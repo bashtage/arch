@@ -1,0 +1,69 @@
+# Travis script that uses miniconda in place of the system installed python
+# versions.  Allows substantial flexability for choosing versions of
+# required packages and is simpler to use to test up-to-date scientific Python
+# stack
+language: python
+
+env:
+  # Default values for common packages, override as needed
+  global:
+    - CYTHON=0.20
+    - PATSY=0.2
+    - PANDAS=
+    - OPTIONAL=
+    - STATSMODELS=
+    - COVERAGE=true
+
+matrix:
+  fast_finish: true
+  include:
+  - python: 2.7
+    env:
+    - PYTHON=2.7
+    - NUMPY=1.7
+    - SCIPY=0.12
+  - python: 2.7
+    env:
+    - PYTHON=3.3
+    - NUMPY=1.8
+    - SCIPY=0.14
+    - PANDAS=0.14
+    - COVERAGE=false
+
+notifications:
+  email:
+    on_success: always
+
+# Setup anaconda
+before_install:
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b
+  - export PATH=/home/travis/miniconda/bin:$PATH
+  - sudo apt-get install pandoc
+  - conda update --yes --quiet conda
+  # Fix for headless TravisCI
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  # Avoid noise from matplotlib
+  - mkdir $HOME/.config
+  - mkdir $HOME/.config/matplotlib
+
+# Install packages
+install:
+  - conda create --yes --quiet -n arch-test python=${PYTHON} numpy=${NUMPY} scipy=${SCIPY} ipython-notebook statsmodels dateutil nose pip pyyaml setuptools Cython numba matplotlib
+  - source activate arch-test
+  - if [ ${COVERAGE} = true ]; then pip install coverage coveralls nose-cov; fi
+  - python setup.py build
+
+script:
+  - SRCDIR=$PWD
+  - python setup.py install
+  # Show versions
+  - mkdir -p "${SRCDIR}/travis-test"; cd "${SRCDIR}/travis-test"
+  - python -c 'import statsmodels.api as sm; sm.show_versions();'
+  - echo 'import arch; a=arch.test(); import sys; sys.exit((len(a.failures)+len(a.errors))>0)' > test.py
+  - if [ ${COVERAGE} = true ]; then coverage run --rcfile=${SRCDIR}/.travis_coveragerc test.py; else python test.py; fi
+
+after_success:
+  - if [ ${COVERAGE} = true ]; then coveralls --rcfile=${SRCDIR}/.travis_coveragerc; fi

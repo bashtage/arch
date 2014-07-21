@@ -1,0 +1,10 @@
+sphinxcontrib-napoleon
+mock
+numpy
+Cython
+scipy
+matplotlib
+pandas
+patsy
+ipython
+

@@ -1,0 +1,40 @@
+package:
+  name: arch
+  version: "1.0"
+
+source:
+  git_url: https://github.com/bashtage/arch.git
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - cython
+    - numpy
+    - ipython-notebook
+    - pywin32 # [win]
+
+  run:
+    - python
+    - numpy
+    - cython
+    - numpy
+    - scipy
+    - pandas
+    - patsy
+    - matplotlib
+    - statsmodels
+
+test:
+  imports:
+    - arch
+  requires:
+    - nose
+    
+
+about:
+  home: https://github.com/bashtage/arch
+  license : NSCA

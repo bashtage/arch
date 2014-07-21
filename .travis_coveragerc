@@ -1,0 +1,21 @@
+# .coveragerc to control coverage.py
+[run]
+source = arch
+branch = True
+include = */arch/*
+omit = *test_*.py
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+
+    # Don't complain if tests don't hit defensive assertion code:
+    raise NotImplementedError
+    except NotImplementedError
+    # Ignore pass
+    pass
+include = */arch/*
+omit = *test_*.py,*/compat/*,*recursions.py
+ignore_errors = True
