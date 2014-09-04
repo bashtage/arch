@@ -30,9 +30,15 @@ class TestMeanModel(unittest.TestCase):
         zm = ZeroMean()
         zm.volatility = GARCH()
         sim_data = zm.simulate(np.array([0.1, 0.1, 0.8]), 1000)
+        date_index = pd.date_range('2000-12-31',periods=1000, freq='W')
         cls.y = sim_data.data.values
-        cls.y_df = pd.DataFrame(cls.y[:, None], columns=['LongVariableName'])
-        cls.y_series = pd.Series(cls.y, name='VeryVeryLongLongVariableName')
+        cls.y_df = pd.DataFrame(cls.y[:, None],
+                                columns=['LongVariableName'],
+                                index=date_index)
+
+        cls.y_series = pd.Series(cls.y,
+                                 name='VeryVeryLongLongVariableName',
+                                 index=date_index)
         x = cls.resids + randn(cls.T)
         cls.x = x[:, None]
         cls.x_df = pd.DataFrame(cls.x, columns=['LongExogenousName'])
@@ -81,7 +87,7 @@ class TestMeanModel(unittest.TestCase):
         assert_almost_equal(res.params, np.array([np.mean(self.y ** 2)]))
         garch = GARCH()
         zm.volatility = garch
-        zm.fit(iter=5)
+        zm.fit(iter=0)
 
     def test_harx(self):
         harx = HARX(self.y, self.x, lags=[1, 5, 22])
@@ -211,7 +217,6 @@ class TestMeanModel(unittest.TestCase):
         arx
         arx._repr_html_()
 
-
     def test_ar(self):
         ar = ARX(self.y, lags=3)
         params = np.array([1.0, 0.4, 0.3, 0.2, 1.0])
@@ -269,8 +274,6 @@ class TestMeanModel(unittest.TestCase):
         res.plot(annualize='M')
         res.plot(scale=360)
 
-
-
     def test_arch_model(self):
         am = arch_model(self.y)
         assert_true(isinstance(am, ConstantMean))
@@ -320,7 +323,6 @@ class TestMeanModel(unittest.TestCase):
         am = arch_model(self.y, vol='egarch')
         assert_true(isinstance(am.volatility, EGARCH))
 
-
         assert_raises(ValueError, arch_model, self.y, mean='unknown')
         assert_raises(ValueError, arch_model, self.y, vol='unknown')
         assert_raises(ValueError, arch_model, self.y, dist='unknown')
@@ -333,11 +335,11 @@ class TestMeanModel(unittest.TestCase):
 
     def test_summary(self):
         am = arch_model(self.y, mean='ar', lags=[1, 3, 5])
-        res = am.fit()
+        res = am.fit(iter=0)
         res.summary()
 
         am = arch_model(self.y, mean='ar', lags=[1, 3, 5], dist='studentst')
-        res = am.fit()
+        res = am.fit(iter=0)
         res.summary()
 
     def test_errors(self):
@@ -365,7 +367,6 @@ class TestMeanModel(unittest.TestCase):
         with self.assertRaises(ValueError):
             ar.volatility = ConstantVariance()
             ar.fit(cov_type='unknown')
-
 
     def test_warnings(self):
         with warnings.catch_warnings(record=True) as w:
@@ -403,37 +404,36 @@ class TestMeanModel(unittest.TestCase):
                             res_har_r_v2.conditional_volatility)
         assert_almost_equal(res_ar.resid, res_har_r_v2.resid)
 
-
     def test_starting_values(self):
         am = arch_model(self.y, mean='ar', lags=[1, 3, 5])
-        res = am.fit(cov_type='mle')
+        res = am.fit(cov_type='mle', iter=0)
         res2 = am.fit(starting_values=res.params, iter=0)
 
         am = arch_model(self.y, mean='zero')
         sv = np.array([1.0, 0.3, 0.8])
         with warnings.catch_warnings(record=True) as w:
-            am.fit(starting_values=sv)
+            am.fit(starting_values=sv, iter=0)
         assert_equal(len(w), 1)
 
     def test_no_param_volatility(self):
         cm = ConstantMean(self.y)
         cm.volatility = EWMAVariance()
-        cm.fit()
+        cm.fit(iter=0)
         cm.volatility = RiskMetrics2006()
-        cm.fit()
+        cm.fit(iter=0)
 
         ar = ARX(self.y, lags=5)
         ar.volatility = EWMAVariance()
-        ar.fit()
+        ar.fit(iter=0)
         ar.volatility = RiskMetrics2006()
-        ar.fit()
+        ar.fit(iter=0)
 
     def test_egarch(self):
         cm = ConstantMean(self.y)
         cm.volatility = EGARCH()
-        cm.fit(iter=5)
+        cm.fit(iter=0)
         cm.distribution = StudentsT()
-        cm.fit(iter=5)
+        cm.fit(iter=0)
 
     def test_multiple_lags(self):
         """Smoke test to ensure models estimate with multiple lags"""
@@ -458,4 +458,87 @@ class TestMeanModel(unittest.TestCase):
                         else:
                             cm.volatility = process(p=p, o=o, q=q)
                             cm.fit(iter=0, disp='off')
+
+    def test_first_last_obs(self):
+        ar = ARX(self.y, lags=5, hold_back=100)
+        res = ar.fit(iter=0)
+        resids = res.resid
+        resid_copy = resids.copy()
+        resid_copy[:100] = np.nan
+        assert_equal(resids, resid_copy)
+
+        ar.volatility = GARCH()
+        res = ar.fit(iter=0)
+        resids = res.resid
+        resid_copy = resids.copy()
+        resid_copy[:100] = np.nan
+        assert_equal(resids, resid_copy)
+
+        ar = ARX(self.y, lags=5, last_obs=500)
+        ar.volatility = GARCH()
+        res = ar.fit(iter=0)
+        resids = res.resid
+        resid_copy = resids.copy()
+        resid_copy[500:] = np.nan
+        assert_equal(resids, resid_copy)
+
+        ar = ARX(self.y, lags=5, hold_back=100, last_obs=500)
+        ar.volatility = GARCH()
+        res = ar.fit(iter=0)
+        resids = res.resid
+        resid_copy = resids.copy()
+        resid_copy[:100] = np.nan
+        resid_copy[500:] = np.nan
+        assert_equal(resids, resid_copy)
+
+        vol = res.conditional_volatility
+        vol_copy = vol.copy()
+        vol_copy[:100] = np.nan
+        vol_copy[500:] = np.nan
+        assert_equal(vol, vol_copy)
+        assert_equal(self.y.shape[0], vol.shape[0])
+
+        ar = ARX(self.y, lags=5, last_obs=500)
+        ar.volatility = GARCH()
+        res = ar.fit(iter=0)
+        resids = res.resid
+        resid_copy = resids.copy()
+        resid_copy[:5] = np.nan
+        resid_copy[500:] = np.nan
+        assert_equal(resids, resid_copy)
+
+    def test_date_first_last_obs(self):
+        y = self.y_series
+        cm = ConstantMean(y, hold_back=y.index[100])
+        print(y.index[100])
+        res = cm.fit()
+        cm = ConstantMean(y, hold_back=100)
+        res2 = cm.fit()
+        assert_equal(res.resid.values, res2.resid.values)
+        cm = ConstantMean(y, hold_back='2002-12-01')
+        res2 = cm.fit()
+        assert_equal(res.resid.values, res2.resid.values)
+        # Test non-exact start
+        cm = ConstantMean(y, hold_back='2002-12-02')
+        res2 = cm.fit()
+        assert_equal(res.resid.values, res2.resid.values)
+
+        cm = ConstantMean(y, last_obs=y.index[900])
+        print(y.index[900])
+        res = cm.fit()
+        cm = ConstantMean(y, last_obs=900)
+        res2 = cm.fit()
+        assert_equal(res.resid.values, res2.resid.values)
+
+        cm = ConstantMean(y, hold_back='2002-12-02', last_obs=y.index[900])
+        res = cm.fit()
+        cm = ConstantMean(y, hold_back=100, last_obs=900)
+        res2 = cm.fit()
+        assert_equal(res.resid.values, res2.resid.values)
+        # Mix and match
+        cm = ConstantMean(y, hold_back=100, last_obs=y.index[900])
+        res2 = cm.fit()
+        assert_equal(res.resid.values, res2.resid.values)
+
+
 

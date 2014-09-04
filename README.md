@@ -108,3 +108,14 @@ conda install -c https://conda.binstar.org/bashtage arch
 ## More about ARCH
 More information about ARCH and related models is available in the notes and 
 research available at [Kevin Sheppard's site](http://www.kevinsheppard.com).
+
+## Contributing
+
+Contributions are welcome.  There are opportunities at many levels to 
+contribute:
+
+* Implement new volatility process, e.g FIGARCH
+* Improve docstrings where unclear or with typos
+* Provide examples, preferrablly in the form of IPython notebooks
+
+
