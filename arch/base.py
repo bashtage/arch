@@ -21,7 +21,7 @@ from statsmodels.tools.numdiff import approx_fprime, approx_hess
 
 from .distribution import Distribution, Normal
 from .volatility import VolatilityProcess, ConstantVariance
-from .utils import ensure1d, parse_dataframe, DocStringInheritor
+from .utils import ensure1d, DocStringInheritor, date_to_index
 from .compat.python import add_metaclass, range
 
 __all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel']
@@ -30,7 +30,6 @@ SP14 = LooseVersion(scipy.version.short_version).version[1] >= 14
 # Callback variables
 _callback_iter, _callback_llf = 0, 0.0,
 _callback_func_count, _callback_iter_display = 0, 1
-
 
 
 def _callback(parameters):
@@ -149,15 +148,28 @@ class ARCHModel(object):
         self._y = np.asarray(self._y_series)
 
         self.hold_back = hold_back
-        if hold_back is None:
-            self.hold_back = 0
-        self.first_obs = self.hold_back
+        if isinstance(hold_back, (str, dt.datetime, np.datetime64)):
+            date_index = self._y_series.index
+            _first_obs_index = date_to_index(hold_back, date_index)
+            self.first_obs = date_index[_first_obs_index]
+        elif hold_back is None:
+            self.first_obs = _first_obs_index = 0
+        else:
+            _first_obs_index = hold_back
+            self.first_obs = self._y_series.index[_first_obs_index]
 
-        self.last_obs = last_obs
-        if last_obs is None:
-            self.last_obs = self._y.shape[0]
+        self.last_obs = _last_obs_index = last_obs
+        if isinstance(last_obs, (str, dt.datetime, np.datetime64)):
+            date_index = self._y_series.index
+            _last_obs_index = date_to_index(last_obs, date_index)
+            self.last_obs = date_index[_last_obs_index]
+        elif last_obs is None:
+            self.last_obs = _last_obs_index = self._y.shape[0]
+        else:
+            self.last_obs = self._y_series.index[last_obs]
 
-        self.nobs = self.last_obs - self.first_obs
+        self.nobs = _last_obs_index - _first_obs_index
+        self._indices = (_first_obs_index, _last_obs_index)
 
         self._volatility = None
         self._distribution = None
@@ -445,7 +457,7 @@ class ARCHModel(object):
 
         names = self._all_parameter_names()
         # Reshape resids and vol
-        first_obs, last_obs = self.first_obs, self.last_obs
+        first_obs, last_obs = self._indices
         resids_final = np.empty_like(self._y, dtype=np.float64)
         resids_final.fill(np.nan)
         resids_final[first_obs:last_obs] = resids
@@ -931,6 +943,7 @@ class ARCHModelResult(object):
         ax = fig.add_subplot(2, 1, 1)
         ax.plot(self._index, self.resid / self.conditional_volatility)
         ax.set_title('Standardized Residuals')
+        ax.axes.xaxis.set_ticklabels([])
 
         ax = fig.add_subplot(2, 1, 2)
         vol = self.conditional_volatility

@@ -6,7 +6,7 @@ import numpy as np
 from pandas import DataFrame, Series
 import pandas as pd
 
-__all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor']
+__all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor', 'date_to_index']
 
 def ensure1d(x, name, series=False):
     if isinstance(x, pd.Series):
@@ -77,3 +77,54 @@ class DocStringInheritor(type):
                         attribute.__doc__=doc
                         break
         return type.__new__(meta, name, bases, clsdict)
+
+def date_to_index(date, date_index):
+    """
+    Looks up a
+
+    Parameters
+    ----------
+    date : string, datetime or datetime64
+        Date to use when returning the index
+    date_index : 1-d array of datetime64
+        Index data containing datetime64 values
+
+    Returns
+    -------
+    index : int
+        Index location
+
+    Notes
+    -----
+    Assumes dates are increasing and unique.
+
+    Uses last value interpolation if a date is not in the series so that the
+    value returned satisfies date_index[index] is the largest date less than or
+    equal to date.
+    """
+    import datetime as dt
+    import pandas as pd
+    from pandas.core.common import is_datetime64_dtype
+
+    if not is_datetime64_dtype(date_index):
+        raise ValueError('date_index must be a datetime64 array')
+    if not np.all(np.diff(date_index.values)>0):
+        raise ValueError('date_index is not monotonic and unique')
+    if not isinstance(date, (dt.datetime, np.datetime64, str)):
+        raise ValueError("date must be a datetime, datetime64 or string")
+    elif isinstance(date, dt.datetime):
+        date = np.datetime64(date)
+    elif isinstance(date, str):
+        orig_date = date
+        date = np.datetime64(pd.to_datetime(date, coerce=True))
+        if date == pd.NaT:
+            raise ValueError('date:' + orig_date +
+                             ' cannot be parsed to a date.')
+
+    date_index = np.asarray(date_index)
+
+    locs = np.nonzero(date_index <= date)[0]
+    if locs.shape[0] == 0:
+        raise ValueError('All dates in date_index occur after date')
+    else:
+        return locs.max()

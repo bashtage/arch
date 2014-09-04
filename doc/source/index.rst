@@ -15,13 +15,6 @@ as
 
 An complete ARCH model is divided into three components:
 
-.. toctree::
-    :maxdepth: 1
-
-    Examples <examples>
-    Mean Models <mean>
-    Volatility Processes <volatility>
-    Distributions <distribution>
 
 ..
 .. Theoretical Background <background>
@@ -45,16 +38,25 @@ blocks of an ARCH model
 
     from arch.mean import ConstantMean
     from arch.volatiltiy import GARCH
-    from arch.distribution impot StudentsT
+    from arch.distribution import Normal
     am = ConstantMean(returns)
     am.volatility = GARCH(1,0,1)
-    am.distribution = StudentsT()
+    am.distribution = Normal()
 
 In either case, model parameters are estimated using
 
 ::
 
     res = am.fit()
+
+
+.. toctree::
+    :maxdepth: 1
+
+    Examples <examples>
+    Mean Models <mean>
+    Volatility Processes <volatility>
+    Distributions <distribution>
 
 
 Model Constructor

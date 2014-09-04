@@ -4,6 +4,7 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 """
 from __future__ import print_function, division, absolute_import
 from collections import OrderedDict
+import datetime as dt
 
 import numpy as np
 from numpy import zeros, empty, ones, isscalar, log
@@ -14,7 +15,7 @@ from pandas import DataFrame
 from .base import ARCHModel, implicit_constant, ARCHModelResult
 from .volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH
 from .distribution import Normal, StudentsT
-from .utils import ensure1d, parse_dataframe
+from .utils import ensure1d, parse_dataframe, date_to_index
 from .compat.python import range, iteritems
 
 __all__ = ['HARX', 'ConstantMean', 'ZeroMean', 'ARX', 'arch_mode', 'LS']
@@ -102,7 +103,6 @@ class HARX(ARCHModel):
         self.constant = constant
         self.use_rotated = use_rotated
         self.regressors = None
-        self.hold_back = hold_back
 
         self.name = 'HAR'
         if self._x is not None:
@@ -111,19 +111,32 @@ class HARX(ARCHModel):
             max_lags = np.max(np.asarray(lags))
         else:
             max_lags = 0
-        if hold_back is None:
-            self.first_obs = max_lags
-        elif hold_back < max_lags:
-            from warnings import warn
 
+        if isinstance(hold_back,(str,dt.datetime,np.datetime64)):
+            date_index = self._y_series.index
+            _first_obs_index = date_to_index(hold_back, date_index)
+        elif hold_back is None:
+            _first_obs_index = max_lags
+        else:
+            _first_obs_index = hold_back
+
+        self.first_obs = 0
+        if self._y.shape[0] > 0:
+            self.first_obs = self._y_series.index[_first_obs_index]
+
+        if _first_obs_index < max_lags:
+            from warnings import warn
             warn('hold_back is less then the minimum number given the lags '
                  'selected', RuntimeWarning)
-            self.first_obs = max_lags
-        else:
-            self.first_obs = hold_back
+            _first_obs_index = max_lags
+            self.first_obs = self._y_series.index[_first_obs_index]
 
+        _last_obs_index = self._indices[1]
+        self.nobs = _last_obs_index - _first_obs_index
+        self._indices = (_first_obs_index, _last_obs_index)
         self._init_model()
-        self.nobs = self.last_obs - self.first_obs
+
+
 
     @property
     def x(self):
@@ -423,12 +436,12 @@ class HARX(ARCHModel):
             reg_x = empty((nobs_orig, 0), dtype=np.float64)
 
         self.regressors = np.hstack((reg_constant, reg_lags, reg_x))
-        self.regressors = self.regressors[self.first_obs:self.last_obs, :]
-        self._y_adj = self._y[self.first_obs:self.last_obs]
+        first_obs, last_obs = self._indices
+        self.regressors = self.regressors[first_obs:last_obs, :]
+        self._y_adj = self._y[first_obs:last_obs]
 
 
     def _r2(self, params):
-        first_obs, last_obs = self.first_obs, self.last_obs
         y = self._y_adj
         x = self.regressors
         constant = False
@@ -469,7 +482,7 @@ class HARX(ARCHModel):
             warn('Cannot estimate model with no data', RuntimeWarning)
             return None
 
-        first_obs, last_obs = self.first_obs, self.last_obs
+        first_obs, last_obs = self._indices
         nobs = last_obs - first_obs
         if nobs < self.num_params:
             raise ValueError(
@@ -520,7 +533,9 @@ class HARX(ARCHModel):
         resids = np.empty_like(self._y, dtype=np.float64)
         resids.fill(np.nan)
         resids[first_obs:last_obs] = e
-        vol = np.zeros_like(resids) * np.sqrt(sigma2)
+        vol = np.zeros_like(resids)
+        vol.fill(np.nan)
+        vol[first_obs:last_obs] = np.sqrt(sigma2)
         names = self._all_parameter_names()
         loglikelihood = self._static_gaussian_loglikelihood(e)
 
@@ -645,7 +660,7 @@ class ConstantMean(HARX):
         return df
 
     def resids(self, params):
-        return self._y[self.first_obs:self.last_obs] - params
+        return self._y[self._indices[0]:self._indices[1]] - params
 
 
 class ZeroMean(HARX):
@@ -767,7 +782,7 @@ class ZeroMean(HARX):
         return df
 
     def resids(self, params):
-        return self._y[self.first_obs:self.last_obs]
+        return self._y[self._indices[0]:self._indices[1]]
 
 
 class ARX(HARX):
