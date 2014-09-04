@@ -33,9 +33,9 @@ class HARX(ARCHModel):
 
     Parameters
     ----------
-    y : array
+    y : array or Series
         nobs element vector containing the dependent variable
-    x : array, optional
+    x : array or DataFrame, optional
         nobs by k element array containing exogenous regressors
     lags : scalar, 1-d array or 2-d array, optional
         Description of lag structure of the HAR.  Scalar included all lags
@@ -47,13 +47,19 @@ class HARX(ARCHModel):
     use_rotated : bool, optional
         Flag indicating to use the alternative rotated form of the HAR where
         HAR lags do not overlap
-    hold_back : int, optional
+    hold_back : int, str, datetime or datetime64, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample
-    last_obs : int, optional
+        lag lengths to estimate on the common sample.  When y is a Series with
+        a DateTime index, hold_back can contain datetime, datetime64 or
+        formatted string to indicate the index of the first data point to use
+        in estimation.
+    last_obs : int, str, datetime or datetime64,  optional
         Index of last observation to use when estimating the model.  Used when
-        producing pseudo-out-of-sample forecasts
+        producing pseudo-out-of-sample forecasts. When y is a Series with
+        a DateTime index, last_obs can contain datetime, datetime64 or
+        formatted string to indicate the index of the final data point to use
+        in estimation.
     volatility : VolatilityProcess, optional
         Volatility process to use in the model
     distribution : Distribution, optional
@@ -74,6 +80,14 @@ class HARX(ARCHModel):
     >>> y = np.random.randn(100)
     >>> harx = HARX(y, lags=[1, 5, 22])
     >>> res = harx.fit()
+
+    >>> from pandas import Series, date_range
+    >>> import datetime as dt
+    >>> index = date_range('2000-01-01', freq='M', periods=120)
+    >>> y = Series(y, name='y', index=index)
+    >>> start = dt.datetime(2001, 1, 1)
+    >>> end = dt.datetime(2008, 12, 31)
+    >>> HARX(y, lags=[1, 5, 22], hold_back=start, last_obs=end)
 
     Notes
     -----
@@ -550,15 +564,21 @@ class ConstantMean(HARX):
 
     Parameters
     ----------
-    y : array
+    y : array or Series
         nobs element vector containing the dependent variable
-    hold_back : int, optional
+    hold_back : int, str, datetime or datetime64, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample
-    last_obs : int, optional
+        lag lengths to estimate on the common sample.  When y is a Series with
+        a DateTime index, hold_back can contain datetime, datetime64 or
+        formatted string to indicate the index of the first data point to use
+        in estimation.
+    last_obs : int, str, datetime or datetime64,  optional
         Index of last observation to use when estimating the model.  Used when
-        producing pseudo-out-of-sample forecasts
+        producing pseudo-out-of-sample forecasts. When y is a Series with
+        a DateTime index, last_obs can contain datetime, datetime64 or
+        formatted string to indicate the index of the final data point to use
+        in estimation.
     volatility : VolatilityProcess, optional
         Volatility process to use in the model
     distribution : Distribution, optional
@@ -669,15 +689,21 @@ class ZeroMean(HARX):
 
     Parameters
     ----------
-    y : array
+    y : array or Series
         nobs element vector containing the dependent variable
-    hold_back : int, optional
+    hold_back : int, str, datetime or datetime64, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample
-    last_obs : int, optional
+        lag lengths to estimate on the common sample.  When y is a Series with
+        a DateTime index, hold_back can contain datetime, datetime64 or
+        formatted string to indicate the index of the first data point to use
+        in estimation.
+    last_obs : int, str, datetime or datetime64,  optional
         Index of last observation to use when estimating the model.  Used when
-        producing pseudo-out-of-sample forecasts
+        producing pseudo-out-of-sample forecasts. When y is a Series with
+        a DateTime index, last_obs can contain datetime, datetime64 or
+        formatted string to indicate the index of the final data point to use
+        in estimation.
     volatility : VolatilityProcess, optional
         Volatility process to use in the model
     distribution : Distribution, optional
@@ -792,9 +818,9 @@ class ARX(HARX):
 
     Parameters
     ----------
-    y : array
+    y : array or Series
         nobs element vector containing the dependent variable
-    x : array, optional
+    x : array or DataFrame, optional
         nobs by k element array containing exogenous regressors
     lags : scalar, 1-d array, optional
         Description of lag structure of the HAR.  Scalar included all lags
@@ -802,13 +828,19 @@ class ARX(HARX):
         lags[1], ...
     constant : bool, optional
         Flag whether the model should include a constant
-    hold_back : int, optional
+    hold_back : int, str, datetime or datetime64, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample
-    last_obs : int, optional
+        lag lengths to estimate on the common sample.  When y is a Series with
+        a DateTime index, hold_back can contain datetime, datetime64 or
+        formatted string to indicate the index of the first data point to use
+        in estimation.
+    last_obs : int, str, datetime or datetime64,  optional
         Index of last observation to use when estimating the model.  Used when
-        producing pseudo-out-of-sample forecasts
+        producing pseudo-out-of-sample forecasts. When y is a Series with
+        a DateTime index, last_obs can contain datetime, datetime64 or
+        formatted string to indicate the index of the final data point to use
+        in estimation.
 
     Methods
     -------
@@ -901,19 +933,25 @@ class LS(HARX):
 
     Parameters
     ----------
-    y : array
+    y : array or Series
         nobs element vector containing the dependent variable
-    x : array
+    x : array or DataFrame, optional
         nobs by k element array containing exogenous regressors
     constant : bool, optional
         Flag whether the model should include a constant
-    hold_back : int, optional
+    hold_back : int, str, datetime or datetime64, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample
-    last_obs : int, optional
+        lag lengths to estimate on the common sample.  When y is a Series with
+        a DateTime index, hold_back can contain datetime, datetime64 or
+        formatted string to indicate the index of the first data point to use
+        in estimation.
+    last_obs : int, str, datetime or datetime64,  optional
         Index of last observation to use when estimating the model.  Used when
-        producing pseudo-out-of-sample forecasts
+        producing pseudo-out-of-sample forecasts. When y is a Series with
+        a DateTime index, last_obs can contain datetime, datetime64 or
+        formatted string to indicate the index of the final data point to use
+        in estimation.
 
     Methods
     -------

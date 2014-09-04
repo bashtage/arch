@@ -116,6 +116,6 @@ contribute:
 
 * Implement new volatility process, e.g FIGARCH
 * Improve docstrings where unclear or with typos
-* Provide examples, preferrablly in the form of IPython notebooks
+* Provide examples, preferably in the form of IPython notebooks
 
 
