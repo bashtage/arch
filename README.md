@@ -28,8 +28,7 @@ This is a work-in-progress for ARCH and related models, written in Python
 
 ## Examples
 
-See the [example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/Examples.ipynb) 
-for a more complete overview.
+See the [example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/examples.ipynb) for a more complete overview.
 
 ```python
 import datetime as dt
