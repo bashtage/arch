@@ -255,10 +255,20 @@ class TestMeanModel(unittest.TestCase):
         ar.__repr__()
         ar = ARX(self.y_series, lags=5)
         ar.__repr__()
+        res = ar.fit()
+        assert_true(isinstance(res.resid, pd.Series))
+        assert_true(isinstance(res.conditional_volatility, pd.Series))
+        # Smoke tests
         summ = ar.fit().summary()
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
-        res = ar.fit(iter=5)
+        res = ar.fit(iter=5, cov_type='mle')
+        res.param_cov
         res.plot()
+        res.plot(annualize='D')
+        res.plot(annualize='W')
+        res.plot(annualize='M')
+        res.plot(scale=360)
+
 
 
     def test_arch_model(self):
@@ -306,6 +316,10 @@ class TestMeanModel(unittest.TestCase):
 
         am = arch_model(self.y, vol='arch')
         assert_true(isinstance(am.volatility, ARCH))
+
+        am = arch_model(self.y, vol='egarch')
+        assert_true(isinstance(am.volatility, EGARCH))
+
 
         assert_raises(ValueError, arch_model, self.y, mean='unknown')
         assert_raises(ValueError, arch_model, self.y, vol='unknown')
