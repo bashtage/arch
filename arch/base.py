@@ -2,6 +2,7 @@
 Core classes for ARCH models
 """
 from __future__ import print_function, division, absolute_import
+from copy import deepcopy
 from functools import partial
 import datetime as dt
 from distutils.version import LooseVersion
@@ -465,9 +466,10 @@ class ARCHModel(object):
         vol_final.fill(np.nan)
         vol_final[first_obs:last_obs] = vol
 
+        model_copy = deepcopy(self)
         return ARCHModelResult(params, None, r2, resids_final, vol_final,
                                cov_type, self._y_series, names, loglikelihood,
-                               self._is_pandas, self)
+                               self._is_pandas, model_copy)
 
     def parameter_names(self):
         """List of parameters names
