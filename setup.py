@@ -93,4 +93,5 @@ setup(name='arch',
       zip_safe=False,
       include_package_data=True,
       distclass=BinaryDistribution,
+      requires=['Cython', 'matplotlib', 'numpy', 'scipy', 'pandas', 'statsmodels']
 )
