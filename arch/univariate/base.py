@@ -1,7 +1,7 @@
 """
 Core classes for ARCH models
 """
-from __future__ import print_function, division, absolute_import
+from __future__ import division, absolute_import
 from copy import deepcopy
 from functools import partial
 import datetime as dt
@@ -22,8 +22,8 @@ from statsmodels.tools.numdiff import approx_fprime, approx_hess
 
 from .distribution import Distribution, Normal
 from .volatility import VolatilityProcess, ConstantVariance
-from .utils import ensure1d, DocStringInheritor, date_to_index
-from .compat.python import add_metaclass, range
+from ..utils import ensure1d, DocStringInheritor, date_to_index
+from ..compat.python import add_metaclass, range
 
 __all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel']
 SP14 = LooseVersion(scipy.version.short_version).version[1] >= 14

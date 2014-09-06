@@ -21,24 +21,22 @@ An complete ARCH model is divided into three components:
 ..
 
 However, the simplest method to construct this model is to use the constructor
-function :py:meth:`~arch.mean.arch`
+function :py:meth:`~arch.arch_model`
 
 ::
 
-    from arch.mean import arch
+    from arch import arch_model
     import pandas.io.data as web
     sp500 = web.get_data_yahoo('^GSPC', start=start, end=end)
     returns = 100 * sp500['Adj Close'].pct_change().dropna()
-    am = arch(returns)
+    am = arch_model(returns)
 
 Alternatively, the same model can be manually assembled from the building
 blocks of an ARCH model
 
 ::
 
-    from arch.mean import ConstantMean
-    from arch.volatiltiy import GARCH
-    from arch.distribution import Normal
+    from arch import ConstantMean, GARCH, Normal
     am = ConstantMean(returns)
     am.volatility = GARCH(1,0,1)
     am.distribution = Normal()
@@ -71,7 +69,7 @@ Model Results
 -------------
 All model return the same object, a results class (:py:class:`ARCHModelResult`)
 
-.. py:currentmodule:: arch.base
+.. py:currentmodule:: arch.univariate.base
 .. autoclass:: ARCHModelResult
     :members: summary, plot, conf_int
 

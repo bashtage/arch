@@ -2,23 +2,19 @@ Distributions
 =============
 A distribution is the final component of an ARCH Model.
 
-.. py:currentmodule::arch.distribution
-
-.. automodule:: arch.distribution
+.. py:currentmodule:: arch.univariate
 
 Normal
 ------
 
 .. autoclass:: Normal
     :members: starting_values, bounds, constraints, simulate, loglikelihoood
-    :show-inheritance:
 
 Student's t
 -----------
 
 .. autoclass:: StudentsT
     :members: starting_values, bounds, constraints, simulate, loglikelihoood
-    :show-inheritance:
 
 Writing New Distributions
 -------------------------

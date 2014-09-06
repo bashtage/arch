@@ -3,44 +3,37 @@ Volatility Processes
 A volatility process is added to a mean model to capture time-varying
 volatility.
 
-.. py:currentmodule::arch.volatility
-
-.. automodule:: arch.volatility
+.. py:currentmodule:: arch.univariate
 
 Constant Variance
 -----------------
 
 .. autoclass:: ConstantVariance
     :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
-    :show-inheritance:
 
 GARCH
 -----
 
 .. autoclass:: GARCH
     :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
-    :show-inheritance:
 
 EGARCH
 ------
 
 .. autoclass:: EGARCH
     :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
-    :show-inheritance:
 
 HARCH
 -----
 
 .. autoclass:: HARCH
     :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
-    :show-inheritance:
 
 ARCH
 ----
 
 .. autoclass:: ARCH
     :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
-    :show-inheritance:
 
 Parameterless Variance Processes
 --------------------------------
@@ -66,4 +59,5 @@ Writing New Volatility Processes
 All volatility processes must inherit from :class:VolatilityProcess and provide
 all public methods.
 
+.. py:currentmodule:: arch.univariate.volatility
 .. autoclass:: VolatilityProcess

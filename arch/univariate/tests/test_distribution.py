@@ -6,8 +6,7 @@ from numpy.testing import assert_almost_equal, assert_equal, assert_array_equal,
     assert_raises
 import numpy as np
 
-from arch.distribution import Normal, StudentsT
-from arch.compat.python import range
+from arch.univariate.distribution import Normal, StudentsT
 
 
 class TestDistributions(unittest.TestCase):

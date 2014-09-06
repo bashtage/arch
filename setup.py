@@ -11,7 +11,8 @@ import numpy
 
 ext_modules = []
 if not '--no-binary' in sys.argv:
-    ext_modules.append(Extension("arch.recursions", ["./arch/recursions.pyx"]))
+    ext_modules.append(Extension("arch.univariate.recursions",
+                                 ["./arch/univariate/recursions.pyx"]))
 else:
     sys.argv.remove('--no-binary')
 
@@ -83,7 +84,7 @@ setup(name='arch',
       author='Kevin Sheppard',
       author_email='kevin.sheppard@economics.ox.ac.uk',
       url='http://github.com/bashtage/arch',
-      packages=['arch', 'arch.tests', 'arch.compat'],
+      packages=['arch', 'arch.tests', 'arch.compat', 'arch.univariate'],
       ext_modules=ext_modules,
       package_dir={'arch': './arch'},
       cmdclass={'build_ext': build_ext},

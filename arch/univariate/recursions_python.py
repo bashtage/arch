@@ -3,9 +3,11 @@ Pure Python implementations of the core recursions in the models. Only used for
 testing and if it isn't possible to install the Cython version using
 python setup.py install --no-binary
 """
-from __future__ import division
+from __future__ import division, absolute_import
 from numpy import log
 import numpy as np
+
+from ..compat.python import range
 
 __all__ = ['harch_recursion','arch_recursion','garch_recursion',
            'egarch_recursion']
