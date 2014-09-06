@@ -65,14 +65,6 @@ class HARX(ARCHModel):
     distribution : Distribution, optional
         Error distribution to use in the model
 
-    Methods
-    -------
-    fit
-        Estimates model parameters
-    simulate
-        Simulates data from a HAR-X
-
-
     Examples
     --------
     >>> import numpy as np
@@ -122,7 +114,7 @@ class HARX(ARCHModel):
         if self._x is not None:
             self.name += '-X'
         if lags is not None:
-            max_lags = np.max(np.asarray(lags))
+            max_lags = np.max(np.asarray(lags, dtype=np.int32))
         else:
             max_lags = 0
 
@@ -584,14 +576,6 @@ class ConstantMean(HARX):
     distribution : Distribution, optional
         Error distribution to use in the model
 
-    Methods
-    -------
-    fit
-        Estimates model parameters
-    simulate
-        Simulates data from a HAR-X
-
-
     Examples
     --------
     >>> import numpy as np
@@ -708,14 +692,6 @@ class ZeroMean(HARX):
         Volatility process to use in the model
     distribution : Distribution, optional
         Error distribution to use in the model
-
-    Methods
-    -------
-    fit
-        Estimates model parameters
-    simulate
-        Simulates data from a HAR-X
-
 
     Examples
     --------
@@ -842,14 +818,6 @@ class ARX(HARX):
         formatted string to indicate the index of the final data point to use
         in estimation.
 
-    Methods
-    -------
-    fit
-        Estimates model parameters
-    simulate
-        Simulates data from a HAR-X
-
-
     Examples
     --------
     >>> import numpy as np
@@ -952,14 +920,6 @@ class LS(HARX):
         a DateTime index, last_obs can contain datetime, datetime64 or
         formatted string to indicate the index of the final data point to use
         in estimation.
-
-    Methods
-    -------
-    fit
-        Estimates model parameters
-    simulate
-        Simulates data from a HAR-X
-
 
     Examples
     --------
