@@ -2,15 +2,14 @@ import unittest
 
 import scipy.stats as stats
 from scipy.special import gammaln
-from numpy.testing import assert_almost_equal, assert_equal, assert_array_equal, \
-    assert_raises
+from numpy.testing import assert_almost_equal, assert_equal, \
+    assert_array_equal, assert_raises
 import numpy as np
 
 from arch.univariate.distribution import Normal, StudentsT
 
 
 class TestDistributions(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.T = 1000
@@ -29,11 +28,10 @@ class TestDistributions(unittest.TestCase):
         bounds = dist.bounds(self.resids)
         assert_equal(len(bounds), 0)
 
-        A, b = dist.constraints()
-        assert_equal(len(A), 0)
+        a, b = dist.constraints()
+        assert_equal(len(a), 0)
 
         assert_array_equal(dist.starting_values(self.resids), np.empty((0,)))
-
 
     def test_studentst(self):
         dist = StudentsT()

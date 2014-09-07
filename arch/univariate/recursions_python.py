@@ -9,8 +9,9 @@ import numpy as np
 
 from ..compat.python import range
 
-__all__ = ['harch_recursion','arch_recursion','garch_recursion',
+__all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion',
            'egarch_recursion']
+
 
 def harch_recursion(parameters, resids, sigma2, lags, nobs, backcast,
                     var_bounds):
@@ -80,8 +81,7 @@ def arch_recursion(parameters, resids, sigma2, p, nobs, backcast, var_bounds):
             if (t - i - 1) < 0:
                 sigma2[t] += parameters[i + 1] * backcast
             else:
-                sigma2[t] += parameters[i + 1] * resids[t - i - 1] * \
-                             resids[t - i - 1]
+                sigma2[t] += parameters[i + 1] * resids[t - i - 1] ** 2
         if sigma2[t] < var_bounds[t, 0]:
             sigma2[t] = var_bounds[t, 0]
         elif sigma2[t] > var_bounds[t, 1]:
@@ -135,8 +135,8 @@ def garch_recursion(parameters, fresids, sresids, sigma2, p, o, q, nobs,
             if (t - 1 - j) < 0:
                 sigma2[t] += parameters[loc] * 0.5 * backcast
             else:
-                sigma2[t] += parameters[loc] * fresids[t - 1 - j] \
-                             * (sresids[t - 1 - j] < 0)
+                sigma2[t] += parameters[loc] \
+                    * fresids[t - 1 - j] * (sresids[t - 1 - j] < 0)
             loc += 1
         for j in range(q):
             if (t - 1 - j) < 0:
@@ -155,7 +155,8 @@ def garch_recursion(parameters, fresids, sresids, sigma2, p, o, q, nobs,
     return None
 
 
-def egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast, var_bounds, lnsigma2, std_resids, abs_std_resids):
+def egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast,
+                     var_bounds, lnsigma2, std_resids, abs_std_resids):
     norm_const = 0.79788456080286541  # E[abs(e)], e~N(0,1)
 
     for t in range(nobs):
@@ -164,7 +165,8 @@ def egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast, var_bo
         loc += 1
         for j in range(p):
             if (t - 1 - j) >= 0:
-                lnsigma2[t] += parameters[loc] * (abs_std_resids[t - 1 - j] - norm_const)
+                lnsigma2[t] += parameters[loc] * \
+                    (abs_std_resids[t - 1 - j] - norm_const)
             loc += 1
         for j in range(o):
             if (t - 1 - j) >= 0:

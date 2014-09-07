@@ -314,10 +314,12 @@ class ARCHModel(object):
     def _parse_parameters(self, x):
         """Return the parameters of each model in a tuple"""
 
-        km, kv, kd = self.num_params, self.volatility.num_params, self.distribution.num_params
+        km, kv = self.num_params, self.volatility.num_params
+        kd= self.distribution.num_params
         return x[:km], x[km:km + kv], x[km + kv:]
 
-    def fit(self, iter=1, disp='final', starting_values=None, cov_type='robust'):
+    def fit(self, iter=1, disp='final', starting_values=None,
+            cov_type='robust'):
         """
         Fits the model given a nobs by 1 vector of sigma2 values
 
@@ -546,10 +548,9 @@ class ARCHModel(object):
         elif backcast is None:
             backcast = self._backcast
 
-
         kwargs = {'sigma2': np.zeros_like(resids),
                   'backcast': backcast,
-                  'var_bounds' : var_bounds,
+                  'var_bounds': var_bounds,
                   'individual': False}
 
         hess = approx_hess(params, self._loglikelihood, kwargs=kwargs)

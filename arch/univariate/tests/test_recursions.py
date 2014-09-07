@@ -3,8 +3,8 @@ import unittest
 from nose.tools import assert_true
 import numpy as np
 from numpy.testing import assert_almost_equal
-
 import arch.univariate.recursions as rec
+
 import arch.univariate.recursions_python as recpy
 from arch.compat.python import range
 
@@ -116,7 +116,6 @@ class TestRecursions(unittest.TestCase):
         rec.garch_recursion(parameters, fresids, sresids, sigma2, 1, 1,
                             0, T, backcast, self.var_bounds)
         assert_almost_equal(sigma2_python, sigma2)
-
 
     def test_garch_no_p(self):
         T, resids, = self.T, self.resids

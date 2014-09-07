@@ -118,7 +118,7 @@ class HARX(ARCHModel):
         else:
             max_lags = 0
 
-        if isinstance(hold_back,(str,dt.datetime,np.datetime64)):
+        if isinstance(hold_back, (str, dt.datetime, np.datetime64)):
             date_index = self._y_series.index
             _first_obs_index = date_to_index(hold_back, date_index)
         elif hold_back is None:
@@ -142,8 +142,6 @@ class HARX(ARCHModel):
         self._indices = (_first_obs_index, _last_obs_index)
         self._init_model()
 
-
-
     @property
     def x(self):
         """Gets the value of the exogenous regressors in the model"""
@@ -152,7 +150,8 @@ class HARX(ARCHModel):
     def parameter_names(self):
         return self._generate_variable_names()
 
-    def _static_gaussian_loglikelihood(self, resids):
+    @staticmethod
+    def _static_gaussian_loglikelihood(resids):
         nobs = resids.shape[0]
         sigma2 = resids.dot(resids) / nobs
 
@@ -162,38 +161,43 @@ class HARX(ARCHModel):
 
         return loglikelihood
 
-    def _model_description(self):
+    def _model_description(self, include_lags=True):
         """Generates the model description for use by __str__ and related
         functions"""
-        if self.lags is not None:
-            lagstr = ['[' + str(lag[0]) + ':' + str(lag[1]) + ']' for lag in
-                      self._lags.T]
-            lagstr = ', '.join(lagstr)
-        else:
-            lagstr = 'None'
+        if include_lags:
+            if self.lags is not None:
+                lagstr = ['[' + str(lag[0]) + ':' + str(lag[1]) + ']' for lag in
+                          self._lags.T]
+                lagstr = ', '.join(lagstr)
+            else:
+                lagstr = 'none'
         xstr = str(self._x.shape[1]) if self._x is not None else '0'
-        conststr = 'Yes' if self.constant else 'No'
+        conststr = 'yes' if self.constant else 'no'
         od = OrderedDict()
-        od[''] = self.name
-        od['Constant'] = conststr
-        od['Lags'] = lagstr
-        od['No. of Exog'] = xstr
+        od['constant'] = conststr
+        if include_lags:
+            od['lags'] = lagstr
+        od['no. of exog'] = xstr
+        od['volatility'] = self.volatility.__str__()
+        od['distribution'] = self.distribution.__str__()
         return od
 
     def __str__(self):
         descr = self._model_description()
-        descr_str = ''
+        descr_str = self.name + '('
         for key, val in iteritems(descr):
             if val:
                 if key:
-                    descr_str += key + ': ' + val + '\n'
-                else:
-                    descr_str += val + '\n'
+                    descr_str += key + ': ' + val + ', '
+        descr_str = descr_str[:-2]  # Strip final ', '
+        descr_str += ')'
 
         return descr_str
 
     def __repr__(self):
-        return self.__str__() + 'ID: ' + hex(id(self))
+        repr = self.__str__()
+        repr.replace('\n','')
+        return repr  + ', id: ' + hex(id(self))
 
     def _repr_html_(self):
         """HTML representation for IPython Notebook"""
@@ -446,7 +450,6 @@ class HARX(ARCHModel):
         self.regressors = self.regressors[first_obs:last_obs, :]
         self._y_adj = self._y[first_obs:last_obs]
 
-
     def _r2(self, params):
         y = self._y_adj
         x = self.regressors
@@ -610,6 +613,10 @@ class ConstantMean(HARX):
     def num_params(self):
         return 1
 
+    def _model_description(self, include_lags=False):
+        return super(ConstantMean, self)._model_description(include_lags)
+
+
     def simulate(self, params, nobs, burn=500, initial_value_vol=None):
         """
         Simulated data from a constant mean model
@@ -729,6 +736,10 @@ class ZeroMean(HARX):
     def num_params(self):
         return 0
 
+    def _model_description(self, include_lags=False):
+        return super(ZeroMean, self)._model_description(include_lags)
+
+
     def simulate(self, params, nobs, burn=500, initial_value_vol=None):
         """
         Simulated data from a zero mean model
@@ -842,7 +853,7 @@ class ARX(HARX):
 
     """
 
-    def __init__(self, y, x=None, lags=None, constant=True, hold_back=None,
+    def __init__(self, y=None, x=None, lags=None, constant=True, hold_back=None,
                  last_obs=None, volatility=None, distribution=None):
         # Convert lags to 2-d format
 
@@ -870,18 +881,21 @@ class ARX(HARX):
             self.name += '-X'
 
     def _model_description(self):
+        """Generates the model description for use by __str__ and related
+        functions"""
         if self.lags is not None:
             lagstr = [str(lag[1]) for lag in self._lags.T]
             lagstr = ', '.join(lagstr)
         else:
-            lagstr = 'None'
+            lagstr = 'none'
         xstr = str(self._x.shape[1]) if self._x is not None else '0'
-        conststr = 'Yes' if self.constant else 'No'
+        conststr = 'yes' if self.constant else 'no'
         od = OrderedDict()
-        od[''] = self.name
-        od['Constant'] = conststr
-        od['Lags'] = lagstr
-        od['No. of Exog'] = xstr
+        od['constant'] = conststr
+        od['lags'] = lagstr
+        od['no. of exog'] = xstr
+        od['volatility'] = self.volatility.__str__()
+        od['distribution'] = self.distribution.__str__()
         return od
 
     def _generate_lag_names(self):
@@ -940,21 +954,14 @@ class LS(HARX):
 
     """
 
-    def __init__(self, y, x, constant=True, hold_back=None, last_obs=None):
+    def __init__(self, y=None, x=None, constant=True, hold_back=None, last_obs=None):
         # Convert lags to 2-d format
         super(LS, self).__init__(y, x, None, constant, False, hold_back,
                                  last_obs)
         self.name = 'Least Squares'
 
-    def _model_description(self):
-        xstr = str(self._x.shape[1])
-        conststr = 'Yes' if self.constant else 'No'
-        od = OrderedDict()
-        od[''] = self.name
-        od['Constant'] = conststr
-        od['No. of Exog'] = xstr
-
-        return od
+    def _model_description(self, include_lags=False):
+        return super(LS, self)._model_description(include_lags)
 
 
 def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
