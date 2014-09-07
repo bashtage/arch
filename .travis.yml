@@ -8,8 +8,7 @@ env:
   # Default values for common packages, override as needed
   global:
     - CYTHON=0.20
-    - PATSY=0.2
-    - PANDAS=
+    - PATSY=
     - OPTIONAL=
     - STATSMODELS=
     - COVERAGE=true
@@ -22,12 +21,18 @@ matrix:
     - PYTHON=2.7
     - NUMPY=1.7
     - SCIPY=0.12
+    - MATPLOTLIB=1.2
+    - PANDAS=0.12
+  - python: 2.7
+    env:
+    - PYTHON=2.7
   - python: 2.7
     env:
     - PYTHON=3.3
     - NUMPY=1.8
     - SCIPY=0.14
     - PANDAS=0.14
+    - MATPLOTLIB=1.4
     - COVERAGE=false
 
 notifications:
@@ -48,10 +53,21 @@ before_install:
   # Avoid noise from matplotlib
   - mkdir $HOME/.config
   - mkdir $HOME/.config/matplotlib
+  # Location for older version of matplotlib
+  - if [ ${MATPLOTLIB} = "1.2" ]; then mkdir $HOME/.matplotlib; fi
+  # Build package list to avoid empty package=versions; only needed for versioned pacakges
+  - PKGS="python=${PYTHON}"
+  - PKGS="${PKGS} numpy"; if [ ${NUMPY} ]; then PKGS="${PKGS}=${NUMPY}"; fi
+  - PKGS="${PKGS} scipy"; if [ ${SCIPY} ]; then PKGS="${PKGS}=${SCIPY}"; fi
+  - PKGS="${PKGS} patsy"; if [ ${PATSY} ]; then PKGS="${PKGS}=${PATSY}"; fi
+  - PKGS="${PKGS} pandas"; if [ ${PANDAS} ]; then PKGS="${PKGS}=${PANDAS}"; fi
+  - PKGS="${PKGS} Cython"; if [ ${CYTHON} ]; then PKGS="${PKGS}=${CYTHON}"; fi
+  - PKGS="${PKGS} matplotlib"; if [ ${MATPLOTLIB} ]; then PKGS="${PKGS}=${MATPLOTLIB}"; fi
+  - PKGS="${PKGS} statsmodels"; if [ ${STATSMODELS} ]; then PKGS="${PKGS}=${STATSMODELS}"; fi
 
 # Install packages
 install:
-  - conda create --yes --quiet -n arch-test python=${PYTHON} numpy=${NUMPY} scipy=${SCIPY} ipython-notebook statsmodels dateutil nose pip pyyaml setuptools Cython numba matplotlib
+  - conda create --yes --quiet -n arch-test ${PKGS} ${OPTIONAL} ipython-notebook statsmodels dateutil nose pip pyyaml setuptools
   - source activate arch-test
   - if [ ${COVERAGE} = true ]; then pip install coverage coveralls nose-cov; fi
   - python setup.py build

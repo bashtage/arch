@@ -2,12 +2,20 @@
 import os
 import subprocess
 import sys
+import re
+from distutils.version import StrictVersion
 
 from setuptools import setup, Extension
 from setuptools.dist import Distribution
 from Cython.Distutils import build_ext
-import numpy
 
+REQUIREMENTS = {'Cython': '0.20',
+                'matplotlib': '1.2',
+                'numpy': '1.7',
+                'scipy': '0.12',
+                'pandas': '0.12',
+                'statsmodels': '0.5',
+                'patsy': '0.2'}
 
 ext_modules = []
 if not '--no-binary' in sys.argv:
@@ -21,6 +29,61 @@ class BinaryDistribution(Distribution):
     def is_pure(self):
         return False
 
+
+def strip_rc(version):
+    return re.sub(r"rc\d+$", "", version)
+
+# Polite checks for numpy, scipy and pandas.  These should not be upgraded,
+# and if found and below the required version, refuse to install
+missing_package = '{package} is installed, but the version installed' \
+                  ', {existing_ver}, is less than the required version ' \
+                  'of {required_version}. This package must be manually ' \
+                  'updated.  If this isn\'t possible, consider installing in ' \
+                  'an empty virtual environment.'
+
+PACKAGE_CHECKS = ['numpy','scipy','pandas']
+for key in PACKAGE_CHECKS:
+    version = None
+    satisfies_req = True
+    existing_version = 'Too Old to Detect'
+    if key == 'numpy':
+        try:
+            import numpy
+            try:
+                from numpy.version import short_version as version
+            except ImportError:
+                satisfies_req = False
+        except ImportError:
+            pass
+
+    elif key == 'scipy':
+        try:
+            import scipy
+            try:
+                from scipy.version import short_version as version
+            except ImportError:
+                satisfies_req = False
+        except ImportError:
+            pass
+
+    elif key == 'pandas':
+        try:
+            from pandas.version import short_version as version
+        except ImportError:
+            pass
+        except:  # very old version
+            satisfies_req = False
+    else:
+        raise NotImplementedError('Unknown package')
+
+    if version:
+        existing_version = StrictVersion(strip_rc(version))
+        satisfies_req = existing_version >= REQUIREMENTS[key]
+    if not satisfies_req:
+        message = missing_package.format(package=key,
+                                         existing_ver=existing_version,
+                                         required_version=REQUIREMENTS[key])
+        raise EnvironmentError(message)
 
 cwd = os.getcwd()
 
@@ -94,5 +157,5 @@ setup(name='arch',
       zip_safe=False,
       include_package_data=True,
       distclass=BinaryDistribution,
-      requires=['Cython', 'matplotlib', 'numpy', 'scipy', 'pandas', 'statsmodels']
+      install_requires=[key + '>=' + REQUIREMENTS[key] for key in REQUIREMENTS]
 )
