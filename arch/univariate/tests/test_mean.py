@@ -12,7 +12,8 @@ try:
     import arch.univariate.recursions as rec
 except ImportError:
     import arch.univariate.recursions_python as rec
-from arch.univariate.mean import HARX, ConstantMean, ARX, ZeroMean, arch_model, LS
+from arch.univariate.mean import HARX, ConstantMean, ARX, ZeroMean, \
+    arch_model, LS
 from arch.univariate.volatility import ConstantVariance, GARCH, HARCH, ARCH, \
     RiskMetrics2006, EWMAVariance, EGARCH
 from arch.univariate.distribution import Normal, StudentsT
@@ -29,7 +30,7 @@ class TestMeanModel(unittest.TestCase):
         zm = ZeroMean()
         zm.volatility = GARCH()
         sim_data = zm.simulate(np.array([0.1, 0.1, 0.8]), 1000)
-        date_index = pd.date_range('2000-12-31',periods=1000, freq='W')
+        date_index = pd.date_range('2000-12-31', periods=1000, freq='W')
         cls.y = sim_data.data.values
         cls.y_df = pd.DataFrame(cls.y[:, None],
                                 columns=['LongVariableName'],

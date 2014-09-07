@@ -5,14 +5,16 @@ import numpy as np
 from numpy.testing import assert_almost_equal, assert_equal, assert_allclose, \
     assert_array_equal, assert_raises
 
+
 try:
     from arch.univariate import _recursions as rec
 except:
     from arch.univariate import recursions_python as rec
-from arch.univariate.volatility import GARCH, ARCH, HARCH, ConstantVariance, EWMAVariance, \
-    RiskMetrics2006, EGARCH
+from arch.univariate.volatility import GARCH, ARCH, HARCH, ConstantVariance, \
+    EWMAVariance, RiskMetrics2006, EGARCH
 from arch.univariate.distribution import Normal, StudentsT
 from arch.compat.python import range
+
 
 class TestVolatiltyProcesses(unittest.TestCase):
     @classmethod
@@ -361,7 +363,7 @@ class TestVolatiltyProcesses(unittest.TestCase):
         assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
 
         assert_equal(cv.num_params, 1)
-        assert_equal(cv.name, 'Constant Volatility')
+        assert_equal(cv.name, 'Constant Variance')
 
     def test_garch_no_symmetric(self):
         garch = GARCH(p=0, o=1, q=1)
@@ -480,7 +482,6 @@ class TestVolatiltyProcesses(unittest.TestCase):
         assert_equal(garch.num_params, 3)
         assert_equal(garch.name, 'GJR-GARCH')
 
-
     def test_arch_multiple_lags(self):
         arch = ARCH(p=5)
 
@@ -594,11 +595,11 @@ class TestVolatiltyProcesses(unittest.TestCase):
         garch = GARCH(1, 1, 1, power=1.0)
         assert_equal(garch.name, 'TARCH/ZARCH')
         garch = GARCH(3, 0, 0, power=1.5)
-        assert_equal(garch.name, 'Power ARCH (1.5)')
+        assert_equal(garch.name, 'Power ARCH (power: 1.5)')
         garch = GARCH(1, 2, 1, power=1.5)
-        assert_equal(garch.name, 'Asym. Power GARCH (1.5)')
+        assert_equal(garch.name, 'Asym. Power GARCH (power: 1.5)')
         garch = GARCH(2, 0, 2, power=1.5)
-        assert_equal(garch.name, 'Power GARCH (1.5)')
+        assert_equal(garch.name, 'Power GARCH (power: 1.5)')
 
     def test_ewma(self):
         ewma = EWMAVariance()
@@ -659,7 +660,7 @@ class TestVolatiltyProcesses(unittest.TestCase):
         assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
 
         assert_equal(ewma.num_params, 0)
-        assert_equal(ewma.name, 'EWMA/RiskMetrics (0.94)')
+        assert_equal(ewma.name, 'EWMA/RiskMetrics')
 
 
     def test_riskmetrics(self):
@@ -695,7 +696,7 @@ class TestVolatiltyProcesses(unittest.TestCase):
         sim_data = rm06.simulate(parameters, self.T, rng.simulate([]))
 
         assert_equal(rm06.num_params, 0)
-        assert_equal(rm06.name, 'RiskMetrics2006 (1560, 4, 14, 1.414)')
+        assert_equal(rm06.name, 'RiskMetrics2006')
 
 
     def test_egarch(self):
@@ -742,18 +743,18 @@ class TestVolatiltyProcesses(unittest.TestCase):
         sim_data = egarch.simulate(parameters, self.T, rng.simulate([]))
         np.random.set_state(state)
         e = np.random.standard_normal(self.T + 500)
-        initial_value = 0.1 / (1-0.95)
+        initial_value = 0.1 / (1 - 0.95)
         lnsigma2 = np.zeros(self.T + 500)
         lnsigma2[0] = initial_value
         sigma2 = np.zeros(self.T + 500)
         sigma2[0] = np.exp(lnsigma2[0])
         data = np.zeros(self.T + 500)
         data[0] = np.sqrt(sigma2[0]) * e[0]
-        norm_const = np.sqrt(2/np.pi)
+        norm_const = np.sqrt(2 / np.pi)
         for t in range(1, self.T + 500):
             lnsigma2[t] = parameters[0]
-            lnsigma2[t] += parameters[1] * (np.abs(e[t-1]) - norm_const)
-            lnsigma2[t] += parameters[2] * e[t-1]
+            lnsigma2[t] += parameters[1] * (np.abs(e[t - 1]) - norm_const)
+            lnsigma2[t] += parameters[2] * e[t - 1]
             lnsigma2[t] += parameters[3] * lnsigma2[t - 1]
 
         sigma2 = np.exp(lnsigma2)
@@ -761,7 +762,7 @@ class TestVolatiltyProcesses(unittest.TestCase):
 
         data = data[500:]
         sigma2 = sigma2[500:]
-        
+
         assert_almost_equal(data - sim_data[0] + 1.0, np.ones_like(data))
         assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
 

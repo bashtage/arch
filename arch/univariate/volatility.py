@@ -66,6 +66,12 @@ class VolatilityProcess(object):
         self.name = ''
         self._normal = Normal()
 
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.__str__() + ', id: ' + hex(id(self))
+
     def variance_bounds(self, resids, power=2.0):
         """
         Parameters
@@ -255,7 +261,7 @@ class ConstantVariance(VolatilityProcess):
     def __init__(self):
         super(ConstantVariance, self).__init__()
         self.num_params = 1
-        self.name = 'Constant Volatility'
+        self.name = 'Constant Variance'
 
     def compute_variance(self, parameters, resids, sigma2, backcast,
                          var_bounds):
@@ -362,6 +368,21 @@ class GARCH(VolatilityProcess):
                              'than 0.25')
         self.name = self._name()
 
+    def __str__(self):
+        descr = self.name
+
+        if self.power != 1.0 and self.power != 2.0:
+            descr = descr[:-1] + ', '
+        else:
+            descr += '('
+
+        for k, v in (('p', self.p), ('o', self.o), ('q', self.q)):
+            if v > 0:
+                descr += k + ': ' + str(v) + ', '
+
+        descr = descr[:-2] + ')'
+        return descr
+
     def variance_bounds(self, resids, power=2.0):
         return super(GARCH, self).variance_bounds(resids, self.power)
 
@@ -383,11 +404,11 @@ class GARCH(VolatilityProcess):
                 return 'TARCH/ZARCH'
         else:
             if o == 0 and q == 0:
-                return 'Power ARCH ({0:0.1f})'.format(self.power)
+                return 'Power ARCH (power: {0:0.1f})'.format(self.power)
             elif o == 0:
-                return 'Power GARCH ({0:0.1f})'.format(self.power)
+                return 'Power GARCH (power: {0:0.1f})'.format(self.power)
             else:
-                return 'Asym. Power GARCH ({0:0.1f})'.format(self.power)
+                return 'Asym. Power GARCH (power: {0:0.1f})'.format(self.power)
 
     def bounds(self, resids):
         v = np.mean(abs(resids) ** self.power)
@@ -607,6 +628,13 @@ class HARCH(VolatilityProcess):
         self.num_params = self._num_lags + 1
         self.name = 'HARCH'
 
+    def __str__(self):
+        descr = self.name + '(lags: '
+        descr += ', '.join([str(l) for l in self.lags])
+        descr += ')'
+
+        return descr
+
     def bounds(self, resids):
         lags = self.lags
         k_arch = lags.shape[0]
@@ -775,7 +803,11 @@ class EWMAVariance(VolatilityProcess):
         self.num_params = 0
         if not 0.0 < lam < 1.0:
             raise ValueError('lam must be strictly between 0 and 1')
-        self.name = 'EWMA/RiskMetrics (' + '{0:0.2f}'.format(lam) + ')'
+        self.name = 'EWMA/RiskMetrics'
+
+    def __str__(self):
+        descr = self.name + '(lam: ' + '{0:0.2f}'.format(self.lam) + ')'
+        return descr
 
     def starting_values(self, resids):
         return np.empty((0,))
@@ -868,10 +900,15 @@ class RiskMetrics2006(VolatilityProcess):
             raise ValueError('kmax must be a positive integer')
         if not rho > 1:
             raise ValueError('rho must be a positive number larger than 1')
-        self.name = 'RiskMetrics2006 (' \
-                    + '{0:d}, {1:d}, {2:d}, {3:0.3f}'.format(tau0, tau1, kmax,
-                                                             rho) \
-                    + ')'
+        self.name = 'RiskMetrics2006'
+
+    def __str__(self):
+        descr = self.name
+        descr += '(tau0: {0:d}, tau1: {1:d}, kmax: {2:d}, ' \
+                 'rho: {3:0.3f}'.format(self.tau0, self.tau1,
+                                        self.kmax, self.rho)
+        descr += ')'
+        return descr
 
     def _ewma_combination_weights(self):
         tau0, tau1, kmax, rho = self.tau0, self.tau1, self.kmax, self.rho
@@ -1036,6 +1073,14 @@ class EGARCH(VolatilityProcess):
         self.name = 'EGARCH' if q > 0 else 'EARCH'
         self._arrays = None  # Helpers for fitting variance
 
+    def __str__(self):
+        descr = self.name + '('
+        for k, v in (('p', self.p), ('o', self.o), ('q', self.q)):
+            if v > 0:
+                descr += k + ': ' + str(v) + ', '
+        descr = descr[:-2] + ')'
+        return descr
+
     def variance_bounds(self, resids, power=2.0):
         return super(EGARCH, self).variance_bounds(resids, 2.0)
 
@@ -1117,7 +1162,7 @@ class EGARCH(VolatilityProcess):
             loc += 1
             for j in range(p):
                 lnsigma2[t] += parameters[loc] * \
-                    (abserrors[t - 1 - j] - norm_const)
+                               (abserrors[t - 1 - j] - norm_const)
                 loc += 1
             for j in range(o):
                 lnsigma2[t] += parameters[loc] * errors[t - 1 - j]

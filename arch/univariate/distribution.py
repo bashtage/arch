@@ -138,6 +138,15 @@ class Distribution(object):
         raise NotImplementedError(
             'Subclasses must implement')  # pragma: no cover
 
+    def __str__(self):
+        return self._description()
+
+    def __repr__(self):
+        return self.__str__() + ', id: ' + hex(id(self)) + ''
+
+    def _description(self):
+        return self.name + ' distribution'
+
 
 class Normal(Distribution):
     """
@@ -226,7 +235,7 @@ class StudentsT(Distribution):
     def __init__(self):
         super(StudentsT, self).__init__('Normal')
         self.num_params = 1
-        self.name = 'Student\'s nobs'
+        self.name = 'Standardized Student\'s t'
 
     def constraints(self):
         return array([[1], [-1]]), array([2.05, -500.0])
@@ -279,7 +288,6 @@ class StudentsT(Distribution):
             return lls
         else:
             return sum(lls)
-
 
     def starting_values(self, std_resid):
         """
