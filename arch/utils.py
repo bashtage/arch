@@ -8,6 +8,11 @@ import pandas as pd
 
 __all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor', 'date_to_index']
 
+deprecation_doc = """
+{func} has been moved.  Please use {new_location}.{func}.
+"""
+
+
 def ensure1d(x, name, series=False):
     if isinstance(x, pd.Series):
         if not isinstance(x.name, str):

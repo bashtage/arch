@@ -3,9 +3,9 @@ import unittest
 from nose.tools import assert_true
 import numpy as np
 from numpy.testing import assert_almost_equal
-import arch.recursions as rec
 
-import arch.recursions_python as recpy
+import arch.univariate.recursions as rec
+import arch.univariate.recursions_python as recpy
 from arch.compat.python import range
 
 

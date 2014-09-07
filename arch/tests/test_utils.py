@@ -7,8 +7,8 @@ from pandas import Series, DataFrame, date_range
 
 from arch.utils import ensure1d, parse_dataframe, DocStringInheritor, \
     date_to_index
-from arch.base import implicit_constant
-from arch.compat.python import add_metaclass, range
+from arch.univariate.base import implicit_constant
+from arch.compat.python import add_metaclass
 
 
 class TestUtils(TestCase):

@@ -9,15 +9,14 @@ import pandas as pd
 
 
 try:
-    import arch.recursions as rec
+    import arch.univariate.recursions as rec
 except ImportError:
-    import arch.recursions_python as rec
-from arch.mean import HARX, ConstantMean, ARX, ZeroMean, arch_model, LS
-from arch.volatility import ConstantVariance, GARCH, HARCH, ARCH, \
+    import arch.univariate.recursions_python as rec
+from arch.univariate.mean import HARX, ConstantMean, ARX, ZeroMean, arch_model, LS
+from arch.univariate.volatility import ConstantVariance, GARCH, HARCH, ARCH, \
     RiskMetrics2006, EWMAVariance, EGARCH
-from arch.distribution import Normal, StudentsT
-from arch.compat.python import range
-from pandas.compat import iteritems
+from arch.univariate.distribution import Normal, StudentsT
+from arch.compat.python import range, iteritems
 
 
 class TestMeanModel(unittest.TestCase):
