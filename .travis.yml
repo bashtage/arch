@@ -21,7 +21,7 @@ matrix:
     - PYTHON=2.7
     - NUMPY=1.7
     - SCIPY=0.12
-    - MATPLOTLIB=1.2
+    - MATPLOTLIB=1.3
     - PANDAS=0.12
   - python: 2.7
     env:
@@ -67,7 +67,7 @@ before_install:
 
 # Install packages
 install:
-  - conda create --yes --quiet -n arch-test ${PKGS} ${OPTIONAL} ipython-notebook statsmodels dateutil nose pip pyyaml setuptools
+  - conda create --yes --quiet -n arch-test ${PKGS} ${OPTIONAL} ipython-notebook statsmodels dateutil nose pip pyyaml setuptools pyqt pyparsing
   - source activate arch-test
   - if [ ${COVERAGE} = true ]; then pip install coverage coveralls nose-cov; fi
   - python setup.py build
