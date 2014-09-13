@@ -508,6 +508,10 @@ class HARX(ARCHModel):
             params = np.array([sigma2])
             param_cov = np.array([[np.mean(y ** 2 - sigma2) / nobs]])
             vol = np.zeros_like(y) * np.sqrt(sigma2)
+            # Throw away names in the case of starting values
+            num_params = params.shape[0]
+            if len(names) != num_params:
+                names = ['p' + str(i) for i in range(num_params)]
 
             return ARCHModelResult(params, param_cov, 0.0, y, vol, cov_type,
                                    self._y_series, names, loglikelihood,
@@ -547,6 +551,11 @@ class HARX(ARCHModel):
         vol[first_obs:last_obs] = np.sqrt(sigma2)
         names = self._all_parameter_names()
         loglikelihood = self._static_gaussian_loglikelihood(e)
+
+        # Throw away names in the case of starting values
+        num_params = params.shape[0]
+        if len(names) != num_params:
+            names = ['p' + str(i) for i in range(num_params)]
 
         return ARCHModelResult(params, param_cov, r2, resids, vol, cov_type,
                                self._y_series, names, loglikelihood,

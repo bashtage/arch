@@ -428,7 +428,6 @@ class ARCHModel(object):
         f_ieqcons = constraint(a, b)
         disp = 1 if disp == 'final' else 0
         if SP14:
-
             xopt = fmin_slsqp(func, sv, f_ieqcons=f_ieqcons, bounds=bounds,
                               args=args, iter=100, acc=1e-06, iprint=1,
                               full_output=1, epsilon=1.4901161193847656e-08,
@@ -493,7 +492,7 @@ class ARCHModel(object):
         sv : 1-d array
             Starting values
         """
-        params = self._fit_no_arch_normal_errors().params
+        params = np.asarray(self._fit_no_arch_normal_errors().params)
         # Remove sigma2
         if params.shape[0] == 1:
             return np.empty(0)
@@ -619,9 +618,9 @@ class ARCHModelResult(object):
     conditional_volatility : 1-d array or Series
         nobs element array containing the conditional volatility (square root
         of conditional variance)
-    params : array
+    params : Series
         Estimated parameters
-    param_cov : array
+    param_cov : DataFrame
         Estimated variance-covariance of the parameters
     rsquared : float
         R-squared
@@ -631,11 +630,11 @@ class ARCHModelResult(object):
         Number of observations used in the estimation
     num_params : int
         Number of parameters in the model
-    tvalues : array
+    tvalues : Series
         Array of t-statistics for the null the coefficient is 0
-    std_err : float
+    std_err : Series
         Array of parameter standard errors
-    pvalues : array
+    pvalues : Series
         Array of p-values for the t-statistics
     resid : 1-d array or Series
         nobs element array containing model residuals
@@ -676,7 +675,9 @@ class ARCHModelResult(object):
         cv = stats.norm.ppf(1.0 - alpha / 2.0)
         se = self.std_err
         params = self.params
-        return np.vstack((params - cv * se, params + cv * se)).T
+
+        return pd.DataFrame(np.vstack((params - cv * se, params + cv * se)).T,
+                            columns=['lower', 'upper'], index=self._names)
 
     def summary(self):
         """
@@ -741,9 +742,9 @@ class ARCHModelResult(object):
         table.extend_right(SimpleTable(vals, stubs=stubs))
         smry.tables.append(table)
 
-        conf_int = self.conf_int
+        conf_int = np.asarray(self.conf_int())
         conf_int_str = []
-        for c in conf_int():
+        for c in conf_int:
             conf_int_str.append('[' + format_float_fixed(c[0], 7, 3)
                                 + ',' + format_float_fixed(c[1], 7, 3) + ']')
 
@@ -820,19 +821,21 @@ class ARCHModelResult(object):
     @cache_readonly
     def params(self):
         """Model Parameters"""
-        return self._params
+        return pd.Series(self._params, index=self._names, name='params')
 
     @cache_readonly
     def param_cov(self):
         """Parameter covariance"""
         if self._param_cov is not None:
-            return self._param_cov
+            param_cov = self._param_cov
         else:
+            params = np.asarray(self.params)
             if self.cov_type == 'robust':
-                return self._model.compute_param_cov(self.params)
+                param_cov = self._model.compute_param_cov(params)
             else:
-                return self._model.compute_param_cov(self.params, robust=False)
-
+                param_cov = self._model.compute_param_cov(params,
+                                                          robust=False)
+        return pd.DataFrame(param_cov, columns=self._names, index=self._names)
 
     @cache_readonly
     def conditional_volatility(self):
@@ -874,7 +877,8 @@ class ARCHModelResult(object):
         """
         Array of p-values for the t-statistics
         """
-        return stats.norm.sf(np.abs(self.tvalues)) * 2
+        return pd.Series(stats.norm.sf(np.abs(self.tvalues)) * 2,
+                         index=self._names, name='pvalues')
 
     @cache_readonly
     def resid(self):
@@ -891,14 +895,17 @@ class ARCHModelResult(object):
         """
         Parameter standard error
         """
-        return sqrt(diag(self.param_cov))
+        return pd.Series(diag(self.param_cov),
+                         index=self._names, name='std_err')
 
     @cache_readonly
     def tvalues(self):
         """
         t-statistics for the null the coefficient is 0
         """
-        return self.params / self.std_err
+        tvalues = self.params / self.std_err
+        tvalues.name = 'tvalues'
+        return tvalues
 
     def plot(self, annualize=None, scale=None):
         """

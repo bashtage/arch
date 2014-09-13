@@ -397,9 +397,12 @@ class TestMeanModel(unittest.TestCase):
         res_ar_v2 = ar_v2.fit()
         assert_almost_equal(res_har.rsquared, res_har_r.rsquared)
         assert_almost_equal(res_har_r_v2.rsquared, res_har_r.rsquared)
-        assert_almost_equal(res_ar.params, res_ar_v2.params)
-        assert_almost_equal(res_ar.params, res_har_r_v2.params)
-        assert_almost_equal(res_ar.param_cov, res_har_r_v2.param_cov)
+        assert_almost_equal(np.asarray(res_ar.params),
+                            np.asarray(res_ar_v2.params))
+        assert_almost_equal(np.asarray(res_ar.params),
+                            np.asarray(res_har_r_v2.params))
+        assert_almost_equal(np.asarray(res_ar.param_cov),
+                            np.asarray(res_har_r_v2.param_cov))
         assert_almost_equal(res_ar.conditional_volatility,
                             res_har_r_v2.conditional_volatility)
         assert_almost_equal(res_ar.resid, res_har_r_v2.resid)
