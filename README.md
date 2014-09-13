@@ -54,7 +54,12 @@ Documentation is hosted on [read the docs](http://arch.readthedocs.org/en/latest
 * statsmodels (0.5+)
 * matplotlib (1.3+)
 
-Installing
+### Optional Requirements
+
+* Numba (0.14+), only required if installing using --no-binary
+
+### Installing
+
 * Cython (0.20+)
 * nose (For tests)
 * sphinx (to build docs)

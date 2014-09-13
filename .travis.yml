@@ -11,6 +11,7 @@ env:
     - PATSY=
     - OPTIONAL=
     - STATSMODELS=
+    - NUMBA=
     - COVERAGE=true
 
 matrix:
@@ -26,13 +27,15 @@ matrix:
   - python: 2.7
     env:
     - PYTHON=2.7
+    - NUMPY=1.8.2
   - python: 2.7
     env:
     - PYTHON=3.3
-    - NUMPY=1.8
+    - NUMPY=1.9
     - SCIPY=0.14
     - PANDAS=0.14
     - MATPLOTLIB=1.4
+    - NUMBA=0.14
     - COVERAGE=false
 
 notifications:
@@ -64,6 +67,7 @@ before_install:
   - PKGS="${PKGS} Cython"; if [ ${CYTHON} ]; then PKGS="${PKGS}=${CYTHON}"; fi
   - PKGS="${PKGS} matplotlib"; if [ ${MATPLOTLIB} ]; then PKGS="${PKGS}=${MATPLOTLIB}"; fi
   - PKGS="${PKGS} statsmodels"; if [ ${STATSMODELS} ]; then PKGS="${PKGS}=${STATSMODELS}"; fi
+  - if [ ${NUMBA} ]; then PKGS="${PKGS} numba=${NUMBA}"; fi
 
 # Install packages
 install:

@@ -39,6 +39,9 @@ def harch_recursion(double[:] parameters,
         Length of resids
     backcast : float64
         Value to use when initializing the recursion
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        variances for each time period
     """
     cdef Py_ssize_t t, i, num_lags
     cdef int j
@@ -62,7 +65,7 @@ def harch_recursion(double[:] parameters,
             else:
                 sigma2[t] = var_bounds[t,1] + log(sigma2[t] - var_bounds[t,1])
 
-    return None
+    return sigma2
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -89,6 +92,9 @@ def arch_recursion(double[:] parameters,
         Length of resids
     backcast : float64
         Value to use when initializing the recursion
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        variances for each time period
     """
 
     cdef Py_ssize_t t
@@ -111,7 +117,7 @@ def arch_recursion(double[:] parameters,
             else:
                 sigma2[t] = var_bounds[t,1] + log(sigma2[t] - var_bounds[t,1])
 
-    return None
+    return sigma2
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -127,6 +133,8 @@ def garch_recursion(double[:] parameters,
                     double backcast,
                     double[:, :] var_bounds):
     """
+    Compute variance recursion for GARCH and related models
+
     Parameters
     ----------
     parameters : 1-d array, float64
@@ -148,6 +156,9 @@ def garch_recursion(double[:] parameters,
         Length of resids
     backcast : float64
         Value to use when initializing the recursion
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        transformed variances for each time period
     """
 
     cdef Py_ssize_t t
@@ -184,7 +195,7 @@ def garch_recursion(double[:] parameters,
             else:
                 sigma2[t] = var_bounds[t,1] + log(sigma2[t] - var_bounds[t,1])
 
-    return None
+    return sigma2
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -200,6 +211,37 @@ def egarch_recursion(double[:] parameters,
                      double[:] lnsigma2,
                      double[:] std_resids,
                      double[:] abs_std_resids):
+    """
+    Compute variance recursion for EGARCH models
+
+    Parameters
+    ----------
+    parameters : 1-d array, float64
+        Model parameters
+    resids : 1-d array, float64
+        Residuals to use in the recursion
+    sigma2 : 1-d array, float64
+        Conditional variances with same shape as resids
+    p : int
+        Number of symmetric innovations in model
+    o : int
+        Number of asymmetric innovations in model
+    q : int
+        Number of lags of the (transformed) variance in the model
+    nobs : int
+        Length of resids
+    backcast : float64
+        Value to use when initializing the recursion
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        variances for each time period
+    lnsigma2 : 1-d array, float64
+        Temporary array (overwritten) with same shape as resids
+    std_resids : 1-d array, float64
+        Temporary array (overwritten) with same shape as resids
+    abs_std_resids : 1-d array, float64
+        Temporary array (overwritten) with same shape as resids
+    """
 
     cdef double norm_const = 0.79788456080286541  # E[abs(e)], e~N(0,1)
     cdef Py_ssize_t t
