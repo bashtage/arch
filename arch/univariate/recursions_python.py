@@ -9,10 +9,19 @@ import numpy as np
 
 from ..compat.python import range
 
+try:
+    from numba import jit
+except ImportError:
+    def jit(func):
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        return wrapper
+
 __all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion',
            'egarch_recursion']
 
-
+@jit
 def harch_recursion(parameters, resids, sigma2, lags, nobs, backcast,
                     var_bounds):
     """
@@ -30,8 +39,9 @@ def harch_recursion(parameters, resids, sigma2, lags, nobs, backcast,
         Length of resids
     backcast : float64
         Value to use when initializing the recursion
-    var_bounds : 1-d array
-        2-element array of upper and lower bounds for conditional variances
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        variances for each time period
     """
 
     for t in range(nobs):
@@ -51,9 +61,9 @@ def harch_recursion(parameters, resids, sigma2, lags, nobs, backcast,
             else:
                 sigma2[t] = var_bounds[t, 1] + 1000
 
-    return None
+    return sigma2
 
-
+@jit
 def arch_recursion(parameters, resids, sigma2, p, nobs, backcast, var_bounds):
     """
     Parameters
@@ -70,9 +80,9 @@ def arch_recursion(parameters, resids, sigma2, p, nobs, backcast, var_bounds):
         Length of resids
     backcast : float64
         Value to use when initializing the recursion
-    bounds : 2-d array
-        Array of lower and upper bounds used to ensure fit variables
-        are always positive
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        variances for each time period
     """
 
     for t in range(nobs):
@@ -90,9 +100,9 @@ def arch_recursion(parameters, resids, sigma2, p, nobs, backcast, var_bounds):
             else:
                 sigma2[t] = var_bounds[t, 1] + 1000
 
-    return None
+    return sigma2
 
-
+@jit
 def garch_recursion(parameters, fresids, sresids, sigma2, p, o, q, nobs,
                     backcast, var_bounds):
     """
@@ -119,6 +129,9 @@ def garch_recursion(parameters, fresids, sresids, sigma2, p, o, q, nobs,
         Length of resids
     backcast : float64
         Value to use when initializing the recursion
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        transformed variances for each time period
     """
 
     for t in range(nobs):
@@ -152,11 +165,42 @@ def garch_recursion(parameters, fresids, sresids, sigma2, p, o, q, nobs,
             else:
                 sigma2[t] = var_bounds[t, 1] + 1000
 
-    return None
+    return sigma2
 
-
+@jit
 def egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast,
                      var_bounds, lnsigma2, std_resids, abs_std_resids):
+    """
+    Compute variance recursion for EGARCH models
+
+    Parameters
+    ----------
+    parameters : 1-d array, float64
+        Model parameters
+    resids : 1-d array, float64
+        Residuals to use in the recursion
+    sigma2 : 1-d array, float64
+        Conditional variances with same shape as resids
+    p : int
+        Number of symmetric innovations in model
+    o : int
+        Number of asymmetric innovations in model
+    q : int
+        Number of lags of the (transformed) variance in the model
+    nobs : int
+        Length of resids
+    backcast : float64
+        Value to use when initializing the recursion
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        variances for each time period
+    lnsigma2 : 1-d array, float64
+        Temporary array (overwritten) with same shape as resids
+    std_resids : 1-d array, float64
+        Temporary array (overwritten) with same shape as resids
+    abs_std_resids : 1-d array, float64
+        Temporary array (overwritten) with same shape as resids
+    """
     norm_const = 0.79788456080286541  # E[abs(e)], e~N(0,1)
 
     for t in range(nobs):
