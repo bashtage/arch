@@ -26,7 +26,10 @@ function :py:meth:`~arch.arch_model`
 ::
 
     from arch import arch_model
+    import datetime as dt
     import pandas.io.data as web
+    start = dt.datetime(2000,1,1)
+    end = dt.datetime(2014,1,1)
     sp500 = web.get_data_yahoo('^GSPC', start=start, end=end)
     returns = 100 * sp500['Adj Close'].pct_change().dropna()
     am = arch_model(returns)
