@@ -102,6 +102,12 @@ except IOError as e:
 
 # Convert examples notebook to rst for docs
 try:
+    from IPython.nbconvert.utils.exceptions import ConversionException
+    from IPython.nbconvert.utils.pandoc import PandocMissing
+except ImportError as e:
+    ConversionException = PandocMissing = ValueError
+
+try:
     from IPython.nbformat import current as nbformat
     from IPython.nbconvert import RSTExporter
 
@@ -120,7 +126,7 @@ try:
             f = open(os.path.join(cwd, 'doc', 'source', key), 'wb')
             f.write(resources['outputs'][key])
             f.close()
-except IOError as e:
+except:
     import warnings
 
     warnings.warn('Unable to convert examples.ipynb to examples.rst.  This only'
