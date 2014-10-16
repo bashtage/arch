@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division
+
 from unittest import TestCase
 import warnings
 
@@ -35,4 +37,3 @@ class TestDeprecations(TestCase):
                 warnings.simplefilter("always")
                 error_distribution = dist()
                 assert_equal(len(w), 1)
-    

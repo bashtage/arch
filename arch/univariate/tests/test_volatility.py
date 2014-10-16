@@ -572,13 +572,13 @@ class TestVolatiltyProcesses(unittest.TestCase):
         studt = StudentsT()
         with warnings.catch_warnings(record=True) as w:
             garch.simulate(parameters, 1000, studt.simulate([4.0]))
-        assert_equal(len(w), 1)
+            assert_equal(len(w), 1)
 
         harch = HARCH(lags=[1, 5, 22])
         parameters = np.array([0.1, 0.2, 0.4, 0.5])
         with warnings.catch_warnings(record=True) as w:
             harch.simulate(parameters, 1000, studt.simulate([4.0]))
-        assert_equal(len(w), 1)
+            assert_equal(len(w), 1)
 
 
     def test_model_names(self):

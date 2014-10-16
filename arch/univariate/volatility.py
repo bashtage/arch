@@ -325,7 +325,7 @@ class GARCH(VolatilityProcess):
 
     Examples
     --------
-    >>> from arch.volatility import GARCH
+    >>> from arch.univariate import GARCH
 
     Standard GARCH(1,1)
 
@@ -584,7 +584,7 @@ class HARCH(VolatilityProcess):
 
     Examples
     --------
-    >>> from arch.volatility import HARCH
+    >>> from arch.univariate import HARCH
 
     Lag-1 HARCH, which is identical to an ARCH(1)
     >>> harch = HARCH()
@@ -727,7 +727,7 @@ class ARCH(GARCH):
     --------
     ARCH(1) process
 
-    >>> from arch.volatility import ARCH
+    >>> from arch.univariate import ARCH
 
     ARCH(5) process
 
@@ -783,7 +783,7 @@ class EWMAVariance(VolatilityProcess):
     --------
     Daily RiskMetrics EWMA process
 
-    >>> from arch.volatility import EWMAVariance
+    >>> from arch.univariate import EWMAVariance
     >>> rm = EWMAVariance(0.94)
 
     Notes
@@ -872,7 +872,7 @@ class RiskMetrics2006(VolatilityProcess):
     --------
     Daily RiskMetrics 2006 process
 
-    >>> from arch.volatility import RiskMetrics2006
+    >>> from arch.univariate import RiskMetrics2006
     >>> rm = RiskMetrics2006()
 
     Notes
@@ -1031,7 +1031,7 @@ class EGARCH(VolatilityProcess):
 
     Examples
     --------
-    >>> from arch.volatility import EGARCH
+    >>> from arch.univariate import EGARCH
 
     Symmetric EGARCH(1,1)
 

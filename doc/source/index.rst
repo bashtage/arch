@@ -1,3 +1,8 @@
+ARCH
+====
+The ARCH toolbox currently contains routines for univariate
+volatility models and bootstrapping.
+
 ARCH Models
 ===========
 ARCH models are a popular class of volatility models that use observed values
@@ -54,10 +59,9 @@ In either case, model parameters are estimated using
 .. toctree::
     :maxdepth: 1
 
-    Examples <examples>
-    Mean Models <mean>
-    Volatility Processes <volatility>
-    Distributions <distribution>
+    Univariate Volatility Models <univariate/univariate>
+    Bootstrapping <bootstrap/bootstrap>
+    Change Log <changes>
 
 
 Model Constructor

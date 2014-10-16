@@ -5,7 +5,7 @@ import sys
 import re
 from distutils.version import StrictVersion
 
-from setuptools import setup, Extension
+from setuptools import setup, Extension, find_packages
 from setuptools.dist import Distribution
 from Cython.Distutils import build_ext
 
@@ -21,6 +21,8 @@ ext_modules = []
 if not '--no-binary' in sys.argv:
     ext_modules.append(Extension("arch.univariate.recursions",
                                  ["./arch/univariate/recursions.pyx"]))
+    ext_modules.append(Extension("arch.bootstrap._samplers",
+                                 ["./arch/bootstrap/_samplers.pyx"]))
 else:
     sys.argv.remove('--no-binary')
 
@@ -110,28 +112,39 @@ except ImportError as e:
 try:
     from IPython.nbformat import current as nbformat
     from IPython.nbconvert import RSTExporter
+    import glob
+    notebooks = glob.glob(os.path.join(cwd, 'examples', '*.ipynb'))
+    for notebook in notebooks:
+        f = open(notebook, 'rt')
+        example_nb = f.read()
+        f.close()
 
-    f = open(os.path.join(cwd, 'examples', 'examples.ipynb'), 'rt')
-    example_nb = f.read()
-    f.close()
-
-    example_nb = nbformat.reads_json(example_nb)
-    rst_export = RSTExporter()
-    (body, resources) = rst_export.from_notebook_node(example_nb)
-    f = open(os.path.join(cwd, 'doc', 'source', 'examples.rst'), 'wt')
-    f.write(body)
-    f.close()
-    for key in resources['outputs'].keys():
-        if key.endswith('.png'):
-            f = open(os.path.join(cwd, 'doc', 'source', key), 'wb')
-            f.write(resources['outputs'][key])
-            f.close()
+        example_nb = nbformat.reads_json(example_nb)
+        rst_export = RSTExporter()
+        (body, resources) = rst_export.from_notebook_node(example_nb)
+        rst_path = os.path.join(cwd, 'doc', 'source')
+        path_parts = os.path.split(notebook)
+        nb_filename = path_parts[-1]
+        nb_filename = nb_filename.split('.')[0]
+        source_dir = nb_filename.split('_')[0]
+        rst_filename = os.path.join(cwd, 'doc', 'source',
+                                    source_dir,  nb_filename + '.rst')
+        f = open(rst_filename, 'wt')
+        f.write(body)
+        f.close()
+        for key in resources['outputs'].keys():
+            if key.endswith('.png'):
+                resource_filename = os.path.join(cwd, 'doc', 'source',
+                                                 source_dir, key)
+                f = open(resource_filename, 'wb')
+                f.write(resources['outputs'][key])
+                f.close()
 except:
     import warnings
 
     warnings.warn('Unable to convert examples.ipynb to examples.rst.  This only'
-                  'affects documentation generation and not operation of the '
-                  'module.')
+                  'affects documentation generation and not the operation of the'
+                  ' module.')
 
 # Read version information from plain VERSION file
 version = None
@@ -153,8 +166,7 @@ setup(name='arch',
       author='Kevin Sheppard',
       author_email='kevin.sheppard@economics.ox.ac.uk',
       url='http://github.com/bashtage/arch',
-      packages=['arch', 'arch.tests', 'arch.compat',
-                'arch.univariate', 'arch.univariate.tests'],
+      packages=find_packages(),
       ext_modules=ext_modules,
       package_dir={'arch': './arch'},
       cmdclass={'build_ext': build_ext},

@@ -1,30 +1,42 @@
-[![Documentation Status](https://readthedocs.org/projects/arch/badge/?version=latest)](https://readthedocs.org/projects/arch/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/arch/badge/?version=latest)](http://arch.readthedocs.org/en/latest/)
 [![CI Status](https://travis-ci.org/bashtage/arch.svg?branch=master)](https://travis-ci.org/bashtage/arch)
 [![Coverage Status](https://coveralls.io/repos/bashtage/arch/badge.png?branch=master)](https://coveralls.io/r/bashtage/arch?branch=master)
 
-
 # ARCH
 
-This is a work-in-progress for ARCH and related models, written in Python 
-(and Cython)
+This is a work-in-progress for ARCH and other tools for financial econometrics, 
+written in Python (and Cython)
 
-## What is this repository for?
+## What is in this repository?
 
-* Mean models
-  * Constant mean
-  * Heterogeneous Autoregression (HAR)
-  * Autoregression (AR)
-  * Zero mean
-  * Models with and without exogensou regressors
-* Volatility models
-  * ARCH
-  * GARCH
-  * TARCH
-  * EGARCH
-  * EWMA/RiskMetrics
-* Distributions
-  * Normal
-  * Student's T
+* Univariate ARCH Models
+    * Mean models
+        * Constant mean
+        * Heterogeneous Autoregression (HAR)
+        * Autoregression (AR)
+        * Zero mean
+        * Models with and without exogenous regressors
+    * Volatility models
+        * ARCH
+        * GARCH
+        * TARCH
+        * EGARCH
+        * EWMA/RiskMetrics
+    * Distributions
+        * Normal
+        * Student's T
+* Bootstrapping
+    * Bootstraps
+        * IID Bootstrap
+        * Stationary Bootstrap
+        * Circular Block Bootstrap
+        * Moving Block Bootstrap
+    * Methods
+        * Confidence interval construction
+        * Covariance estimation
+        * Apply method to estimate model across bootstraps
+        * Generic Bootstrap iterator
+     
 
 ## Examples
 
@@ -102,7 +114,7 @@ skipped using the flag `--no-binary`
 pip install git+git://github.com/bashtage/arch.git --install-option "--no-binary"
 ```
 
-_Note that it isn't possible to run the test suite will fail if installed with_ `--no-binary`
+_Note that it isn't possible to run the test suite. It will fail if installed with_ `--no-binary` _since it tests the Numba implementations against Cython implementations._
 
 **Anaconda**
 

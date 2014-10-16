@@ -45,7 +45,6 @@ class TestUtils(TestCase):
         y = DataFrame(np.reshape(np.arange(10), (5, 2)))
         assert_raises(ValueError, ensure1d, y, 'y')
 
-
     def test_parse_dataframe(self):
         s = Series(np.arange(10.0), name='variable')
         out = parse_dataframe(s, 'y')
@@ -92,7 +91,6 @@ class TestUtils(TestCase):
         y = Series(np.arange(3000.0), index=dr)
         date_index = y.index
         import datetime as dt
-        # TODO: Finish Test
         index = date_to_index(date_index[0], date_index)
         assert_equal(index, 0)
         index = date_to_index(date_index[-1], date_index)
@@ -113,13 +111,3 @@ class TestUtils(TestCase):
         num_index = z.index
         assert_raises(ValueError, date_to_index,
                       dt.datetime(2009, 8, 1), num_index)
-
-
-
-
-
-
-
-
-
-

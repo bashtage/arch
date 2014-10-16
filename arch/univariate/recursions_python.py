@@ -8,15 +8,7 @@ from numpy import log
 import numpy as np
 
 from ..compat.python import range
-
-try:
-    from numba import jit
-except ImportError:
-    def jit(func):
-        def wrapper(*args, **kwargs):
-            return func(*args, **kwargs)
-
-        return wrapper
+from ..compat.numba import jit
 
 __all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion',
            'egarch_recursion']
