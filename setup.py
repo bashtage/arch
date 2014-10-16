@@ -24,6 +24,7 @@ if not '--no-binary' in sys.argv:
     ext_modules.append(Extension("arch.bootstrap._samplers",
                                  ["./arch/bootstrap/_samplers.pyx"]))
 else:
+    del REQUIREMENTS['Cython']                
     sys.argv.remove('--no-binary')
 
 
