@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division
+
 import unittest
 import warnings
 
@@ -371,16 +373,16 @@ class TestMeanModel(unittest.TestCase):
     def test_warnings(self):
         with warnings.catch_warnings(record=True) as w:
             ARX(self.y, lags=[1, 2, 3, 12], hold_back=5)
-        assert_equal(len(w), 1)
+            assert_equal(len(w), 1)
 
         with warnings.catch_warnings(record=True) as w:
             HARX(self.y, lags=[[1, 1, 1], [2, 5, 22]], use_rotated=True)
-        assert_equal(len(w), 1)
+            assert_equal(len(w), 1)
 
         har = HARX()
         with warnings.catch_warnings(record=True) as w:
             har.fit()
-        assert_equal(len(w), 1)
+            assert_equal(len(w), 1)
 
     def test_har_lag_specifications(self):
         """ Test equivalence of alternative lag specifications"""
@@ -416,7 +418,7 @@ class TestMeanModel(unittest.TestCase):
         sv = np.array([1.0, 0.3, 0.8])
         with warnings.catch_warnings(record=True) as w:
             am.fit(starting_values=sv, iter=0)
-        assert_equal(len(w), 1)
+            assert_equal(len(w), 1)
 
     def test_no_param_volatility(self):
         cm = ConstantMean(self.y)

@@ -68,18 +68,18 @@ class HARX(ARCHModel):
     Examples
     --------
     >>> import numpy as np
-    >>> from arch.mean import HARX
+    >>> from arch.univariate import HARX
     >>> y = np.random.randn(100)
     >>> harx = HARX(y, lags=[1, 5, 22])
     >>> res = harx.fit()
 
     >>> from pandas import Series, date_range
     >>> import datetime as dt
-    >>> index = date_range('2000-01-01', freq='M', periods=120)
+    >>> index = date_range('2000-01-01', freq='M', periods=y.shape[0])
     >>> y = Series(y, name='y', index=index)
     >>> start = dt.datetime(2001, 1, 1)
     >>> end = dt.datetime(2008, 12, 31)
-    >>> HARX(y, lags=[1, 5, 22], hold_back=start, last_obs=end)
+    >>> har = HARX(y, lags=[1, 6], hold_back=start, last_obs=end)
 
     Notes
     -----
@@ -260,8 +260,7 @@ class HARX(ARCHModel):
         Examples
         --------
         >>> import numpy as np
-        >>> from arch.mean import HARX
-        >>> from arch.volatility import GARCH
+        >>> from arch.univariate import HARX, GARCH
         >>> harx = HARX(lags=[1, 5, 22])
         >>> harx.volatility = GARCH()
         >>> harx_params = np.array([1, 0.2, 0.3, 0.4])
@@ -591,7 +590,7 @@ class ConstantMean(HARX):
     Examples
     --------
     >>> import numpy as np
-    >>> from arch.mean import ConstantMean
+    >>> from arch.univariate import ConstantMean
     >>> y = np.random.randn(100)
     >>> cm = ConstantMean(y)
     >>> res = cm.fit()
@@ -656,8 +655,7 @@ class ConstantMean(HARX):
         Basic data simulation with a constant mean and volatility
 
         >>> import numpy as np
-        >>> from arch.mean import ConstantMean
-        >>> from arch.volatility import GARCH
+        >>> from arch.univariate import ConstantMean, GARCH
         >>> cm = ConstantMean()
         >>> cm.volatility = GARCH()
         >>> cm_params = np.array([1])
@@ -712,7 +710,7 @@ class ZeroMean(HARX):
     Examples
     --------
     >>> import numpy as np
-    >>> from arch.mean import ZeroMean
+    >>> from arch.univariate import ZeroMean
     >>> y = np.random.randn(100)
     >>> zm = ZeroMean(y)
     >>> res = zm.fit()
@@ -777,13 +775,13 @@ class ZeroMean(HARX):
         --------
         Basic data simulation with no mean and constant volatility
 
-        >>> from arch.mean import ZeroMean
+        >>> from arch.univariate import ZeroMean
         >>> zm = ZeroMean()
         >>> sim_data = zm.simulate([1.0], 1000)
 
         Simulating data with a non-trivial volatility process
 
-        >>> from arch.volatility import GARCH
+        >>> from arch.univariate import GARCH
         >>> zm.volatility = GARCH(p=1, o=1, q=1)
         >>> sim_data = zm.simulate([0.05, 0.1, 0.1, 0.8], 300)
         """
@@ -841,13 +839,13 @@ class ARX(HARX):
     Examples
     --------
     >>> import numpy as np
-    >>> from arch.mean import ARX
+    >>> from arch.univariate import ARX
     >>> y = np.random.randn(100)
     >>> arx = ARX(y, lags=[1, 5, 22])
     >>> res = arx.fit()
 
     Estimating an AR with GARCH(1,1) errors
-    >>> from arch.volatility import GARCH
+    >>> from arch.univariate import GARCH
     >>> arx.volatility = GARCH()
     >>> res = arx.fit(iter=0, disp='off')
 
@@ -947,7 +945,7 @@ class LS(HARX):
     Examples
     --------
     >>> import numpy as np
-    >>> from arch.mean import LS
+    >>> from arch.univariate import LS
     >>> y = np.random.randn(100)
     >>> x = np.random.randn(100,2)
     >>> ls = LS(y, x)
@@ -1024,7 +1022,7 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
     A basic GARCH(1,1) with a constant mean can be constructed using only
     the return data
 
-    >>> from arch.mean import arch_model
+    >>> from arch.univariate import arch_model
     >>> am = arch_model(returns)
 
     Alternative mean and volatility processes can be directly specified
