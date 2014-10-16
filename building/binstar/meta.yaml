@@ -12,7 +12,7 @@ requirements:
   build:
     - python
     - setuptools
-    - cython
+    - cython 0.20*
     - numpy
     - scipy
     - pandas

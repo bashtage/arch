@@ -3,6 +3,7 @@ Setlocal EnableDelayedExpansion
 REM Get current directory
 SET CURRENT_WORKING_DIR=%~dp0
 REM Python and NumPy versions
+set VERSION=2.0
 set PY_VERSION=27 33 34
 set NPY_VERSION=18 19
 
@@ -34,7 +35,7 @@ set NPY_VERSION=18 19
         echo Python: !CONDA_PY!, NumPy: !CONDA_NPY!
 
         REM Remove from binstar
-        binstar remove bashtage/arch/1.0/win-64\arch-1.0-np!CONDA_NPY!py!CONDA_PY!_0.tar.bz2 --force
+        binstar remove bashtage/arch/!VERSION!/win-64\arch-!VERSION!-np!CONDA_NPY!py!CONDA_PY!_0.tar.bz2 --force
         cd %CURRENT_WORKING_DIR%
         conda build binstar
 
