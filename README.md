@@ -40,7 +40,9 @@ written in Python (and Cython)
 
 ## Examples
 
-See the [example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/examples.ipynb) for a more complete overview.
+### Volatility Modeling 
+
+See the [univariate volatility example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/univariate_volatility_modeling.ipynb) for a more complete overview.
 
 ```python
 import datetime as dt
@@ -53,6 +55,36 @@ returns = 100 * data['Adj Close'].pct_change().dropna()
 from arch import arch_model
 am = arch_model(returns)
 res = am.fit()
+```
+
+### Bootstrap
+
+See the [bootstrap example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/bootstrap_examples.ipynb) for examples of bootstrapping the Sharpe ratio and a Probit model from Statsmodels.
+
+
+```python
+# Import data
+import datetime as dt
+import pandas as pd
+import pandas.io.data as web
+start = dt.datetime(1951,1,1)
+end = dt.datetime(2014,1,1)
+sp500 = web.get_data_yahoo('^GSPC', start=start, end=end)
+start = sp500.index.min()
+end = sp500.index.max()
+monthly_dates = pd.date_range(start, end, freq='M')
+monthly = sp500.reindex(monthly_dates, method='ffill')
+returns = 100 * monthly['Adj Close'].pct_change().dropna()
+
+# Function to compute parameters
+def sharpe_ratio(x):
+    mu, sigma = 12 * x.mean(), np.sqrt(12 * x.var())
+    return np.array([mu, sigma, mu / sigma])
+
+# Bootstrap confidence intervals
+from arch.bootstrap import IIDBootstrap
+bs = IIDBootstrap(returns)
+ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')    
 ```
 
 ## Documentation
@@ -72,7 +104,7 @@ Documentation is hosted on [read the docs](http://arch.readthedocs.org/en/latest
 
 ### Installing
 
-* Cython (0.20+)
+* Cython (0.20+, if not using --no-binary)
 * nose (For tests)
 * sphinx (to build docs)
 * sphinx-napoleon (to build docs)
