@@ -28,7 +28,7 @@ the (annualized) standard deviation.
 ::
 
     import numpy as np
-    def sr(x):
+    def sharpe_ratio(x):
         return np.array([12 * x.mean() / np.sqrt(12 * x.var())])
 
 The bootstrapped Sharpe ratios can be directly computed using `apply`.

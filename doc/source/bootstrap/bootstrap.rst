@@ -9,6 +9,7 @@ parameters and the (internally generated) sampling scheme.
 .. toctree::
     :maxdepth: 1
 
+    Examples <bootstrap_examples>
     Confidence Interval Construction <confidence-intervals>
     Parameter Covariance Estimation <parameter-covariance-estimation>
     Semiparametric and Parametric Bootstraps <semiparametric-parametric-bootstrap>

@@ -22,7 +22,7 @@ class HARX(mean.HARX):
         import warnings
 
         warnings.warn(deprecation_doc.format(func='HARX',
-                                             new_location='arch'),
+                                             new_location='arch.univariate'),
                       FutureWarning)
         return mean.HARX(*args, **kwargs)
 
@@ -32,7 +32,7 @@ class ARX(mean.ARX):
         import warnings
 
         warnings.warn(deprecation_doc.format(func='ARX',
-                                             new_location='arch'),
+                                             new_location='arch.univariate'),
                       FutureWarning)
         return mean.ARX(*args, **kwargs)
 
@@ -42,7 +42,7 @@ class ConstantMean(mean.ConstantMean):
         import warnings
 
         warnings.warn(deprecation_doc.format(func='ConstantMean',
-                                             new_location='arch'),
+                                             new_location='arch.univariate'),
                       FutureWarning)
         return mean.ConstantMean(*args, **kwargs)
 
@@ -52,7 +52,7 @@ class ZeroMean(mean.ZeroMean):
         import warnings
 
         warnings.warn(deprecation_doc.format(func='ZeroMean',
-                                             new_location='arch'),
+                                             new_location='arch.univariate'),
                       FutureWarning)
         return mean.ZeroMean(*args, **kwargs)
 
@@ -62,6 +62,6 @@ class LS(mean.LS):
         import warnings
 
         warnings.warn(deprecation_doc.format(func='LS',
-                                             new_location='arch'),
+                                             new_location='arch.univariate'),
                       FutureWarning)
         return mean.LS(*args, **kwargs)

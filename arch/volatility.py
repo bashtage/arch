@@ -7,7 +7,7 @@ class ARCH(vol.ARCH):
         import warnings
 
         warnings.warn(deprecation_doc.format(func='ARCH',
-                                             new_location='arch'),
+                                             new_location='arch.univariate'),
                       FutureWarning)
         return vol.ARCH(*args, **kwargs)
 
@@ -17,7 +17,7 @@ class EWMAVariance(vol.EWMAVariance):
         import warnings
 
         warnings.warn(deprecation_doc.format(func='EWMAVariance',
-                                             new_location='arch'),
+                                             new_location='arch.univariate'),
                       FutureWarning)
         return vol.EWMAVariance(*args, **kwargs)
 
@@ -27,7 +27,7 @@ class RiskMetrics2006(vol.RiskMetrics2006):
         import warnings
 
         warnings.warn(deprecation_doc.format(func='RiskMetrics2006',
-                                             new_location='arch'),
+                                             new_location='arch.univariate'),
                       FutureWarning)
         return vol.RiskMetrics2006(*args, **kwargs)
 
@@ -37,7 +37,7 @@ class GARCH(vol.GARCH):
         import warnings
 
         warnings.warn(deprecation_doc.format(func='GARCH',
-                                             new_location='arch'),
+                                             new_location='arch.univariate'),
                       FutureWarning)
         return vol.GARCH(*args, **kwargs)
 
@@ -46,7 +46,7 @@ class EGARCH(vol.EGARCH):
         import warnings
 
         warnings.warn(deprecation_doc.format(func='EGARCH',
-                                             new_location='arch'),
+                                             new_location='arch.univariate'),
                       FutureWarning)
         return vol.EGARCH(*args, **kwargs)
 
@@ -55,7 +55,7 @@ class HARCH(vol.HARCH):
         import warnings
 
         warnings.warn(deprecation_doc.format(func='HARCH',
-                                             new_location='arch'),
+                                             new_location='arch.univariate'),
                       FutureWarning)
         return vol.HARCH(*args, **kwargs)
 
@@ -64,7 +64,7 @@ class ConstantVariance(vol.ConstantVariance):
         import warnings
 
         warnings.warn(deprecation_doc.format(func='ConstantVariance',
-                                             new_location='arch'),
+                                             new_location='arch.univariate'),
                       FutureWarning)
         return vol.ConstantVariance(*args, **kwargs)
 

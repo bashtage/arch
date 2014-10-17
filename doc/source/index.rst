@@ -1,10 +1,21 @@
 ARCH
-====
-The ARCH toolbox currently contains routines for univariate
-volatility models and bootstrapping.
+----
+The ARCH toolbox currently contains routines for univariate volatility models
+and bootstrapping.  Current plans are to continue to expand this toolbox to
+include additional routines to analyze financial data.
 
-ARCH Models
-===========
+Contents
+========
+
+.. toctree::
+    :maxdepth: 1
+
+    Univariate Volatility Models <univariate/univariate>
+    Bootstrapping <bootstrap/bootstrap>
+    Change Log <changes>
+
+Introduction to ARCH Models
+===========================
 ARCH models are a popular class of volatility models that use observed values
 of returns or residuals as volatility shocks.  A basic GARCH model is specified
 as
@@ -54,31 +65,6 @@ In either case, model parameters are estimated using
 ::
 
     res = am.fit()
-
-
-.. toctree::
-    :maxdepth: 1
-
-    Univariate Volatility Models <univariate/univariate>
-    Bootstrapping <bootstrap/bootstrap>
-    Change Log <changes>
-
-
-Model Constructor
------------------
-While models can be carefully specified using the individual components, most common specifications can be specified
-using a simple model constructor.
-
-.. py:currentmodule:: arch
-.. autofunction:: arch_model
-
-Model Results
--------------
-All model return the same object, a results class (:py:class:`ARCHModelResult`)
-
-.. py:currentmodule:: arch.univariate.base
-.. autoclass:: ARCHModelResult
-    :members: summary, plot, conf_int
 
 Indices and tables
 ==================

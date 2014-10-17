@@ -47,7 +47,7 @@ The main function used will return a 3-element array containing the parameters.
 
 ::
 
-    def estimate_params(x):
+    def sharpe_ratio(x):
         mu, sigma = 12 * x.mean(), np.sqrt(12 * x.var())
         return np.array([mu, sigma, mu / sigma])
 
@@ -74,7 +74,7 @@ the required order statistics from these empirical distributions.
 
     from arch.bootstrap import IIDBootstrap
     bs = IIDBootstrap(returns)
-    ci = bs.conf_int(estimate_params, 1000, method='percentile')
+    ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 
 .. note::
 
@@ -117,7 +117,7 @@ computed element-by-element.
 
     from arch.bootstrap import IIDBootstrap
     bs = IIDBootstrap(returns)
-    ci = bs.conf_int(estimate_params, 1000, method='basic')
+    ci = bs.conf_int(sharpe_ratio, 1000, method='basic')
 
 
 Percentile (``percentile``)
@@ -138,7 +138,7 @@ distribution.
 
     from arch.bootstrap import IIDBootstrap
     bs = IIDBootstrap(returns)
-    ci = bs.conf_int(estimate_params, 1000, method='percentile')
+    ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 
 Asymptotic Normal Approximation (``norm``, ``cov`` or ``var``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -159,7 +159,7 @@ error.
 
     from arch.bootstrap import IIDBootstrap
     bs = IIDBootstrap(returns)
-    ci = bs.conf_int(estimate_params, 1000, method='norm')
+    ci = bs.conf_int(sharpe_ratio, 1000, method='norm')
 
 Studentized (``studentized``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -188,7 +188,7 @@ outer bootstraps.
 
     from arch.bootstrap import IIDBootstrap
     bs = IIDBootstrap(returns)
-    ci = bs.conf_int(estimate_params, 1000, method='studentized')
+    ci = bs.conf_int(sharpe_ratio, 1000, method='studentized')
 
 Demonstrating the use of the standard error function is simpler in the CAP-M
 example. Assuming the data are homoskedastic, the parameter standard errors
@@ -226,7 +226,7 @@ improve confidence intervals.
 
     from arch.bootstrap import IIDBootstrap
     bs = IIDBootstrap(returns)
-    ci = bs.conf_int(estimate_params, 1000, method='bc')
+    ci = bs.conf_int(sharpe_ratio, 1000, method='bc')
 
 
 Bias-corrected and accelerated (``bca``)
@@ -242,5 +242,5 @@ parameter is set to 0.
 
     from arch.bootstrap import IIDBootstrap
     bs = IIDBootstrap(returns)
-    ci = bs.conf_int(estimate_params, 1000, method='bca')
+    ci = bs.conf_int(sharpe_ratio, 1000, method='bca')
 
