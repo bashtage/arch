@@ -3,11 +3,11 @@ Confidence Intervals
 The confidence interval function allows three types of confidence intervals to
 be constructed:
 
-* Nonparametric, which only resample the data
+* Nonparametric, which only resamples the data
 * Semi-parametric, which use resampled residuals
 * Parametric, which simulate residuals
 
-Confidence intervals can then be computed using one of 5 methods:
+Confidence intervals can then be computed using one of 6 methods:
 
 * Basic (``basic``)
 * Percentile (``percentile``)
@@ -16,8 +16,8 @@ Confidence intervals can then be computed using one of 5 methods:
 * Bias-corrected (``bc``, ``bias-corrected`` or ``debiased``)
 * Bias-corrected and accelerated (``bca``)
 
-Finally, the studentized bootstrap can be conducted using either an analytic
-parameter variance formula or using a nested-bootstrap.
+.. contents::
+    :local:
 
 Setup
 =====
@@ -51,15 +51,19 @@ The main function used will return a 3-element array containing the parameters.
         mu, sigma = 12 * x.mean(), np.sqrt(12 * x.var())
         return np.array([mu, sigma, mu / sigma])
 
+.. note::
+
+    Functions must return 1-d NumPy arrays or Pandas Series.
+
 Confidence Interval Types
 =========================
 
 Three types of confidence intervals can be computed.  The simplest are
-non-parametric which only make use of parameter estimates from both the original
-data as well as the bootstrap resamples.  Semi-parametric mix the original data
-with a limited form or resamples, usually for residuals.  Finally, parametric
-bootstrap confidence intervals make use of a parametric distribution to
-construct "as-if" exact confidence intervals.
+non-parametric; these only make use of parameter estimates from both the
+original data as well as the resampled data.  Semi-parametric mix the original
+data with a limited form of resampling, usually for residuals.  Finally,
+parametric bootstrap confidence intervals make use of a parametric distribution
+to construct "as-if" exact confidence intervals.
 
 Nonparametric Confidence Intervals
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -67,8 +71,8 @@ Non-parametric sampling is the simplest method to construct confidence
 intervals.
 
 This example makes use of the percentile bootstrap which is conceptually the
-simplest method - it constructs many bootstrap replications and simply return
-the required order statistics from these empirical distributions.
+simplest method - it constructs many bootstrap replications and returns
+order statistics from these empirical distributions.
 
 ::
 
@@ -97,6 +101,13 @@ See :doc:`Parametric Bootstraps <semiparametric-parametric-bootstrap>`
 Confidence Interval Methods
 ===========================
 
+.. note::
+
+    ``conf_int`` can construct two-sided, upper or lower (one-sided) confidence
+    intervals.  All examples use two-sided, 95% confidence intervals (the
+    default).  This can be modified using the keyword inputs ``type``
+    (``'upper'``, ``'lower'`` or ``'two-sided'``) and ``size``.
+
 Basic (``basic``)
 ~~~~~~~~~~~~~~~~~
 
@@ -123,8 +134,9 @@ computed element-by-element.
 Percentile (``percentile``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Basic confidence intervals construct many bootstrap replications
-:math:`\hat{\theta}_b^\star` and then constructs the confidence interval as
+The percentile method directly constructs condifence intervals from the emprical
+CDF of the bootstrap parameter estimates, :math:`\hat{\theta}_b^\star`.
+The confidence interval is then defined.
 
 .. math::
 
@@ -143,8 +155,8 @@ distribution.
 Asymptotic Normal Approximation (``norm``, ``cov`` or ``var``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The asymptotic normal approximation methos simply estimates the covairance of
-the parameters and then uses this with the usual quantiles from a normal
+The asymptotic normal approximation method estimates the covairance of
+the parameters and then combines this with the usual quantiles from a normal
 distribution.  The confidence interval is then
 
 .. math::
@@ -178,7 +190,8 @@ The confidence interval is then
     \hat{\theta} + \hat{\sigma}\hat{G}^{-1}\left(1-\alpha/2\right), \right]
 
 where :math:`\hat{G}` is the estimated quantile function for the studentized
-data.
+data and where :math:`\hat{\sigma}` is a bootstrap estimate of the parameter
+standard error.
 
 The version that uses a nested bootstrap is simple to implement although it can
 be slow since it requires :math:`B` inner bootstraps of each of the :math:`B`
@@ -190,24 +203,42 @@ outer bootstraps.
     bs = IIDBootstrap(returns)
     ci = bs.conf_int(sharpe_ratio, 1000, method='studentized')
 
-Demonstrating the use of the standard error function is simpler in the CAP-M
-example. Assuming the data are homoskedastic, the parameter standard errors
-can be computed by
+In order to use the standard error function, it is necessary to estimate the
+standard error of the parameters.  In this example, this can be done using a
+method-of-moments argument and the delta-method. A detailed description of
+the mathematical formula is beyond the intent of this document.
 
 ::
 
-    def ols_se(params, y, x):
-        e = y - x.dot(params)
-        nobs = y.shape[0]
-        sigma2 = e.dot(e) / (nobs - x.shape[1])
-        xpx = x.T.dot(x) / nobs
-        vcv = sigma2 * np.inv(xpx)
-        return np.sqrt(np.diag(vcv))
+    def sharpe_ratio_se(params, x):
+        mu, sigma, sr = params
+        y = 12 * x
+        e1 = y - mu
+        e2 = y ** 2.0 - sigma ** 2.0
+        errors = np.vstack((e1, e2)).T
+        t = errors.shape[0]
+        vcv = errors.T.dot(errors) / t
+        D = np.array([[1, 0],
+                      [0, 0.5 * 1 / sigma],
+                      [1.0 / sigma, - mu / (2.0 * sigma**3)]
+                      ])
+        avar = D.dot(vcv /t).dot(D.T)
+        return np.sqrt(np.diag(avar))
+
+The studentized bootstrap can then be implemented using the standard error
+function.
+
+::
+
+    from arch.bootstrap import IIDBootstrap
+    bs = IIDBootstrap(returns)
+    ci = bs.conf_int(sharpe_ratio, 1000, method='studentized',
+                     std_err_func=sharpe_ratio_se)
 
 .. note::
 
     Standard error functions must return a 1-d array with the same number
-    of element as params
+    of element as params.
 
 .. note::
 
@@ -221,13 +252,14 @@ Bias-corrected (``bc``, ``bias-corrected`` or ``debiased``)
 The bias corrected bootstrap makes use of a bootstrap estimate of the bias to
 improve confidence intervals.
 
-
 ::
 
     from arch.bootstrap import IIDBootstrap
     bs = IIDBootstrap(returns)
     ci = bs.conf_int(sharpe_ratio, 1000, method='bc')
 
+The bias-corrected confidence interval is identical to the bias-corrected and
+accelerated where :math:`a=0`.
 
 Bias-corrected and accelerated (``bca``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -243,4 +275,24 @@ parameter is set to 0.
     from arch.bootstrap import IIDBootstrap
     bs = IIDBootstrap(returns)
     ci = bs.conf_int(sharpe_ratio, 1000, method='bca')
+
+The confidence interval is based on the empirical  distribution of the bootstrap
+parameter estimates, :math:`\hat{\theta}_b^\star`, where the percentiles used
+are
+
+..
+
+    $\Phi\left(
+    \Phi^{-1}\left(\hat{b}\right)+\frac{\Phi^{-1}\left(\hat{b}\right)
+    +z_{\alpha}}{1-\hat{a}\left(\Phi^{-1}\left(\hat{b}\right)+z_{\alpha}\right)}
+    \right)
+
+where :math:`z_{\alpha}` is the usual quantile from the normal distribution and
+:math:`b` is the empirical bias estimate,
+
+.. math::
+
+    $\hat{b}=\#\left\{ \hat{\theta}_{b}^{\star}<\hat{\theta}\right\} / B
+
+:math:`a` is a skewness-like estimator using a leave-one-out jackknife.
 
