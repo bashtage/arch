@@ -10,7 +10,7 @@ the original (non-bootstrap) data.  This keyword argument must be
 optional so that the function can be called without the keyword
 argument to estimate parameters.  In most applications other inputs
 will also be needed to perform the semi-parametric step - these can
-be input using the ``extra_kwargs`` variable.
+be input using the ``extra_kwargs`` keyword input.
 
 For simplicity, consider a semiparametric bootstrap of an OLS regression.
 The bootstrap step will combine the original parameter estimates and original
@@ -18,7 +18,7 @@ regressors with bootstrapped residuals to construct a bootstrapped
 regressand.  The bootstrap regressand and regressors can then be used to
 produce a bootstraped parameter estimate.
 
-The function used must:
+The user-provided function must:
 
 - Estimate the parameters when ``params`` is not provided
 - Estimate residuals from bootstrapped data when ``params`` is provided
@@ -57,8 +57,9 @@ This function can then be used to perform a semiparametric bootstrap
 Using ``partial`` instead of ``extra_kwargs``
 =============================================
 
-``partial`` can be used instead to provide a wrapper functions which can then
-be used in the bootstrap.
+``functools.partial`` can be used instead to provide a wrapper function which
+can then be used in the bootstrap.  This example fixed the value of ``x_orig``
+so that it isn't necessary to use ``extra_kwargs``.
 
 ::
 
@@ -70,7 +71,7 @@ Semiparametric Bootstrap (Alternative Method)
 =============================================
 
 Since semiparametric bootstraps are effectively bootstrapping residuals, an
-alternative method to construct a semiparametric bootstrap estimate. This
+alternative method can be used to conduct a semiparametric bootstrap. This
 requires passing both the data and the estimated residuals when intializing
 the bootstrap.
 
@@ -96,6 +97,12 @@ previous method.
     resids = y - x.dot(ols_semi_v2(y,x))
     bs = IIDBootstrap(y, x, resids=resids)
     bs.conf_int(ols_semi_v2, 1000, sampling='semi', extra_kwargs={'x_orig': x})
+
+.. note::
+
+    This alternative method is more useful when computing residuals is
+    relatively expensive when compared to simulating data or estimating
+    parameters.  These circumstances are rarely encountered in actual problems.
 
 .. _parametric-bootstraps:
 

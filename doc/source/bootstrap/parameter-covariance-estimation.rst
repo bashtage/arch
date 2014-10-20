@@ -62,6 +62,8 @@ The output is
     sigma -0.442891  0.495087 -0.049454
     SR     0.273945 -0.049454  0.020830
 
+.. note::
 
-
-
+    The covariance estimator is centered using the average of the bootstrapped
+    estimators. The original sample estimator can be used to center using the
+    keyword argument ``recenter=False``.
