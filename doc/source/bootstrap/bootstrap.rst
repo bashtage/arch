@@ -12,8 +12,8 @@ parameters and the (internally generated) sampling scheme.
     Examples <bootstrap_examples>
     Confidence Interval Construction <confidence-intervals>
     Parameter Covariance Estimation <parameter-covariance-estimation>
-    Semiparametric and Parametric Bootstraps <semiparametric-parametric-bootstrap>
     Low-level Interface <low-level-interface>
+    Semiparametric and Parametric Bootstraps <semiparametric-parametric-bootstrap>
     Bootstraps for IID data <iid-bootstraps>
     Bootstraps for Time-series Data <timeseries-bootstraps>
     Background and References <background>

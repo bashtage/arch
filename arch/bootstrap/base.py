@@ -27,9 +27,9 @@ def _loo_jackknife(func, nobs, args, kwargs):
     nobs : int
         Number of observation in the data
     args : list
-        List of positional inputs
+        List of positional inputs (arrays, Series or DataFrames)
     kwargs: dict
-        List of keyword inputs
+        List of keyword inputs (arrays, Series or DataFrames)
 
     Returns
     -------
@@ -40,8 +40,18 @@ def _loo_jackknife(func, nobs, args, kwargs):
     results = []
     for i in range(nobs):
         items = np.r_[0:i, i + 1:nobs]
-        args_copy = [arg[items] for arg in args]
-        kwargs_copy = {k: v[items] for k, v in iteritems(kwargs)}
+        args_copy = []
+        for arg in args:
+            if isinstance(arg, (pd.Series, pd.DataFrame)):
+                args_copy.append(arg.iloc[items])
+            else:
+                args_copy.append(arg[items])
+        kwargs_copy = {}
+        for k, v in iteritems(kwargs):
+            if isinstance(v, (pd.Series, pd.DataFrame)):
+                kwargs_copy[k] = v.iloc[items]
+            else:
+                kwargs_copy[k] = v[items]
         results.append(func(*args_copy, **kwargs_copy))
     return np.array(results)
 
@@ -408,7 +418,6 @@ class IIDBootstrap(object):
                 b = stats.norm.ppf(p)
                 b = b[:, None]
                 if method == 'bca':
-                    # TODO : Check dimensions of a
                     nobs = self._num_items
                     jk_params = _loo_jackknife(func, nobs, self._args,
                                                self._kwargs)

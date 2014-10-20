@@ -37,7 +37,6 @@ class TestBootstrap(TestCase):
 
         cls.func = func
 
-
     def test_numpy(self):
         x, y, z = self.x, self.y, self.z
         bs = IIDBootstrap(y)
@@ -525,7 +524,7 @@ class TestBootstrap(TestCase):
         for i in range(len(x)):
             if i == 0:
                 y = x[1:]
-            elif i == len(x - 1):
+            elif i == (len(x) - 1):
                 y = x[:-1]
             else:
                 temp = list(x[:i])
@@ -534,14 +533,38 @@ class TestBootstrap(TestCase):
             direct_results[i] = func(y)
         assert_allclose(direct_results, results)
 
+        x = self.x_df
+        results_df = _loo_jackknife(func, len(x), (x,), {})
+        assert_equal(results, results_df)
+
+        y = self.y
+        results = _loo_jackknife(func, len(y), (y,), {})
+
+        direct_results = np.zeros_like(y)
+        for i in range(len(y)):
+            if i == 0:
+                z = y[1:]
+            elif i == (len(y) - 1):
+                z = y[:-1]
+            else:
+                temp = list(y[:i])
+                temp.extend(list(y[i + 1:]))
+                z = np.array(temp)
+            direct_results[i] = func(z)
+        assert_allclose(direct_results, results)
+
+        y = self.y_series
+        results_series = _loo_jackknife(func, len(y), (y,), {})
+        assert_equal(results, results_series)
+
     def test_bca(self):
         num_bootstrap = 20
         bs = IIDBootstrap(self.x)
         bs.seed(23456)
-
+    
         def func(y):
             return y.mean(axis=0)
-
+    
         ci_direct = bs.conf_int(func, reps=num_bootstrap, method='bca')
         bs.reset(seed=23456)
         base, results = bs._base, bs._results
@@ -549,10 +572,9 @@ class TestBootstrap(TestCase):
         p[0] = np.mean(results[:, 0] < base[0])
         p[1] = np.mean(results[:, 1] < base[1])
         b = stats.norm.ppf(p)
-        b = b[:,None]
+        b = b[:, None]
         q = stats.norm.ppf(np.array([0.025, 0.975]))
-
-
+    
         base = func(self.x)
         nobs = self.x.shape[0]
         jk = _loo_jackknife(func, nobs, [self.x], {})
@@ -562,28 +584,29 @@ class TestBootstrap(TestCase):
         a = u3 / (6.0 * (u2 ** 1.5))
         a = a[:, None]
         percentiles = 100 * stats.norm.cdf(b + (b + q) / (1 - a * (b + q)))
-
+    
         ci = np.zeros((2, 2))
         for i in range(2):
             ci[i] = np.percentile(results[:, i], list(percentiles[i]))
         ci = ci.T
         assert_allclose(ci_direct, ci)
-
+    
     def test_pandas_integer_index(self):
         x = self.x
         x_int = self.x_df.copy()
         x_int.index = 10 + np.arange(x.shape[0])
-        bs = IIDBootstrap(x,x_int)
+        bs = IIDBootstrap(x, x_int)
         bs.seed(23456)
         for pdata, kwdata in bs.bootstrap(10):
             assert_equal(pdata[0], pdata[1].values)
-
+    
     def test_apply(self):
         bs = IIDBootstrap(self.x)
         bs.seed(23456)
+    
         def func(y):
             return y.mean(0)
-
+    
         results = bs.apply(func, 1000)
         bs.reset(23456)
         direct_results = []
@@ -591,7 +614,3 @@ class TestBootstrap(TestCase):
             direct_results.append(func(*pos))
         direct_results = np.array(direct_results)
         assert_equal(results, direct_results)
-
-
-
-
