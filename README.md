@@ -36,6 +36,12 @@ written in Python (and Cython)
         * Covariance estimation
         * Apply method to estimate model across bootstraps
         * Generic Bootstrap iterator
+* Unit Root Tests
+    * Augmented Dickey-Fuller
+    * Dickey-Fuller GLS
+    * Phillips-Perron
+    * KPSS
+    * Variance Ratio tests
      
 
 ## Examples
@@ -86,6 +92,9 @@ from arch.bootstrap import IIDBootstrap
 bs = IIDBootstrap(returns)
 ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')    
 ```
+
+### Unit Root Tests
+See the [unit root testing example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/unitroot_examples.ipynb) for examples of testing series for unit roots.
 
 ## Documentation
 Documentation is hosted on [read the docs](http://arch.readthedocs.org/en/latest/)
