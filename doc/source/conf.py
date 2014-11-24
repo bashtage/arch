@@ -49,7 +49,10 @@ if on_rtd:
                     'statsmodels.tools.numdiff.approx_hess',
                     'statsmodels.tsa',
                     'statsmodels.tsa.tsatools',
-                    'statsmodels.tsa.tsatools.lagmat']
+                    'statsmodels.tsa.tsatools.lagmat',
+                    'statsmodels.regression',
+                    'statsmodels.regression.linear_model'
+                    'statsmodels.regression.linear_model.OLS']
 
     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
