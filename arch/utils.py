@@ -12,6 +12,27 @@ deprecation_doc = """
 {func} has been moved.  Please use {new_location}.{func}.
 """
 
+# def ensure_1d(y, var_name=None):
+#     """Returns a 1d array if the input is squeezable to 1d. Otherwise raises
+#     and error
+#
+#     Parameters
+#     ----------
+#     y : array-like
+#         The array to squeeze to 1d, or raise an error if not compatible
+#
+#     Returns
+#     -------
+#     y_1d : array
+#         A 1d version of the input, returned as an array
+#     """
+#     y = squeeze(asarray(y))
+#     if y.ndim != 1:
+#         if var_name is None:
+#             var_name = 'Input'
+#         err_msg = '{var_name} must be 1d or squeezable to 1d.'
+#         raise ValueError(err_msg.format(var_name=var_name))
+#     return y
 
 def ensure1d(x, name, series=False):
     if isinstance(x, pd.Series):
@@ -44,7 +65,7 @@ def ensure1d(x, name, series=False):
             raise ValueError(name + ' must be squeezable to 1 dimension')
 
     if series:
-        return pd.Series(x,name=name)
+        return pd.Series(x, name=name)
     else:
         return np.asarray(x)
 

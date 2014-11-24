@@ -1,13 +1,41 @@
 # Compatibility code from six and pandas
 import sys
 
+try:
+    import __builtin__ as builtins
+    # not writeable when instantiated with string, doesn't handle unicode well
+    from cStringIO import StringIO as cStringIO
+    # always writeable
+    from StringIO import StringIO
+
+    BytesIO = StringIO
+    import cPickle
+    pickle = cPickle
+    import urllib2
+    import urlparse
+except ImportError:
+    import builtins
+    from io import StringIO, BytesIO
+
+    cStringIO = StringIO
+    import pickle as cPickle
+    pickle = cPickle
+    import urllib.request
+    import urllib.parse
+    from urllib.request import HTTPError, urlretrieve
+
 PY3 = sys.version_info[0] == 3
 
 if PY3:
     range = range
+    long = int
+
+    def lmap(*args, **kwargs):
+        return list(map(*args, **kwargs))
 else:
     range = xrange
-
+    long = long
+    lmap = builtins.map
 
 def with_metaclass(meta, *bases):
     """Create a base class with a metaclass."""
