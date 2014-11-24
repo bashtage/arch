@@ -16,7 +16,7 @@ import os
 import sys
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
-if on_rtd:
+if False: #  on_rtd:
     try:
         from unittest.mock import MagicMock
     except ImportError:

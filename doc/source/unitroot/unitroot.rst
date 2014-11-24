@@ -1,5 +1,5 @@
 Unit Root Testing
-=================
+-----------------
 
 Many time series are highly persistent, and determining whether the data appear
 to be stationary or contains a unit root is the first step in many analyses.
@@ -19,12 +19,12 @@ process with an alternative of a unit root.
 .. toctree::
     :maxdepth: 2
 
-    Unit Root Tests <tests>
     Examples <unitroot_examples>
+    Unit Root Tests <tests>
 
 
 Introduction
-------------
+============
 
 All tests expect a 1-d series as the first input.  The input can be any array that can be `squeeze`d to 1-d, a pandas
 `Series` or a pandas `DataFrame` that contains a single variable.
@@ -42,7 +42,7 @@ All tests share a common structure.  The key elements are:
   * `summary()` - Returns a summary object that can be printed to get a formatted table
 
 Basic Example
--------------
+=============
 
 This basic example show the use of the Augmented-Dickey fuller to test whether the default premium, defined as the
 difference between the yields of large portfolios of BAA and AAA bonds.  This example uses a constant and time trend.
