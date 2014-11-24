@@ -7,4 +7,5 @@ matplotlib
 pandas
 patsy
 ipython
+statsmodels
 
