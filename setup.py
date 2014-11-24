@@ -1,3 +1,4 @@
+from __future__ import print_function
 # setup.py
 import os
 import subprocess
@@ -24,7 +25,7 @@ if not '--no-binary' in sys.argv:
     ext_modules.append(Extension("arch.bootstrap._samplers",
                                  ["./arch/bootstrap/_samplers.pyx"]))
 else:
-    del REQUIREMENTS['Cython']                
+    del REQUIREMENTS['Cython']
     sys.argv.remove('--no-binary')
 
 
@@ -44,7 +45,7 @@ missing_package = '{package} is installed, but the version installed' \
                   'updated.  If this isn\'t possible, consider installing in ' \
                   'an empty virtual environment.'
 
-PACKAGE_CHECKS = ['numpy','scipy','pandas']
+PACKAGE_CHECKS = ['numpy', 'scipy', 'pandas']
 for key in PACKAGE_CHECKS:
     version = None
     satisfies_req = True
@@ -52,6 +53,7 @@ for key in PACKAGE_CHECKS:
     if key == 'numpy':
         try:
             import numpy
+
             try:
                 from numpy.version import short_version as version
             except ImportError:
@@ -62,6 +64,7 @@ for key in PACKAGE_CHECKS:
     elif key == 'scipy':
         try:
             import scipy
+
             try:
                 from scipy.version import short_version as version
             except ImportError:
@@ -114,38 +117,51 @@ try:
     from IPython.nbformat import current as nbformat
     from IPython.nbconvert import RSTExporter
     import glob
+
     notebooks = glob.glob(os.path.join(cwd, 'examples', '*.ipynb'))
     for notebook in notebooks:
-        f = open(notebook, 'rt')
-        example_nb = f.read()
-        f.close()
+        try:
+            f = open(notebook, 'rt')
+            example_nb = f.read()
+            f.close()
 
-        example_nb = nbformat.reads_json(example_nb)
-        rst_export = RSTExporter()
-        (body, resources) = rst_export.from_notebook_node(example_nb)
-        rst_path = os.path.join(cwd, 'doc', 'source')
-        path_parts = os.path.split(notebook)
-        nb_filename = path_parts[-1]
-        nb_filename = nb_filename.split('.')[0]
-        source_dir = nb_filename.split('_')[0]
-        rst_filename = os.path.join(cwd, 'doc', 'source',
-                                    source_dir,  nb_filename + '.rst')
-        f = open(rst_filename, 'wt')
-        f.write(body)
-        f.close()
-        for key in resources['outputs'].keys():
-            if key.endswith('.png'):
-                resource_filename = os.path.join(cwd, 'doc', 'source',
-                                                 source_dir, key)
-                f = open(resource_filename, 'wb')
-                f.write(resources['outputs'][key])
-                f.close()
+            example_nb = nbformat.reads_json(example_nb)
+            rst_export = RSTExporter()
+            (body, resources) = rst_export.from_notebook_node(example_nb)
+            rst_path = os.path.join(cwd, 'doc', 'source')
+            path_parts = os.path.split(notebook)
+            nb_filename = path_parts[-1]
+            nb_filename = nb_filename.split('.')[0]
+            source_dir = nb_filename.split('_')[0]
+            rst_filename = os.path.join(cwd, 'doc', 'source',
+                                        source_dir, nb_filename + '.rst')
+            f = open(rst_filename, 'wt')
+            f.write(body)
+            f.close()
+            for key in resources['outputs'].keys():
+                if key.endswith('.png'):
+                    resource_filename = os.path.join(cwd, 'doc', 'source',
+                                                     source_dir, key)
+                    f = open(resource_filename, 'wb')
+                    f.write(resources['outputs'][key])
+                    f.close()
+        except:
+            import warnings
+
+            warnings.warn('Unable to convert {original} to {target}.  This only'
+                          'affects documentation generation and not the operation of the'
+                          ' module.'.format(original=notebook,
+                                            target=rst_filename))
+            print('The last error was:')
+            import sys
+            print(sys.exc_info()[0])
+            print(sys.exc_info()[1])
+
 except:
     import warnings
 
-    warnings.warn('Unable to convert examples.ipynb to examples.rst.  This only'
-                  'affects documentation generation and not the operation of the'
-                  ' module.')
+    warnings.warn('Unable to import required modules from IPython. This only '
+                  'affects documentation generation and not the operation of the module.')
 
 # Read version information from plain VERSION file
 version = None
@@ -173,7 +189,8 @@ setup(name='arch',
       cmdclass={'build_ext': build_ext},
       include_dirs=[numpy.get_include()],
       keywords=['arch', 'ARCH', 'variance', 'econometrics', 'volatility',
-                'finance', 'GARCH'],
+                'finance', 'GARCH', 'bootstrap', 'random walk', 'unit root',
+                'Dickey Fuller', 'time series', 'confidence intervals'],
       zip_safe=False,
       include_package_data=True,
       distclass=BinaryDistribution,
