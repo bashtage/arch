@@ -33,9 +33,8 @@ matrix:
     - PYTHON=3.3
     - NUMPY=1.9
     - SCIPY=0.14
-    - PANDAS=0.14
+    - NUMBA=0.15
     - MATPLOTLIB=1.4
-    - NUMBA=0.14
     - COVERAGE=false
 
 notifications:
