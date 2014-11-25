@@ -1,5 +1,8 @@
 Bootstrapping
 -------------
+
+.. py:module::arch.bootstrap
+
 The bootstrap module provides both high- and low-level interfaces for
 bootstrapping data contained in NumPy arrays or pandas Series or DataFrames.
 
