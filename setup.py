@@ -197,6 +197,7 @@ setup(name='arch',
       classifiers=[
           'Development Status :: 4 - Beta',
           'Intended Audience :: End Users/Desktop',
+          'Intended Audience :: Financial and Insurance Industry',
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3.3',
           'Programming Language :: Python :: 3.4',
