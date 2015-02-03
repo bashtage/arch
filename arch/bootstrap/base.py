@@ -520,7 +520,11 @@ class IIDBootstrap(object):
         """
         kwargs = _add_extra_kwargs(self._kwargs, extra_kwargs)
         base = func(*self._args, **kwargs)
-        results = np.zeros((reps, base.shape[0]))
+        try:
+            num_params = base.shape[0]
+        except:
+            num_params = 1
+        results = np.zeros((reps, num_params))
         count = 0
         for pos_data, kw_data in self.bootstrap(reps):
             kwargs = _add_extra_kwargs(kw_data, extra_kwargs)
