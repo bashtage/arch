@@ -614,3 +614,19 @@ class TestBootstrap(TestCase):
             direct_results.append(func(*pos))
         direct_results = np.array(direct_results)
         assert_equal(results, direct_results)
+
+    def test_apply_series(self):
+        bs = IIDBootstrap(self.y_series)
+        bs.seed(23456)
+
+        def func(y):
+            return y.mean(0)
+
+        results = bs.apply(func, 1000)
+        bs.reset(23456)
+        direct_results = []
+        for pos, kw in bs.bootstrap(1000):
+            direct_results.append(func(*pos))
+        direct_results = np.array(direct_results)
+        direct_results = direct_results[:,None]
+        assert_equal(results, direct_results)
