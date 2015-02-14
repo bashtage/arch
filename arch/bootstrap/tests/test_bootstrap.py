@@ -614,3 +614,18 @@ class TestBootstrap(TestCase):
             direct_results.append(func(*pos))
         direct_results = np.array(direct_results)
         assert_equal(results, direct_results)
+
+    def test_scalar_function(self):
+        bs = IIDBootstrap(self.y_series)
+        bs.seed(23456)
+        def func(y):
+            return y.mean()
+
+        results = bs.apply(func)
+        bs.seed(23456)
+        direct_results = np.zeros_like(results)
+        i = 0
+        for pos, kw in bs.bootstrap(1000):
+            direct_results[i] = func(*pos)
+            i += 1
+        assert_equal(results, direct_results)
