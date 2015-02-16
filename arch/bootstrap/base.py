@@ -164,13 +164,28 @@ class IIDBootstrap(object):
         self._results = None
         self._studentized_results = None
         self._last_func = None
-
+        self._name = 'IID Bootstrap'
         for key, value in iteritems(kwargs):
             attr = getattr(self, key, None)
             if attr is None:
                 self.__setattr__(key, value)
             else:
                 raise ValueError(key + ' is a reserved name')
+
+    def __str__(self):
+        repr = self._name
+        repr += '(no. pos. inputs: ' + str(len(self.pos_data))
+        repr += ', no. keyword inputs: ' + str(len(self.kw_data)) + ')'
+        return repr
+
+    def __repr__(self):
+        return self.__str__()[:-1] + ', ID: ' + hex(id(self)) + ')'
+
+    def _repr_html(self):
+        html = '<strong>' + self._name + '</strong>('
+        html += '<strong>no. pos. inputs</strong>: ' + str(len(self.pos_data))
+        html += ', <strong>no. keyword inputs</strong>: ' + str(len(self.kw_data))
+        html += ', <strong>ID</strong>: ' + hex(id(self)) + ')'
 
     @property
     def index(self):
@@ -746,6 +761,23 @@ class CircularBlockBootstrap(IIDBootstrap):
         self.block_size = block_size
         self._parameters = [block_size]
         super(CircularBlockBootstrap, self).__init__(*args, **kwargs)
+
+    def __str__(self):
+        repr = self._name
+        repr += '(block size: ' + self.block_size
+        repr += ', no. pos. inputs: ' + str(len(self.pos_data))
+        repr += ', no. keyword inputs: ' + str(len(self.kw_data)) + ')'
+        return repr
+
+    def __repr__(self):
+        return self.__str__()[:-1] + ', ID: ' + hex(id(self)) + ')'
+
+    def _repr_html(self):
+        html = '<strong>' + self._name + '</strong>('
+        html += '<strong>block size</strong>: ' + self.block_size
+        html += ', <strong>no. pos. inputs</strong>: ' + str(len(self.pos_data))
+        html += ', <strong>no. keyword inputs</strong>: ' + str(len(self.kw_data))
+        html += ', <strong>ID</strong>: ' + hex(id(self)) + ')'
 
     def update_indices(self):
         num_blocks = self._num_items // self.block_size
