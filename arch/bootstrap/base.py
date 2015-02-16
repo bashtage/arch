@@ -155,7 +155,7 @@ class IIDBootstrap(object):
         self._index = np.arange(self._num_items)
 
         self._parameters = []
-
+        self._seed = None
         self.pos_data = args
         self.kw_data = kwargs
         self.data = (args, kwargs)
@@ -227,18 +227,26 @@ class IIDBootstrap(object):
         value : int
             Integer to use as the seed
         """
+        self._seed = value
         self.random_state.seed(value)
         return None
 
-    def reset(self, seed=None):
+    def reset(self, use_seed=True):
         """
-        Resets the bootstrap to its initial condition
+        Resets the bootstrap to either its initial state or the last seed.
+
+        Parameters
+        ----------
+        use_seed : bool, optional
+            Flag indicating whether to use the last seed if provided.  If
+            False or if no seed has been set, the bootstrap will be reset
+            to the initial state.  Default is True
         """
         self._index = np.arange(self._num_items)
         self._resample()
         self.random_state.set_state(self._initial_state)
-        if seed is not None:
-            self.seed(seed)
+        if use_seed and self._seed is not None:
+            self.seed(self._seed)
         return None
 
     def bootstrap(self, reps):
@@ -492,6 +500,29 @@ class IIDBootstrap(object):
 
         return np.vstack((lower, upper))
 
+    def clone(self, *args, **kwargs):
+        """
+        Clones the bootstrap using different data.
+
+        Parameters
+        ----------
+        args
+            Positional arguments to bootstrap
+        kwargs
+            Keyword arguments to bootstrap
+
+        Returns
+        -------
+        bs
+            Bootstrap instance
+        """
+        pos_arguments = copy.deepcopy(self._parameters)
+        pos_arguments.extend(args)
+        bs = self.__class__(*pos_arguments, **kwargs)
+        if self._seed is not None:
+            bs.seed(self._seed)
+        return bs
+
     def apply(self, func, reps=1000, extra_kwargs=None):
         """
         Applies a function to bootstrap replicated data
@@ -584,9 +615,7 @@ class IIDBootstrap(object):
                 studentized_results[count] = (results[count] - base) / std_err
             elif studentize_reps > 0:
                 # Need new bootstrap of same type
-                pos_data_aug = copy.deepcopy(self._parameters)
-                pos_data_aug.extend(pos_data)
-                nested_bs = self.__class__(*pos_data_aug, **kw_data)
+                nested_bs = self.clone(*pos_data, **kw_data)
                 # Set the seed to ensure reproducability
                 seed = self.random_state.randint(2 ** 31 - 1)
                 nested_bs.seed(seed)
@@ -849,6 +878,7 @@ class StationaryBootstrap(CircularBlockBootstrap):
 
     def __init__(self, block_size, *args, **kwargs):
         super(StationaryBootstrap, self).__init__(block_size, *args, **kwargs)
+        self._name = 'Stationary Bootstrap'
         self._p = 1.0 / block_size
         self._name = 'Stationary Bootstrap'
 

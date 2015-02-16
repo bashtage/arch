@@ -19,6 +19,7 @@ parameters and the (internally generated) sampling scheme.
     Semiparametric and Parametric Bootstraps <semiparametric-parametric-bootstrap>
     Bootstraps for IID data <iid-bootstraps>
     Bootstraps for Time-series Data <timeseries-bootstraps>
+    Multiple Comparisons <multiple-comparison>
     Background and References <background>
 
 
