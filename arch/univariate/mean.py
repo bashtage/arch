@@ -202,14 +202,14 @@ class HARX(ARCHModel):
     def _repr_html_(self):
         """HTML representation for IPython Notebook"""
         descr = self._model_description()
-        html = ''
+        html = '<strong>' + self.name + '</strong>('
         for key, val in iteritems(descr):
             if val:
                 if key:
-                    html += '<strong>' + key + ': </strong>' + val + '</br>\n'
+                    html += '<strong>' + key + ': </strong>' + val + ',\n'
                 else:
-                    html += '<strong>' + val + '</strong></br>\n'
-        html += '<strong>ID: </strong> ' + hex(id(self))
+                    html += '<strong>' + val + '</strong>,\n'
+        html += '<strong>ID: </strong> ' + hex(id(self)) + ')'
         return html
 
     def resids(self, params):
