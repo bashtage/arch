@@ -13,7 +13,7 @@ as
       \sigma^2_t & = & \omega + \alpha \epsilon_t^2 + \beta \sigma^2_{t-1}
    \end{eqnarray}
 
-An complete ARCH model is divided into three components:
+A complete ARCH model is divided into three components:
 
 
 ..
