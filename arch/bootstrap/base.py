@@ -186,6 +186,7 @@ class IIDBootstrap(object):
         html += '<strong>no. pos. inputs</strong>: ' + str(len(self.pos_data))
         html += ', <strong>no. keyword inputs</strong>: ' + str(len(self.kw_data))
         html += ', <strong>ID</strong>: ' + hex(id(self)) + ')'
+        return html
 
     @property
     def index(self):
@@ -761,23 +762,22 @@ class CircularBlockBootstrap(IIDBootstrap):
         self.block_size = block_size
         self._parameters = [block_size]
         super(CircularBlockBootstrap, self).__init__(*args, **kwargs)
+        self._name = 'Circular Block Bootstrap'
 
     def __str__(self):
         repr = self._name
-        repr += '(block size: ' + self.block_size
+        repr += '(block size: ' + str(self.block_size)
         repr += ', no. pos. inputs: ' + str(len(self.pos_data))
         repr += ', no. keyword inputs: ' + str(len(self.kw_data)) + ')'
         return repr
 
-    def __repr__(self):
-        return self.__str__()[:-1] + ', ID: ' + hex(id(self)) + ')'
-
     def _repr_html(self):
         html = '<strong>' + self._name + '</strong>('
-        html += '<strong>block size</strong>: ' + self.block_size
+        html += '<strong>block size</strong>: ' + str(self.block_size)
         html += ', <strong>no. pos. inputs</strong>: ' + str(len(self.pos_data))
         html += ', <strong>no. keyword inputs</strong>: ' + str(len(self.kw_data))
         html += ', <strong>ID</strong>: ' + hex(id(self)) + ')'
+        return html
 
     def update_indices(self):
         num_blocks = self._num_items // self.block_size
@@ -850,6 +850,7 @@ class StationaryBootstrap(CircularBlockBootstrap):
     def __init__(self, block_size, *args, **kwargs):
         super(StationaryBootstrap, self).__init__(block_size, *args, **kwargs)
         self._p = 1.0 / block_size
+        self._name = 'Stationary Bootstrap'
 
     def update_indices(self):
         indices = self.random_state.randint(self._num_items,
@@ -914,6 +915,7 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
 
     def __init__(self, block_size, *args, **kwargs):
         super(MovingBlockBootstrap, self).__init__(block_size, *args, **kwargs)
+        self._name = 'Moving Block Bootstrap'
 
     def update_indices(self):
         num_blocks = self._num_items // self.block_size

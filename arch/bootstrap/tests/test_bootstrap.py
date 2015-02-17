@@ -630,3 +630,33 @@ class TestBootstrap(TestCase):
         direct_results = np.array(direct_results)
         direct_results = direct_results[:,None]
         assert_equal(results, direct_results)
+
+    def test_str(self):
+        bs = IIDBootstrap(self.y_series)
+        expected = 'IID Bootstrap(no. pos. inputs: 1, no. keyword inputs: 0)'
+        assert_equal(str(bs), expected)
+        expected = expected[:-1] + ', ID: ' + hex(id(bs)) + ')'
+        assert_equal(bs.__repr__(), expected)
+        expected = '<strong>IID Bootstrap</strong>(' + \
+                   '<strong>no. pos. inputs</strong>: 1, ' + \
+                   '<strong>no. keyword inputs</strong>: 0, ' + \
+                   '<strong>ID</strong>: ' + hex(id(bs)) + ')'
+        assert_equal(bs._repr_html(), expected)
+
+        bs = StationaryBootstrap(10, self.y_series, self.x_df)
+        expected = 'Stationary Bootstrap(block size: 10, no. pos. inputs: 2, no. keyword inputs: 0)'
+        assert_equal(str(bs), expected)
+        expected = expected[:-1] + ', ID: ' + hex(id(bs)) + ')'
+        assert_equal(bs.__repr__(), expected)
+
+        bs = CircularBlockBootstrap(block_size=20, y=self.y_series, x=self.x_df)
+        expected = 'Circular Block Bootstrap(block size: 20, no. pos. inputs: 0, no. keyword inputs: 2)'
+        assert_equal(str(bs), expected)
+        expected = expected[:-1] + ', ID: ' + hex(id(bs)) + ')'
+        assert_equal(bs.__repr__(), expected)
+        expected = '<strong>Circular Block Bootstrap</strong>' + \
+                   '(<strong>block size</strong>: 20, '\
+                   + '<strong>no. pos. inputs</strong>: 0, ' + \
+                   '<strong>no. keyword inputs</strong>: 2,' + \
+                   ' <strong>ID</strong>: ' + hex(id(bs)) + ')'
+        assert_equal(bs._repr_html(), expected)
