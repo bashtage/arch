@@ -1,12 +1,55 @@
 import unittest
+import timeit
 
 from nose.tools import assert_true
 import numpy as np
 from numpy.testing import assert_almost_equal
-import arch.univariate.recursions as rec
+from numpy.testing.decorators import skipif
 
+import arch.univariate.recursions as rec
 import arch.univariate.recursions_python as recpy
 from arch.compat.python import range
+
+try:
+    import numba
+    missing_numba = False
+except ImportError:
+    missing_numba = True
+
+class Timer(object):
+    def __init__(self, first, first_name, second, second_name, model_name, setup, repeat=5, number=10):
+        self.first_code = first
+        self.second_code = second
+        self.setup = setup
+        self.first_name = first_name
+        self.second_name = second_name
+        self.model_name = model_name
+        self.repeat = repeat
+        self.number = number
+        self._run = False
+        self.times = []
+        self._codes = [first, second]
+        self.ratio = np.inf
+
+    def display(self):
+        if not self._run:
+            self.time()
+        self.ratio = self.times[0] / self.times[1]
+
+        print(self.model_name + ' timing')
+        print(self.first_name + ': ' + str(self.times[0]) + 's')
+        print(self.second_name + ': ' + str(self.times[1]) + 's')
+        print(self.first_name + '/' + self.second_name + ' Ratio: ' +
+              str(self.ratio) + 's')
+        print('\n')
+
+
+    def time(self):
+        self.times = []
+        for code in self._codes:
+            timer = timeit.Timer(code, setup=self.setup)
+            self.times.append(min(timer.repeat(self.repeat, self.number)))
+        return None
 
 
 class TestRecursions(unittest.TestCase):
@@ -19,6 +62,20 @@ class TestRecursions(unittest.TestCase):
         var_bounds = np.array([var / 1000000.0, var * 1000000.0])
         cls.var_bounds = np.ones((cls.T, 2)) * var_bounds
         cls.backcast = 1.0
+        cls.timer_setup = """
+import numpy as np
+import arch.univariate.recursions as rec
+import arch.univariate.recursions_python as recpy
+from arch.compat.python import range
+
+T = 10000
+resids = np.random.randn(T)
+sigma2 = np.zeros_like(resids)
+var = resids.var()
+backcast = 1.0
+var_bounds = np.array([var / 1000000.0, var * 1000000.0])
+var_bounds = np.ones((T, 2)) * var_bounds
+        """
 
     def test_garch(self):
         T, resids, = self.T, self.resids
@@ -257,5 +314,61 @@ class TestRecursions(unittest.TestCase):
             sigma2[t] = np.exp(lnsigma2[t])
         assert_almost_equal(sigma2_python, sigma2)
 
+    @skipif(missing_numba)
+    def test_garch_performance(self):
+        garch_setup = """
+parameters = np.array([.1, .4, .3, .2])
+fresids = resids ** 2.0
+sresids = np.sign(resids)
+        """
 
+        garch_first = """
+recpy.garch_recursion(parameters, fresids, sresids, sigma2, 1, 1, 1, T, backcast, var_bounds)
+        """
+        garch_second = """
+rec.garch_recursion(parameters, fresids, sresids, sigma2, 1, 1, 1, T, backcast, var_bounds)
+        """
+        timer = Timer(garch_first, 'Numba', garch_second, 'Cython', 'GARCH', self.timer_setup + garch_setup)
+        timer.display()
+        assert_true(timer.ratio < 10.0)
 
+    @skipif(missing_numba)
+    def test_harch_performance(self):
+        harch_setup = """
+parameters = np.array([.1, .4, .3, .2])
+lags = np.array([1, 5, 22], dtype=np.int32)
+        """
+
+        harch_first = """
+recpy.harch_recursion(parameters, resids, sigma2, lags, T, backcast, var_bounds)
+        """
+
+        harch_second = """
+rec.harch_recursion(parameters, resids, sigma2, lags, T, backcast, var_bounds)
+        """
+
+        timer = Timer(harch_first, 'Numba', harch_second, 'Cython', 'HARCH', self.timer_setup + harch_setup)
+        timer.display()
+        assert_true(timer.ratio < 10.0)
+
+    @skipif(missing_numba)
+    def test_egarch_performance(self):
+        egarch_setup = """
+nobs = T
+parameters = np.array([0.0, 0.1, -0.1, 0.95])
+p = o = q = 1
+backcast = 0.0
+lnsigma2 = np.empty_like(sigma2)
+std_resids = np.empty_like(sigma2)
+abs_std_resids = np.empty_like(sigma2)
+        """
+
+        egarch_first = """
+rec.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast, var_bounds, lnsigma2, std_resids, abs_std_resids)
+        """
+
+        egarch_second = """
+recpy.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast, var_bounds, lnsigma2, std_resids, abs_std_resids)
+        """
+        timer = Timer(egarch_first, 'Numba', egarch_second, 'Cython', 'EGARCH', self.timer_setup + egarch_setup)
+        timer.display()
