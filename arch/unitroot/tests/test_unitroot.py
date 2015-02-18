@@ -5,7 +5,7 @@ from arch.compat.python import iteritems
 
 import numpy as np
 from numpy.testing import (assert_almost_equal, assert_equal, assert_raises)
-from numpy import log, polyval, diff, ceil, ones
+from numpy import log, polyval, diff, ceil
 
 from arch.unitroot import ADF, DFGLS, PhillipsPerron, KPSS, VarianceRatio
 from arch.unitroot.critical_values.dickey_fuller import tau_2010
