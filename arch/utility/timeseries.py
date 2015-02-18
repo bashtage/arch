@@ -66,7 +66,6 @@ def add_trend(x=None, trend="c", prepend=False, nobs=None, has_constant='skip'):
     --------
     statsmodels.tools.tools.add_constant
     """
-    #TODO: could be generalized for trend of aribitrary order
     trend = trend.lower()
     if trend == "c":  # handles structured arrays
         trend_order = 0

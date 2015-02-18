@@ -11,11 +11,12 @@ This version has been optimized for execution on a large cluster and should
 scale well with 128 or more engines.
 """
 from __future__ import division, print_function
-# from statsmodels.compat import range, lmap
 import datetime
 import time
 from numpy import array, savez, percentile, nan
 from IPython.parallel import Client
+
+from arch.compat.python import range, lmap
 
 # Time in seconds to sleep before checking if ready
 SLEEP = 10
@@ -44,11 +45,6 @@ def clear_cache(client, view):
     client.history = []
     view.history = []
     client.session.digest_history.clear()
-
-
-# TODO: Remove when merged in no 2to3 branch
-def lmap(*args):
-    return list(map(*args))
 
 
 def wrapper(n, trend, b, rng_seed=0):

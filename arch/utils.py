@@ -2,6 +2,7 @@
 Utility functions that do not explicitly relate to Volatility modeling
 """
 from __future__ import print_function, division, absolute_import
+
 import numpy as np
 from pandas import DataFrame, Series
 import pandas as pd
@@ -12,27 +13,6 @@ deprecation_doc = """
 {func} has been moved.  Please use {new_location}.{func}.
 """
 
-# def ensure_1d(y, var_name=None):
-#     """Returns a 1d array if the input is squeezable to 1d. Otherwise raises
-#     and error
-#
-#     Parameters
-#     ----------
-#     y : array-like
-#         The array to squeeze to 1d, or raise an error if not compatible
-#
-#     Returns
-#     -------
-#     y_1d : array
-#         A 1d version of the input, returned as an array
-#     """
-#     y = squeeze(asarray(y))
-#     if y.ndim != 1:
-#         if var_name is None:
-#             var_name = 'Input'
-#         err_msg = '{var_name} must be 1d or squeezable to 1d.'
-#         raise ValueError(err_msg.format(var_name=var_name))
-#     return y
 
 def ensure1d(x, name, series=False):
     if isinstance(x, pd.Series):
@@ -58,7 +38,7 @@ def ensure1d(x, name, series=False):
     if not isinstance(x, np.ndarray):
         x = np.asarray(x)
     if x.ndim == 0:
-        x=x[None]
+        x = x[None]
     elif x.ndim != 1:
         x = np.squeeze(x)
         if x.ndim != 1:
@@ -69,6 +49,23 @@ def ensure1d(x, name, series=False):
     else:
         return np.asarray(x)
 
+
+def ensure2d(x, name):
+    if isinstance(x, pd.Series):
+        return pd.DataFrame(x)
+    elif isinstance(x, pd.DataFrame):
+        return x
+    elif isinstance(x, np.ndarray):
+        if x.ndim == 0:
+            return np.asarray([[x]])
+        elif x.ndim == 1:
+            return x[:, None]
+        elif x.ndim == 2:
+            return x
+        else:
+            raise ValueError('Variable ' + name + 'must be 2d or reshapeable to 2d')
+    else:
+        raise ValueError('Variable ' + name + 'must be 2d or reshapeable to 2d')
 
 
 def parse_dataframe(x, name):
@@ -83,26 +80,29 @@ def parse_dataframe(x, name):
 
 
 class DocStringInheritor(type):
-    '''A variation on
+    """
+    A variation on
     http://groups.google.com/group/comp.lang.python/msg/26f7b4fcb4d66c95
     by Paul McGuire
-    '''
-    def __new__(meta, name, bases, clsdict):
-        if not('__doc__' in clsdict and clsdict['__doc__']):
+    """
+
+    def __new__(mcs, name, bases, clsdict):
+        if not ('__doc__' in clsdict and clsdict['__doc__']):
             for mro_cls in (mro_cls for base in bases for mro_cls in base.mro()):
-                doc=mro_cls.__doc__
+                doc = mro_cls.__doc__
                 if doc:
-                    clsdict['__doc__']=doc
+                    clsdict['__doc__'] = doc
                     break
         for attr, attribute in clsdict.items():
             if not attribute.__doc__:
                 for mro_cls in (mro_cls for base in bases for mro_cls in base.mro()
                                 if hasattr(mro_cls, attr)):
-                    doc=getattr(getattr(mro_cls,attr),'__doc__')
+                    doc = getattr(getattr(mro_cls, attr), '__doc__')
                     if doc:
-                        attribute.__doc__=doc
+                        attribute.__doc__ = doc
                         break
-        return type.__new__(meta, name, bases, clsdict)
+        return type.__new__(mcs, name, bases, clsdict)
+
 
 def date_to_index(date, date_index):
     """
@@ -129,13 +129,12 @@ def date_to_index(date, date_index):
     equal to date.
     """
     import datetime as dt
-    import pandas as pd
     from pandas.core.common import is_datetime64_dtype
 
     if not is_datetime64_dtype(date_index):
         raise ValueError('date_index must be a datetime64 array')
 
-    if not np.all((np.diff(date_index.values).astype(dtype=np.int64))>0):
+    if not np.all((np.diff(date_index.values).astype(dtype=np.int64)) > 0):
         raise ValueError('date_index is not monotonic and unique')
     if not isinstance(date, (dt.datetime, np.datetime64, str)):
         raise ValueError("date must be a datetime, datetime64 or string")

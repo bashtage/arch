@@ -371,7 +371,7 @@ class TestBootstrap(TestCase):
 
         ci = bs.conf_int(func, reps=num_bootstrap, method='studentized',
                          std_err_func=std_err_func)
-        bs.reset(seed=23456)
+        bs.reset()
         base = func(self.x)
         results = np.zeros((num_bootstrap, 2))
         stud_results = np.zeros((num_bootstrap, 2))
@@ -392,11 +392,11 @@ class TestBootstrap(TestCase):
             ci_direct[1, i] = base[i] - std_err[i] * np.percentile(stud_results[:, i], 2.5)
         assert_allclose(ci, ci_direct)
 
-        bs.reset(seed=23456)
+        bs.reset()
         ci = bs.conf_int(func, reps=num_bootstrap, method='studentized',
                          studentize_reps=50)
 
-        bs.reset(seed=23456)
+        bs.reset()
         base = func(self.x)
         results = np.zeros((num_bootstrap, 2))
         stud_results = np.zeros((num_bootstrap, 2))
@@ -437,7 +437,7 @@ class TestBootstrap(TestCase):
             return y.mean(axis=0)
 
         ci = bs.conf_int(func, reps=num_bootstrap, method='bc')
-        bs.reset(seed=23456)
+        bs.reset()
         ci_db = bs.conf_int(func, reps=num_bootstrap, method='debiased')
         assert_equal(ci, ci_db)
         base, results = bs._base, bs._results
@@ -477,7 +477,7 @@ class TestBootstrap(TestCase):
         bs.seed(23456)
 
         ci = bs.conf_int(func=param_func, reps=reps, sampling='parametric')
-        bs.reset(seed=23456)
+        bs.reset()
         results = np.zeros((reps, 2))
         count = 0
         mu = self.x.mean(0)
@@ -487,9 +487,9 @@ class TestBootstrap(TestCase):
             count += 1
         assert_equal(bs._results, results)
 
-        bs.reset(seed=23456)
+        bs.reset()
         ci = bs.conf_int(func=semi_func, reps=100, sampling='semi')
-        bs.reset(seed=23456)
+        bs.reset()
         results = np.zeros((reps, 2))
         count = 0
         for pos, kw in bs.bootstrap(100):
@@ -566,7 +566,7 @@ class TestBootstrap(TestCase):
             return y.mean(axis=0)
     
         ci_direct = bs.conf_int(func, reps=num_bootstrap, method='bca')
-        bs.reset(seed=23456)
+        bs.reset()
         base, results = bs._base, bs._results
         p = np.zeros(2)
         p[0] = np.mean(results[:, 0] < base[0])
