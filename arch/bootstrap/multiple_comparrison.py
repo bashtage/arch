@@ -69,6 +69,7 @@ class StepM(object):
     --------
     SPA
     """
+
     def __init__(self, benchmark, models, size=0.05, block_size=None, reps=1000,
                  bootstrap='stationary', studentize=True, nested=False):
         self.benchmark = ensure2d(benchmark, 'benchmark')
@@ -80,6 +81,39 @@ class StepM(object):
         self.reps = reps
         self.size = size
         self._superior_models = None
+
+        self._info = self._display_info()
+
+    def _display_info(self):
+        if self.spa.studentize:
+            method = 'nested bootstrap' if self.spa.nested else 'asymptotic'
+        else:
+            method = 'none'
+        return OrderedDict([('FWER (size)', str(self.size)),
+                            ('studentization_method', method),
+                            ('bootstrap', str(self.spa.bootstrap)),
+                            ('id', hex(id(self)))])
+
+    def __str__(self):
+        repr = 'StepM('
+        for key in self._info:
+            if key == 'id':
+                continue
+            repr += key.replace('_', ' ') + ': ' + self._info[key] + ', '
+        repr = repr[:-2] + ')'
+        return repr
+
+    def __repr__(self):
+        return self.__str__()[:-1] + ', ID:' + self._info['id'] + ')'
+
+    def _repr_html_(self):
+        repr = '<strong>StepM</strong>('
+        for key in self._info:
+            if key == 'id':
+                continue
+            repr += '<strong>' + key.replace('_', ' ') + '</strong>: ' + self._info[key] + ','
+        repr = repr[:-1] + ')'
+        return repr
 
     def compute(self):
         """
@@ -199,9 +233,10 @@ class SPA(object):
             self.block_size = block_size
         self.studentize = studentize
         self.nested = nested
-        self._loss_diff = np.asarray(models) - np.asarray(self.benchmark)
+        self._loss_diff = np.asarray(self.benchmark) - np.asarray(self.models)
         self._loss_diff_var = None
         self.t, self.k = self._loss_diff.shape
+        bootstrap = bootstrap.lower().replace(' ', '_')
         if bootstrap in ('stationary', 'sb'):
             bootstrap = StationaryBootstrap(self.block_size, self._loss_diff)
         elif bootstrap in ('circular', 'cbb'):
@@ -210,7 +245,7 @@ class SPA(object):
         elif bootstrap in ('moving_block', 'mbb'):
             bootstrap = MovingBlockBootstrap(self.block_size, self._loss_diff)
         else:
-            raise ValueError('Unknown bootstrap')
+            raise ValueError('Unknown bootstrap:' + bootstrap)
         self.bootstrap = bootstrap
         self._pvalues = None
         self._simulated_vals = None
@@ -222,9 +257,9 @@ class SPA(object):
             method = 'nested bootstrap' if self.nested else 'asymptotic'
         else:
             method = 'none'
-        return OrderedDict(studentization_method=method,
-                           bootstrap=str(self.bootstrap),
-                           id=hex(id(self)))
+        return OrderedDict([('studentization_method', method),
+                            ('bootstrap', str(self.bootstrap)),
+                            ('id', hex(id(self)))])
 
     def __str__(self):
         repr = 'SPA('
@@ -244,7 +279,7 @@ class SPA(object):
             if key == 'id':
                 continue
             repr += '<strong>' + key.replace('_', ' ') + '</strong>: ' + self._info[key] + ','
-        repr = repr[:-2] + ')'
+        repr = repr[:-1] + ')'
         return repr
 
     def reset(self):
@@ -267,6 +302,8 @@ class SPA(object):
 
     def subset(self, selector):
         """
+
+
         Parameters
         ----------
         selector : array
@@ -286,15 +323,15 @@ class SPA(object):
             self._simulate_values()
         simulated_vals = self._simulated_vals
         # Use subset if needed
-        simulated_vals = simulated_vals[:, self._selector, :]
+        simulated_vals = simulated_vals[self._selector, :, :]
         max_simulated_vals = np.max(simulated_vals, 0)
         loss_diff = self._loss_diff[:, self._selector]
 
         max_loss_diff = np.max(loss_diff.mean(axis=0))
         pvalues = (max_simulated_vals > max_loss_diff).mean(axis=0)
-        self._pvalues = OrderedDict(lower=pvalues[0],
-                                    consistent=pvalues[1],
-                                    upper=pvalues[2])
+        self._pvalues = OrderedDict([('lower', pvalues[0]),
+                                     ('consistent', pvalues[1]),
+                                     ('upper', pvalues[2])])
 
     def _simulate_values(self):
         self._compute_variance()
@@ -303,12 +340,12 @@ class SPA(object):
         # 3. Compute simulated values
         # Upper always re-centers
         upper_mean = self._loss_diff.mean(0)
-        consitent_mean = upper_mean.copy()
-        consitent_mean[np.logical_not(self._valid_columns)] = 0.0
+        consistent_mean = upper_mean.copy()
+        consistent_mean[np.logical_not(self._valid_columns)] = 0.0
         lower_mean = upper_mean.copy()
         # Lower does not re-center those that are worse
         lower_mean[lower_mean < 0] = 0.0
-        means = [lower_mean, consitent_mean, upper_mean]
+        means = [lower_mean, consistent_mean, upper_mean]
         simulated_vals = np.zeros((self.k, self.reps, 3))
         for i, bsdata in enumerate(self.bootstrap.bootstrap(self.reps)):
             pos_arg, kw_arg = bsdata
@@ -333,7 +370,7 @@ class SPA(object):
             bs = self.bootstrap.clone(demeaned)
             func = lambda x: x.mean(0)
             means = bs.apply(func, reps=self.reps)
-            return self.t * means.var(axis=0)
+            variances = self.t * means.var(axis=0)
         else:
             t = self.t
             p = 1.0 / self.block_size
@@ -389,8 +426,10 @@ class SPA(object):
         if self._pvalues is None:
             msg = 'compute must be called before pvalues are available.'
             raise RuntimeError(msg)
+        if not (0.0 < pvalue < 1.0):
+            raise ValueError('pvalue must be in (0,1)')
         # Subset if neded
-        simulated_values = self._simulated_vals[:, self._selector]
+        simulated_values = self._simulated_vals[self._selector, :, :]
         max_simulated_values = np.max(simulated_values, axis=0)
         crit_vals = np.percentile(max_simulated_values,
                                   100.0 * (1 - pvalue),
@@ -421,11 +460,11 @@ class SPA(object):
         List of superior models returned is always with respect to the initial
         set of models, even when using subset().
         """
-        if pvalue_type not in self._pvalues:
-            raise ValueError('Unknown pvalue type')
         if self._pvalues is None:
             msg = 'compute must be called before pvalues are available.'
             raise RuntimeError(msg)
+        if pvalue_type not in self._pvalues:
+            raise ValueError('Unknown pvalue type')
         crit_val = self.critical_values(pvalue=pvalue)[pvalue_type]
         better_models = self._loss_diff.mean(0) > crit_val
         better_models = np.logical_and(better_models, self._selector)
