@@ -788,9 +788,9 @@ class CircularBlockBootstrap(IIDBootstrap):
     """
 
     def __init__(self, block_size, *args, **kwargs):
+        super(CircularBlockBootstrap, self).__init__(*args, **kwargs)
         self.block_size = block_size
         self._parameters = [block_size]
-        super(CircularBlockBootstrap, self).__init__(*args, **kwargs)
         self._name = 'Circular Block Bootstrap'
 
     def __str__(self):
