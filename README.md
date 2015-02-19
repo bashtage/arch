@@ -9,44 +9,47 @@ written in Python (and Cython)
 
 ## What is in this repository?
 
-* Univariate ARCH Models
-    * Mean models
-        * Constant mean
-        * Heterogeneous Autoregression (HAR)
-        * Autoregression (AR)
-        * Zero mean
-        * Models with and without exogenous regressors
-    * Volatility models
-        * ARCH
-        * GARCH
-        * TARCH
-        * EGARCH
-        * EWMA/RiskMetrics
-    * Distributions
-        * Normal
-        * Student's T
-* Bootstrapping
-    * Bootstraps
-        * IID Bootstrap
-        * Stationary Bootstrap
-        * Circular Block Bootstrap
-        * Moving Block Bootstrap
-    * Methods
-        * Confidence interval construction
-        * Covariance estimation
-        * Apply method to estimate model across bootstraps
-        * Generic Bootstrap iterator
-* Unit Root Tests
-    * Augmented Dickey-Fuller
-    * Dickey-Fuller GLS
-    * Phillips-Perron
-    * KPSS
-    * Variance Ratio tests
-     
+* [Univariate ARCH Models](#volatility)
+* [Unit Root Tests](#unit-root)
+* [Bootstrapping](#bootstrap)
+* [Multiple Comparison Tests](#multiple-comparison)
+
+## Documentation
+Documentation is hosted on [read the docs](http://arch.readthedocs.org/en/latest/)
+
+## More about ARCH
+More information about ARCH and related models is available in the notes and 
+research available at [Kevin Sheppard's site](http://www.kevinsheppard.com).
+
+## Contributing
+
+Contributions are welcome.  There are opportunities at many levels to 
+contribute:
+
+* Implement new volatility process, e.g FIGARCH
+* Improve docstrings where unclear or with typos
+* Provide examples, preferably in the form of IPython notebooks
 
 ## Examples
 
+<a name="volatility"/>
 ### Volatility Modeling 
+
+* Mean models
+    * Constant mean
+    * Heterogeneous Autoregression (HAR)
+    * Autoregression (AR)
+    * Zero mean
+    * Models with and without exogenous regressors
+* Volatility models
+    * ARCH
+    * GARCH
+    * TARCH
+    * EGARCH
+    * EWMA/RiskMetrics
+* Distributions
+    * Normal
+    * Student's T
 
 See the [univariate volatility example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/univariate_volatility_modeling.ipynb) for a more complete overview.
 
@@ -63,7 +66,30 @@ am = arch_model(returns)
 res = am.fit()
 ```
 
+<a name="unit-root"/>
+### Unit Root Tests
+
+* Augmented Dickey-Fuller
+* Dickey-Fuller GLS
+* Phillips-Perron
+* KPSS
+* Variance Ratio tests
+
+See the [unit root testing example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/unitroot_examples.ipynb) for examples of testing series for unit roots.
+
+<a name="bootstrap"/>
 ### Bootstrap
+
+* Bootstraps
+    * IID Bootstrap
+    * Stationary Bootstrap
+    * Circular Block Bootstrap
+    * Moving Block Bootstrap
+* Methods
+    * Confidence interval construction
+    * Covariance estimation
+    * Apply method to estimate model across bootstraps
+    * Generic Bootstrap iterator
 
 See the [bootstrap example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/bootstrap_examples.ipynb) for examples of bootstrapping the Sharpe ratio and a Probit model from Statsmodels.
 
@@ -93,12 +119,12 @@ bs = IIDBootstrap(returns)
 ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')    
 ```
 
-### Unit Root Tests
-See the [unit root testing example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/unitroot_examples.ipynb) for examples of testing series for unit roots.
+<a name="multiple-comparison"/>
+### Multiple Comparison Procedures
 
-## Documentation
-Documentation is hosted on [read the docs](http://arch.readthedocs.org/en/latest/)
- 
+* Test of Superior Predictive Ability (SPA), also known as the Reality Check or Bootstrap Data Snooper
+* Stepwise (StepM)
+
 ## Requirements
 
 * NumPy (1.7+)
@@ -109,7 +135,7 @@ Documentation is hosted on [read the docs](http://arch.readthedocs.org/en/latest
 
 ### Optional Requirements
 
-* Numba (0.14+), only required if installing using --no-binary
+* Numba (0.15+) will be used if available and when installed using --no-binary
 
 ### Installing
 
@@ -118,9 +144,7 @@ Documentation is hosted on [read the docs](http://arch.readthedocs.org/en/latest
 * sphinx (to build docs)
 * sphinx-napoleon (to build docs)
 
-## Installing
-
-Setup does not verify requirements.  Please ensure these are installed.
+**Note**: Setup does not verify requirements.  Please ensure these are installed.
 
 ### Linux/OSX
 
@@ -155,25 +179,13 @@ skipped using the flag `--no-binary`
 pip install git+git://github.com/bashtage/arch.git --install-option "--no-binary"
 ```
 
-_Note that it isn't possible to run the test suite. It will fail if installed with_ `--no-binary` _since it tests the Numba implementations against Cython implementations._
+_Note: the test suite compares the Numba implementations against Cython 
+implementations of some recursions, and so it isn't possible to run the 
+test suite when installing with_ `--no-binary` .
 
 **Anaconda**
 
 ```
 conda install -c https://conda.binstar.org/bashtage arch
 ```
-
-## More about ARCH
-More information about ARCH and related models is available in the notes and 
-research available at [Kevin Sheppard's site](http://www.kevinsheppard.com).
-
-## Contributing
-
-Contributions are welcome.  There are opportunities at many levels to 
-contribute:
-
-* Implement new volatility process, e.g FIGARCH
-* Improve docstrings where unclear or with typos
-* Provide examples, preferably in the form of IPython notebooks
-
 
