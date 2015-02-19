@@ -86,11 +86,11 @@ class StepM(object):
 
     def _display_info(self):
         if self.spa.studentize:
-            method = 'nested bootstrap' if self.spa.nested else 'asymptotic'
+            method = 'bootstrap' if self.spa.nested else 'asymptotic'
         else:
             method = 'none'
-        return OrderedDict([('FWER (size)', str(self.size)),
-                            ('studentization_method', method),
+        return OrderedDict([('FWER (size)', '{:0.2f}'.format(self.size)),
+                            ('studentization', method),
                             ('bootstrap', str(self.spa.bootstrap)),
                             ('id', hex(id(self)))])
 
@@ -104,16 +104,33 @@ class StepM(object):
         return repr
 
     def __repr__(self):
-        return self.__str__()[:-1] + ', ID:' + self._info['id'] + ')'
+        return self.__str__()[:-1] + ', ID: ' + self._info['id'] + ')'
 
     def _repr_html_(self):
         repr = '<strong>StepM</strong>('
         for key in self._info:
             if key == 'id':
                 continue
-            repr += '<strong>' + key.replace('_', ' ') + '</strong>: ' + self._info[key] + ','
-        repr = repr[:-1] + ')'
+            repr += '<strong>' + key.replace('_', ' ') + '</strong>: ' + self._info[key] + ', '
+        repr = repr[:-2] + ')'
         return repr
+
+    def reset(self):
+        """
+        Reset the bootstrap to it's initial state.
+        """
+        self.spa.reset()
+
+    def seed(self, value):
+        """
+        Seeds the bootstrap's random number generator
+
+        Parameters
+        ----------
+        value : int
+            Integer to use as the seed
+        """
+        self.spa.seed(value)
 
     def compute(self):
         """
@@ -254,10 +271,10 @@ class SPA(object):
 
     def _display_info(self):
         if self.studentize:
-            method = 'nested bootstrap' if self.nested else 'asymptotic'
+            method = 'bootstrap' if self.nested else 'asymptotic'
         else:
             method = 'none'
-        return OrderedDict([('studentization_method', method),
+        return OrderedDict([('studentization', method),
                             ('bootstrap', str(self.bootstrap)),
                             ('id', hex(id(self)))])
 
@@ -271,15 +288,15 @@ class SPA(object):
         return repr
 
     def __repr__(self):
-        return self.__str__()[:-1] + ', ID:' + self._info['id'] + ')'
+        return self.__str__()[:-1] + ', ID: ' + self._info['id'] + ')'
 
     def _repr_html_(self):
         repr = '<strong>SPA</strong>('
         for key in self._info:
             if key == 'id':
                 continue
-            repr += '<strong>' + key.replace('_', ' ') + '</strong>: ' + self._info[key] + ','
-        repr = repr[:-1] + ')'
+            repr += '<strong>' + key.replace('_', ' ') + '</strong>: ' + self._info[key] + ', '
+        repr = repr[:-2] + ')'
         return repr
 
     def reset(self):
@@ -377,7 +394,7 @@ class SPA(object):
             variances = np.sum(demeaned ** 2, 0) / t
             for i in range(1, t):
                 kappa = ((1.0 - (i / t)) * ((1 - p) ** i)) + ((i / t) * ((1 - p) ** (t - i)))
-                variances += 2 * kappa * np.sum(demeaned[0:(t - i), :] * demeaned[i:t, :], 0) / t
+                variances += 2 * kappa * np.sum(demeaned[:(t - i), :] * demeaned[i:, :], 0) / t
         self._loss_diff_var = variances
 
     def _check_column_validity(self):

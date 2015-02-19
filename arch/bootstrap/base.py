@@ -631,6 +631,8 @@ class IIDBootstrap(object):
 
     def cov(self, func, reps=1000, recenter=True, extra_kwargs=None):
         """
+        Compute parameter covariance using bootstrap
+
         Parameters
         ----------
         func : callable
@@ -700,6 +702,80 @@ class IIDBootstrap(object):
             errors = results - base
 
         return errors.T.dot(errors) / reps
+
+    def var(self, func, reps=1000, recenter=True, extra_kwargs=None):
+        """
+        Compute parameter variance using bootstrap
+
+        Parameters
+        ----------
+        func : callable
+            Callable function that returns the statistic of interest as a
+            1-d array
+        reps : int, optional
+            Number of bootstrap replications
+        recenter : bool, optional
+            Whether to center the bootstrap variance estimator on the average
+            of the bootstrap samples (True) or to center on the original sample
+            estimate (False).  Default is True.
+        extra_kwargs: dict, optional
+            Dictionary of extra keyword arguments to pass to func
+
+        Returns
+        -------
+        var : 1-d array
+            Bootstrap variance estimator
+
+        Notes
+        -----
+        func must have the signature
+
+        .. code:: python
+
+            func(params, *args, **kwargs)
+
+        where params are a 1-dimensional array, and `*args` and `**kwargs` are
+        data used in the the bootstrap.  The first argument, params, will be
+        none when called using the original data, and will contain the estimate
+        computed using the original data in bootstrap replications.  This
+        parameter is passed to allow parametric bootstrap simulation.
+
+        Example
+        -------
+        Bootstrap covariance of the mean
+
+        >>> from arch.bootstrap import IIDBootstrap
+        >>> import numpy as np
+        >>> def func(x):
+        ...     return x.mean(axis=0)
+        >>> y = np.random.randn(1000,3)
+        >>> bs = IIDBootstrap(y)
+        >>> variances = bs.var(func, 1000)
+
+        Bootstrap covariance using a function that takes additional input
+
+        >>> def func(x, stat='mean'):
+        ...     if stat=='mean':
+        ...         return x.mean(axis=0)
+        ...     elif stat=='var':
+        ...         return x.var(axis=0)
+        >>> variances = bs.var(func, 1000, extra_kwargs={'stat':'var'})
+
+        .. note::
+
+            Note this is a generic example and so the class used should be the
+            name of the required bootstrap
+
+        """
+        self._construct_bootstrap_estimates(func, reps, extra_kwargs)
+        base, results = self._base, self._results
+
+        if recenter:
+            errors = results - np.mean(results, 0)
+        else:
+            errors = results - base
+
+        return (errors ** 2).sum(0) / reps
 
     def update_indices(self):
         """

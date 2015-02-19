@@ -453,7 +453,6 @@ class TestMeanModel(unittest.TestCase):
             for p in [1, 2, 3]:
                 for o in [1, 2, 3]:
                     for q in [1, 2, 3]:
-                        print(name + ':' + str(p) + ',' + str(o) + ',' + str(q))
                         if name in ('arch',):
                             cm.volatility = process(p=p + o + q)
                             cm.fit(iter=0, disp='off')
@@ -515,7 +514,6 @@ class TestMeanModel(unittest.TestCase):
     def test_date_first_last_obs(self):
         y = self.y_series
         cm = ConstantMean(y, hold_back=y.index[100])
-        print(y.index[100])
         res = cm.fit()
         cm = ConstantMean(y, hold_back=100)
         res2 = cm.fit()
@@ -529,7 +527,6 @@ class TestMeanModel(unittest.TestCase):
         assert_equal(res.resid.values, res2.resid.values)
 
         cm = ConstantMean(y, last_obs=y.index[900])
-        print(y.index[900])
         res = cm.fit()
         cm = ConstantMean(y, last_obs=900)
         res2 = cm.fit()
