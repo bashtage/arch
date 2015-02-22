@@ -112,7 +112,9 @@ class MCS(MultipleComparison):
     def __init__(self, losses, size, reps=1000, block_size=None, method='R',
                  bootstrap='stationary'):
         self.losses = ensure2d(losses, 'losses')
-        self._losses_arr = np.array(losses)
+        self._losses_arr = np.asarray(self.losses)
+        if self._losses_arr.shape[1] < 2:
+            raise ValueError('losses must have at least two columns')
         self.size = size
         self.reps = reps
         if block_size is None:
@@ -379,7 +381,7 @@ class StepM(MultipleComparison):
         better_models = list(self.spa.better_models(self.size))
         all_better_models = better_models
         # 3. Stop if nothing superior
-        while better_models:
+        while better_models and (len(better_models) < self.k):
             # A. Use Selector to remove better models
             selector = np.ones(self.k, dtype=np.bool)
             if isinstance(self.models, pd.DataFrame):  # Columns
@@ -403,6 +405,9 @@ class StepM(MultipleComparison):
         """
         Returns a list of the indices or column names of the superior models.
         """
+        if self._superior_models is None:
+            msg = 'compute must be callded before accessing superior_models'
+            raise RuntimeError(msg)
         return self._superior_models
 
 

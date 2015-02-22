@@ -128,7 +128,7 @@ ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 * Stepwise (StepM)
 * Model Confidence Set (MCS)
 
-See the [multiple comparison example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/bootstrap_multiple_comparison.ipynb) 
+See the [multiple comparison example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/multiple-comparison_examples.ipynb) 
 for examples of the multiple comparison procedures.
 
 ## Requirements

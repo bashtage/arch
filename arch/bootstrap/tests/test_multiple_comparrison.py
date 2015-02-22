@@ -147,6 +147,14 @@ class TestSPA(TestCase):
         spa = SPA(self.benchmark, self.models, bootstrap='moving block')
         assert_true(isinstance(spa.bootstrap, MovingBlockBootstrap))
 
+    def test_single_model(self):
+        spa = SPA(self.benchmark, self.models[:,0])
+        spa.compute()
+
+        spa = SPA(self.benchmark_series, self.models_df.iloc[:,0])
+        spa.compute()
+
+
 
 class TestStepM(TestCase):
     @classmethod
@@ -212,6 +220,24 @@ class TestStepM(TestCase):
         stepm = StepM(self.benchmark_series, self.models, size=0.05, studentize=False)
         expected = 'StepM(FWER (size): 0.05, studentization: none, bootstrap: ' + str(stepm.spa.bootstrap) + ')'
         assert_equal(expected, str(stepm))
+
+    def test_single_model(self):
+        stepm = StepM(self.benchmark, self.models[:,0], size=0.10)
+        stepm.compute()
+
+        stepm = StepM(self.benchmark_series, self.models_df.iloc[:,0])
+        stepm.compute()
+
+    def test_all_superior(self):
+        adj_models = self.models - 100.0
+        stepm = StepM(self.benchmark, adj_models, size=0.10)
+        stepm.compute()
+        assert_equal(len(stepm.superior_models), self.models.shape[1])
+
+    def test_errors(self):
+        stepm = StepM(self.benchmark, self.models, size=0.10)
+        with assert_raises(RuntimeError):
+            stepm.superior_models
 
 
 class TestMCS(TestCase):
@@ -328,11 +354,13 @@ class TestMCS(TestCase):
         assert_true(isinstance(mcs.pvalues, pd.DataFrame))
 
     def test_errors(self):
+        assert_raises(ValueError, MCS, self.losses[:,1], 0.05)
         mcs = MCS(self.losses, 0.05, reps=100, block_size=10, method='max', bootstrap='circular')
         mcs.compute()
         mcs = MCS(self.losses, 0.05, reps=100, block_size=10, method='max', bootstrap='moving block')
         mcs.compute()
         assert_raises(ValueError, MCS, self.losses, 0.05, bootstrap='unknown')
+
 
     def test_str_repr(self):
         mcs = MCS(self.losses, 0.05)
