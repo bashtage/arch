@@ -9,6 +9,8 @@ import scipy.stats as stats
 from arch.compat.python import iteritems, itervalues, add_metaclass, range
 from arch.utils import DocStringInheritor
 
+__all__ = ['IIDBootstrap', 'StationaryBootstrap', 'CircularBlockBootstrap',
+           'MovingBlockBootstrap']
 
 try:
     from ._samplers import stationary_bootstrap_sample

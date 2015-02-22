@@ -3,7 +3,7 @@ from unittest import TestCase
 from nose.tools import assert_true
 
 import pandas as pd
-from pandas.util.testing import assert_series_equal
+from pandas.util.testing import assert_series_equal, assert_frame_equal
 import numpy as np
 from numpy import random, linspace
 from numpy.testing import assert_equal, assert_raises, assert_allclose
@@ -11,7 +11,7 @@ import scipy.stats as stats
 
 from arch.bootstrap import (StationaryBootstrap, CircularBlockBootstrap,
                             MovingBlockBootstrap)
-from arch.bootstrap.multiple_comparrison import SPA, StepM
+from arch.bootstrap.multiple_comparrison import SPA, StepM, MCS
 
 
 class TestSPA(TestCase):
@@ -68,8 +68,8 @@ class TestSPA(TestCase):
         spa.reset()
         bs = spa.bootstrap.clone(demeaned)
         variances = spa._loss_diff_var
-        boostrap_variances = t * bs.var(lambda x: x.mean(0), reps=100, recenter=True)
-        assert_allclose(boostrap_variances, variances)
+        bootstrap_variances = t * bs.var(lambda x: x.mean(0), reps=100, recenter=True)
+        assert_allclose(bootstrap_variances, variances)
 
     def test_pvalues_and_critvals(self):
         spa = SPA(self.benchmark, self.models, reps=100)
@@ -109,7 +109,8 @@ class TestSPA(TestCase):
 
         expected = ('<strong>SPA</strong>(' +
                     '<strong>studentization</strong>: asymptotic, ' +
-                    '<strong>bootstrap</strong>: ' + str(spa.bootstrap) + ')')
+                    '<strong>bootstrap</strong>: ' + str(spa.bootstrap) + ', '
+                                                                          '<strong>ID</strong>: ' + hex(id(spa)) + ')')
 
         assert_equal(spa._repr_html_(), expected)
         spa = SPA(self.benchmark, self.models, studentize=False, bootstrap='cbb')
@@ -164,14 +165,13 @@ class TestStepM(TestCase):
                                      columns=['col_' + str(i) for i in range(cls.k)])
 
     def test_equivalence(self):
-        adj_models = self.models - linspace(-2.0,2.0,self.k)
+        adj_models = self.models - linspace(-2.0, 2.0, self.k)
         stepm = StepM(self.benchmark, adj_models, size=0.20, reps=200)
         stepm.seed(23456)
         stepm.compute()
 
-
-        adj_models = self.models_df - linspace(-2.0,2.0,self.k)
-        stepm_pandas = StepM(self.benchmark_series, adj_models , size=0.20, reps=200)
+        adj_models = self.models_df - linspace(-2.0, 2.0, self.k)
+        stepm_pandas = StepM(self.benchmark_series, adj_models, size=0.20, reps=200)
         stepm_pandas.seed(23456)
         stepm_pandas.compute()
         stepm_pandas.superior_models
@@ -184,11 +184,10 @@ class TestStepM(TestCase):
         stepm = StepM(self.benchmark, adj_models, reps=120)
         stepm.compute()
         superior_models = stepm.superior_models
-        print(superior_models)
         spa = SPA(self.benchmark, adj_models, reps=120)
         spa.compute()
-        print(spa.pvalues)
-        print(spa.critical_values(0.05))
+        spa.pvalues
+        spa.critical_values(0.05)
         spa.better_models(0.05)
         adj_models = self.models_df - linspace(-3.0, 3.0, self.k)
         stepm = StepM(self.benchmark_series, adj_models, reps=120)
@@ -197,7 +196,7 @@ class TestStepM(TestCase):
 
     def test_str_repr(self):
         stepm = StepM(self.benchmark_series, self.models, size=0.10)
-        expected = 'StepM(FWER (size): 0.10, studentization: asymptotic, bootstrap: ' + str(stepm.spa.bootstrap) +')'
+        expected = 'StepM(FWER (size): 0.10, studentization: asymptotic, bootstrap: ' + str(stepm.spa.bootstrap) + ')'
         assert_equal(str(stepm), expected)
         expected = expected[:-1] + ', ID: ' + hex(id(stepm)) + ')'
         assert_equal(stepm.__repr__(), expected)
@@ -205,9 +204,144 @@ class TestStepM(TestCase):
         expected = ('<strong>StepM</strong>('
                     '<strong>FWER (size)</strong>: 0.10, '
                     '<strong>studentization</strong>: asymptotic, '
-                    '<strong>bootstrap</strong>: ' + str(stepm.spa.bootstrap) +')')
+                    '<strong>bootstrap</strong>: ' + str(stepm.spa.bootstrap) + ', ' +
+                    '<strong>ID</strong>: ' + hex(id(stepm)) + ')')
+
         assert_equal(stepm._repr_html_(), expected)
 
         stepm = StepM(self.benchmark_series, self.models, size=0.05, studentize=False)
-        expected = 'StepM(FWER (size): 0.05, studentization: none, bootstrap: ' + str(stepm.spa.bootstrap) +')'
+        expected = 'StepM(FWER (size): 0.05, studentization: none, bootstrap: ' + str(stepm.spa.bootstrap) + ')'
         assert_equal(expected, str(stepm))
+
+
+class TestMCS(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        random.seed(23456)
+        fixed_rng = stats.chi2(10)
+        cls.t = t = 1000
+        cls.k = k = 50
+        cls.losses = fixed_rng.rvs((t, k))
+        index = pd.date_range('2000-01-01', periods=t)
+        cls.losses_df = pd.DataFrame(cls.losses, index=index)
+
+    def test_r_method(self):
+        def r_step(losses, indices):
+            # A basic but direct implementation of the r method
+            t, k = losses.shape
+            b = len(indices)
+            mean_diffs = losses.mean(0)
+            loss_diffs = np.zeros((k, k))
+            variances = np.zeros((k, k))
+            bs_diffs = np.zeros(b)
+            stat_candidates = []
+            for i in range(k):
+                for j in range(i, k):
+                    if i == j:
+                        variances[i, i] = 1.0
+                        loss_diffs[i, j] = 0.0
+                        continue
+                    loss_diffs_vec = losses[:, i] - losses[:, j]
+                    loss_diffs_vec = loss_diffs_vec - loss_diffs_vec.mean()
+                    loss_diffs[i, j] = mean_diffs[i] - mean_diffs[j]
+                    loss_diffs[j, i] = mean_diffs[j] - mean_diffs[i]
+                    for n in range(b):
+                        # Compute bootstraped versions
+                        bs_diffs[n] = loss_diffs_vec[indices[n]].mean()
+                    variances[j, i] = variances[i, j] = (bs_diffs ** 2).mean()
+                    stat_candidates.append(np.abs(bs_diffs) / np.sqrt(variances[i, j]))
+            stat_candidates = np.array(stat_candidates).T
+            stat_distn = np.max(stat_candidates, 1)
+            std_loss_diffs = loss_diffs / np.sqrt(variances)
+            stat = np.max(std_loss_diffs)
+            pval = np.mean(stat <= stat_distn)
+            loc = np.argwhere(std_loss_diffs == stat)
+            drop_index = loc.flat[0]
+            return pval, drop_index
+
+        losses = self.losses[:, :10]  # Limit size
+        mcs = MCS(losses, 0.05, reps=200)
+        mcs.seed(23456)
+        mcs.compute()
+        m = 5  # Number of direct
+        pvals = np.zeros(m) * np.nan
+        indices = np.zeros(m) * np.nan
+        for i in range(m):
+            removed = list(indices[np.isfinite(indices)])
+            include = list(set(list(range(10))).difference(removed))
+            include.sort()
+            pval, drop_index = r_step(losses[:, np.array(include)], mcs._bootsrap_indices)
+            pvals[i] = pval if i == 0 else np.max([pvals[i - 1], pval])
+            indices[i] = include[drop_index]
+        direct = pd.DataFrame(pvals, index=indices, columns=['Pvalue'])
+        direct.index.name = 'Model index'
+        assert_frame_equal(mcs.pvalues.iloc[:m], direct)
+
+    def test_max_method(self):
+        def max_step(losses, indices):
+            # A basic but direct implementation of the max method
+            t, k = losses.shape
+            b = len(indices)
+            loss_errors = losses - losses.mean(0)
+            stats = np.zeros((b, k))
+            for n in range(b):
+                # Compute bootstraped versions
+                bs_loss_errors = loss_errors[indices[n]]
+                stats[n] = bs_loss_errors.mean(0) - bs_loss_errors.mean()
+            variances = (stats ** 2).mean(0)
+            std_devs = np.sqrt(variances)
+            stat_dist = np.max(stats / std_devs, 1)
+
+            test_stat = (losses.mean(0) - losses.mean())
+            std_test_stat = test_stat / std_devs
+            test_stat = np.max(std_test_stat)
+            pval = (test_stat < stat_dist).mean()
+            drop_index = np.argwhere(std_test_stat == test_stat).squeeze()
+            return pval, drop_index, std_devs
+
+        losses = self.losses[:, :10]  # Limit size
+        mcs = MCS(losses, 0.05, reps=200, method='max')
+        mcs.seed(23456)
+        mcs.compute()
+        m = 8  # Number of direct
+        pvals = np.zeros(m) * np.nan
+        indices = np.zeros(m) * np.nan
+        for i in range(m):
+            removed = list(indices[np.isfinite(indices)])
+            include = list(set(list(range(10))).difference(removed))
+            include.sort()
+            pval, drop_index, std_devs = max_step(losses[:, np.array(include)], mcs._bootsrap_indices)
+            pvals[i] = pval if i == 0 else np.max([pvals[i - 1], pval])
+            indices[i] = include[drop_index]
+        direct = pd.DataFrame(pvals, index=indices, columns=['Pvalue'])
+        direct.index.name = 'Model index'
+        assert_frame_equal(mcs.pvalues.iloc[:m], direct)
+
+
+    def test_smoke(self):
+        mcs = MCS(self.losses, 0.05, reps=100, block_size=10, method='max')
+        mcs.compute()
+        mcs = MCS(self.losses_df, 0.05, reps=100, block_size=10, method='r')
+        mcs.compute()
+        assert_equal(type(mcs.included), list)
+        assert_equal(type(mcs.excluded), list)
+        assert_true(isinstance(mcs.pvalues, pd.DataFrame))
+
+    def test_errors(self):
+        mcs = MCS(self.losses, 0.05, reps=100, block_size=10, method='max', bootstrap='circular')
+        mcs.compute()
+        mcs = MCS(self.losses, 0.05, reps=100, block_size=10, method='max', bootstrap='moving block')
+        mcs.compute()
+        assert_raises(ValueError, MCS, self.losses, 0.05, bootstrap='unknown')
+
+    def test_str_repr(self):
+        mcs = MCS(self.losses, 0.05)
+        expected = 'MCS(size: 0.05, bootstrap: ' + str(mcs.bootstrap) + ')'
+        assert_equal(str(mcs), expected)
+        expected = expected[:-1] + ', ID: ' + hex(id(mcs)) + ')'
+        assert_equal(mcs.__repr__(), expected)
+        expected = ('<strong>MCS</strong>(' +
+                    '<strong>size</strong>: 0.05, ' +
+                    '<strong>bootstrap</strong>: ' + str(mcs.bootstrap) + ', ' +
+                    '<strong>ID</strong>: ' + hex(id(mcs)) + ')')
+        assert_equal(mcs._repr_html_(), expected)

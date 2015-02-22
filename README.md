@@ -91,7 +91,9 @@ See the [unit root testing example notebook](http://nbviewer.ipython.org/github/
     * Apply method to estimate model across bootstraps
     * Generic Bootstrap iterator
 
-See the [bootstrap example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/bootstrap_examples.ipynb) for examples of bootstrapping the Sharpe ratio and a Probit model from Statsmodels.
+See the [bootstrap example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/bootstrap_examples.ipynb) 
+for examples of bootstrapping the Sharpe ratio and a Probit model from 
+Statsmodels.
 
 
 ```python
@@ -124,6 +126,10 @@ ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 
 * Test of Superior Predictive Ability (SPA), also known as the Reality Check or Bootstrap Data Snooper
 * Stepwise (StepM)
+* Model Confidence Set (MCS)
+
+See the [multiple comparison example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/bootstrap_multiple_comparison.ipynb) 
+for examples of the multiple comparison procedures.
 
 ## Requirements
 
@@ -180,7 +186,7 @@ pip install git+git://github.com/bashtage/arch.git --install-option "--no-binary
 ```
 
 _Note: the test suite compares the Numba implementations against Cython 
-implementations of some recursions, and so it isn't possible to run the 
+implementations of some recursions, and so it is not possible to run the 
 test suite when installing with_ `--no-binary` .
 
 **Anaconda**
