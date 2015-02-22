@@ -11,7 +11,7 @@ def stationary_bootstrap_sample(int[:] indices,
     """
     Parameters
     -------
-    indices: 1-s arrah
+    indices: 1-d array
         Array containing draws from randint with the same size as the data in
         the range of [0,nobs)
     u : 1-d array

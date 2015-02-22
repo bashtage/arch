@@ -20,6 +20,7 @@ parameters and the (internally generated) sampling scheme.
     Bootstraps for IID data <iid-bootstraps>
     Bootstraps for Time-series Data <timeseries-bootstraps>
     Multiple Comparisons <multiple-comparison>
+    Multiple Comparison Examples <bootstrap_multiple_comparison>
     Background and References <background>
 
 

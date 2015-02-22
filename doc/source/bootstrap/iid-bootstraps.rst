@@ -6,4 +6,4 @@ Independent, Identical Distributed Data (i.i.d.)
 either i.i.d. or at least not serially dependant.
 
 .. autoclass:: IIDBootstrap
-    :members: conf_int, cov, apply, bootstrap, reset, seed, set_state, get_state
+    :members: conf_int, var, cov, apply, bootstrap, reset, seed, set_state, get_state

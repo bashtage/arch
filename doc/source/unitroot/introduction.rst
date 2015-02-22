@@ -1,7 +1,7 @@
 Introduction
 ------------
 
-All tests expect a 1-d series as the first input.  The input can be any array that can be `squeeze`d to 1-d, a pandas
+All tests expect a 1-d series as the first input.  The input can be any array that can `squeeze` into a 1-d array, a pandas
 `Series` or a pandas `DataFrame` that contains a single variable.
 
 All tests share a common structure.  The key elements are:

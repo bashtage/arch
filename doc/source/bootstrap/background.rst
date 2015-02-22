@@ -18,8 +18,16 @@ Articles used in the creation of this module include
 
 .. [CarpenterBithell] Carpenter, J., & Bithell, J. (2000). Bootstrap confidence intervals: when, which, what? A practical guide for medical statisticians. `Statistics in medicine`, 19(9), 1141-1164.
 
-.. [DavidsonMacKinnon] Davidson, R., & MacKinnon, J. G. (2006). Bootstrap methods in econometrics. Palgrave handbook of econometrics, 1, 812-38.
+.. [DavidsonMacKinnon] Davidson, R., & MacKinnon, J. G. (2006). Bootstrap methods in econometrics. `Palgrave Handbook of Econometrics`, 1, 812-38.
 
 .. [DiCiccioEfron] DiCiccio, T. J., & Efron, B. (1996). Bootstrap confidence intervals. `Statistical science`, 189-212.
 
 .. [Efron] Efron, B. (1987). Better bootstrap confidence intervals. `Journal of the American statistical Association`, 82(397), 171-185.
+
+.. [Hansen] Hansen, P. R. (2005). A test for superior predictive ability. `Journal of Business & Economic Statistics`, 23(4).
+
+.. [HansenLundeNason] Hansen, P. R., Lunde, A., & Nason, J. M. (2011). The model confidence set. `Econometrica`, 79(2), 453-497.
+
+.. [RomanoWolf] Romano, J. P., & Wolf, M. (2005). Stepwise multiple testing as formalized data snooping. `Econometrica`, 73(4), 1237-1282.
+
+.. [White] White, H. (2000). A reality check for data snooping. `Econometrica`, 68(5), 1097-1126.

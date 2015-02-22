@@ -59,7 +59,7 @@ Using ``partial`` instead of ``extra_kwargs``
 
 ``functools.partial`` can be used instead to provide a wrapper function which
 can then be used in the bootstrap.  This example fixed the value of ``x_orig``
-so that it isn't necessary to use ``extra_kwargs``.
+so that it is not necessary to use ``extra_kwargs``.
 
 ::
 

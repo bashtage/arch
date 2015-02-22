@@ -46,7 +46,7 @@ The bootstrapped Sharpe ratios can be directly computed using `apply`.
 
 The Bootstrap Iterator
 ======================
-The lowest-level method to use a boostrap is the iterator.  This is used
+The lowest-level method to use a bootstrap is the iterator.  This is used
 internally in all higher-level methods that estimate a function using multiple
 bootstrap replications.  The iterator returns a two-element tuple where the
 first element contains all positional arguments (in the order input) passed when
