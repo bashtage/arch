@@ -9,7 +9,7 @@ else
     export OS=linux-64
 fi
 
-sudo Xvfb :99 -nolisten tcp -fbdir /var/run
+sudo Xvfb :99 -nolisten tcp -fbdir /var/run &
 
 ## declare Python and Numpy Versions
 declare -a PY_VERSIONS=( "27" "33" "34" )

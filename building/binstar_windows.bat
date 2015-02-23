@@ -26,10 +26,12 @@ set NPY_VERSION=18 19
 
         cd %CURRENT_WORKING_DIR%
         IF %%P==27 (
-            call python2_setup.bat
+            REM No longer needed using Python Tools
+            REM call python2_setup.bat
         ) ELSE (
             call python3_setup.bat
         )
+        set PATH=C:\Program Files (x86)\Git\bin;%PATH%;
         set CONDA_PY=%%P
         set CONDA_NPY=%%N
         echo Python: !CONDA_PY!, NumPy: !CONDA_NPY!
