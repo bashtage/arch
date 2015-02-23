@@ -1,5 +1,3 @@
-sphinxcontrib-napoleon
-mock
 numpy
 Cython
 scipy
@@ -8,4 +6,5 @@ pandas
 patsy
 ipython
 statsmodels
-
+sphinxcontrib-napoleon==0.2.11
+mock
