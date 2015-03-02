@@ -8,7 +8,6 @@ on the local machine.  This can be started using a command similar to
 Remote clusters can be used by modifying the call to Client.
 """
 from __future__ import division, print_function
-#from statsmodels.compat import range, lmap
 import datetime
 from numpy import array, savez, percentile, nan
 from IPython.parallel import Client
@@ -122,7 +121,7 @@ for tr in trends:
     for i in range(EX_NUM):
         print("Experiment Number {0} for Trend {1}".format(i + 1, tr))
         # Non parallel version
-        #out = lmap(wrapper, T, [tr] * m, [EX_SIZE] * m, [seeds[i]] * m))
+        # out = lmap(wrapper, T, [tr] * m, [EX_SIZE] * m, [seeds[i]] * m))
         now = datetime.datetime.now()
         out = lview.map_sync(wrapper, T, [tr] * m, [EX_SIZE] * m, [seeds[i]] * m)
         # Prevent unnecessary results from accumulating

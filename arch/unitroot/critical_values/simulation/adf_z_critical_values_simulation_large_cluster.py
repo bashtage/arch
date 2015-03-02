@@ -135,7 +135,6 @@ for tr in trends:
     filename = 'adf_z_' + tr + '.npz'
 
     for i, t in enumerate(T):
-        #for i in range(EX_NUM):
         print("Time series length {0} for Trend {1}".format(t, tr))
         now = datetime.datetime.now()
         # Serial version

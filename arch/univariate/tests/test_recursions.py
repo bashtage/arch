@@ -12,12 +12,15 @@ from arch.compat.python import range
 
 try:
     import numba
+
     missing_numba = False
 except ImportError:
     missing_numba = True
 
+
 class Timer(object):
-    def __init__(self, first, first_name, second, second_name, model_name, setup, repeat=5, number=10):
+    def __init__(self, first, first_name, second, second_name, model_name,
+                 setup, repeat=5, number=10):
         self.first_code = first
         self.second_code = second
         self.setup = setup
@@ -42,7 +45,6 @@ class Timer(object):
         print(self.first_name + '/' + self.second_name + ' Ratio: ' +
               str(self.ratio) + 's')
         print('\n')
-
 
     def time(self):
         self.times = []
@@ -328,7 +330,8 @@ recpy.garch_recursion(parameters, fresids, sresids, sigma2, 1, 1, 1, T, backcast
         garch_second = """
 rec.garch_recursion(parameters, fresids, sresids, sigma2, 1, 1, 1, T, backcast, var_bounds)
         """
-        timer = Timer(garch_first, 'Numba', garch_second, 'Cython', 'GARCH', self.timer_setup + garch_setup)
+        timer = Timer(garch_first, 'Numba', garch_second, 'Cython', 'GARCH',
+                      self.timer_setup + garch_setup)
         timer.display()
         assert_true(timer.ratio < 10.0)
 
@@ -347,7 +350,8 @@ recpy.harch_recursion(parameters, resids, sigma2, lags, T, backcast, var_bounds)
 rec.harch_recursion(parameters, resids, sigma2, lags, T, backcast, var_bounds)
         """
 
-        timer = Timer(harch_first, 'Numba', harch_second, 'Cython', 'HARCH', self.timer_setup + harch_setup)
+        timer = Timer(harch_first, 'Numba', harch_second, 'Cython', 'HARCH',
+                      self.timer_setup + harch_setup)
         timer.display()
         assert_true(timer.ratio < 10.0)
 
@@ -370,5 +374,6 @@ rec.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast, var_bo
         egarch_second = """
 recpy.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast, var_bounds, lnsigma2, std_resids, abs_std_resids)
         """
-        timer = Timer(egarch_first, 'Numba', egarch_second, 'Cython', 'EGARCH', self.timer_setup + egarch_setup)
+        timer = Timer(egarch_first, 'Numba', egarch_second, 'Cython', 'EGARCH',
+                      self.timer_setup + egarch_setup)
         timer.display()

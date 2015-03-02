@@ -19,8 +19,8 @@ from ..utility.exceptions import InvalidLengthWarning, invalid_length_doc
 from .critical_values.dickey_fuller import *
 from .critical_values.kpss import *
 from .critical_values.dfgls import *
-from ..utils import ensure1d, DocStringInheritor
 from ..compat.python import add_metaclass, range
+from ..utility.array import ensure1d, DocStringInheritor
 from ..utility.timeseries import add_trend
 
 

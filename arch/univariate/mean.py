@@ -15,7 +15,7 @@ from pandas import DataFrame
 from .base import ARCHModel, implicit_constant, ARCHModelResult
 from .volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH
 from .distribution import Normal, StudentsT
-from ..utils import ensure1d, parse_dataframe, date_to_index
+from ..utility.array import ensure1d, parse_dataframe, date_to_index, find_index
 from ..compat.python import range, iteritems
 
 __all__ = ['HARX', 'ConstantMean', 'ZeroMean', 'ARX', 'arch_model', 'LS']
@@ -24,6 +24,17 @@ COV_TYPES = {'white': 'White\'s Heteroskedasticity Consistent Estimator',
              'classic_ols': 'Homoskedastic (Classic)',
              'robust': 'Bollerslev-Wooldridge (Robust) Estimator',
              'mle': 'ML Estimator'}
+
+
+def align_forecast(f, align):
+    if align == 'origin':
+        return f
+    elif align in ('target', 'horizon'):
+        for i, col in enumerate(f):
+            f[col] = f[col].shift(i + 1)
+        return f
+    else:
+        raise ValueError('Unknown alignment')
 
 
 class HARX(ARCHModel):
@@ -117,6 +128,7 @@ class HARX(ARCHModel):
             max_lags = np.max(np.asarray(lags, dtype=np.int32))
         else:
             max_lags = 0
+        self._max_lags = max_lags
 
         if isinstance(hold_back, (str, dt.datetime, np.datetime64)):
             date_index = self._y_series.index
@@ -132,6 +144,7 @@ class HARX(ARCHModel):
 
         if _first_obs_index < max_lags:
             from warnings import warn
+
             warn('hold_back is less then the minimum number given the lags '
                  'selected', RuntimeWarning)
             _first_obs_index = max_lags
@@ -196,8 +209,8 @@ class HARX(ARCHModel):
 
     def __repr__(self):
         repr = self.__str__()
-        repr.replace('\n','')
-        return repr  + ', id: ' + hex(id(self))
+        repr.replace('\n', '')
+        return repr + ', id: ' + hex(id(self))
 
     def _repr_html_(self):
         """HTML representation for IPython Notebook"""
@@ -560,6 +573,80 @@ class HARX(ARCHModel):
                                self._y_series, names, loglikelihood,
                                self._is_pandas, self)
 
+    def forecast(self, params, horizon=1, start=None, align='origin'):
+        """
+        Forecast values
+
+        Parameters
+        ----------
+        params : 1d array-like
+            Model parameters
+        horizon : int, optional
+            Maximum horizon to construct forecasts
+        start : int, str, or datetime-like, optional
+            Integer index, date-convertible string or datetime to use to compute
+            the observation of the first forecast. String and datetime can only
+            be used with a pandas Series or DataFrame.
+        align : str, optional
+            Alignment of forecasts.  'origin' aligns with last observation used
+            to produce the forecast, so that observation i will have columns
+            h.1, h.2, ..., h.horizon which are the 1-step ahead using
+            information up-to-and-including i.  'target' aligns the observations
+            so that the forecast in position [i, h.k] will for the time i=k
+            forecast of the value in position i.
+
+        Returns
+        -------
+        forecasts : DataFrame
+            Array of forecasts aligned according to `align`
+        """
+        if self._x is not None:
+            raise RuntimeError('Forecasts are not available when the model '
+                               'contains exogenous regressors.')
+        params = np.asarray(params)
+        max_lag = self._max_lags
+        # 1. Convert start to numeric index, if needed
+        if start is None:
+            start_loc = max(0, max_lag - 1)
+        else:
+            start_loc = find_index(self._y_series, start)
+        if start_loc < (max_lag - 1):
+            raise ValueError('Forecasts cannot be produced for observations '
+                             'earlier than the maximum lag length.')
+        t = self._y.shape[0]
+        format_str = '{0:>0' + str(int(np.ceil(np.log10(horizon + 0.5)))) + '}'
+        columns = ['h.' + format_str.format(h + 1) for h in range(horizon)]
+        forecasts = DataFrame(index=self._y_series.index,
+                              columns=columns,
+                              dtype=np.float64)
+        # Fast track for no lags
+        if max_lag == 0:
+            fcast = params[0] if self.constant else 0.0
+            forecasts.iloc[start_loc:, :] = fcast
+            return align_forecast(forecasts, align)
+
+        # 2b. Compute forecasts recursively for each date
+        fcast = np.zeros(t + horizon)
+        fcast[:start_loc] = self._y[:start_loc]
+        for i in range(start_loc, t):
+            fcast[i] = self._y[i]
+            for h in range(horizon):
+                forecast_index = i + h + 1
+                fcast[forecast_index] = 0.0
+                ind = 0
+                if self.constant:
+                    fcast[forecast_index] += params[ind]
+                    ind += 1
+                for lag in self._lags.T:
+                    st = forecast_index - lag[1]
+                    en = forecast_index - lag[0]
+                    avg_lag = fcast[st:en].mean()
+                    fcast[forecast_index] += params[ind] * avg_lag
+                    ind += 1
+            forecasts.iloc[i, :] = fcast[i + 1:i + horizon + 1]
+        # 3. Use align function to align output
+        return align_forecast(forecasts, align)
+
 
 class ConstantMean(HARX):
     """
@@ -623,7 +710,6 @@ class ConstantMean(HARX):
 
     def _model_description(self, include_lags=False):
         return super(ConstantMean, self)._model_description(include_lags)
-
 
     def simulate(self, params, nobs, burn=500, initial_value_vol=None):
         """
@@ -745,7 +831,6 @@ class ZeroMean(HARX):
 
     def _model_description(self, include_lags=False):
         return super(ZeroMean, self)._model_description(include_lags)
-
 
     def simulate(self, params, nobs, burn=500, initial_value_vol=None):
         """
@@ -961,7 +1046,8 @@ class LS(HARX):
 
     """
 
-    def __init__(self, y=None, x=None, constant=True, hold_back=None, last_obs=None):
+    def __init__(self, y=None, x=None, constant=True, hold_back=None,
+                 last_obs=None):
         # Convert lags to 2-d format
         super(LS, self).__init__(y, x, None, constant, False, hold_back,
                                  last_obs)

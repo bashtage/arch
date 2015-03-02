@@ -302,8 +302,8 @@ class TestVolatiltyProcesses(unittest.TestCase):
                 shock22 = shock22 / 22.0
 
             sigma2[t] += parameters[1] * shock1 \
-                         + parameters[2] * shock5 \
-                         + parameters[3] * shock22
+                + parameters[2] * shock5 \
+                + parameters[3] * shock22
 
             data[t] = e[t] * np.sqrt(sigma2[t])
         data = data[500:]
@@ -552,7 +552,6 @@ class TestVolatiltyProcesses(unittest.TestCase):
                         'beta[1]', 'beta[2]', 'beta[3]']
         assert_equal(names, names_target)
 
-
     def test_errors(self):
         assert_raises(ValueError, GARCH, p=-1)
         assert_raises(ValueError, GARCH, o=-1)
@@ -579,7 +578,6 @@ class TestVolatiltyProcesses(unittest.TestCase):
         with warnings.catch_warnings(record=True) as w:
             harch.simulate(parameters, 1000, studt.simulate([4.0]))
             assert_equal(len(w), 1)
-
 
     def test_model_names(self):
         garch = GARCH(2, 0, 0)
@@ -662,7 +660,6 @@ class TestVolatiltyProcesses(unittest.TestCase):
         assert_equal(ewma.num_params, 0)
         assert_equal(ewma.name, 'EWMA/RiskMetrics')
 
-
     def test_riskmetrics(self):
         rm06 = RiskMetrics2006()
 
@@ -697,7 +694,6 @@ class TestVolatiltyProcesses(unittest.TestCase):
 
         assert_equal(rm06.num_params, 0)
         assert_equal(rm06.name, 'RiskMetrics2006')
-
 
     def test_egarch(self):
         egarch = EGARCH(p=1, o=1, q=1)

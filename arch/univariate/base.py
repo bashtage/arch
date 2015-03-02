@@ -22,7 +22,7 @@ from statsmodels.tools.numdiff import approx_fprime, approx_hess
 
 from .distribution import Distribution, Normal
 from .volatility import VolatilityProcess, ConstantVariance
-from ..utils import ensure1d, DocStringInheritor, date_to_index
+from ..utility.array import ensure1d, DocStringInheritor, date_to_index
 from ..compat.python import add_metaclass, range
 
 __all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel']
@@ -315,7 +315,7 @@ class ARCHModel(object):
         """Return the parameters of each model in a tuple"""
 
         km, kv = self.num_params, self.volatility.num_params
-        kd= self.distribution.num_params
+        kd = self.distribution.num_params
         return x[:km], x[km:km + kv], x[km + kv:]
 
     def fit(self, iter=1, disp='final', starting_values=None,
@@ -363,7 +363,7 @@ class ARCHModel(object):
         backcast = v.backcast(resids)
         self._backcast = backcast
         sv_volatility = v.starting_values(resids)
-        var_bounds  = v.variance_bounds(resids)
+        var_bounds = v.variance_bounds(resids)
         v.compute_variance(sv_volatility, resids, sigma2, backcast, var_bounds)
         std_resids = resids / sqrt(sigma2)
         # 2. Construct constraint matrices from all models and distribution
@@ -404,9 +404,10 @@ class ARCHModel(object):
                 valid = valid and bound[0] <= sv[i] <= bound[1]
             if not valid:
                 import warnings
-                warnings.warn("Starting values do not satisfy the parameter "
-                              "constraints in the model.  The provided starting "
-                              "values will be ignored.")
+
+                warnings.warn('Starting values do not satisfy the parameter '
+                              'constraints in the model.  The provided '
+                              'starting values will be ignored.')
                 starting_values = None
 
         if starting_values is None:
@@ -433,7 +434,7 @@ class ARCHModel(object):
                               full_output=1, epsilon=1.4901161193847656e-08,
                               callback=_callback, disp=disp)
         else:
-            if iter > 0:   # Fix limit in SciPy < 0.14
+            if iter > 0:  # Fix limit in SciPy < 0.14
                 disp = 2
             xopt = fmin_slsqp(func, sv, f_ieqcons=f_ieqcons, bounds=bounds,
                               args=args, iter=100, acc=1e-06, iprint=1,
@@ -563,6 +564,12 @@ class ARCHModel(object):
         else:
             return inv_hess / nobs
 
+    def forecast(self, params, horizon=1, start=None, align='origin'):
+        """
+        Computes forecasts from the model
+        """
+        raise NotImplementedError("Subclasses must implement")
+
 
 class ARCHModelResult(object):
     """
@@ -638,7 +645,8 @@ class ARCHModelResult(object):
         Array of p-values for the t-statistics
     resid : 1-d array or Series
         nobs element array containing model residuals
-
+    model : ARCHModel
+        Model instance used to produce the fit
     """
 
     def __init__(self, params, param_cov, r2, resid, volatility, cov_type,
@@ -648,7 +656,7 @@ class ARCHModelResult(object):
         self._resid = resid
         self._is_pandas = is_pandas
         self._r2 = r2
-        self._model = model
+        self.model = model
         self._datetime = dt.datetime.now()
         self._cache = resettable_cache()
         self._dep_name = dep_var.name
@@ -696,7 +704,7 @@ class ARCHModelResult(object):
         # 4. Distribution parameters
         # 5. Notes
 
-        model = self._model
+        model = self.model
         model_name = model.name + ' - ' + model.volatility.name
 
         # Summary Header
@@ -769,9 +777,9 @@ class ARCHModelResult(object):
             pos += 1
             param_table_data.append(row)
 
-        mc = self._model.num_params
-        vc = self._model.volatility.num_params
-        dc = self._model.distribution.num_params
+        mc = self.model.num_params
+        vc = self.model.volatility.num_params
+        dc = self.model.distribution.num_params
         counts = (mc, vc, dc)
         titles = ('Mean Model', 'Volatility Model', 'Distribution')
         total = 0
@@ -831,10 +839,10 @@ class ARCHModelResult(object):
         else:
             params = np.asarray(self.params)
             if self.cov_type == 'robust':
-                param_cov = self._model.compute_param_cov(params)
+                param_cov = self.model.compute_param_cov(params)
             else:
-                param_cov = self._model.compute_param_cov(params,
-                                                          robust=False)
+                param_cov = self.model.compute_param_cov(params,
+                                                         robust=False)
         return pd.DataFrame(param_cov, columns=self._names, index=self._names)
 
     @cache_readonly
@@ -863,7 +871,7 @@ class ARCHModelResult(object):
         """
         return 1 - (
             (1 - self.rsquared) * (self.nobs - 1) / (
-                self.nobs - self._model.num_params))
+                self.nobs - self.model.num_params))
 
     @cache_readonly
     def nobs(self):
@@ -974,102 +982,55 @@ class ARCHModelResult(object):
 
         return fig
 
+    def forecast(self, params=None, horizon=1, start=None, align='origin'):
+        """
+        Construct forecasts from estimated model
 
-        # def forecast(self, horizon=1, start=None, align='origin'):
-        #             # TODO: Forecast implementation
-        #  """
-        # Construct forecasts from a HAR-X
-        #
-        # Parameters
-        #     ----------
-        #     horizon : int, optional
-        #         Forecast horizon.  All forecasts up to horizon are constructed.
-        #     start : int, optional
-        #         First observation from which to construct forecasts.  If omitted,
-        #         forecasts will start at the first observation used in the estimation
-        #         of the model
-        #     align : str, optional
-        #         Either 'origin' or 'target' (equiv. 'horizon').  Determines how the
-        #         array containing forecasts is aligned.  If 'origin', forecast[t,h]
-        #         contains the forecast made using y[:t] (that is, up to but not
-        #         including t) for horizon h + 1.  For example, y[100,2] contains the
-        #         3-step ahead forecast using the first 100 data points, which will
-        #         correspond to the realization y[100 + 2].  If 'target', then
-        #         the same forecast is in location y[102, 2], so that it is aligned
-        #         with the observation to use when evaluating, but still in the same
-        #         column.
-        #
-        #     Returns
-        #     -------
-        #     ytph : array
-        #         nobs by horizon array of forecast values.  Values that are not
-        #         forecast are set to `np.nan`.  If align is `target', returned array
-        #         is nobs + horizon by horizon.
-        #
-        #     Notes
-        #     -----
-        #     If model contains exogenous variables (`model.x is not None`), then only
-        #     1-step ahead forecasts are available.  Using horizon > 1 will produce
-        #     a warning and all columns, except the first, will be nan-filled.
-        #     """
-        #
-        #     model = self._model
-        #     constant, lags, x = model.constant, model._lags, model.x
-        #     params = self.params
-        #     max_lag = np.max(lags)
-        #     y, nobs = model.y, model.nobs
-        #     h = horizon
-        #     ytph = empty((nobs, h))
-        #     ytph.fill(np.nan)
-        #
-        #     ytemp = zeros(nobs + h)
-        #     if start is None:
-        #         start = self._model.first_obs
-        #     elif start < self._model.first_obs:
-        #         from warnings import warn
-        #
-        #         warn('Cannot start forecasts before the first observation used in '
-        #              'estimation.', SyntaxWarning)
-        #         start = self._model.first_obs
-        #     if x is not None and h > 1:
-        #         from warnings import warn
-        #
-        #         warn('Cannot forecasts for horizons longer than 1 when model has '
-        #              'exogenous regressors', SyntaxWarning)
-        #         pass
-        #
-        #     for t in range(start, nobs):
-        #         for h in range(horizon):
-        #             # Only 1 step ahead for models with x!
-        #             if h > 1 and x is not None:
-        #                 ytph[t, h] = np.nan
-        #                 break
-        #
-        #             count = 0
-        #
-        #             ytemp[t - max_lag:t] = y[t - max_lag:t]
-        #             ytph[t, h] = 0.0
-        #             if constant:
-        #                 ytph[t, h] += params[0]
-        #                 count += 1
-        #             for lag in lags.nobs:
-        #                 val = ytemp[t + h - lag[1]:t + h - lag[0]]
-        #                 if lag[1] - lag[0] > 1:
-        #                     val = val.mean()
-        #                 ytph[t, h] += params[count] * val
-        #                 count += 1
-        #             if x is not None:
-        #                 ytph[t, h] += params[count:].dot(x[t, :])
-        #             # Copy for recursion
-        #             ytemp[t + h] = ytph[t, h]
-        #
-        #     if align.lower() in ('horizon', 'target'):
-        #         temp = empty((nobs + horizon - 1, horizon))
-        #         temp.fill(np.nan)
-        #         for t in range(start, nobs):
-        #             for h in range(horizon):
-        #                 temp[t + h, h] = ytph[t, h]
-        #         ytph = temp
-        #
-        #     return ytph
+        Parameters
+        ----------
+        params : 1d array-like, optional
+            Alternative parameters to use.  If not provided, the parameters
+            computed by fitting the model are used.  Must be identical in shape
+            to the parameters computed by fitting the model.
+        horizon : int, optional
+           Number of steps to forecast
+        start : int, datetime or str, optional
+            An integer, datetime or str indicating the first observation to
+            produce the forecast for.  Datetimes can only be used with pandas
+            inputs that have a datetime index.  Strings must be convertible
+            to a date time, such as in '1945-01-01'.
+        align : str, optional
+            Either 'origin' or 'target'.  When set of 'origin', the t-th row
+            of forecasts contains the forecasts for t+1, t+2, ..., t+h.
+            When set to 'target', the t-th row contains the 1-step ahead
+            forecast from time t-1, the 2 step from time t-2, ..., and the
+            h-step from time t-h.  'target' simplified computing forecast
+            errors since the realization and h-step forecast are aligned.
 
+        Returns
+        -------
+        forecasts : DataFrame
+            t by h data frame containing the forecasts.  The alignment of the
+            forecasts is controlled by `align`.
+
+        Notes
+        -----
+        If model contains exogenous variables (`model.x is not None`), then only
+        1-step ahead forecasts are available.  Using horizon > 1 will produce
+        a warning and all columns, except the first, will be nan-filled.
+
+        If `align` is 'origin', forecast[t,h] contains the forecast made using
+        y[:t] (that is, up to but not including t) for horizon h + 1.  For
+        example, y[100,2] contains the 3-step ahead forecast using the first
+        100 data points, which will correspond to the realization y[100 + 2].
+        If `align` is 'target', then the same forecast is in location
+        [102, 2], so that it is aligned with the observation to use when
+        evaluating, but still in the same column.
+        """
+        if params is None:
+            params = self._params
+        else:
+            if (params.size != np.array(self._params).size or
+                    params.ndim != self._params.ndim):
+                raise ValueError('params have incorrect dimensions')
+        return self.model.forecast(params, horizon, start, align)
