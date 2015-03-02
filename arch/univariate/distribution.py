@@ -10,7 +10,7 @@ from scipy.special import gammaln
 import scipy.stats as stats
 
 from ..compat.python import add_metaclass
-from ..utils import DocStringInheritor
+from ..utility.array import DocStringInheritor
 
 
 __all__ = ['Distribution', 'Normal', 'StudentsT']

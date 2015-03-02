@@ -9,17 +9,17 @@ from numpy.testing import assert_almost_equal, assert_equal, assert_raises
 from nose.tools import assert_true
 import pandas as pd
 
-
 try:
     import arch.univariate.recursions as rec
 except ImportError:
     import arch.univariate.recursions_python as rec
 from arch.univariate.mean import HARX, ConstantMean, ARX, ZeroMean, \
-    arch_model, LS
+    arch_model, LS, align_forecast
 from arch.univariate.volatility import ConstantVariance, GARCH, HARCH, ARCH, \
     RiskMetrics2006, EWMAVariance, EGARCH
 from arch.univariate.distribution import Normal, StudentsT
 from arch.compat.python import range, iteritems
+from pandas.util.testing import assert_frame_equal
 
 
 class TestMeanModel(unittest.TestCase):
@@ -67,6 +67,14 @@ class TestMeanModel(unittest.TestCase):
         res = cm.fit()
         assert_almost_equal(res.params, np.array([self.y.mean(), self.y.var()]))
 
+        forecasts = res.forecast(horizon=20, start=20)
+        direct = pd.DataFrame(index=np.arange(self.y.shape[0]),
+                              columns=['h.{0:>02d}'.format(i + 1) for i in
+                                       range(20)],
+                              dtype=np.float64)
+        direct.iloc[20:, :] = res.params.iloc[0]
+        assert_frame_equal(direct, forecasts)
+
     def test_zero_mean(self):
         zm = ZeroMean(self.y)
         parameters = np.array([1.0])
@@ -87,6 +95,14 @@ class TestMeanModel(unittest.TestCase):
         assert_equal(zm.lags, None)
         res = zm.fit()
         assert_almost_equal(res.params, np.array([np.mean(self.y ** 2)]))
+
+        forecasts = res.forecast(horizon=99)
+        direct = pd.DataFrame(index=np.arange(self.y.shape[0]),
+                              columns=['h.{0:>02d}'.format(i + 1) for i in
+                                       range(99)],
+                              dtype=np.float64)
+        direct.iloc[:, :] = 0.0
+        assert_frame_equal(direct, forecasts)
         garch = GARCH()
         zm.volatility = garch
         zm.fit(iter=0)
@@ -115,6 +131,7 @@ class TestMeanModel(unittest.TestCase):
         assert_equal(a, np.empty((0, 5)))
         assert_equal(b, np.empty(0))
         res = harx.fit()
+        assert_raises(RuntimeError, res.forecast, horizon=10)
         nobs = self.T - 22
         rhs = np.ones((nobs, 5))
         y = self.y
@@ -171,6 +188,30 @@ class TestMeanModel(unittest.TestCase):
         params = np.linalg.pinv(rhs).dot(lhs)
         assert_almost_equal(params, res.params[:-1])
 
+        assert_raises(ValueError, res.forecast, horizon=6, start=0)
+        forecasts = res.forecast(horizon=6)
+        t = self.y.shape[0]
+        direct = pd.DataFrame(index=np.arange(t),
+                              columns=['h.' + str(i + 1) for i in range(6)],
+                              dtype=np.float64)
+
+        params = np.asarray(res.params)
+        fcast = np.zeros(t + 6)
+        for i in range(21, t):
+            fcast[:i + 1] = self.y[:i + 1]
+            fcast[i + 1:] = 0.0
+            for h in range(6):
+                fcast[i + h + 1] = params[0]
+                fcast[i + h + 1] += params[1] * fcast[i + h:i + h + 1]
+                fcast[i + h + 1] += params[2] * fcast[
+                                                i + h - 4:i + h + 1].mean()
+                fcast[i + h + 1] += params[3] * fcast[
+                                                i + h - 21:i + h + 1].mean()
+            direct.iloc[i, :] = fcast[i + 1:i + 7]
+        assert_frame_equal(direct, forecasts)
+        forecasts = res.forecast(res.params, horizon=6)
+        assert_frame_equal(direct, forecasts)
+
         assert_equal(har.first_obs, 22)
         assert_equal(har.last_obs, 1000)
         assert_equal(har.hold_back, None)
@@ -178,6 +219,27 @@ class TestMeanModel(unittest.TestCase):
         assert_equal(har.nobs, self.T - 22)
         assert_equal(har.name, 'HAR')
         assert_equal(har.use_rotated, False)
+
+        har = HARX(self.y_series, lags=[1, 5, 22])
+        res = har.fit()
+        direct = pd.DataFrame(index=self.y_series.index,
+                              columns=['h.' + str(i + 1) for i in range(6)],
+                              dtype=np.float64)
+        forecasts = res.forecast(horizon=6)
+        params = np.asarray(res.params)
+        fcast = np.zeros(t + 6)
+        for i in range(21, t):
+            fcast[:i + 1] = self.y[:i + 1]
+            fcast[i + 1:] = 0.0
+            for h in range(6):
+                fcast[i + h + 1] = params[0]
+                fcast[i + h + 1] += params[1] * fcast[i + h:i + h + 1]
+                fcast[i + h + 1] += params[2] * fcast[
+                                                i + h - 4:i + h + 1].mean()
+                fcast[i + h + 1] += params[3] * fcast[
+                                                i + h - 21:i + h + 1].mean()
+            direct.iloc[i, :] = fcast[i + 1:i + 7]
+        assert_frame_equal(direct, forecasts)
 
     def test_arx(self):
         arx = ARX(self.y, self.x, lags=3, hold_back=10, last_obs=900,
@@ -208,7 +270,7 @@ class TestMeanModel(unittest.TestCase):
         rhs[:, 3] = self.x[10:900, 0]
         params = np.linalg.pinv(rhs).dot(lhs)
         assert_almost_equal(params, res.params[:-1])
-
+        assert_raises(RuntimeError, res.forecast)
         assert_equal(arx.first_obs, 10)
         assert_equal(arx.last_obs, 900)
         assert_equal(arx.hold_back, 10)
@@ -247,6 +309,21 @@ class TestMeanModel(unittest.TestCase):
             rhs[i - 3, 3] = y[i - 3]
         params = np.linalg.pinv(rhs).dot(lhs)
         assert_almost_equal(params, res.params[:-1])
+
+        forecasts = res.forecast(horizon=5)
+        direct = pd.DataFrame(index=np.arange(y.shape[0]),
+                              columns=['h.' + str(i + 1) for i in range(5)],
+                              dtype=np.float64)
+        params = res.params.iloc[:-1]
+        for i in range(2, y.shape[0]):
+            fcast = np.zeros(y.shape[0] + 5)
+            fcast[:y.shape[0]] = y.copy()
+            for h in range(1, 6):
+                reg = np.array(
+                    [1.0, fcast[i + h - 1], fcast[i + h - 2], fcast[i + h - 3]])
+                fcast[i + h] = reg.dot(params)
+            direct.iloc[i, :] = fcast[i + 1:i + 6]
+        assert_frame_equal(direct, forecasts)
 
         assert_equal(ar.first_obs, 3)
         assert_equal(ar.last_obs, 1000)
@@ -541,6 +618,26 @@ class TestMeanModel(unittest.TestCase):
         cm = ConstantMean(y, hold_back=100, last_obs=y.index[900])
         res2 = cm.fit()
         assert_equal(res.resid.values, res2.resid.values)
+
+    def test_align(self):
+        dates = pd.date_range('2000-01-01', '2010-01-01', freq='M')
+        columns = ['h.' + '{0:>02}'.format(str(h + 1)) for h in range(10)]
+        forecasts = pd.DataFrame(np.random.randn(120, 10),
+                                 index=dates,
+                                 columns=columns)
+
+        aligned = align_forecast(forecasts.copy(), align='origin')
+        assert_frame_equal(aligned, forecasts)
+
+        aligned = align_forecast(forecasts.copy(), align='target')
+        direct = forecasts.copy()
+        for i in range(10):
+            direct.iloc[(i + 1):, i] = direct.iloc[:(120 - i - 1), i].values
+            direct.iloc[:(i + 1), i] = np.nan
+        assert_frame_equal(aligned, direct)
+
+        assert_raises(ValueError, align_forecast, forecasts, align='unknown')
+
 
 
 

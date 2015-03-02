@@ -13,6 +13,7 @@ from ..compat.numba import jit
 __all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion',
            'egarch_recursion']
 
+
 @jit
 def harch_recursion(parameters, resids, sigma2, lags, nobs, backcast,
                     var_bounds):

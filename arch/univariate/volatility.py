@@ -10,7 +10,7 @@ import numpy as np
 from numpy import sqrt, ones, zeros, isscalar, sign, ones_like, arange, empty, \
     abs, array, finfo, float64, log, exp, floor
 
-from ..utils import ensure1d, DocStringInheritor
+from ..utility.array import ensure1d, DocStringInheritor
 from .distribution import Normal
 from ..compat.python import add_metaclass, range
 
@@ -329,15 +329,15 @@ class GARCH(VolatilityProcess):
 
     Standard GARCH(1,1)
 
-    >>> garch = GARCH(p=1,q=1)
+    >>> garch = GARCH(p=1, q=1)
 
     Asymmetric GJR-GARCH process
 
-    >>> gjr = GARCH(p=1,o=1,q=1)
+    >>> gjr = GARCH(p=1, o=1, q=1)
 
     Asymmetric TARCH process
 
-    >>> tarch = GARCH(p=1,o=1,q=1,power=1.0)
+    >>> tarch = GARCH(p=1, o=1, q=1, power=1.0)
 
     Notes
     -----
@@ -591,7 +591,7 @@ class HARCH(VolatilityProcess):
 
     More useful and realistic lag lengths
 
-    >>> harch = HARCH(lags=[1,5,22])
+    >>> harch = HARCH(lags=[1, 5, 22])
 
     Notes
     -----
@@ -1035,11 +1035,11 @@ class EGARCH(VolatilityProcess):
 
     Symmetric EGARCH(1,1)
 
-    >>> egarch = EGARCH(p=1,q=1)
+    >>> egarch = EGARCH(p=1, q=1)
 
     Standard EGARCH process
 
-    >>> egarch = EGARCH(p=1,o=1,q=1)
+    >>> egarch = EGARCH(p=1, o=1, q=1)
 
     Exponential ARCH process
 

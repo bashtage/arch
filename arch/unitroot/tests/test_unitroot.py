@@ -19,6 +19,7 @@ DECIMAL_3 = 3
 DECIMAL_2 = 2
 DECIMAL_1 = 1
 
+
 class TestUnitRoot(object):
     @classmethod
     def setupClass(cls):

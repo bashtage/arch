@@ -176,7 +176,7 @@ except:
     raise EnvironmentError('Cannot locate VERSION')
 
 setup(name='arch',
-      license='NCAA',
+      license='NCSA',
       version=version,
       description='ARCH for Python',
       long_description=long_description,
@@ -190,7 +190,8 @@ setup(name='arch',
       include_dirs=[numpy.get_include()],
       keywords=['arch', 'ARCH', 'variance', 'econometrics', 'volatility',
                 'finance', 'GARCH', 'bootstrap', 'random walk', 'unit root',
-                'Dickey Fuller', 'time series', 'confidence intervals'],
+                'Dickey Fuller', 'time series', 'confidence intervals',
+                'multiple comparisons', 'Reality Check', 'SPA', 'StepM'],
       zip_safe=False,
       include_package_data=True,
       distclass=BinaryDistribution,

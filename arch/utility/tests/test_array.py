@@ -5,8 +5,8 @@ from numpy.testing import assert_equal, assert_raises
 import numpy as np
 from pandas import Series, DataFrame, date_range
 
-from arch.utils import ensure1d, parse_dataframe, DocStringInheritor, \
-    date_to_index
+from arch.utility.array import ensure1d, parse_dataframe, DocStringInheritor, \
+    date_to_index, find_index
 from arch.univariate.base import implicit_constant
 from arch.compat.python import add_metaclass
 
@@ -91,6 +91,7 @@ class TestUtils(TestCase):
         y = Series(np.arange(3000.0), index=dr)
         date_index = y.index
         import datetime as dt
+
         index = date_to_index(date_index[0], date_index)
         assert_equal(index, 0)
         index = date_to_index(date_index[-1], date_index)
@@ -111,3 +112,27 @@ class TestUtils(TestCase):
         num_index = z.index
         assert_raises(ValueError, date_to_index,
                       dt.datetime(2009, 8, 1), num_index)
+
+    def test_find_index(self):
+        index = date_range('2000-01-01', periods=5000)
+        series = Series(np.arange(len(index)), index=index, name='test')
+        df = DataFrame(series)
+        assert_equal(find_index(series, '2000-01-01'), 0)
+        assert_equal(find_index(series, series.index[0]), 0)
+        assert_equal(find_index(series, series.index[3000]), 3000)
+        assert_equal(find_index(series, series.index[3000].to_datetime()), 3000)
+        found_loc =find_index(series,
+                              np.datetime64(series.index[3000].to_datetime()))
+        assert_equal(found_loc, 3000)
+        assert_raises(ValueError, find_index, series, 'bad-date')
+        assert_raises(ValueError, find_index, series, '1900-01-01')
+        
+        assert_equal(find_index(df, '2000-01-01'), 0)
+        assert_equal(find_index(df, df.index[0]), 0)
+        assert_equal(find_index(df, df.index[3000]), 3000)
+        assert_equal(find_index(df, df.index[3000].to_datetime()), 3000)
+        found_loc =find_index(df,
+                              np.datetime64(df.index[3000].to_datetime()))
+        assert_equal(found_loc, 3000)
+        assert_raises(ValueError, find_index, df, 'bad-date')
+        assert_raises(ValueError, find_index, df, '1900-01-01')

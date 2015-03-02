@@ -3,9 +3,13 @@ Utility functions that do not explicitly relate to Volatility modeling
 """
 from __future__ import print_function, division, absolute_import
 
+import datetime
+
 import numpy as np
 from pandas import DataFrame, Series
 import pandas as pd
+
+from ..compat.python import long, string_types
 
 __all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor', 'date_to_index']
 
@@ -63,7 +67,8 @@ def ensure2d(x, name):
         elif x.ndim == 2:
             return x
         else:
-            raise ValueError('Variable ' + name + 'must be 2d or reshapeable to 2d')
+            raise ValueError(
+                'Variable ' + name + 'must be 2d or reshapeable to 2d')
     else:
         raise ValueError('Variable ' + name + 'must be 2d or reshapeable to 2d')
 
@@ -88,14 +93,16 @@ class DocStringInheritor(type):
 
     def __new__(mcs, name, bases, clsdict):
         if not ('__doc__' in clsdict and clsdict['__doc__']):
-            for mro_cls in (mro_cls for base in bases for mro_cls in base.mro()):
+            for mro_cls in (mro_cls for base in bases for mro_cls in
+                            base.mro()):
                 doc = mro_cls.__doc__
                 if doc:
                     clsdict['__doc__'] = doc
                     break
         for attr, attribute in clsdict.items():
             if not attribute.__doc__:
-                for mro_cls in (mro_cls for base in bases for mro_cls in base.mro()
+                for mro_cls in (mro_cls for base in bases for mro_cls in
+                                base.mro()
                                 if hasattr(mro_cls, attr)):
                     doc = getattr(getattr(mro_cls, attr), '__doc__')
                     if doc:
@@ -154,3 +161,33 @@ def date_to_index(date, date_index):
         raise ValueError('All dates in date_index occur after date')
     else:
         return locs.max()
+
+
+def find_index(s, index):
+    """
+    Returns the numeric index for a string or datetime
+
+    Parameters
+    ----------
+    s : Series or DataFrame
+        Series or DataFrame to use in lookup
+    index : datetime-like, str
+        Index value, either a string convertible to a datetime or a datetime
+
+    Returns
+    -------
+    loc : int
+        Integer location of index value
+    """
+    if isinstance(index, (int, long, np.int, np.int64)):
+        return index
+    if isinstance(index, string_types):
+        date_index = pd.to_datetime(index, coerce=True)
+        if date_index is pd.NaT:
+            raise ValueError(index + ' cannot be converted to datetime')
+    elif isinstance(index, (pd.datetime, np.datetime64, datetime.datetime)):
+        date_index = pd.to_datetime(index)
+    loc = np.argwhere(s.index == date_index).squeeze()
+    if loc.size == 0:
+        raise ValueError('index not found')
+    return loc

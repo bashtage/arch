@@ -7,7 +7,7 @@ import pandas as pd
 import scipy.stats as stats
 
 from arch.compat.python import iteritems, itervalues, add_metaclass, range
-from arch.utils import DocStringInheritor
+from arch.utility.array import DocStringInheritor
 
 __all__ = ['IIDBootstrap', 'StationaryBootstrap', 'CircularBlockBootstrap',
            'MovingBlockBootstrap']
@@ -341,7 +341,7 @@ class IIDBootstrap(object):
         >>> import numpy as np
         >>> def func(x):
         ...     return x.mean(0)
-        >>> y = np.random.randn(1000,2)
+        >>> y = np.random.randn(1000, 2)
         >>> from arch.bootstrap import IIDBootstrap
         >>> bs = IIDBootstrap(y)
         >>> ci = bs.conf_int(func, 1000)
@@ -676,7 +676,7 @@ class IIDBootstrap(object):
         >>> import numpy as np
         >>> def func(x):
         ...     return x.mean(axis=0)
-        >>> y = np.random.randn(1000,3)
+        >>> y = np.random.randn(1000, 3)
         >>> bs = IIDBootstrap(y)
         >>> cov = bs.cov(func, 1000)
 
@@ -750,7 +750,7 @@ class IIDBootstrap(object):
         >>> import numpy as np
         >>> def func(x):
         ...     return x.mean(axis=0)
-        >>> y = np.random.randn(1000,3)
+        >>> y = np.random.randn(1000, 3)
         >>> bs = IIDBootstrap(y)
         >>> variances = bs.var(func, 1000)
 
@@ -761,7 +761,7 @@ class IIDBootstrap(object):
         ...         return x.mean(axis=0)
         ...     elif stat=='var':
         ...         return x.var(axis=0)
-        >>> variances = bs.var(func, 1000, extra_kwargs={'stat':'var'})
+        >>> variances = bs.var(func, 1000, extra_kwargs={'stat': 'var'})
 
         .. note::
 
@@ -856,7 +856,7 @@ class CircularBlockBootstrap(IIDBootstrap):
     >>> from arch.bootstrap import CircularBlockBootstrap
     >>> from numpy.random import standard_normal
     >>> y = standard_normal((500, 1))
-    >>> x = standard_normal((500,2))
+    >>> x = standard_normal((500, 2))
     >>> z = standard_normal(500)
     >>> bs = CircularBlockBootstrap(17, x, y=y, z=z)
     >>> for data in bs.bootstrap(100):

@@ -12,17 +12,17 @@ No Mean
 Constant Mean
 ~~~~~~~~~~~~~
 .. autoclass:: ConstantMean
-    :members: resids, simulate, fit
+    :members: resids, simulate, fit, forecast
 
 Autoregressions
 ~~~~~~~~~~~~~~~
 .. autoclass:: ARX
-    :members: resids, simulate, fit
+    :members: resids, simulate, fit, forecast
 
 Heterogeneous Autoregressions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: HARX
-    :members: resids, simulate, fit
+    :members: resids, simulate, fit, forecast
 
 Least Squares
 ~~~~~~~~~~~~~
