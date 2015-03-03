@@ -200,7 +200,6 @@ class Normal(Distribution):
         else:
             return sum(lls)
 
-
     def starting_values(self, std_resid):
         """
         Parameters
@@ -325,5 +324,3 @@ class StudentsT(Distribution):
 
     def parameter_names(self):
         return ['nu']
-
-

@@ -179,8 +179,8 @@ class MCS(MultipleComparison):
         losses = self._losses_arr
         mean_losses = losses.mean(0)[:, None]
         loss_diffs = mean_losses - mean_losses.T
-        # 2. Compute pairwise variance using bootstrap (k,k)
-        # 2a. In each bootstrap, save the average difference of each pair (b,k,k)
+        # Compute pairwise variance using bootstrap (k,k)
+        # In each bootstrap, save the average difference of each pair (b,k,k)
         bootstrapped_mean_losses = np.zeros((self.reps, self.k, self.k))
         bs = self.bootstrap
         for j, data in enumerate(bs.bootstrap(self.reps)):
@@ -670,8 +670,8 @@ class SPA(MultipleComparison):
         pvalue : float, optional
             P-value in (0,1) to use when computing superior models
         pvalue_type : str, optional
-            String in 'lower', 'consistent', or 'upper' indicating which critical
-            value to use.
+            String in 'lower', 'consistent', or 'upper' indicating which
+            critical value to use.
 
         Returns
         -------

@@ -33,7 +33,7 @@ _callback_iter, _callback_llf = 0, 0.0,
 _callback_func_count, _callback_iter_display = 0, 1
 
 
-def _callback(parameters):
+def _callback(*args):
     """
     Callback for use in optimization
 
@@ -78,8 +78,8 @@ def constraint(a, b):
     Returns
     -------
     partial : callable
-        Callable constraint which accepts the parameters as the first input and returns
-        a.dot(parameters) - b
+        Callable constraint which accepts the parameters as the first input and
+        returns a.dot(parameters) - b
 
     Notes
     -----
@@ -295,7 +295,7 @@ class ARCHModel(object):
         # 2. Compute sigma2 using VolatilityModel
         sigma2 = self.volatility.compute_variance(vp, resids, sigma2, backcast,
                                                   var_bounds)
-        # 3. Compute loglikelihood using Distribution
+        # 3. Compute log likelihood using Distribution
         llf = self.distribution.loglikelihoood(dp, resids, sigma2, individual)
 
         _callback_llf = -1.0 * llf
@@ -315,19 +315,18 @@ class ARCHModel(object):
         """Return the parameters of each model in a tuple"""
 
         km, kv = self.num_params, self.volatility.num_params
-        kd = self.distribution.num_params
         return x[:km], x[km:km + kv], x[km + kv:]
 
-    def fit(self, iter=1, disp='final', starting_values=None,
+    def fit(self, update_freq=1, disp='final', starting_values=None,
             cov_type='robust'):
         """
         Fits the model given a nobs by 1 vector of sigma2 values
 
         Parameters
         ----------
-        iter : int, optional
-            Frequency of iteration updates.  Output is generated every `iter`
-            iterations. Set to 0 to disable iterative output.
+        update_freq : int, optional
+            Frequency of iteration updates.  Output is generated every
+            `update_freq` iterations. Set to 0 to disable iterative output.
         disp : str
             Either 'final' to print optimization result or 'off' to display
             nothing
@@ -336,8 +335,8 @@ class ARCHModel(object):
             are constructed by the model components.
         cov_type : str, optional
             Estimation method of parameter covariance.  Supported options are
-            'robust', which does not assume the Information Matrix Equality holds
-            and 'classic' which does.  In the ARCH literature, 'robust'
+            'robust', which does not assume the Information Matrix Equality
+            holds and 'classic' which does.  In the ARCH literature, 'robust'
             corresponds to Bollerslev-Wooldridge covariance estimation.
 
         Returns
@@ -351,7 +350,7 @@ class ARCHModel(object):
         offsets = np.array((self.num_params, v.num_params, d.num_params))
         total_params = sum(offsets)
         has_closed_form = (v.num_params == 1 and d.num_params == 0) or \
-                          total_params == 0
+            total_params == 0
         if has_closed_form:
             try:
                 return self._fit_no_arch_normal_errors(cov_type=cov_type)
@@ -419,10 +418,10 @@ class ARCHModel(object):
         # 4. Estimate models using constrained optimization
         global _callback_func_count, _callback_iter, _callback_iter_display
         _callback_func_count, _callback_iter = 0, 0
-        if iter <= 0:
+        if update_freq <= 0:
             _callback_iter_display = 2 ** 31
         else:
-            _callback_iter_display = iter
+            _callback_iter_display = update_freq
 
         func = self._loglikelihood
         args = (sigma2, backcast, var_bounds)
@@ -434,7 +433,7 @@ class ARCHModel(object):
                               full_output=1, epsilon=1.4901161193847656e-08,
                               callback=_callback, disp=disp)
         else:
-            if iter > 0:  # Fix limit in SciPy < 0.14
+            if update_freq > 0:  # Fix limit in SciPy < 0.14
                 disp = 2
             xopt = fmin_slsqp(func, sv, f_ieqcons=f_ieqcons, bounds=bounds,
                               args=args, iter=100, acc=1e-06, iprint=1,
@@ -451,7 +450,6 @@ class ARCHModel(object):
         vol = np.zeros_like(resids)
         self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
         vol = np.sqrt(vol)
-        nobs = resids.shape[0]
 
         try:
             r2 = self._r2(mp)
@@ -659,10 +657,11 @@ class ARCHModelResult(object):
         self.model = model
         self._datetime = dt.datetime.now()
         self._cache = resettable_cache()
+        self._dep_var = dep_var
         self._dep_name = dep_var.name
         self._names = names
         self._loglikelihood = loglikelihood
-        self._nobs = dep_var.shape[0]
+        self._nobs = model.nobs
         self._index = dep_var.index
         self.cov_type = cov_type
         self._volatility = volatility
@@ -766,7 +765,7 @@ class ARCHModelResult(object):
         formats = [(10, 4), (9, 3), (9, 3), (9, 3), None]
         pos = 0
         param_table_data = []
-        for j in range(len(vals[0])):
+        for _ in range(len(vals[0])):
             row = []
             for i, val in enumerate(vals):
                 if isinstance(val[pos], np.float64):
@@ -926,7 +925,6 @@ class ARCHModelResult(object):
             contain annualized volatility.  Supported values are 'D' (daily),
             'W' (weekly) and 'M' (monthly), which scale variance by 252, 52,
             and 12, respectively.
-
         scale : float, optional
             Value to use when scaling returns to annualize.  If scale is
             provides, annualize is ignored and the value in scale is used.
@@ -942,7 +940,7 @@ class ARCHModelResult(object):
         >>> am = arch_model(None)
         >>> sim_data = am.simulate([0.0, 0.01, 0.07, 0.92], 2520)
         >>> am = arch_model(sim_data['data'])
-        >>> res = am.fit(iter=0, disp='off')
+        >>> res = am.fit(update_freq=0, disp='off')
         >>> fig = res.plot()
 
         Produce a plot with annualized volatility
@@ -1013,6 +1011,18 @@ class ARCHModelResult(object):
             t by h data frame containing the forecasts.  The alignment of the
             forecasts is controlled by `align`.
 
+        Examples
+        --------
+        >>> import pandas as pd
+        >>> from arch import arch_model
+        >>> am = arch_model(None,mean='HAR',lags=[1,5,22],vol='Constant')
+        >>> sim_data = am.simulate([0.1,0.4,0.3,0.2,1.0], 250)
+        >>> sim_data.index = pd.date_range('2000-01-01',periods=250)
+        >>> am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22], \
+                            vol='Constant', last_obs=125)
+        >>> res = am.fit()
+        >>> fig = res.hedgehog_plot()
+
         Notes
         -----
         If model contains exogenous variables (`model.x is not None`), then only
@@ -1034,3 +1044,56 @@ class ARCHModelResult(object):
                     params.ndim != self._params.ndim):
                 raise ValueError('params have incorrect dimensions')
         return self.model.forecast(params, horizon, start, align)
+
+    def hedgehog_plot(self, params=None, horizon=10, step=10, start=None):
+        """
+        Construct forecasts from estimated model
+
+        Parameters
+        ----------
+        params : 1d array-like, optional
+            Alternative parameters to use.  If not provided, the parameters
+            computed by fitting the model are used.  Must be identical in shape
+            to the parameters computed by fitting the model.
+        horizon : int, optional
+            Number of steps to forecast
+        step : int, optional
+            Number of forecast to skip between spines in the plot. Non-negative.
+        start : int, datetime or str, optional
+            An integer, datetime or str indicating the first observation to
+            produce the forecast for.  Datetimes can only be used with pandas
+            inputs that have a datetime index.  Strings must be convertible
+            to a date time, such as in '1945-01-01'.
+
+        Returns
+        -------
+        fig : figure
+            Handle to the figure
+        """
+        forecasts = self.forecast(params, horizon=horizon, start=start)
+        import matplotlib.pyplot as plt
+
+        fig, ax = plt.subplots(1, 1)
+        use_date = isinstance(self._dep_var.index, pd.DatetimeIndex)
+        plot_fn = ax.plot_date if use_date else ax.plot
+        x_values = np.array(self._dep_var.index)
+        y_values = self._dep_var.values
+        plot_fn(x_values, y_values, linestyle='-', marker='')
+        first_obs = np.min(np.where(np.logical_not(np.isnan(forecasts)))[0])
+        spines = []
+        t = forecasts.shape[0]
+        for i in range(first_obs, t, step):
+            if i + horizon + 1 > x_values.shape[0]:
+                continue
+            temp_x = x_values[i:i + horizon + 1]
+            temp_y = np.hstack((y_values[i], forecasts.iloc[i]))
+            line = plot_fn(temp_x, temp_y, linewidth=3, linestyle='-',
+                           marker='')
+            spines.append(line)
+        color = spines[0][0].get_color()
+        for spine in spines[1:]:
+            spine[0].set_color(color)
+        ax.set_title(self._dep_name + ' Forecast Hedgehog Plot')
+
+        return fig
+

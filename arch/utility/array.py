@@ -3,11 +3,11 @@ Utility functions that do not explicitly relate to Volatility modeling
 """
 from __future__ import print_function, division, absolute_import
 
-import datetime
+import datetime as dt
 
 import numpy as np
-from pandas import DataFrame, Series
-import pandas as pd
+from pandas import DataFrame, Series, to_datetime, NaT, datetime
+from pandas.core.common import is_datetime64_dtype
 
 from ..compat.python import long, string_types
 
@@ -19,7 +19,7 @@ deprecation_doc = """
 
 
 def ensure1d(x, name, series=False):
-    if isinstance(x, pd.Series):
+    if isinstance(x, Series):
         if not isinstance(x.name, str):
             x.name = str(x.name)
         if series:
@@ -27,11 +27,11 @@ def ensure1d(x, name, series=False):
         else:
             return np.asarray(x)
 
-    if isinstance(x, pd.DataFrame):
+    if isinstance(x, DataFrame):
         if x.shape[1] != 1:
             raise ValueError(name + ' must be squeezable to 1 dimension')
         else:
-            x = pd.Series(x[x.columns[0]], x.index)
+            x = Series(x[x.columns[0]], x.index)
             if not isinstance(x.name, str):
                 x.name = str(x.name)
         if series:
@@ -49,15 +49,15 @@ def ensure1d(x, name, series=False):
             raise ValueError(name + ' must be squeezable to 1 dimension')
 
     if series:
-        return pd.Series(x, name=name)
+        return Series(x, name=name)
     else:
         return np.asarray(x)
 
 
 def ensure2d(x, name):
-    if isinstance(x, pd.Series):
-        return pd.DataFrame(x)
-    elif isinstance(x, pd.DataFrame):
+    if isinstance(x, Series):
+        return DataFrame(x)
+    elif isinstance(x, DataFrame):
         return x
     elif isinstance(x, np.ndarray):
         if x.ndim == 0:
@@ -135,9 +135,6 @@ def date_to_index(date, date_index):
     value returned satisfies date_index[index] is the largest date less than or
     equal to date.
     """
-    import datetime as dt
-    from pandas.core.common import is_datetime64_dtype
-
     if not is_datetime64_dtype(date_index):
         raise ValueError('date_index must be a datetime64 array')
 
@@ -149,8 +146,8 @@ def date_to_index(date, date_index):
         date = np.datetime64(date)
     elif isinstance(date, str):
         orig_date = date
-        date = np.datetime64(pd.to_datetime(date, coerce=True))
-        if date == pd.NaT:
+        date = np.datetime64(to_datetime(date, coerce=True))
+        if date == NaT:
             raise ValueError('date:' + orig_date +
                              ' cannot be parsed to a date.')
 
@@ -181,12 +178,9 @@ def find_index(s, index):
     """
     if isinstance(index, (int, long, np.int, np.int64)):
         return index
-    if isinstance(index, string_types):
-        date_index = pd.to_datetime(index, coerce=True)
-        if date_index is pd.NaT:
-            raise ValueError(index + ' cannot be converted to datetime')
-    elif isinstance(index, (pd.datetime, np.datetime64, datetime.datetime)):
-        date_index = pd.to_datetime(index)
+    date_index = to_datetime(index, coerce=True)
+    if date_index is NaT:
+        raise ValueError(index + ' cannot be converted to datetime')
     loc = np.argwhere(s.index == date_index).squeeze()
     if loc.size == 0:
         raise ValueError('index not found')
