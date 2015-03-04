@@ -932,7 +932,7 @@ class ARX(HARX):
     Estimating an AR with GARCH(1,1) errors
     >>> from arch.univariate import GARCH
     >>> arx.volatility = GARCH()
-    >>> res = arx.fit(iter=0, disp='off')
+    >>> res = arx.fit(update_freq=0, disp='off')
 
     Notes
     -----
@@ -1090,11 +1090,24 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
         Name of the error distribution.  Currently supported options are:
             'Normal' (default)
             'StudentsT'
+    hold_back : int, str, datetime or datetime64, optional
+        Number of observations at the start of the sample to exclude when
+        estimating model parameters.  Used when comparing models with different
+        lag lengths to estimate on the common sample.  When y is a Series with
+        a DateTime index, hold_back can contain datetime, datetime64 or
+        formatted string to indicate the index of the first data point to use
+        in estimation.
+    last_obs : int, str, datetime or datetime64,  optional
+        Index of last observation to use when estimating the model.  Used when
+        producing pseudo-out-of-sample forecasts. When y is a Series with
+        a DateTime index, last_obs can contain datetime, datetime64 or
+        formatted string to indicate the index of the final data point to use
+        in estimation.
 
     Returns
     -------
     model : ARCHModel
-        Configures ARCH model
+        Configured ARCH model
 
     Examples
     --------

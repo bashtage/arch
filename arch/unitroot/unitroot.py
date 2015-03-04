@@ -359,11 +359,12 @@ class ADF(UnitRootTest):
 
     Examples
     --------
+    >>> from arch.unitroot import ADF
     >>> import numpy as np
     >>> import statsmodels.api as sm
     >>> data = sm.datasets.macrodata.load().data
     >>> inflation = np.diff(np.log(data['cpi']))
-    >>> adf = sm.tsa.ADF(inflation)
+    >>> adf = ADF(inflation)
     >>> adf.stat
     -3.093111891727883
     >>> adf.pvalue
@@ -505,11 +506,12 @@ class DFGLS(UnitRootTest):
 
     Examples
     --------
+    >>> from arch.unitroot import DFGLS
     >>> import numpy as np
     >>> import statsmodels.api as sm
     >>> data = sm.datasets.macrodata.load().data
     >>> inflation = np.diff(np.log(data['cpi']))
-    >>> dfgls = sm.tsa.DFGLS(inflation)
+    >>> dfgls = DFGLS(inflation)
     >>> dfgls.stat
     -2.7610943027494161
     >>> dfgls.pvalue
@@ -670,11 +672,12 @@ class PhillipsPerron(UnitRootTest):
 
     Examples
     --------
+    >>> from arch.unitroot import PhillipsPerron
     >>> import numpy as np
     >>> import statsmodels.api as sm
     >>> data = sm.datasets.macrodata.load().data
     >>> inflation = np.diff(np.log(data['cpi']))
-    >>> pp = sm.tsa.PhillipsPerron(inflation)
+    >>> pp = PhillipsPerron(inflation)
     >>> pp.stat
     -8.1355784802409303
     >>> pp.pvalue
@@ -753,9 +756,9 @@ class PhillipsPerron(UnitRootTest):
         rho = resols.params[0]
         # 3. Compute statistics
         self._stat_tau = sqrt(gamma0 / lam2) * ((rho - 1) / sigma) \
-                         - 0.5 * ((lam2 - gamma0) / lam) * (n * sigma / s)
+            - 0.5 * ((lam2 - gamma0) / lam) * (n * sigma / s)
         self._stat_rho = n * (rho - 1) \
-                         - 0.5 * (n ** 2.0 * sigma2 / s2) * (lam2 - gamma0)
+            - 0.5 * (n ** 2.0 * sigma2 / s2) * (lam2 - gamma0)
 
         self._nobs = int(resols.nobs)
         if self._test_type == 'rho':
@@ -834,11 +837,12 @@ class KPSS(UnitRootTest):
 
     Examples
     --------
+    >>> from arch.unitroot import KPSS
     >>> import numpy as np
     >>> import statsmodels.api as sm
     >>> data = sm.datasets.macrodata.load().data
     >>> inflation = np.diff(np.log(data['cpi']))
-    >>> kpss = sm.tsa.KPSS(inflation)
+    >>> kpss = KPSS(inflation)
     >>> kpss.stat
     0.28700886586311969
     >>> kpss.pvalue
@@ -933,6 +937,7 @@ class VarianceRatio(UnitRootTest):
 
     Examples
     --------
+    >>> from arch.unitroot import VarianceRatio
     >>> import datetime as dt
     >>> from matplotlib.finance import fetch_historical_yahoo as yahoo
     >>> csv = yahoo('^GSPC', dt.date(1950,1,1), dt.date(2010,1,1))
@@ -941,8 +946,7 @@ class VarianceRatio(UnitRootTest):
     >>> data = data[::-1]  # Reverse
     >>> data.resample('M',how='last')  # End of month
     >>> returns = data['Adj Close'].pct_change().dropna()
-    >>> import statsmodels.api as sm
-    >>> vr = sm.tsa.VarianceRatio(returns, lags=12)
+    >>> vr = VarianceRatio(returns, lags=12)
     >>> vr.stat
     -23.021986263667511
     >>> vr.pvalue
@@ -1053,7 +1057,8 @@ class VarianceRatio(UnitRootTest):
             sigma2_1 *= nq / (nq - 1)
             m = q * (nq - q + 1) * (1 - (q / nq))
             sigma2_q *= (nq * q) / m
-            self._summary_text = ['Computed with overlapping blocks (de-biased)']
+            self._summary_text = ['Computed with overlapping blocks '
+                                  '(de-biased)']
 
         if not overlap:
             self._stat_variance = 2.0 * (q - 1)

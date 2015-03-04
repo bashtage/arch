@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+
 class ColumnNameConflict(Warning):
     pass
 
@@ -10,6 +11,7 @@ Some of the column named being added were not unique and have been renamed.
 
              {0}
 """
+
 
 def _enforce_unique_col_name(existing, new):
     converted_names = []
@@ -32,6 +34,7 @@ def _enforce_unique_col_name(existing, new):
         warnings.warn(ws, ColumnNameConflict)
 
     return unique_names
+
 
 def add_trend(x=None, trend="c", prepend=False, nobs=None, has_constant='skip'):
     """
@@ -59,12 +62,8 @@ def add_trend(x=None, trend="c", prepend=False, nobs=None, has_constant='skip'):
 
     Notes
     -----
-    Returns columns as ["ctt","ct","t","c"] whenever applicable. There is currently
-    no checking for an existing trend.
-
-    See also
-    --------
-    statsmodels.tools.tools.add_constant
+    Returns columns as ["ctt","ct","t","c"] whenever applicable. There is
+    currently no checking for an existing trend.
     """
     trend = trend.lower()
     if trend == "c":  # handles structured arrays

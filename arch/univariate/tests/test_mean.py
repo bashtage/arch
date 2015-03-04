@@ -105,7 +105,7 @@ class TestMeanModel(unittest.TestCase):
         assert_frame_equal(direct, forecasts)
         garch = GARCH()
         zm.volatility = garch
-        zm.fit(iter=0)
+        zm.fit(update_freq=0)
 
     def test_harx(self):
         harx = HARX(self.y, self.x, lags=[1, 5, 22])
@@ -132,6 +132,7 @@ class TestMeanModel(unittest.TestCase):
         assert_equal(b, np.empty(0))
         res = harx.fit()
         assert_raises(RuntimeError, res.forecast, horizon=10)
+        assert_raises(ValueError, res.forecast, params=np.array([1.0, 1.0]))
         nobs = self.T - 22
         rhs = np.ones((nobs, 5))
         y = self.y
@@ -345,13 +346,14 @@ class TestMeanModel(unittest.TestCase):
         # Smoke tests
         summ = ar.fit().summary()
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
-        res = ar.fit(iter=5, cov_type='mle')
+        res = ar.fit(update_freq=5, cov_type='mle')
         res.param_cov
         res.plot()
         res.plot(annualize='D')
         res.plot(annualize='W')
         res.plot(annualize='M')
         res.plot(scale=360)
+        res.hedgehog_plot()
 
     def test_arch_model(self):
         am = arch_model(self.y)
@@ -414,11 +416,11 @@ class TestMeanModel(unittest.TestCase):
 
     def test_summary(self):
         am = arch_model(self.y, mean='ar', lags=[1, 3, 5])
-        res = am.fit(iter=0)
+        res = am.fit(update_freq=0)
         res.summary()
 
         am = arch_model(self.y, mean='ar', lags=[1, 3, 5], dist='studentst')
-        res = am.fit(iter=0)
+        res = am.fit(update_freq=0)
         res.summary()
 
     def test_errors(self):
@@ -488,34 +490,34 @@ class TestMeanModel(unittest.TestCase):
 
     def test_starting_values(self):
         am = arch_model(self.y, mean='ar', lags=[1, 3, 5])
-        res = am.fit(cov_type='mle', iter=0)
-        res2 = am.fit(starting_values=res.params, iter=0)
+        res = am.fit(cov_type='mle', update_freq=0)
+        res2 = am.fit(starting_values=res.params, update_freq=0)
 
         am = arch_model(self.y, mean='zero')
         sv = np.array([1.0, 0.3, 0.8])
         with warnings.catch_warnings(record=True) as w:
-            am.fit(starting_values=sv, iter=0)
+            am.fit(starting_values=sv, update_freq=0)
             assert_equal(len(w), 1)
 
     def test_no_param_volatility(self):
         cm = ConstantMean(self.y)
         cm.volatility = EWMAVariance()
-        cm.fit(iter=0)
+        cm.fit(update_freq=0)
         cm.volatility = RiskMetrics2006()
-        cm.fit(iter=0)
+        cm.fit(update_freq=0)
 
         ar = ARX(self.y, lags=5)
         ar.volatility = EWMAVariance()
-        ar.fit(iter=0)
+        ar.fit(update_freq=0)
         ar.volatility = RiskMetrics2006()
-        ar.fit(iter=0)
+        ar.fit(update_freq=0)
 
     def test_egarch(self):
         cm = ConstantMean(self.y)
         cm.volatility = EGARCH()
-        cm.fit(iter=0)
+        cm.fit(update_freq=0)
         cm.distribution = StudentsT()
-        cm.fit(iter=0)
+        cm.fit(update_freq=0)
 
     def test_multiple_lags(self):
         """Smoke test to ensure models estimate with multiple lags"""
@@ -526,30 +528,30 @@ class TestMeanModel(unittest.TestCase):
         cm = ConstantMean(self.y)
         for name, process in iteritems(vp):
             cm.volatility = process()
-            cm.fit(iter=0, disp='off')
+            cm.fit(update_freq=0, disp='off')
             for p in [1, 2, 3]:
                 for o in [1, 2, 3]:
                     for q in [1, 2, 3]:
                         if name in ('arch',):
                             cm.volatility = process(p=p + o + q)
-                            cm.fit(iter=0, disp='off')
+                            cm.fit(update_freq=0, disp='off')
                         elif name in ('harch',):
                             cm.volatility = process(lags=[p, p + o, p + o + q])
-                            cm.fit(iter=0, disp='off')
+                            cm.fit(update_freq=0, disp='off')
                         else:
                             cm.volatility = process(p=p, o=o, q=q)
-                            cm.fit(iter=0, disp='off')
+                            cm.fit(update_freq=0, disp='off')
 
     def test_first_last_obs(self):
         ar = ARX(self.y, lags=5, hold_back=100)
-        res = ar.fit(iter=0)
+        res = ar.fit(update_freq=0)
         resids = res.resid
         resid_copy = resids.copy()
         resid_copy[:100] = np.nan
         assert_equal(resids, resid_copy)
 
         ar.volatility = GARCH()
-        res = ar.fit(iter=0)
+        res = ar.fit(update_freq=0)
         resids = res.resid
         resid_copy = resids.copy()
         resid_copy[:100] = np.nan
@@ -557,7 +559,7 @@ class TestMeanModel(unittest.TestCase):
 
         ar = ARX(self.y, lags=5, last_obs=500)
         ar.volatility = GARCH()
-        res = ar.fit(iter=0)
+        res = ar.fit(update_freq=0)
         resids = res.resid
         resid_copy = resids.copy()
         resid_copy[500:] = np.nan
@@ -565,7 +567,7 @@ class TestMeanModel(unittest.TestCase):
 
         ar = ARX(self.y, lags=5, hold_back=100, last_obs=500)
         ar.volatility = GARCH()
-        res = ar.fit(iter=0)
+        res = ar.fit(update_freq=0)
         resids = res.resid
         resid_copy = resids.copy()
         resid_copy[:100] = np.nan
@@ -581,7 +583,7 @@ class TestMeanModel(unittest.TestCase):
 
         ar = ARX(self.y, lags=5, last_obs=500)
         ar.volatility = GARCH()
-        res = ar.fit(iter=0)
+        res = ar.fit(update_freq=0)
         resids = res.resid
         resid_copy = resids.copy()
         resid_copy[:5] = np.nan
@@ -637,6 +639,7 @@ class TestMeanModel(unittest.TestCase):
         assert_frame_equal(aligned, direct)
 
         assert_raises(ValueError, align_forecast, forecasts, align='unknown')
+
 
 
 

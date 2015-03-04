@@ -201,7 +201,6 @@ class VolatilityProcess(object):
         """
         Construct forecasts
         """
-        # TODO: Forecast implementation
         raise NotImplementedError('Must be overridden')  # pragma: no cover
 
     def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
@@ -921,8 +920,6 @@ class RiskMetrics2006(VolatilityProcess):
     def _ewma_smoothing_parameters(self):
         tau0, tau1, kmax, rho = self.tau0, self.tau1, self.kmax, self.rho
         taus = tau1 * (rho ** np.arange(kmax))
-        w = 1 - log(taus) / log(tau0)
-        w = w / w.sum()
         mus = exp(-1.0 / taus)
         return mus
 
@@ -1162,7 +1159,7 @@ class EGARCH(VolatilityProcess):
             loc += 1
             for j in range(p):
                 lnsigma2[t] += parameters[loc] * \
-                               (abserrors[t - 1 - j] - norm_const)
+                    (abserrors[t - 1 - j] - norm_const)
                 loc += 1
             for j in range(o):
                 lnsigma2[t] += parameters[loc] * errors[t - 1 - j]
