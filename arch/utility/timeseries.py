@@ -66,37 +66,37 @@ def add_trend(x=None, trend="c", prepend=False, nobs=None, has_constant='skip'):
     currently no checking for an existing trend.
     """
     trend = trend.lower()
-    if trend == "c":  # handles structured arrays
+    if trend == 'c':
         trend_order = 0
-    elif trend == "ct" or trend == "t":
+    elif trend == 'ct' or trend == 't':
         trend_order = 1
-    elif trend == "ctt":
+    elif trend == 'ctt':
         trend_order = 2
     else:
-        raise ValueError("trend %s not understood" % trend)
+        raise ValueError('trend %s not understood' % trend)
     if x is not None:
         nobs = len(np.asanyarray(x))
-    elif nobs <= 0:
-        raise ValueError("nobs must be a positive integer if x is None")
+    elif nobs is None or nobs <= 0:
+        raise ValueError('nobs must be a positive integer if x is None')
     trend_array = np.vander(np.arange(1, nobs + 1, dtype=np.float64),
                             trend_order + 1)
     # put in order ctt
     trend_array = np.fliplr(trend_array)
-    if trend == "t":
+    if trend == 't':
         trend_array = trend_array[:, 1:]
         # check for constant
     if x is None:
         return trend_array
     x_array = np.asarray(x)
-    if "c" in trend and \
+    if 'c' in trend and \
             np.any(np.logical_and(np.ptp(x_array, axis=0) == 0,
                                   np.all(x_array != 0, axis=0))):
         if has_constant == 'raise':
-            raise ValueError("x already contains a constant")
+            raise ValueError('x already contains a constant')
         elif has_constant == 'add':
             pass
-        elif has_constant == 'skip' and trend == "ct":
-            trend_array = trend_array[:, 1]
+        elif has_constant == 'skip' and trend in ('c', 'ct', 'ctt'):
+            trend_array = trend_array[:, 1:]
     if isinstance(x, pd.DataFrame):
         columns = ('const', 'trend', 'quadratic_trend')
         if trend == 't':

@@ -30,7 +30,7 @@ class MultipleComparison(object):
     Abstract class for inheritance
     """
 
-    def __index__(self):
+    def __init__(self):
         self._model = ''
         self._info = OrderedDict()
         self.bootstrap = None
@@ -111,6 +111,7 @@ class MCS(MultipleComparison):
 
     def __init__(self, losses, size, reps=1000, block_size=None, method='R',
                  bootstrap='stationary'):
+        super(MCS, self).__init__()
         self.losses = ensure2d(losses, 'losses')
         self._losses_arr = np.asarray(self.losses)
         if self._losses_arr.shape[1] < 2:
@@ -349,6 +350,7 @@ class StepM(MultipleComparison):
 
     def __init__(self, benchmark, models, size=0.05, block_size=None, reps=1000,
                  bootstrap='stationary', studentize=True, nested=False):
+        super(StepM, self).__init__()
         self.benchmark = ensure2d(benchmark, 'benchmark')
         self.models = ensure2d(models, 'models')
         self.spa = SPA(benchmark, models, block_size=block_size, reps=reps,
@@ -483,6 +485,7 @@ class SPA(MultipleComparison):
 
     def __init__(self, benchmark, models, block_size=None, reps=1000,
                  bootstrap='stationary', studentize=True, nested=False):
+        super(SPA, self).__init__()
         self.benchmark = ensure2d(benchmark, 'benchmark')
         self.models = ensure2d(models, 'models')
         self.reps = reps
@@ -522,7 +525,7 @@ class SPA(MultipleComparison):
         """
         Reset the bootstrap to it's initial state.
         """
-        self.bootstrap.reset()
+        super(SPA, self).reset()
         self._pvalues = None
 
     def subset(self, selector):

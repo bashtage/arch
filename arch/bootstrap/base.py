@@ -963,7 +963,7 @@ class StationaryBootstrap(CircularBlockBootstrap):
     def update_indices(self):
         indices = self.random_state.randint(self._num_items,
                                             size=self._num_items)
-        indices = indices.astype(np.int32)
+        indices = indices.astype(np.int64)
         u = self.random_state.random_sample(self._num_items)
         return stationary_bootstrap_sample(indices, u, self._p)
 

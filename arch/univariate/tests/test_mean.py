@@ -286,6 +286,7 @@ class TestMeanModel(unittest.TestCase):
         ar = ARX(self.y, lags=3)
         params = np.array([1.0, 0.4, 0.3, 0.2, 1.0])
         data = ar.simulate(params, self.T)
+        assert_equal(self.y, ar.y)
 
         bounds = ar.bounds()
         for b in bounds:
@@ -352,6 +353,7 @@ class TestMeanModel(unittest.TestCase):
         res.plot(annualize='D')
         res.plot(annualize='W')
         res.plot(annualize='M')
+        assert_raises(ValueError, res.plot, annualize='unknown')
         res.plot(scale=360)
         res.hedgehog_plot()
 

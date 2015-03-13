@@ -11,7 +11,10 @@ from pandas.util.testing import assert_frame_equal, assert_series_equal
 from arch.bootstrap import IIDBootstrap, StationaryBootstrap, \
     MovingBlockBootstrap, CircularBlockBootstrap
 from arch.bootstrap.base import _loo_jackknife
-
+from arch.bootstrap._samplers_python import (stationary_bootstrap_sample,
+                                             stationary_bootstrap_sample_python)
+from arch.bootstrap._samplers import \
+    stationary_bootstrap_sample as stationary_bootstrap_sample_cython
 
 warnings.simplefilter("always", RuntimeWarning)
 warnings.simplefilter("always")
@@ -388,8 +391,10 @@ class TestBootstrap(TestCase):
         std_err = np.sqrt(np.mean(errors ** 2.0, axis=0))
         ci_direct = np.zeros((2, 2))
         for i in range(2):
-            ci_direct[0, i] = base[i] - std_err[i] * np.percentile(stud_results[:, i], 97.5)
-            ci_direct[1, i] = base[i] - std_err[i] * np.percentile(stud_results[:, i], 2.5)
+            ci_direct[0, i] = base[i] - std_err[i] * np.percentile(
+                stud_results[:, i], 97.5)
+            ci_direct[1, i] = base[i] - std_err[i] * np.percentile(
+                stud_results[:, i], 2.5)
         assert_allclose(ci, ci_direct)
 
         bs.reset()
@@ -418,8 +423,10 @@ class TestBootstrap(TestCase):
 
         ci_direct = np.zeros((2, 2))
         for i in range(2):
-            ci_direct[0, i] = base[i] - std_err[i] * np.percentile(stud_results[:, i], 97.5)
-            ci_direct[1, i] = base[i] - std_err[i] * np.percentile(stud_results[:, i], 2.5)
+            ci_direct[0, i] = base[i] - std_err[i] * np.percentile(
+                stud_results[:, i], 97.5)
+            ci_direct[1, i] = base[i] - std_err[i] * np.percentile(
+                stud_results[:, i], 2.5)
         assert_allclose(ci, ci_direct)
 
         with warnings.catch_warnings(record=True) as w:
@@ -561,10 +568,10 @@ class TestBootstrap(TestCase):
         num_bootstrap = 20
         bs = IIDBootstrap(self.x)
         bs.seed(23456)
-    
+
         def func(y):
             return y.mean(axis=0)
-    
+
         ci_direct = bs.conf_int(func, reps=num_bootstrap, method='bca')
         bs.reset()
         base, results = bs._base, bs._results
@@ -574,7 +581,7 @@ class TestBootstrap(TestCase):
         b = stats.norm.ppf(p)
         b = b[:, None]
         q = stats.norm.ppf(np.array([0.025, 0.975]))
-    
+
         base = func(self.x)
         nobs = self.x.shape[0]
         jk = _loo_jackknife(func, nobs, [self.x], {})
@@ -584,13 +591,13 @@ class TestBootstrap(TestCase):
         a = u3 / (6.0 * (u2 ** 1.5))
         a = a[:, None]
         percentiles = 100 * stats.norm.cdf(b + (b + q) / (1 - a * (b + q)))
-    
+
         ci = np.zeros((2, 2))
         for i in range(2):
             ci[i] = np.percentile(results[:, i], list(percentiles[i]))
         ci = ci.T
         assert_allclose(ci_direct, ci)
-    
+
     def test_pandas_integer_index(self):
         x = self.x
         x_int = self.x_df.copy()
@@ -599,14 +606,14 @@ class TestBootstrap(TestCase):
         bs.seed(23456)
         for pdata, kwdata in bs.bootstrap(10):
             assert_equal(pdata[0], pdata[1].values)
-    
+
     def test_apply(self):
         bs = IIDBootstrap(self.x)
         bs.seed(23456)
-    
+
         def func(y):
             return y.mean(0)
-    
+
         results = bs.apply(func, 1000)
         bs.reset(23456)
         direct_results = []
@@ -628,7 +635,7 @@ class TestBootstrap(TestCase):
         for pos, kw in bs.bootstrap(1000):
             direct_results.append(func(*pos))
         direct_results = np.array(direct_results)
-        direct_results = direct_results[:,None]
+        direct_results = direct_results[:, None]
         assert_equal(results, direct_results)
 
     def test_str(self):
@@ -655,8 +662,25 @@ class TestBootstrap(TestCase):
         expected = expected[:-1] + ', ID: ' + hex(id(bs)) + ')'
         assert_equal(bs.__repr__(), expected)
         expected = '<strong>Circular Block Bootstrap</strong>' + \
-                   '(<strong>block size</strong>: 20, '\
+                   '(<strong>block size</strong>: 20, ' \
                    + '<strong>no. pos. inputs</strong>: 0, ' + \
                    '<strong>no. keyword inputs</strong>: 2,' + \
                    ' <strong>ID</strong>: ' + hex(id(bs)) + ')'
         assert_equal(bs._repr_html(), expected)
+
+    def test_samplers(self):
+        """
+        Test all three implementations are identical
+        """
+        indices = np.array(np.random.randint(0, 1000, 1000), dtype=np.int64)
+        u = np.random.random_sample(1000)
+        p = 0.1
+        indices_orig = indices.copy()
+
+        numba = stationary_bootstrap_sample(indices, u, p)
+        indices = indices_orig.copy()
+        python = stationary_bootstrap_sample_python(indices, u, p)
+        indices = indices_orig.copy()
+        cython = stationary_bootstrap_sample_cython(indices, u, p)
+        assert_equal(numba, cython)
+        assert_equal(numba, python)

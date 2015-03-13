@@ -136,3 +136,9 @@ class TestUtils(TestCase):
         assert_equal(found_loc, 3000)
         assert_raises(ValueError, find_index, df, 'bad-date')
         assert_raises(ValueError, find_index, df, '1900-01-01')
+
+
+class TestDoc(TestCase):
+    def test_doc(self):
+        from arch import doc
+        doc()

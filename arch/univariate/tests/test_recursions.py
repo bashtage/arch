@@ -89,9 +89,13 @@ var_bounds = np.ones((T, 2)) * var_bounds
 
         recpy.garch_recursion(parameters, fresids, sresids, sigma2,
                               1, 1, 1, T, backcast, self.var_bounds)
+        sigma2_numba = sigma2.copy()
+        recpy.garch_recursion_python(parameters, fresids, sresids, sigma2, 1,
+                                     1, 1, T, backcast, self.var_bounds)
         sigma2_python = sigma2.copy()
         rec.garch_recursion(parameters, fresids, sresids, sigma2, 1, 1,
                             1, T, backcast, self.var_bounds)
+        assert_almost_equal(sigma2_numba, sigma2)
         assert_almost_equal(sigma2_python, sigma2)
 
     def test_harch(self):
@@ -100,11 +104,15 @@ var_bounds = np.ones((T, 2)) * var_bounds
 
         parameters = np.array([.1, .4, .3, .2])
         lags = np.array([1, 5, 22], dtype=np.int32)
+        recpy.harch_recursion_python(parameters, resids, sigma2, lags, T,
+                                     backcast, self.var_bounds)
+        sigma2_python = sigma2.copy()
         recpy.harch_recursion(parameters, resids, sigma2, lags, T, backcast,
                               self.var_bounds)
-        sigma2_python = sigma2.copy()
+        sigma2_numba = sigma2.copy()
         rec.harch_recursion(parameters, resids, sigma2, lags, T, backcast,
                             self.var_bounds)
+        assert_almost_equal(sigma2_numba, sigma2)
         assert_almost_equal(sigma2_python, sigma2)
 
     def test_arch(self):
@@ -114,11 +122,15 @@ var_bounds = np.ones((T, 2)) * var_bounds
         parameters = np.array([.1, .4, .3, .2])
         p = 3
 
+        recpy.arch_recursion_python(parameters, resids, sigma2, p, T,
+                                    backcast, self.var_bounds)
+        sigma2_python = sigma2.copy()
         recpy.arch_recursion(parameters, resids, sigma2, p, T,
                              backcast, self.var_bounds)
-        sigma2_python = sigma2.copy()
+        sigma2_numba = sigma2.copy()
         rec.arch_recursion(parameters, resids, sigma2, p, T, backcast,
                            self.var_bounds)
+        assert_almost_equal(sigma2_numba, sigma2)
         assert_almost_equal(sigma2_python, sigma2)
 
     def test_garch_power_1(self):
@@ -126,7 +138,6 @@ var_bounds = np.ones((T, 2)) * var_bounds
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([.1, .4, .3, .2])
-        lags = np.array([1, 5, 22])
         fresids = np.abs(resids) ** 1.0
         sresids = np.sign(resids)
 
@@ -294,13 +305,19 @@ var_bounds = np.ones((T, 2)) * var_bounds
         lnsigma2 = np.empty_like(sigma2)
         std_resids = np.empty_like(sigma2)
         abs_std_resids = np.empty_like(sigma2)
-        rec.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs,
-                             backcast,
-                             var_bounds, lnsigma2, std_resids, abs_std_resids)
-        sigma2_python = sigma2.copy()
-        recpy.egarch_recursion(parameters, resids, sigma2_python, p, o, q, nobs,
+        recpy.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs,
                                backcast, var_bounds, lnsigma2, std_resids,
                                abs_std_resids)
+        sigma2_numba = sigma2.copy()
+        recpy.egarch_recursion_python(parameters, resids, sigma2, p, o, q, nobs,
+                                      backcast, var_bounds, lnsigma2,
+                                      std_resids,
+                                      abs_std_resids)
+        sigma2_python = sigma2.copy()
+        rec.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs,
+                             backcast, var_bounds, lnsigma2, std_resids,
+                             abs_std_resids)
+        assert_almost_equal(sigma2_numba, sigma2)
         assert_almost_equal(sigma2_python, sigma2)
 
         norm_const = np.sqrt(2 / np.pi)

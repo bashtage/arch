@@ -14,9 +14,8 @@ __all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion',
            'egarch_recursion']
 
 
-@jit
-def harch_recursion(parameters, resids, sigma2, lags, nobs, backcast,
-                    var_bounds):
+def harch_recursion_python(parameters, resids, sigma2, lags, nobs, backcast,
+                           var_bounds):
     """
     Parameters
     ----------
@@ -56,8 +55,12 @@ def harch_recursion(parameters, resids, sigma2, lags, nobs, backcast,
 
     return sigma2
 
-@jit
-def arch_recursion(parameters, resids, sigma2, p, nobs, backcast, var_bounds):
+
+harch_recursion = jit(harch_recursion_python)
+
+
+def arch_recursion_python(parameters, resids, sigma2, p, nobs, backcast,
+                          var_bounds):
     """
     Parameters
     ----------
@@ -95,9 +98,12 @@ def arch_recursion(parameters, resids, sigma2, p, nobs, backcast, var_bounds):
 
     return sigma2
 
-@jit
-def garch_recursion(parameters, fresids, sresids, sigma2, p, o, q, nobs,
-                    backcast, var_bounds):
+
+arch_recursion = jit(arch_recursion_python)
+
+
+def garch_recursion_python(parameters, fresids, sresids, sigma2, p, o, q, nobs,
+                           backcast, var_bounds):
     """
     Compute variance recursion for GARCH and related models
 
@@ -142,7 +148,7 @@ def garch_recursion(parameters, fresids, sresids, sigma2, p, o, q, nobs,
                 sigma2[t] += parameters[loc] * 0.5 * backcast
             else:
                 sigma2[t] += parameters[loc] \
-                    * fresids[t - 1 - j] * (sresids[t - 1 - j] < 0)
+                             * fresids[t - 1 - j] * (sresids[t - 1 - j] < 0)
             loc += 1
         for j in range(q):
             if (t - 1 - j) < 0:
@@ -160,9 +166,12 @@ def garch_recursion(parameters, fresids, sresids, sigma2, p, o, q, nobs,
 
     return sigma2
 
-@jit
-def egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast,
-                     var_bounds, lnsigma2, std_resids, abs_std_resids):
+
+garch_recursion = jit(garch_recursion_python)
+
+
+def egarch_recursion_python(parameters, resids, sigma2, p, o, q, nobs, backcast,
+                            var_bounds, lnsigma2, std_resids, abs_std_resids):
     """
     Compute variance recursion for EGARCH models
 
@@ -203,7 +212,7 @@ def egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast,
         for j in range(p):
             if (t - 1 - j) >= 0:
                 lnsigma2[t] += parameters[loc] * \
-                    (abs_std_resids[t - 1 - j] - norm_const)
+                               (abs_std_resids[t - 1 - j] - norm_const)
             loc += 1
         for j in range(o):
             if (t - 1 - j) >= 0:
@@ -227,3 +236,5 @@ def egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast,
         abs_std_resids[t] = np.abs(std_resids[t])
 
     return sigma2
+
+egarch_recursion = jit(egarch_recursion_python)
