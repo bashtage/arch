@@ -43,7 +43,6 @@ matrix:
     - SCIPY=0.15
     - NUMBA=0.17
     - MATPLOTLIB=1.4
-    - COVERAGE=false
 
 notifications:
   email:

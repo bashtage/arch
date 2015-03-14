@@ -1,14 +1,19 @@
 from __future__ import division
 
+from unittest import TestCase
+
 import numpy as np
 from numpy import log, diff
 from numpy.testing import assert_almost_equal
+from nose.tools import assert_raises
 
 from arch.utility import cov_nw
 
-class TestVarNW(object):
+
+class TestVarNW(TestCase):
+
     @classmethod
-    def setupClass(cls):
+    def setUpClass(cls):
         from statsmodels.datasets.macrodata import load
 
         cls.cpi = log(load().data['cpi'])
@@ -48,3 +53,20 @@ class TestVarNW(object):
         expected = (gamma_0 + w1 * (gamma_1 + gamma_1.T)
                     + w2 * (gamma_2 + gamma_2.T)) / 100.0
         assert_almost_equal(cov_nw(y, lags=2), expected)
+
+    def test_cov_nw_axis(self):
+        y = np.random.randn(100, 2)
+        e = y - y.mean(0)
+        gamma_0 = e.T.dot(e)
+        gamma_1 = e[1:].T.dot(e[:-1])
+        gamma_2 = e[2:].T.dot(e[:-2])
+        w1, w2 = 1.0 - (1.0 / 3.0), 1.0 - (2.0 / 3.0)
+        expected = (gamma_0 + w1 * (gamma_1 + gamma_1.T)
+                    + w2 * (gamma_2 + gamma_2.T)) / 100.0
+        assert_almost_equal(cov_nw(y.T, lags=2, axis=1), expected)
+
+    def test_errors(self):
+        y = np.random.randn(100, 2)
+        assert_raises(ValueError, cov_nw, y, 200)
+        assert_raises(ValueError, cov_nw, y, axis=3)
+        assert_raises(ValueError, cov_nw, y, ddof=200)

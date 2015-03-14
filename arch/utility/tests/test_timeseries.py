@@ -2,11 +2,12 @@ from __future__ import division
 import unittest
 import warnings
 
-from nose.tools import assert_true
+from nose.tools import assert_true, assert_raises
 
 import numpy as np
 from numpy.random import randn
-from numpy.testing import assert_equal, assert_array_almost_equal
+from numpy.testing import (assert_equal, assert_array_almost_equal,
+                           assert_array_equal)
 import pandas as pd
 from pandas.util.testing import assert_frame_equal, assert_produces_warning
 
@@ -93,3 +94,18 @@ class TestAddTrend(unittest.TestCase):
         assert np.all(y[:, 0] == 1.0)
         assert y[0, 1] == 1.0
         assert_array_almost_equal(np.diff(y[:, 1]), np.ones((n - 1)))
+
+    def test_skip_constant(self):
+        x = np.ones((100,1))
+        appended = add_trend(x, trend='c', has_constant='add')
+        assert_array_equal(np.ones((100,2)), appended)
+        appended = add_trend(x, trend='c', has_constant='skip')
+        assert_array_equal(np.ones((100,1)), appended)
+
+    def test_errors(self):
+        n = 100
+        assert_raises(ValueError, add_trend, x=None, trend='unknown', nobs=n)
+        assert_raises(ValueError, add_trend, x=None, trend='ct')
+        x = np.ones((100,1))
+        assert_raises(ValueError, add_trend, x, trend='ct',
+                      has_constant='raise')

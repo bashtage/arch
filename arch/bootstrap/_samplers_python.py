@@ -2,8 +2,7 @@ from __future__ import absolute_import, division
 from ..compat.numba import jit
 
 
-@jit
-def stationary_bootstrap_sample(indices, u, p):
+def stationary_bootstrap_sample_python(indices, u, p):
     """
     Parameters
     -------
@@ -29,3 +28,6 @@ def stationary_bootstrap_sample(indices, u, p):
                 indices[i] = 0
 
     return indices
+
+
+stationary_bootstrap_sample = jit(stationary_bootstrap_sample_python)

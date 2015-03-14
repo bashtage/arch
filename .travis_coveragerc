@@ -17,5 +17,5 @@ exclude_lines =
     # Ignore pass
     pass
 include = */arch/*
-omit = *test_*.py,*/compat/*,*recursions.py
+omit = *test_*.py,*/compat/*,*recursions.py,*samplers.py
 ignore_errors = True

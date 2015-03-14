@@ -147,6 +147,7 @@ class ARCHModel(object):
             self._y_series = ensure1d(empty((0,)), 'y', series=True)
 
         self._y = np.asarray(self._y_series)
+        self._y_original = y
 
         self.hold_back = hold_back
         if isinstance(hold_back, (str, dt.datetime, np.datetime64)):
@@ -218,7 +219,7 @@ class ARCHModel(object):
     @property
     def y(self):
         """Returns the dependent variable"""
-        return self._y
+        return self._y_original
 
     @property
     def volatility(self):
@@ -252,7 +253,7 @@ class ARCHModel(object):
         """
         Number of parameters in mean model, excluding any variance components
         """
-        return 0
+        raise NotImplementedError('Subclasses must implement')
 
     def _r2(self, params):
         """
