@@ -4,7 +4,7 @@ scipy
 matplotlib
 pandas
 patsy
-ipython
+ipython==2
 statsmodels
 sphinxcontrib-napoleon==0.2.11
 mock
