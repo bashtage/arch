@@ -1,5 +1,5 @@
 from __future__ import print_function
-# setup.py
+
 import os
 import subprocess
 import sys
@@ -114,7 +114,7 @@ except ImportError as e:
     ConversionException = PandocMissing = ValueError
 
 try:
-    from IPython.nbformat import current as nbformat
+    import IPython.nbformat as nbformat
     from IPython.nbconvert import RSTExporter
     import glob
 
@@ -125,9 +125,6 @@ try:
             example_nb = f.read()
             f.close()
 
-            example_nb = nbformat.reads_json(example_nb)
-            rst_export = RSTExporter()
-            (body, resources) = rst_export.from_notebook_node(example_nb)
             rst_path = os.path.join(cwd, 'doc', 'source')
             path_parts = os.path.split(notebook)
             nb_filename = path_parts[-1]
@@ -135,25 +132,31 @@ try:
             source_dir = nb_filename.split('_')[0]
             rst_filename = os.path.join(cwd, 'doc', 'source',
                                         source_dir, nb_filename + '.rst')
-            f = open(rst_filename, 'wt')
-            f.write(body)
-            f.close()
+
+            example_nb = nbformat.reader.reads(example_nb)
+            rst_export = RSTExporter()
+            (body, resources) = rst_export.from_notebook_node(example_nb)
+            with open(rst_filename, 'wt') as rst:
+                rst.write(body)
+
             for key in resources['outputs'].keys():
                 if key.endswith('.png'):
                     resource_filename = os.path.join(cwd, 'doc', 'source',
                                                      source_dir, key)
-                    f = open(resource_filename, 'wb')
-                    f.write(resources['outputs'][key])
-                    f.close()
+                    with open(resource_filename, 'wb') as resource:
+                        resource.write(resources['outputs'][key])
+
         except:
             import warnings
 
-            warnings.warn('Unable to convert {original} to {target}.  This only'
-                          'affects documentation generation and not the operation of the'
-                          ' module.'.format(original=notebook,
-                                            target=rst_filename))
+            warnings.warn('Unable to convert {original} to {target}.  This '
+                          'only affects documentation generation and not the '
+                          'operation of the '
+                          'module.'.format(original=notebook,
+                                           target=rst_filename))
             print('The last error was:')
             import sys
+
             print(sys.exc_info()[0])
             print(sys.exc_info()[1])
 
@@ -161,7 +164,8 @@ except:
     import warnings
 
     warnings.warn('Unable to import required modules from IPython. This only '
-                  'affects documentation generation and not the operation of the module.')
+                  'affects documentation generation and not the operation of '
+                  'the module.')
 
 # Read version information from plain VERSION file
 version = None
@@ -209,6 +213,6 @@ setup(name='arch',
           'Programming Language :: Python',
           'Programming Language :: Cython',
           'Topic :: Scientific/Engineering',
-          ],
+      ],
       install_requires=[key + '>=' + REQUIREMENTS[key] for key in REQUIREMENTS]
-)
+      )

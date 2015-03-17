@@ -142,7 +142,9 @@ for examples of the multiple comparison procedures.
 
 ### Optional Requirements
 
-* Numba (0.15+) will be used if available and when installed using --no-binary
+* Numba (0.15+) will be used if available **and** when installed using the 
+--no-binary option
+* IPython (3.0+) is required to run the notebooks
 
 ### Installing
 
