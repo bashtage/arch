@@ -166,6 +166,11 @@ except:
     warnings.warn('Unable to import required modules from IPython. This only '
                   'affects documentation generation and not the operation of '
                   'the module.')
+    print('The last error was:')
+    import sys
+
+    print(sys.exc_info()[0])
+    print(sys.exc_info()[1])
 
 # Read version information from plain VERSION file
 version = None
