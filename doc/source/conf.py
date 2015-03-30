@@ -16,46 +16,6 @@ import os
 import sys
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
-if False: #  on_rtd:
-    try:
-        from unittest.mock import MagicMock
-    except ImportError:
-        from mock import MagicMock
-
-    class Mock(MagicMock):
-        @classmethod
-        def __getattr__(cls, name):
-                return Mock()
-
-    MOCK_MODULES = ['statsmodels',
-                    'statsmodels.iolib',
-                    'statsmodels.iolib.summary',
-                    'statsmodels.iolib.summary.Summary',
-                    'statsmodels.iolib.summary.fmt_2cols',
-                    'statsmodels.iolib.summary.fmt_params',
-                    'statsmodels.iolib.table',
-                    'statsmodels.iolib.table.SimpleTable',
-                    'statsmodels.tools',
-                    'statsmodels.tools.decorators',
-                    'statsmodels.tools.decorators.cache_readonly',
-                    'statsmodels.tools.decorators.resettable_cache'
-                    'statsmodels.tools.summary',
-                    'statsmodels.compatnp',
-                    'statsmodels.compatnp.collections',
-                    'statsmodels.compatnp.collections.OrderedDict',
-                    'statsmodels.tools',
-                    'statsmodels.tools.numdiff',
-                    'statsmodels.tools.numdiff.approx_fprime',
-                    'statsmodels.tools.numdiff.approx_hess',
-                    'statsmodels.tsa',
-                    'statsmodels.tsa.tsatools',
-                    'statsmodels.tsa.tsatools.lagmat',
-                    'statsmodels.regression',
-                    'statsmodels.regression.linear_model'
-                    'statsmodels.regression.linear_model.OLS']
-
-    sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
 cwd = os.getcwd()
 source_dir = os.path.join(cwd, '..', '..')
 print source_dir
@@ -76,7 +36,7 @@ sys.path.insert(0, source_dir)
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinxcontrib.napoleon',
+    'sphinx.ext.napoleon',
     'sphinx.ext.doctest',
     'sphinx.ext.todo',
     'sphinx.ext.mathjax',
@@ -101,7 +61,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'arch'
-copyright = u'2014, Kevin Sheppard'
+copyright = u'2014-5, Kevin Sheppard'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
