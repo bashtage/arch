@@ -293,3 +293,11 @@ intersphinx_mapping = {
     'pandas': ('FIXME', None)
 }
 
+print('\n')
+print('*'*72)
+print('\n')
+import pandas as pd
+pd.show_versions()
+print('\n')
+print('*'*72)
+print('\n'*3)
