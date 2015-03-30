@@ -4,7 +4,7 @@ scipy
 matplotlib
 pandas
 patsy
-ipython==3
+ipython>=3
 statsmodels
-sphinx==1.3
+sphinx>=1.3
 mock
