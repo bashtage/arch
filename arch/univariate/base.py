@@ -623,7 +623,9 @@ class ARCHModelResult(object):
         Schwarz/Bayes information criteria
     conditional_volatility : 1-d array or Series
         nobs element array containing the conditional volatility (square root
-        of conditional variance)
+        of conditional variance).  The values are aligned with the input data so
+        that the value in the t-th position is the variance of t-th error,
+        which is computed using time-(t-1) information.
     params : Series
         Estimated parameters
     param_cov : DataFrame
@@ -989,8 +991,8 @@ class ARCHModelResult(object):
         ----------
         params : 1d array-like, optional
             Alternative parameters to use.  If not provided, the parameters
-            computed by fitting the model are used.  Must be identical in shape
-            to the parameters computed by fitting the model.
+            estimated when fitting the model are used.  Must be identical in
+            shape to the parameters computed by fitting the model.
         horizon : int, optional
            Number of steps to forecast
         start : int, datetime or str, optional
@@ -1026,6 +1028,12 @@ class ARCHModelResult(object):
 
         Notes
         -----
+        The most basic 1-step ahead forecast will return a vector with the same
+        length as the original data, where the t-th value will be the time-t
+        forecast for time t + 1.  When the horizon is > 1, and when using the
+        default value for `align`, the forecast value in position [t, h] is the
+        time-t, h+1 step ahead forecast.
+
         If model contains exogenous variables (`model.x is not None`), then only
         1-step ahead forecasts are available.  Using horizon > 1 will produce
         a warning and all columns, except the first, will be nan-filled.
