@@ -66,4 +66,4 @@ All model return the same object, a results class (:py:class:`ARCHModelResult`)
 
 .. py:currentmodule:: arch.univariate.base
 .. autoclass:: ARCHModelResult
-    :members: summary, plot, conf_int
+    :members: summary, forecast, conf_int, plot, hedgehog_plot
