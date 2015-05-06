@@ -159,7 +159,7 @@ class TestVolatiltyProcesses(unittest.TestCase):
         assert_almost_equal(backcast,
                             np.sum((self.resids[:75] ** 2) * (w / w.sum())))
 
-        parameters = np.array([0.5, 0.5])
+        parameters = np.array([0.5, 0.7])
         var_bounds = arch.variance_bounds(self.resids)
         arch.compute_variance(parameters, self.resids, self.sigma2, backcast,
                               var_bounds)
