@@ -476,7 +476,6 @@ class GARCH(VolatilityProcess):
 
     def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
         p, o, q, power = self.p, self.o, self.q, self.power
-        inv_power = 1.0 / power
         errors = rng(nobs + burn)
 
         if initial_value is None:
@@ -499,8 +498,8 @@ class GARCH(VolatilityProcess):
 
         max_lag = np.max([p, o, q])
         fsigma[:max_lag] = initial_value
-        sigma2[:max_lag] = initial_value ** inv_power
-        data[:max_lag] = sqrt(sigma2[:max_lag]) * sign(errors[:max_lag])
+        sigma2[:max_lag] = initial_value ** (2.0 / power)
+        data[:max_lag] = sqrt(sigma2[:max_lag]) * errors[:max_lag]
         fdata[:max_lag] = abs(data[:max_lag]) ** power
 
         for t in range(max_lag, nobs + burn):
