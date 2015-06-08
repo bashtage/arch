@@ -30,6 +30,11 @@ matrix:
     - NUMPY=1.8.2
   - python: 2.7
     env:
+    - PYTHON=2.7
+    - NUMBA=0.19
+    - COVERAGE=false
+  - python: 2.7
+    env:
     - PYTHON=3.3
     - NUMPY=1.9
     - SCIPY=0.14

@@ -562,7 +562,7 @@ class TestBootstrap(TestCase):
 
         y = self.y_series
         results_series = _loo_jackknife(func, len(y), (y,), {})
-        assert_equal(results, results_series)
+        assert_allclose(results, results_series)
 
     def test_bca(self):
         num_bootstrap = 20
