@@ -495,8 +495,8 @@ class DFGLS(UnitRootTest):
     -----
     The null hypothesis of the Dickey-Fuller GLS is that there is a unit
     root, with the alternative that there is no unit root. If the pvalue is
-    above a critical size, then the null cannot be rejected that there
-    and the series appears to be a unit root.
+    above a critical size, then the null cannot be rejected and the series
+    appears to be a unit root.
 
     DFGLS differs from the ADF test in that an initial GLS detrending step
     is used before a trend-less ADF regression is run.
