@@ -70,7 +70,8 @@ class TestDistributions(unittest.TestCase):
         const_b = (1 + 3*lam**2 - const_a**2)**.5
 
         resids = self.resids / self.sigma2**.5
-        pdf = const_b * const_c * (1 + 1/(eta-2) *((const_b * resids + const_a)
+        pdf = const_b * const_c / self.sigma2**.5 \
+            * (1 + 1/(eta-2) *((const_b * resids + const_a)
             /(1 + np.sign(resids + const_a / const_b) * lam))**2)**(-(eta+1)/2)
 
         ll2 = np.log(pdf).sum()
