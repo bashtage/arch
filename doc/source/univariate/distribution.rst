@@ -16,6 +16,12 @@ Student's t
 .. autoclass:: StudentsT
     :members: starting_values, bounds, constraints, simulate, loglikelihoood
 
+Skew Student's t
+----------------
+
+.. autoclass:: SkewStudent
+    :members: starting_values, bounds, constraints, simulate, loglikelihoood
+
 Writing New Distributions
 -------------------------
 All distributions must inherit from :class:Distribution and provide all public
