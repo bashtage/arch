@@ -398,6 +398,7 @@ class SkewStudent(Distribution):
         const_a = self.__const_a(parameters)
         const_b = self.__const_b(parameters)
 
+        resids /= (sigma2**.5)
         lls = log(const_b * const_c) \
             - (eta+1)/2 * log(1 + 1/(eta-2) * ((const_b * resids + const_a)
             / (1 + sign(resids + const_a / const_b) * lam))**2)
