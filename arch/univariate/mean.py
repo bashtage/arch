@@ -14,7 +14,7 @@ from pandas import DataFrame
 
 from .base import ARCHModel, implicit_constant, ARCHModelResult
 from .volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH
-from .distribution import Normal, StudentsT
+from .distribution import Normal, StudentsT, SkewStudent
 from ..utility.array import ensure1d, parse_dataframe, date_to_index, find_index
 from ..compat.python import range, iteritems
 
@@ -244,10 +244,10 @@ class HARX(ARCHModel):
         ----------
         params : array
             Parameters to use when simulating the model.  Parameter order is
-            [mean volatility distribution] where the parameters of the mean 
-            model are ordered [constant lag[0] lag[1] ... lag[p] ex[0] ... 
-            ex[k-1]] where lag[j] indicates the coefficient on the jth lag in 
-            the model and ex[j] is the coefficient on the jth exogenous 
+            [mean volatility distribution] where the parameters of the mean
+            model are ordered [constant lag[0] lag[1] ... lag[p] ex[0] ...
+            ex[k-1]] where lag[j] indicates the coefficient on the jth lag in
+            the model and ex[j] is the coefficient on the jth exogenous
             variable.
         nobs : int
             Length of series to simulate
@@ -261,7 +261,7 @@ class HARX(ARCHModel):
             nobs + burn by k array of exogenous variables to include in the
             simulation.
         initial_value_vol : array or float, optional
-            An array or scalar to use when initializing the volatility process. 
+            An array or scalar to use when initializing the volatility process.
 
         Returns
         -------
@@ -1090,6 +1090,7 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
         Name of the error distribution.  Currently supported options are:
             'Normal' (default)
             'StudentsT'
+            'SkewStudents'
     hold_back : int, str, datetime or datetime64, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
@@ -1140,7 +1141,7 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
     """
     known_mean = ('zero', 'constant', 'harx', 'har', 'ar', 'arx', 'ls')
     known_vol = ('arch', 'garch', 'harch', 'constant', 'egarch')
-    known_dist = ('normal', 'studentst')
+    known_dist = ('normal', 'studentst', 'skewstudent')
     mean = mean.lower()
     vol = vol.lower()
     dist = dist.lower()
@@ -1179,7 +1180,9 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
 
     if dist == 'normal':
         d = Normal()
-    else:  # dist == 'studentst':
+    elif dist == 'skewstudent':
+        d = SkewStudent()
+    else: # dist == 'studentst':
         d = StudentsT()
 
     am.volatility = v
