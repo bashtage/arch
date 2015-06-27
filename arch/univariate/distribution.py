@@ -6,7 +6,7 @@ from __future__ import division, absolute_import
 
 from numpy.random import standard_normal, standard_t
 from numpy import empty, array, sqrt, log, exp, sign, pi, sum, asarray, ones_like
-from scipy.special import gammaln, gamma
+from scipy.special import gammaln
 import scipy.stats as stats
 
 from ..compat.python import add_metaclass
