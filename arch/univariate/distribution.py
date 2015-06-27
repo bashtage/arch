@@ -278,8 +278,7 @@ class StudentsT(Distribution):
         where :math:`\Gamma` is the gamma function.
         """
         nu = parameters[0]
-        lls = gammaln(0.5 * (nu + 1)) - gammaln(nu / 2) - 1 / 2 * log(
-            pi * (nu - 2))
+        lls = gammaln((nu + 1)/2) - gammaln(nu/2) - log(pi * (nu - 2))/2
         lls -= 0.5 * (log(sigma2))
         lls -= ((nu + 1) / 2) * (log(1 + (resids ** 2.0) / (sigma2 * (nu - 2))))
 
@@ -338,10 +337,10 @@ class SkewStudent(Distribution):
 
     def constraints(self):
         return array([[1, 0], [-1, 0], [0, 1], [0, -1]]), \
-            array([2.05, -500.0, -1., -1.])
+            array([2.05, -300.0, -1, -1])
 
     def bounds(self, resids):
-        return [(2.05, 500.0), (-1., 1.)]
+        return [(2.05, 300.0), (-1, 1)]
 
     def loglikelihoood(self, parameters, resids, sigma2, individual=False):
         """Computes the log-likelihood of assuming residuals are have a
@@ -371,23 +370,21 @@ class SkewStudent(Distribution):
 
         .. math::
 
-            \\begin{cases}
-            \\ln\\left[bc\\left(1+\\frac{1}{\\eta-2}
-                \\left(\\frac{a+bx}{1-\\lambda}\\right)^{2}\\right)
-                ^{-\\left(\\eta+1\\right)/2}\\right], & x<-a/b,\\\\
-            \\ln\\left[bc\\left(1+\\frac{1}{\\eta-2}
-                \\left(\\frac{a+bx}{1+\\lambda}\\right)^{2}\\right)
-                ^{-\\left(\\eta+1\\right)/2}\\right], & x\geq-a/b,
-            \\end{cases}
+            \\ln\\left[\\frac{bc}{\\sigma}\\left(1+\\frac{1}{\\eta-2}
+                \\left(\\frac{a+bx/\\sigma}
+                {1+sgn(x/\\sigma^2+a/b)\\lambda}\\right)^{2}\\right)
+                ^{-\\left(\\eta+1\\right)/2}\\right],
 
         where :math:`2<\eta<\infty`, and :math:`-1<\lambda<1`.
         The constants :math:`a`, :math:`b`, and :math:`c` are given by
 
         .. math::
 
-            a=4\\lambda c\\frac{\\eta-2}{\\eta-1},\\quad b^{2}=1+3\\lambda^{2}-a^{2},
+            a=4\\lambda c\\frac{\\eta-2}{\\eta-1},
+                \\quad b^{2}=1+3\\lambda^{2}-a^{2},
                 \\quad c=\\frac{\\Gamma\\left(\\frac{\\eta+1}{2}\\right)}
-                {\\sqrt{\\pi\\left(\\eta-2\\right)}\\Gamma\\left(\\frac{\\eta}{2}\\right)},
+                {\\sqrt{\\pi\\left(\\eta-2\\right)}
+                \\Gamma\\left(\\frac{\\eta}{2}\\right)},
 
         and :math:`\Gamma` is the gamma function.
 
@@ -399,9 +396,9 @@ class SkewStudent(Distribution):
         const_b = self.__const_b(parameters)
 
         resids = resids / sigma2**.5
-        lls = log(const_b * const_c) \
-            - (eta+1)/2 * log(1 + 1/(eta-2) * ((const_b * resids + const_a)
-            / (1 + sign(resids + const_a / const_b) * lam))**2)
+        lls = log(const_b) + const_c - log(sigma2)/2
+        lls -= (eta+1)/2 * log(1 + ((const_b * resids + const_a)
+            / (1 + sign(resids + const_a / const_b) * lam))**2 / (eta-2))
 
         if individual:
             return lls
@@ -458,11 +455,11 @@ class SkewStudent(Distribution):
 
         Returns
         -------
-        a : float
+        float
 
         """
         eta, lam = parameters
-        return 4*lam*self.__const_c(parameters)*(eta-2)/(eta-1)
+        return 4*lam*exp(self.__const_c(parameters))*(eta-2)/(eta-1)
 
     def __const_b(self, parameters):
         """Compute b constant.
@@ -474,7 +471,7 @@ class SkewStudent(Distribution):
 
         Returns
         -------
-        b : float
+        float
 
         """
         eta, lam = parameters
@@ -490,11 +487,12 @@ class SkewStudent(Distribution):
 
         Returns
         -------
-        c : float
+        float
 
         """
         eta, lam = parameters
-        return gamma((eta+1)/2) / ((pi*(eta-2))**.5 * gamma(eta/2))
+#        return gamma((eta+1)/2) / ((pi*(eta-2))**.5 * gamma(eta/2))
+        return gammaln((eta+1)/2) - gammaln(eta/2) - log(pi*(eta-2))/2
 
     def icdf(self, arg, parameters):
         """Inverse cumulative density function (ICDF).
