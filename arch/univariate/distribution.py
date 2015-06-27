@@ -332,8 +332,8 @@ class SkewStudent(Distribution):
     """
 
     def __init__(self):
-        super(SkewStudents, self).__init__('Normal')
-        self.num_params = 1
+        super(SkewStudent, self).__init__('Normal')
+        self.num_params = 2
         self.name = 'Standardized Skew Student\'s t'
 
     def constraints(self):
@@ -398,7 +398,7 @@ class SkewStudent(Distribution):
         const_a = self.__const_a(parameters)
         const_b = self.__const_b(parameters)
 
-        resids /= (sigma2**.5)
+        resids = resids / sigma2**.5
         lls = log(const_b * const_c) \
             - (eta+1)/2 * log(1 + 1/(eta-2) * ((const_b * resids + const_a)
             / (1 + sign(resids + const_a / const_b) * lam))**2)
