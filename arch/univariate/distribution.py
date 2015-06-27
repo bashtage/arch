@@ -431,15 +431,15 @@ class SkewStudent(Distribution):
         return array([sv, 0.])
 
     def _simulator(self, nobs):
-        parameters = self._parameters
+        parameters = self._parameters[0]
         std_dev = sqrt(parameters[0] / (parameters[0] - 2.))
         return self.icdf(stats.uniform.rvs(size=nobs), parameters) / std_dev
 
     def simulate(self, parameters):
         parameters = asarray(parameters)[None]
-        if parameters[0] <= 2.0:
+        if parameters[0, 0] <= 2.0:
             raise ValueError('The shape parameter must be larger than 2')
-        if abs(parameters[1]) > 1.0:
+        if abs(parameters[0, 1]) > 1.0:
             raise ValueError('The skew parameter must be '
                              + 'smaller than 1 in absolute value')
         self._parameters = parameters
@@ -519,7 +519,7 @@ class SkewStudent(Distribution):
 
         cond = arg < (1-lam)/2
 
-        icdf1 = stats.t.ppf(arg[cond]/(1-lam), self.eta)
+        icdf1 = stats.t.ppf(arg[cond]/(1-lam), eta)
         icdf2 = stats.t.ppf(.5+(arg[~cond]-(1-lam)/2)/(1+lam), eta)
         icdf = -999.99*ones_like(arg)
         icdf[cond] = icdf1
