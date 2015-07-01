@@ -327,7 +327,19 @@ class StudentsT(Distribution):
 
 class SkewStudent(Distribution):
     """
-    Standardized Skewed Student's nobs distribution for use with ARCH models
+    Standardized Skewed Student's [1]_ distribution for use with ARCH models
+
+    Notes
+    -----
+    For :math:`\\lambda=0` the distribution is standardized Student's t.
+
+    References
+    ----------
+
+    .. [1] Hansen, B. E. (1994). Autoregressive conditional density estimation.
+        *International Economic Review*, 35(3), 705–730.
+        <http://www.ssc.wisc.edu/~bhansen/papers/ier_94.pdf>
+
     """
 
     def __init__(self):
@@ -372,7 +384,7 @@ class SkewStudent(Distribution):
 
             \\ln\\left[\\frac{bc}{\\sigma}\\left(1+\\frac{1}{\\eta-2}
                 \\left(\\frac{a+bx/\\sigma}
-                {1+sgn(x/\\sigma^2+a/b)\\lambda}\\right)^{2}\\right)
+                {1+sgn(x/\\sigma+a/b)\\lambda}\\right)^{2}\\right)
                 ^{-\\left(\\eta+1\\right)/2}\\right],
 
         where :math:`2<\eta<\infty`, and :math:`-1<\lambda<1`.
