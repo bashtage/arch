@@ -428,9 +428,8 @@ class SkewStudent(Distribution):
         return array([sv, 0.])
 
     def _simulator(self, nobs):
-        parameters = self._parameters[0]
-        std_dev = sqrt(parameters[0] / (parameters[0] - 2.))
-        return self.icdf(stats.uniform.rvs(size=nobs), parameters) / std_dev
+        # No need to normalize since it is already done in parameterization
+        return self.ppf(stats.uniform.rvs(size=nobs), self._parameters[0])
 
     def simulate(self, parameters):
         parameters = asarray(parameters)[None]
@@ -443,7 +442,7 @@ class SkewStudent(Distribution):
         return self._simulator
 
     def parameter_names(self):
-        return ['eta', 'lambda']
+        return ['nu', 'lambda']
 
     def __const_a(self, parameters):
         """Compute a constant.
@@ -494,7 +493,7 @@ class SkewStudent(Distribution):
 #        return gamma((eta+1)/2) / ((pi*(eta-2))**.5 * gamma(eta/2))
         return gammaln((eta+1)/2) - gammaln(eta/2) - log(pi*(eta-2))/2
 
-    def icdf(self, arg, parameters):
+    def ppf(self, arg, parameters):
         """Inverse cumulative density function (ICDF).
 
         Parameters
