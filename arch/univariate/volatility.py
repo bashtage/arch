@@ -482,8 +482,9 @@ class GARCH(VolatilityProcess):
             scale = ones_like(parameters)
             scale[p + 1:p + o + 1] = 0.5
 
-            if (1.0 - np.sum(parameters[1:] * scale[1:])) > 0:
-                initial_value = parameters[0] / (1.0 - np.sum(parameters[1:]))
+            persistence = np.sum(parameters[1:] * scale[1:])
+            if (1.0 - persistence) > 0:
+                initial_value = parameters[0] / (1.0 - persistence)
             else:
                 from warnings import warn
 
