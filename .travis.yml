@@ -31,7 +31,7 @@ matrix:
   - python: 2.7
     env:
     - PYTHON=2.7
-    - NUMBA=0.19
+    - NUMBA=0.20
     - COVERAGE=false
   - python: 2.7
     env:
@@ -46,7 +46,7 @@ matrix:
     - PYTHON=3.4
     - NUMPY=1.9
     - SCIPY=0.15
-    - NUMBA=0.18
+    - NUMBA=0.19
     - MATPLOTLIB=1.4
 
 notifications:
