@@ -5,7 +5,7 @@ Distributions to use in ARCH models.  All distributions must inherit from
 from __future__ import division, absolute_import
 
 from numpy.random import standard_normal, standard_t
-from numpy import empty, array, sqrt, log, pi, sum, asarray
+from numpy import empty, array, sqrt, log, exp, sign, pi, sum, asarray, ones_like
 from scipy.special import gammaln
 import scipy.stats as stats
 
@@ -13,7 +13,7 @@ from ..compat.python import add_metaclass
 from ..utility.array import DocStringInheritor
 
 
-__all__ = ['Distribution', 'Normal', 'StudentsT']
+__all__ = ['Distribution', 'Normal', 'StudentsT', 'SkewStudent']
 
 
 @add_metaclass(DocStringInheritor)
@@ -278,8 +278,7 @@ class StudentsT(Distribution):
         where :math:`\Gamma` is the gamma function.
         """
         nu = parameters[0]
-        lls = gammaln(0.5 * (nu + 1)) - gammaln(nu / 2) - 1 / 2 * log(
-            pi * (nu - 2))
+        lls = gammaln((nu + 1)/2) - gammaln(nu/2) - log(pi * (nu - 2))/2
         lls -= 0.5 * (log(sigma2))
         lls -= ((nu + 1) / 2) * (log(1 + (resids ** 2.0) / (sigma2 * (nu - 2))))
 
@@ -324,3 +323,216 @@ class StudentsT(Distribution):
 
     def parameter_names(self):
         return ['nu']
+
+
+class SkewStudent(Distribution):
+    """
+    Standardized Skewed Student's [1]_ distribution for use with ARCH models
+
+    Notes
+    -----
+    For :math:`\\lambda=0` the distribution is standardized Student's t.
+
+    References
+    ----------
+
+    .. [1] Hansen, B. E. (1994). Autoregressive conditional density estimation.
+        *International Economic Review*, 35(3), 705–730.
+        <http://www.ssc.wisc.edu/~bhansen/papers/ier_94.pdf>
+
+    """
+
+    def __init__(self):
+        super(SkewStudent, self).__init__('Normal')
+        self.num_params = 2
+        self.name = 'Standardized Skew Student\'s t'
+
+    def constraints(self):
+        return array([[1, 0], [-1, 0], [0, 1], [0, -1]]), \
+            array([2.05, -300.0, -1, -1])
+
+    def bounds(self, resids):
+        return [(2.05, 300.0), (-1, 1)]
+
+    def loglikelihoood(self, parameters, resids, sigma2, individual=False):
+        """Computes the log-likelihood of assuming residuals are have a
+        standardized (to have unit variance) Skew Student's t distribution,
+        conditional on the variance.
+
+        Parameters
+        ----------
+        parameters : 1-d array
+            Shape parameter of the skew-t distribution
+        resids  : 1-d array, float
+            The residuals to use in the log-likelihood calculation
+        sigma2 : 1-d array, float
+            Conditional variances of resids
+        individual : bool, optional
+            Flag indicating whether to return the vector of individual log
+            likelihoods (True) or the sum (False)
+
+        Returns
+        -------
+        ll : float64
+            The log-likelihood
+
+        Notes
+        -----
+        The log-likelihood of a single data point x is
+
+        .. math::
+
+            \\ln\\left[\\frac{bc}{\\sigma}\\left(1+\\frac{1}{\\eta-2}
+                \\left(\\frac{a+bx/\\sigma}
+                {1+sgn(x/\\sigma+a/b)\\lambda}\\right)^{2}\\right)
+                ^{-\\left(\\eta+1\\right)/2}\\right],
+
+        where :math:`2<\eta<\infty`, and :math:`-1<\lambda<1`.
+        The constants :math:`a`, :math:`b`, and :math:`c` are given by
+
+        .. math::
+
+            a=4\\lambda c\\frac{\\eta-2}{\\eta-1},
+                \\quad b^{2}=1+3\\lambda^{2}-a^{2},
+                \\quad c=\\frac{\\Gamma\\left(\\frac{\\eta+1}{2}\\right)}
+                {\\sqrt{\\pi\\left(\\eta-2\\right)}
+                \\Gamma\\left(\\frac{\\eta}{2}\\right)},
+
+        and :math:`\Gamma` is the gamma function.
+
+        """
+        eta, lam = parameters
+
+        const_c = self.__const_c(parameters)
+        const_a = self.__const_a(parameters)
+        const_b = self.__const_b(parameters)
+
+        resids = resids / sigma2**.5
+        lls = log(const_b) + const_c - log(sigma2)/2
+        lls -= (eta+1)/2 * log(1 + ((const_b * resids + const_a)
+            / (1 + sign(resids + const_a / const_b) * lam))**2 / (eta-2))
+
+        if individual:
+            return lls
+        else:
+            return sum(lls)
+
+    def starting_values(self, std_resid):
+        """
+        Parameters
+        ----------
+        std_resid : 1-d array
+            Estimated standardized residuals to use in computing starting
+            values for the shape parameter
+
+        Returns
+        -------
+        sv : 1-d array
+            Array containing starting valuer for shape parameter
+
+        Notes
+        -----
+        Uses relationship between kurtosis and degree of freedom parameter to
+        produce a moment-based estimator for the starting values.
+        """
+        k = stats.kurtosis(std_resid, fisher=False)
+        sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
+        return array([sv, 0.])
+
+    def _simulator(self, nobs):
+        # No need to normalize since it is already done in parameterization
+        return self.ppf(stats.uniform.rvs(size=nobs), self._parameters[0])
+
+    def simulate(self, parameters):
+        parameters = asarray(parameters)[None]
+        if parameters[0, 0] <= 2.0:
+            raise ValueError('The shape parameter must be larger than 2')
+        if abs(parameters[0, 1]) > 1.0:
+            raise ValueError('The skew parameter must be '
+                             + 'smaller than 1 in absolute value')
+        self._parameters = parameters
+        return self._simulator
+
+    def parameter_names(self):
+        return ['nu', 'lambda']
+
+    def __const_a(self, parameters):
+        """Compute a constant.
+
+        Parameters
+        ----------
+        parameters : 1-d array
+            Shape parameters of the skew-t distribution
+
+        Returns
+        -------
+        float
+
+        """
+        eta, lam = parameters
+        return 4*lam*exp(self.__const_c(parameters))*(eta-2)/(eta-1)
+
+    def __const_b(self, parameters):
+        """Compute b constant.
+
+        Parameters
+        ----------
+        parameters : 1-d array
+            Shape parameters of the skew-t distribution
+
+        Returns
+        -------
+        float
+
+        """
+        eta, lam = parameters
+        return (1 + 3*lam**2 - self.__const_a(parameters)**2)**.5
+
+    def __const_c(self, parameters):
+        """Compute c constant.
+
+        Parameters
+        ----------
+        parameters : 1-d array
+            Shape parameters of the skew-t distribution
+
+        Returns
+        -------
+        float
+
+        """
+        eta, lam = parameters
+#        return gamma((eta+1)/2) / ((pi*(eta-2))**.5 * gamma(eta/2))
+        return gammaln((eta+1)/2) - gammaln(eta/2) - log(pi*(eta-2))/2
+
+    def ppf(self, arg, parameters):
+        """Inverse cumulative density function (ICDF).
+
+        Parameters
+        ----------
+        arg : array
+            Grid of point to evaluate ICDF at. Must belong to (0, 1)
+        parameters : 1-d array
+            Shape parameters of the skew-t distribution
+
+        Returns
+        -------
+        array
+            ICDF values. Same shape as the input.
+
+        """
+        eta, lam = parameters
+
+        a = self.__const_a(parameters)
+        b = self.__const_b(parameters)
+
+        cond = arg < (1-lam)/2
+
+        icdf1 = stats.t.ppf(arg[cond]/(1-lam), eta)
+        icdf2 = stats.t.ppf(.5+(arg[~cond]-(1-lam)/2)/(1+lam), eta)
+        icdf = -999.99*ones_like(arg)
+        icdf[cond] = icdf1
+        icdf[~cond] = icdf2
+        icdf = (icdf * (1+sign(arg-(1-lam)/2)*lam) * (1-2/eta)**.5 - a)/b
+
+        return icdf

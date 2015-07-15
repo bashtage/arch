@@ -12,7 +12,7 @@ except:
     from arch.univariate import recursions_python as rec
 from arch.univariate.volatility import GARCH, ARCH, HARCH, ConstantVariance, \
     EWMAVariance, RiskMetrics2006, EGARCH
-from arch.univariate.distribution import Normal, StudentsT
+from arch.univariate.distribution import Normal, StudentsT, SkewStudent
 from arch.compat.python import range
 
 
@@ -573,6 +573,13 @@ class TestVolatiltyProcesses(unittest.TestCase):
             garch.simulate(parameters, 1000, studt.simulate([4.0]))
             assert_equal(len(w), 1)
 
+        garch = GARCH()
+        parameters = np.array([0.1, 0.2, 0.8, 4.0, 0.5])
+        skewstud = SkewStudent()
+        with warnings.catch_warnings(record=True) as w:
+            garch.simulate(parameters, 1000, skewstud.simulate([4.0, 0.5]))
+            assert_equal(len(w), 1)
+
         harch = HARCH(lags=[1, 5, 22])
         parameters = np.array([0.1, 0.2, 0.4, 0.5])
         with warnings.catch_warnings(record=True) as w:
@@ -771,3 +778,7 @@ class TestVolatiltyProcesses(unittest.TestCase):
         assert_equal(egarch.p, 1)
         assert_equal(egarch.o, 1)
         assert_equal(egarch.q, 1)
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -1,12 +1,12 @@
 import unittest
 
 import scipy.stats as stats
-from scipy.special import gammaln
+from scipy.special import gammaln, gamma
 from numpy.testing import assert_almost_equal, assert_equal, \
     assert_array_equal, assert_raises
 import numpy as np
 
-from arch.univariate.distribution import Normal, StudentsT
+from arch.univariate.distribution import Normal, StudentsT, SkewStudent
 
 
 class TestDistributions(unittest.TestCase):
@@ -58,4 +58,39 @@ class TestDistributions(unittest.TestCase):
         assert_array_equal(dist.starting_values(self.resids), np.array([sv]))
 
         assert_raises(ValueError, dist.simulate, np.array([1.5]))
+
+    def test_skewstudent(self):
+        dist = SkewStudent()
+        eta, lam = 4.0, .5
+        ll1 = dist.loglikelihoood(np.array([eta, lam]),
+                                  self.resids, self.sigma2)
+        # Direct calculation of PDF, then log
+        const_c = gamma((eta+1)/2) / ((np.pi*(eta-2))**.5 * gamma(eta/2))
+        const_a = 4*lam*const_c*(eta-2)/(eta-1)
+        const_b = (1 + 3*lam**2 - const_a**2)**.5
+
+        resids = self.resids / self.sigma2**.5
+        pdf = const_b * const_c / self.sigma2**.5 \
+            * (1 + 1/(eta-2) *((const_b * resids + const_a)
+            /(1 + np.sign(resids + const_a / const_b) * lam))**2)**(-(eta+1)/2)
+
+        ll2 = np.log(pdf).sum()
+        assert_almost_equal(ll1, ll2)
+
+        assert_equal(dist.num_params, 2)
+
+        bounds = dist.bounds(self.resids)
+        assert_equal(len(bounds), 2)
+
+        A, b = dist.constraints()
+        assert_equal(A.shape, (4, 2))
+
+        k = stats.kurtosis(self.resids, fisher=False)
+        sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
+        assert_array_equal(dist.starting_values(self.resids), np.array([sv, 0.]))
+
+        assert_raises(ValueError, dist.simulate, np.array([1.5, 0.]))
+        assert_raises(ValueError, dist.simulate, np.array([4., 1.5]))
+        assert_raises(ValueError, dist.simulate, np.array([4., -1.5]))
+        assert_raises(ValueError, dist.simulate, np.array([1.5, 1.5]))
 

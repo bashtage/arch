@@ -341,9 +341,9 @@ class GARCH(VolatilityProcess):
     Notes
     -----
     In this class of processes, the variance dynamics are
-    
+
     .. math::
-    
+
         \\sigma_{t}^{\\lambda}=\\omega
         +\\sum_{i=1}^{p}\\alpha_{i}\\left|\\epsilon_{t-i}\\right|^{\\lambda}
         +\\sum_{j=1}^{o}\\gamma_{j}\\left|\\epsilon_{t-j}\\right|^{\\lambda}
@@ -482,8 +482,9 @@ class GARCH(VolatilityProcess):
             scale = ones_like(parameters)
             scale[p + 1:p + o + 1] = 0.5
 
-            if (1.0 - np.sum(parameters[1:] * scale[1:])) > 0:
-                initial_value = parameters[0] / (1.0 - np.sum(parameters[1:]))
+            persistence = np.sum(parameters[1:] * scale[1:])
+            if (1.0 - persistence) > 0:
+                initial_value = parameters[0] / (1.0 - persistence)
             else:
                 from warnings import warn
 
@@ -593,7 +594,7 @@ class HARCH(VolatilityProcess):
 
     Notes
     -----
-    In a Heterogeneous ARCH process, variance dynamics are 
+    In a Heterogeneous ARCH process, variance dynamics are
 
     .. math::
 

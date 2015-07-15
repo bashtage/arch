@@ -427,12 +427,19 @@ class ARCHModel(object):
         func = self._loglikelihood
         args = (sigma2, backcast, var_bounds)
         f_ieqcons = constraint(a, b)
-        disp = 1 if disp == 'final' else 0
+
+        if disp == 'off':
+            callback = None
+            disp = 0
+        elif disp == 'final':
+            callback = _callback
+            disp = 1
+
         if SP14:
             xopt = fmin_slsqp(func, sv, f_ieqcons=f_ieqcons, bounds=bounds,
                               args=args, iter=100, acc=1e-06, iprint=1,
                               full_output=1, epsilon=1.4901161193847656e-08,
-                              callback=_callback, disp=disp)
+                              callback=callback, disp=disp)
         else:
             if update_freq > 0:  # Fix limit in SciPy < 0.14
                 disp = 2
@@ -1105,4 +1112,3 @@ class ARCHModelResult(object):
         ax.set_title(self._dep_name + ' Forecast Hedgehog Plot')
 
         return fig
-
