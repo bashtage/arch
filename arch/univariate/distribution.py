@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Distributions to use in ARCH models.  All distributions must inherit from
 :class:`Distribution` and provide the same methods with the same inputs.
