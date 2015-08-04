@@ -7,7 +7,7 @@ All ARCH models start by specifying a mean model.
 No Mean
 ~~~~~~~
 .. autoclass:: ZeroMean
-    :members: resids, simulate, fit
+    :members: resids, simulate, fit,  fix
 
 Constant Mean
 ~~~~~~~~~~~~~
@@ -17,17 +17,17 @@ Constant Mean
 Autoregressions
 ~~~~~~~~~~~~~~~
 .. autoclass:: ARX
-    :members: resids, simulate, fit, forecast
+    :members: resids, simulate, fit, fix, forecast
 
 Heterogeneous Autoregressions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: HARX
-    :members: resids, simulate, fit, forecast
+    :members: resids, simulate, fit, fix, forecast
 
 Least Squares
 ~~~~~~~~~~~~~
 .. autoclass:: LS
-    :members: resids, simulate, fit
+    :members: resids, simulate, fit, fix
 
 
 Writing New Mean Models
