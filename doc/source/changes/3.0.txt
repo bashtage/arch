@@ -1,0 +1,9 @@
+Changes since 3.0
+=================
+- Added forecast code for mean forecasting
+- Added volatility hedgehog plot
+- Added ``fix`` to arch models which allows for user specified parameters
+instead of estimated parameters.
+- Added Hansen's Skew T distribution to distribution (Stanislav Khrapov)
+- Updated IPython notebooks to latest IPython version
+- Bug and typo fixes to IPython notebooks

@@ -19,7 +19,7 @@ from arch.univariate.volatility import ConstantVariance, GARCH, HARCH, ARCH, \
     RiskMetrics2006, EWMAVariance, EGARCH
 from arch.univariate.distribution import Normal, StudentsT
 from arch.compat.python import range, iteritems
-from pandas.util.testing import assert_frame_equal
+from pandas.util.testing import assert_frame_equal, assert_series_equal
 
 
 class TestMeanModel(unittest.TestCase):
@@ -642,6 +642,18 @@ class TestMeanModel(unittest.TestCase):
 
         assert_raises(ValueError, align_forecast, forecasts, align='unknown')
 
+    def test_fixed_user_parameters(self):
+        am = arch_model(self.y_series)
+        res = am.fit()
+        fixed_res = am.fix(res.params)
+        assert_series_equal(res.conditional_volatility,
+                            fixed_res.conditional_volatility)
+        assert_series_equal(res.params, fixed_res.params)
+        assert_equal(res.aic, fixed_res.aic)
+        assert_equal(res.bic, fixed_res.bic)
+        assert_equal(res.loglikelihood, fixed_res.loglikelihood)
+        assert_equal(res.num_params, fixed_res.num_params)
+        assert_equal(res.nobs, fixed_res.nobs)
 
 
 

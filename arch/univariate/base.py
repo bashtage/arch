@@ -14,10 +14,10 @@ import scipy
 from scipy.optimize import fmin_slsqp
 import scipy.stats as stats
 import pandas as pd
-
 from statsmodels.tools.decorators import cache_readonly, resettable_cache
 from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
 from statsmodels.iolib.table import SimpleTable
+
 from statsmodels.tools.numdiff import approx_fprime, approx_hess
 
 from .distribution import Distribution, Normal
@@ -318,6 +318,61 @@ class ARCHModel(object):
         km, kv = self.num_params, self.volatility.num_params
         return x[:km], x[km:km + kv], x[km + kv:]
 
+    def fix(self, params):
+        """
+        Allows an ARCHModelFixedResult to be constructed from fixed parameters.
+
+        Parameters
+        ----------
+        params: ndarray-like
+            User specified parameters to use when generating the result. Must
+            have the correct number of parameters for a given choice of mean
+            model, volatility model and distribution.
+
+        Returns
+        -------
+        results : ARCHModelFixedResult
+            Object containing model results
+
+        Notes
+        -----
+        Parameters are not checked against model-specific constraints.
+        """
+        v, d = self.volatility, self.distribution
+
+        resids = self.resids(self.starting_values())
+        sigma2 = np.zeros_like(resids)
+        backcast = v.backcast(resids)
+        self._backcast = backcast
+
+        var_bounds = v.variance_bounds(resids)
+
+        params = np.asanyarray(params)
+        loglikelihood = -1.0 * self._loglikelihood(params, sigma2, backcast,
+                                                   var_bounds)
+
+        mp, vp, dp = self._parse_parameters(params)
+
+        resids = self.resids(mp)
+        vol = np.zeros_like(resids)
+        self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
+        vol = np.sqrt(vol)
+
+        names = self._all_parameter_names()
+        # Reshape resids and vol
+        first_obs, last_obs = self._indices
+        resids_final = np.empty_like(self._y, dtype=np.float64)
+        resids_final.fill(np.nan)
+        resids_final[first_obs:last_obs] = resids
+        vol_final = np.empty_like(self._y, dtype=np.float64)
+        vol_final.fill(np.nan)
+        vol_final[first_obs:last_obs] = vol
+
+        model_copy = deepcopy(self)
+        return ARCHModelFixedResult(params, resids, vol, self._y_series, names,
+                                    loglikelihood, self._is_pandas, model_copy)
+
+
     def fit(self, update_freq=1, disp='final', starting_values=None,
             cov_type='robust'):
         """
@@ -351,7 +406,7 @@ class ARCHModel(object):
         offsets = np.array((self.num_params, v.num_params, d.num_params))
         total_params = sum(offsets)
         has_closed_form = (v.num_params == 1 and d.num_params == 0) or \
-            total_params == 0
+                          total_params == 0
         if has_closed_form:
             try:
                 return self._fit_no_arch_normal_errors(cov_type=cov_type)
@@ -363,9 +418,8 @@ class ARCHModel(object):
         backcast = v.backcast(resids)
         self._backcast = backcast
         sv_volatility = v.starting_values(resids)
-        var_bounds = v.variance_bounds(resids)
-        v.compute_variance(sv_volatility, resids, sigma2, backcast, var_bounds)
         std_resids = resids / sqrt(sigma2)
+
         # 2. Construct constraint matrices from all models and distribution
         constraints = (self.constraints(),
                        self.volatility.constraints(),
@@ -428,10 +482,9 @@ class ARCHModel(object):
         args = (sigma2, backcast, var_bounds)
         f_ieqcons = constraint(a, b)
 
-        if disp == 'off':
-            callback = None
-            disp = 0
-        elif disp == 'final':
+        callback = None
+        disp = 0
+        if disp == 'final':
             callback = _callback
             disp = 1
 
@@ -577,7 +630,436 @@ class ARCHModel(object):
         raise NotImplementedError("Subclasses must implement")
 
 
-class ARCHModelResult(object):
+class ARCHModelFixedResult(object):
+    """
+    Results for fixed parameters for an ARCHModel model
+
+    Parameters
+    ----------
+    params : array
+        Estimated parameters
+    resid : array
+        Residuals from model.  Residuals have same shape as original data and
+        contain nan-values in locations not used in estimation
+    volatility : array
+        Conditional volatility from model
+    dep_var: Series
+        Dependent variable
+    names: list (str)
+        Model parameter names
+    loglikelihood : float
+        Loglikelihood at specified parameters
+    is_pandas : bool
+        Whether the original input was pandas
+    model : ARCHModel
+        The model object used to estimate the parameters
+
+    Methods
+    -------
+    summary
+        Produce a summary of the results
+    plot
+        Produce a plot of the volatility and standardized residuals
+    forecast
+        Construct forecasts from a model
+
+    Attributes
+    ----------
+    loglikelihood : float
+        Value of the log-likelihood
+    aic : float
+        Akaike information criteria
+    bic : float
+        Schwarz/Bayes information criteria
+    conditional_volatility : 1-d array or Series
+        nobs element array containing the conditional volatility (square root
+        of conditional variance).  The values are aligned with the input data so
+        that the value in the t-th position is the variance of t-th error,
+        which is computed using time-(t-1) information.
+    params : Series
+        Estimated parameters
+    nobs : int
+        Number of observations used in the estimation
+    num_params : int
+        Number of parameters in the model
+    resid : 1-d array or Series
+        nobs element array containing model residuals
+    model : ARCHModel
+        Model instance used to produce the fit
+    """
+
+    def __init__(self, params, resid, volatility, dep_var, names,
+                 loglikelihood, is_pandas, model):
+        self._params = params
+        self._resid = resid
+        self._is_pandas = is_pandas
+        self.model = model
+        self._datetime = dt.datetime.now()
+        self._cache = resettable_cache()
+        self._dep_var = dep_var
+        self._dep_name = dep_var.name
+        self._names = names
+        self._loglikelihood = loglikelihood
+        self._nobs = model.nobs
+        self._index = dep_var.index
+        self._volatility = volatility
+
+    def summary(self):
+        """
+        Constructs a summary of the results from a fit model.
+
+        Returns
+        -------
+        summary : Summary instance
+            Object that contains tables and facilitated export to text, html or
+            latex
+        """
+        # Summary layout
+        # 1. Overall information
+        # 2. Mean parameters
+        # 3. Volatility parameters
+        # 4. Distribution parameters
+        # 5. Notes
+
+        model = self.model
+        model_name = model.name + ' - ' + model.volatility.name
+
+        # Summary Header
+        top_left = [('Dep. Variable:', self._dep_name),
+                    ('Mean Model:', model.name),
+                    ('Vol Model:', model.volatility.name),
+                    ('Distribution:', model.distribution.name),
+                    ('Method:', 'User-specified Parameters'),
+                    ('', ''),
+                    ('Date:', self._datetime.strftime('%a, %b %d %Y')),
+                    ('Time:', self._datetime.strftime('%H:%M:%S'))]
+
+        top_right = [('R-squared:', '--'),
+                     ('Adj. R-squared:', '--'),
+                     ('Log-Likelihood:', '%#10.6g' % self.loglikelihood),
+                     ('AIC:', '%#10.6g' % self.aic),
+                     ('BIC:', '%#10.6g' % self.bic),
+                     ('No. Observations:', self._nobs),
+                     ('', ''),
+                     ('', ''),]
+
+        title = model_name + ' Model Results'
+        stubs = []
+        vals = []
+        for stub, val in top_left:
+            stubs.append(stub)
+            vals.append([val])
+        table = SimpleTable(vals, txt_fmt=fmt_2cols, title=title, stubs=stubs)
+
+        # create summary table instance
+        smry = Summary()
+        # Top Table
+        # Parameter table
+        fmt = fmt_2cols
+        fmt['data_fmts'][1] = '%18s'
+
+        top_right = [('%-21s' % ('  ' + k), v) for k, v in top_right]
+        stubs = []
+        vals = []
+        for stub, val in top_right:
+            stubs.append(stub)
+            vals.append([val])
+        table.extend_right(SimpleTable(vals, stubs=stubs))
+        smry.tables.append(table)
+
+        stubs = self._names
+        header = ['coef']
+        vals = (self.params,)
+        formats = [(10, 4)]
+        pos = 0
+        param_table_data = []
+        for _ in range(len(vals[0])):
+            row = []
+            for i, val in enumerate(vals):
+                if isinstance(val[pos], np.float64):
+                    converted = format_float_fixed(val[pos], *formats[i])
+                else:
+                    converted = val[pos]
+                row.append(converted)
+            pos += 1
+            param_table_data.append(row)
+
+        mc = self.model.num_params
+        vc = self.model.volatility.num_params
+        dc = self.model.distribution.num_params
+        counts = (mc, vc, dc)
+        titles = ('Mean Model', 'Volatility Model', 'Distribution')
+        total = 0
+        for title, count in zip(titles, counts):
+            if count == 0:
+                continue
+
+            table_data = param_table_data[total:total + count]
+            table_stubs = stubs[total:total + count]
+            total += count
+            table = SimpleTable(table_data,
+                                stubs=table_stubs,
+                                txt_fmt=fmt_params,
+                                headers=header, title=title)
+            smry.tables.append(table)
+
+        extra_text = ('Results generated with user-specified parameters.',
+                      'Since the model was not estimated, there are no std. '
+                      'errors.')
+        smry.add_extra_txt(extra_text)
+        return smry
+
+    @cache_readonly
+    def loglikelihood(self):
+        """Model loglikelihood"""
+        return self._loglikelihood
+
+    @cache_readonly
+    def aic(self):
+        """Akaike Information Criteria
+
+        -2 * loglikelihood + 2 * num_params"""
+        return -2 * self.loglikelihood + 2 * self.num_params
+
+    @cache_readonly
+    def num_params(self):
+        """Number of parameters in model"""
+        return len(self.params)
+
+    @cache_readonly
+    def bic(self):
+        """
+        Schwarz/Bayesian Information Criteria
+
+        -2 * loglikelihod + log(nobs) * num_params
+        """
+        return -2 * self.loglikelihood + np.log(self.nobs) * self.num_params
+
+    @cache_readonly
+    def params(self):
+        """Model Parameters"""
+        return pd.Series(self._params, index=self._names, name='params')
+
+    @cache_readonly
+    def conditional_volatility(self):
+        """
+        Estimated conditional volatility
+        """
+        if self._is_pandas:
+            return pd.Series(self._volatility,
+                             name='cond_vol',
+                             index=self._index)
+        else:
+            return self._volatility
+
+    @cache_readonly
+    def nobs(self):
+        """
+        Number of data points used ot estimate model
+        """
+        return self._nobs
+
+    @cache_readonly
+    def resid(self):
+        """
+        Model residuals
+        """
+        if self._is_pandas:
+            return pd.Series(self._resid, name='resid', index=self._index)
+        else:
+            return self._resid
+
+    def plot(self, annualize=None, scale=None):
+        """
+        Plot standardized residuals and conditional volatility
+
+        Parameters
+        ----------
+        annualize : str, optional
+            String containing frequency of data that indicates plot should
+            contain annualized volatility.  Supported values are 'D' (daily),
+            'W' (weekly) and 'M' (monthly), which scale variance by 252, 52,
+            and 12, respectively.
+        scale : float, optional
+            Value to use when scaling returns to annualize.  If scale is
+            provides, annualize is ignored and the value in scale is used.
+
+        Returns
+        -------
+        fig : figure
+            Handle to the figure
+
+        Examples
+        --------
+        >>> from arch import arch_model
+        >>> am = arch_model(None)
+        >>> sim_data = am.simulate([0.0, 0.01, 0.07, 0.92], 2520)
+        >>> am = arch_model(sim_data['data'])
+        >>> res = am.fit(update_freq=0, disp='off')
+        >>> fig = res.plot()
+
+        Produce a plot with annualized volatility
+
+        >>> fig = res.plot(annualize='D')
+
+        Override the usual scale of 252 to use 360 for an asset that trades
+        most days of the year
+
+        >>> fig = res.plot(scale=360)
+        """
+        import matplotlib.pyplot as plt
+
+        fig = plt.figure()
+
+        ax = fig.add_subplot(2, 1, 1)
+        ax.plot(self._index, self.resid / self.conditional_volatility)
+        ax.set_title('Standardized Residuals')
+        ax.axes.xaxis.set_ticklabels([])
+
+        ax = fig.add_subplot(2, 1, 2)
+        vol = self.conditional_volatility
+        title = 'Annualized Conditional Volatility'
+        if scale is not None:
+            vol = vol * np.sqrt(scale)
+        elif annualize is not None:
+            scales = {'D': 252, 'W': 52, 'M': 12}
+            if annualize in scales:
+                vol = vol * np.sqrt(scales[annualize])
+            else:
+                raise ValueError('annualize not recognized')
+        else:
+            title = 'Conditional Volatility'
+
+        ax.plot(self._index, vol)
+        ax.set_title(title)
+
+        return fig
+
+    def forecast(self, params=None, horizon=1, start=None, align='origin'):
+        """
+        Construct forecasts from estimated model
+
+        Parameters
+        ----------
+        params : 1d array-like, optional
+            Alternative parameters to use.  If not provided, the parameters
+            estimated when fitting the model are used.  Must be identical in
+            shape to the parameters computed by fitting the model.
+        horizon : int, optional
+           Number of steps to forecast
+        start : int, datetime or str, optional
+            An integer, datetime or str indicating the first observation to
+            produce the forecast for.  Datetimes can only be used with pandas
+            inputs that have a datetime index.  Strings must be convertible
+            to a date time, such as in '1945-01-01'.
+        align : str, optional
+            Either 'origin' or 'target'.  When set of 'origin', the t-th row
+            of forecasts contains the forecasts for t+1, t+2, ..., t+h.
+            When set to 'target', the t-th row contains the 1-step ahead
+            forecast from time t-1, the 2 step from time t-2, ..., and the
+            h-step from time t-h.  'target' simplified computing forecast
+            errors since the realization and h-step forecast are aligned.
+
+        Returns
+        -------
+        forecasts : DataFrame
+            t by h data frame containing the forecasts.  The alignment of the
+            forecasts is controlled by `align`.
+
+        Examples
+        --------
+        >>> import pandas as pd
+        >>> from arch import arch_model
+        >>> am = arch_model(None,mean='HAR',lags=[1,5,22],vol='Constant')
+        >>> sim_data = am.simulate([0.1,0.4,0.3,0.2,1.0], 250)
+        >>> sim_data.index = pd.date_range('2000-01-01',periods=250)
+        >>> am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22], \
+                            vol='Constant', last_obs=125)
+        >>> res = am.fit()
+        >>> fig = res.hedgehog_plot()
+
+        Notes
+        -----
+        The most basic 1-step ahead forecast will return a vector with the same
+        length as the original data, where the t-th value will be the time-t
+        forecast for time t + 1.  When the horizon is > 1, and when using the
+        default value for `align`, the forecast value in position [t, h] is the
+        time-t, h+1 step ahead forecast.
+
+        If model contains exogenous variables (`model.x is not None`), then only
+        1-step ahead forecasts are available.  Using horizon > 1 will produce
+        a warning and all columns, except the first, will be nan-filled.
+
+        If `align` is 'origin', forecast[t,h] contains the forecast made using
+        y[:t] (that is, up to but not including t) for horizon h + 1.  For
+        example, y[100,2] contains the 3-step ahead forecast using the first
+        100 data points, which will correspond to the realization y[100 + 2].
+        If `align` is 'target', then the same forecast is in location
+        [102, 2], so that it is aligned with the observation to use when
+        evaluating, but still in the same column.
+        """
+        if params is None:
+            params = self._params
+        else:
+            if (params.size != np.array(self._params).size or
+                        params.ndim != self._params.ndim):
+                raise ValueError('params have incorrect dimensions')
+        return self.model.forecast(params, horizon, start, align)
+
+    def hedgehog_plot(self, params=None, horizon=10, step=10, start=None):
+        """
+        Construct forecasts from estimated model
+
+        Parameters
+        ----------
+        params : 1d array-like, optional
+            Alternative parameters to use.  If not provided, the parameters
+            computed by fitting the model are used.  Must be identical in shape
+            to the parameters computed by fitting the model.
+        horizon : int, optional
+            Number of steps to forecast
+        step : int, optional
+            Number of forecast to skip between spines in the plot. Non-negative.
+        start : int, datetime or str, optional
+            An integer, datetime or str indicating the first observation to
+            produce the forecast for.  Datetimes can only be used with pandas
+            inputs that have a datetime index.  Strings must be convertible
+            to a date time, such as in '1945-01-01'.
+
+        Returns
+        -------
+        fig : figure
+            Handle to the figure
+        """
+        forecasts = self.forecast(params, horizon=horizon, start=start)
+        import matplotlib.pyplot as plt
+
+        fig, ax = plt.subplots(1, 1)
+        use_date = isinstance(self._dep_var.index, pd.DatetimeIndex)
+        plot_fn = ax.plot_date if use_date else ax.plot
+        x_values = np.array(self._dep_var.index)
+        y_values = self._dep_var.values
+        plot_fn(x_values, y_values, linestyle='-', marker='')
+        first_obs = np.min(np.where(np.logical_not(np.isnan(forecasts)))[0])
+        spines = []
+        t = forecasts.shape[0]
+        for i in range(first_obs, t, step):
+            if i + horizon + 1 > x_values.shape[0]:
+                continue
+            temp_x = x_values[i:i + horizon + 1]
+            temp_y = np.hstack((y_values[i], forecasts.iloc[i]))
+            line = plot_fn(temp_x, temp_y, linewidth=3, linestyle='-',
+                           marker='')
+            spines.append(line)
+        color = spines[0][0].get_color()
+        for spine in spines[1:]:
+            spine[0].set_color(color)
+        ax.set_title(self._dep_name + ' Forecast Hedgehog Plot')
+
+        return fig
+
+
+class ARCHModelResult(ARCHModelFixedResult):
     """
     Results from estimation of an ARCHModel model
 
@@ -659,22 +1141,13 @@ class ARCHModelResult(object):
 
     def __init__(self, params, param_cov, r2, resid, volatility, cov_type,
                  dep_var, names, loglikelihood, is_pandas, model):
-        self._params = params
+        super(ARCHModelResult, self).__init__(params, resid, volatility,
+                                              dep_var, names, loglikelihood,
+                                              is_pandas, model)
+
         self._param_cov = param_cov
-        self._resid = resid
-        self._is_pandas = is_pandas
         self._r2 = r2
-        self.model = model
-        self._datetime = dt.datetime.now()
-        self._cache = resettable_cache()
-        self._dep_var = dep_var
-        self._dep_name = dep_var.name
-        self._names = names
-        self._loglikelihood = loglikelihood
-        self._nobs = model.nobs
-        self._index = dep_var.index
         self.cov_type = cov_type
-        self._volatility = volatility
 
     def conf_int(self, alpha=0.05):
         """
@@ -810,37 +1283,6 @@ class ARCHModelResult(object):
         return smry
 
     @cache_readonly
-    def loglikelihood(self):
-        """Model loglikelihood"""
-        return self._loglikelihood
-
-    @cache_readonly
-    def aic(self):
-        """Akaike Information Criteria
-
-        -2 * loglikelihood + 2 * num_params"""
-        return -2 * self.loglikelihood + 2 * self.num_params
-
-    @cache_readonly
-    def num_params(self):
-        """Number of parameters in model"""
-        return len(self.params)
-
-    @cache_readonly
-    def bic(self):
-        """
-        Schwarz/Bayesian Information Criteria
-
-        -2 * loglikelihod + log(nobs) * num_params
-        """
-        return -2 * self.loglikelihood + np.log(self.nobs) * self.num_params
-
-    @cache_readonly
-    def params(self):
-        """Model Parameters"""
-        return pd.Series(self._params, index=self._names, name='params')
-
-    @cache_readonly
     def param_cov(self):
         """Parameter covariance"""
         if self._param_cov is not None:
@@ -853,18 +1295,6 @@ class ARCHModelResult(object):
                 param_cov = self.model.compute_param_cov(params,
                                                          robust=False)
         return pd.DataFrame(param_cov, columns=self._names, index=self._names)
-
-    @cache_readonly
-    def conditional_volatility(self):
-        """
-        Estimated conditional volatility
-        """
-        if self._is_pandas:
-            return pd.Series(self._volatility,
-                             name='cond_vol',
-                             index=self._index)
-        else:
-            return self._volatility
 
     @cache_readonly
     def rsquared(self):
@@ -883,29 +1313,12 @@ class ARCHModelResult(object):
                 self.nobs - self.model.num_params))
 
     @cache_readonly
-    def nobs(self):
-        """
-        Number of data points used ot estimate model
-        """
-        return self._nobs
-
-    @cache_readonly
     def pvalues(self):
         """
         Array of p-values for the t-statistics
         """
         return pd.Series(stats.norm.sf(np.abs(self.tvalues)) * 2,
                          index=self._names, name='pvalues')
-
-    @cache_readonly
-    def resid(self):
-        """
-        Model residuals
-        """
-        if self._is_pandas:
-            return pd.Series(self._resid, name='resid', index=self._index)
-        else:
-            return self._resid
 
     @cache_readonly
     def std_err(self):
@@ -923,192 +1336,3 @@ class ARCHModelResult(object):
         tvalues = self.params / self.std_err
         tvalues.name = 'tvalues'
         return tvalues
-
-    def plot(self, annualize=None, scale=None):
-        """
-        Plot standardized residuals and conditional volatility
-
-        Parameters
-        ----------
-        annualize : str, optional
-            String containing frequency of data that indicates plot should
-            contain annualized volatility.  Supported values are 'D' (daily),
-            'W' (weekly) and 'M' (monthly), which scale variance by 252, 52,
-            and 12, respectively.
-        scale : float, optional
-            Value to use when scaling returns to annualize.  If scale is
-            provides, annualize is ignored and the value in scale is used.
-
-        Returns
-        -------
-        fig : figure
-            Handle to the figure
-
-        Examples
-        --------
-        >>> from arch import arch_model
-        >>> am = arch_model(None)
-        >>> sim_data = am.simulate([0.0, 0.01, 0.07, 0.92], 2520)
-        >>> am = arch_model(sim_data['data'])
-        >>> res = am.fit(update_freq=0, disp='off')
-        >>> fig = res.plot()
-
-        Produce a plot with annualized volatility
-
-        >>> fig = res.plot(annualize='D')
-
-        Override the usual scale of 252 to use 360 for an asset that trades
-        most days of the year
-
-        >>> fig = res.plot(scale=360)
-        """
-        import matplotlib.pyplot as plt
-
-        fig = plt.figure()
-
-        ax = fig.add_subplot(2, 1, 1)
-        ax.plot(self._index, self.resid / self.conditional_volatility)
-        ax.set_title('Standardized Residuals')
-        ax.axes.xaxis.set_ticklabels([])
-
-        ax = fig.add_subplot(2, 1, 2)
-        vol = self.conditional_volatility
-        title = 'Annualized Conditional Volatility'
-        if scale is not None:
-            vol = vol * np.sqrt(scale)
-        elif annualize is not None:
-            scales = {'D': 252, 'W': 52, 'M': 12}
-            if annualize in scales:
-                vol = vol * np.sqrt(scales[annualize])
-            else:
-                raise ValueError('annualize not recognized')
-        else:
-            title = 'Conditional Volatility'
-
-        ax.plot(self._index, vol)
-        ax.set_title(title)
-
-        return fig
-
-    def forecast(self, params=None, horizon=1, start=None, align='origin'):
-        """
-        Construct forecasts from estimated model
-
-        Parameters
-        ----------
-        params : 1d array-like, optional
-            Alternative parameters to use.  If not provided, the parameters
-            estimated when fitting the model are used.  Must be identical in
-            shape to the parameters computed by fitting the model.
-        horizon : int, optional
-           Number of steps to forecast
-        start : int, datetime or str, optional
-            An integer, datetime or str indicating the first observation to
-            produce the forecast for.  Datetimes can only be used with pandas
-            inputs that have a datetime index.  Strings must be convertible
-            to a date time, such as in '1945-01-01'.
-        align : str, optional
-            Either 'origin' or 'target'.  When set of 'origin', the t-th row
-            of forecasts contains the forecasts for t+1, t+2, ..., t+h.
-            When set to 'target', the t-th row contains the 1-step ahead
-            forecast from time t-1, the 2 step from time t-2, ..., and the
-            h-step from time t-h.  'target' simplified computing forecast
-            errors since the realization and h-step forecast are aligned.
-
-        Returns
-        -------
-        forecasts : DataFrame
-            t by h data frame containing the forecasts.  The alignment of the
-            forecasts is controlled by `align`.
-
-        Examples
-        --------
-        >>> import pandas as pd
-        >>> from arch import arch_model
-        >>> am = arch_model(None,mean='HAR',lags=[1,5,22],vol='Constant')
-        >>> sim_data = am.simulate([0.1,0.4,0.3,0.2,1.0], 250)
-        >>> sim_data.index = pd.date_range('2000-01-01',periods=250)
-        >>> am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22], \
-                            vol='Constant', last_obs=125)
-        >>> res = am.fit()
-        >>> fig = res.hedgehog_plot()
-
-        Notes
-        -----
-        The most basic 1-step ahead forecast will return a vector with the same
-        length as the original data, where the t-th value will be the time-t
-        forecast for time t + 1.  When the horizon is > 1, and when using the
-        default value for `align`, the forecast value in position [t, h] is the
-        time-t, h+1 step ahead forecast.
-
-        If model contains exogenous variables (`model.x is not None`), then only
-        1-step ahead forecasts are available.  Using horizon > 1 will produce
-        a warning and all columns, except the first, will be nan-filled.
-
-        If `align` is 'origin', forecast[t,h] contains the forecast made using
-        y[:t] (that is, up to but not including t) for horizon h + 1.  For
-        example, y[100,2] contains the 3-step ahead forecast using the first
-        100 data points, which will correspond to the realization y[100 + 2].
-        If `align` is 'target', then the same forecast is in location
-        [102, 2], so that it is aligned with the observation to use when
-        evaluating, but still in the same column.
-        """
-        if params is None:
-            params = self._params
-        else:
-            if (params.size != np.array(self._params).size or
-                    params.ndim != self._params.ndim):
-                raise ValueError('params have incorrect dimensions')
-        return self.model.forecast(params, horizon, start, align)
-
-    def hedgehog_plot(self, params=None, horizon=10, step=10, start=None):
-        """
-        Construct forecasts from estimated model
-
-        Parameters
-        ----------
-        params : 1d array-like, optional
-            Alternative parameters to use.  If not provided, the parameters
-            computed by fitting the model are used.  Must be identical in shape
-            to the parameters computed by fitting the model.
-        horizon : int, optional
-            Number of steps to forecast
-        step : int, optional
-            Number of forecast to skip between spines in the plot. Non-negative.
-        start : int, datetime or str, optional
-            An integer, datetime or str indicating the first observation to
-            produce the forecast for.  Datetimes can only be used with pandas
-            inputs that have a datetime index.  Strings must be convertible
-            to a date time, such as in '1945-01-01'.
-
-        Returns
-        -------
-        fig : figure
-            Handle to the figure
-        """
-        forecasts = self.forecast(params, horizon=horizon, start=start)
-        import matplotlib.pyplot as plt
-
-        fig, ax = plt.subplots(1, 1)
-        use_date = isinstance(self._dep_var.index, pd.DatetimeIndex)
-        plot_fn = ax.plot_date if use_date else ax.plot
-        x_values = np.array(self._dep_var.index)
-        y_values = self._dep_var.values
-        plot_fn(x_values, y_values, linestyle='-', marker='')
-        first_obs = np.min(np.where(np.logical_not(np.isnan(forecasts)))[0])
-        spines = []
-        t = forecasts.shape[0]
-        for i in range(first_obs, t, step):
-            if i + horizon + 1 > x_values.shape[0]:
-                continue
-            temp_x = x_values[i:i + horizon + 1]
-            temp_y = np.hstack((y_values[i], forecasts.iloc[i]))
-            line = plot_fn(temp_x, temp_y, linewidth=3, linestyle='-',
-                           marker='')
-            spines.append(line)
-        color = spines[0][0].get_color()
-        for spine in spines[1:]:
-            spine[0].set_color(color)
-        ax.set_title(self._dep_name + ' Forecast Hedgehog Plot')
-
-        return fig
