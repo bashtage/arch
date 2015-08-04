@@ -347,7 +347,7 @@ class ARCHModel(object):
 
         var_bounds = v.variance_bounds(resids)
 
-        params = np.asanyarray(params)
+        params = np.asarray(params)
         loglikelihood = -1.0 * self._loglikelihood(params, sigma2, backcast,
                                                    var_bounds)
 
@@ -473,28 +473,24 @@ class ARCHModel(object):
         # 4. Estimate models using constrained optimization
         global _callback_func_count, _callback_iter, _callback_iter_display
         _callback_func_count, _callback_iter = 0, 0
-        if update_freq <= 0:
+        if update_freq <= 0 or disp == 'off':
             _callback_iter_display = 2 ** 31
+            update_freq = 0
         else:
             _callback_iter_display = update_freq
+        disp = 1 if disp == 'final' else 0
 
         func = self._loglikelihood
         args = (sigma2, backcast, var_bounds)
         f_ieqcons = constraint(a, b)
 
-        callback = None
-        disp = 0
-        if disp == 'final':
-            callback = _callback
-            disp = 1
-
         if SP14:
             xopt = fmin_slsqp(func, sv, f_ieqcons=f_ieqcons, bounds=bounds,
                               args=args, iter=100, acc=1e-06, iprint=1,
                               full_output=1, epsilon=1.4901161193847656e-08,
-                              callback=callback, disp=disp)
+                              callback=_callback, disp=disp)
         else:
-            if update_freq > 0:  # Fix limit in SciPy < 0.14
+            if update_freq > 0 and disp:  # Fix limit in SciPy < 0.14
                 disp = 2
             xopt = fmin_slsqp(func, sv, f_ieqcons=f_ieqcons, bounds=bounds,
                               args=args, iter=100, acc=1e-06, iprint=1,

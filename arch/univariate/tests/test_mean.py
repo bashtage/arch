@@ -654,6 +654,26 @@ class TestMeanModel(unittest.TestCase):
         assert_equal(res.loglikelihood, fixed_res.loglikelihood)
         assert_equal(res.num_params, fixed_res.num_params)
         assert_equal(res.nobs, fixed_res.nobs)
+        # Smoke for summary
+        fixed_res.summary()
+
+    def test_output_options(self):
+        import sys
+        from arch.compat.python import StringIO
+        am = arch_model(self.y_series)
+        orig_stdout = sys.stdout
+        try:
+            sio = StringIO()
+            sys.stdout = sio
+            res = am.fit(disp='final')
+            sio.seek(0)
+            print('SIO!')
+            print(sio.read())
+        finally:
+            sys.stdout = orig_stdout
+
+        res = am.fit(disp='off')
+
 
 
 

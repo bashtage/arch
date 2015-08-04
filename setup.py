@@ -6,7 +6,7 @@ import sys
 import re
 from distutils.version import StrictVersion
 
-from setuptools import setup, Extension, find_packages
+from setuptools import setup, Extension, find_packages, Command
 from setuptools.dist import Distribution
 from Cython.Distutils import build_ext
 
@@ -28,11 +28,48 @@ else:
     del REQUIREMENTS['Cython']
     sys.argv.remove('--no-binary')
 
-
 class BinaryDistribution(Distribution):
     def is_pure(self):
         return False
 
+class CleanCommand(Command):
+    """Custom distutils command to clean the .so and .pyc files."""
+
+    user_options = [("all", "a", "")]
+
+    def initialize_options(self):
+        self.all = True
+        self._clean_files = []
+        self._clean_trees = []
+        for root, dirs, files in list(os.walk('arch')):
+            for f in files:
+                if os.path.splitext(f)[-1] == '.pyx':
+                    search = os.path.join(root, os.path.splitext(f)[0] + '.*')
+                    candidates = glob.glob(search)
+                    for c in candidates:
+                        if os.path.splitext(c)[-1] in ('.pyc', '.c', '.so',
+                                                       '.pyd', '.dll'):
+                            self._clean_files.append(c)
+
+        for d in ('build',):
+            if os.path.exists(d):
+                self._clean_trees.append(d)
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        for f in self._clean_files:
+            try:
+                os.unlink(f)
+            except Exception:
+                pass
+        for clean_tree in self._clean_trees:
+            try:
+                import shutil
+                shutil.rmtree(clean_tree)
+            except Exception:
+                pass
 
 def strip_rc(version):
     return re.sub(r"rc\d+$", "", version)
@@ -195,7 +232,7 @@ setup(name='arch',
       packages=find_packages(),
       ext_modules=ext_modules,
       package_dir={'arch': './arch'},
-      cmdclass={'build_ext': build_ext},
+      cmdclass={'build_ext': build_ext, 'clean': CleanCommand},
       include_dirs=[numpy.get_include()],
       keywords=['arch', 'ARCH', 'variance', 'econometrics', 'volatility',
                 'finance', 'GARCH', 'bootstrap', 'random walk', 'unit root',
