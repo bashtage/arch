@@ -158,7 +158,7 @@ for examples of the multiple comparison procedures.
 ### Linux/OSX
 
 ```
-pip install git+git://github.com/bashtage/arch.git
+pip install git+https://github.com/bashtage/arch.git
 ```
 
 **Anaconda**
@@ -176,7 +176,7 @@ conda install -c https://conda.binstar.org/bashtage arch
 If you are comfortable compiling binaries on Windows:
 
 ```
-pip install git+git://github.com/bashtage/arch.git
+pip install git+https://github.com/bashtage/arch.git
 ```
 
 **No Compiler**
@@ -185,7 +185,7 @@ All binary code is backed by a pure Python implementation.  Compiling can be
 skipped using the flag `--no-binary`
  
 ```
-pip install git+git://github.com/bashtage/arch.git --install-option "--no-binary"
+pip install git+https://github.com/bashtage/arch.git --install-option "--no-binary"
 ```
 
 _Note: the test suite compares the Numba implementations against Cython 
