@@ -67,3 +67,10 @@ All model return the same object, a results class (:py:class:`ARCHModelResult`)
 .. py:currentmodule:: arch.univariate.base
 .. autoclass:: ARCHModelResult
     :members: summary, forecast, conf_int, plot, hedgehog_plot
+
+When using the ``fix`` method, a (:py:class:`ARCHModelFixedResult`) is produced
+that lacks some properties of a (:py:class:`ARCHModelResult`) that are not
+relevant when parameters are not estimated.
+
+.. autoclass:: ARCHModelFixedResult
+    :members: summary, forecast, plot, hedgehog_plot
