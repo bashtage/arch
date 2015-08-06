@@ -5,7 +5,7 @@ cimport cython
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-def stationary_bootstrap_sample(long[:] indices,
+def stationary_bootstrap_sample(np.int64_t[:] indices,
                                 double[:] u,
                                 double p):
     """
