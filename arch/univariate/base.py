@@ -1321,7 +1321,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         """
         Parameter standard error
         """
-        return pd.Series(np.sqrt(diag(self.param_cov)),
+        return pd.Series(sqrt(diag(self.param_cov)),
                          index=self._names, name='std_err')
 
     @cache_readonly

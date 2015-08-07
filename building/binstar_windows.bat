@@ -31,7 +31,6 @@ set NPY_VERSION=18 19
         ) ELSE (
             call python3_setup.bat
         )
-        set PATH=C:\Program Files (x86)\Git\bin;%PATH%;
         set CONDA_PY=%%P
         set CONDA_NPY=%%N
         echo Python: !CONDA_PY!, NumPy: !CONDA_NPY!
