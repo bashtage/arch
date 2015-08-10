@@ -673,8 +673,3 @@ class TestMeanModel(unittest.TestCase):
             sys.stdout = orig_stdout
 
         res = am.fit(disp='off')
-
-
-
-
-
