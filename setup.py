@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import glob
 import os
 import subprocess
 import sys
@@ -153,7 +154,6 @@ except ImportError as e:
 try:
     import IPython.nbformat as nbformat
     from IPython.nbconvert import RSTExporter
-    import glob
 
     notebooks = glob.glob(os.path.join(cwd, 'examples', '*.ipynb'))
     for notebook in notebooks:
