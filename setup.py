@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import glob
 import os
+import pkg_resources
 import subprocess
 import sys
 import re
@@ -16,13 +17,15 @@ CMDCLASS = {}
 # prevent setup.py from crashing by calling import numpy before
 # numpy is installed
 class build_ext(_build_ext):
-    def finalize_options(self):
-        _build_ext.finalize_options(self)
+    def build_extensions(self):
+        numpy_incl = pkg_resources.resource_filename('numpy', 'core/include')
 
-        # Prevent numpy from thinking it is still in its setup process:
-        __builtins__.__NUMPY_SETUP__ = False
-        import numpy
-        self.include_dirs.append(numpy.get_include())
+        for ext in self.extensions:
+            if (hasattr(ext, 'include_dirs') and
+                    not numpy_incl in ext.include_dirs):
+                ext.include_dirs.append(numpy_incl)
+        _build_ext.build_extensions(self)
+
 CMDCLASS['build_ext'] = build_ext
 
 SETUP_REQUIREMENTS = {'numpy': '1.7'}
