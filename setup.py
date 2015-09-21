@@ -1,6 +1,8 @@
 from __future__ import print_function
 
+import glob
 import os
+import pkg_resources
 import subprocess
 import sys
 import re
@@ -8,15 +10,34 @@ from distutils.version import StrictVersion
 
 from setuptools import setup, Extension, find_packages, Command
 from setuptools.dist import Distribution
-from Cython.Distutils import build_ext
+from Cython.Distutils.build_ext import build_ext as _build_ext
 
+CMDCLASS = {}
+
+# prevent setup.py from crashing by calling import numpy before
+# numpy is installed
+class build_ext(_build_ext):
+    def build_extensions(self):
+        numpy_incl = pkg_resources.resource_filename('numpy', 'core/include')
+
+        for ext in self.extensions:
+            if (hasattr(ext, 'include_dirs') and
+                    not numpy_incl in ext.include_dirs):
+                ext.include_dirs.append(numpy_incl)
+        _build_ext.build_extensions(self)
+
+CMDCLASS['build_ext'] = build_ext
+
+SETUP_REQUIREMENTS = {'numpy': '1.7'}
 REQUIREMENTS = {'Cython': '0.20',
                 'matplotlib': '1.2',
-                'numpy': '1.7',
                 'scipy': '0.12',
                 'pandas': '0.12',
                 'statsmodels': '0.5',
                 'patsy': '0.2'}
+
+ALL_REQUIREMENTS = SETUP_REQUIREMENTS.copy()
+ALL_REQUIREMENTS.update(REQUIREMENTS)
 
 ext_modules = []
 if not '--no-binary' in sys.argv:
@@ -71,6 +92,8 @@ class CleanCommand(Command):
             except Exception:
                 pass
 
+CMDCLASS['clean'] = CleanCommand
+
 def strip_rc(version):
     return re.sub(r"rc\d+$", "", version)
 
@@ -121,11 +144,11 @@ for key in PACKAGE_CHECKS:
 
     if version:
         existing_version = StrictVersion(strip_rc(version))
-        satisfies_req = existing_version >= REQUIREMENTS[key]
+        satisfies_req = existing_version >= ALL_REQUIREMENTS[key]
     if not satisfies_req:
         message = missing_package.format(package=key,
                                          existing_ver=existing_version,
-                                         required_version=REQUIREMENTS[key])
+                                         required_version=ALL_REQUIREMENTS[key])
         raise EnvironmentError(message)
 
 cwd = os.getcwd()
@@ -153,7 +176,6 @@ except ImportError as e:
 try:
     import IPython.nbformat as nbformat
     from IPython.nbconvert import RSTExporter
-    import glob
 
     notebooks = glob.glob(os.path.join(cwd, 'examples', '*.ipynb'))
     for notebook in notebooks:
@@ -233,7 +255,6 @@ setup(name='arch',
       ext_modules=ext_modules,
       package_dir={'arch': './arch'},
       cmdclass={'build_ext': build_ext, 'clean': CleanCommand},
-      include_dirs=[numpy.get_include()],
       keywords=['arch', 'ARCH', 'variance', 'econometrics', 'volatility',
                 'finance', 'GARCH', 'bootstrap', 'random walk', 'unit root',
                 'Dickey Fuller', 'time series', 'confidence intervals',
@@ -256,5 +277,6 @@ setup(name='arch',
           'Programming Language :: Cython',
           'Topic :: Scientific/Engineering',
       ],
-      install_requires=[key + '>=' + REQUIREMENTS[key] for key in REQUIREMENTS]
+      install_requires=[key + '>=' + REQUIREMENTS[key] for key in REQUIREMENTS],
+      setup_requires=[key + '>=' + SETUP_REQUIREMENTS[key] for key in SETUP_REQUIREMENTS],
       )
