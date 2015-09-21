@@ -1,1 +1,6 @@
 .idea/*
+*.pyc
+arch/_version.py
+arch.egg-info/
+build
+dist
