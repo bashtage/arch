@@ -270,9 +270,9 @@ def egarch_recursion(double[:] parameters,
             sigma2[t] = var_bounds[t, 0]
         elif sigma2[t] > var_bounds[t, 1]:
             if sigma2[t] > DBL_MAX:
-                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] - var_bounds[t, 1])
-            else:
                 sigma2[t] = var_bounds[t, 1] + 1000
+            else:
+                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] - var_bounds[t, 1])
         std_resids[t] = resids[t] / sqrt(sigma2[t])
         abs_std_resids[t] = fabs(std_resids[t])
 
