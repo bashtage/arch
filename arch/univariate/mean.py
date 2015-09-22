@@ -4,12 +4,14 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 """
 from __future__ import division, absolute_import
 from collections import OrderedDict
+import copy
 import datetime as dt
 
 import numpy as np
 from numpy import zeros, empty, ones, isscalar, log
 from statsmodels.tsa.tsatools import lagmat
 from statsmodels.tools.decorators import cache_readonly
+
 from pandas import DataFrame
 
 from .base import ARCHModel, implicit_constant, ARCHModelResult
@@ -513,6 +515,9 @@ class HARX(ARCHModel):
         x = self.regressors
         y = self._y_adj
 
+        # Fake convergence results, see GH #87
+        _xopt = ['','',0,'','']
+
         if x.shape[1] == 0:
             loglikelihood = self._static_gaussian_loglikelihood(y)
             names = self._all_parameter_names()
@@ -527,7 +532,7 @@ class HARX(ARCHModel):
 
             return ARCHModelResult(params, param_cov, 0.0, y, vol, cov_type,
                                    self._y_series, names, loglikelihood,
-                                   self._is_pandas, self)
+                                   self._is_pandas, _xopt, copy.deepcopy(self))
 
         regression_params = np.linalg.pinv(x).dot(y)
         xpxi = np.linalg.inv(x.T.dot(x) / nobs)
@@ -571,7 +576,7 @@ class HARX(ARCHModel):
 
         return ARCHModelResult(params, param_cov, r2, resids, vol, cov_type,
                                self._y_series, names, loglikelihood,
-                               self._is_pandas, self)
+                               self._is_pandas, _xopt, copy.deepcopy(self))
 
     def forecast(self, params, horizon=1, start=None, align='origin'):
         """
@@ -1141,7 +1146,8 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
     """
     known_mean = ('zero', 'constant', 'harx', 'har', 'ar', 'arx', 'ls')
     known_vol = ('arch', 'garch', 'harch', 'constant', 'egarch')
-    known_dist = ('normal', 'studentst', 'skewstudent')
+    known_dist = ('normal', 'gaussian', 'studentst', 't', 'skewstudent',
+                  'skewt')
     mean = mean.lower()
     vol = vol.lower()
     dist = dist.lower()
@@ -1178,16 +1184,14 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
     else:  # vol == 'harch'
         v = HARCH(lags=p)
 
-    if dist == 'normal':
+    if dist in ('normal', 'gaussian'):
         d = Normal()
-    elif dist == 'skewstudent':
+    elif dist in ('skewstudent', 'skewt'):
         d = SkewStudent()
-    else: # dist == 'studentst':
+    elif dist in ('studentst', 't'):
         d = StudentsT()
 
     am.volatility = v
     am.distribution = d
 
     return am
-
-

@@ -6,6 +6,7 @@ from copy import deepcopy
 from functools import partial
 import datetime as dt
 from distutils.version import LooseVersion
+import warnings
 
 import numpy as np
 from numpy.linalg import matrix_rank
@@ -17,7 +18,6 @@ import pandas as pd
 from statsmodels.tools.decorators import cache_readonly, resettable_cache
 from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
 from statsmodels.iolib.table import SimpleTable
-
 from statsmodels.tools.numdiff import approx_fprime, approx_hess
 
 from .distribution import Distribution, Normal
@@ -31,6 +31,24 @@ SP14 = LooseVersion(scipy.version.short_version).version[1] >= 14
 # Callback variables
 _callback_iter, _callback_llf = 0, 0.0,
 _callback_func_count, _callback_iter_display = 0, 1
+
+
+class ConvergenceWarning(Warning):
+    pass
+
+convergence_warning = """
+The optimizer returned code {code}. The message is:
+{string_message}
+See scipy.optimize.fmin_slsqp for code meaning.
+"""
+
+class StartingValueWarning(Warning):
+    pass
+
+starting_value_warning = """
+Starting values do not satisfy the parameter constraints in the model.  The
+provided starting values will be ignored.
+"""
 
 
 def _callback(*args):
@@ -393,12 +411,18 @@ class ARCHModel(object):
             Estimation method of parameter covariance.  Supported options are
             'robust', which does not assume the Information Matrix Equality
             holds and 'classic' which does.  In the ARCH literature, 'robust'
-            corresponds to Bollerslev-Wooldridge covariance estimation.
+            corresponds to Bollerslev-Wooldridge covariance estimator.
 
         Returns
         -------
         results : ARCHModelResult
             Object containing model results
+
+        Notes
+        -----
+        A ConvergenceWarning is raised if SciPy's optimizer indicates difficulty
+        finding the optimum.
+
         """
         # 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,
         # use closed form
@@ -457,11 +481,7 @@ class ARCHModel(object):
             for i, bound in enumerate(bounds):
                 valid = valid and bound[0] <= sv[i] <= bound[1]
             if not valid:
-                import warnings
-
-                warnings.warn('Starting values do not satisfy the parameter '
-                              'constraints in the model.  The provided '
-                              'starting values will be ignored.')
+                warnings.warn(starting_value_warning, StartingValueWarning)
                 starting_values = None
 
         if starting_values is None:
@@ -487,15 +507,24 @@ class ARCHModel(object):
         if SP14:
             xopt = fmin_slsqp(func, sv, f_ieqcons=f_ieqcons, bounds=bounds,
                               args=args, iter=100, acc=1e-06, iprint=1,
-                              full_output=1, epsilon=1.4901161193847656e-08,
+                              full_output=True, epsilon=1.4901161193847656e-08,
                               callback=_callback, disp=disp)
         else:
             if update_freq > 0 and disp:  # Fix limit in SciPy < 0.14
                 disp = 2
             xopt = fmin_slsqp(func, sv, f_ieqcons=f_ieqcons, bounds=bounds,
                               args=args, iter=100, acc=1e-06, iprint=1,
-                              full_output=1, epsilon=1.4901161193847656e-08,
+                              full_output=True, epsilon=1.4901161193847656e-08,
                               disp=disp)
+
+        # Check convergence
+        imode, smode = xopt[3:]
+        if imode != 0:
+            warnings.simplefilter('always')
+            warnings.warn(convergence_warning.format(code=imode,
+                                                     string_message=smode),
+                          ConvergenceWarning)
+            warnings.simplefilter('default')
 
         # 5. Return results
         params = xopt[0]
@@ -526,7 +555,7 @@ class ARCHModel(object):
         model_copy = deepcopy(self)
         return ARCHModelResult(params, None, r2, resids_final, vol_final,
                                cov_type, self._y_series, names, loglikelihood,
-                               self._is_pandas, model_copy)
+                               self._is_pandas, xopt, model_copy)
 
     def parameter_names(self):
         """List of parameters names
@@ -1136,7 +1165,7 @@ class ARCHModelResult(ARCHModelFixedResult):
     """
 
     def __init__(self, params, param_cov, r2, resid, volatility, cov_type,
-                 dep_var, names, loglikelihood, is_pandas, model):
+                 dep_var, names, loglikelihood, is_pandas, optim_output, model):
         super(ARCHModelResult, self).__init__(params, resid, volatility,
                                               dep_var, names, loglikelihood,
                                               is_pandas, model)
@@ -1144,6 +1173,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         self._param_cov = param_cov
         self._r2 = r2
         self.cov_type = cov_type
+        self._optim_output = optim_output
 
     def conf_int(self, alpha=0.05):
         """
@@ -1274,7 +1304,14 @@ class ARCHModelResult(ARCHModelFixedResult):
                                 headers=header, title=title)
             smry.tables.append(table)
 
-        extra_text = ('Covariance estimator: ' + self.cov_type,)
+        extra_text = ['Covariance estimator: ' + self.cov_type]
+
+        if self.convergence_flag:
+            extra_text.append("""
+WARNING: The optimizer did not indicate sucessful convergence. The message was
+{string_message}. See convergence_flag.""".format(
+                string_message=self._optim_output[-1]))
+
         smry.add_extra_txt(extra_text)
         return smry
 
@@ -1332,3 +1369,10 @@ class ARCHModelResult(ARCHModelFixedResult):
         tvalues = self.params / self.std_err
         tvalues.name = 'tvalues'
         return tvalues
+
+    @cache_readonly
+    def convergence_flag(self):
+        """
+        scipy.optimize.fmin_slsqp result flag
+        """
+        return self._optim_output[3]
