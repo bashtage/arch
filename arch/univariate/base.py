@@ -442,6 +442,8 @@ class ARCHModel(object):
         backcast = v.backcast(resids)
         self._backcast = backcast
         sv_volatility = v.starting_values(resids)
+        var_bounds = v.variance_bounds(resids)
+        v.compute_variance(sv_volatility, resids, sigma2, backcast, var_bounds)
         std_resids = resids / sqrt(sigma2)
 
         # 2. Construct constraint matrices from all models and distribution
@@ -469,7 +471,7 @@ class ARCHModel(object):
         bounds.extend(v.bounds(resids))
         bounds.extend(d.bounds(std_resids))
 
-        var_bounds = v.variance_bounds(resids)
+
         # 3. Construct starting values from all models
         sv = starting_values
         if starting_values is not None:
