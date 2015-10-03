@@ -217,6 +217,10 @@ class MCS(MultipleComparison):
             i = loc.squeeze()[0]
             eliminated.append([indices.flat[i], pval])
             included[indices.flat[i]] = False
+        # Add pval of 1 for model remaining
+        indices = np.argwhere(included).flatten()
+        for ind in indices:
+            eliminated.append([ind, 1.0])
         self._pvalues = self._format_pvalues(eliminated)
 
     def _compute_max(self):

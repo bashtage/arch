@@ -373,3 +373,11 @@ class TestMCS(TestCase):
                     '<strong>bootstrap</strong>: ' + str(mcs.bootstrap) + ', ' +
                     '<strong>ID</strong>: ' + hex(id(mcs)) + ')')
         assert_equal(mcs._repr_html_(), expected)
+
+    def test_all_models_have_pval(self):
+        losses = self.losses_df.iloc[:, :20]
+        mcs = MCS(losses, 0.05, reps=200)
+        mcs.seed(23456)
+        mcs.compute()
+        nan_locs = np.isnan(mcs.pvalues.iloc[:,0])
+        assert_true(not nan_locs.any())
