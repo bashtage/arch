@@ -7,3 +7,4 @@ instead of estimated parameters.
 - Added Hansen's Skew T distribution to distribution (Stanislav Khrapov)
 - Updated IPython notebooks to latest IPython version
 - Bug and typo fixes to IPython notebooks
+- Changed MCS to give a pvalue of 1.0 to best model.  Previously was NaN
