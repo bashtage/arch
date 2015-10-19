@@ -1,13 +1,14 @@
 from __future__ import division
-from unittest import TestCase
-from nose.tools import assert_true
 
-import pandas as pd
-from pandas.util.testing import assert_series_equal, assert_frame_equal
+from unittest import TestCase
+
 import numpy as np
+import pandas as pd
+import scipy.stats as stats
+from nose.tools import assert_true
 from numpy import random, linspace
 from numpy.testing import assert_equal, assert_raises, assert_allclose
-import scipy.stats as stats
+from pandas.util.testing import assert_series_equal, assert_frame_equal
 
 from arch.bootstrap import (StationaryBootstrap, CircularBlockBootstrap,
                             MovingBlockBootstrap)
@@ -239,6 +240,14 @@ class TestStepM(TestCase):
         with assert_raises(RuntimeError):
             stepm.superior_models
 
+    def test_exact_ties(self):
+        adj_models = self.models_df - 100.0
+        adj_models.iloc[:, :2] -= adj_models.iloc[:,:2].mean()
+        adj_models.iloc[:, :2] += self.benchmark_df.mean().iloc[0]
+        stepm = StepM(self.benchmark_df, adj_models, size=0.10)
+        stepm.compute()
+        assert_equal(len(stepm.superior_models), self.models.shape[1] - 2)
+
 
 class TestMCS(TestCase):
     @classmethod
@@ -381,3 +390,12 @@ class TestMCS(TestCase):
         mcs.compute()
         nan_locs = np.isnan(mcs.pvalues.iloc[:,0])
         assert_true(not nan_locs.any())
+
+    def test_exact_ties(self):
+        losses = self.losses_df.iloc[:, :20].copy()
+        tied_mean = losses.mean().median()
+        losses.iloc[:, 10:] -= losses.iloc[:, 10:].mean()
+        losses.iloc[:, 10:] += tied_mean
+        mcs = MCS(losses, 0.05, reps=200)
+        mcs.seed(23456)
+        mcs.compute()
