@@ -146,7 +146,10 @@ def date_to_index(date, date_index):
         date = np.datetime64(date)
     elif isinstance(date, str):
         orig_date = date
-        date = np.datetime64(to_datetime(date, coerce=True))
+        try:
+            date = np.datetime64(to_datetime(date, errors='coerce'))
+        except:
+            date = np.datetime64(to_datetime(date, coerce=True))
         if date == NaT:
             raise ValueError('date:' + orig_date +
                              ' cannot be parsed to a date.')
@@ -178,7 +181,11 @@ def find_index(s, index):
     """
     if isinstance(index, (int, long, np.int, np.int64)):
         return index
-    date_index = to_datetime(index, coerce=True)
+    try:
+        date_index = to_datetime(index, errors='coerce')
+    except:
+        date_index = to_datetime(index, coerce=True)
+
     if date_index is NaT:
         raise ValueError(index + ' cannot be converted to datetime')
     loc = np.argwhere(s.index == date_index).squeeze()
