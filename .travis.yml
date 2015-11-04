@@ -9,7 +9,7 @@ language: python
 env:
   # Default values for common packages, override as needed
   global:
-    - CYTHON=0.20
+    - CYTHON=0.22
     - PATSY=
     - OPTIONAL=
     - STATSMODELS=
@@ -22,13 +22,7 @@ matrix:
   - python: 2.7
     env:
     - PYTHON=2.7
-    - NUMPY=1.7
-    - SCIPY=0.12
     - MATPLOTLIB=1.3
-    - PANDAS=0.12
-  - python: 2.7
-    env:
-    - PYTHON=2.7
     - NUMPY=1.8.2
   - python: 2.7
     env:
@@ -40,7 +34,7 @@ matrix:
     - PYTHON=3.3
     - NUMPY=1.9
     - SCIPY=0.14
-    - NUMBA=0.15
+    - NUMBA=0.20
     - MATPLOTLIB=1.4
     - COVERAGE=false
   - python: 2.7
@@ -56,7 +50,6 @@ matrix:
     - CYTHON=0.23
     - NUMPY=1.10
     - SCIPY=0.16
-    - MATPLOTLIB=1.4
 
 addons:
   apt:
@@ -73,6 +66,7 @@ before_install:
   - chmod +x miniconda.sh
   - ./miniconda.sh -b
   - export PATH=/home/travis/miniconda/bin:$PATH
+  - export PATH=/home/travis/miniconda2/bin:$PATH
   - conda update --yes --quiet conda
   # Fix for headless TravisCI
   - "export DISPLAY=:99.0"

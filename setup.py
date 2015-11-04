@@ -28,12 +28,12 @@ class build_ext(_build_ext):
 
 CMDCLASS['build_ext'] = build_ext
 
-SETUP_REQUIREMENTS = {'numpy': '1.7'}
-REQUIREMENTS = {'Cython': '0.20',
-                'matplotlib': '1.2',
-                'scipy': '0.12',
-                'pandas': '0.12',
-                'statsmodels': '0.5',
+SETUP_REQUIREMENTS = {'numpy': '1.8'}
+REQUIREMENTS = {'Cython': '0.22',
+                'matplotlib': '1.3',
+                'scipy': '0.14',
+                'pandas': '0.14',
+                'statsmodels': '0.6',
                 'patsy': '0.2'}
 
 ALL_REQUIREMENTS = SETUP_REQUIREMENTS.copy()
