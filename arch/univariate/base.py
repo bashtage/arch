@@ -26,7 +26,6 @@ from ..utility.array import ensure1d, DocStringInheritor, date_to_index
 from ..compat.python import add_metaclass, range
 
 __all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel']
-SP14 = LooseVersion(scipy.version.short_version).version[1] >= 14
 
 # Callback variables
 _callback_iter, _callback_llf = 0, 0.0,
@@ -506,18 +505,10 @@ class ARCHModel(object):
         args = (sigma2, backcast, var_bounds)
         f_ieqcons = constraint(a, b)
 
-        if SP14:
-            xopt = fmin_slsqp(func, sv, f_ieqcons=f_ieqcons, bounds=bounds,
-                              args=args, iter=100, acc=1e-06, iprint=1,
-                              full_output=True, epsilon=1.4901161193847656e-08,
-                              callback=_callback, disp=disp)
-        else:
-            if update_freq > 0 and disp:  # Fix limit in SciPy < 0.14
-                disp = 2
-            xopt = fmin_slsqp(func, sv, f_ieqcons=f_ieqcons, bounds=bounds,
-                              args=args, iter=100, acc=1e-06, iprint=1,
-                              full_output=True, epsilon=1.4901161193847656e-08,
-                              disp=disp)
+        xopt = fmin_slsqp(func, sv, f_ieqcons=f_ieqcons, bounds=bounds,
+                          args=args, iter=100, acc=1e-06, iprint=1,
+                          full_output=True, epsilon=1.4901161193847656e-08,
+                          callback=_callback, disp=disp)
 
         # Check convergence
         imode, smode = xopt[3:]
