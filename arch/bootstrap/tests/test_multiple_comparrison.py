@@ -308,7 +308,9 @@ class TestMCS(TestCase):
             pval, drop_index = r_step(losses[:, np.array(include)], mcs._bootsrap_indices)
             pvals[i] = pval if i == 0 else np.max([pvals[i - 1], pval])
             indices[i] = include[drop_index]
-        direct = pd.DataFrame(pvals, index=indices, columns=['Pvalue'])
+        direct = pd.DataFrame(pvals,
+                              index=np.array(indices,dtype=np.int64),
+                              columns=['Pvalue'])
         direct.index.name = 'Model index'
         assert_frame_equal(mcs.pvalues.iloc[:m], direct)
 
@@ -348,7 +350,9 @@ class TestMCS(TestCase):
             pval, drop_index, std_devs = max_step(losses[:, np.array(include)], mcs._bootsrap_indices)
             pvals[i] = pval if i == 0 else np.max([pvals[i - 1], pval])
             indices[i] = include[drop_index]
-        direct = pd.DataFrame(pvals, index=indices, columns=['Pvalue'])
+        direct = pd.DataFrame(pvals,
+                              index=np.array(indices,dtype=np.int64),
+                              columns=['Pvalue'])
         direct.index.name = 'Model index'
         assert_frame_equal(mcs.pvalues.iloc[:m], direct)
 
