@@ -213,6 +213,9 @@ class VolatilityProcess(object):
             Parameters required to simulate the volatility model
         nobs : int
             Number of data points to simulate
+        rng : callable
+            Callable function that takes a single integer input and returns a
+            vector of random numbers
         burn : int, optional
             Number of additional observations to generate when initializing the
             simulation
