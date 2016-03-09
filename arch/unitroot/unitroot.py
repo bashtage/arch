@@ -63,8 +63,8 @@ def _df_select_lags(y, trend, max_lags, method):
 
     Notes
     -----
-    See statsmodels.tsa.tsatools._autolag for details.  If max_lags is None, the
-    default value of 12 * (nobs/100)**(1/4) is used.
+    See statsmodels.tsa.tsatools._autolag for details.  If max_lags is None,
+    the default value of 12 * (nobs/100)**(1/4) is used.
     """
     nobs = y.shape[0]
     delta_y = diff(y)
@@ -240,8 +240,7 @@ class UnitRootTest(object):
 
         cv_string = 'Critical Values: '
         cv = self._critical_values.keys()
-        g = lambda x: float(x.split('%')[0])
-        cv_numeric = array(lmap(g, cv))
+        cv_numeric = array(lmap(lambda x: float(x.split('%')[0]), cv))
         cv_numeric = sort(cv_numeric)
         for val in cv_numeric:
             p = str(int(val)) + '%'
@@ -379,8 +378,8 @@ class ADF(UnitRootTest):
 
     References
     ----------
-    Greene, W. H. 2011. Econometric Analysis. Prentice Hall: Upper Saddle River,
-    New Jersey.
+    Greene, W. H. 2011. Econometric Analysis. Prentice Hall: Upper Saddle
+    River, New Jersey.
 
     Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton
     University Press.
@@ -827,13 +826,14 @@ class KPSS(UnitRootTest):
 
     Notes
     -----
-    The null hypothesis of the KPSS test is that the series is weakly stationary
-    and the alternative is that it is non-stationary. If the p-value
-    is above a critical size, then the null cannot be rejected that there
-    and the series appears stationary.
+    The null hypothesis of the KPSS test is that the series is weakly
+    stationary and the alternative is that it is non-stationary. If the
+    p-value is above a critical size, then the null cannot be rejected
+    that there and the series appears stationary.
 
-    The p-values and critical values were computed using an extensive simulation
-    based on 100,000,000 replications using series with 2,000 observations.
+    The p-values and critical values were computed using an extensive
+    simulation based on 100,000,000 replications using series with 2,000
+    observations.
 
     Examples
     --------
@@ -856,8 +856,8 @@ class KPSS(UnitRootTest):
     References
     ----------
     Kwiatkowski, D.; Phillips, P. C. B.; Schmidt, P.; Shin, Y. (1992). "Testing
-    the null hypothesis of stationarity against the alternative of a unit root".
-    Journal of Econometrics 54 (1-3), 159-178
+    the null hypothesis of stationarity against the alternative of a unit
+    root". Journal of Econometrics 54 (1-3), 159-178
     """
 
     def __init__(self, y, lags=None, trend='c'):
@@ -896,19 +896,19 @@ class VarianceRatio(UnitRootTest):
     y : array-like, (nobs,)
         The data to test for a random walk
     lags : int, >=2
-        The number of periods to used in the multi-period variance, which is the
-        numerator of the test statistic.  Must be at least 2
+        The number of periods to used in the multi-period variance, which is
+        the numerator of the test statistic.  Must be at least 2
     trend : str, {'nc', 'c'}, optional
         'c' allows for a non-zero drift in the random walk, while 'nc' requires
         that the increments to y are mean 0
     overlap : bool, optional
         Indicates whether to use all overlapping blocks.  Default is True.  If
-        False, the number of observations in y minus 1 must be an exact multiple
-        of lags.  If this condition is not satistifed, some values at the end of
-        y will be discarded.
+        False, the number of observations in y minus 1 must be an exact
+        multiple of lags.  If this condition is not satistifed, some values at
+        the end of y will be discarded.
     robust : bool, optional
-        Indicates whether to use heteroskedasticity robust inference. Default is
-        True.
+        Indicates whether to use heteroskedasticity robust inference. Default
+        is True.
     debiased : bool, optional
         Indicates whether to use a debiased version of the test. Default is
         True. Only applicable if overlap is True.

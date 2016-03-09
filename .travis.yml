@@ -42,6 +42,7 @@ matrix:
   - python: 2.7
     env:
     - PYTHON=3.5
+    - NUMBA=0.24
 
 addons:
   apt:

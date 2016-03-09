@@ -11,10 +11,12 @@ This version has been optimized for execution on a large cluster and should
 scale well with 128 or more engines.
 """
 from __future__ import division, print_function
+
 import datetime
 import time
-from numpy import array, savez, percentile, nan
+
 from IPython.parallel import Client
+from numpy import array, savez, percentile, nan
 
 from arch.compat.python import range, lmap
 
@@ -159,8 +161,8 @@ for tr in trends:
 
         elapsed = datetime.datetime.now() - now
         print('Total time {0} for T={1}'.format(elapsed, t))
-        q = lambda x: percentile(x, percentiles)
-        quantiles = lmap(q, out)
+        quantiles = lmap(lambda x: percentile(x, percentiles), out)
         results[:, i, :] = array(quantiles).T
 
-        savez(filename, trend=tr, results=results, percentiles=percentiles, T=T)
+        savez(filename, trend=tr, results=results,
+              percentiles=percentiles, T=T)

@@ -3,17 +3,19 @@ Calculates quantiles of the KPSS test statistic for both the constant
 and constant plus trend scenarios.
 """
 from __future__ import division, print_function
+
 import os
-from numpy.random import RandomState
+
 import numpy as np
 import pandas as pd
+from numpy.random import RandomState
 from statsmodels.tsa.tsatools import add_trend
 
 
 def simulate_kpss(nobs, B, trend='c', rng=None):
     """
-    Simulated the KPSS test statistic for nobs observations, 
-    performing B replications. 
+    Simulated the KPSS test statistic for nobs observations,
+    performing B replications.
     """
     if rng is None:
         rng = RandomState()
@@ -37,7 +39,7 @@ def simulate_kpss(nobs, B, trend='c', rng=None):
 def wrapper(nobs, b, trend='c', max_memory=250):
     """
     A wrapper around the main simulation that runs it in blocks so that large
-    simulations can be run without constructing very large arrays and running 
+    simulations can be run without constructing very large arrays and running
     out of memory.
     """
     rng = RandomState()

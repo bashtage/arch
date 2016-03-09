@@ -1,16 +1,16 @@
 """
-Critical value simulation for the Dickey-Fuller GLS model.  Similar in design to
-MacKinnon (2010).  Makes use of parallel_fun in statsmodels which works best when
-joblib is installed.
+Critical value simulation for the Dickey-Fuller GLS model.  Similar in design
+to MacKinnon (2010).  Makes use of parallel_fun in statsmodels which works
+best when joblib is installed.
 """
 from __future__ import division, print_function
-from statsmodels.compat import range
+
 import datetime
 
+import numpy as np
 from numpy import ones, vstack, arange, diff, cumsum, sqrt, sum
 from numpy.linalg import pinv
-import numpy as np
-
+from statsmodels.compat import range
 from statsmodels.tools.parallel import parallel_func
 
 # Controls memory use, in MiB
@@ -22,7 +22,7 @@ EX_SIZE = 200000
 
 def wrapper(n, trend, b, seed=0):
     """
-    Wraps and blocks the main simulation so that the maximum amount of memory 
+    Wraps and blocks the main simulation so that the maximum amount of memory
     can be controlled on multi processor systems when executing in parallel
     """
     rng = np.random.RandomState()
@@ -104,15 +104,14 @@ if __name__ == '__main__':
         results = np.zeros((len(percentiles), len(T), EX_NUM))
 
         for i in range(EX_NUM):
-            print("Experiment Number {0} of {1} (trend {2})".format(i + 1,
-                                                                    EX_NUM, tr))
+            print("Experiment Number {0} of {1} "
+                  "(trend {2})".format(i + 1, EX_NUM, tr))
             now = datetime.datetime.now()
             parallel, p_func, n_jobs = parallel_func(wrapper,
                                                      n_jobs=NUM_JOBS,
                                                      verbose=2)
             out = parallel(p_func(t, tr, EX_SIZE, seed=seeds[i]) for t in T)
-            q = lambda x: np.percentile(x, percentiles)
-            quantiles = map(q, out)
+            quantiles = map(lambda x: np.percentile(x, percentiles), out)
             results[:, :, i] = np.array(quantiles).T
             print('Elapsed time {0} seconds'.format(
                 datetime.datetime.now() - now))

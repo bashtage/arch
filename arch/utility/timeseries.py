@@ -36,7 +36,8 @@ def _enforce_unique_col_name(existing, new):
     return unique_names
 
 
-def add_trend(x=None, trend="c", prepend=False, nobs=None, has_constant='skip'):
+def add_trend(x=None, trend="c", prepend=False, nobs=None,
+              has_constant='skip'):
     """
     Adds a trend and/or constant to an array.
 

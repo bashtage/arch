@@ -1,5 +1,6 @@
 from __future__ import division
 
+
 def cov_nw(y, lags=0, demean=True, axis=0, ddof=0):
     """
     Computes Newey-West covariance for 1-d and 2-d arrays

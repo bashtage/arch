@@ -8,7 +8,7 @@ on the local machine.  This can be started using a command similar to
 Remote clusters can be used by modifying the call to Client.
 """
 from __future__ import division, print_function
-# from statsmodels.compat import range, lmap
+
 from statsmodels.tools.parallel import parallel_func
 import datetime
 from numpy import array, savez, percentile, nan
@@ -32,7 +32,7 @@ def lmap(*args):
 
 def wrapper(n, trend, b, seed=0):
     """
-    Wraps and blocks the main simulation so that the maximum amount of memory 
+    Wraps and blocks the main simulation so that the maximum amount of memory
     can be controlled on multi processor systems when executing in parallel
     """
     rng = RandomState()
@@ -121,8 +121,7 @@ if __name__ == '__main__':
             # out = lmap(wrapper, T, [tr] * m, [EX_SIZE] * m, [seeds[i]] * m))
             now = datetime.datetime.now()
             out = parallel(p_func(t, tr, EX_SIZE, seed=seeds[i]) for t in T)
-            q = lambda x: percentile(x, percentiles)
-            quantiles = map(q, out)
+            quantiles = map(lambda x: percentile(x, percentiles), out)
             results[:, :, i] = array(quantiles).T
             elapsed = datetime.datetime.now() - now
             print('Elapsed time {0} seconds'.format(elapsed))
@@ -131,4 +130,5 @@ if __name__ == '__main__':
                 savez(filename, trend=tr, results=results,
                       percentiles=percentiles, T=T)
 
-        savez(filename, trend=tr, results=results, percentiles=percentiles, T=T)
+        savez(filename, trend=tr, results=results,
+              percentiles=percentiles, T=T)

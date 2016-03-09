@@ -6,7 +6,8 @@ Distributions to use in ARCH models.  All distributions must inherit from
 from __future__ import division, absolute_import
 
 from numpy.random import standard_normal, standard_t
-from numpy import empty, array, sqrt, log, exp, sign, pi, sum, asarray, ones_like
+from numpy import (empty, array, sqrt, log, exp, sign, pi, sum, asarray,
+                   ones_like)
 from scipy.special import gammaln
 import scipy.stats as stats
 
@@ -281,7 +282,8 @@ class StudentsT(Distribution):
         nu = parameters[0]
         lls = gammaln((nu + 1)/2) - gammaln(nu/2) - log(pi * (nu - 2))/2
         lls -= 0.5 * (log(sigma2))
-        lls -= ((nu + 1) / 2) * (log(1 + (resids ** 2.0) / (sigma2 * (nu - 2))))
+        lls -= ((nu + 1) / 2) * \
+               (log(1 + (resids ** 2.0) / (sigma2 * (nu - 2))))
 
         if individual:
             return lls
@@ -410,8 +412,9 @@ class SkewStudent(Distribution):
 
         resids = resids / sigma2**.5
         lls = log(const_b) + const_c - log(sigma2)/2
-        lls -= (eta+1)/2 * log(1 + ((const_b * resids + const_a)
-            / (1 + sign(resids + const_a / const_b) * lam))**2 / (eta-2))
+        llf_resid = ((const_b * resids + const_a) /
+                     (1 + sign(resids + const_a / const_b) * lam))**2
+        lls -= (eta + 1) / 2 * log(1 + llf_resid / (eta - 2))
 
         if individual:
             return lls
@@ -449,8 +452,8 @@ class SkewStudent(Distribution):
         if parameters[0, 0] <= 2.0:
             raise ValueError('The shape parameter must be larger than 2')
         if abs(parameters[0, 1]) > 1.0:
-            raise ValueError('The skew parameter must be '
-                             + 'smaller than 1 in absolute value')
+            raise ValueError('The skew parameter must be ' +
+                             'smaller than 1 in absolute value')
         self._parameters = parameters
         return self._simulator
 
