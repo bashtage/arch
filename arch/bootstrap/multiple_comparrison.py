@@ -352,8 +352,9 @@ class StepM(MultipleComparison):
     SPA
     """
 
-    def __init__(self, benchmark, models, size=0.05, block_size=None, reps=1000,
-                 bootstrap='stationary', studentize=True, nested=False):
+    def __init__(self, benchmark, models, size=0.05, block_size=None,
+                 reps=1000, bootstrap='stationary', studentize=True,
+                 nested=False):
         super(StepM, self).__init__()
         self.benchmark = ensure2d(benchmark, 'benchmark')
         self.models = ensure2d(models, 'models')
@@ -601,8 +602,7 @@ class SPA(MultipleComparison):
         if self.nested:
             # Use bootstrap to estimate variances
             bs = self.bootstrap.clone(demeaned)
-            func = lambda x: x.mean(0)
-            means = bs.apply(func, reps=self.reps)
+            means = bs.apply(lambda x: x.mean(0), reps=self.reps)
             variances = self.t * means.var(axis=0)
         else:
             t = self.t

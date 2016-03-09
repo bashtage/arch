@@ -3,22 +3,23 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 :class:`ARCHModel` and provide the same methods with the same inputs.
 """
 from __future__ import division, absolute_import
-from collections import OrderedDict
+
 import copy
 import datetime as dt
+from collections import OrderedDict
 
 import numpy as np
 from numpy import zeros, empty, ones, isscalar, log
-from statsmodels.tsa.tsatools import lagmat
-from statsmodels.tools.decorators import cache_readonly
-
 from pandas import DataFrame
+from statsmodels.tools.decorators import cache_readonly
+from statsmodels.tsa.tsatools import lagmat
 
 from .base import ARCHModel, implicit_constant, ARCHModelResult
-from .volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH
 from .distribution import Normal, StudentsT, SkewStudent
-from ..utility.array import ensure1d, parse_dataframe, date_to_index, find_index
+from .volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH
 from ..compat.python import range, iteritems
+from ..utility.array import (ensure1d, parse_dataframe, date_to_index,
+                             find_index)
 
 __all__ = ['HARX', 'ConstantMean', 'ZeroMean', 'ARX', 'arch_model', 'LS']
 
@@ -181,8 +182,8 @@ class HARX(ARCHModel):
         functions"""
         if include_lags:
             if self.lags is not None:
-                lagstr = ['[' + str(lag[0]) + ':' + str(lag[1]) + ']' for lag in
-                          self._lags.T]
+                lagstr = ['[' + str(lag[0]) + ':' + str(lag[1]) + ']'
+                          for lag in self._lags.T]
                 lagstr = ', '.join(lagstr)
             else:
                 lagstr = 'none'
@@ -448,7 +449,8 @@ class HARX(ARCHModel):
         if self.lags is not None and nobs_orig > 0:
             maxlag = np.max(self.lags)
             lag_array = lagmat(self._y, maxlag)
-            reg_lags = empty((nobs_orig, self._lags.shape[1]), dtype=np.float64)
+            reg_lags = empty((nobs_orig, self._lags.shape[1]),
+                             dtype=np.float64)
             for i, lags in enumerate(self._lags.T):
                 reg_lags[:, i] = np.mean(lag_array[:, lags[0]:lags[1]], 1)
         else:
@@ -516,7 +518,7 @@ class HARX(ARCHModel):
         y = self._y_adj
 
         # Fake convergence results, see GH #87
-        _xopt = ['','',0,'','']
+        _xopt = ['', '', 0, '', '']
 
         if x.shape[1] == 0:
             loglikelihood = self._static_gaussian_loglikelihood(y)
@@ -589,16 +591,16 @@ class HARX(ARCHModel):
         horizon : int, optional
             Maximum horizon to construct forecasts
         start : int, str, or datetime-like, optional
-            Integer index, date-convertible string or datetime to use to compute
-            the observation of the first forecast. String and datetime can only
-            be used with a pandas Series or DataFrame.
+            Integer index, date-convertible string or datetime to use to
+            compute the observation of the first forecast. String and datetime
+            can only be used with a pandas Series or DataFrame.
         align : str, optional
             Alignment of forecasts.  'origin' aligns with last observation used
             to produce the forecast, so that observation i will have columns
             h.1, h.2, ..., h.horizon which are the 1-step ahead using
-            information up-to-and-including i.  'target' aligns the observations
-            so that the forecast in position [i, h.k] will for the time i=k
-            forecast of the value in position i.
+            information up-to-and-including i.  'target' aligns the
+            observations so that the forecast in position [i, h.k] will for
+            the time i=k forecast of the value in position i.
 
         Returns
         -------
@@ -950,8 +952,9 @@ class ARX(HARX):
 
     """
 
-    def __init__(self, y=None, x=None, lags=None, constant=True, hold_back=None,
-                 last_obs=None, volatility=None, distribution=None):
+    def __init__(self, y=None, x=None, lags=None, constant=True,
+                 hold_back=None, last_obs=None, volatility=None,
+                 distribution=None):
         # Convert lags to 2-d format
 
         if lags is not None:
@@ -1135,9 +1138,10 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
     >>> am = arch_model(returns, mean='AR', lags=2, vol='harch', p=[1, 5, 22])
 
     This example demonstrates the construction of a zero mean process
-    with a TARCH volatility process and Student nobs error distribution
+    with a TARCH volatility process and Student t error distribution
 
-    >>> am = arch_model(returns, mean='zero', p=1, o=1, q=1, power=1.0, dist='StudentsT')
+    >>> am = arch_model(returns, mean='zero', p=1, o=1, q=1,
+                        power=1.0, dist='StudentsT')
 
     Notes
     -----

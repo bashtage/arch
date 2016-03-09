@@ -11,7 +11,8 @@ from pandas.core.common import is_datetime64_dtype
 
 from ..compat.python import long, string_types
 
-__all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor', 'date_to_index']
+__all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor',
+           'date_to_index']
 
 deprecation_doc = """
 {func} has been moved.  Please use {new_location}.{func}.
@@ -70,7 +71,8 @@ def ensure2d(x, name):
             raise ValueError(
                 'Variable ' + name + 'must be 2d or reshapeable to 2d')
     else:
-        raise ValueError('Variable ' + name + 'must be 2d or reshapeable to 2d')
+        raise ValueError('Variable ' + name + 'must be 2d or ' +
+                         'reshapeable to 2d')
 
 
 def parse_dataframe(x, name):

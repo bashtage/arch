@@ -41,6 +41,7 @@ The optimizer returned code {code}. The message is:
 See scipy.optimize.fmin_slsqp for code meaning.
 """
 
+
 class StartingValueWarning(Warning):
     pass
 
@@ -64,7 +65,7 @@ def _callback(*args):
     Uses global values to track iteration, iteration display frequency,
     log likelihood and function count
     """
-    global _callback_iter, _callback_iter_display
+    global _callback_iter
     _callback_iter += 1
     disp = 'Iteration: {0:>6},   Func. Count: {1:>6.3g},   Neg. LLF: {2}'
     if _callback_iter % _callback_iter_display == 0:
@@ -108,8 +109,8 @@ def constraint(a, b):
 
 def format_float_fixed(x, max_digits=10, decimal=4):
     """Formats a floating point number so that if it can be well expressed
-    in using a string with digits len, then it is converted simply, otherwise it
-    is expressed in scientific notaiton"""
+    in using a string with digits len, then it is converted simply, otherwise
+    it is expressed in scientific notation"""
     # basic_format = '{:0.' + str(digits) + 'g}'
     if x == 0:
         return ('{:0.' + str(decimal) + 'f}').format(0.0)
@@ -389,7 +390,6 @@ class ARCHModel(object):
         return ARCHModelFixedResult(params, resids, vol, self._y_series, names,
                                     loglikelihood, self._is_pandas, model_copy)
 
-
     def fit(self, update_freq=1, disp='final', starting_values=None,
             cov_type='robust'):
         """
@@ -419,8 +419,8 @@ class ARCHModel(object):
 
         Notes
         -----
-        A ConvergenceWarning is raised if SciPy's optimizer indicates difficulty
-        finding the optimum.
+        A ConvergenceWarning is raised if SciPy's optimizer indicates
+        difficulty finding the optimum.
 
         """
         # 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,
@@ -429,7 +429,7 @@ class ARCHModel(object):
         offsets = np.array((self.num_params, v.num_params, d.num_params))
         total_params = sum(offsets)
         has_closed_form = (v.num_params == 1 and d.num_params == 0) or \
-                          total_params == 0
+            total_params == 0
         if has_closed_form:
             try:
                 return self._fit_no_arch_normal_errors(cov_type=cov_type)
@@ -469,7 +469,6 @@ class ARCHModel(object):
         bounds = self.bounds()
         bounds.extend(v.bounds(resids))
         bounds.extend(d.bounds(std_resids))
-
 
         # 3. Construct starting values from all models
         sv = starting_values
@@ -562,8 +561,8 @@ class ARCHModel(object):
 
     def starting_values(self):
         """
-        Returns starting values for the mean model, often the same as the values
-        returned from fit
+        Returns starting values for the mean model, often the same as the
+        values returned from fit
 
         Returns
         -------
@@ -691,8 +690,8 @@ class ARCHModelFixedResult(object):
         Schwarz/Bayes information criteria
     conditional_volatility : 1-d array or Series
         nobs element array containing the conditional volatility (square root
-        of conditional variance).  The values are aligned with the input data so
-        that the value in the t-th position is the variance of t-th error,
+        of conditional variance).  The values are aligned with the input data
+        so that the value in the t-th position is the variance of t-th error,
         which is computed using time-(t-1) information.
     params : Series
         Estimated parameters
@@ -759,7 +758,7 @@ class ARCHModelFixedResult(object):
                      ('BIC:', '%#10.6g' % self.bic),
                      ('No. Observations:', self._nobs),
                      ('', ''),
-                     ('', ''),]
+                     ('', ''), ]
 
         title = model_name + ' Model Results'
         stubs = []
@@ -1004,9 +1003,10 @@ class ARCHModelFixedResult(object):
         default value for `align`, the forecast value in position [t, h] is the
         time-t, h+1 step ahead forecast.
 
-        If model contains exogenous variables (`model.x is not None`), then only
-        1-step ahead forecasts are available.  Using horizon > 1 will produce
-        a warning and all columns, except the first, will be nan-filled.
+        If model contains exogenous variables (`model.x is not None`), then
+        only 1-step ahead forecasts are available.  Using horizon > 1 will
+        produce a warning and all columns, except the first, will be
+        nan-filled.
 
         If `align` is 'origin', forecast[t,h] contains the forecast made using
         y[:t] (that is, up to but not including t) for horizon h + 1.  For
@@ -1020,7 +1020,7 @@ class ARCHModelFixedResult(object):
             params = self._params
         else:
             if (params.size != np.array(self._params).size or
-                        params.ndim != self._params.ndim):
+                    params.ndim != self._params.ndim):
                 raise ValueError('params have incorrect dimensions')
         return self.model.forecast(params, horizon, start, align)
 
@@ -1037,7 +1037,7 @@ class ARCHModelFixedResult(object):
         horizon : int, optional
             Number of steps to forecast
         step : int, optional
-            Number of forecast to skip between spines in the plot. Non-negative.
+            Non-negative number of forecasts to skip between spines
         start : int, datetime or str, optional
             An integer, datetime or str indicating the first observation to
             produce the forecast for.  Datetimes can only be used with pandas
@@ -1130,8 +1130,8 @@ class ARCHModelResult(ARCHModelFixedResult):
         Schwarz/Bayes information criteria
     conditional_volatility : 1-d array or Series
         nobs element array containing the conditional volatility (square root
-        of conditional variance).  The values are aligned with the input data so
-        that the value in the t-th position is the variance of t-th error,
+        of conditional variance).  The values are aligned with the input data
+        so that the value in the t-th position is the variance of t-th error,
         which is computed using time-(t-1) information.
     params : Series
         Estimated parameters
@@ -1158,7 +1158,8 @@ class ARCHModelResult(ARCHModelFixedResult):
     """
 
     def __init__(self, params, param_cov, r2, resid, volatility, cov_type,
-                 dep_var, names, loglikelihood, is_pandas, optim_output, model):
+                 dep_var, names, loglikelihood, is_pandas, optim_output,
+                 model):
         super(ARCHModelResult, self).__init__(params, resid, volatility,
                                               dep_var, names, loglikelihood,
                                               is_pandas, model)
@@ -1173,7 +1174,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         Parameters
         ----------
         alpha : float, optional
-            Size (probability) to use when constructing the confidence interval.
+            Size (prob.) to use when constructing the confidence interval.
 
         Returns
         -------
@@ -1254,8 +1255,8 @@ class ARCHModelResult(ARCHModelFixedResult):
         conf_int = np.asarray(self.conf_int())
         conf_int_str = []
         for c in conf_int:
-            conf_int_str.append('[' + format_float_fixed(c[0], 7, 3)
-                                + ',' + format_float_fixed(c[1], 7, 3) + ']')
+            conf_int_str.append('[' + format_float_fixed(c[0], 7, 3) +
+                                ',' + format_float_fixed(c[1], 7, 3) + ']')
 
         stubs = self._names
         header = ['coef', 'std err', 't', 'P>|t|', '95.0% Conf. Int.']

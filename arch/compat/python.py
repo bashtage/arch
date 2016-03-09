@@ -30,6 +30,7 @@ if PY3:
     range = range
     long = int
     string_types = str,
+
     def lmap(*args, **kwargs):
         return list(map(*args, **kwargs))
 else:
@@ -37,6 +38,7 @@ else:
     range = xrange
     long = long
     lmap = builtins.map
+
 
 def with_metaclass(meta, *bases):
     """Create a base class with a metaclass."""
@@ -89,4 +91,3 @@ def itervalues(obj, **kwargs):
     if not func:
         func = obj.values
     return func(**kwargs)
-

@@ -9,7 +9,7 @@ language: python
 env:
   # Default values for common packages, override as needed
   global:
-    - CYTHON=0.22
+    - CYTHON=
     - PATSY=
     - OPTIONAL=
     - STATSMODELS=
@@ -29,6 +29,8 @@ matrix:
     env:
     - PYTHON=2.7
     - NUMBA=0.21
+    - NUMPY=1.10
+    - SCIPY=0.16
     - COVERAGE=false
   - python: 2.7
     env:
@@ -40,18 +42,12 @@ matrix:
   - python: 2.7
     env:
     - PYTHON=3.5
-    - CYTHON=0.23
-    - NUMPY=1.10
-    - SCIPY=0.16
+    - NUMBA=0.24
 
 addons:
   apt:
     packages:
     - pandoc
-
-notifications:
-  email:
-    on_success: always
 
 # Setup anaconda
 before_install:
@@ -79,6 +75,8 @@ before_install:
   - PKGS="${PKGS} matplotlib"; if [ ${MATPLOTLIB} ]; then PKGS="${PKGS}=${MATPLOTLIB}"; fi
   - PKGS="${PKGS} statsmodels"; if [ ${STATSMODELS} ]; then PKGS="${PKGS}=${STATSMODELS}"; fi
   - if [ ${NUMBA} ]; then PKGS="${PKGS} numba=${NUMBA}"; fi
+  # Fix for missing libgfortran
+  - if [ ${PYTHON} = "3.4" ]; then PKGS="${PKGS} libgfortran=1"; fi
 
 # Install packages
 install:

@@ -7,16 +7,16 @@ from __future__ import division, absolute_import
 import itertools
 
 import numpy as np
-from numpy import sqrt, ones, zeros, isscalar, sign, ones_like, arange, empty, \
-    abs, array, finfo, float64, log, exp, floor
+from numpy import sqrt, ones, zeros, isscalar, sign, ones_like, arange,\
+    empty, abs, array, finfo, float64, log, exp, floor
 
 from ..utility.array import ensure1d, DocStringInheritor
 from .distribution import Normal
 from ..compat.python import add_metaclass, range
 
 try:
-    from .recursions import arch_recursion, garch_recursion, harch_recursion, \
-        egarch_recursion
+    from .recursions import arch_recursion, garch_recursion, \
+        harch_recursion, egarch_recursion
 except ImportError:  # pragma: no cover
     from .recursions_python import arch_recursion, garch_recursion, \
         harch_recursion, egarch_recursion
@@ -229,7 +229,8 @@ class VolatilityProcess(object):
         """
         raise NotImplementedError('Must be overridden')  # pragma: no cover
 
-    def _gaussian_loglikelihood(self, parameters, resids, backcast, var_bounds):
+    def _gaussian_loglikelihood(self, parameters, resids, backcast,
+                                var_bounds):
         """
         Private implementation of a Gaussian log-likelihood for use in
         constructing starting values or other quantities that do not depend on
@@ -794,7 +795,7 @@ class EWMAVariance(VolatilityProcess):
 
     .. math::
 
-        \\sigma_t^{2}=\\lambda \\sigma_{t-1}^2  + (1-\\lambda) \\epsilon^2_{t-1}
+        \\sigma_t^{2}=\\lambda\\sigma_{t-1}^2 + (1-\\lambda)\\epsilon^2_{t-1}
 
     This model has no parameters since the smoothing parameter is fixed.
     """

@@ -115,7 +115,8 @@ class IIDBootstrap(object):
     Supports numpy arrays and pandas Series and DataFrames.  Data returned has
     the same type as the input date.
 
-    Data entered using keyword arguments is directly accessibly as an attribute.
+    Data entered using keyword arguments is directly accessibly as an
+    attribute.
 
     Examples
     --------
@@ -186,7 +187,8 @@ class IIDBootstrap(object):
     def _repr_html(self):
         html = '<strong>' + self._name + '</strong>('
         html += '<strong>no. pos. inputs</strong>: ' + str(len(self.pos_data))
-        html += ', <strong>no. keyword inputs</strong>: ' + str(len(self.kw_data))
+        html += ', <strong>no. keyword inputs</strong>: ' + \
+                str(len(self.kw_data))
         html += ', <strong>ID</strong>: ' + hex(id(self)) + ')'
         return html
 
@@ -395,19 +397,21 @@ class IIDBootstrap(object):
         _reuse = False
         if reuse:
             # check conditions for reuse
-            _reuse = (self._results is not None and len(self._results) == reps
-                      and method != studentized and self._last_func is func)
+            _reuse = (self._results is not None and
+                      len(self._results) == reps and
+                      method != studentized and
+                      self._last_func is func)
 
         if not _reuse:
             if reuse:
                 import warnings
 
                 warn = 'The conditions to reuse the previous bootstrap has ' \
-                       'not been satisfied. A new bootstrap will be constructed'
+                       'not been satisfied. A new bootstrap will be used.'
                 warnings.warn(warn, RuntimeWarning)
             self._construct_bootstrap_estimates(func, reps, extra_kwargs,
                                                 std_err_func=std_err_func,
-                                                studentize_reps=studentize_reps,
+                                                studentize_reps=studentize_reps,  # noqa
                                                 sampling=sampling)
 
         base, results = self._base, self._results
@@ -536,8 +540,8 @@ class IIDBootstrap(object):
         reps : int, optional
             Number of bootstrap replications
         extra_kwargs : dict, optional
-            Extra keyword arguments to use when calling func.  Must not conflict
-            with keyword arguments used to initialize bootstrap
+            Extra keyword arguments to use when calling func.  Must not
+            conflict with keyword arguments used to initialize bootstrap
 
         Returns
         -------
@@ -844,7 +848,8 @@ class CircularBlockBootstrap(IIDBootstrap):
     Supports numpy arrays and pandas Series and DataFrames.  Data returned has
     the same type as the input date.
 
-    Data entered using keyword arguments is directly accessibly as an attribute.
+    Data entered using keyword arguments is directly accessibly as an
+    attribute.
 
     Examples
     --------
@@ -881,8 +886,10 @@ class CircularBlockBootstrap(IIDBootstrap):
     def _repr_html(self):
         html = '<strong>' + self._name + '</strong>('
         html += '<strong>block size</strong>: ' + str(self.block_size)
-        html += ', <strong>no. pos. inputs</strong>: ' + str(len(self.pos_data))
-        html += ', <strong>no. keyword inputs</strong>: ' + str(len(self.kw_data))
+        html += ', <strong>no. pos. inputs</strong>: ' + \
+                str(len(self.pos_data))
+        html += ', <strong>no. keyword inputs</strong>: ' + \
+                str(len(self.kw_data))
         html += ', <strong>ID</strong>: ' + hex(id(self)) + ')'
         return html
 
@@ -933,7 +940,8 @@ class StationaryBootstrap(CircularBlockBootstrap):
     Supports numpy arrays and pandas Series and DataFrames.  Data returned has
     the same type as the input date.
 
-    Data entered using keyword arguments is directly accessibly as an attribute.
+    Data entered using keyword arguments is directly accessibly as an
+    attribute.
 
     Examples
     --------
@@ -1000,7 +1008,8 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     Supports numpy arrays and pandas Series and DataFrames.  Data returned has
     the same type as the input date.
 
-    Data entered using keyword arguments is directly accessibly as an attribute.
+    Data entered using keyword arguments is directly accessibly as an
+    attribute.
 
     Examples
     --------

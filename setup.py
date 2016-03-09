@@ -14,6 +14,7 @@ from Cython.Distutils.build_ext import build_ext as _build_ext
 
 CMDCLASS = {}
 
+
 # prevent setup.py from crashing by calling import numpy before
 # numpy is installed
 class build_ext(_build_ext):
@@ -22,7 +23,7 @@ class build_ext(_build_ext):
 
         for ext in self.extensions:
             if (hasattr(ext, 'include_dirs') and
-                    not numpy_incl in ext.include_dirs):
+                    numpy_incl not in ext.include_dirs):
                 ext.include_dirs.append(numpy_incl)
         _build_ext.build_extensions(self)
 
@@ -40,7 +41,7 @@ ALL_REQUIREMENTS = SETUP_REQUIREMENTS.copy()
 ALL_REQUIREMENTS.update(REQUIREMENTS)
 
 ext_modules = []
-if not '--no-binary' in sys.argv:
+if '--no-binary' not in sys.argv:
     ext_modules.append(Extension("arch.univariate.recursions",
                                  ["./arch/univariate/recursions.pyx"]))
     ext_modules.append(Extension("arch.bootstrap._samplers",
@@ -49,9 +50,11 @@ else:
     del REQUIREMENTS['Cython']
     sys.argv.remove('--no-binary')
 
+
 class BinaryDistribution(Distribution):
     def is_pure(self):
         return False
+
 
 class CleanCommand(Command):
     """Custom distutils command to clean the .so and .pyc files."""
@@ -94,6 +97,7 @@ class CleanCommand(Command):
 
 CMDCLASS['clean'] = CleanCommand
 
+
 def strip_rc(version):
     return re.sub(r"rc\d+$", "", version)
 
@@ -102,8 +106,8 @@ def strip_rc(version):
 missing_package = '{package} is installed, but the version installed' \
                   ', {existing_ver}, is less than the required version ' \
                   'of {required_version}. This package must be manually ' \
-                  'updated.  If this isn\'t possible, consider installing in ' \
-                  'an empty virtual environment.'
+                  'updated.  If this isn\'t possible, consider installing ' \
+                  'in an empty virtual environment.'
 
 PACKAGE_CHECKS = ['numpy', 'scipy', 'pandas']
 for key in PACKAGE_CHECKS:
@@ -146,9 +150,10 @@ for key in PACKAGE_CHECKS:
         existing_version = StrictVersion(strip_rc(version))
         satisfies_req = existing_version >= ALL_REQUIREMENTS[key]
     if not satisfies_req:
+        requirement = ALL_REQUIREMENTS[key]
         message = missing_package.format(package=key,
                                          existing_ver=existing_version,
-                                         required_version=ALL_REQUIREMENTS[key])
+                                         required_version=requirement)
         raise EnvironmentError(message)
 
 cwd = os.getcwd()
@@ -163,8 +168,8 @@ try:
 except IOError as e:
     import warnings
 
-    warnings.warn('Unable to convert README.md.  Most likely because pandoc is '
-                  'not installed')
+    warnings.warn('Unable to convert README.md.  Most likely because pandoc '
+                  'is not installed')
 
 # Convert examples notebook to rst for docs
 try:
@@ -238,7 +243,7 @@ try:
     version = version_file.read().strip()
     version_file.close()
     version_py_file = open(os.path.join(cwd, 'arch', '_version.py'), mode='wt')
-    version_py_file.write('__version__="' + version + '"')
+    version_py_file.write('__version__ = "' + version + '"\n')
     version_py_file.close()
 except:
     raise EnvironmentError('Cannot locate VERSION')
@@ -277,6 +282,8 @@ setup(name='arch',
           'Programming Language :: Cython',
           'Topic :: Scientific/Engineering',
       ],
-      install_requires=[key + '>=' + REQUIREMENTS[key] for key in REQUIREMENTS],
-      setup_requires=[key + '>=' + SETUP_REQUIREMENTS[key] for key in SETUP_REQUIREMENTS],
+      install_requires=[key + '>=' + REQUIREMENTS[key]
+                        for key in REQUIREMENTS],
+      setup_requires=[key + '>=' + SETUP_REQUIREMENTS[key]
+                      for key in SETUP_REQUIREMENTS],
       )
