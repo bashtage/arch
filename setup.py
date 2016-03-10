@@ -173,14 +173,14 @@ except IOError as e:
 
 # Convert examples notebook to rst for docs
 try:
-    from IPython.nbconvert.utils.exceptions import ConversionException
-    from IPython.nbconvert.utils.pandoc import PandocMissing
+    from nbconvert.utils.exceptions import ConversionException
+    from nbconvert.utils.pandoc import PandocMissing
 except ImportError as e:
     ConversionException = PandocMissing = ValueError
 
 try:
-    import IPython.nbformat as nbformat
-    from IPython.nbconvert import RSTExporter
+    import nbformat as nbformat
+    from nbconvert import RSTExporter
 
     notebooks = glob.glob(os.path.join(cwd, 'examples', '*.ipynb'))
     for notebook in notebooks:
@@ -227,9 +227,9 @@ try:
 except:
     import warnings
 
-    warnings.warn('Unable to import required modules from IPython. This only '
-                  'affects documentation generation and not the operation of '
-                  'the module.')
+    warnings.warn('Unable to import required modules from the jupyter project.'
+                  ' This only affects documentation generation and not the '
+                  'operation of the module.')
     print('The last error was:')
     import sys
 
