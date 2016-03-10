@@ -80,7 +80,7 @@ before_install:
 
 # Install packages
 install:
-  - conda create --yes --quiet -n arch-test ${PKGS} ${OPTIONAL} ipython-notebook statsmodels nose pip pyyaml setuptools pyqt pyparsing
+  - conda create --yes --quiet -n arch-test ${PKGS} ${OPTIONAL} nbconvert nbformat statsmodels nose pip pyyaml setuptools pyqt pyparsing
   - source activate arch-test
   - if [ ${COVERAGE} = true ]; then pip install coverage coveralls nose-cov; fi
   - python setup.py build
