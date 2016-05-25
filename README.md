@@ -1,6 +1,8 @@
 [![Documentation Status](https://readthedocs.org/projects/arch/badge/?version=latest)](http://arch.readthedocs.org/en/latest/)
-[![CI Status](https://travis-ci.org/bashtage/arch.svg?branch=master)](https://travis-ci.org/bashtage/arch)
+[![Travis Build Status](https://travis-ci.org/bashtage/arch.svg?branch=master)](https://travis-ci.org/bashtage/arch)
+[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/nmt02u7jwcgx7i2x?svg=true)](https://ci.appveyor.com/project/bashtage/arch/branch/master)
 [![Coverage Status](https://coveralls.io/repos/bashtage/arch/badge.svg?branch=master)](https://coveralls.io/r/bashtage/arch?branch=master)
+[![Code Health](https://landscape.io/github/bashtage/arch/master/landscape.svg?style=flat)](https://landscape.io/github/bashtage/arch/master)
 [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.15681.svg)](http://dx.doi.org/10.5281/zenodo.15681)
 
 # ARCH

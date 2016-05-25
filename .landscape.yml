@@ -1,0 +1,5 @@
+ignore-paths:
+    - arch/compat/python.py
+python-targets:
+    - 2
+    - 3
