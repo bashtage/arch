@@ -137,16 +137,16 @@ for examples of the multiple comparison procedures.
 ## Requirements
 
 * NumPy (1.8+)
-* SciPy (0.14+)
-* Pandas (0.14+)
+* SciPy (0.15+)
+* Pandas (0.15+)
 * statsmodels (0.6+)
 * matplotlib (1.3+)
 
 ### Optional Requirements
 
-* Numba (0.19+) will be used if available **and** when installed using the 
+* Numba (0.21+) will be used if available **and** when installed using the 
 --no-binary option
-* IPython (3.0+) is required to run the notebooks
+* IPython (4.0+) is required to run the notebooks
 
 ### Installing
 
