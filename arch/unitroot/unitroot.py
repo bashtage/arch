@@ -364,17 +364,17 @@ class ADF(UnitRootTest):
     >>> data = sm.datasets.macrodata.load().data
     >>> inflation = np.diff(np.log(data['cpi']))
     >>> adf = ADF(inflation)
-    >>> adf.stat
-    -3.093111891727883
-    >>> adf.pvalue
-    0.027067156654784364
+    >>> print('{0:0.4f}'.format(adf.stat))
+    -3.0931
+    >>> print('{0:0.4f}'.format(adf.pvalue))
+    0.0271
     >>> adf.lags
-    2L
+    2
     >>> adf.trend='ct'
-    >>> adf.stat
-    -3.2111220810567316
-    >>> adf.pvalue
-    0.082208183131829649
+    >>> print('{0:0.4f}'.format(adf.stat))
+    -3.2111
+    >>> print('{0:0.4f}'.format(adf.pvalue))
+    0.0822
 
     References
     ----------
@@ -511,17 +511,17 @@ class DFGLS(UnitRootTest):
     >>> data = sm.datasets.macrodata.load().data
     >>> inflation = np.diff(np.log(data['cpi']))
     >>> dfgls = DFGLS(inflation)
-    >>> dfgls.stat
-    -2.7610943027494161
-    >>> dfgls.pvalue
-    0.0059024528170065768
+    >>> print('{0:0.4f}'.format(dfgls.stat))
+    -2.7611
+    >>> print('{0:0.4f}'.format(dfgls.pvalue))
+    0.0059
     >>> dfgls.lags
-    2L
+    2
     >>> dfgls.trend = 'ct'
-    >>> dfgls.stat
-    -2.90355133529604
-    >>> dfgls.pvalue
-    0.044662612387444081
+    >>> print('{0:0.4f}'.format(dfgls.stat))
+    -2.9036
+    >>> print('{0:0.4f}'.format(dfgls.pvalue))
+    0.0447
 
     References
     ----------
@@ -677,22 +677,22 @@ class PhillipsPerron(UnitRootTest):
     >>> data = sm.datasets.macrodata.load().data
     >>> inflation = np.diff(np.log(data['cpi']))
     >>> pp = PhillipsPerron(inflation)
-    >>> pp.stat
-    -8.1355784802409303
-    >>> pp.pvalue
-    1.061467301832819e-12
+    >>> print('{0:0.4f}'.format(pp.stat))
+    -8.1356
+    >>> print('{0:0.4f}'.format(pp.pvalue))
+    0.0000
     >>> pp.lags
     15
     >>> pp.trend = 'ct'
-    >>> pp.stat
-    -8.2021582107367514
-    >>> pp.pvalue
-    2.4367363200875479e-11
+    >>> print('{0:0.4f}'.format(pp.stat))
+    -8.2022
+    >>> print('{0:0.4f}'.format(pp.pvalue))
+    0.0000
     >>> pp.test_type = 'rho'
-    >>> pp.stat
-    -120.32706602359212
-    >>> pp.pvalue
-    0.0
+    >>> print('{0:0.4f}'.format(pp.stat))
+    -120.3271
+    >>> print('{0:0.4f}'.format(pp.pvalue))
+    0.0000
 
     References
     ----------
@@ -843,15 +843,15 @@ class KPSS(UnitRootTest):
     >>> data = sm.datasets.macrodata.load().data
     >>> inflation = np.diff(np.log(data['cpi']))
     >>> kpss = KPSS(inflation)
-    >>> kpss.stat
-    0.28700886586311969
-    >>> kpss.pvalue
-    .14735012654422672
+    >>> print('{0:0.4f}'.format(kpss.stat))
+    0.2870
+    >>> print('{0:0.4f}'.format(kpss.pvalue))
+    0.1474
     >>> kpss.trend = 'ct'
-    >>> kpss.stat
-    0.20749526406020977
-    >>> kpss.pvalue
-    .012834648872163952
+    >>> print('{0:0.4f}'.format(kpss.stat))
+    0.2075
+    >>> print('{0:0.4f}'.format(kpss.pvalue))
+    0.0128
 
     References
     ----------
@@ -944,13 +944,13 @@ class VarianceRatio(UnitRootTest):
     >>> import pandas as pd
     >>> data = pd.DataFrame.from_csv(csv)
     >>> data = data[::-1]  # Reverse
-    >>> data.resample('M',how='last')  # End of month
+    >>> data = data.resample('M',how='last')  # End of month
     >>> returns = data['Adj Close'].pct_change().dropna()
     >>> vr = VarianceRatio(returns, lags=12)
-    >>> vr.stat
-    -23.021986263667511
-    >>> vr.pvalue
-    0.0
+    >>> print('{0:0.4f}'.format(vr.stat))
+    -11.4517
+    >>> print('{0:0.4f}'.format(vr.pvalue))
+    0.0000
 
     References
     ----------
