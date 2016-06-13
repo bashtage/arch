@@ -1123,7 +1123,7 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
     >>> import datetime as dt
     >>> start = dt.datetime(1990, 1, 1)
     >>> end = dt.datetime(2014, 1, 1)
-    >>> import pandas.io.data as web
+    >>> import pandas_datareader.data as web
     >>> sp500 = web.get_data_yahoo('^GSPC', start=start, end=end)
     >>> returns = 100 * sp500['Adj Close'].pct_change().dropna()
 
@@ -1141,7 +1141,7 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
     with a TARCH volatility process and Student t error distribution
 
     >>> am = arch_model(returns, mean='zero', p=1, o=1, q=1,
-                        power=1.0, dist='StudentsT')
+    ...                 power=1.0, dist='StudentsT')
 
     Notes
     -----
