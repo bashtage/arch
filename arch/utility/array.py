@@ -83,7 +83,9 @@ def parse_dataframe(x, name):
     elif isinstance(x, Series):
         return [x.name], x.index
     else:
-        return [name], np.arange(np.squeeze(x).shape[0])
+        if not isinstance(name, list):
+            name = [name]
+        return name, np.arange(np.squeeze(x).shape[0])
 
 
 class DocStringInheritor(type):

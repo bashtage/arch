@@ -357,6 +357,40 @@ class TestMeanModel(unittest.TestCase):
         res.plot(scale=360)
         res.hedgehog_plot()
 
+    def test_arch_arx(self):
+        np.random.seed(12345)
+        x = np.random.randn(500, 3)
+        y = x.sum(1) + 3 * np.random.randn(500)
+
+        am = ARX(y=y, x=x)
+        am.fit().summary()
+        am.volatility = ARCH(p=2)
+        results = am.fit(update_freq=0, disp='off')
+        assert_true(isinstance(results.pvalues, pd.Series), True)
+        assert_equal(list(results.pvalues.index),
+                     ['Const', 'x0', 'x1', 'x2',
+                      'omega', 'alpha[1]', 'alpha[2]'])
+
+        am = ARX(y=y, lags=2, x=x)
+        am.fit().summary()
+        am.volatility = ARCH(p=2)
+        results = am.fit(update_freq=0, disp='off')
+        assert_true(isinstance(results.pvalues, pd.Series), True)
+        assert_equal(list(results.pvalues.index),
+                     ['Const', 'y[1]', 'y[2]', 'x0', 'x1', 'x2',
+                      'omega', 'alpha[1]', 'alpha[2]'])
+
+        x = pd.DataFrame(x, columns=['x0', 'x1', 'x2'])
+        y = pd.Series(y, name='y')
+        am = ARX(y=y, x=x)
+        am.fit().summary()
+        am.volatility = ARCH(p=2)
+        results = am.fit(update_freq=0, disp='off')
+        assert_true(isinstance(results.pvalues, pd.Series), True)
+        assert_equal(list(results.pvalues.index),
+                     ['Const', 'x0', 'x1', 'x2',
+                      'omega', 'alpha[1]', 'alpha[2]'])
+
     def test_arch_model(self):
         am = arch_model(self.y)
         assert_true(isinstance(am, ConstantMean))
