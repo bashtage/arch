@@ -2,9 +2,9 @@ import unittest
 import warnings
 
 import numpy as np
+from nose.tools import assert_true
 from numpy.testing import assert_almost_equal, assert_equal, assert_allclose, \
     assert_array_equal, assert_raises
-
 
 try:
     from arch.univariate import _recursions as rec
@@ -80,6 +80,10 @@ class TestVolatiltyProcesses(unittest.TestCase):
         names = garch.parameter_names()
         names_target = ['omega', 'alpha[1]', 'beta[1]']
         assert_equal(names, names_target)
+
+        assert_true(isinstance(garch.__str__(), str))
+        repr = garch.__repr__()
+        assert_true(str(hex(id(garch))) in repr)
 
         assert_equal(garch.name, 'GARCH')
         assert_equal(garch.num_params, 3)
@@ -198,6 +202,9 @@ class TestVolatiltyProcesses(unittest.TestCase):
         assert_equal(arch.name, 'ARCH')
         assert_equal(arch.num_params, 2)
         assert_equal(arch.p, 1)
+        assert_true(isinstance(arch.__str__(), str))
+        repr = arch.__repr__()
+        assert_true(str(hex(id(arch))) in repr)
 
     def test_arch_harch(self):
         arch = ARCH(p=1)
@@ -220,6 +227,9 @@ class TestVolatiltyProcesses(unittest.TestCase):
         Ah, bh = harch.constraints()
         assert_equal(A, Ah)
         assert_equal(b, bh)
+        assert_true(isinstance(arch.__str__(), str))
+        repr = arch.__repr__()
+        assert_true(str(hex(id(arch))) in repr)
 
     def test_harch(self):
         harch = HARCH(lags=[1, 5, 22])
@@ -302,8 +312,8 @@ class TestVolatiltyProcesses(unittest.TestCase):
                 shock22 = shock22 / 22.0
 
             sigma2[t] += parameters[1] * shock1 \
-                + parameters[2] * shock5 \
-                + parameters[3] * shock22
+                         + parameters[2] * shock5 \
+                         + parameters[3] * shock22
 
             data[t] = e[t] * np.sqrt(sigma2[t])
         data = data[500:]
@@ -314,6 +324,9 @@ class TestVolatiltyProcesses(unittest.TestCase):
         assert_equal(harch.name, 'HARCH')
         assert_equal(harch.lags, [1, 5, 22])
         assert_equal(harch.num_params, 4)
+        assert_true(isinstance(harch.__str__(), str))
+        repr = harch.__repr__()
+        assert_true(str(hex(id(harch))) in repr)
 
     def test_constant_variance(self):
         cv = ConstantVariance()
@@ -364,6 +377,9 @@ class TestVolatiltyProcesses(unittest.TestCase):
 
         assert_equal(cv.num_params, 1)
         assert_equal(cv.name, 'Constant Variance')
+        assert_true(isinstance(cv.__str__(), str))
+        repr = cv.__repr__()
+        assert_true(str(hex(id(cv))) in repr)
 
     def test_garch_no_symmetric(self):
         garch = GARCH(p=0, o=1, q=1)
@@ -564,6 +580,7 @@ class TestVolatiltyProcesses(unittest.TestCase):
         assert_raises(ValueError, RiskMetrics2006, tau1=-10)
         assert_raises(ValueError, RiskMetrics2006, tau0=10, tau1=8, rho=1.5)
         assert_raises(ValueError, RiskMetrics2006, kmax=0)
+        assert_raises(ValueError, RiskMetrics2006, rho=0.5)
 
     def test_warnings(self):
         garch = GARCH()
@@ -601,6 +618,7 @@ class TestVolatiltyProcesses(unittest.TestCase):
         assert_equal(garch.name, 'TARCH/ZARCH')
         garch = GARCH(3, 0, 0, power=1.5)
         assert_equal(garch.name, 'Power ARCH (power: 1.5)')
+        assert_true('Power' in garch.__str__())
         garch = GARCH(1, 2, 1, power=1.5)
         assert_equal(garch.name, 'Asym. Power GARCH (power: 1.5)')
         garch = GARCH(2, 0, 2, power=1.5)
@@ -666,6 +684,9 @@ class TestVolatiltyProcesses(unittest.TestCase):
 
         assert_equal(ewma.num_params, 0)
         assert_equal(ewma.name, 'EWMA/RiskMetrics')
+        assert_true(isinstance(ewma.__str__(), str))
+        repr = ewma.__repr__()
+        assert_true(str(hex(id(ewma))) in repr)
 
     def test_riskmetrics(self):
         rm06 = RiskMetrics2006()
@@ -778,6 +799,13 @@ class TestVolatiltyProcesses(unittest.TestCase):
         assert_equal(egarch.p, 1)
         assert_equal(egarch.o, 1)
         assert_equal(egarch.q, 1)
+        assert_true(isinstance(egarch.__str__(), str))
+        repr = egarch.__repr__()
+        assert_true(str(hex(id(egarch))) in repr)
+
+        assert_raises(ValueError, EGARCH, p=0, o=0, q=1)
+        assert_raises(ValueError, EGARCH, p=1, o=1, q=-1)
+
 
 
 if __name__ == '__main__':
