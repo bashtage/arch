@@ -7,7 +7,7 @@ from __future__ import division, absolute_import
 import itertools
 
 import numpy as np
-from numpy import sqrt, ones, zeros, isscalar, sign, ones_like, arange,\
+from numpy import sqrt, ones, zeros, isscalar, sign, ones_like, arange, \
     empty, abs, array, finfo, float64, log, exp, floor
 
 from ..utility.array import ensure1d, DocStringInheritor
@@ -15,11 +15,10 @@ from .distribution import Normal
 from ..compat.python import add_metaclass, range
 
 try:
-    from .recursions import arch_recursion, garch_recursion, \
-        harch_recursion, egarch_recursion
+    from .recursions import garch_recursion, harch_recursion, egarch_recursion
 except ImportError:  # pragma: no cover
-    from .recursions_python import arch_recursion, garch_recursion, \
-        harch_recursion, egarch_recursion
+    from .recursions_python import (garch_recursion, harch_recursion,
+                                    egarch_recursion)
 
 __all__ = ['GARCH', 'ARCH', 'HARCH', 'ConstantVariance', 'EWMAVariance',
            'RiskMetrics2006', 'EGARCH']
@@ -390,7 +389,7 @@ class GARCH(VolatilityProcess):
         return super(GARCH, self).variance_bounds(resids, self.power)
 
     def _name(self):
-        p, o, q, power = self.p, self.o, self.q, self.power
+        p, o, q, power = self.p, self.o, self.q, self.power  # noqa: F841
         if power == 2.0:
             if o == 0 and q == 0:
                 return 'ARCH'
@@ -667,7 +666,7 @@ class HARCH(VolatilityProcess):
         return sigma2
 
     def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
-        k_arch, lags = self._num_lags, self.lags
+        lags = self.lags
         errors = rng(nobs + burn)
 
         if initial_value is None:
@@ -922,7 +921,7 @@ class RiskMetrics2006(VolatilityProcess):
         return w
 
     def _ewma_smoothing_parameters(self):
-        tau0, tau1, kmax, rho = self.tau0, self.tau1, self.kmax, self.rho
+        tau1, kmax, rho = self.tau1, self.kmax, self.rho
         taus = tau1 * (rho ** np.arange(kmax))
         mus = exp(-1.0 / taus)
         return mus

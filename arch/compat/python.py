@@ -1,4 +1,5 @@
 # Compatibility code from six and pandas
+# flake8: noqa
 import sys
 
 try:

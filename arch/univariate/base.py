@@ -5,13 +5,11 @@ from __future__ import division, absolute_import
 from copy import deepcopy
 from functools import partial
 import datetime as dt
-from distutils.version import LooseVersion
 import warnings
 
 import numpy as np
 from numpy.linalg import matrix_rank
 from numpy import ones, zeros, sqrt, diag, empty, ceil
-import scipy
 from scipy.optimize import fmin_slsqp
 import scipy.stats as stats
 import pandas as pd
@@ -267,12 +265,6 @@ class ARCHModel(object):
             raise ValueError("Must subclass Distribution")
         self._distribution = value
 
-    def num_params(self):
-        """
-        Number of parameters in mean model, excluding any variance components
-        """
-        raise NotImplementedError('Subclasses must implement')
-
     def _r2(self, params):
         """
         Computes the model r-square.  Optional to over-ride.  Must match
@@ -356,7 +348,7 @@ class ARCHModel(object):
         -----
         Parameters are not checked against model-specific constraints.
         """
-        v, d = self.volatility, self.distribution
+        v = self.volatility
 
         resids = self.resids(self.starting_values())
         sigma2 = np.zeros_like(resids)
