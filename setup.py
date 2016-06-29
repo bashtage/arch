@@ -10,7 +10,17 @@ from distutils.version import StrictVersion
 
 from setuptools import setup, Extension, find_packages, Command
 from setuptools.dist import Distribution
-from Cython.Distutils.build_ext import build_ext as _build_ext
+
+try:
+    from Cython.Distutils.build_ext import build_ext as _build_ext
+
+    CYTHON_INSTALLED = True
+except ImportError:
+    CYTHON_INSTALLED = False
+
+
+    class _build_ext(object):
+        pass
 
 CMDCLASS = {}
 
@@ -23,11 +33,10 @@ class build_ext(_build_ext):
 
         for ext in self.extensions:
             if (hasattr(ext, 'include_dirs') and
-                    numpy_incl not in ext.include_dirs):
+                        numpy_incl not in ext.include_dirs):
                 ext.include_dirs.append(numpy_incl)
         _build_ext.build_extensions(self)
 
-CMDCLASS['build_ext'] = build_ext
 
 SETUP_REQUIREMENTS = {'numpy': '1.8'}
 REQUIREMENTS = {'Cython': '0.22',
@@ -41,14 +50,16 @@ ALL_REQUIREMENTS = SETUP_REQUIREMENTS.copy()
 ALL_REQUIREMENTS.update(REQUIREMENTS)
 
 ext_modules = []
-if '--no-binary' not in sys.argv:
+if '--no-binary' not in sys.argv and CYTHON_INSTALLED:
     ext_modules.append(Extension("arch.univariate.recursions",
                                  ["./arch/univariate/recursions.pyx"]))
     ext_modules.append(Extension("arch.bootstrap._samplers",
                                  ["./arch/bootstrap/_samplers.pyx"]))
+    CMDCLASS['build_ext'] = build_ext
 else:
     del REQUIREMENTS['Cython']
-    sys.argv.remove('--no-binary')
+    if '--no-binary' in sys.argv:
+        sys.argv.remove('--no-binary')
 
 
 class BinaryDistribution(Distribution):
@@ -95,11 +106,13 @@ class CleanCommand(Command):
             except Exception:
                 pass
 
+
 CMDCLASS['clean'] = CleanCommand
 
 
 def strip_rc(version):
     return re.sub(r"rc\d+$", "", version)
+
 
 # Polite checks for numpy, scipy and pandas.  These should not be upgraded,
 # and if found and below the required version, refuse to install
@@ -259,7 +272,7 @@ setup(name='arch',
       packages=find_packages(),
       ext_modules=ext_modules,
       package_dir={'arch': './arch'},
-      cmdclass={'build_ext': build_ext, 'clean': CleanCommand},
+      cmdclass=CMDCLASS,
       keywords=['arch', 'ARCH', 'variance', 'econometrics', 'volatility',
                 'finance', 'GARCH', 'bootstrap', 'random walk', 'unit root',
                 'Dickey Fuller', 'time series', 'confidence intervals',
