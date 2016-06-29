@@ -6,4 +6,7 @@ except ImportError:
     def jit(func):
         def wrapper(*args, **kwargs):
             return func(*args, **kwargs)
+
         return wrapper
+
+__all__ = ['jit']

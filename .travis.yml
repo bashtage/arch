@@ -13,7 +13,7 @@ env:
     - PATSY=
     - OPTIONAL=
     - NUMBA=
-    - COVERAGE=true
+    - COVERAGE=false
     - USE_NUMBA=true
     - STATSMODELS_MASTER=false
 
@@ -25,7 +25,6 @@ matrix:
     - PYTHON=2.7
     - MATPLOTLIB=1.3
     - NUMPY=1.8.2
-    - COVERAGE=false
     - USE_NUMBA=false
     - PANDAS=0.14
   - python: 2.7
@@ -34,7 +33,6 @@ matrix:
     - NUMBA=0.21
     - NUMPY=1.10
     - SCIPY=0.16
-    - COVERAGE=false
     - MATPLOTLIB=1.5
     - PANDAS=0.16
   - python: 2.7
@@ -45,10 +43,12 @@ matrix:
     - NUMBA=0.24
     - MATPLOTLIB=1.4
     - PANDAS=0.17
+    - COVERAGE=true
   - python: 2.7
     env:
     - PYTHON=3.5
     - STATSMODELS_MASTER=true
+    - COVERAGE=true
 
 addons:
   apt:
@@ -86,20 +86,25 @@ before_install:
 
 # Install packages
 install:
-  - conda create --yes --quiet -n arch-test ${PKGS} ${OPTIONAL} statsmodels nbconvert nbformat nose pip pyyaml setuptools pyqt pyparsing
+  - conda create --yes --quiet -n arch-test ${PKGS} ${OPTIONAL} statsmodels nbconvert nbformat nose pip pyyaml setuptools pyqt pyparsing flake8
   - source activate arch-test
-  - if [ ${COVERAGE} = true ]; then pip install coverage coveralls nose-cov; fi;
+  - if [ ${COVERAGE} = true ]; then pip install coverage coveralls; fi;
   - if [ ${STATSMODELS_MASTER} = true ]; then sh ./ci/statsmodels-master.sh; fi;
   - python setup.py build
+  - python setup.py install
 
 script:
   - SRCDIR=$PWD
-  - python setup.py install
   # Show versions
-  - mkdir -p "${SRCDIR}/travis-test"; cd "${SRCDIR}/travis-test"
   - python -c 'import statsmodels.api as sm; sm.show_versions();'
-  - echo 'import arch; a=arch.test(); import sys; sys.exit((len(a.failures)+len(a.errors))>0)' > test.py
-  - if [ ${COVERAGE} = true ]; then coverage run --rcfile=${SRCDIR}/.travis_coveragerc test.py; else nosetests arch; fi
+  - mkdir -p "${SRCDIR}/travis-test"; cd "${SRCDIR}/travis-test"
+  # Coverage
+  - export COVERAGE_OPTIONS=""
+  - if [ ${COVERAGE} = true ]; then export COVERAGE_OPTIONS="--with-coverage --cover-tests --cover-package=arch"; fi
+  # Test
+  - nosetests $COVERAGE_OPTIONS arch
 
 after_success:
   - if [ ${COVERAGE} = true ]; then coveralls --rcfile=${SRCDIR}/.travis_coveragerc; fi
+  - cd ${SRCDIR}
+  - flake8 arch --exclude=*test*

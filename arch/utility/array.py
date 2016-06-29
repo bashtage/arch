@@ -6,10 +6,10 @@ from __future__ import print_function, division, absolute_import
 import datetime as dt
 
 import numpy as np
-from pandas import DataFrame, Series, to_datetime, NaT, datetime
+from pandas import DataFrame, Series, to_datetime, NaT
 from pandas.core.common import is_datetime64_dtype
 
-from ..compat.python import long, string_types
+from ..compat.python import long
 
 __all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor',
            'date_to_index']
