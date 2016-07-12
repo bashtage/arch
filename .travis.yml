@@ -106,5 +106,6 @@ script:
 
 after_success:
   - if [ ${COVERAGE} = true ]; then coveralls --rcfile=${SRCDIR}/.travis_coveragerc; fi
+  - if [ ${COVERAGE} = true ]; then bash <(curl -s https://codecov.io/bash); fi
   - cd ${SRCDIR}
   - flake8 arch --exclude=*test*
