@@ -13,7 +13,8 @@ from pandas import DataFrame
 from statsmodels.tools.decorators import cache_readonly
 from statsmodels.tsa.tsatools import lagmat
 
-from .base import ARCHModel, implicit_constant, ARCHModelResult, ARCHModelForecast
+from .base import UnivariateARCHModelForecast
+from .base import UnivariateARCHModel, implicit_constant, UnivariateARCHModelResult
 from .distribution import Normal, StudentsT, SkewStudent
 from .volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH
 from ..compat.python import range, iteritems
@@ -77,7 +78,7 @@ def _ar_to_impulse(steps, params):
     return impulse
 
 
-class HARX(ARCHModel):
+class HARX(UnivariateARCHModel):
     r"""
     Heterogeneous Autoregression (HAR), with optional exogenous regressors,
     model estimation and simulation
@@ -527,13 +528,13 @@ class HARX(ARCHModel):
 
         Returns
         -------
-        result : ARCHModelResult
+        result : UnivariateARCHModelResult
             Results class containing parameter estimates, estimated parameter
             covariance and related estimates
 
         Notes
         -----
-        See :class:`ARCHModelResult` for details on computed results
+        See :class:`UnivariateARCHModelResult` for details on computed results
         """
         nobs = self._fit_y.shape[0]
         if nobs == 0:
@@ -566,10 +567,10 @@ class HARX(ARCHModel):
                 names = ['p' + str(i) for i in range(num_params)]
 
             fit_start, fit_stop = self._fit_indices
-            return ARCHModelResult(params, param_cov, 0.0, y, vol, cov_type,
-                                   self._y_series, names, loglikelihood,
-                                   self._is_pandas, _xopt, fit_start, fit_stop,
-                                   copy.deepcopy(self))
+            return UnivariateARCHModelResult(params, param_cov, 0.0, y, vol, cov_type,
+                                             self._y_series, names, loglikelihood,
+                                             self._is_pandas, _xopt, fit_start, fit_stop,
+                                             copy.deepcopy(self))
 
         regression_params = np.linalg.pinv(x).dot(y)
         xpxi = np.linalg.inv(x.T.dot(x) / nobs)
@@ -613,10 +614,10 @@ class HARX(ARCHModel):
             names = ['p' + str(i) for i in range(num_params)]
 
         fit_start, fit_stop = self._fit_indices
-        return ARCHModelResult(params, param_cov, r2, resids, vol, cov_type,
-                               self._y_series, names, loglikelihood,
-                               self._is_pandas, _xopt, fit_start, fit_stop,
-                               copy.deepcopy(self))
+        return UnivariateARCHModelResult(params, param_cov, r2, resids, vol, cov_type,
+                                         self._y_series, names, loglikelihood,
+                                         self._is_pandas, _xopt, fit_start, fit_stop,
+                                         copy.deepcopy(self))
 
     def forecast(self, parameters, horizon=1, start=None, align='origin',
                  method='analytic', simulations=1000):
@@ -689,12 +690,11 @@ class HARX(ARCHModel):
             variance_paths = mean_paths = shocks = long_run_variance_paths = None
 
         index = self._y_series.index
-        return ARCHModelForecast(index, mean_fcast, longrun_var_fcasts,
-                                 var_fcasts, align=align,
-                                 simulated_paths=mean_paths,
-                                 simulated_residuals=shocks,
-                                 simulated_variances=long_run_variance_paths,
-                                 simulated_residual_variances=variance_paths)
+        return UnivariateARCHModelForecast(index, mean_fcast, longrun_var_fcasts, var_fcasts,
+                                           align=align, simulated_paths=mean_paths,
+                                           simulated_residuals=shocks,
+                                           simulated_variances=long_run_variance_paths,
+                                           simulated_residual_variances=variance_paths)
 
 
 class ConstantMean(HARX):

@@ -54,24 +54,28 @@ def ensure1d(x, name, series=False):
         return np.asarray(x)
 
 
-def ensure2d(x, name):
+def ensure2d(x, name, dataframe=False):
     if isinstance(x, Series):
         return DataFrame(x)
     elif isinstance(x, DataFrame):
         return x
     elif isinstance(x, np.ndarray):
         if x.ndim == 0:
-            return np.asarray([[x]])
+            out = np.asarray([[x]])
         elif x.ndim == 1:
-            return x[:, None]
+            out = x[:, None]
         elif x.ndim == 2:
-            return x
+            out = x
         else:
             raise ValueError(
                 'Variable ' + name + 'must be 2d or reshapeable to 2d')
     else:
         raise ValueError('Variable ' + name + 'must be 2d or ' +
                          'reshapeable to 2d')
+
+    if dataframe:
+        return DataFrame(out)
+    return out
 
 
 def parse_dataframe(x, name):

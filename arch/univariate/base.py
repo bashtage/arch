@@ -22,11 +22,14 @@ from statsmodels.tools.numdiff import approx_fprime, approx_hess
 
 from .distribution import Distribution, Normal
 from .volatility import VolatilityProcess, ConstantVariance
+from ..common.model import ARCHModel
 from ..utility.array import ensure1d, DocStringInheritor
 from ..utility.exceptions import ConvergenceWarning, StartingValueWarning, \
     convergence_warning, starting_value_warning
 
-__all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel']
+__all__ = ['implicit_constant', 'UnivariateARCHModelResult',
+           'UnivariateARCHModel', 'UnivariateARCHModelForecast',
+           'UnivariateARCHModelForecastSimulation']
 
 # Callback variables
 _callback_iter, _callback_llf = 0, 0.0,
@@ -128,7 +131,7 @@ def implicit_constant(x):
 
 
 @add_metaclass(DocStringInheritor)
-class ARCHModel(object):
+class UnivariateARCHModel(ARCHModel):
     """
     Abstract base class for mean models in ARCH processes.  Specifies the
     conditional mean process.
@@ -141,30 +144,12 @@ class ARCHModel(object):
     def __init__(self, y=None, volatility=None, distribution=None,
                  hold_back=None):
 
-        # Set on model fit
-        self._fit_indices = None
-        self._fit_y = None
+        y = y if y is None else ensure1d(y, 'y', isinstance(y, (pd.Series, pd.DataFrame)))
+        super(UnivariateARCHModel, self).__init__(y, volatility, distribution,
+                                                  hold_back)
+        self._y_series = self._y_pd
 
-        self._is_pandas = isinstance(y, (pd.DataFrame, pd.Series))
-        if y is not None:
-            self._y_series = ensure1d(y, 'y', series=True)
-        else:
-            self._y_series = ensure1d(empty((0,)), 'y', series=True)
-
-        self._y = np.asarray(self._y_series)
-        self._y_original = y
-
-        self.hold_back = hold_back
-        self._hold_back = 0 if hold_back is None else hold_back
-
-        self._volatility = None
-        self._distribution = None
-        self._backcast = None
-        self._var_bounds = None
-
-        if volatility is not None:
-            self.volatility = volatility
-        else:
+        if volatility is None:
             self.volatility = ConstantVariance()
 
         if distribution is not None:
@@ -348,8 +333,8 @@ class ARCHModel(object):
         vol_final[first_obs:last_obs] = vol
 
         model_copy = deepcopy(self)
-        return ARCHModelFixedResult(params, resids, vol, self._y_series, names,
-                                    loglikelihood, self._is_pandas, model_copy)
+        return UnivariateARCHModelFixedResult(params, resids, vol, self._y_series, names,
+                                              loglikelihood, self._is_pandas, model_copy)
 
     def _adjust_sample(self, first_obs, last_obs):
         """
@@ -399,7 +384,7 @@ class ARCHModel(object):
 
         Returns
         -------
-        results : ARCHModelResult
+        results : UnivariateARCHModelResult
             Object containing model results
 
         Notes
@@ -540,9 +525,9 @@ class ARCHModel(object):
 
         fit_start, fit_stop = self._fit_indices
         model_copy = deepcopy(self)
-        return ARCHModelResult(params, None, r2, resids_final, vol_final,
-                               cov_type, self._y_series, names, loglikelihood,
-                               self._is_pandas, xopt, fit_start, fit_stop, model_copy)
+        return UnivariateARCHModelResult(params, None, r2, resids_final, vol_final,
+                                         cov_type, self._y_series, names, loglikelihood,
+                                         self._is_pandas, xopt, fit_start, fit_stop, model_copy)
 
     def parameter_names(self):
         """List of parameters names
@@ -718,7 +703,7 @@ class ARCHModel(object):
         raise NotImplementedError('Subclasses must implement')
 
 
-class ARCHModelFixedResult(object):
+class UnivariateARCHModelFixedResult(object):
     """
     Results for fixed parameters for an ARCHModel model
 
@@ -1192,7 +1177,7 @@ class ARCHModelFixedResult(object):
         return fig
 
 
-class ARCHModelResult(ARCHModelFixedResult):
+class UnivariateARCHModelResult(UnivariateARCHModelFixedResult):
     """
     Results from estimation of an ARCHModel model
 
@@ -1278,9 +1263,9 @@ class ARCHModelResult(ARCHModelFixedResult):
     def __init__(self, params, param_cov, r2, resid, volatility, cov_type,
                  dep_var, names, loglikelihood, is_pandas, optim_output,
                  fit_start, fit_stop, model):
-        super(ARCHModelResult, self).__init__(params, resid, volatility,
-                                              dep_var, names, loglikelihood,
-                                              is_pandas, model)
+        super(UnivariateARCHModelResult, self).__init__(params, resid, volatility,
+                                                        dep_var, names, loglikelihood,
+                                                        is_pandas, model)
 
         self._fit_indices = (fit_start, fit_stop)
         self._param_cov = param_cov
@@ -1519,7 +1504,7 @@ def _format_forecasts(values, index):
     return forecasts
 
 
-class ARCHModelForecastSimulation(object):
+class UnivariateARCHModelForecastSimulation(object):
     """
     Container for a simulation or bootstrap-based forecasts from an ARCH Model
 
@@ -1565,7 +1550,7 @@ class ARCHModelForecastSimulation(object):
         return self._residual_variances
 
 
-class ARCHModelForecast(object):
+class UnivariateARCHModelForecast(object):
     """
     Container for forecasts from an ARCH Model
 
@@ -1605,10 +1590,10 @@ class ARCHModelForecast(object):
         self._variance = _align_forecast(variance, align=align)
         self._residual_variance = _align_forecast(residual_variance, align=align)
 
-        self._sim = ARCHModelForecastSimulation(simulated_paths,
-                                                simulated_residuals,
-                                                simulated_variances,
-                                                simulated_residual_variances)
+        self._sim = UnivariateARCHModelForecastSimulation(simulated_paths,
+                                                          simulated_residuals,
+                                                          simulated_variances,
+                                                          simulated_residual_variances)
 
     @property
     def mean(self):

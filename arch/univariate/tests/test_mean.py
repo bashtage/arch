@@ -15,8 +15,8 @@ try:
     import arch.univariate.recursions as rec
 except ImportError:
     import arch.univariate.recursions_python as rec  # noqa
-from arch.univariate.base import ARCHModelResult, ARCHModelForecast, \
-    _align_forecast
+from arch.univariate.base import UnivariateARCHModelForecast, _align_forecast, \
+    UnivariateARCHModelResult
 from arch.univariate.mean import HARX, ConstantMean, ARX, ZeroMean, LS, \
     arch_model
 from arch.univariate.volatility import ConstantVariance, GARCH, HARCH, ARCH, \
@@ -83,7 +83,7 @@ class TestMeanModel(TestCase):
         direct.iloc[20:, :] = res.params.iloc[0]
         # TODO
         # assert_frame_equal(direct, forecasts)
-        assert isinstance(forecasts, ARCHModelForecast)
+        assert isinstance(forecasts, UnivariateARCHModelForecast)
 
     def test_zero_mean(self):
         zm = ZeroMean(self.y)
@@ -110,7 +110,7 @@ class TestMeanModel(TestCase):
                                        range(99)],
                               dtype=np.float64)
         direct.iloc[:, :] = 0.0
-        assert isinstance(forecasts, ARCHModelForecast)
+        assert isinstance(forecasts, UnivariateARCHModelForecast)
         # TODO
         # assert_frame_equal(direct, forecasts)
         garch = GARCH()
@@ -219,11 +219,11 @@ class TestMeanModel(TestCase):
                 fcast[i + h + 1] += params[3] * fcast[
                                                 i + h - 21:i + h + 1].mean()
             direct.iloc[i, :] = fcast[i + 1:i + 7]
-        assert isinstance(forecasts, ARCHModelForecast)
+        assert isinstance(forecasts, UnivariateARCHModelForecast)
         # TODO
         # assert_frame_equal(direct, forecasts)
         forecasts = res.forecast(res.params, horizon=6)
-        assert isinstance(forecasts, ARCHModelForecast)
+        assert isinstance(forecasts, UnivariateARCHModelForecast)
         # TODO
         # assert_frame_equal(direct, forecasts)
 
@@ -251,7 +251,7 @@ class TestMeanModel(TestCase):
                 fcast[i + h + 1] += params[3] * fcast[
                                                 i + h - 21:i + h + 1].mean()
             direct.iloc[i, :] = fcast[i + 1:i + 7]
-        assert isinstance(forecasts, ARCHModelForecast)
+        assert isinstance(forecasts, UnivariateARCHModelForecast)
         # TODO
         # assert_frame_equal(direct, forecasts)
 
@@ -338,7 +338,7 @@ class TestMeanModel(TestCase):
                                 fcast[i + h - 2], fcast[i + h - 3]])
                 fcast[i + h] = reg.dot(params)
             direct.iloc[i, :] = fcast[i + 1:i + 6]
-        assert isinstance(forecasts, ARCHModelForecast)
+        assert isinstance(forecasts, UnivariateARCHModelForecast)
         # TODO
         # assert_frame_equal(direct, forecasts)
 
@@ -556,8 +556,8 @@ class TestMeanModel(TestCase):
         am = arch_model(self.y, mean='ar', lags=[1, 3, 5])
         res = am.fit(cov_type='mle', update_freq=0, disp=DISPLAY)
         res2 = am.fit(starting_values=res.params, update_freq=0, disp=DISPLAY)
-        assert isinstance(res, ARCHModelResult)
-        assert isinstance(res2, ARCHModelResult)
+        assert isinstance(res, UnivariateARCHModelResult)
+        assert isinstance(res2, UnivariateARCHModelResult)
         assert len(res.params) == 7
         assert len(res2.params) == 7
 

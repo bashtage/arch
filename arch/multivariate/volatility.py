@@ -1,0 +1,3 @@
+
+class ConstantCovariance(object):
+    pass
