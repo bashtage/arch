@@ -4,15 +4,16 @@ inherit from :class:`VolatilityProcess` and provide the same methods with the
 same inputs.
 """
 from __future__ import division, absolute_import
+
 import itertools
 
 import numpy as np
 from numpy import sqrt, ones, zeros, isscalar, sign, ones_like, arange, \
     empty, abs, array, finfo, float64, log, exp, floor
 
-from ..utility.array import ensure1d, DocStringInheritor
 from .distribution import Normal
 from ..compat.python import add_metaclass, range
+from ..utility.array import ensure1d, DocStringInheritor
 
 try:
     from .recursions import garch_recursion, harch_recursion, egarch_recursion
@@ -48,6 +49,23 @@ def ewma_recursion(lam, resids, sigma2, nobs, backcast):
     garch_recursion(np.array([0.0, 1.0 - lam, lam]), resids ** 2.0,
                     resids, sigma2, 1, 0, 1, nobs, backcast, var_bounds)
     return sigma2
+
+
+class VarianceForecast(object):
+    _forecasts = None
+    _forecast_paths = None
+
+    def __init__(self, forecasts, forecast_paths=None):
+        self._forecasts = forecasts
+        self._forecast_paths = forecast_paths
+
+    @property
+    def forecasts(self):
+        return self._forecasts
+
+    @property
+    def forecast_paths(self):
+        return self._forecast_paths
 
 
 @add_metaclass(DocStringInheritor)
@@ -196,7 +214,8 @@ class VolatilityProcess(object):
         """
         raise NotImplementedError('Must be overridden')  # pragma: no cover
 
-    def forecast(self, parameters, first_obs=None, horizon=1):
+    def forecast(self, parameters, data, first_obs=None, horizon=1,
+                 method='analytic', simulations=1000):
         """
         Construct forecasts
         """
@@ -291,6 +310,30 @@ class ConstantVariance(VolatilityProcess):
 
     def parameter_names(self):
         return ['sigma2']
+
+    def forecast(self, parameters, resids, first_obs=None, horizon=1,
+                 method='analytic', simulations=1000, simulator=None):
+        t = resids.shape
+        forecasts = np.empty((t, horizon))
+        forecasts.fill(np.nan)
+
+        if method == 'analytic':
+            forecasts[first_obs:, :] = parameters[0]
+            forecast_paths = None
+            return VarianceForecast(forecasts, forecast_paths)
+
+        if method == 'bootstrap':
+            bs_resids = resids if first_obs is None else resids[:first_obs]
+            sim_resids = np.random.choice(bs_resids, (simulations, horizon))
+        elif method == 'simulate':
+            sim_resids = simulator(simulations * horizon)
+            sim_resids = sim_resids.reshape((simulations, horizon))
+        forecast_paths = sim_resids * parameters[0]
+        forecast_paths = np.tile(forecast_paths, (t, 1, 1))
+        forecast_paths[:first_obs, :, :] = np.nan
+
+        forecasts = np.squeeze(forecast_paths.mean(0))
+        return VarianceForecast(forecasts, forecast_paths)
 
 
 class GARCH(VolatilityProcess):
@@ -515,7 +558,7 @@ class GARCH(VolatilityProcess):
                 loc += 1
             for j in range(o):
                 fsigma[t] += parameters[loc] * \
-                    fdata[t - 1 - j] * (data[t - 1 - j] < 0)
+                             fdata[t - 1 - j] * (data[t - 1 - j] < 0)
                 loc += 1
             for j in range(q):
                 fsigma[t] += parameters[loc] * fsigma[t - 1 - j]
@@ -1162,7 +1205,7 @@ class EGARCH(VolatilityProcess):
             loc += 1
             for j in range(p):
                 lnsigma2[t] += parameters[loc] * \
-                    (abserrors[t - 1 - j] - norm_const)
+                               (abserrors[t - 1 - j] - norm_const)
                 loc += 1
             for j in range(o):
                 lnsigma2[t] += parameters[loc] * errors[t - 1 - j]
