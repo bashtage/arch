@@ -3,15 +3,16 @@ import unittest
 import scipy.stats as stats
 from scipy.special import gammaln, gamma
 from numpy.testing import assert_almost_equal, assert_equal, \
-    assert_array_equal, assert_raises
+    assert_array_equal
 import numpy as np
+import pytest
 
 from arch.univariate.distribution import Normal, StudentsT, SkewStudent
 
 
 class TestDistributions(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         cls.T = 1000
         cls.resids = np.random.randn(cls.T)
         cls.sigma2 = 1 + np.random.random(cls.resids.shape)
@@ -57,7 +58,8 @@ class TestDistributions(unittest.TestCase):
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         assert_array_equal(dist.starting_values(self.resids), np.array([sv]))
 
-        assert_raises(ValueError, dist.simulate, np.array([1.5]))
+        with pytest.raises(ValueError):
+            dist.simulate(np.array([1.5]))
 
     def test_skewstudent(self):
         dist = SkewStudent()
@@ -89,8 +91,12 @@ class TestDistributions(unittest.TestCase):
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         assert_array_equal(dist.starting_values(self.resids), np.array([sv, 0.]))
 
-        assert_raises(ValueError, dist.simulate, np.array([1.5, 0.]))
-        assert_raises(ValueError, dist.simulate, np.array([4., 1.5]))
-        assert_raises(ValueError, dist.simulate, np.array([4., -1.5]))
-        assert_raises(ValueError, dist.simulate, np.array([1.5, 1.5]))
+        with pytest.raises(ValueError):
+            dist.simulate(np.array([1.5, 0.]))
+        with pytest.raises(ValueError):
+            dist.simulate(np.array([4., 1.5]))
+        with pytest.raises(ValueError):
+            dist.simulate(np.array([4., -1.5]))
+        with pytest.raises(ValueError):
+            dist.simulate(np.array([1.5, 1.5]))
 

@@ -3,15 +3,17 @@
 from __future__ import print_function, division
 from arch.compat.python import iteritems
 
+from unittest import TestCase
+import pytest
+
 import numpy as np
-from numpy.testing import (assert_almost_equal, assert_equal, assert_raises)
+from numpy.testing import assert_almost_equal, assert_equal
 from numpy import log, polyval, diff, ceil
 
 from arch.unitroot import ADF, DFGLS, PhillipsPerron, KPSS, VarianceRatio
 from arch.unitroot.critical_values.dickey_fuller import tau_2010
 
 import warnings
-import sys
 
 DECIMAL_5 = 5
 DECIMAL_4 = 4
@@ -20,9 +22,10 @@ DECIMAL_2 = 2
 DECIMAL_1 = 1
 
 
-class TestUnitRoot(object):
+class TestUnitRoot(TestCase):
+
     @classmethod
-    def setupClass(cls):
+    def setup_class(cls):
         from statsmodels.datasets.macrodata import load
 
         cls.cpi = log(load().data['cpi'])
@@ -114,7 +117,7 @@ class TestUnitRoot(object):
 
     def test_pp_bad_type(self):
         pp = PhillipsPerron(self.inflation, lags=12)
-        with assert_raises(ValueError):
+        with pytest.raises(ValueError):
             pp.test_type = 'unknown'
 
     def test_pp_auto(self):
@@ -145,19 +148,19 @@ class TestUnitRoot(object):
 
     def test_dfgls_bad_trend(self):
         dfgls = DFGLS(self.inflation, trend='ct', method='BIC', max_lags=3)
-        with assert_raises(ValueError):
+        with pytest.raises(ValueError):
             dfgls.trend = 'nc'
 
         assert dfgls != 0.0
 
     def test_negative_lag(self):
         adf = ADF(self.inflation)
-        with assert_raises(ValueError):
+        with pytest.raises(ValueError):
             adf.lags = -1
 
     def test_invalid_determinstic(self):
         adf = ADF(self.inflation)
-        with assert_raises(ValueError):
+        with pytest.raises(ValueError):
             adf.trend = 'bad-value'
 
     def test_variance_ratio(self):
@@ -230,15 +233,9 @@ class TestUnitRoot(object):
 
     def test_variance_ratio_invalid_lags(self):
         y = self.inflation
-        assert_raises(ValueError, VarianceRatio, y, lags=1)
+        with pytest.raises(ValueError):
+            VarianceRatio(y, lags=1)
 
     def test_variance_ratio_generic(self):
         # TODO: Currently not a test, just makes sure code runs at all
         vr = VarianceRatio(self.inflation, lags=24)
-
-
-if __name__ == "__main__":
-    import nose
-
-    nose.runmodule(argv=[__file__, '-vvs', '-x'], exit=False)
-

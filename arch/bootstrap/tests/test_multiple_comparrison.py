@@ -1,13 +1,13 @@
 from __future__ import division
 
 from unittest import TestCase
+import pytest
 
 import numpy as np
 import pandas as pd
 import scipy.stats as stats
-from nose.tools import assert_true
 from numpy import random, linspace
-from numpy.testing import assert_equal, assert_raises, assert_allclose
+from numpy.testing import assert_equal, assert_allclose
 from pandas.util.testing import assert_series_equal, assert_frame_equal
 
 from arch.bootstrap import (StationaryBootstrap, CircularBlockBootstrap,
@@ -17,7 +17,7 @@ from arch.bootstrap.multiple_comparrison import SPA, StepM, MCS
 
 class TestSPA(TestCase):
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         random.seed(23456)
         fixed_rng = stats.chi2(10)
         cls.t = t = 1000
@@ -90,16 +90,21 @@ class TestSPA(TestCase):
     def test_errors(self):
         spa = SPA(self.benchmark, self.models, reps=100)
 
-        with assert_raises(RuntimeError):
+        with pytest.raises(RuntimeError):
             spa.pvalues
 
-        assert_raises(RuntimeError, spa.critical_values)
-        assert_raises(RuntimeError, spa.better_models)
+        with pytest.raises(RuntimeError):
+            spa.critical_values()
+        with pytest.raises(RuntimeError):
+            spa.better_models()
 
-        assert_raises(ValueError, SPA, self.benchmark, self.models, bootstrap='unknown')
+        with pytest.raises(ValueError):
+            SPA(self.benchmark, self.models, bootstrap='unknown')
         spa.compute()
-        assert_raises(ValueError, spa.better_models, pvalue_type='unknown')
-        assert_raises(ValueError, spa.critical_values, pvalue=1.0)
+        with pytest.raises(ValueError):
+            spa.better_models(pvalue_type='unknown')
+        with pytest.raises(ValueError):
+            spa.critical_values(pvalue=1.0)
 
     def test_str_repr(self):
         spa = SPA(self.benchmark, self.models)
@@ -138,15 +143,15 @@ class TestSPA(TestCase):
 
     def test_bootstrap_selection(self):
         spa = SPA(self.benchmark, self.models, bootstrap='sb')
-        assert_true(isinstance(spa.bootstrap, StationaryBootstrap))
+        assert isinstance(spa.bootstrap, StationaryBootstrap)
         spa = SPA(self.benchmark, self.models, bootstrap='cbb')
-        assert_true(isinstance(spa.bootstrap, CircularBlockBootstrap))
+        assert isinstance(spa.bootstrap, CircularBlockBootstrap)
         spa = SPA(self.benchmark, self.models, bootstrap='circular')
-        assert_true(isinstance(spa.bootstrap, CircularBlockBootstrap))
+        assert isinstance(spa.bootstrap, CircularBlockBootstrap)
         spa = SPA(self.benchmark, self.models, bootstrap='mbb')
-        assert_true(isinstance(spa.bootstrap, MovingBlockBootstrap))
+        assert isinstance(spa.bootstrap, MovingBlockBootstrap)
         spa = SPA(self.benchmark, self.models, bootstrap='moving block')
-        assert_true(isinstance(spa.bootstrap, MovingBlockBootstrap))
+        assert isinstance(spa.bootstrap, MovingBlockBootstrap)
 
     def test_single_model(self):
         spa = SPA(self.benchmark, self.models[:,0])
@@ -159,7 +164,7 @@ class TestSPA(TestCase):
 
 class TestStepM(TestCase):
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         random.seed(23456)
         fixed_rng = stats.chi2(10)
         cls.t = t = 1000
@@ -237,7 +242,7 @@ class TestStepM(TestCase):
 
     def test_errors(self):
         stepm = StepM(self.benchmark, self.models, size=0.10)
-        with assert_raises(RuntimeError):
+        with pytest.raises(RuntimeError):
             stepm.superior_models
 
     def test_exact_ties(self):
@@ -251,7 +256,7 @@ class TestStepM(TestCase):
 
 class TestMCS(TestCase):
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         random.seed(23456)
         fixed_rng = stats.chi2(10)
         cls.t = t = 1000
@@ -364,15 +369,17 @@ class TestMCS(TestCase):
         mcs.compute()
         assert_equal(type(mcs.included), list)
         assert_equal(type(mcs.excluded), list)
-        assert_true(isinstance(mcs.pvalues, pd.DataFrame))
+        assert isinstance(mcs.pvalues, pd.DataFrame)
 
     def test_errors(self):
-        assert_raises(ValueError, MCS, self.losses[:,1], 0.05)
+        with pytest.raises(ValueError):
+            MCS(self.losses[:,1], 0.05)
         mcs = MCS(self.losses, 0.05, reps=100, block_size=10, method='max', bootstrap='circular')
         mcs.compute()
         mcs = MCS(self.losses, 0.05, reps=100, block_size=10, method='max', bootstrap='moving block')
         mcs.compute()
-        assert_raises(ValueError, MCS, self.losses, 0.05, bootstrap='unknown')
+        with pytest.raises(ValueError):
+            MCS(self.losses, 0.05, bootstrap='unknown')
 
 
     def test_str_repr(self):
@@ -393,7 +400,7 @@ class TestMCS(TestCase):
         mcs.seed(23456)
         mcs.compute()
         nan_locs = np.isnan(mcs.pvalues.iloc[:,0])
-        assert_true(not nan_locs.any())
+        assert not nan_locs.any()
 
     def test_exact_ties(self):
         losses = self.losses_df.iloc[:, :20].copy()

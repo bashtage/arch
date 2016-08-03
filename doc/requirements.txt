@@ -7,4 +7,3 @@ pandas
 patsy
 statsmodels
 sphinx>=1.3
-mock

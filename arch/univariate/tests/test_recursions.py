@@ -1,10 +1,10 @@
 import unittest
 import timeit
 
-from nose.tools import assert_true
 import numpy as np
 from numpy.testing import assert_almost_equal
 from numpy.testing.decorators import skipif
+import pytest
 
 import arch.univariate.recursions as rec
 import arch.univariate.recursions_python as recpy
@@ -56,7 +56,7 @@ class Timer(object):
 
 class TestRecursions(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         cls.T = 1000
         cls.resids = np.random.randn(cls.T)
         cls.sigma2 = np.zeros_like(cls.resids)
@@ -245,7 +245,7 @@ var_bounds = np.ones((T, 2)) * var_bounds
         rec.harch_recursion(parameters, resids, sigma2, lags, T, backcast,
                             self.var_bounds)
         assert_almost_equal(sigma2_python, sigma2)
-        assert_true((sigma2 >= self.var_bounds[:, 1]).all())
+        assert (sigma2 >= self.var_bounds[:, 1]).all()
 
         parameters = np.array([-1e100, .4, .3, .2])
         recpy.harch_recursion(parameters, resids, sigma2, lags, T, backcast,
@@ -266,7 +266,7 @@ var_bounds = np.ones((T, 2)) * var_bounds
         rec.garch_recursion(parameters, fresids, sresids, sigma2, 1, 1,
                             1, T, backcast, self.var_bounds)
         assert_almost_equal(sigma2_python, sigma2)
-        assert_true((sigma2 >= self.var_bounds[:, 1]).all())
+        assert (sigma2 >= self.var_bounds[:, 1]).all()
 
         parameters = np.array([-1e100, .4, .3, .2])
         recpy.garch_recursion(parameters, fresids, sresids, sigma2,
@@ -284,7 +284,7 @@ var_bounds = np.ones((T, 2)) * var_bounds
         rec.arch_recursion(parameters, resids, sigma2, 3, T, backcast,
                            self.var_bounds)
         assert_almost_equal(sigma2_python, sigma2)
-        assert_true((sigma2 >= self.var_bounds[:, 1]).all())
+        assert (sigma2 >= self.var_bounds[:, 1]).all()
 
         parameters = np.array([-1e100, .4, .3, .2])
         recpy.arch_recursion(parameters, resids, sigma2, 3, T, backcast,
@@ -333,7 +333,8 @@ var_bounds = np.ones((T, 2)) * var_bounds
             sigma2[t] = np.exp(lnsigma2[t])
         assert_almost_equal(sigma2_python, sigma2)
 
-    @skipif(missing_numba)
+    @pytest.mark.skipif(missing_numba,
+                        reason='numba not installed')
     def test_garch_performance(self):
         garch_setup = """
 parameters = np.array([.1, .4, .3, .2])
@@ -350,9 +351,10 @@ rec.garch_recursion(parameters, fresids, sresids, sigma2, 1, 1, 1, T, backcast, 
         timer = Timer(garch_first, 'Numba', garch_second, 'Cython', 'GARCH',
                       self.timer_setup + garch_setup)
         timer.display()
-        assert_true(timer.ratio < 10.0)
+        assert timer.ratio < 10.0
 
-    @skipif(missing_numba)
+    @pytest.mark.skipif(missing_numba,
+                        reason = 'numba not installed')
     def test_harch_performance(self):
         harch_setup = """
 parameters = np.array([.1, .4, .3, .2])
@@ -370,9 +372,10 @@ rec.harch_recursion(parameters, resids, sigma2, lags, T, backcast, var_bounds)
         timer = Timer(harch_first, 'Numba', harch_second, 'Cython', 'HARCH',
                       self.timer_setup + harch_setup)
         timer.display()
-        assert_true(timer.ratio < 10.0)
+        assert timer.ratio < 10.0
 
-    @skipif(missing_numba)
+    @pytest.mark.skipif(missing_numba,
+                        reason='numba not installed')
     def test_egarch_performance(self):
         egarch_setup = """
 nobs = T

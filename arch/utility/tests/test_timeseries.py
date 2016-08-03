@@ -2,7 +2,7 @@ from __future__ import division
 import unittest
 import warnings
 
-from nose.tools import assert_true, assert_raises
+import pytest
 
 import numpy as np
 from numpy.random import randn
@@ -49,7 +49,7 @@ class TestAddTrend(unittest.TestCase):
             y = add_trend(x, trend='ct')
             # should produce a single warning
 
-        assert_true(len(w) > 0)
+        assert len(w) > 0
         assert 'const' in y.columns
         assert 'trend_0' in y.columns
 
@@ -104,8 +104,10 @@ class TestAddTrend(unittest.TestCase):
 
     def test_errors(self):
         n = 100
-        assert_raises(ValueError, add_trend, x=None, trend='unknown', nobs=n)
-        assert_raises(ValueError, add_trend, x=None, trend='ct')
+        with pytest.raises(ValueError):
+            add_trend(x=None, trend='unknown', nobs=n)
+        with pytest.raises(ValueError):
+            add_trend(x=None, trend='ct')
         x = np.ones((100,1))
-        assert_raises(ValueError, add_trend, x, trend='ct',
-                      has_constant='raise')
+        with pytest.raises(ValueError):
+            add_trend(x, trend='ct', has_constant='raise')

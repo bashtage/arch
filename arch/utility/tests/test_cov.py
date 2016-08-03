@@ -5,7 +5,7 @@ from unittest import TestCase
 import numpy as np
 from numpy import log, diff
 from numpy.testing import assert_almost_equal
-from nose.tools import assert_raises
+import pytest
 
 from arch.utility import cov_nw
 
@@ -13,7 +13,7 @@ from arch.utility import cov_nw
 class TestVarNW(TestCase):
 
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         from statsmodels.datasets.macrodata import load
 
         cls.cpi = log(load().data['cpi'])
@@ -67,6 +67,9 @@ class TestVarNW(TestCase):
 
     def test_errors(self):
         y = np.random.randn(100, 2)
-        assert_raises(ValueError, cov_nw, y, 200)
-        assert_raises(ValueError, cov_nw, y, axis=3)
-        assert_raises(ValueError, cov_nw, y, ddof=200)
+        with pytest.raises(ValueError):
+            cov_nw(y, 200)
+        with pytest.raises(ValueError):
+            cov_nw(y, axis=3)
+        with pytest.raises(ValueError):
+            cov_nw(y, ddof=200)
