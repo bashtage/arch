@@ -88,7 +88,7 @@ before_install:
 install:
   - conda create --yes --quiet -n arch-test ${PKGS} ${OPTIONAL} statsmodels nbconvert nbformat pytest flake8
   - source activate arch-test
-  - if [ ${COVERAGE} = true ]; then pip install coverage coveralls pytest-cov; fi;
+  - pip install coverage coveralls pytest-cov codecov
   - if [ ${STATSMODELS_MASTER} = true ]; then sh ./ci/statsmodels-master.sh; fi;
   - python setup.py build
   - python setup.py install
@@ -98,14 +98,10 @@ script:
   - conda list
   # flake testing
   - flake8 arch --exclude=*test*
-  # Coverage
-  - export COVERAGE_OPTIONS=""
-  - SRCDIR=$PWD
-  - if [ ${COVERAGE} = true ]; then export COVERAGE_OPTIONS="--cov-config ${SRCDIR}/.travis_coveragerc --cov=arch --cov-report xml --cov-report html"; fi
   # Main test
-  - mkdir -p "${SRCDIR}/travis-test"; cd "${SRCDIR}/travis-test"
-  - py.test -s $COVERAGE_OPTIONS --pyargs arch
+  - mkdir -p travis-test && cd travis-test
+  - py.test -s --cov=arch --pyargs arch
 
 after_success:
   - if [ ${COVERAGE} = true ]; then coveralls --rcfile=${SRCDIR}/.travis_coveragerc; fi
-  - if [ ${COVERAGE} = true ]; then bash <(curl -s https://codecov.io/bash); fi
+  - if [ ${COVERAGE} = true ]; then codecov; fi
