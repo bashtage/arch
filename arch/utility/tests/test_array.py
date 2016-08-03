@@ -1,9 +1,9 @@
 from unittest import TestCase
 
-from nose.tools import assert_true
-from numpy.testing import assert_equal, assert_raises
+from numpy.testing import assert_equal
 import numpy as np
 from pandas import Series, DataFrame, date_range
+import pytest
 
 from arch.utility.array import ensure1d, parse_dataframe, DocStringInheritor, \
     date_to_index, find_index
@@ -20,30 +20,32 @@ class TestUtils(TestCase):
         out = ensure1d(np.arange(5.0)[:, None], 'y')
         assert_equal(out, np.arange(5.0))
         in_array = np.reshape(np.arange(16.0), (4, 4))
-        assert_raises(ValueError, ensure1d, in_array, 'y')
+        with pytest.raises(ValueError):
+            ensure1d(in_array, 'y')
 
         y = Series(np.arange(5.0))
         ys = ensure1d(y, 'y')
-        assert_true(isinstance(ys, np.ndarray))
+        assert isinstance(ys, np.ndarray)
         ys = ensure1d(y, 'y', True)
-        assert_true(isinstance(ys, Series))
+        assert isinstance(ys, Series)
         y = DataFrame(y)
         ys = ensure1d(y, 'y')
-        assert_true(isinstance(ys, np.ndarray))
+        assert isinstance(ys, np.ndarray)
         ys = ensure1d(y, 'y', True)
-        assert_true(isinstance(ys, Series))
+        assert isinstance(ys, Series)
         y = Series(np.arange(5.0), name='series')
         ys = ensure1d(y, 'y')
-        assert_true(isinstance(ys, np.ndarray))
+        assert isinstance(ys, np.ndarray)
         ys = ensure1d(y, 'y', True)
-        assert_true(isinstance(ys, Series))
+        assert isinstance(ys, Series)
         y = DataFrame(y)
         ys = ensure1d(y, 'y')
-        assert_true(isinstance(ys, np.ndarray))
+        assert isinstance(ys, np.ndarray)
         ys = ensure1d(y, 'y', True)
-        assert_true(isinstance(ys, Series))
+        assert isinstance(ys, Series)
         y = DataFrame(np.reshape(np.arange(10), (5, 2)))
-        assert_raises(ValueError, ensure1d, y, 'y')
+        with pytest.raises(ValueError):
+            ensure1d(y, 'y')
 
     def test_parse_dataframe(self):
         s = Series(np.arange(10.0), name='variable')
@@ -60,13 +62,13 @@ class TestUtils(TestCase):
 
     def test_implicit_constant(self):
         x = np.random.standard_normal((1000, 2))
-        assert_true(not implicit_constant(x))
+        assert not implicit_constant(x)
         x[:, 0] = 1.0
-        assert_true(implicit_constant(x))
+        assert implicit_constant(x)
         x = np.random.standard_normal((1000, 3))
         x[:, 0] = x[:, 0] > 0
         x[:, 1] = 1 - x[:, 0]
-        assert_true(implicit_constant(x))
+        assert implicit_constant(x)
 
     def test_docstring_inheritor(self):
         @add_metaclass(DocStringInheritor)
@@ -105,13 +107,13 @@ class TestUtils(TestCase):
         assert_equal(index, 499)
         index = date_to_index(dt.datetime(2009, 8, 1), date_index)
         assert_equal(index, 499)
-        assert_raises(ValueError, date_to_index, dt.date(2009, 8, 1),
-                      date_index)
+        with pytest.raises(ValueError):
+            date_to_index(dt.date(2009, 8, 1), date_index)
         z = y + 0.0
         z.index = np.arange(3000)
         num_index = z.index
-        assert_raises(ValueError, date_to_index,
-                      dt.datetime(2009, 8, 1), num_index)
+        with pytest.raises(ValueError):
+            date_to_index(dt.datetime(2009, 8, 1), num_index)
 
     def test_find_index(self):
         index = date_range('2000-01-01', periods=5000)
@@ -124,8 +126,10 @@ class TestUtils(TestCase):
         found_loc =find_index(series,
                               np.datetime64(series.index[3000].to_datetime()))
         assert_equal(found_loc, 3000)
-        assert_raises(ValueError, find_index, series, 'bad-date')
-        assert_raises(ValueError, find_index, series, '1900-01-01')
+        with pytest.raises(ValueError):
+            find_index(series, 'bad-date')
+        with pytest.raises(ValueError):
+            find_index(series, '1900-01-01')
         
         assert_equal(find_index(df, '2000-01-01'), 0)
         assert_equal(find_index(df, df.index[0]), 0)
@@ -134,8 +138,10 @@ class TestUtils(TestCase):
         found_loc =find_index(df,
                               np.datetime64(df.index[3000].to_datetime()))
         assert_equal(found_loc, 3000)
-        assert_raises(ValueError, find_index, df, 'bad-date')
-        assert_raises(ValueError, find_index, df, '1900-01-01')
+        with pytest.raises(ValueError):
+            find_index(df, 'bad-date')
+        with pytest.raises(ValueError):
+            find_index(df, '1900-01-01')
 
 
 class TestDoc(TestCase):

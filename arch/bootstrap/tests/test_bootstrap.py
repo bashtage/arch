@@ -3,10 +3,11 @@ import warnings
 from unittest import TestCase
 
 import numpy as np
-from numpy.testing import assert_equal, assert_raises, assert_allclose
+from numpy.testing import assert_equal, assert_allclose
 import scipy.stats as stats
 import pandas as pd
 from pandas.util.testing import assert_frame_equal, assert_series_equal
+import pytest
 
 from arch.bootstrap import IIDBootstrap, StationaryBootstrap, \
     MovingBlockBootstrap, CircularBlockBootstrap
@@ -22,7 +23,7 @@ warnings.simplefilter("always")
 
 class TestBootstrap(TestCase):
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         warnings.simplefilter("always", RuntimeWarning)
         warnings.simplefilter("always")
 
@@ -170,16 +171,21 @@ class TestBootstrap(TestCase):
     def test_errors(self):
         x = np.arange(10)
         y = np.arange(100)
-        assert_raises(ValueError, IIDBootstrap, x, y)
-        assert_raises(ValueError, IIDBootstrap, index=x)
+        with pytest.raises(ValueError):
+            IIDBootstrap(x, y)
+        with pytest.raises(ValueError):
+            IIDBootstrap(index=x)
         bs = IIDBootstrap(y)
 
         def func(y):
             return y.mean(axis=0)
 
-        assert_raises(ValueError, bs.conf_int, func, method='unknown')
-        assert_raises(ValueError, bs.conf_int, func, tail='dragon')
-        assert_raises(ValueError, bs.conf_int, func, size=95)
+        with pytest.raises(ValueError):
+            bs.conf_int(func, method='unknown')
+        with pytest.raises(ValueError):
+            bs.conf_int(func, tail='dragon')
+        with pytest.raises(ValueError):
+            bs.conf_int(func, size=95)
 
     def test_cov(self):
         def func(y):
@@ -517,8 +523,8 @@ class TestBootstrap(TestCase):
 
         bs = IIDBootstrap(axis=self.x)
         bs.seed(23456)
-        assert_raises(ValueError, bs.cov, func,
-                      reps=num_bootstrap, extra_kwargs=extra_kwargs)
+        with pytest.raises(ValueError):
+            bs.cov(func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
 
     def test_jackknife(self):
         def func(x):
