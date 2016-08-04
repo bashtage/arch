@@ -13,7 +13,7 @@ requirements:
     - python
     - setuptools
     - cython
-    - numpy
+    - numpy x.x
     - scipy
     - pandas
     - patsy
@@ -26,7 +26,7 @@ requirements:
     - python
     - setuptools
     - cython
-    - numpy
+    - numpy x.x
     - scipy
     - pandas
     - patsy

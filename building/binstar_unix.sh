@@ -21,11 +21,11 @@ declare -a NPY_VERSIONS=( "110" "111" )
 ## Loop across Python and Numpy
 for PY in "${PY_VERSIONS[@]}"
 do
-    export CONDA_PY=$PY
+    export CONDA_PY=${PY}
     for NPY in "${NPY_VERSIONS[@]}"
     do
-        export CONDA_NPY=$NPY
+        export CONDA_NPY=${NPY}
         anaconda remove bashtage/arch/${VERSION}/${OS}/arch-${VERSION}-np${NPY}py${PY}_0.tar.bz2 -f
-        conda build ./building/binstar
+        conda build --python ${PY} --numpy ${NPY} ./building/binstar
     done
 done
