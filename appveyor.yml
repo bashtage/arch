@@ -21,7 +21,7 @@ build_script:
   - cmd: SET PATH=C:\Py;C:\Py\Scripts;C:\Py\Library\bin;%PATH%
   - cmd: conda config --set always_yes yes
   - cmd: conda update conda --quiet
-  - cmd: conda install numpy cython pytest pandas scipy patsy statsmodels matplotlib numba nbconvert nbformat nose pip pyyaml setuptools pyqt pyparsing --quiet
+  - cmd: conda install numpy cython pytest pandas scipy patsy statsmodels matplotlib numba nbconvert nbformat pip pyyaml setuptools pyqt pyparsing --quiet
   - cmd: python setup.py install
 
 test_script:

@@ -39,7 +39,7 @@ test:
   imports:
     - arch
   requires:
-    - nose
+    - pytest
 
 about:
   home: https://github.com/bashtage/arch
