@@ -2,6 +2,7 @@
 [![Travis Build Status](https://travis-ci.org/bashtage/arch.svg?branch=master)](https://travis-ci.org/bashtage/arch)
 [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/nmt02u7jwcgx7i2x?svg=true)](https://ci.appveyor.com/project/bashtage/arch/branch/master)
 [![Coverage Status](https://coveralls.io/repos/bashtage/arch/badge.svg?branch=master)](https://coveralls.io/r/bashtage/arch?branch=master)
+[![codecov](https://codecov.io/gh/bashtage/arch/branch/master/graph/badge.svg)](https://codecov.io/gh/bashtage/arch)
 [![Code Health](https://landscape.io/github/bashtage/arch/master/landscape.svg?style=flat)](https://landscape.io/github/bashtage/arch/master)
 [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.15681.svg)](http://dx.doi.org/10.5281/zenodo.15681)
 
@@ -36,6 +37,7 @@ contribute:
 ## Examples
 
 <a name="volatility"/>
+
 ### Volatility Modeling 
 
 * Mean models
@@ -70,6 +72,7 @@ res = am.fit()
 ```
 
 <a name="unit-root"/>
+
 ### Unit Root Tests
 
 * Augmented Dickey-Fuller
@@ -81,6 +84,7 @@ res = am.fit()
 See the [unit root testing example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/unitroot_examples.ipynb) for examples of testing series for unit roots.
 
 <a name="bootstrap"/>
+
 ### Bootstrap
 
 * Bootstraps
@@ -125,6 +129,7 @@ ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 ```
 
 <a name="multiple-comparison"/>
+
 ### Multiple Comparison Procedures
 
 * Test of Superior Predictive Ability (SPA), also known as the Reality Check or Bootstrap Data Snooper
@@ -151,7 +156,7 @@ for examples of the multiple comparison procedures.
 ### Installing
 
 * Cython (0.20+, if not using --no-binary)
-* nose (For tests)
+* py.test (For tests)
 * sphinx (to build docs)
 * sphinx-napoleon (to build docs)
 

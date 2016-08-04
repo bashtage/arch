@@ -3,9 +3,9 @@ Setlocal EnableDelayedExpansion
 REM Get current directory
 SET CURRENT_WORKING_DIR=%~dp0
 REM Python and NumPy versions
-set VERSION=2.0
-set PY_VERSION=27 33 34
-set NPY_VERSION=18 19
+set VERSION=3.2
+set PY_VERSION=27 35
+set NPY_VERSION=110 111
 
 
 (for %%P in (%PY_VERSION%) do (
