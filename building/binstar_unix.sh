@@ -22,7 +22,7 @@ do
     for NPY in "${NPY_VERSIONS[@]}"
     do
         export CONDA_NPY=$NPY
-        binstar remove bashtage/arch/${VERSION}/${OS}/arch-${VERSION}-np${NPY}py${PY}_0.tar.bz2 -f
+        anaconda remove bashtage/arch/${VERSION}/${OS}/arch-${VERSION}-np${NPY}py${PY}_0.tar.bz2 -f
         conda build ./building/binstar
     done
 done

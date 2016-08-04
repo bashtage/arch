@@ -1,5 +1,4 @@
-import arch
-t=arch.test()
-import sys
-sys.exit((len(t.failures)+len(t.errors))>0)
+import pytest
 
+if __name__ == '__main__':
+    pytest.main('--pyargs arch')
