@@ -18,7 +18,7 @@ on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 cwd = os.getcwd()
 source_dir = os.path.join(cwd, '..', '..')
-print source_dir
+print(source_dir)
 sys.path.insert(0, source_dir)
 
 # If extensions (or modules to document with autodoc) are in another directory,
