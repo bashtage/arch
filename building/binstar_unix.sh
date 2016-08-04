@@ -1,7 +1,7 @@
 #!/bin/bash
 cd ..
 
-export VERSION=2.0
+export VERSION=3.2
 ## detect OS
 if [ "$(uname)" == "Darwin" ]; then
     export OS=osx-64
@@ -12,8 +12,8 @@ fi
 sudo Xvfb :99 -nolisten tcp -fbdir /var/run &
 
 ## declare Python and Numpy Versions
-declare -a PY_VERSIONS=( "27" "33" "34" )
-declare -a NPY_VERSIONS=( "18" "19" )
+declare -a PY_VERSIONS=( "27" "35" )
+declare -a NPY_VERSIONS=( "110" "111" )
 
 ## Loop across Python and Numpy
 for PY in "${PY_VERSIONS[@]}"
