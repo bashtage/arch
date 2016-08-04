@@ -12,14 +12,14 @@ requirements:
   build:
     - python
     - setuptools
-    - cython 0.22*
+    - cython
     - numpy
     - scipy
     - pandas
     - patsy
     - statsmodels
     - matplotlib
-    - ipython-notebook
+    - nbconvert
     - pywin32 # [win]
 
   run:
@@ -32,7 +32,6 @@ requirements:
     - patsy
     - statsmodels
     - matplotlib
-    - ipython-notebook
     - pywin32 # [win]
 
 test:

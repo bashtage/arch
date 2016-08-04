@@ -1,4 +1,7 @@
 #!/bin/bash
+
+conda config --set anaconda_upload yes
+
 cd ..
 
 export VERSION=3.2
