@@ -218,8 +218,8 @@ class Normal(Distribution):
     def starting_values(self, std_resid):
         return empty(0)
 
-    def _simulator(self, nobs):
-        return standard_normal(nobs)
+    def _simulator(self, size):
+        return standard_normal(size)
 
     def simulate(self, parameters):
         return self._simulator
@@ -444,9 +444,9 @@ class SkewStudent(Distribution):
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv, 0.])
 
-    def _simulator(self, nobs):
+    def _simulator(self, size):
         # No need to normalize since it is already done in parameterization
-        return self.ppf(stats.uniform.rvs(size=nobs), self._parameters[0])
+        return self.ppf(stats.uniform.rvs(size=size), self._parameters[0])
 
     def simulate(self, parameters):
         parameters = asarray(parameters)[None]

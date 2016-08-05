@@ -3,7 +3,6 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 :class:`ARCHModel` and provide the same methods with the same inputs.
 """
 from __future__ import division, absolute_import
-from ..compat.python import range, iteritems
 
 import copy
 from collections import OrderedDict
@@ -14,11 +13,11 @@ from pandas import DataFrame
 from statsmodels.tools.decorators import cache_readonly
 from statsmodels.tsa.tsatools import lagmat
 
-from .base import ARCHModel, implicit_constant, ARCHModelResult
+from .base import ARCHModel, implicit_constant, ARCHModelResult, ARCHModelForecast
 from .distribution import Normal, StudentsT, SkewStudent
 from .volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH
-from ..utility.array import (ensure1d, parse_dataframe, cutoff_to_index,
-                             find_index)
+from ..compat.python import range, iteritems
+from ..utility.array import ensure1d, parse_dataframe, cutoff_to_index
 
 __all__ = ['HARX', 'ConstantMean', 'ZeroMean', 'ARX', 'arch_model', 'LS']
 
@@ -28,19 +27,58 @@ COV_TYPES = {'white': 'White\'s Heteroskedasticity Consistent Estimator',
              'mle': 'ML Estimator'}
 
 
-def align_forecast(f, align):
-    if align == 'origin':
-        return f
-    elif align in ('target', 'horizon'):
-        for i, col in enumerate(f):
-            f[col] = f[col].shift(i + 1)
-        return f
-    else:
-        raise ValueError('Unknown alignment')
+def _forecast_pad(count, forecasts):
+    shape = list(forecasts.shape)
+    shape[0] = count
+    fill = np.empty(tuple(shape))
+    fill.fill(np.nan)
+    return np.concatenate((fill, forecasts))
+
+
+def _ar_forecast(y, horizon, start_index, constant, arp):
+    """
+
+    Parameters
+    ----------
+    y : array
+    horizon : int
+    start_index : int
+    constant : float
+    arp : array
+
+    Returns
+    -------
+    forecasts : array
+    """
+    t = y.shape[0]
+    p = arp.shape[0]
+    fcasts = np.empty((t, p + horizon))
+    for i in range(p):
+        fcasts[p - 1:, i] = y[i:(-p + i + 1)] if i < p - 1 else y[i:]
+    for i in range(p, horizon + p):
+        fcasts[:, i] = constant + fcasts[:, i-p:i].dot(arp[::-1])
+    fcasts[: start_index] = np.nan
+
+    return fcasts[:, p:]
+
+
+def _ar_to_impulse(steps, params):
+    p = params.shape[0]
+    impulse = np.zeros(steps)
+    impulse[0] = 1
+    if p == 0:
+        return impulse
+
+    for i in range(1, steps):
+        k = min(p - 1, i - 1)
+        st = max(i - p, 0)
+        impulse[i] = impulse[st:i].dot(params[k::-1])
+
+    return impulse
 
 
 class HARX(ARCHModel):
-    """
+    r"""
     Heterogeneous Autoregression (HAR), with optional exogenous regressors,
     model estimation and simulation
 
@@ -88,10 +126,10 @@ class HARX(ARCHModel):
 
     .. math::
 
-        y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} \\bar{y}_{t-L_{i,0}:L_{i,1}}
+        y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} \bar{y}_{t-L_{i,0}:L_{i,1}}
         + \gamma' x_t + \epsilon_t
 
-    where :math:`\\bar{y}_{t-L_{i,0}:L_{i,1}}` is the average value of
+    where :math:`\bar{y}_{t-L_{i,0}:L_{i,1}}` is the average value of
     :math:`y_t` between :math:`t-L_{i,0}` and :math:`t - L_{i,1}`.
     """
 
@@ -183,9 +221,9 @@ class HARX(ARCHModel):
         return descr_str
 
     def __repr__(self):
-        repr = self.__str__()
-        repr.replace('\n', '')
-        return repr + ', id: ' + hex(id(self))
+        txt = self.__str__()
+        txt.replace('\n', '')
+        return txt + ', id: ' + hex(id(self))
 
     def _repr_html_(self):
         """HTML representation for IPython Notebook"""
@@ -200,15 +238,18 @@ class HARX(ARCHModel):
         html += '<strong>ID: </strong> ' + hex(id(self)) + ')'
         return html
 
-    def resids(self, params):
-        return self._fit_y - self._fit_regressors.dot(params)
+    def resids(self, params, y=None, regressors=None):
+        regressors = self._fit_regressors if y is None else regressors
+        y = self._fit_y if y is None else y
+
+        return y - regressors.dot(params)
 
     @cache_readonly
     def num_params(self):
         """
         Returns the number of parameters
         """
-        return self.regressors.shape[1]
+        return int(self.regressors.shape[1])
 
     def simulate(self, params, nobs, burn=500, initial_value=None, x=None,
                  initial_value_vol=None):
@@ -407,6 +448,17 @@ class HARX(ARCHModel):
         else:
             raise ValueError('Incorrect format for lags')
 
+    def _har_to_ar(self, params):
+        if self._max_lags == 0:
+            return params
+        har = params[int(self.constant):]
+        ar = np.zeros(self._max_lags)
+        for value, lag in zip(har, self._lags.T):
+            ar[lag[0]:lag[1]] += value / (lag[1] - lag[0])
+        if self.constant:
+            ar = np.concatenate((params[:1], ar))
+        return ar
+
     def _init_model(self):
         """Should be called whenever the model is initialized or changed"""
         self._reformat_lags()
@@ -562,79 +614,81 @@ class HARX(ARCHModel):
                                self._y_series, names, loglikelihood,
                                self._is_pandas, _xopt, copy.deepcopy(self))
 
-    def forecast(self, params, horizon=1, start=None, align='origin'):
-        """
-        Forecast values
-
-        Parameters
-        ----------
-        params : 1d array-like
-            Model parameters
-        horizon : int, optional
-            Maximum horizon to construct forecasts
-        start : int, str, or datetime-like, optional
-            Integer index, date-convertible string or datetime to use to
-            compute the observation of the first forecast. String and datetime
-            can only be used with a pandas Series or DataFrame.
-        align : str, optional
-            Alignment of forecasts.  'origin' aligns with last observation used
-            to produce the forecast, so that observation i will have columns
-            h.1, h.2, ..., h.horizon which are the 1-step ahead using
-            information up-to-and-including i.  'target' aligns the
-            observations so that the forecast in position [i, h.k] will for
-            the time i=k forecast of the value in position i.
-
-        Returns
-        -------
-        forecasts : DataFrame
-            Array of forecasts aligned according to `align`
-        """
+    def forecast(self, parameters, horizon=1, start=None, align='origin',
+                 method='analytic', simulations=1000):
         if self._x is not None:
             raise RuntimeError('Forecasts are not available when the model '
                                'contains exogenous regressors.')
-        params = np.asarray(params)
-        max_lag = self._max_lags
-        # 1. Convert start to numeric index, if needed
-        if start is None:
-            start_loc = max(0, max_lag - 1)
-        else:
-            start_loc = find_index(self._y_series, start)
-        if start_loc < (max_lag - 1):
-            raise ValueError('Forecasts cannot be produced for observations '
-                             'earlier than the maximum lag length.')
-        t = self._y.shape[0]
-        format_str = '{0:>0' + str(int(np.ceil(np.log10(horizon + 0.5)))) + '}'
-        columns = ['h.' + format_str.format(h + 1) for h in range(horizon)]
-        forecasts = DataFrame(index=self._y_series.index,
-                              columns=columns,
-                              dtype=np.float64)
-        # Fast track for no lags
-        if max_lag == 0:
-            fcast = params[0] if self.constant else 0.0
-            forecasts.iloc[start_loc:, :] = fcast
-            return align_forecast(forecasts, align)
+        # Check start
+        earliest, default_start = self._fit_indices
+        default_start = max(0, default_start - 1)
+        start_index = cutoff_to_index(start, self._y_series.index, default_start)
+        if start_index < (earliest - 1):
+            raise ValueError('start cannot be less than the first value used '
+                             'to fit the model: {0}'.format(earliest))
+        # Parse params
+        parameters = np.asarray(parameters)
+        mp, vp, dp = self._parse_parameters(parameters)
 
-        # 2b. Compute forecasts recursively for each date
-        fcast = np.zeros(t + horizon)
-        fcast[:start_loc] = self._y[:start_loc]
-        for i in range(start_loc, t):
-            fcast[i] = self._y[i]
-            for h in range(horizon):
-                forecast_index = i + h + 1
-                fcast[forecast_index] = 0.0
-                ind = 0
-                if self.constant:
-                    fcast[forecast_index] += params[ind]
-                    ind += 1
-                for lag in self._lags.T:
-                    st = forecast_index - lag[1]
-                    en = forecast_index - lag[0]
-                    avg_lag = fcast[st:en].mean()
-                    fcast[forecast_index] += params[ind] * avg_lag
-                    ind += 1
-            forecasts.iloc[i, :] = fcast[i + 1:i + horizon + 1]
-        # 3. Use align function to align output
-        return align_forecast(forecasts, align)
+        #####################################
+        # Compute residual variance forecasts
+        #####################################
+        # Backcast should use only the sample used in fitting
+        resids = self.resids(mp)
+        backcast = self._volatility.backcast(resids)
+        full_resids = self.resids(mp, self._y[earliest:], self.regressors[earliest:])
+        vb = self._volatility.variance_bounds(full_resids, 2.0)
+        rng = self._distribution.simulate(dp)
+        variance_start = max(0, start_index - earliest)
+        vfcast = self._volatility.forecast(vp, full_resids, backcast, vb,
+                                           start=variance_start,
+                                           horizon=horizon, method=method,
+                                           simulations=simulations, rng=rng)
+        var_fcasts = vfcast.forecasts
+        var_fcasts = _forecast_pad(earliest, var_fcasts)
+
+        arp = self._har_to_ar(mp)
+        constant = arp[0] if self.constant else 0.0
+        dynp = arp[int(self.constant):]
+        mean_fcast = _ar_forecast(self._y, horizon, start_index, constant, dynp)
+        # Compute total variance forecasts, which depend on model
+        impulse = _ar_to_impulse(horizon, dynp)
+        longrun_var_fcasts = var_fcasts.copy()
+        for i in range(horizon):
+            lrf = var_fcasts[:, :(i + 1)].dot(impulse[i::-1] ** 2)
+            longrun_var_fcasts[:, i] = lrf
+
+        if method.lower() in ('simulation', 'bootstrap'):
+            # TODO: This is not tested, and probably wrong
+            variance_paths = _forecast_pad(earliest, vfcast.forecast_paths)
+            long_run_variance_paths = variance_paths.copy()
+            shocks = _forecast_pad(earliest, vfcast.shocks)
+            for i in range(horizon):
+                _impulses = impulse[i::-1][:, None]
+                lrvp = variance_paths[:, :, :(i + 1)].dot(_impulses ** 2)
+                long_run_variance_paths[:, :, i] = np.squeeze(lrvp)
+            t, m = self._y.shape[0], self._max_lags
+            mean_paths = np.empty((t, simulations, m + horizon))
+            mean_paths.fill(np.nan)
+            dynp_rev = dynp[::-1]
+            for i in range(start_index, t):
+                mean_paths[i, :, :m] = self._y[i - m + 1:i + 1]
+
+                for j in range(horizon):
+                    mean_paths[i, :, m + j] = constant + \
+                                              mean_paths[i, :, j:m + j].dot(dynp_rev) + \
+                                              shocks[i, :, j]
+            mean_paths = mean_paths[:, :, m:]
+        else:
+            variance_paths = mean_paths = shocks = long_run_variance_paths = None
+
+        index = self._y_series.index
+        return ARCHModelForecast(index, mean_fcast, longrun_var_fcasts,
+                                 var_fcasts, align=align,
+                                 simulated_paths=mean_paths,
+                                 simulated_residuals=shocks,
+                                 simulated_variances=long_run_variance_paths,
+                                 simulated_residual_variances=variance_paths)
 
 
 class ConstantMean(HARX):
@@ -741,8 +795,9 @@ class ConstantMean(HARX):
         df = DataFrame(df)
         return df
 
-    def resids(self, params):
-        return self._fit_y - params
+    def resids(self, params, y=None, regressors=None):
+        y = self._fit_y if y is None else y
+        return y - params
 
 
 class ZeroMean(HARX):
@@ -854,8 +909,8 @@ class ZeroMean(HARX):
 
         return df
 
-    def resids(self, params):
-        return self._fit_y
+    def resids(self, params, y=None, regressors=None):
+        return self._fit_y if y is None else y
 
 
 class ARX(HARX):
@@ -1076,7 +1131,7 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
     Notes
     -----
     Input that are not relevant for a particular specification, such as `lags`
-    when `mean=zero`, are silently ignored.
+    when `mean='zero'`, are silently ignored.
     """
     known_mean = ('zero', 'constant', 'harx', 'har', 'ar', 'arx', 'ls')
     known_vol = ('arch', 'garch', 'harch', 'constant', 'egarch')

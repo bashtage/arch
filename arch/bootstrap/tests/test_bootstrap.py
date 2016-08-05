@@ -231,6 +231,7 @@ class TestBootstrap(TestCase):
         assert_allclose(cov, direct_cov)
 
     def test_smoke(self):
+        # TODO: Upgrade to meaningful test
         num_bootstrap = 20
 
         def func(y):

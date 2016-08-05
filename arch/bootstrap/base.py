@@ -176,10 +176,10 @@ class IIDBootstrap(object):
                 raise ValueError(key + ' is a reserved name')
 
     def __str__(self):
-        repr = self._name
-        repr += '(no. pos. inputs: ' + str(len(self.pos_data))
-        repr += ', no. keyword inputs: ' + str(len(self.kw_data)) + ')'
-        return repr
+        txt = self._name
+        txt += '(no. pos. inputs: ' + str(len(self.pos_data))
+        txt += ', no. keyword inputs: ' + str(len(self.kw_data)) + ')'
+        return txt
 
     def __repr__(self):
         return self.__str__()[:-1] + ', ID: ' + hex(id(self)) + ')'
@@ -877,11 +877,11 @@ class CircularBlockBootstrap(IIDBootstrap):
         self._name = 'Circular Block Bootstrap'
 
     def __str__(self):
-        repr = self._name
-        repr += '(block size: ' + str(self.block_size)
-        repr += ', no. pos. inputs: ' + str(len(self.pos_data))
-        repr += ', no. keyword inputs: ' + str(len(self.kw_data)) + ')'
-        return repr
+        txt = self._name
+        txt += '(block size: ' + str(self.block_size)
+        txt += ', no. pos. inputs: ' + str(len(self.pos_data))
+        txt += ', no. keyword inputs: ' + str(len(self.kw_data)) + ')'
+        return txt
 
     def _repr_html(self):
         html = '<strong>' + self._name + '</strong>('

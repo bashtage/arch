@@ -82,8 +82,8 @@ class TestVolatiltyProcesses(TestCase):
         assert_equal(names, names_target)
 
         assert isinstance(garch.__str__(), str)
-        repr = garch.__repr__()
-        assert str(hex(id(garch))) in repr
+        txt = garch.__repr__()
+        assert str(hex(id(garch))) in txt
 
         assert_equal(garch.name, 'GARCH')
         assert_equal(garch.num_params, 3)
@@ -203,8 +203,8 @@ class TestVolatiltyProcesses(TestCase):
         assert_equal(arch.num_params, 2)
         assert_equal(arch.p, 1)
         assert isinstance(arch.__str__(), str)
-        repr = arch.__repr__()
-        assert str(hex(id(arch))) in repr
+        txt = arch.__repr__()
+        assert str(hex(id(arch))) in txt
 
     def test_arch_harch(self):
         arch = ARCH(p=1)
@@ -228,8 +228,8 @@ class TestVolatiltyProcesses(TestCase):
         assert_equal(a, ah)
         assert_equal(b, bh)
         assert isinstance(arch.__str__(), str)
-        repr = arch.__repr__()
-        assert str(hex(id(arch))) in repr
+        txt = arch.__repr__()
+        assert str(hex(id(arch))) in txt
 
     def test_harch(self):
         harch = HARCH(lags=[1, 5, 22])
@@ -310,8 +310,7 @@ class TestVolatiltyProcesses(TestCase):
                     shock22 += data[t - i - 1] if t - i - 1 >= 0 else backcast
                 shock22 = shock22 / 22.0
 
-            sigma2[t] += parameters[1] * shock1 + parameters[2] * shock5 + \
-                parameters[3] * shock22
+            sigma2[t] += parameters[1] * shock1 + parameters[2] * shock5 + parameters[3] * shock22
 
             data[t] = e[t] * np.sqrt(sigma2[t])
         data = data[500:]
@@ -323,8 +322,8 @@ class TestVolatiltyProcesses(TestCase):
         assert_equal(harch.lags, [1, 5, 22])
         assert_equal(harch.num_params, 4)
         assert isinstance(harch.__str__(), str)
-        repr = harch.__repr__()
-        assert str(hex(id(harch))) in repr
+        txt = harch.__repr__()
+        assert str(hex(id(harch))) in txt
 
     def test_constant_variance(self):
         cv = ConstantVariance()
@@ -376,8 +375,8 @@ class TestVolatiltyProcesses(TestCase):
         assert_equal(cv.num_params, 1)
         assert_equal(cv.name, 'Constant Variance')
         assert isinstance(cv.__str__(), str)
-        repr = cv.__repr__()
-        assert str(hex(id(cv))) in repr
+        txt = cv.__repr__()
+        assert str(hex(id(cv))) in txt
 
     def test_garch_no_symmetric(self):
         garch = GARCH(p=0, o=1, q=1)
@@ -695,8 +694,8 @@ class TestVolatiltyProcesses(TestCase):
         assert_equal(ewma.num_params, 0)
         assert_equal(ewma.name, 'EWMA/RiskMetrics')
         assert isinstance(ewma.__str__(), str)
-        repr = ewma.__repr__()
-        assert str(hex(id(ewma))) in repr
+        txt = ewma.__repr__()
+        assert str(hex(id(ewma))) in txt
 
     def test_riskmetrics(self):
         rm06 = RiskMetrics2006()
@@ -815,8 +814,8 @@ class TestVolatiltyProcesses(TestCase):
         assert_equal(egarch.o, 1)
         assert_equal(egarch.q, 1)
         assert isinstance(egarch.__str__(), str)
-        repr = egarch.__repr__()
-        assert str(hex(id(egarch))) in repr
+        txt = egarch.__repr__()
+        assert str(hex(id(egarch))) in txt
 
         with pytest.raises(ValueError):
             EGARCH(p=0, o=0, q=1)

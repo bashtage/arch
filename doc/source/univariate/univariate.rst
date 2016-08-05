@@ -8,6 +8,8 @@ Univariate Volatility Models
 
     Introduction <introduction>
     Examples <univariate_volatility_modeling>
+    Forecasting <forecasting>
+    Forecasting Examples <univariate_volatility_forecasting>
     Mean Models <mean>
     Volatility Processes <volatility>
     Distributions <distribution>

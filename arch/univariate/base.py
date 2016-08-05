@@ -176,6 +176,7 @@ class ARCHModel(object):
         self._volatility = None
         self._distribution = None
         self._backcast = None
+        self._var_bounds = None
 
         if volatility is not None:
             self.volatility = volatility
@@ -425,6 +426,7 @@ class ARCHModel(object):
         """
         if self._y_original is None:
             raise RuntimeError('Cannot estimate model without data.')
+
         # 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,
         # use closed form
         v, d = self.volatility, self.distribution
@@ -446,7 +448,7 @@ class ARCHModel(object):
         backcast = v.backcast(resids)
         self._backcast = backcast
         sv_volatility = v.starting_values(resids)
-        var_bounds = v.variance_bounds(resids)
+        self._var_bounds = var_bounds = v.variance_bounds(resids)
         v.compute_variance(sv_volatility, resids, sigma2, backcast, var_bounds)
         std_resids = resids / sqrt(sigma2)
 
@@ -595,7 +597,7 @@ class ARCHModel(object):
                  initial_value_vol=None):
         raise NotImplementedError('Subclasses must implement')
 
-    def resids(self, params):
+    def resids(self, params, y=None, regressors=None):
         """
         Compute model residuals
 
@@ -603,8 +605,13 @@ class ARCHModel(object):
         ----------
         params : 1-d array
             Model parameters
+        y : 1-d array, optional
+            Alternative values to use when computing model residuals
+        regressors : 2-d array, optional
+            Alternative regressor values to use when computing model residuals
 
         Returns
+        -------
         resids : 1-d array
             Model residuals
         """
@@ -648,9 +655,78 @@ class ARCHModel(object):
         else:
             return inv_hess / nobs
 
-    def forecast(self, params, horizon=1, start=None, align='origin'):
+    def forecast(self, params, horizon=1, start=None, align='origin', method='analytic',
+                 simulations=1000):
         """
-        Computes forecasts from the model
+        Construct forecasts from estimated model
+
+        Parameters
+        ----------
+        params : 1d array-like, optional
+            Alternative parameters to use.  If not provided, the parameters
+            estimated when fitting the model are used.  Must be identical in
+            shape to the parameters computed by fitting the model.
+        horizon : int, optional
+           Number of steps to forecast
+        start : {int, datetime, Timestamp, str}, optional
+            An integer, datetime or str indicating the first observation to
+            produce the forecast for.  Datetimes can only be used with pandas
+            inputs that have a datetime index. Strings must be convertible
+            to a date time, such as in '1945-01-01'.
+        align : str, optional
+            Either 'origin' or 'target'.  When set of 'origin', the t-th row
+            of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
+            set to 'target', the t-th row contains the 1-step ahead forecast
+            from time t-1, the 2 step from time t-2, ..., and the h-step from
+            time t-h.  'target' simplified computing forecast errors since the
+            realization and h-step forecast are aligned.
+        method : {'analytic', 'simulation', 'bootstrap'}
+            Method to use when producing the forecast. The default is analytic.
+            The method only affects the variance forecast generation.  Not all
+            volatility models support all methods. In particular, volatility
+            models that do not evolve in squares such as EGARCH or TARCH do not
+            support the 'analytic' method for horizons > 1.
+        simulations : int
+            Number of simulations to run when computing the forecast using
+            either simulation or bootstrap.
+
+        Returns
+        -------
+        forecasts : DataFrame
+            t by h data frame containing the forecasts.  The alignment of the forecasts is
+            controlled by `align`.
+
+        Examples
+        --------
+        >>> import pandas as pd
+        >>> from arch import arch_model
+        >>> am = arch_model(None,mean='HAR',lags=[1,5,22],vol='Constant')
+        >>> sim_data = am.simulate([0.1,0.4,0.3,0.2,1.0], 250)
+        >>> sim_data.index = pd.date_range('2000-01-01',periods=250)
+        >>> am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22],  vol='Constant')
+        >>> res = am.fit()
+        >>> fig = res.hedgehog_plot()
+
+        Notes
+        -----
+        The most basic 1-step ahead forecast will return a vector with the same
+        length as the original data, where the t-th value will be the time-t
+        forecast for time t + 1.  When the horizon is > 1, and when using the
+        default value for `align`, the forecast value in position [t, h] is the
+        time-t, h+1 step ahead forecast.
+
+        If model contains exogenous variables (`model.x is not None`), then
+        only 1-step ahead forecasts are available.  Using horizon > 1 will
+        produce a warning and all columns, except the first, will be
+        nan-filled.
+
+        If `align` is 'origin', forecast[t,h] contains the forecast made using
+        y[:t] (that is, up to but not including t) for horizon h + 1.  For
+        example, y[100,2] contains the 3-step ahead forecast using the first
+        100 data points, which will correspond to the realization y[100 + 2].
+        If `align` is 'target', then the same forecast is in location
+        [102, 2], so that it is aligned with the observation to use when
+        evaluating, but still in the same column.
         """
         raise NotImplementedError('Subclasses must implement')
 
@@ -960,7 +1036,8 @@ class ARCHModelFixedResult(object):
 
         return fig
 
-    def forecast(self, params=None, horizon=1, start=None, align='origin'):
+    def forecast(self, params=None, horizon=1, start=None, align='origin', method='analytic',
+                 simulations=1000):
         """
         Construct forecasts from estimated model
 
@@ -972,24 +1049,33 @@ class ARCHModelFixedResult(object):
             shape to the parameters computed by fitting the model.
         horizon : int, optional
            Number of steps to forecast
-        start : int, datetime or str, optional
+        start : {int, datetime, Timestamp, str}, optional
             An integer, datetime or str indicating the first observation to
             produce the forecast for.  Datetimes can only be used with pandas
-            inputs that have a datetime index.  Strings must be convertible
+            inputs that have a datetime index. Strings must be convertible
             to a date time, such as in '1945-01-01'.
         align : str, optional
             Either 'origin' or 'target'.  When set of 'origin', the t-th row
-            of forecasts contains the forecasts for t+1, t+2, ..., t+h.
-            When set to 'target', the t-th row contains the 1-step ahead
-            forecast from time t-1, the 2 step from time t-2, ..., and the
-            h-step from time t-h.  'target' simplified computing forecast
-            errors since the realization and h-step forecast are aligned.
+            of forecasts contains the forecasts for t+1, t+2, ..., t+h. When
+            set to 'target', the t-th row contains the 1-step ahead forecast
+            from time t-1, the 2 step from time t-2, ..., and the h-step from
+            time t-h.  'target' simplified computing forecast errors since the
+            realization and h-step forecast are aligned.
+        method : {'analytic', 'simulation', 'bootstrap'}
+            Method to use when producing the forecast. The default is analytic.
+            The method only affects the variance forecast generation.  Not all
+            volatility models support all methods. In particular, volatility
+            models that do not evolve in squares such as EGARCH or TARCH do not
+            support the 'analytic' method for horizons > 1.
+        simulations : int
+            Number of simulations to run when computing the forecast using
+            either simulation or bootstrap.
 
         Returns
         -------
         forecasts : DataFrame
-            t by h data frame containing the forecasts.  The alignment of the
-            forecasts is controlled by `align`.
+            t by h data frame containing the forecasts.  The alignment of the forecasts is
+            controlled by `align`.
 
         Examples
         --------
@@ -998,8 +1084,7 @@ class ARCHModelFixedResult(object):
         >>> am = arch_model(None,mean='HAR',lags=[1,5,22],vol='Constant')
         >>> sim_data = am.simulate([0.1,0.4,0.3,0.2,1.0], 250)
         >>> sim_data.index = pd.date_range('2000-01-01',periods=250)
-        >>> am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22], \
-                            vol='Constant')
+        >>> am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22],  vol='Constant')
         >>> res = am.fit()
         >>> fig = res.hedgehog_plot()
 
@@ -1030,11 +1115,11 @@ class ARCHModelFixedResult(object):
             if (params.size != np.array(self._params).size or
                     params.ndim != self._params.ndim):
                 raise ValueError('params have incorrect dimensions')
-        return self.model.forecast(params, horizon, start, align)
+        return self.model.forecast(params, horizon, start, align, method, simulations)
 
     def hedgehog_plot(self, params=None, horizon=10, step=10, start=None):
         """
-        Construct forecasts from estimated model
+        Plot forecasts from estimated model
 
         Parameters
         ----------
@@ -1066,14 +1151,14 @@ class ARCHModelFixedResult(object):
         x_values = np.array(self._dep_var.index)
         y_values = self._dep_var.values
         plot_fn(x_values, y_values, linestyle='-', marker='')
-        first_obs = np.min(np.where(np.logical_not(np.isnan(forecasts)))[0])
+        first_obs = np.min(np.where(np.logical_not(np.isnan(forecasts.mean)))[0])
         spines = []
-        t = forecasts.shape[0]
+        t = forecasts.mean.shape[0]
         for i in range(first_obs, t, step):
             if i + horizon + 1 > x_values.shape[0]:
                 continue
             temp_x = x_values[i:i + horizon + 1]
-            temp_y = np.hstack((y_values[i], forecasts.iloc[i]))
+            temp_y = np.hstack((y_values[i], forecasts.mean.iloc[i]))
             line = plot_fn(temp_x, temp_y, linewidth=3, linestyle='-',
                            marker='')
             spines.append(line)
@@ -1123,8 +1208,6 @@ class ARCHModelResult(ARCHModelFixedResult):
         Produce a summary of the results
     plot
         Produce a plot of the volatility and standardized residuals
-    forecast
-        Construct forecasts from a model
     conf_int
         Confidence intervals
 
@@ -1378,3 +1461,131 @@ WARNING: The optimizer did not indicate sucessful convergence. The message was
         scipy.optimize.fmin_slsqp result flag
         """
         return self._optim_output[3]
+
+
+def _align_forecast(f, align):
+    if align == 'origin':
+        return f
+    elif align in ('target', 'horizon'):
+        for i, col in enumerate(f):
+            f[col] = f[col].shift(i + 1)
+        return f
+    else:
+        raise ValueError('Unknown alignment')
+
+
+def _format_forecasts(values, index):
+    horizon = values.shape[1]
+    format_str = '{0:>0' + str(int(np.ceil(np.log10(horizon + 0.5)))) + '}'
+    columns = ['h.' + format_str.format(h + 1) for h in range(horizon)]
+    forecasts = pd.DataFrame(values, index=index,
+                             columns=columns, dtype=np.float64)
+    return forecasts
+
+
+class ARCHModelForecastSimulation(object):
+    """
+    Container for a simulation or bootstrap-based forecasts from an ARCH Model
+
+    Parameters
+    ----------
+    values
+    residuals
+    variances
+    residual_variances
+
+    Attributes
+    ----------
+    values : DataFrame
+        Simulated values of the process
+    residuals : DataFrame
+        Simulated residuals used to produce the values
+    variances : DataFrame
+        Simulated variances of the values
+    residual_variances : DataFrame
+        Simulated variance of the residuals
+    """
+
+    def __init__(self, values, residuals, variances, residual_variances):
+        self._values = values
+        self._residuals = residuals
+        self._variances = variances
+        self._residual_variances = residual_variances
+
+    @property
+    def values(self):
+        return self._values
+
+    @property
+    def residuals(self):
+        return self._residuals
+
+    @property
+    def variances(self):
+        return self._variances
+
+    @property
+    def residual_variances(self):
+        return self._residual_variances
+
+
+class ARCHModelForecast(object):
+    """
+    Container for forecasts from an ARCH Model
+
+    Parameters
+    ----------
+    index : {list, array}
+    mean : array
+    variance : array
+    residual_variance : array
+    simulated_paths : array, optional
+    simulated_variances : array, optional
+    simulated_residual_variances : array, optional
+    simulated_residuals : array, optional
+    align : {'origin', 'target'}
+
+    Attributes
+    ----------
+    mean : DataFrame
+        Forecast values for the conditional mean of the process
+    variance : DataFrame
+        Forecast values for the conditional variance of the process
+    residual_variance : DataFrame
+        Forecast values for the conditional variance of the residuals
+    simulations : ARCHModelForecastSimulation
+        Object containing detailed simulation results if using a simulation-based method
+    """
+    def __init__(self, index, mean, variance, residual_variance,
+                 simulated_paths=None, simulated_variances=None,
+                 simulated_residual_variances=None, simulated_residuals=None,
+                 align='origin'):
+
+        mean = _format_forecasts(mean, index)
+        variance = _format_forecasts(variance, index)
+        residual_variance = _format_forecasts(residual_variance, index)
+
+        self._mean = _align_forecast(mean, align=align)
+        self._variance = _align_forecast(variance, align=align)
+        self._residual_variance = _align_forecast(residual_variance, align=align)
+
+        self._sim = ARCHModelForecastSimulation(simulated_paths,
+                                                simulated_residuals,
+                                                simulated_variances,
+                                                simulated_residual_variances)
+
+    @property
+    def mean(self):
+        return self._mean
+
+    @property
+    def variance(self):
+        return self._variance
+
+    @property
+    def residual_variance(self):
+        return self._residual_variance
+
+    @property
+    def simulations(self):
+        return self._sim

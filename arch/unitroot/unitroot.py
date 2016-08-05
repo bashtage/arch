@@ -46,15 +46,15 @@ def _df_select_lags(y, trend, max_lags, method):
 
     Parameters
     ----------
-    y : array-like, (nobs,)
+    y : array
         The data for the lag selection exercise
-    trend : str, {'nc','c','ct','ctt'}
+    trend : {'nc','c','ct','ctt'}
         The trend order
     max_lags : int
         The maximum number of lags to check.  This setting affects all
         estimation since the sample is adjusted by max_lags when
         fitting the models
-    method : str, {'AIC','BIC','t-stat'}
+    method : {'AIC','BIC','t-stat'}
         The method to use when estimating the model
 
     Returns
@@ -101,9 +101,9 @@ def _estimate_df_regression(y, trend, lags):
 
     Parameters
     ----------
-    y : array-like, (nobs,)
+    y : array
         The data for the lag selection
-    trend : str, {'nc','c','ct','ctt'}
+    trend : {'nc','c','ct','ctt'}
         The trend order
     lags : int
         The number of lags to include in the ADF regression
@@ -313,21 +313,21 @@ class ADF(UnitRootTest):
 
     Parameters
     ----------
-    y : array-like, (nobs,)
+    y : array
         The data to test for a unit root
-    lags : int, non-negative, optional
+    lags : int, optional
         The number of lags to use in the ADF regression.  If omitted or None,
         `method` is used to automatically select the lag length with no more
         than `max_lags` are included.
-    trend : str, {'nc', 'c', 'ct', 'ctt'}, optional
+    trend : {'nc', 'c', 'ct', 'ctt'}, optional
         The trend component to include in the ADF test
         'nc' - No trend components
         'c' - Include a constant (Default)
         'ct' - Include a constant and linear time trend
         'ctt' - Include a constant and linear and quadratic time trends
-    max_lags : int, non-negative, optional
+    max_lags : int, optional
         The maximum number of lags to use when selecting lag length
-    method : str, {'AIC', 'BIC', 't-stat'}, optional
+    method : {'AIC', 'BIC', 't-stat'}, optional
         The method to use when selecting the lag length
         'AIC' - Select the minimum of the Akaike IC
         'BIC' - Select the minimum of the Schwarz/Bayesian IC
@@ -461,21 +461,19 @@ class DFGLS(UnitRootTest):
 
     Parameters
     ----------
-    y : array-like, (nobs,)
+    y : array
         The data to test for a unit root
-    lags : int, non-negative, optional
+    lags : int, optional
         The number of lags to use in the ADF regression.  If omitted or None,
         `method` is used to automatically select the lag length with no more
         than `max_lags` are included.
-    trend : str, {'c', 'ct'}, optional
+    trend : {'c', 'ct'}, optional
         The trend component to include in the ADF test
-        'nc' - No trend components
         'c' - Include a constant (Default)
         'ct' - Include a constant and linear time trend
-        'ctt' - Include a constant and linear and quadratic time trends
-    max_lags : int, non-negative, optional
+    max_lags : int, optional
         The maximum number of lags to use when selecting lag length
-    method : str, {'AIC', 'BIC', 't-stat'}, optional
+    method : {'AIC', 'BIC', 't-stat'}, optional
         The method to use when selecting the lag length
         'AIC' - Select the minimum of the Akaike IC
         'BIC' - Select the minimum of the Schwarz/Bayesian IC
@@ -627,18 +625,18 @@ class PhillipsPerron(UnitRootTest):
 
     Parameters
     ----------
-    y : array-like, (nobs,)
+    y : array
         The data to test for a unit root
-    lags : int, non-negative, optional
+    lags : int, optional
         The number of lags to use in the Newey-West estimator of the long-run
         covariance.  If omitted or None, the lag length is set automatically to
         12 * (nobs/100) ** (1/4)
-    trend : str, {'nc', 'c', 'ct'}, optional
+    trend : {'nc', 'c', 'ct'}, optional
         The trend component to include in the ADF test
             'nc' - No trend components
             'c' - Include a constant (Default)
             'ct' - Include a constant and linear time trend
-    test_type : str, {'tau', 'rho'}
+    test_type : {'tau', 'rho'}
         The test to use when computing the test statistic. 'tau' is based on
         the t-stat and 'rho' uses a test based on nobs times the re-centered
         regression coefficient
@@ -805,13 +803,13 @@ class KPSS(UnitRootTest):
 
     Parameters
     ----------
-    y : array-like, (nobs,)
+    y : array
         The data to test for stationarity
-    lags : int, non-negative, optional
+    lags : int, optional
         The number of lags to use in the Newey-West estimator of the long-run
         covariance.  If omitted or None, the lag length is set automatically to
         12 * (nobs/100) ** (1/4)
-    trend : str, {'c', 'ct'}, optional
+    trend : {'c', 'ct'}, optional
         The trend component to include in the ADF test
             'c' - Include a constant (Default)
             'ct' - Include a constant and linear time trend
@@ -898,12 +896,12 @@ class VarianceRatio(UnitRootTest):
 
     Parameters
     ----------
-    y : array-like, (nobs,)
+    y : array
         The data to test for a random walk
-    lags : int, >=2
+    lags : int
         The number of periods to used in the multi-period variance, which is
         the numerator of the test statistic.  Must be at least 2
-    trend : str, {'nc', 'c'}, optional
+    trend : {'nc', 'c'}, optional
         'c' allows for a non-zero drift in the random walk, while 'nc' requires
         that the increments to y are mean 0
     overlap : bool, optional
@@ -1090,14 +1088,14 @@ def mackinnonp(stat, regression="c", num_unit_roots=1, dist_type='ADF-t'):
     ----------
     stat : float
         "T-value" from an Augmented Dickey-Fuller or DFGLS regression.
-    regression : str {"c", "nc", "ct", "ctt"}
+    regression : {'c', 'nc', 'ct', 'ctt'}
         This is the method of regression that was used.  Following MacKinnon's
         notation, this can be "c" for constant, "nc" for no constant, "ct" for
         constant and trend, and "ctt" for constant, trend, and trend-squared.
     num_unit_roots : int
         The number of series believed to be I(1).  For (Augmented) Dickey-
         Fuller N = 1.
-    dist_type: str, {'ADF-t', 'ADF-z', 'DFGLS'}
+    dist_type: {'ADF-t', 'ADF-z', 'DFGLS'}
         The test type to use when computing p-values.  Options include
         'ADF-t' - ADF t-stat based tests
         'ADF-z' - ADF z tests
@@ -1174,14 +1172,14 @@ def mackinnoncrit(num_unit_roots=1, regression="c", nobs=inf,
         non-cointegration is being tested.  For N > 12, the critical values
         are linearly interpolated (not yet implemented).  For the ADF test,
         N = 1.
-    reg : str {'c', 'tc', 'ctt', 'nc'}
+    reg : {'c', 'tc', 'ctt', 'nc'}
         Following MacKinnon (1996), these stand for the type of regression run.
         'c' for constant and no trend, 'tc' for constant with a linear trend,
         'ctt' for constant with a linear and quadratic trend, and 'nc' for
         no constant.  The values for the no constant case are taken from the
         1996 paper, as they were not updated for 2010 due to the unrealistic
         assumptions that would underlie such a case.
-    nobs : int or np.inf
+    nobs : {int, np.inf}
         This is the sample size.  If the sample size is numpy.inf, then the
         asymptotic critical values are returned.
 
@@ -1239,7 +1237,7 @@ def kpss_crit(stat, trend='c'):
     ----------
     stat : float
         The KPSS test statistic.
-    trend : str, {'c','ct'}
+    trend : {'c','ct'}
         The trend used when computing the KPSS statistic
 
     Returns
@@ -1265,7 +1263,3 @@ def kpss_crit(stat, trend='c'):
     crit_value = interp(cv, y[::-1], x[::-1])
 
     return pvalue, crit_value
-
-
-if __name__ == '__main__':
-    pass
