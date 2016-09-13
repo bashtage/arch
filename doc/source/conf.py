@@ -43,8 +43,8 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.ifconfig',
-    'matplotlib.sphinxext.only_directives',
-    'matplotlib.sphinxext.plot_directive',
+    'IPython.sphinxext.ipython_console_highlighting',
+    'IPython.sphinxext.ipython_directive'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -61,7 +61,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'arch'
-copyright = u'2014-5, Kevin Sheppard'
+copyright = u'2014-6, Kevin Sheppard'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -203,7 +203,7 @@ html_domain_indices = True
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'pygarchdoc'
+htmlhelp_basename = 'arch'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -286,18 +286,10 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    'statsmodels': ('http://statsmodels.sourceforge.net/devel/', None),
+    'statsmodels': ('http://www.statsmodels.org/dev/', None),
     'matplotlib': ('http://matplotlib.org/', None),
-    'python': ('http://docs.python.org/', None),
+    'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
+    'python': ('http://docs.python.org/3', None),
     'numpy': ('http://docs.scipy.org/doc/numpy', None),
-    'pandas': ('FIXME', None)
+    'pandas': ('http://pandas.pydata.org/pandas-docs/stable/', None)
 }
-
-print('\n')
-print('*'*72)
-print('\n')
-import pandas as pd
-pd.show_versions()
-print('\n')
-print('*'*72)
-print('\n'*3)
