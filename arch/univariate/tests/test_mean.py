@@ -724,3 +724,22 @@ class TestMeanModel(unittest.TestCase):
             sys.stdout = orig_stdout
 
         res = am.fit(disp='off')
+
+    def test_convergence_warning(self):
+        y = np.array([0.83277114, 0.45194014, -0.33475561, -0.49463896, 0.54715787,
+                      1.11895382, 1.31280266, 0.81464021, 0.8532107, 1.0967188,
+                      0.9346354, 0.92289249, 1.01339085, 1.071065, 1.42413486,
+                      1.15392453, 1.10929691, 0.96162061, 0.96489515, 0.93250153,
+                      1.34509807, 1.80951607, 1.66313783, 1.38610821, 1.26381761])
+        am = arch_model(y, mean='ARX', lags=10, p=5, q=0)
+        with warnings.catch_warnings(record=True) as w:
+            am.fit()
+            assert_equal(len(w), 1)
+
+        with warnings.catch_warnings(record=True) as w:
+            am.fit(show_warning=False)
+            assert_equal(len(w), 0)
+
+        with warnings.catch_warnings(record=True) as w:
+            am.fit(show_warning=True)
+            assert_equal(len(w), 1)
