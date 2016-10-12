@@ -383,7 +383,7 @@ class ARCHModel(object):
                                     loglikelihood, self._is_pandas, model_copy)
 
     def fit(self, update_freq=1, disp='final', starting_values=None,
-            cov_type='robust'):
+            cov_type='robust', show_warning=True):
         """
         Fits the model given a nobs by 1 vector of sigma2 values
 
@@ -403,6 +403,8 @@ class ARCHModel(object):
             'robust', which does not assume the Information Matrix Equality
             holds and 'classic' which does.  In the ARCH literature, 'robust'
             corresponds to Bollerslev-Wooldridge covariance estimator.
+        show_warning : bool, optional
+            Flag indicating whether convergence warnings should be shown.
 
         Returns
         -------
@@ -503,12 +505,15 @@ class ARCHModel(object):
 
         # Check convergence
         imode, smode = xopt[3:]
-        if imode != 0:
-            warnings.simplefilter('always')
+        if show_warning:
+            warnings.filterwarnings('always', '', ConvergenceWarning)
+        else:
+            warnings.filterwarnings('ignore', '', ConvergenceWarning)
+
+        if imode != 0 and show_warning:
             warnings.warn(convergence_warning.format(code=imode,
                                                      string_message=smode),
                           ConvergenceWarning)
-            warnings.simplefilter('default')
 
         # 5. Return results
         params = xopt[0]
