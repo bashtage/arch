@@ -32,14 +32,16 @@ The setup makes use of return data downloaded from Yahoo!
 ::
 
     import datetime as dt
+
     import pandas as pd
-    import pandas.io.data as web
-    start = dt.datetime(1951,1,1)
-    end = dt.datetime(2014,1,1)
-    sp500 = web.get_data_yahoo('^GSPC', start=start, end=end)
-    start = sp500.index.min()
-    end = sp500.index.max()
-    monthly_dates = pd.date_range(start, end, freq='M')
+    import pandas_datareader.data as web
+
+    start = dt.datetime(1951, 1, 1)
+    end = dt.datetime(2014, 1, 1)
+    sp500 = web.DataReader('^GSPC', 'yahoo', start=start, end=end)
+    low = sp500.index.min()
+    high = sp500.index.max()
+    monthly_dates = pd.date_range(low, high, freq='M')
     monthly = sp500.reindex(monthly_dates, method='ffill')
     returns = 100 * monthly['Adj Close'].pct_change().dropna()
 
@@ -54,6 +56,7 @@ The main function used will return a 3-element array containing the parameters.
 .. note::
 
     Functions must return 1-d NumPy arrays or Pandas Series.
+
 
 Confidence Interval Types
 =========================
@@ -77,6 +80,7 @@ order statistics from these empirical distributions.
 ::
 
     from arch.bootstrap import IIDBootstrap
+
     bs = IIDBootstrap(returns)
     ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 
@@ -127,6 +131,7 @@ computed element-by-element.
 ::
 
     from arch.bootstrap import IIDBootstrap
+
     bs = IIDBootstrap(returns)
     ci = bs.conf_int(sharpe_ratio, 1000, method='basic')
 
@@ -149,6 +154,7 @@ distribution.
 ::
 
     from arch.bootstrap import IIDBootstrap
+
     bs = IIDBootstrap(returns)
     ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 
@@ -170,6 +176,7 @@ error.
 ::
 
     from arch.bootstrap import IIDBootstrap
+
     bs = IIDBootstrap(returns)
     ci = bs.conf_int(sharpe_ratio, 1000, method='norm')
 
@@ -200,6 +207,7 @@ outer bootstraps.
 ::
 
     from arch.bootstrap import IIDBootstrap
+
     bs = IIDBootstrap(returns)
     ci = bs.conf_int(sharpe_ratio, 1000, method='studentized')
 
@@ -273,6 +281,7 @@ parameter is set to 0.
 ::
 
     from arch.bootstrap import IIDBootstrap
+
     bs = IIDBootstrap(returns)
     ci = bs.conf_int(sharpe_ratio, 1000, method='bca')
 
@@ -297,4 +306,3 @@ where :math:`z_{\alpha}` is the usual quantile from the normal distribution and
     \hat{b}=\#\left\{ \hat{\theta}_{b}^{\star}<\hat{\theta}\right\} / B
 
 :math:`a` is a skewness-like estimator using a leave-one-out jackknife.
-

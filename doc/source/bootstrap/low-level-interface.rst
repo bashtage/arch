@@ -11,14 +11,16 @@ This example makes use of monthly S&P 500 data.
 ::
 
     import datetime as dt
+
     import pandas as pd
-    import pandas.io.data as web
-    start = dt.datetime(1951,1,1)
-    end = dt.datetime(2014,1,1)
-    sp500 = web.get_data_yahoo('^GSPC', start=start, end=end)
-    start = sp500.index.min()
-    end = sp500.index.max()
-    monthly_dates = pd.date_range(start, end, freq='M')
+    import pandas_datareader.data as web
+
+    start = dt.datetime(1951, 1, 1)
+    end = dt.datetime(2014, 1, 1)
+    sp500 = web.DataReader('^GSPC', 'yahoo', start=start, end=end)
+    low = sp500.index.min()
+    high = sp500.index.max()
+    monthly_dates = pd.date_range(low, high, freq='M')
     monthly = sp500.reindex(monthly_dates, method='ffill')
     returns = 100 * monthly['Adj Close'].pct_change().dropna()
 
@@ -44,6 +46,7 @@ The bootstrapped Sharpe ratios can be directly computed using `apply`.
 
 .. image:: bootstrap_histogram.png
 
+
 The Bootstrap Iterator
 ======================
 The lowest-level method to use a bootstrap is the iterator.  This is used
@@ -60,13 +63,15 @@ bootstrap iterator.
 
     import pandas as pd
     import numpy as np
+
     from arch.bootstrap import IIDBootstrap
-    x = np.random.randn(1000,2)
-    y = pd.DataFrame(np.random.randn(1000,3))
-    z = np.random.rand(1000,10)
+
+    x = np.random.randn(1000, 2)
+    y = pd.DataFrame(np.random.randn(1000, 3))
+    z = np.random.rand(1000, 10)
     bs = IIDBootstrap(x, y=y, z=z)
 
     for pos, kw in bs.bootstrap(1000):
         xstar = pos[0]  # pos is always a tuple, even when a singleton
-        ystar = kw['y'] # A dictionary
+        ystar = kw['y']  # A dictionary
         zstar = kw['z']  # A dictionary
