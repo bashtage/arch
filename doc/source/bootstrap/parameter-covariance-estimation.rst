@@ -10,14 +10,15 @@ Sharpe ratio of the S&P 500 using Yahoo! Finance data.
 ::
 
     import datetime as dt
-    import pandas.io.data as web
     import pandas as pd
-    start = dt.datetime(1951,1,1)
-    end = dt.datetime(2014,1,1)
-    sp500 = web.get_data_yahoo('^GSPC', start=start, end=end)
-    start = sp500.index.min()
-    end = sp500.index.max()
-    monthly_dates = pd.date_range(start, end, freq='M')
+    import pandas_datareader.data as web
+    
+    start = dt.datetime(1951, 1, 1)
+    end = dt.datetime(2014, 1, 1)
+    sp500 = web.DataReader('^GSPC', 'yahoo', start=start, end=end)
+    low = sp500.index.min()
+    high = sp500.index.max()
+    monthly_dates = pd.date_range(low, high, freq='M')
     monthly = sp500.reindex(monthly_dates, method='ffill')
     returns = 100 * monthly['Adj Close'].pct_change().dropna()
 
@@ -37,11 +38,12 @@ bootstrap with an average block size of 12.
 
 ::
 
-    from arch.bootstrap import StationaryBootstrap
     import pandas as pd
+    from arch.bootstrap import StationaryBootstrap
+
     bs = StationaryBootstrap(12, returns)
     param_cov = bs.cov(sharpe_ratio)
-    index = ['mu','sigma','SR']
+    index = ['mu', 'sigma', 'SR']
     params = sharpe_ratio(returns)
     params = pd.Series(params, index=index)
     param_cov = pd.DataFrame(param_cov, index=index, columns=index)
