@@ -5,7 +5,6 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 from __future__ import division, absolute_import
 
 import copy
-import datetime as dt
 from collections import OrderedDict
 
 import numpy as np
@@ -18,7 +17,7 @@ from .base import ARCHModel, implicit_constant, ARCHModelResult
 from .distribution import Normal, StudentsT, SkewStudent
 from .volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH
 from ..compat.python import range, iteritems
-from ..utility.array import (ensure1d, parse_dataframe, date_to_index,
+from ..utility.array import (ensure1d, parse_dataframe, cutoff_to_index,
                              find_index)
 
 __all__ = ['HARX', 'ConstantMean', 'ZeroMean', 'ARX', 'arch_model', 'LS']
@@ -61,19 +60,10 @@ class HARX(ARCHModel):
     use_rotated : bool, optional
         Flag indicating to use the alternative rotated form of the HAR where
         HAR lags do not overlap
-    hold_back : int, str, datetime or datetime64, optional
+    hold_back : int
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.  When y is a Series with
-        a DateTime index, hold_back can contain datetime, datetime64 or
-        formatted string to indicate the index of the first data point to use
-        in estimation.
-    last_obs : int, str, datetime or datetime64,  optional
-        Index of last observation to use when estimating the model.  Used when
-        producing pseudo-out-of-sample forecasts. When y is a Series with
-        a DateTime index, last_obs can contain datetime, datetime64 or
-        formatted string to indicate the index of the final data point to use
-        in estimation.
+        lag lengths to estimate on the common sample.
     volatility : VolatilityProcess, optional
         Volatility process to use in the model
     distribution : Distribution, optional
@@ -88,12 +78,9 @@ class HARX(ARCHModel):
     >>> res = harx.fit()
 
     >>> from pandas import Series, date_range
-    >>> import datetime as dt
     >>> index = date_range('2000-01-01', freq='M', periods=y.shape[0])
     >>> y = Series(y, name='y', index=index)
-    >>> start = dt.datetime(2001, 1, 1)
-    >>> end = dt.datetime(2008, 12, 31)
-    >>> har = HARX(y, lags=[1, 6], hold_back=start, last_obs=end)
+    >>> har = HARX(y, lags=[1, 6], hold_back=10)
 
     Notes
     -----
@@ -109,12 +96,11 @@ class HARX(ARCHModel):
     """
 
     def __init__(self, y=None, x=None, lags=None, constant=True,
-                 use_rotated=False, hold_back=None, last_obs=None,
-                 volatility=None, distribution=None):
-        super(HARX, self).__init__(y, hold_back=hold_back, last_obs=last_obs,
+                 use_rotated=False, hold_back=None, volatility=None,
+                 distribution=None):
+        super(HARX, self).__init__(y, hold_back=hold_back,
                                    volatility=volatility,
                                    distribution=distribution)
-        self._y_adj = None
         self._x = x
         self._x_names = None
         self._x_index = None
@@ -133,29 +119,15 @@ class HARX(ARCHModel):
             max_lags = 0
         self._max_lags = max_lags
 
-        if isinstance(hold_back, (str, dt.datetime, np.datetime64)):
-            date_index = self._y_series.index
-            _first_obs_index = date_to_index(hold_back, date_index)
-        elif hold_back is None:
-            _first_obs_index = max_lags
-        else:
-            _first_obs_index = hold_back
+        self._hold_back = max_lags if hold_back is None else hold_back
 
-        self.first_obs = 0
-        if self._y.shape[0] > 0:
-            self.first_obs = self._y_series.index[_first_obs_index]
-
-        if _first_obs_index < max_lags:
+        if self._hold_back < max_lags:
             from warnings import warn
 
             warn('hold_back is less then the minimum number given the lags '
                  'selected', RuntimeWarning)
-            _first_obs_index = max_lags
-            self.first_obs = self._y_series.index[_first_obs_index]
+            self._hold_back = max_lags
 
-        _last_obs_index = self._indices[1]
-        self.nobs = _last_obs_index - _first_obs_index
-        self._indices = (_first_obs_index, _last_obs_index)
         self._init_model()
 
     @property
@@ -229,7 +201,7 @@ class HARX(ARCHModel):
         return html
 
     def resids(self, params):
-        return self._y_adj - self.regressors.dot(params)
+        return self._fit_y - self._fit_regressors.dot(params)
 
     @cache_readonly
     def num_params(self):
@@ -462,13 +434,10 @@ class HARX(ARCHModel):
             reg_x = empty((nobs_orig, 0), dtype=np.float64)
 
         self.regressors = np.hstack((reg_constant, reg_lags, reg_x))
-        first_obs, last_obs = self._indices
-        self.regressors = self.regressors[first_obs:last_obs, :]
-        self._y_adj = self._y[first_obs:last_obs]
 
     def _r2(self, params):
-        y = self._y_adj
-        x = self.regressors
+        y = self._fit_y
+        x = self._fit_regressors
         constant = False
         if x is not None and x.shape[1] > 0:
             constant = self.constant or implicit_constant(x)
@@ -477,6 +446,19 @@ class HARX(ARCHModel):
             y = y - np.mean(y)
 
         return 1.0 - e.T.dot(e) / y.dot(y)
+
+    def _adjust_sample(self, first_obs, last_obs):
+        index = self._y_series.index
+        _first_obs_index = cutoff_to_index(first_obs, index, 0)
+        _first_obs_index += self._hold_back
+        _last_obs_index = cutoff_to_index(last_obs, index, self._y.shape[0])
+        if _last_obs_index <= _first_obs_index:
+            raise ValueError('first_obs and last_obs produce in an '
+                             'empty array.')
+        self._fit_indices = [_first_obs_index, _last_obs_index]
+        self._fit_y = self._y[_first_obs_index:_last_obs_index]
+        reg = self.regressors
+        self._fit_regressors = reg[_first_obs_index:_last_obs_index]
 
     def _fit_no_arch_normal_errors(self, cov_type='robust'):
         """
@@ -501,21 +483,20 @@ class HARX(ARCHModel):
         -----
         See :class:`ARCHModelResult` for details on computed results
         """
-        if self.nobs == 0:
+        nobs = self._fit_y.shape[0]
+        if nobs == 0:
             from warnings import warn
 
             warn('Cannot estimate model with no data', RuntimeWarning)
             return None
 
-        first_obs, last_obs = self._indices
-        nobs = last_obs - first_obs
         if nobs < self.num_params:
             raise ValueError(
                 'Insufficient data, ' + str(
                     self.num_params) + ' regressors, ' + str(
                     nobs) + ' data points available')
-        x = self.regressors
-        y = self._y_adj
+        x = self._fit_regressors
+        y = self._fit_y
 
         # Fake convergence results, see GH #87
         _xopt = ['', '', 0, '', '']
@@ -562,6 +543,7 @@ class HARX(ARCHModel):
 
         r2 = self._r2(regression_params)
 
+        first_obs, last_obs = self._fit_indices
         resids = np.empty_like(self._y, dtype=np.float64)
         resids.fill(np.nan)
         resids[first_obs:last_obs] = e
@@ -663,19 +645,10 @@ class ConstantMean(HARX):
     ----------
     y : array or Series
         nobs element vector containing the dependent variable
-    hold_back : int, str, datetime or datetime64, optional
+    hold_back : int
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.  When y is a Series with
-        a DateTime index, hold_back can contain datetime, datetime64 or
-        formatted string to indicate the index of the first data point to use
-        in estimation.
-    last_obs : int, str, datetime or datetime64,  optional
-        Index of last observation to use when estimating the model.  Used when
-        producing pseudo-out-of-sample forecasts. When y is a Series with
-        a DateTime index, last_obs can contain datetime, datetime64 or
-        formatted string to indicate the index of the final data point to use
-        in estimation.
+        lag lengths to estimate on the common sample.
     volatility : VolatilityProcess, optional
         Volatility process to use in the model
     distribution : Distribution, optional
@@ -699,11 +672,9 @@ class ConstantMean(HARX):
 
     """
 
-    def __init__(self, y=None, hold_back=None, last_obs=None,
+    def __init__(self, y=None, hold_back=None,
                  volatility=None, distribution=None):
-        super(ConstantMean, self).__init__(y,
-                                           hold_back=hold_back,
-                                           last_obs=last_obs,
+        super(ConstantMean, self).__init__(y, hold_back=hold_back,
                                            volatility=volatility,
                                            distribution=distribution)
         self.name = 'Constant Mean'
@@ -771,7 +742,7 @@ class ConstantMean(HARX):
         return df
 
     def resids(self, params):
-        return self._y[self._indices[0]:self._indices[1]] - params
+        return self._fit_y - params
 
 
 class ZeroMean(HARX):
@@ -782,19 +753,10 @@ class ZeroMean(HARX):
     ----------
     y : array or Series
         nobs element vector containing the dependent variable
-    hold_back : int, str, datetime or datetime64, optional
+    hold_back : int
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.  When y is a Series with
-        a DateTime index, hold_back can contain datetime, datetime64 or
-        formatted string to indicate the index of the first data point to use
-        in estimation.
-    last_obs : int, str, datetime or datetime64,  optional
-        Index of last observation to use when estimating the model.  Used when
-        producing pseudo-out-of-sample forecasts. When y is a Series with
-        a DateTime index, last_obs can contain datetime, datetime64 or
-        formatted string to indicate the index of the final data point to use
-        in estimation.
+        lag lengths to estimate on the common sample.
     volatility : VolatilityProcess, optional
         Volatility process to use in the model
     distribution : Distribution, optional
@@ -818,13 +780,12 @@ class ZeroMean(HARX):
 
     """
 
-    def __init__(self, y=None, hold_back=None, last_obs=None,
+    def __init__(self, y=None, hold_back=None,
                  volatility=None, distribution=None):
         super(ZeroMean, self).__init__(y,
                                        x=None,
                                        constant=False,
                                        hold_back=hold_back,
-                                       last_obs=last_obs,
                                        volatility=volatility,
                                        distribution=distribution)
         self.name = 'Zero Mean'
@@ -894,7 +855,7 @@ class ZeroMean(HARX):
         return df
 
     def resids(self, params):
-        return self._y[self._indices[0]:self._indices[1]]
+        return self._fit_y
 
 
 class ARX(HARX):
@@ -914,19 +875,10 @@ class ARX(HARX):
         lags[1], ...
     constant : bool, optional
         Flag whether the model should include a constant
-    hold_back : int, str, datetime or datetime64, optional
+    hold_back : int
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.  When y is a Series with
-        a DateTime index, hold_back can contain datetime, datetime64 or
-        formatted string to indicate the index of the first data point to use
-        in estimation.
-    last_obs : int, str, datetime or datetime64,  optional
-        Index of last observation to use when estimating the model.  Used when
-        producing pseudo-out-of-sample forecasts. When y is a Series with
-        a DateTime index, last_obs can contain datetime, datetime64 or
-        formatted string to indicate the index of the final data point to use
-        in estimation.
+        lag lengths to estimate on the common sample.
 
     Examples
     --------
@@ -953,8 +905,7 @@ class ARX(HARX):
     """
 
     def __init__(self, y=None, x=None, lags=None, constant=True,
-                 hold_back=None, last_obs=None, volatility=None,
-                 distribution=None):
+                 hold_back=None, volatility=None, distribution=None):
         # Convert lags to 2-d format
 
         if lags is not None:
@@ -973,8 +924,7 @@ class ARX(HARX):
                 else:
                     raise ValueError('lags does not follow a supported format')
         super(ARX, self).__init__(y, x, lags, constant, False,
-                                  hold_back, last_obs,
-                                  volatility=volatility,
+                                  hold_back, volatility=volatility,
                                   distribution=distribution)
         self.name = 'AR'
         if self._x is not None:
@@ -1021,19 +971,10 @@ class LS(HARX):
         nobs by k element array containing exogenous regressors
     constant : bool, optional
         Flag whether the model should include a constant
-    hold_back : int, str, datetime or datetime64, optional
+    hold_back : int
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.  When y is a Series with
-        a DateTime index, hold_back can contain datetime, datetime64 or
-        formatted string to indicate the index of the first data point to use
-        in estimation.
-    last_obs : int, str, datetime or datetime64,  optional
-        Index of last observation to use when estimating the model.  Used when
-        producing pseudo-out-of-sample forecasts. When y is a Series with
-        a DateTime index, last_obs can contain datetime, datetime64 or
-        formatted string to indicate the index of the final data point to use
-        in estimation.
+        lag lengths to estimate on the common sample.
 
     Examples
     --------
@@ -1054,11 +995,9 @@ class LS(HARX):
 
     """
 
-    def __init__(self, y=None, x=None, constant=True, hold_back=None,
-                 last_obs=None):
+    def __init__(self, y=None, x=None, constant=True, hold_back=None):
         # Convert lags to 2-d format
-        super(LS, self).__init__(y, x, None, constant, False, hold_back,
-                                 last_obs)
+        super(LS, self).__init__(y, x, None, constant, False, hold_back)
         self.name = 'Least Squares'
 
     def _model_description(self, include_lags=False):
@@ -1066,7 +1005,7 @@ class LS(HARX):
 
 
 def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
-               power=2.0, dist='Normal', hold_back=None, last_obs=None):
+               power=2.0, dist='Normal', hold_back=None):
     """
     Convenience function to simplify initialization of ARCH models
 
@@ -1099,19 +1038,10 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
             'Normal' (default)
             'StudentsT'
             'SkewStudents'
-    hold_back : int, str, datetime or datetime64, optional
+    hold_back : int
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
-        lag lengths to estimate on the common sample.  When y is a Series with
-        a DateTime index, hold_back can contain datetime, datetime64 or
-        formatted string to indicate the index of the first data point to use
-        in estimation.
-    last_obs : int, str, datetime or datetime64,  optional
-        Index of last observation to use when estimating the model.  Used when
-        producing pseudo-out-of-sample forecasts. When y is a Series with
-        a DateTime index, last_obs can contain datetime, datetime64 or
-        formatted string to indicate the index of the final data point to use
-        in estimation.
+        lag lengths to estimate on the common sample.
 
     Returns
     -------
@@ -1163,19 +1093,19 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
         raise ValueError('Unknown model type in dist')
 
     if mean == 'zero':
-        am = ZeroMean(y, hold_back=hold_back, last_obs=last_obs)
+        am = ZeroMean(y, hold_back=hold_back)
     elif mean == 'constant':
-        am = ConstantMean(y, hold_back=hold_back, last_obs=last_obs)
+        am = ConstantMean(y, hold_back=hold_back)
     elif mean == 'harx':
-        am = HARX(y, x, lags, hold_back=hold_back, last_obs=last_obs)
+        am = HARX(y, x, lags, hold_back=hold_back)
     elif mean == 'har':
-        am = HARX(y, None, lags, hold_back=hold_back, last_obs=last_obs)
+        am = HARX(y, None, lags, hold_back=hold_back)
     elif mean == 'arx':
-        am = ARX(y, x, lags, hold_back=hold_back, last_obs=last_obs)
+        am = ARX(y, x, lags, hold_back=hold_back)
     elif mean == 'ar':
-        am = ARX(y, None, lags, hold_back=hold_back, last_obs=last_obs)
+        am = ARX(y, None, lags, hold_back=hold_back)
     else:
-        am = LS(y, x, hold_back=hold_back, last_obs=last_obs)
+        am = LS(y, x, hold_back=hold_back)
 
     if vol == 'constant':
         v = ConstantVariance()

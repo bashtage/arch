@@ -62,8 +62,6 @@ class TestMeanModel(unittest.TestCase):
         assert_equal(b, np.empty((0,)))
         assert isinstance(cm.volatility, ConstantVariance)
         assert isinstance(cm.distribution, Normal)
-        assert_equal(cm.first_obs, 0)
-        assert_equal(cm.last_obs, 1000)
         assert_equal(cm.lags, None)
         res = cm.fit()
         assert_almost_equal(res.params, np.array([self.y.mean(), self.y.var()]))
@@ -91,8 +89,6 @@ class TestMeanModel(unittest.TestCase):
         assert_equal(b, np.empty((0,)))
         assert isinstance(zm.volatility, ConstantVariance)
         assert isinstance(zm.distribution, Normal)
-        assert_equal(zm.first_obs, 0)
-        assert_equal(zm.last_obs, 1000)
         assert_equal(zm.lags, None)
         res = zm.fit()
         assert_almost_equal(res.params, np.array([np.mean(self.y ** 2)]))
@@ -148,11 +144,8 @@ class TestMeanModel(unittest.TestCase):
         params = np.linalg.pinv(rhs).dot(lhs)
         assert_almost_equal(params, res.params[:-1])
 
-        assert_equal(harx.first_obs, 22)
-        assert_equal(harx.last_obs, 1000)
         assert_equal(harx.hold_back, None)
         assert_equal(harx.lags, [1, 5, 22])
-        assert_equal(harx.nobs, self.T - 22)
         assert_equal(harx.name, 'HAR-X')
         assert_equal(harx.use_rotated, False)
         harx
@@ -217,11 +210,8 @@ class TestMeanModel(unittest.TestCase):
         forecasts = res.forecast(res.params, horizon=6)
         assert_frame_equal(direct, forecasts)
 
-        assert_equal(har.first_obs, 22)
-        assert_equal(har.last_obs, 1000)
         assert_equal(har.hold_back, None)
         assert_equal(har.lags, [1, 5, 22])
-        assert_equal(har.nobs, self.T - 22)
         assert_equal(har.name, 'HAR')
         assert_equal(har.use_rotated, False)
 
@@ -247,8 +237,7 @@ class TestMeanModel(unittest.TestCase):
         assert_frame_equal(direct, forecasts)
 
     def test_arx(self):
-        arx = ARX(self.y, self.x, lags=3, hold_back=10, last_obs=900,
-                  constant=False)
+        arx = ARX(self.y, self.x, lags=3, hold_back=10, constant=False)
         params = np.array([0.4, 0.3, 0.2, 1.0, 1.0])
         data = arx.simulate(params, self.T, x=randn(self.T + 500, 1))
         bounds = arx.bounds()
@@ -262,7 +251,7 @@ class TestMeanModel(unittest.TestCase):
         a, b = arx.constraints()
         assert_equal(a, np.empty((0, 4)))
         assert_equal(b, np.empty(0))
-        res = arx.fit()
+        res = arx.fit(last_obs=900)
 
         nobs = 900 - 10
         rhs = np.zeros((nobs, 4))
@@ -277,11 +266,8 @@ class TestMeanModel(unittest.TestCase):
         assert_almost_equal(params, res.params[:-1])
         with pytest.raises(RuntimeError):
             res.forecast()
-        assert_equal(arx.first_obs, 10)
-        assert_equal(arx.last_obs, 900)
         assert_equal(arx.hold_back, 10)
         assert_equal(arx.lags, np.array([[0, 1, 2], [1, 2, 3]]))
-        assert_equal(arx.nobs, 890)
         assert_equal(arx.name, 'AR-X')
         assert_equal(arx.use_rotated, False)
         arx
@@ -332,11 +318,8 @@ class TestMeanModel(unittest.TestCase):
             direct.iloc[i, :] = fcast[i + 1:i + 6]
         assert_frame_equal(direct, forecasts)
 
-        assert_equal(ar.first_obs, 3)
-        assert_equal(ar.last_obs, 1000)
         assert_equal(ar.hold_back, None)
         assert_equal(ar.lags, np.array([[0, 1, 2], [1, 2, 3]]))
-        assert_equal(ar.nobs, 997)
         assert_equal(ar.name, 'AR')
         assert_equal(ar.use_rotated, False)
         ar.__repr__()
@@ -510,11 +493,6 @@ class TestMeanModel(unittest.TestCase):
             HARX(self.y, lags=[[1, 1, 1], [2, 5, 22]], use_rotated=True)
             assert_equal(len(w), 1)
 
-        har = HARX()
-        with warnings.catch_warnings(record=True) as w:
-            har.fit()
-            assert_equal(len(w), 1)
-
     def test_har_lag_specifications(self):
         """ Test equivalence of alternative lag specifications"""
         har = HARX(self.y, lags=[1, 2, 3])
@@ -609,17 +587,17 @@ class TestMeanModel(unittest.TestCase):
         resid_copy[:100] = np.nan
         assert_equal(resids, resid_copy)
 
-        ar = ARX(self.y, lags=5, last_obs=500)
+        ar = ARX(self.y, lags=5)
         ar.volatility = GARCH()
-        res = ar.fit(update_freq=0)
+        res = ar.fit(update_freq=0, last_obs=500)
         resids = res.resid
         resid_copy = resids.copy()
         resid_copy[500:] = np.nan
         assert_equal(resids, resid_copy)
 
-        ar = ARX(self.y, lags=5, hold_back=100, last_obs=500)
+        ar = ARX(self.y, lags=5, hold_back=100)
         ar.volatility = GARCH()
-        res = ar.fit(update_freq=0)
+        res = ar.fit(update_freq=0, last_obs=500)
         resids = res.resid
         resid_copy = resids.copy()
         resid_copy[:100] = np.nan
@@ -633,9 +611,9 @@ class TestMeanModel(unittest.TestCase):
         assert_equal(vol, vol_copy)
         assert_equal(self.y.shape[0], vol.shape[0])
 
-        ar = ARX(self.y, lags=5, last_obs=500)
+        ar = ARX(self.y, lags=5)
         ar.volatility = GARCH()
-        res = ar.fit(update_freq=0)
+        res = ar.fit(update_freq=0, last_obs=500)
         resids = res.resid
         resid_copy = resids.copy()
         resid_copy[:5] = np.nan
@@ -644,33 +622,15 @@ class TestMeanModel(unittest.TestCase):
 
     def test_date_first_last_obs(self):
         y = self.y_series
-        cm = ConstantMean(y, hold_back=y.index[100])
-        res = cm.fit()
-        cm = ConstantMean(y, hold_back=100)
-        res2 = cm.fit()
-        assert_equal(res.resid.values, res2.resid.values)
-        cm = ConstantMean(y, hold_back='2002-12-01')
-        res2 = cm.fit()
-        assert_equal(res.resid.values, res2.resid.values)
-        # Test non-exact start
-        cm = ConstantMean(y, hold_back='2002-12-02')
-        res2 = cm.fit()
-        assert_equal(res.resid.values, res2.resid.values)
 
-        cm = ConstantMean(y, last_obs=y.index[900])
-        res = cm.fit()
-        cm = ConstantMean(y, last_obs=900)
-        res2 = cm.fit()
-        assert_equal(res.resid.values, res2.resid.values)
+        cm = ConstantMean(y)
+        res = cm.fit(last_obs=y.index[900])
+        temp = cm._fit_indices
 
-        cm = ConstantMean(y, hold_back='2002-12-02', last_obs=y.index[900])
-        res = cm.fit()
-        cm = ConstantMean(y, hold_back=100, last_obs=900)
-        res2 = cm.fit()
-        assert_equal(res.resid.values, res2.resid.values)
-        # Mix and match
-        cm = ConstantMean(y, hold_back=100, last_obs=y.index[900])
-        res2 = cm.fit()
+        cm = ConstantMean(y)
+        res2 = cm.fit(last_obs=900)
+        temp2 = cm._fit_indices
+
         assert_equal(res.resid.values, res2.resid.values)
 
     def test_align(self):
@@ -704,7 +664,6 @@ class TestMeanModel(unittest.TestCase):
         assert_equal(res.bic, fixed_res.bic)
         assert_equal(res.loglikelihood, fixed_res.loglikelihood)
         assert_equal(res.num_params, fixed_res.num_params)
-        assert_equal(res.nobs, fixed_res.nobs)
         # Smoke for summary
         fixed_res.summary()
 
@@ -743,3 +702,72 @@ class TestMeanModel(unittest.TestCase):
         with warnings.catch_warnings(record=True) as w:
             am.fit(show_warning=True)
             assert_equal(len(w), 1)
+
+    def test_first_after_last(self):
+        am = arch_model(self.y_series)
+        with pytest.raises(ValueError):
+            am.fit(disp='off', first_obs=500, last_obs=480)
+
+        with pytest.raises(ValueError):
+            am.fit(disp='off',
+                   first_obs=self.y_series.index[500],
+                   last_obs=self.y_series.index[480])
+
+    def test_sample_adjustment(self):
+        am = arch_model(self.y_series, vol='Constant')
+        res = am.fit(disp='off')
+
+        res_adj = am.fit(disp='off',
+                         first_obs=0,
+                         last_obs=self.y_series.shape[0]+1)
+        assert_equal(res.resid.values, res_adj.resid.values)
+        assert_equal(res.params.values, res_adj.params.values)
+
+        res = am.fit(disp='off', first_obs=100)
+        res_adj = am.fit(disp='off', first_obs=self.y_series.index[100])
+        assert_equal(res.params.values, res_adj.params.values)
+        assert_equal(res.resid.values, res_adj.resid.values)
+
+        res = am.fit(disp='off', last_obs=900)
+        res2 = am.fit(disp='off', last_obs=self.y_series.index[900])
+        assert_equal(res.params.values, res2.params.values)
+        assert_equal(res.resid.values, res2.resid.values)
+
+        res = am.fit(disp='off', first_obs=100, last_obs=900)
+        res2 = am.fit(disp='off',
+                      first_obs=self.y_series.index[100],
+                      last_obs=self.y_series.index[900])
+        assert_equal(res.params.values, res2.params.values)
+        assert_equal(res.resid.values, res2.resid.values)
+
+    def test_model_obs_equivalence(self):
+        """Tests models that should use the same observation"""
+        am = arch_model(self.y_series.iloc[100:900])
+        res = am.fit(disp='off')
+        am = arch_model(self.y_series)
+        res2 = am.fit(disp='off', first_obs=100, last_obs=900)
+        index = self.y_series.index
+        res3 = am.fit(disp='off', first_obs=index[100], last_obs=index[900])
+        assert_equal(res.params.values, res2.params.values)
+        assert_equal(res2.params.values, res3.params.values)
+
+        am = arch_model(self.y_series, hold_back=100)
+        res4 = am.fit(disp='off', last_obs=900)
+        assert_equal(res.params.values, res4.params.values)
+
+    def test_model_obs_equivalence_ar(self):
+        """Tests models that should use the same observation"""
+        am = arch_model(self.y_series.iloc[100:900], mean='AR', lags=[1, 2, 4])
+        res = am.fit(disp='off')
+        am = arch_model(self.y_series, mean='AR', lags=[1, 2, 4])
+        res2 = am.fit(disp='off', first_obs=100, last_obs=900)
+        index = self.y_series.index
+        res3 = am.fit(disp='off', first_obs=index[100], last_obs=index[900])
+        assert_almost_equal(res.params.values, res2.params.values)
+        assert_almost_equal(res2.params.values, res3.params.values)
+
+        am = arch_model(self.y_series, mean='AR', lags=[1, 2, 4], hold_back=100)
+        res4 = am.fit(disp='off', first_obs=4, last_obs=900)
+        assert_almost_equal(res.params.values, res4.params.values)
+        assert am.hold_back == 100
+
