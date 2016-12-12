@@ -92,6 +92,7 @@ install:
   - if [ ${STATSMODELS_MASTER} = true ]; then sh ./ci/statsmodels-master.sh; fi;
   - python setup.py build
   - python setup.py install
+  - export SRCDIR=${PWD}
 
 script:
   # Show versions

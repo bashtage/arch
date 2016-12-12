@@ -1,4 +1,4 @@
-import unittest
+from unittest import TestCase
 
 import scipy.stats as stats
 from scipy.special import gammaln, gamma
@@ -10,7 +10,7 @@ import pytest
 from arch.univariate.distribution import Normal, StudentsT, SkewStudent
 
 
-class TestDistributions(unittest.TestCase):
+class TestDistributions(TestCase):
     @classmethod
     def setup_class(cls):
         cls.T = 1000

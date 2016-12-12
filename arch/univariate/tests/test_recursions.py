@@ -1,4 +1,4 @@
-import unittest
+from unittest import TestCase
 import timeit
 
 import numpy as np
@@ -54,7 +54,7 @@ class Timer(object):
         return None
 
 
-class TestRecursions(unittest.TestCase):
+class TestRecursions(TestCase):
     @classmethod
     def setup_class(cls):
         cls.T = 1000
