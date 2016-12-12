@@ -8,5 +8,10 @@ Changes since 3.0
 - Updated IPython notebooks to latest IPython version
 - Bug and typo fixes to IPython notebooks
 - Changed MCS to give a pvalue of 1.0 to best model.  Previously was NaN
-
+- Removed ``hold_back`` and ``last_obs`` from model initialization and to
+  ``fit`` method to simplify estimating a model over laternative samples
+  (e.g., rolling window estimation)
+- Redefined ``hold_back`` to only accept integers so that is simply defined
+  the number of observations held back. This number is now held out of the
+  sample irrespective of the value of ``first_obs``.
 

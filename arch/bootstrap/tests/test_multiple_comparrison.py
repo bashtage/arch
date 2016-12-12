@@ -154,12 +154,11 @@ class TestSPA(TestCase):
         assert isinstance(spa.bootstrap, MovingBlockBootstrap)
 
     def test_single_model(self):
-        spa = SPA(self.benchmark, self.models[:,0])
+        spa = SPA(self.benchmark, self.models[:, 0])
         spa.compute()
 
-        spa = SPA(self.benchmark_series, self.models_df.iloc[:,0])
+        spa = SPA(self.benchmark_series, self.models_df.iloc[:, 0])
         spa.compute()
-
 
 
 class TestStepM(TestCase):
@@ -228,10 +227,10 @@ class TestStepM(TestCase):
         assert_equal(expected, str(stepm))
 
     def test_single_model(self):
-        stepm = StepM(self.benchmark, self.models[:,0], size=0.10)
+        stepm = StepM(self.benchmark, self.models[:, 0], size=0.10)
         stepm.compute()
 
-        stepm = StepM(self.benchmark_series, self.models_df.iloc[:,0])
+        stepm = StepM(self.benchmark_series, self.models_df.iloc[:, 0])
         stepm.compute()
 
     def test_all_superior(self):
@@ -314,7 +313,7 @@ class TestMCS(TestCase):
             pvals[i] = pval if i == 0 else np.max([pvals[i - 1], pval])
             indices[i] = include[drop_index]
         direct = pd.DataFrame(pvals,
-                              index=np.array(indices,dtype=np.int64),
+                              index=np.array(indices, dtype=np.int64),
                               columns=['Pvalue'])
         direct.index.name = 'Model index'
         assert_frame_equal(mcs.pvalues.iloc[:m], direct)
@@ -356,11 +355,10 @@ class TestMCS(TestCase):
             pvals[i] = pval if i == 0 else np.max([pvals[i - 1], pval])
             indices[i] = include[drop_index]
         direct = pd.DataFrame(pvals,
-                              index=np.array(indices,dtype=np.int64),
+                              index=np.array(indices, dtype=np.int64),
                               columns=['Pvalue'])
         direct.index.name = 'Model index'
         assert_frame_equal(mcs.pvalues.iloc[:m], direct)
-
 
     def test_smoke(self):
         mcs = MCS(self.losses, 0.05, reps=100, block_size=10, method='max')
@@ -373,14 +371,13 @@ class TestMCS(TestCase):
 
     def test_errors(self):
         with pytest.raises(ValueError):
-            MCS(self.losses[:,1], 0.05)
+            MCS(self.losses[:, 1], 0.05)
         mcs = MCS(self.losses, 0.05, reps=100, block_size=10, method='max', bootstrap='circular')
         mcs.compute()
         mcs = MCS(self.losses, 0.05, reps=100, block_size=10, method='max', bootstrap='moving block')
         mcs.compute()
         with pytest.raises(ValueError):
             MCS(self.losses, 0.05, bootstrap='unknown')
-
 
     def test_str_repr(self):
         mcs = MCS(self.losses, 0.05)
@@ -399,7 +396,7 @@ class TestMCS(TestCase):
         mcs = MCS(losses, 0.05, reps=200)
         mcs.seed(23456)
         mcs.compute()
-        nan_locs = np.isnan(mcs.pvalues.iloc[:,0])
+        nan_locs = np.isnan(mcs.pvalues.iloc[:, 0])
         assert not nan_locs.any()
 
     def test_exact_ties(self):

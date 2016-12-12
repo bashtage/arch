@@ -1,14 +1,24 @@
+import datetime as dt
+import os
 from unittest import TestCase
 
-from numpy.testing import assert_equal
 import numpy as np
+from numpy.testing import assert_equal
 from pandas import Series, DataFrame, date_range
+
+try:
+    from pandas import Timedelta
+
+    pre_timedelta = False
+except ImportError:
+    pre_timedelta = True
+
 import pytest
 
 from arch.utility.array import ensure1d, parse_dataframe, DocStringInheritor, \
-    date_to_index, find_index
+    date_to_index, find_index, cutoff_to_index
 from arch.univariate.base import implicit_constant
-from arch.compat.python import add_metaclass
+from arch.compat.python import add_metaclass, long
 
 
 class TestUtils(TestCase):
@@ -92,7 +102,6 @@ class TestUtils(TestCase):
         dr = date_range('20000101', periods=3000, freq='W')
         y = Series(np.arange(3000.0), index=dr)
         date_index = y.index
-        import datetime as dt
 
         index = date_to_index(date_index[0], date_index)
         assert_equal(index, 0)
@@ -102,11 +111,11 @@ class TestUtils(TestCase):
         index = date_to_index('2009-08-02', date_index)
         assert_equal(index, 500)
         index = date_to_index('2009-08-04', date_index)
-        assert_equal(index, 500)
+        assert_equal(index, 501)
         index = date_to_index('2009-08-01', date_index)
-        assert_equal(index, 499)
+        assert_equal(index, 500)
         index = date_to_index(dt.datetime(2009, 8, 1), date_index)
-        assert_equal(index, 499)
+        assert_equal(index, 500)
         with pytest.raises(ValueError):
             date_to_index(dt.date(2009, 8, 1), date_index)
         z = y + 0.0
@@ -115,6 +124,68 @@ class TestUtils(TestCase):
         with pytest.raises(ValueError):
             date_to_index(dt.datetime(2009, 8, 1), num_index)
 
+    @pytest.mark.skipif(pre_timedelta, reason='Old pandas does not have Timedelta')
+    def test_date_to_index_timestamp(self):
+        dr = date_range('20000101', periods=3000, freq='W')
+        y = Series(np.arange(3000.0), index=dr)
+        date_index = y.index
+        date = y.index[1000]
+        date_pydt = date.to_pydatetime()
+        date_npdt = date.to_datetime64()
+        date_str = date_pydt.strftime('%Y-%m-%d')
+        index = date_to_index(date, date_index)
+        index_pydt = date_to_index(date_pydt, date_index)
+        index_npdt = date_to_index(date_npdt, date_index)
+        index_str = date_to_index(date_str, date_index)
+        assert_equal(index, 1000)
+        assert_equal(index, index_npdt)
+        assert_equal(index, index_pydt)
+        assert_equal(index, index_str)
+
+    @pytest.mark.skipif(pre_timedelta, reason='Old pandas does not have Timedelta')
+    def test_(self):
+        dr = date_range('20000101', periods=3000, freq='W')
+        y = Series(np.arange(3000.0), index=dr)
+        date_index = y.index
+
+        date = date_index[1000] + Timedelta(1, 'D')
+        date_pydt = date.to_pydatetime()
+        date_npdt = date.to_datetime64()
+        date_str = date_pydt.strftime('%Y-%m-%d')
+        index = date_to_index(date, date_index)
+        index_pydt = date_to_index(date_pydt, date_index)
+        index_npdt = date_to_index(date_npdt, date_index)
+        index_str = date_to_index(date_str, date_index)
+        assert_equal(index, 1001)
+        assert_equal(index, index_npdt)
+        assert_equal(index, index_pydt)
+        assert_equal(index, index_str)
+
+        date = date_index[0] - Timedelta(1, 'D')
+        index = date_to_index(date, date_index)
+        assert_equal(index, 0)
+
+        date_pydt = date.to_pydatetime()
+        date_npdt = date.to_datetime64()
+        date_str = date_pydt.strftime('%Y-%m-%d')
+        index_pydt = date_to_index(date_pydt, date_index)
+        index_npdt = date_to_index(date_npdt, date_index)
+        index_str = date_to_index(date_str, date_index)
+        assert_equal(index, index_npdt)
+        assert_equal(index, index_pydt)
+        assert_equal(index, index_str)
+
+    def test_cutoff_to_index(self):
+        dr = date_range('20000101', periods=3000, freq='W')
+        y = Series(np.arange(3000.0), index=dr)
+        date_index = y.index
+        assert cutoff_to_index(1000, date_index, 0) == 1000
+        assert cutoff_to_index(long(1000), date_index, 0) == 1000
+        assert cutoff_to_index(np.int16(1000), date_index, 0) == 1000
+        assert cutoff_to_index(np.int64(1000), date_index, 0) == 1000
+        assert cutoff_to_index(date_index[1000], date_index, 0) == 1000
+        assert cutoff_to_index(None, date_index, 1000) == 1000
+
     def test_find_index(self):
         index = date_range('2000-01-01', periods=5000)
         series = Series(np.arange(len(index)), index=index, name='test')
@@ -122,21 +193,21 @@ class TestUtils(TestCase):
         assert_equal(find_index(series, '2000-01-01'), 0)
         assert_equal(find_index(series, series.index[0]), 0)
         assert_equal(find_index(series, series.index[3000]), 3000)
-        assert_equal(find_index(series, series.index[3000].to_datetime()), 3000)
-        found_loc =find_index(series,
-                              np.datetime64(series.index[3000].to_datetime()))
+        assert_equal(find_index(series, series.index[3000].to_pydatetime()), 3000)
+        found_loc = find_index(series,
+                               np.datetime64(series.index[3000].to_pydatetime()))
         assert_equal(found_loc, 3000)
         with pytest.raises(ValueError):
             find_index(series, 'bad-date')
         with pytest.raises(ValueError):
             find_index(series, '1900-01-01')
-        
+
         assert_equal(find_index(df, '2000-01-01'), 0)
         assert_equal(find_index(df, df.index[0]), 0)
         assert_equal(find_index(df, df.index[3000]), 3000)
-        assert_equal(find_index(df, df.index[3000].to_datetime()), 3000)
-        found_loc =find_index(df,
-                              np.datetime64(df.index[3000].to_datetime()))
+        assert_equal(find_index(df, df.index[3000].to_pydatetime()), 3000)
+        found_loc = find_index(df,
+                               np.datetime64(df.index[3000].to_pydatetime()))
         assert_equal(found_loc, 3000)
         with pytest.raises(ValueError):
             find_index(df, 'bad-date')
@@ -144,6 +215,7 @@ class TestUtils(TestCase):
             find_index(df, '1900-01-01')
 
 
+@pytest.mark.skipif(os.name != 'nt', reason='XVFB is broken on travis')
 class TestDoc(TestCase):
     def test_doc(self):
         from arch import doc

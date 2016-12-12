@@ -6,7 +6,7 @@ from __future__ import print_function, division, absolute_import
 import datetime as dt
 
 import numpy as np
-from pandas import DataFrame, Series, to_datetime, NaT
+from pandas import DataFrame, Series, to_datetime, NaT, Timestamp
 from pandas.core.common import is_datetime64_dtype
 
 from ..compat.python import long
@@ -117,7 +117,7 @@ class DocStringInheritor(type):
 
 def date_to_index(date, date_index):
     """
-    Looks up a
+    Looks up a date in an array of dates
 
     Parameters
     ----------
@@ -134,10 +134,6 @@ def date_to_index(date, date_index):
     Notes
     -----
     Assumes dates are increasing and unique.
-
-    Uses last value interpolation if a date is not in the series so that the
-    value returned satisfies date_index[index] is the largest date less than or
-    equal to date.
     """
     if not is_datetime64_dtype(date_index):
         raise ValueError('date_index must be a datetime64 array')
@@ -162,9 +158,42 @@ def date_to_index(date, date_index):
 
     locs = np.nonzero(date_index <= date)[0]
     if locs.shape[0] == 0:
-        raise ValueError('All dates in date_index occur after date')
-    else:
-        return locs.max()
+        return 0
+
+    loc = locs.max()
+    in_array = np.any(date_index == date)
+    if not in_array:
+        loc += 1
+
+    return loc
+
+
+def cutoff_to_index(cutoff, index, default):
+    """
+    Converts a cutoff to a numerical index
+
+    Parameters
+    ----------
+    cutoff : {None, str, datetime, datetime64, Timestamp)
+        The cutoff point to use
+    index : Pandas index
+        Pandas index
+    default : int
+        The value to return if cutoff is None
+
+    Returns
+    -------
+    val : int
+        Integer value of
+    """
+    int_index = default
+    if isinstance(cutoff, (str, dt.datetime, np.datetime64, Timestamp)):
+        int_index = date_to_index(cutoff, index)
+    elif isinstance(cutoff, (int, long)) or issubclass(cutoff.__class__,
+                                                       np.integer):
+        int_index = cutoff
+
+    return int_index
 
 
 def find_index(s, index):

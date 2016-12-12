@@ -950,7 +950,7 @@ class VarianceRatio(UnitRootTest):
     >>> import pandas as pd
     >>> data = pd.DataFrame.from_csv(csv)
     >>> data = data[::-1]  # Reverse
-    >>> data = data.resample('M',how='last')  # End of month
+    >>> data = data.resample('M').last()  # End of month
     >>> returns = data['Adj Close'].pct_change().dropna()
     >>> vr = VarianceRatio(returns, lags=12)
     >>> print('{0:0.4f}'.format(vr.stat))

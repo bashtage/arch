@@ -2,6 +2,8 @@
 Core classes for ARCH models
 """
 from __future__ import division, absolute_import
+from ..compat.python import add_metaclass, range
+
 from copy import deepcopy
 from functools import partial
 import datetime as dt
@@ -20,8 +22,7 @@ from statsmodels.tools.numdiff import approx_fprime, approx_hess
 
 from .distribution import Distribution, Normal
 from .volatility import VolatilityProcess, ConstantVariance
-from ..utility.array import ensure1d, DocStringInheritor, date_to_index
-from ..compat.python import add_metaclass, range
+from ..utility.array import ensure1d, DocStringInheritor
 
 __all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel']
 
@@ -154,8 +155,12 @@ class ARCHModel(object):
     """
 
     def __init__(self, y=None, volatility=None, distribution=None,
-                 hold_back=None,
-                 last_obs=None):
+                 hold_back=None):
+
+        # Set on model fit
+        self._fit_indices = None
+        self._fit_y = None
+
         self._is_pandas = isinstance(y, (pd.DataFrame, pd.Series))
         if y is not None:
             self._y_series = ensure1d(y, 'y', series=True)
@@ -166,28 +171,7 @@ class ARCHModel(object):
         self._y_original = y
 
         self.hold_back = hold_back
-        if isinstance(hold_back, (str, dt.datetime, np.datetime64)):
-            date_index = self._y_series.index
-            _first_obs_index = date_to_index(hold_back, date_index)
-            self.first_obs = date_index[_first_obs_index]
-        elif hold_back is None:
-            self.first_obs = _first_obs_index = 0
-        else:
-            _first_obs_index = hold_back
-            self.first_obs = self._y_series.index[_first_obs_index]
-
-        self.last_obs = _last_obs_index = last_obs
-        if isinstance(last_obs, (str, dt.datetime, np.datetime64)):
-            date_index = self._y_series.index
-            _last_obs_index = date_to_index(last_obs, date_index)
-            self.last_obs = date_index[_last_obs_index]
-        elif last_obs is None:
-            self.last_obs = _last_obs_index = self._y.shape[0]
-        else:
-            self.last_obs = self._y_series.index[last_obs]
-
-        self.nobs = _last_obs_index - _first_obs_index
-        self._indices = (_first_obs_index, _last_obs_index)
+        self._hold_back = 0 if hold_back is None else hold_back
 
         self._volatility = None
         self._distribution = None
@@ -270,7 +254,7 @@ class ARCHModel(object):
         Computes the model r-square.  Optional to over-ride.  Must match
         signature.
         """
-        raise NotImplementedError("Subcalses optionally may provide.")
+        raise NotImplementedError("Subclasses optionally may provide.")
 
     def _fit_no_arch_normal_errors(self, cov_type='robust'):
         """
@@ -370,7 +354,7 @@ class ARCHModel(object):
 
         names = self._all_parameter_names()
         # Reshape resids and vol
-        first_obs, last_obs = self._indices
+        first_obs, last_obs = self._fit_indices
         resids_final = np.empty_like(self._y, dtype=np.float64)
         resids_final.fill(np.nan)
         resids_final[first_obs:last_obs] = resids
@@ -382,8 +366,26 @@ class ARCHModel(object):
         return ARCHModelFixedResult(params, resids, vol, self._y_series, names,
                                     loglikelihood, self._is_pandas, model_copy)
 
+    def _adjust_sample(self, first_obs, last_obs):
+        """
+        Performs sample adjustment for estimation
+
+        Parameters
+        ----------
+        first_obs : {int, str, datetime, datetime64, Timestamp}
+            First observation to use when estimating model
+        last_obs : {int, str, datetime, datetime64, Timestamp}
+            Last observation to use when estimating model
+
+        Notes
+        -----
+        Adjusted sample must follow Python semantics of first_obs:last_obs
+        """
+        raise NotImplementedError("Subclasses must implement")
+
     def fit(self, update_freq=1, disp='final', starting_values=None,
-            cov_type='robust', show_warning=True):
+            cov_type='robust', show_warning=True, first_obs=None,
+            last_obs=None):
         """
         Fits the model given a nobs by 1 vector of sigma2 values
 
@@ -405,6 +407,10 @@ class ARCHModel(object):
             corresponds to Bollerslev-Wooldridge covariance estimator.
         show_warning : bool, optional
             Flag indicating whether convergence warnings should be shown.
+        first_obs : {int, str, datetime, Timestamp}
+            First observation to use when estimating model
+        last_obs : {int, str, datetime, Timestamp}
+            Last observation to use when estimating model
 
         Returns
         -------
@@ -417,6 +423,8 @@ class ARCHModel(object):
         difficulty finding the optimum.
 
         """
+        if self._y_original is None:
+            raise RuntimeError('Cannot estimate model without data.')
         # 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,
         # use closed form
         v, d = self.volatility, self.distribution
@@ -424,6 +432,9 @@ class ARCHModel(object):
         total_params = sum(offsets)
         has_closed_form = (v.num_params == 1 and d.num_params == 0) or \
             total_params == 0
+
+        self._adjust_sample(first_obs, last_obs)
+
         if has_closed_form:
             try:
                 return self._fit_no_arch_normal_errors(cov_type=cov_type)
@@ -489,7 +500,7 @@ class ARCHModel(object):
         _callback_func_count, _callback_iter = 0, 0
         if update_freq <= 0 or disp == 'off':
             _callback_iter_display = 2 ** 31
-            update_freq = 0
+
         else:
             _callback_iter_display = update_freq
         disp = 1 if disp == 'final' else 0
@@ -533,7 +544,7 @@ class ARCHModel(object):
 
         names = self._all_parameter_names()
         # Reshape resids and vol
-        first_obs, last_obs = self._indices
+        first_obs, last_obs = self._fit_indices
         resids_final = np.empty_like(self._y, dtype=np.float64)
         resids_final.fill(np.nan)
         resids_final[first_obs:last_obs] = resids
@@ -578,11 +589,11 @@ class ARCHModel(object):
         """
         Returns the number of parameters
         """
-        raise NotImplementedError('Must be overridden')
+        raise NotImplementedError('Subclasses must implement')
 
     def simulate(self, params, nobs, burn=500, initial_value=None, x=None,
                  initial_value_vol=None):
-        raise NotImplementedError('Must be overridden')
+        raise NotImplementedError('Subclasses must implement')
 
     def resids(self, params):
         """
@@ -597,7 +608,7 @@ class ARCHModel(object):
         resids : 1-d array
             Model residuals
         """
-        raise NotImplementedError('Must be overridden')
+        raise NotImplementedError('Subclasses must implement')
 
     def compute_param_cov(self, params, backcast=None, robust=True):
         """
@@ -641,7 +652,7 @@ class ARCHModel(object):
         """
         Computes forecasts from the model
         """
-        raise NotImplementedError("Subclasses must implement")
+        raise NotImplementedError('Subclasses must implement')
 
 
 class ARCHModelFixedResult(object):
@@ -714,7 +725,7 @@ class ARCHModelFixedResult(object):
         self._dep_name = dep_var.name
         self._names = names
         self._loglikelihood = loglikelihood
-        self._nobs = model.nobs
+        self._nobs = self.model._fit_y.shape[0]
         self._index = dep_var.index
         self._volatility = volatility
 
@@ -988,7 +999,7 @@ class ARCHModelFixedResult(object):
         >>> sim_data = am.simulate([0.1,0.4,0.3,0.2,1.0], 250)
         >>> sim_data.index = pd.date_range('2000-01-01',periods=250)
         >>> am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22], \
-                            vol='Constant', last_obs=125)
+                            vol='Constant')
         >>> res = am.fit()
         >>> fig = res.hedgehog_plot()
 
