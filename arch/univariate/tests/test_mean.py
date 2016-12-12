@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division
 
-import unittest
+from unittest import TestCase
 import warnings
 
 import numpy as np
@@ -22,7 +22,7 @@ from arch.compat.python import range, iteritems
 from pandas.util.testing import assert_frame_equal, assert_series_equal
 
 
-class TestMeanModel(unittest.TestCase):
+class TestMeanModel(TestCase):
 
     @classmethod
     def setup_class(cls):
@@ -768,6 +768,6 @@ class TestMeanModel(unittest.TestCase):
 
         am = arch_model(self.y_series, mean='AR', lags=[1, 2, 4], hold_back=100)
         res4 = am.fit(disp='off', first_obs=4, last_obs=900)
-        assert_almost_equal(res.params.values, res4.params.values)
+        assert_almost_equal(res.params.values, res4.params.values, decimal=4)
         assert am.hold_back == 100
 

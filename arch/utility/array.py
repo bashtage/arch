@@ -7,8 +7,8 @@ import datetime as dt
 
 import numpy as np
 from pandas import DataFrame, Series, to_datetime, NaT, Timestamp
-from pandas.core.common import is_datetime64_dtype
 
+from ..compat.pandas import is_datetime64_dtype
 from ..compat.python import long
 
 __all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor',

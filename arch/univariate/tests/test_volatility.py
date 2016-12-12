@@ -1,4 +1,4 @@
-import unittest
+from unittest import TestCase
 import warnings
 
 import numpy as np
@@ -16,7 +16,7 @@ from arch.univariate.distribution import Normal, StudentsT, SkewStudent
 from arch.compat.python import range
 
 
-class TestVolatiltyProcesses(unittest.TestCase):
+class TestVolatiltyProcesses(TestCase):
     @classmethod
     def setup_class(cls):
         np.random.seed(1234)
@@ -820,6 +820,3 @@ class TestVolatiltyProcesses(unittest.TestCase):
         with pytest.raises(ValueError):
             EGARCH(p=1, o=1, q=-1)
 
-
-if __name__ == '__main__':
-    unittest.main()

@@ -1,6 +1,6 @@
 from __future__ import division
 
-import unittest
+from unittest import TestCase
 import warnings
 
 import numpy as np
@@ -14,7 +14,7 @@ from pandas.util.testing import assert_frame_equal, assert_produces_warning
 from arch.utility.timeseries import add_trend, ColumnNameConflict
 
 
-class TestAddTrend(unittest.TestCase):
+class TestAddTrend(TestCase):
     def test_add_trend_prepend(self):
         n = 10
         x = randn(n, 1)
