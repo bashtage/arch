@@ -1,17 +1,17 @@
 from unittest import TestCase
+from arch.compat.python import range
+
 import timeit
 
 import numpy as np
-from numpy.testing import assert_almost_equal
-from numpy.testing.decorators import skipif
 import pytest
+from numpy.testing import assert_almost_equal
 
 import arch.univariate.recursions as rec
 import arch.univariate.recursions_python as recpy
-from arch.compat.python import range
 
 try:
-    import numba
+    import numba  # noqa
 
     missing_numba = False
 except ImportError:
@@ -309,10 +309,9 @@ var_bounds = np.ones((T, 2)) * var_bounds
                                backcast, var_bounds, lnsigma2, std_resids,
                                abs_std_resids)
         sigma2_numba = sigma2.copy()
-        recpy.egarch_recursion_python(parameters, resids, sigma2, p, o, q, nobs,
-                                      backcast, var_bounds, lnsigma2,
-                                      std_resids,
-                                      abs_std_resids)
+        recpy.egarch_recursion_python(parameters, resids, sigma2, p, o, q,
+                                      nobs, backcast, var_bounds, lnsigma2,
+                                      std_resids, abs_std_resids)
         sigma2_python = sigma2.copy()
         rec.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs,
                              backcast, var_bounds, lnsigma2, std_resids,
@@ -333,8 +332,7 @@ var_bounds = np.ones((T, 2)) * var_bounds
             sigma2[t] = np.exp(lnsigma2[t])
         assert_almost_equal(sigma2_python, sigma2)
 
-    @pytest.mark.skipif(missing_numba,
-                        reason='numba not installed')
+    @pytest.mark.skipif(missing_numba, reason='numba not installed')
     def test_garch_performance(self):
         garch_setup = """
 parameters = np.array([.1, .4, .3, .2])
@@ -343,18 +341,19 @@ sresids = np.sign(resids)
         """
 
         garch_first = """
-recpy.garch_recursion(parameters, fresids, sresids, sigma2, 1, 1, 1, T, backcast, var_bounds)
+recpy.garch_recursion(parameters, fresids, sresids, sigma2, 1, 1, 1, T,
+backcast, var_bounds)
         """
         garch_second = """
-rec.garch_recursion(parameters, fresids, sresids, sigma2, 1, 1, 1, T, backcast, var_bounds)
+rec.garch_recursion(parameters, fresids, sresids, sigma2, 1, 1, 1, T, backcast,
+var_bounds)
         """
         timer = Timer(garch_first, 'Numba', garch_second, 'Cython', 'GARCH',
                       self.timer_setup + garch_setup)
         timer.display()
         assert timer.ratio < 10.0
 
-    @pytest.mark.skipif(missing_numba,
-                        reason = 'numba not installed')
+    @pytest.mark.skipif(missing_numba, reason='numba not installed')
     def test_harch_performance(self):
         harch_setup = """
 parameters = np.array([.1, .4, .3, .2])
@@ -362,7 +361,8 @@ lags = np.array([1, 5, 22], dtype=np.int32)
         """
 
         harch_first = """
-recpy.harch_recursion(parameters, resids, sigma2, lags, T, backcast, var_bounds)
+recpy.harch_recursion(parameters, resids, sigma2, lags, T, backcast,
+var_bounds)
         """
 
         harch_second = """
@@ -374,8 +374,7 @@ rec.harch_recursion(parameters, resids, sigma2, lags, T, backcast, var_bounds)
         timer.display()
         assert timer.ratio < 10.0
 
-    @pytest.mark.skipif(missing_numba,
-                        reason='numba not installed')
+    @pytest.mark.skipif(missing_numba, reason='numba not installed')
     def test_egarch_performance(self):
         egarch_setup = """
 nobs = T
@@ -388,12 +387,14 @@ abs_std_resids = np.empty_like(sigma2)
         """
 
         egarch_first = """
-rec.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast, var_bounds, lnsigma2, std_resids, abs_std_resids)
-        """
+rec.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast,
+var_bounds, lnsigma2, std_resids, abs_std_resids)
+"""
 
         egarch_second = """
-recpy.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast, var_bounds, lnsigma2, std_resids, abs_std_resids)
-        """
+recpy.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast,
+var_bounds, lnsigma2, std_resids, abs_std_resids)
+"""
         timer = Timer(egarch_first, 'Numba', egarch_second, 'Cython', 'EGARCH',
                       self.timer_setup + egarch_setup)
         timer.display()

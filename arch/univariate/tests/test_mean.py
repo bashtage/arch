@@ -1,29 +1,30 @@
 from __future__ import absolute_import, division
 
-from unittest import TestCase
 import warnings
+from unittest import TestCase
 
 import numpy as np
-from numpy.random import randn
-from numpy.testing import assert_almost_equal, assert_equal
 import pandas as pd
 import pytest
+from numpy.random import randn
+from numpy.testing import assert_almost_equal, assert_equal
+from pandas.util.testing import assert_frame_equal, assert_series_equal
+
+from arch.compat.python import range, iteritems
 
 try:
     import arch.univariate.recursions as rec
 except ImportError:
-    import arch.univariate.recursions_python as rec
-from arch.univariate.mean import HARX, ConstantMean, ARX, ZeroMean, \
-    arch_model, LS, align_forecast
+    import arch.univariate.recursions_python as rec  # noqa
+from arch.univariate.base import ARCHModelResult
+from arch.univariate.mean import HARX, ConstantMean, ARX, ZeroMean, LS, \
+    arch_model, align_forecast
 from arch.univariate.volatility import ConstantVariance, GARCH, HARCH, ARCH, \
     RiskMetrics2006, EWMAVariance, EGARCH
 from arch.univariate.distribution import Normal, StudentsT
-from arch.compat.python import range, iteritems
-from pandas.util.testing import assert_frame_equal, assert_series_equal
 
 
 class TestMeanModel(TestCase):
-
     @classmethod
     def setup_class(cls):
         np.random.seed(1234)
@@ -64,7 +65,8 @@ class TestMeanModel(TestCase):
         assert isinstance(cm.distribution, Normal)
         assert_equal(cm.lags, None)
         res = cm.fit()
-        assert_almost_equal(res.params, np.array([self.y.mean(), self.y.var()]))
+        expected = np.array([self.y.mean(), self.y.var()])
+        assert_almost_equal(res.params, expected)
 
         forecasts = res.forecast(horizon=20, start=20)
         direct = pd.DataFrame(index=np.arange(self.y.shape[0]),
@@ -240,6 +242,7 @@ class TestMeanModel(TestCase):
         arx = ARX(self.y, self.x, lags=3, hold_back=10, constant=False)
         params = np.array([0.4, 0.3, 0.2, 1.0, 1.0])
         data = arx.simulate(params, self.T, x=randn(self.T + 500, 1))
+        assert isinstance(data, pd.DataFrame)
         bounds = arx.bounds()
         for b in bounds:
             assert_equal(b[0], -np.inf)
@@ -277,6 +280,7 @@ class TestMeanModel(TestCase):
         ar = ARX(self.y, lags=3)
         params = np.array([1.0, 0.4, 0.3, 0.2, 1.0])
         data = ar.simulate(params, self.T)
+        assert len(data) == self.T
         assert_equal(self.y, ar.y)
 
         bounds = ar.bounds()
@@ -312,8 +316,8 @@ class TestMeanModel(TestCase):
             fcast = np.zeros(y.shape[0] + 5)
             fcast[:y.shape[0]] = y.copy()
             for h in range(1, 6):
-                reg = np.array(
-                    [1.0, fcast[i + h - 1], fcast[i + h - 2], fcast[i + h - 3]])
+                reg = np.array([1.0, fcast[i + h - 1],
+                                fcast[i + h - 2], fcast[i + h - 3]])
                 fcast[i + h] = reg.dot(params)
             direct.iloc[i, :] = fcast[i + 1:i + 6]
         assert_frame_equal(direct, forecasts)
@@ -334,6 +338,7 @@ class TestMeanModel(TestCase):
         assert isinstance(res.conditional_volatility, pd.Series)
         # Smoke tests
         summ = ar.fit().summary()
+        assert 'Constant Variance' in str(summ)
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
         res = ar.fit(update_freq=5, cov_type='mle')
         res.param_cov
@@ -522,6 +527,10 @@ class TestMeanModel(TestCase):
         am = arch_model(self.y, mean='ar', lags=[1, 3, 5])
         res = am.fit(cov_type='mle', update_freq=0)
         res2 = am.fit(starting_values=res.params, update_freq=0)
+        assert isinstance(res, ARCHModelResult)
+        assert isinstance(res2, ARCHModelResult)
+        assert len(res.params) == 7
+        assert len(res2.params) == 7
 
         am = arch_model(self.y, mean='zero')
         sv = np.array([1.0, 0.3, 0.8])
@@ -625,11 +634,9 @@ class TestMeanModel(TestCase):
 
         cm = ConstantMean(y)
         res = cm.fit(last_obs=y.index[900])
-        temp = cm._fit_indices
 
         cm = ConstantMean(y)
         res2 = cm.fit(last_obs=900)
-        temp2 = cm._fit_indices
 
         assert_equal(res.resid.values, res2.resid.values)
 
@@ -675,21 +682,30 @@ class TestMeanModel(TestCase):
         try:
             sio = StringIO()
             sys.stdout = sio
-            res = am.fit(disp='final')
+            am.fit(disp='final')
             sio.seek(0)
             print('SIO!')
             print(sio.read())
         finally:
             sys.stdout = orig_stdout
 
-        res = am.fit(disp='off')
+        try:
+            sio = StringIO()
+            sys.stdout = sio
+            am.fit(disp='off')
+            sio.seek(0)
+            output = sio.read()
+            assert len(output) == 0
+        finally:
+            sys.stdout = orig_stdout
 
     def test_convergence_warning(self):
-        y = np.array([0.83277114, 0.45194014, -0.33475561, -0.49463896, 0.54715787,
-                      1.11895382, 1.31280266, 0.81464021, 0.8532107, 1.0967188,
-                      0.9346354, 0.92289249, 1.01339085, 1.071065, 1.42413486,
-                      1.15392453, 1.10929691, 0.96162061, 0.96489515, 0.93250153,
-                      1.34509807, 1.80951607, 1.66313783, 1.38610821, 1.26381761])
+        y = np.array([0.83277114, 0.45194014, -0.33475561, -0.49463896,
+                      0.54715787, 1.11895382, 1.31280266, 0.81464021,
+                      0.8532107, 1.0967188, 0.9346354, 0.92289249, 1.01339085,
+                      1.071065, 1.42413486, 1.15392453, 1.10929691, 0.96162061,
+                      0.96489515, 0.93250153, 1.34509807, 1.80951607,
+                      1.66313783, 1.38610821, 1.26381761])
         am = arch_model(y, mean='ARX', lags=10, p=5, q=0)
         with warnings.catch_warnings(record=True) as w:
             am.fit()
@@ -719,7 +735,7 @@ class TestMeanModel(TestCase):
 
         res_adj = am.fit(disp='off',
                          first_obs=0,
-                         last_obs=self.y_series.shape[0]+1)
+                         last_obs=self.y_series.shape[0] + 1)
         assert_equal(res.resid.values, res_adj.resid.values)
         assert_equal(res.params.values, res_adj.params.values)
 
@@ -766,8 +782,8 @@ class TestMeanModel(TestCase):
         assert_almost_equal(res.params.values, res2.params.values)
         assert_almost_equal(res2.params.values, res3.params.values)
 
-        am = arch_model(self.y_series, mean='AR', lags=[1, 2, 4], hold_back=100)
+        am = arch_model(self.y_series, mean='AR', lags=[1, 2, 4],
+                        hold_back=100)
         res4 = am.fit(disp='off', first_obs=4, last_obs=900)
         assert_almost_equal(res.params.values, res4.params.values, decimal=4)
         assert am.hold_back == 100
-

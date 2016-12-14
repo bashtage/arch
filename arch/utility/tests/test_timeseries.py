@@ -71,7 +71,8 @@ class TestAddTrend(TestCase):
         assert y[0, 2] == 1.0
         assert_array_almost_equal(np.diff(y[:, 2]), np.ones((n - 1)))
         assert y[0, 3] == 1.0
-        assert_array_almost_equal(np.diff(y[:, 3]), np.arange(3.0, 2.0 * n, 2.0))
+        assert_array_almost_equal(np.diff(y[:, 3]),
+                                  np.arange(3.0, 2.0 * n, 2.0))
 
     def test_add_trend_t(self):
         n = 20

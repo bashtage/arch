@@ -1,13 +1,11 @@
 from unittest import TestCase
 
-import scipy.stats as stats
-from scipy.special import gammaln, gamma
-from numpy.testing import assert_almost_equal, assert_equal, \
-    assert_array_equal
 import numpy as np
 import pytest
-
+import scipy.stats as stats
 from arch.univariate.distribution import Normal, StudentsT, SkewStudent
+from numpy.testing import assert_almost_equal, assert_equal, assert_array_equal
+from scipy.special import gammaln, gamma
 
 
 class TestDistributions(TestCase):
@@ -51,8 +49,8 @@ class TestDistributions(TestCase):
         bounds = dist.bounds(self.resids)
         assert_equal(len(bounds), 1)
 
-        A, b = dist.constraints()
-        assert_equal(A.shape, (2, 1))
+        a, b = dist.constraints()
+        assert_equal(a.shape, (2, 1))
 
         k = stats.kurtosis(self.resids, fisher=False)
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
@@ -71,10 +69,12 @@ class TestDistributions(TestCase):
         const_a = 4*lam*const_c*(eta-2)/(eta-1)
         const_b = (1 + 3*lam**2 - const_a**2)**.5
 
-        resids = self.resids / self.sigma2**.5
-        pdf = const_b * const_c / self.sigma2**.5 \
-            * (1 + 1/(eta-2) *((const_b * resids + const_a)
-            /(1 + np.sign(resids + const_a / const_b) * lam))**2)**(-(eta+1)/2)
+        resids = self.resids / self.sigma2 ** .5
+        pow = (-(eta + 1) / 2)
+        pdf = const_b * const_c / self.sigma2 ** .5 * \
+            (1 + 1 / (eta - 2) *
+             ((const_b * resids + const_a) /
+              (1 + np.sign(resids + const_a / const_b) * lam)) ** 2) ** pow
 
         ll2 = np.log(pdf).sum()
         assert_almost_equal(ll1, ll2)
@@ -84,12 +84,13 @@ class TestDistributions(TestCase):
         bounds = dist.bounds(self.resids)
         assert_equal(len(bounds), 2)
 
-        A, b = dist.constraints()
-        assert_equal(A.shape, (4, 2))
+        a, b = dist.constraints()
+        assert_equal(a.shape, (4, 2))
 
         k = stats.kurtosis(self.resids, fisher=False)
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
-        assert_array_equal(dist.starting_values(self.resids), np.array([sv, 0.]))
+        assert_array_equal(dist.starting_values(self.resids),
+                           np.array([sv, 0.]))
 
         with pytest.raises(ValueError):
             dist.simulate(np.array([1.5, 0.]))
@@ -99,4 +100,3 @@ class TestDistributions(TestCase):
             dist.simulate(np.array([4., -1.5]))
         with pytest.raises(ValueError):
             dist.simulate(np.array([1.5, 1.5]))
-

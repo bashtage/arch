@@ -14,7 +14,6 @@ except ImportError:
     pre_timedelta = True
 
 import pytest
-
 from arch.utility.array import ensure1d, parse_dataframe, DocStringInheritor, \
     date_to_index, find_index, cutoff_to_index
 from arch.univariate.base import implicit_constant
@@ -124,13 +123,18 @@ class TestUtils(TestCase):
         with pytest.raises(ValueError):
             date_to_index(dt.datetime(2009, 8, 1), num_index)
 
-    @pytest.mark.skipif(pre_timedelta, reason='Old pandas does not have Timedelta')
     def test_date_to_index_timestamp(self):
         dr = date_range('20000101', periods=3000, freq='W')
         y = Series(np.arange(3000.0), index=dr)
         date_index = y.index
         date = y.index[1000]
-        date_pydt = date.to_pydatetime()
+
+        try:
+            date_pydt = date.to_pydatetime()
+        except AttributeError:
+            # Old pandas
+            date_pydt = date.to_datetime()
+
         date_npdt = date.to_datetime64()
         date_str = date_pydt.strftime('%Y-%m-%d')
         index = date_to_index(date, date_index)
@@ -142,7 +146,8 @@ class TestUtils(TestCase):
         assert_equal(index, index_pydt)
         assert_equal(index, index_str)
 
-    @pytest.mark.skipif(pre_timedelta, reason='Old pandas does not have Timedelta')
+    @pytest.mark.skipif(pre_timedelta,
+                        reason='Old pandas does not have Timedelta')
     def test_(self):
         dr = date_range('20000101', periods=3000, freq='W')
         y = Series(np.arange(3000.0), index=dr)
@@ -193,9 +198,10 @@ class TestUtils(TestCase):
         assert_equal(find_index(series, '2000-01-01'), 0)
         assert_equal(find_index(series, series.index[0]), 0)
         assert_equal(find_index(series, series.index[3000]), 3000)
-        assert_equal(find_index(series, series.index[3000].to_pydatetime()), 3000)
-        found_loc = find_index(series,
-                               np.datetime64(series.index[3000].to_pydatetime()))
+        assert_equal(find_index(series, series.index[3000].to_pydatetime()),
+                     3000)
+        npy_date = np.datetime64(series.index[3000].to_pydatetime())
+        found_loc = find_index(series, npy_date)
         assert_equal(found_loc, 3000)
         with pytest.raises(ValueError):
             find_index(series, 'bad-date')

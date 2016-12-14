@@ -7,7 +7,7 @@ All ARCH models start by specifying a mean model.
 No Mean
 ~~~~~~~
 .. autoclass:: ZeroMean
-    :members: resids, simulate, fit,  fix
+    :members: resids, simulate, fit,  fix, forecast
 
 Constant Mean
 ~~~~~~~~~~~~~

@@ -89,7 +89,8 @@ class TestUnitRoot(TestCase):
         for d in adf.valid_trends:
             assert d in ('nc', 'c', 'ct', 'ctt')
         assert adf.null_hypothesis == 'The process contains a unit root.'
-        assert adf.alternative_hypothesis == 'The process is weakly stationary.'
+        assert adf.alternative_hypothesis == 'The process is weakly ' \
+                                             'stationary.'
 
     def test_kpss_auto(self):
         kpss = KPSS(self.inflation)
@@ -239,3 +240,4 @@ class TestUnitRoot(TestCase):
     def test_variance_ratio_generic(self):
         # TODO: Currently not a test, just makes sure code runs at all
         vr = VarianceRatio(self.inflation, lags=24)
+        assert isinstance(vr, VarianceRatio)
