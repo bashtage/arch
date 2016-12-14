@@ -50,8 +50,8 @@ class TestVarNW(TestCase):
         gamma_1 = e[1:].T.dot(e[:-1])
         gamma_2 = e[2:].T.dot(e[:-2])
         w1, w2 = 1.0 - (1.0 / 3.0), 1.0 - (2.0 / 3.0)
-        expected = (gamma_0 + w1 * (gamma_1 + gamma_1.T)
-                    + w2 * (gamma_2 + gamma_2.T)) / 100.0
+        expected = (gamma_0 + w1 * (gamma_1 + gamma_1.T) +
+                    w2 * (gamma_2 + gamma_2.T)) / 100.0
         assert_almost_equal(cov_nw(y, lags=2), expected)
 
     def test_cov_nw_axis(self):
@@ -61,8 +61,8 @@ class TestVarNW(TestCase):
         gamma_1 = e[1:].T.dot(e[:-1])
         gamma_2 = e[2:].T.dot(e[:-2])
         w1, w2 = 1.0 - (1.0 / 3.0), 1.0 - (2.0 / 3.0)
-        expected = (gamma_0 + w1 * (gamma_1 + gamma_1.T)
-                    + w2 * (gamma_2 + gamma_2.T)) / 100.0
+        expected = (gamma_0 + w1 * (gamma_1 + gamma_1.T) +
+                    w2 * (gamma_2 + gamma_2.T)) / 100.0
         assert_almost_equal(cov_nw(y.T, lags=2, axis=1), expected)
 
     def test_errors(self):

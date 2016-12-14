@@ -1,21 +1,22 @@
 from __future__ import absolute_import, division
+
 import warnings
 from unittest import TestCase
 
 import numpy as np
 from numpy.testing import assert_equal, assert_allclose
-import scipy.stats as stats
-import pandas as pd
 from pandas.util.testing import assert_frame_equal, assert_series_equal
+import pandas as pd
 import pytest
+import scipy.stats as stats
 
 from arch.bootstrap import IIDBootstrap, StationaryBootstrap, \
     MovingBlockBootstrap, CircularBlockBootstrap
-from arch.bootstrap.base import _loo_jackknife
-from arch.bootstrap._samplers_python import (stationary_bootstrap_sample,
-                                             stationary_bootstrap_sample_python)
 from arch.bootstrap._samplers import \
     stationary_bootstrap_sample as stationary_bootstrap_sample_cython
+from arch.bootstrap._samplers_python import (stationary_bootstrap_sample,
+                                             stationary_bootstrap_sample_python)  # noqa
+from arch.bootstrap.base import _loo_jackknife
 
 warnings.simplefilter("always", RuntimeWarning)
 warnings.simplefilter("always")
@@ -236,15 +237,15 @@ class TestBootstrap(TestCase):
             return y.mean(axis=0)
 
         bs = StationaryBootstrap(13, self.y)
-        cov = bs.cov(func, reps=num_bootstrap)
+        bs.cov(func, reps=num_bootstrap)
         bs = MovingBlockBootstrap(13, self.y)
-        cov = bs.cov(func, reps=num_bootstrap)
+        bs.cov(func, reps=num_bootstrap)
         bs = CircularBlockBootstrap(13, self.y)
-        cov = bs.cov(func, reps=num_bootstrap)
+        bs.cov(func, reps=num_bootstrap)
         bs = MovingBlockBootstrap(10, self.y)
-        cov = bs.cov(func, reps=num_bootstrap)
+        bs.cov(func, reps=num_bootstrap)
         bs = CircularBlockBootstrap(10, self.y)
-        cov = bs.cov(func, reps=num_bootstrap)
+        bs.cov(func, reps=num_bootstrap)
 
     def test_conf_int_basic(self):
         num_bootstrap = 200
@@ -362,7 +363,8 @@ class TestBootstrap(TestCase):
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always", RuntimeWarning)
             warnings.simplefilter("always")
-            bs.conf_int(func, tail='lower', reps=num_bootstrap // 2, reuse=True)
+            bs.conf_int(func, tail='lower', reps=num_bootstrap // 2,
+                        reuse=True)
             assert_equal(len(w), 1)
 
     def test_studentized(self):
@@ -490,6 +492,8 @@ class TestBootstrap(TestCase):
         bs.seed(23456)
 
         ci = bs.conf_int(func=param_func, reps=reps, sampling='parametric')
+        assert len(ci) == 2
+        assert np.all(ci[0] < ci[1])
         bs.reset()
         results = np.zeros((reps, 2))
         count = 0
@@ -502,6 +506,8 @@ class TestBootstrap(TestCase):
 
         bs.reset()
         ci = bs.conf_int(func=semi_func, reps=100, sampling='semi')
+        assert len(ci) == 2
+        assert np.all(ci[0] < ci[1])
         bs.reset()
         results = np.zeros((reps, 2))
         count = 0
@@ -657,13 +663,16 @@ class TestBootstrap(TestCase):
         assert_equal(bs._repr_html(), expected)
 
         bs = StationaryBootstrap(10, self.y_series, self.x_df)
-        expected = 'Stationary Bootstrap(block size: 10, no. pos. inputs: 2, no. keyword inputs: 0)'
+        expected = 'Stationary Bootstrap(block size: 10, no. pos. ' \
+                   'inputs: 2, no. keyword inputs: 0)'
         assert_equal(str(bs), expected)
         expected = expected[:-1] + ', ID: ' + hex(id(bs)) + ')'
         assert_equal(bs.__repr__(), expected)
 
-        bs = CircularBlockBootstrap(block_size=20, y=self.y_series, x=self.x_df)
-        expected = 'Circular Block Bootstrap(block size: 20, no. pos. inputs: 0, no. keyword inputs: 2)'
+        bs = CircularBlockBootstrap(block_size=20, y=self.y_series,
+                                    x=self.x_df)
+        expected = 'Circular Block Bootstrap(block size: 20, no. pos. ' \
+                   'inputs: 0, no. keyword inputs: 2)'
         assert_equal(str(bs), expected)
         expected = expected[:-1] + ', ID: ' + hex(id(bs)) + ')'
         assert_equal(bs.__repr__(), expected)

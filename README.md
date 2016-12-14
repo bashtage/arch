@@ -141,9 +141,9 @@ for examples of the multiple comparison procedures.
 
 ## Requirements
 
-* NumPy (1.8+)
+* NumPy (1.9+)
 * SciPy (0.15+)
-* Pandas (0.15+)
+* Pandas (0.16+)
 * statsmodels (0.6+)
 * matplotlib (1.3+)
 
