@@ -29,19 +29,19 @@ class Distribution(object):
         self.num_params = 0
         self._parameters = None
 
-    def _simulator(self, nobs):
+    def _simulator(self, size):
         """
         Simulate i.i.d. draws from the distribution
 
         Parameters
         ----------
-        nobs: int
-            Number of draws from the distribution
+        size : int or tuple
+            Shape of the draws from the distribution
 
         Returns
         -------
         rvs : 1-d array
-            Simulated pseudo random normal variables
+            Simulated pseudo random variables
 
         Notes
         -----
@@ -62,7 +62,7 @@ class Distribution(object):
         Returns
         -------
         simulator : callable
-            Callable that take a single, integer argument and returns i.i.d.
+            Callable that take a single output size argument and returns i.i.d.
             draws from the distribution
         """
         raise NotImplementedError(
@@ -104,7 +104,7 @@ class Distribution(object):
         Parameters
         ----------
         parameters : 1-d array
-            Distribution parameters
+            Distribution shape parameters
         resids : 1-d array
             nobs array of model residuals
         sigma2 : 1-d array
@@ -123,7 +123,20 @@ class Distribution(object):
 
     def starting_values(self, std_resid):
         """
-        Compute starting values from standardized residuals
+        Parameters
+        ----------
+        std_resid : 1-d array
+            Estimated standardized residuals to use in computing starting
+            values for the shape parameter
+
+        Returns
+        -------
+        sv : 1-d array
+            The estimated shape parameters for the distribution
+
+        Notes
+        -----
+        Size of sv depends on the distribution
         """
         raise NotImplementedError(
             'Subclasses must implement')  # pragma: no cover
@@ -166,7 +179,7 @@ class Normal(Distribution):
         return tuple([])
 
     def loglikelihoood(self, parameters, resids, sigma2, individual=False):
-        """Computes the log-likelihood of assuming residuals are normally
+        r"""Computes the log-likelihood of assuming residuals are normally
         distributed, conditional on the variance
 
         Parameters
@@ -192,8 +205,8 @@ class Normal(Distribution):
 
         .. math::
 
-            \\ln f\\left(x\\right)=-\\frac{1}{2}\\ln2\\pi\\sigma^{2}
-            -\\frac{x^{2}}{2\\sigma^{2}}
+            \ln f\left(x\right)=-\frac{1}{2}\left(\ln2\pi+\ln\sigma^{2}
+            +\frac{x^{2}}{\sigma^{2}}\right)
 
         """
         lls = -0.5 * (log(2 * pi) + log(sigma2) + resids ** 2.0 / sigma2)
@@ -203,19 +216,6 @@ class Normal(Distribution):
             return sum(lls)
 
     def starting_values(self, std_resid):
-        """
-        Parameters
-        ----------
-        std_resid : 1-d array
-            Estimated standardized residuals to use in computing starting
-            values for the shape parameter
-
-        Returns
-        -------
-        sv : empty array
-            The normal distribution has no shape parameters
-
-        """
         return empty(0)
 
     def _simulator(self, nobs):
@@ -234,9 +234,8 @@ class StudentsT(Distribution):
     """
 
     def __init__(self):
-        super(StudentsT, self).__init__('Normal')
+        super(StudentsT, self).__init__('Standardized Student\'s t')
         self.num_params = 1
-        self.name = 'Standardized Student\'s t'
 
     def constraints(self):
         return array([[1], [-1]]), array([2.05, -500.0])
@@ -245,7 +244,7 @@ class StudentsT(Distribution):
         return [(2.05, 500.0)]
 
     def loglikelihoood(self, parameters, resids, sigma2, individual=False):
-        """Computes the log-likelihood of assuming residuals are have a
+        r"""Computes the log-likelihood of assuming residuals are have a
         standardized (to have unit variance) Student's t distribution,
         conditional on the variance.
 
@@ -272,10 +271,10 @@ class StudentsT(Distribution):
 
         .. math::
 
-            \\ln\\Gamma\\left(\\frac{\\nu+1}{2}\\right)
-            -\\ln\\Gamma\\left(\\frac{\\nu}{2}\\right)
-            -\\frac{1}{2}\\ln(\\pi\\left(\\nu-2\\right)\\sigma^{2})
-            -\\frac{\\nu+1}{2}\\ln(1+x^{2}/(\\sigma^{2}(\\nu-2)))
+            \ln\Gamma\left(\frac{\nu+1}{2}\right)
+            -\ln\Gamma\left(\frac{\nu}{2}\right)
+            -\frac{1}{2}\ln(\pi\left(\nu-2\right)\sigma^{2})
+            -\frac{\nu+1}{2}\ln(1+x^{2}/(\sigma^{2}(\nu-2)))
 
         where :math:`\Gamma` is the gamma function.
         """
@@ -312,10 +311,10 @@ class StudentsT(Distribution):
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv])
 
-    def _simulator(self, nobs):
+    def _simulator(self, size):
         parameters = self._parameters
         std_dev = sqrt(parameters[0] / (parameters[0] - 2))
-        return standard_t(self._parameters[0], nobs) / std_dev
+        return standard_t(self._parameters[0], size=size) / std_dev
 
     def simulate(self, parameters):
         parameters = asarray(parameters)[None]
@@ -329,12 +328,16 @@ class StudentsT(Distribution):
 
 
 class SkewStudent(Distribution):
-    """
+    r"""
     Standardized Skewed Student's [1]_ distribution for use with ARCH models
 
     Notes
     -----
-    For :math:`\\lambda=0` the distribution is standardized Student's t.
+    The Standardized Skewed Student's distribution takes two parameters,
+    :math:`\eta` and :math:`\lambda`. :math:`\eta` controls the tail shape
+    and is similar to the shape parameter in a Standardized Student's t.
+    :math:`\lambda` controls the skewness. When :math:`\lambda=0` the
+    distribution is identical to a standardized Student's t.
 
     References
     ----------
@@ -346,9 +349,8 @@ class SkewStudent(Distribution):
     """
 
     def __init__(self):
-        super(SkewStudent, self).__init__('Normal')
+        super(SkewStudent, self).__init__('Standardized Skew Student\'s t')
         self.num_params = 2
-        self.name = 'Standardized Skew Student\'s t'
 
     def constraints(self):
         return array([[1, 0], [-1, 0], [0, 1], [0, -1]]), \
@@ -358,7 +360,7 @@ class SkewStudent(Distribution):
         return [(2.05, 300.0), (-1, 1)]
 
     def loglikelihoood(self, parameters, resids, sigma2, individual=False):
-        """Computes the log-likelihood of assuming residuals are have a
+        r"""Computes the log-likelihood of assuming residuals are have a
         standardized (to have unit variance) Skew Student's t distribution,
         conditional on the variance.
 
@@ -385,24 +387,23 @@ class SkewStudent(Distribution):
 
         .. math::
 
-            \\ln\\left[\\frac{bc}{\\sigma}\\left(1+\\frac{1}{\\eta-2}
-                \\left(\\frac{a+bx/\\sigma}
-                {1+sgn(x/\\sigma+a/b)\\lambda}\\right)^{2}\\right)
-                ^{-\\left(\\eta+1\\right)/2}\\right],
+            \ln\left[\frac{bc}{\sigma}\left(1+\frac{1}{\eta-2}
+                \left(\frac{a+bx/\sigma}
+                {1+sgn(x/\sigma+a/b)\lambda}\right)^{2}\right)
+                ^{-\left(\eta+1\right)/2}\right],
 
         where :math:`2<\eta<\infty`, and :math:`-1<\lambda<1`.
         The constants :math:`a`, :math:`b`, and :math:`c` are given by
 
         .. math::
 
-            a=4\\lambda c\\frac{\\eta-2}{\\eta-1},
-                \\quad b^{2}=1+3\\lambda^{2}-a^{2},
-                \\quad c=\\frac{\\Gamma\\left(\\frac{\\eta+1}{2}\\right)}
-                {\\sqrt{\\pi\\left(\\eta-2\\right)}
-                \\Gamma\\left(\\frac{\\eta}{2}\\right)},
+            a=4\lambda c\frac{\eta-2}{\eta-1},
+                \quad b^{2}=1+3\lambda^{2}-a^{2},
+                \quad c=\frac{\Gamma\left(\frac{\eta+1}{2}\right)}
+                {\sqrt{\pi\left(\eta-2\right)}
+                \Gamma\left(\frac{\eta}{2}\right)},
 
         and :math:`\Gamma` is the gamma function.
-
         """
         eta, lam = parameters
 
@@ -470,7 +471,8 @@ class SkewStudent(Distribution):
 
         Returns
         -------
-        float
+        a: float
+            Constant used in the distribution
 
         """
         eta, lam = parameters
@@ -487,8 +489,8 @@ class SkewStudent(Distribution):
 
         Returns
         -------
-        float
-
+        b: float
+            Constant used in the distribution
         """
         eta, lam = parameters
         a = self.__const_a(parameters)
@@ -504,8 +506,8 @@ class SkewStudent(Distribution):
 
         Returns
         -------
-        float
-
+        c : float
+            Log of the constant used in loglikelihood
         """
         eta, lam = parameters
 #        return gamma((eta+1)/2) / ((pi*(eta-2))**.5 * gamma(eta/2))
