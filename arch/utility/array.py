@@ -2,14 +2,13 @@
 Utility functions that do not explicitly relate to Volatility modeling
 """
 from __future__ import print_function, division, absolute_import
+from ..compat.pandas import is_datetime64_dtype
+from ..compat.python import long
 
 import datetime as dt
 
 import numpy as np
 from pandas import DataFrame, Series, to_datetime, NaT, Timestamp
-
-from ..compat.pandas import is_datetime64_dtype
-from ..compat.python import long
 
 __all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor',
            'date_to_index']

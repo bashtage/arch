@@ -1,13 +1,13 @@
 from __future__ import absolute_import, division
+from ..compat.python import iteritems, itervalues, add_metaclass, range
+from ..utility.array import DocStringInheritor
+
 import copy
 
 import numpy as np
 from numpy.random import RandomState
 import pandas as pd
 import scipy.stats as stats
-
-from arch.compat.python import iteritems, itervalues, add_metaclass, range
-from arch.utility.array import DocStringInheritor
 
 __all__ = ['IIDBootstrap', 'StationaryBootstrap', 'CircularBlockBootstrap',
            'MovingBlockBootstrap']
