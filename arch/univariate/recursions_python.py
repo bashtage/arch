@@ -4,11 +4,11 @@ testing and if it isn't possible to install the Cython version using
 python setup.py install --no-binary
 """
 from __future__ import division, absolute_import
-from numpy import log
-import numpy as np
-
 from ..compat.python import range
 from ..compat.numba import jit
+
+from numpy import log
+import numpy as np
 
 __all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion',
            'egarch_recursion']

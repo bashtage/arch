@@ -4,6 +4,7 @@ inherit from :class:`VolatilityProcess` and provide the same methods with the
 same inputs.
 """
 from __future__ import division, absolute_import
+from ..compat.python import add_metaclass, range
 
 import itertools
 
@@ -12,7 +13,6 @@ from numpy import sqrt, ones, zeros, isscalar, sign, ones_like, arange, \
     empty, abs, array, finfo, float64, log, exp, floor
 
 from .distribution import Normal
-from ..compat.python import add_metaclass, range
 from ..utility.array import ensure1d, DocStringInheritor
 
 try:

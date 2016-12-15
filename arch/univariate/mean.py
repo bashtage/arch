@@ -3,6 +3,7 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 :class:`ARCHModel` and provide the same methods with the same inputs.
 """
 from __future__ import division, absolute_import
+from ..compat.python import range, iteritems
 
 import copy
 from collections import OrderedDict
@@ -16,7 +17,6 @@ from statsmodels.tsa.tsatools import lagmat
 from .base import ARCHModel, implicit_constant, ARCHModelResult
 from .distribution import Normal, StudentsT, SkewStudent
 from .volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH
-from ..compat.python import range, iteritems
 from ..utility.array import (ensure1d, parse_dataframe, cutoff_to_index,
                              find_index)
 

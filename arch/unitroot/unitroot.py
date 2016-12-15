@@ -1,9 +1,10 @@
 from __future__ import division, absolute_import
+from ..compat.python import add_metaclass, range, lmap, long
+
 import warnings
 
 from numpy import (diff, ceil, power, sqrt, sum, cumsum, int32, int64, interp,
                    array, inf, abs, log, sort, polyval)
-
 from numpy.linalg import pinv
 from scipy.stats import norm
 
@@ -13,7 +14,6 @@ from statsmodels.tsa.stattools import _autolag
 from statsmodels.iolib.summary import Summary
 from statsmodels.iolib.table import SimpleTable
 
-from ..compat.python import lmap, long
 from ..utility import cov_nw
 from ..utility.exceptions import InvalidLengthWarning, invalid_length_doc
 from .critical_values.dickey_fuller import (adf_z_cv_approx, adf_z_large_p,
@@ -25,7 +25,6 @@ from .critical_values.kpss import kpss_critical_values
 from .critical_values.dfgls import (dfgls_large_p, dfgls_small_p,
                                     dfgls_tau_max, dfgls_tau_min,
                                     dfgls_tau_star, dfgls_cv_approx)
-from ..compat.python import add_metaclass, range
 from ..utility.array import ensure1d, DocStringInheritor
 from ..utility.timeseries import add_trend
 
