@@ -564,6 +564,9 @@ class TestMeanModel(TestCase):
         ar.fit(update_freq=0, disp=DISPLAY)
         ar.volatility = RiskMetrics2006()
         ar.fit(update_freq=0, disp=DISPLAY)
+        assert 'tau0' in str(ar.volatility)
+        assert 'tau1' in str(ar.volatility)
+        assert 'kmax' in str(ar.volatility)
 
     def test_egarch(self):
         cm = ConstantMean(self.y)

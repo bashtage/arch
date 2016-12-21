@@ -7,7 +7,7 @@ from numpy.testing import assert_allclose
 
 from arch.univariate.distribution import Normal, StudentsT
 from arch.univariate.volatility import GARCH, ConstantVariance, HARCH, EWMAVariance, \
-    RiskMetrics2006, BootstrapRng
+    RiskMetrics2006, BootstrapRng, EGARCH
 
 
 def _compare_truncated_forecasts(full, trunc, start):
@@ -19,13 +19,6 @@ def _compare_truncated_forecasts(full, trunc, start):
         assert trunc.forecast_paths is None
         assert trunc.shocks is None
         return
-
-    assert np.all(np.isnan(trunc.forecast_paths[:start]))
-    assert np.all(np.isnan(trunc.shocks[:start]))
-
-    assert_allclose(trunc.forecast_paths[start:], full.forecast_paths[start:])
-    assert_allclose(trunc.shocks[start:], full.shocks[start:])
-    return
 
 
 class PreservedState(object):
@@ -148,8 +141,6 @@ class TestVarianceForecasts(TestCase):
                          method='bootstrap', start=0, simulations=2000)
 
     def test_arch_1_forecast(self):
-        dist = Normal()
-        rng = dist.simulate([])
         t = self.t
         vol = GARCH(p=1, o=0, q=0)
         params = np.array([10.0, 0.4])
@@ -198,6 +189,14 @@ class TestVarianceForecasts(TestCase):
         expected[:100] = np.nan
         assert_allclose(forecast.forecasts, expected)
 
+    def test_arch_1_forecast_simulation(self):
+        dist = Normal()
+        rng = dist.simulate([])
+        vol = GARCH(p=1, o=0, q=0)
+        params = np.array([10.0, 0.4])
+        backcast = vol.backcast(self.resid)
+        var_bounds = vol.variance_bounds(self.resid)
+
         with preserved_state():
             forecast = vol.forecast(params, self.resid, backcast, var_bounds,
                                     horizon=1, method='simulation', rng=rng)
@@ -208,74 +207,110 @@ class TestVarianceForecasts(TestCase):
         assert np.all(np.isnan(forecast.forecast_paths[:-1]))
         expected = (params[0] + params[1] * self.resid[-1] ** 2.0)
         assert_allclose(forecast.forecasts[-1], expected)
-        assert_allclose(forecast.forecast_paths[-1], expected)
+        assert_allclose(forecast.forecast_paths[-1], expected * np.ones((1000, 1)))
+        assert_allclose(forecast.shocks[-1], np.sqrt(expected) * rng((1000, 1)))
 
-        if False:
-            assert forecast.forecasts[-1] == params[0]
-            assert np.all(forecast.forecast_paths[-1] == params[0])
-            assert np.all(np.isnan(forecast.shocks[:-1]))
-            assert_allclose(forecast.shocks[-1], np.sqrt(params[0]) * rng((1000, 1)))
+        with preserved_state():
+            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
+                                    horizon=5, method='simulation', rng=rng)
 
-            with preserved_state():
-                forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                        horizon=5, method='simulation', rng=rng)
-            assert forecast.forecasts.shape == (1000, 5)
-            assert forecast.forecast_paths.shape == (1000, 1000, 5)
-            assert forecast.shocks.shape == (1000, 1000, 5)
-            assert np.all(np.isnan(forecast.forecasts[:-1]))
-            assert np.all(forecast.forecasts[-1] == params[0])
-            assert np.all(np.isnan(forecast.forecast_paths[:-1]))
-            assert np.all(forecast.forecast_paths[-1] == params[0])
-            assert_allclose(forecast.shocks[-1], np.sqrt(params[0]) * rng((1000, 5)))
+        paths = np.zeros((1000, 5))
+        paths[:, 0] = expected
+        std_shocks = rng((1000, 5))
+        shocks = np.zeros((1000, 5))
+        shocks[:, 0] = np.sqrt(paths[:, 0]) * std_shocks[:, 0]
+        for i in range(1, 5):
+            paths[:, i] = params[0] + params[1] * shocks[:, i - 1] ** 2
+            shocks[:, i] = np.sqrt(paths[:, i]) * std_shocks[:, i]
 
-            with preserved_state():
-                forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                        horizon=5, start=100, method='simulation',
-                                        simulations=2000, rng=rng)
-            assert forecast.forecasts.shape == (1000, 5)
-            assert forecast.forecast_paths.shape == (1000, 2000, 5)
-            assert forecast.shocks.shape == (1000, 2000, 5)
-            assert np.all(np.isnan(forecast.forecasts[:100]))
-            assert np.all(forecast.forecasts[100:] == params[0])
-            assert np.all(np.isnan(forecast.forecast_paths[:100]))
-            assert np.all(forecast.forecast_paths[100:] == params[0])
-            expected = np.sqrt(params[0]) * rng((2000, 5))
-            expected = np.tile(expected, (t, 1, 1))
-            expected[:100] = np.nan
-            assert_allclose(forecast.shocks, expected)
+        assert forecast.forecasts.shape == (1000, 5)
+        assert forecast.forecast_paths.shape == (1000, 1000, 5)
+        assert forecast.shocks.shape == (1000, 1000, 5)
+        assert np.all(np.isnan(forecast.forecasts[:-1]))
+        assert np.all(np.isnan(forecast.forecast_paths[:-1]))
+        assert np.all(np.isnan(forecast.shocks[:-1]))
+        assert_allclose(forecast.forecasts[-1], paths.mean(0))
+        assert_allclose(forecast.forecast_paths[-1], paths)
+        assert_allclose(forecast.shocks[-1], shocks)
 
-            with preserved_state():
-                forecast = vol.forecast(params, self.resid, backcast,
-                                        var_bounds, horizon=5, method='bootstrap')
-            assert forecast.forecasts.shape == (1000, 5)
-            assert forecast.forecast_paths.shape == (1000, 1000, 5)
-            assert forecast.shocks.shape == (1000, 1000, 5)
-            assert np.all(np.isnan(forecast.forecasts[:-1]))
-            assert np.all(forecast.forecasts[-1] == params[0])
-            assert np.all(np.isnan(forecast.forecast_paths[:-1]))
-            assert np.all(forecast.forecast_paths[-1] == params[0])
-            index = np.floor(np.random.random_sample((1000, 5)) * t)
-            index = index.astype(np.int64)
-            assert_allclose(forecast.shocks[-1], self.resid[index])
+        with preserved_state():
+            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
+                                    horizon=5, start=100, method='simulation',
+                                    simulations=2000, rng=rng)
 
-            with preserved_state():
-                forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                        horizon=5, method='bootstrap', start=100,
-                                        simulations=2000)
-            assert forecast.forecasts.shape == (1000, 5)
-            assert forecast.forecast_paths.shape == (1000, 2000, 5)
-            assert forecast.shocks.shape == (1000, 2000, 5)
-            assert np.all(np.isnan(forecast.forecasts[:100]))
-            assert np.all(forecast.forecasts[100:] == params[0])
-            assert np.all(np.isnan(forecast.forecast_paths[:100]))
-            assert np.all(forecast.forecast_paths[100:] == params[0])
-            index = np.random.random_sample((2000, 5))
-            expected = np.empty((1000, 2000, 5))
-            expected.fill(np.nan)
-            for i in range(100, 1000):
-                int_index = np.floor((i + 1) * index).astype(np.int64)
-                expected[i] = self.resid[int_index]
-            assert_allclose(forecast.shocks, expected)
+        paths = np.zeros((1000, 2000, 5))
+        paths.fill(np.nan)
+        shocks = np.zeros((1000, 2000, 5))
+        shocks.fill(np.nan)
+        for i in range(100, 1000):
+            std_shocks = rng((2000, 5))
+            paths[i, :, 0] = params[0] + params[1] * self.resid[i] ** 2.0
+            shocks[i, :, 0] = np.sqrt(paths[i, :, 0]) * std_shocks[:, 0]
+            for j in range(1, 5):
+                paths[i, :, j] = params[0] + params[1] * shocks[i, :, j - 1] ** 2
+                shocks[i, :, j] = np.sqrt(paths[i, :, j]) * std_shocks[:, j]
+
+        assert_allclose(forecast.forecast_paths, paths)
+        assert_allclose(forecast.forecasts, paths.mean(1))
+        assert_allclose(forecast.shocks, shocks)
+
+    def test_arch_1_forecast_bootstrap(self):
+        vol = GARCH(p=1, o=0, q=0)
+        params = np.array([10.0, 0.4])
+        backcast = vol.backcast(self.resid)
+        var_bounds = vol.variance_bounds(self.resid)
+
+        with preserved_state():
+            forecast = vol.forecast(params, self.resid, backcast,
+                                    var_bounds, horizon=5, method='bootstrap')
+        sigma2 = np.zeros(1000)
+        sigma2[0] = params[0] + params[1] * backcast
+        for i in range(1, 1000):
+            sigma2[i] = params[0] + params[1] * self.resid[i - 1] ** 2.0
+        std_resids = self.resid / np.sqrt(sigma2)
+        locs = np.floor(1000 * np.random.random_sample((1000, 5))).astype(np.int64)
+        std_shocks = std_resids[locs]
+
+        paths = np.zeros((1000, 5))
+        paths[:, 0] = params[0] + params[1] * self.resid[-1] ** 2.0
+        shocks = np.zeros((1000, 5))
+        shocks[:, 0] = np.sqrt(paths[:, 0]) * std_shocks[:, 0]
+        for i in range(1, 5):
+            paths[:, i] = params[0] + params[1] * shocks[:, i - 1] ** 2
+            shocks[:, i] = np.sqrt(paths[:, i]) * std_shocks[:, i]
+
+        assert forecast.forecasts.shape == (1000, 5)
+        assert forecast.forecast_paths.shape == (1000, 1000, 5)
+        assert forecast.shocks.shape == (1000, 1000, 5)
+        assert np.all(np.isnan(forecast.forecasts[:-1]))
+        assert np.all(np.isnan(forecast.forecast_paths[:-1]))
+        assert np.all(np.isnan(forecast.shocks[:-1]))
+        assert_allclose(forecast.forecasts[-1], paths.mean(0))
+        assert_allclose(forecast.forecast_paths[-1], paths)
+        assert_allclose(forecast.shocks[-1], shocks)
+
+        with preserved_state():
+            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
+                                    horizon=5, method='bootstrap', start=333,
+                                    simulations=2000)
+
+        paths = np.zeros((1000, 2000, 5))
+        paths.fill(np.nan)
+        shocks = np.zeros((1000, 2000, 5))
+        shocks.fill(np.nan)
+        for i in range(333, 1000):
+            locs = np.random.random_sample((2000, 5))
+            int_locs = np.floor((i+1) * locs).astype(np.int64)
+            std_shocks = std_resids[int_locs]
+            paths[i, :, 0] = params[0] + params[1] * self.resid[i] ** 2.0
+            shocks[i, :, 0] = np.sqrt(paths[i, :, 0]) * std_shocks[:, 0]
+            for j in range(1, 5):
+                paths[i, :, j] = params[0] + params[1] * shocks[i, :, j - 1] ** 2
+                shocks[i, :, j] = np.sqrt(paths[i, :, j]) * std_shocks[:, j]
+
+        assert_allclose(forecast.forecast_paths, paths)
+        assert_allclose(forecast.forecasts, paths.mean(1))
+        assert_allclose(forecast.shocks, shocks)
 
     def test_arch_2_forecast(self):
         vol = GARCH(p=2, o=0, q=0)
@@ -536,9 +571,13 @@ class TestVarianceForecasts(TestCase):
             vol.forecast(params, self.resid, backcast, var_bounds,
                          horizon=10, start=100, rng=rng, method='bootstrap')
 
-    @pytest.mark.skipif(True, reason='egarch forecasting not implemented')
     def test_egarch_111_forecast(self):
-        pass
+        vol = EGARCH(p=1, o=1, q=1)
+        params = np.array([3.0, 0.1, 0.1, 0.95])
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=0)
 
     @pytest.mark.skipif(True, reason='egarch forecasting not implemented')
     def test_egarch_101_forecast(self):
@@ -786,9 +825,6 @@ class TestVarianceForecasts(TestCase):
                                     rng=rng, simulations=100)
         paths = np.zeros((100, 3))
         shocks = np.zeros((100, 3))
-
-        def asymsq(e):
-            return e * e * (e < 0)
 
         resids = self.resid
         sigma2_0 = params[0] + (np.sum(params[1:]) - 0.5 * np.sum(params[3:5])) * backcast
