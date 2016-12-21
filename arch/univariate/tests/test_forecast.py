@@ -16,29 +16,29 @@ class TestForecasting(TestCase):
     def setup_class(cls):
         np.random.seed(12345)
         am = arch_model(None, mean='Constant', vol='Constant')
-        data = am.simulate(np.array([0.0, 1.0]), 10000)
+        data = am.simulate(np.array([0.0, 1.0]), 1000)
         data.index = pd.date_range('2000-01-01', periods=data.index.shape[0])
         cls.zero_mean = data.data
 
         am = arch_model(None, mean='AR', vol='Constant', lags=[1])
-        data = am.simulate(np.array([1.0, 0.9, 0.1]), 10000)
+        data = am.simulate(np.array([1.0, 0.9, 0.1]), 1000)
         data.index = pd.date_range('2000-01-01', periods=data.index.shape[0])
         cls.ar1 = data.data
 
         am = arch_model(None, mean='AR', vol='Constant', lags=[1, 2])
-        data = am.simulate(np.array([1.0, 1.9, -0.95, 0.1]), 10000)
+        data = am.simulate(np.array([1.0, 1.9, -0.95, 0.1]), 1000)
         data.index = pd.date_range('2000-01-01', periods=data.index.shape[0])
         cls.ar2 = data.data
 
         am = arch_model(None, mean='HAR', vol='Constant', lags=[1, 5, 22])
-        data = am.simulate(np.array([1.0, 0.4, 0.3, 0.2, 0.1]), 10000)
+        data = am.simulate(np.array([1.0, 0.4, 0.3, 0.2, 0.1]), 1000)
         data.index = pd.date_range('2000-01-01', periods=data.index.shape[0])
         cls.har3 = data.data
 
     def test_ar_forecasting(self):
         params = np.array([0.9])
         forecasts = _ar_forecast(self.zero_mean, 5, 0, 0.0, params)
-        expected = np.zeros((10000, 5))
+        expected = np.zeros((1000, 5))
         expected[:, 0] = 0.9 * self.zero_mean.values
         for i in range(1, 5):
             expected[:, i] = 0.9 * expected[:, i - 1]
@@ -46,7 +46,7 @@ class TestForecasting(TestCase):
 
         params = np.array([0.5, -0.3, 0.2])
         forecasts = _ar_forecast(self.zero_mean, 5, 2, 0.0, params)
-        expected = np.zeros((9998, 8))
+        expected = np.zeros((998, 8))
         expected[:, 0] = self.zero_mean.iloc[0:-2]
         expected[:, 1] = self.zero_mean.iloc[1:-1]
         expected[:, 2] = self.zero_mean.iloc[2:]
@@ -115,9 +115,9 @@ class TestForecasting(TestCase):
 
         assert np.all(0.0 == fcast.mean[499:])
         assert_allclose(fcast.variance.iloc[499:],
-                        np.ones((9501, 3)) * params[0])
+                        np.ones((501, 3)) * params[0])
         assert_allclose(fcast.residual_variance.iloc[499:],
-                        np.ones((9501, 3)) * params[0])
+                        np.ones((501, 3)) * params[0])
 
     def test_frame_labels(self):
         am = arch_model(self.zero_mean, mean='Zero', vol='Constant')
@@ -208,12 +208,12 @@ class TestForecasting(TestCase):
         expected = res.params.iloc[-1] * np.cumsum(expected ** 2)
         assert_allclose(fcast.variance.iloc[-1], expected)
 
-        expected = np.empty((10000, 5))
+        expected = np.empty((1000, 5))
         expected[:2] = np.nan
         expected[2:] = res.params.iloc[-1]
 
         fcast = res.forecast(horizon=5, start=1)
-        expected = np.zeros((9999, 7))
+        expected = np.zeros((999, 7))
         expected[:, 0] = self.ar2.iloc[0:-1]
         expected[:, 1] = self.ar2.iloc[1:]
         for i in range(2, 7):
@@ -225,7 +225,7 @@ class TestForecasting(TestCase):
         expected = np.concatenate((fill, expected[:, 2:]))
         assert_allclose(fcast.mean.values, expected)
 
-        expected = np.empty((10000, 5))
+        expected = np.empty((1000, 5))
         expected[:2] = np.nan
         expected[2:] = res.params.iloc[-1]
         assert_allclose(fcast.residual_variance.values, expected)
@@ -246,7 +246,7 @@ class TestForecasting(TestCase):
             res.forecast(horizon=1, start=20)
 
         fcast_66 = res.forecast(horizon=66, start=21)
-        expected = np.empty((10000, 66 + 22))
+        expected = np.empty((1000, 66 + 22))
         expected.fill(np.nan)
         for i in range(22):
             if i < 21:
@@ -309,8 +309,8 @@ class TestForecasting(TestCase):
             res.forecast(start=date)
 
         fcast_0 = res.forecast()
-        fcast_1 = res.forecast(start=9999)
-        fcast_2 = res.forecast(start=self.har3.index[9999])
+        fcast_1 = res.forecast(start=999)
+        fcast_2 = res.forecast(start=self.har3.index[999])
         for field in ('mean', 'variance', 'residual_variance'):
             assert_frame_equal(getattr(fcast_0, field),
                                getattr(fcast_1, field))
@@ -322,12 +322,12 @@ class TestForecasting(TestCase):
         am = arch_model(self.zero_mean, mean='Constant', vol='Constant')
         res = am.fit(first_obs=100)
         res.forecast()
-        res = am.fit(last_obs=9000)
+        res = am.fit(last_obs=900)
         res.forecast()
-        res = am.fit(first_obs=1000, last_obs=9000)
+        res = am.fit(first_obs=100, last_obs=900)
         res.forecast()
-        res.forecast(start=1000)
-        res.forecast(start=2000)
+        res.forecast(start=100)
+        res.forecast(start=200)
         am = arch_model(self.zero_mean, mean='Constant', vol='Constant',
                         hold_back=20)
         res = am.fit(first_obs=100)
