@@ -28,6 +28,7 @@ matrix:
     - SCIPY=0.15
     - USE_NUMBA=false
     - PANDAS=0.16
+    - COVERAGE=true
   - python: 2.7
     env:
     - PYTHON=2.7
@@ -44,7 +45,6 @@ matrix:
     - NUMBA=0.24
     - MATPLOTLIB=1.4
     - PANDAS=0.18
-    - COVERAGE=true
   - python: 2.7
     env:
     - PYTHON=3.5
