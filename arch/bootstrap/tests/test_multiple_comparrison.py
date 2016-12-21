@@ -383,6 +383,7 @@ class TestMCS(TestCase):
         assert_frame_equal(mcs.pvalues.iloc[:m], direct)
 
     def test_smoke(self):
+        # TODO: Upgrade to meaningful test
         mcs = MCS(self.losses, 0.05, reps=100, block_size=10, method='max')
         mcs.compute()
         mcs = MCS(self.losses_df, 0.05, reps=100, block_size=10, method='r')

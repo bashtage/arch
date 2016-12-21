@@ -4,25 +4,46 @@ inherit from :class:`VolatilityProcess` and provide the same methods with the
 same inputs.
 """
 from __future__ import division, absolute_import
-from ..compat.python import add_metaclass, range
 
 import itertools
 
 import numpy as np
-from numpy import sqrt, ones, zeros, isscalar, sign, ones_like, arange, \
-    empty, abs, array, finfo, float64, log, exp, floor
+from numpy import (sqrt, ones, zeros, isscalar, sign, ones_like, arange, empty, abs, array, finfo,
+                   float64, log, exp, floor)
 
 from .distribution import Normal
+from ..compat.python import add_metaclass, range
 from ..utility.array import ensure1d, DocStringInheritor
 
 try:
     from .recursions import garch_recursion, harch_recursion, egarch_recursion
 except ImportError:  # pragma: no cover
-    from .recursions_python import (garch_recursion, harch_recursion,
-                                    egarch_recursion)
+    from .recursions_python import (garch_recursion, harch_recursion, egarch_recursion)
 
-__all__ = ['GARCH', 'ARCH', 'HARCH', 'ConstantVariance', 'EWMAVariance',
-           'RiskMetrics2006', 'EGARCH']
+__all__ = ['GARCH', 'ARCH', 'HARCH', 'ConstantVariance', 'EWMAVariance', 'RiskMetrics2006',
+           'EGARCH']
+
+
+class BootstrapRng(object):
+    def __init__(self, std_resid, start):
+        if start <= 0 or start > std_resid.shape[0]:
+            raise ValueError('start must be > 0 and <= len(std_resid).')
+
+        self.std_resid = std_resid
+        self.start = start
+        self._index = start
+
+    def rng(self):
+        def _rng(size):
+            if self._index >= self.std_resid.shape[0]:
+                raise IndexError('not enough data points.')
+            index = np.random.random_sample(size)
+            int_index = np.floor((self._index + 1) * index)
+            int_index = int_index.astype(np.int64)
+            self._index += 1
+            return self.std_resid[int_index]
+
+        return _rng
 
 
 def ewma_recursion(lam, resids, sigma2, nobs, backcast):
@@ -31,23 +52,23 @@ def ewma_recursion(lam, resids, sigma2, nobs, backcast):
 
     Parameters
     ----------
-    lam : float64
+    lam : float
         Smoothing parameter
-    resids : 1-d array, float64
+    resids : array
         Residuals to use in the recursion
-    sigma2 : 1-d array, float64
+    sigma2 : array
         Conditional variances with same shape as resids
     nobs : int
         Length of resids
-    backcast : float64
+    backcast : float
         Value to use when initializing the recursion
     """
 
     # Throw away bounds
     var_bounds = ones((nobs, 1)) * np.array([-1.0, 1.7e308])
 
-    garch_recursion(np.array([0.0, 1.0 - lam, lam]), resids ** 2.0,
-                    resids, sigma2, 1, 0, 1, nobs, backcast, var_bounds)
+    garch_recursion(np.array([0.0, 1.0 - lam, lam]), resids ** 2.0, resids, sigma2, 1, 0, 1, nobs,
+                    backcast, var_bounds)
     return sigma2
 
 
@@ -55,9 +76,10 @@ class VarianceForecast(object):
     _forecasts = None
     _forecast_paths = None
 
-    def __init__(self, forecasts, forecast_paths=None):
+    def __init__(self, forecasts, forecast_paths=None, shocks=None):
         self._forecasts = forecasts
         self._forecast_paths = forecast_paths
+        self._shocks = shocks
 
     @property
     def forecasts(self):
@@ -67,13 +89,16 @@ class VarianceForecast(object):
     def forecast_paths(self):
         return self._forecast_paths
 
+    @property
+    def shocks(self):
+        return self._shocks
+
 
 @add_metaclass(DocStringInheritor)
 class VolatilityProcess(object):
     """
-    Abstract base class for ARCH models.  Allows the conditional mean model
-    to be specified separately from the conditional variance, even though
-    parameters are estimated jointly.
+    Abstract base class for ARCH models.  Allows the conditional mean model to be specified
+    separately from the conditional variance, even though parameters are estimated jointly.
     """
 
     __metaclass__ = DocStringInheritor
@@ -82,6 +107,7 @@ class VolatilityProcess(object):
         self.num_params = 0
         self.name = ''
         self._normal = Normal()
+        self._min_bootstrap_obs = 100
 
     def __str__(self):
         return self.name
@@ -89,21 +115,188 @@ class VolatilityProcess(object):
     def __repr__(self):
         return self.__str__() + ', id: ' + hex(id(self))
 
+    def _check_forecasting_method(self, method, horizon):
+        """
+        Verify the requested forecasting method as valid for the specification
+
+        Parameters
+        ----------
+        method : str
+            Forecasting method
+        horizon : int
+            Forecast horizon
+
+        Raises
+        ------
+        NotImplementedError
+            * If method is not known or not supported
+        """
+        raise NotImplementedError('Must be overridden')  # pragma: no cover
+
+    def _one_step_forecast(self, parameters, resids, backcast, var_bounds, horizon):
+        """
+        One-step ahead forecast
+
+        Parameters
+        ----------
+        parameters : array
+            Parameters required to forecast the volatility model
+        resids : array
+            Residuals to use in the recursion
+        backcast : float
+            Value to use when initializing the recursion
+        var_bounds : array
+            Array containing columns of lower and upper bounds
+        horizon : int
+            Forecast horizon.  Must be 1 or larger.  Forecasts are produced
+            for horizons in [1, horizon].
+
+        Returns
+        -------
+        sigma2 : array
+            t element array containing the one-step ahead forecasts
+        forecsts : array
+            t by horizon array containing the one-step ahead forecasts in the first location
+        """
+        t = resids.shape[0]
+        _resids = np.concatenate((resids, [0]))
+        _var_bounds = np.concatenate((var_bounds, [[0, np.inf]]))
+        sigma2 = np.zeros(t + 1)
+        self.compute_variance(parameters, _resids, sigma2, backcast, _var_bounds)
+        forecasts = np.zeros((t, horizon))
+        forecasts[:, 0] = sigma2[1:]
+        sigma2 = sigma2[:-1]
+
+        return sigma2, forecasts
+
+    def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+        """
+        Analytic multi-step volatility forecasts from the model
+
+        Parameters
+        ----------
+        parameters : array
+            Parameters required to forecast the volatility model
+        resids : array
+            Residuals to use in the recursion
+        backcast : float
+            Value to use when initializing the recursion
+        var_bounds : array
+            Array containing columns of lower and upper bounds
+        start : int
+            Index of the first observation to use as the starting point for
+            the forecast.  Default is 0.
+        horizon : int
+            Forecast horizon.  Must be 1 or larger.  Forecasts are produced
+            for horizons in [1, horizon].
+
+        Returns
+        -------
+        forecasts : VarianceForecast
+            Class containing the variance forecasts, and, if using simulation
+            or bootstrap, the simulated paths.
+        """
+
+        raise NotImplementedError('Must be overridden')  # pragma: no cover
+
+    def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
+                             simulations, rng):
+        """
+        Simulation-based volatility forecasts from the model
+
+        Parameters
+        ----------
+        parameters : array
+            Parameters required to forecast the volatility model
+        resids : array
+            Residuals to use in the recursion
+        backcast : float
+            Value to use when initializing the recursion
+        var_bounds : array
+            Array containing columns of lower and upper bounds
+        start : int
+            Index of the first observation to use as the starting point for
+            the forecast.  Default is 0.
+        horizon : int
+            Forecast horizon.  Must be 1 or larger.  Forecasts are produced
+            for horizons in [1, horizon].
+        simulations : int
+            Number of simulations to run when computing the forecast using
+            either simulation or bootstrap.
+        rng : callable
+            Callable random number generator required if method is
+            'simulation'. Must take a single shape input and return random
+            samples numbers with that shape.
+
+        Returns
+        -------
+        forecasts : VarianceForecast
+            Class containing the variance forecasts, and, if using simulation
+            or bootstrap, the simulated paths.
+        """
+        raise NotImplementedError('Must be overridden')  # pragma: no cover
+
+    def _bootstrap_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
+                            simulations):
+        """
+        Simulation-based volatility forecasts using model residuals
+
+        Parameters
+        ----------
+        parameters : array
+            Parameters required to forecast the volatility model
+        resids : array
+            Residuals to use in the recursion
+        backcast : float
+            Value to use when initializing the recursion
+        var_bounds : array
+            Array containing columns of lower and upper bounds
+        start : int
+            Index of the first observation to use as the starting point for
+            the forecast.  Default is 0.
+        horizon : int
+            Forecast horizon.  Must be 1 or larger.  Forecasts are produced
+            for horizons in [1, horizon].
+        simulations : int
+            Number of simulations to run when computing the forecast using
+            either simulation or bootstrap.
+        rng : callable
+            Callable random number generator required if method is
+            'simulation'. Must take a single shape input and return random
+            samples numbers with that shape.
+
+        Returns
+        -------
+        forecasts : VarianceForecast
+            Class containing the variance forecasts, and, if using simulation
+            or bootstrap, the simulated paths.
+        """
+        sigma2 = np.empty_like(resids)
+        self.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
+        std_resid = resids / np.sqrt(sigma2)
+        if start < self._min_bootstrap_obs:
+            raise ValueError('start must include more than {0} '
+                             'observations'.format(self._min_bootstrap_obs))
+        rng = BootstrapRng(std_resid, start).rng()
+        return self._simulation_forecast(parameters, resids, backcast, var_bounds,
+                                         start, horizon, simulations, rng)
+
     def variance_bounds(self, resids, power=2.0):
         """
         Parameters
         ----------
-        resids : 1-d array
-            Approximate residuals to use to compute the lower and upper bounds
-            on the conditional variance
+        resids : array
+            Approximate residuals to use to compute the lower and upper bounds on the conditional
+            variance
         power : float, optional
-            Power used in the model. 2.0, the default corresponds to standard
-            ARCH models that evolve in squares.
+            Power used in the model. 2.0, the default corresponds to standard ARCH models that
+            evolve in squares.
 
         Returns
-        var_bounds : 2-d array
-            Array containing columns of lower and upper bounds with the same
-            number of elements as resids
+        -------
+        var_bounds : array
+            Array containing columns of lower and upper bounds with the same number of elements as
+            resids
         """
         nobs = resids.shape[0]
 
@@ -133,13 +326,12 @@ class VolatilityProcess(object):
 
         Parameters
         ----------
-        resids : 1-d array
-            Array of (approximate) residuals to use when computing starting
-            values
+        resids : array
+            Array of (approximate) residuals to use when computing starting values
 
         Returns
         -------
-        sv : 1-d array
+        sv : array
             Array of starting values
         """
         raise NotImplementedError('Must be overridden')  # pragma: no cover
@@ -150,7 +342,7 @@ class VolatilityProcess(object):
 
         Parameters
         ----------
-        resids : 1-d array
+        resids : array
             Vector of (approximate) residuals
 
         Returns
@@ -170,7 +362,7 @@ class VolatilityProcess(object):
 
         Parameters
         ----------
-        resids : 1-d array
+        resids : array
             Vector of (approximate) residuals
 
         """
@@ -183,13 +375,13 @@ class VolatilityProcess(object):
 
         Parameters
         ----------
-        resids : 1-d array
+        resids : array
             Vector of mean zero residuals
-        sigma2 : 1-d array
+        sigma2 : array
             Array with same size as resids to store the conditional variance
         backcast : float
             Value to use when initializing ARCH recursion
-        var_bounds : 2-d array
+        var_bounds : array
             Array containing columns of lower and upper bounds
         """
         raise NotImplementedError('Must be overridden')  # pragma: no cover
@@ -200,26 +392,89 @@ class VolatilityProcess(object):
 
         Returns
         -------
-        A : 2-d array
-            Parameters loadings in constraint. Shape is number of constraints
-            by number of parameters
-        b : 1-d array
+        A : array
+            Parameters loadings in constraint. Shape is number of constraints by number of
+            parameters
+        b : array
             Constraint values, one for each constraint
 
         Notes
         -----
-        Values returned are used in constructing linear inequality constraints
-        of the form A.dot(parameters) - b >= 0
-
+        Values returned are used in constructing linear inequality constraints of the form
+        A.dot(parameters) - b >= 0
         """
         raise NotImplementedError('Must be overridden')  # pragma: no cover
 
-    def forecast(self, parameters, data, first_obs=None, horizon=1,
-                 method='analytic', simulations=1000):
+    def forecast(self, parameters, resids, backcast, var_bounds, start=None, horizon=1,
+                 method='analytic', simulations=1000, rng=None):
         """
-        Construct forecasts
+        Forecast volatility from the model
+
+        Parameters
+        ----------
+        parameters : array, 1-d
+            Parameters required to forecast the volatility model
+        resids : array, 1-d
+            Residuals to use in the recursion
+        backcast : float
+            Value to use when initializing the recursion
+        var_bounds : array, 2-d
+            Array containing columns of lower and upper bounds
+        start : {None, int}
+            Index of the first observation to use as the starting point for
+            the forecast.  Default is len(resids).
+        horizon : int
+            Forecast horizon.  Must be 1 or larger.  Forecasts are produced
+            for horizons in [1, horizon].
+        method : {'analytic', 'simulation', 'bootstrap'}
+            Method to use when producing the forecast. The default is analytic.
+        simulations : int
+            Number of simulations to run when computing the forecast using
+            either simulation or bootstrap.
+        rng : callable
+            Callable random number generator required if method is
+            'simulation'. Must take a single shape input and return random
+            samples numbers with that shape.
+
+        Returns
+        -------
+        forecasts : VarianceForecast
+            Class containing the variance forecasts, and, if using simulation
+            or bootstrap, the simulated paths.
+
+        Raises
+        ------
+        NotImplementedError
+            * If method is not supported
+        ValueError
+            * If the method is not known
+
+        Notes
+        -----
+        The analytic ``method`` is not supported for all models.  Attempting
+        to use this method when not available will raise a ValueError.
         """
-        raise NotImplementedError('Must be overridden')  # pragma: no cover
+        method = method.lower()
+        if method not in ('analytic', 'simulation', 'bootstrap'):
+            raise ValueError('{0} is not a known forecasting method'.format(method))
+
+        self._check_forecasting_method(method, horizon)
+
+        start = len(resids) - 1 if start is None else start
+
+        if method == 'analytic':
+            return self._analytic_forecast(parameters, resids, backcast, var_bounds, start,
+                                           horizon)
+        elif method == 'simulation':
+            return self._simulation_forecast(parameters, resids, backcast, var_bounds, start,
+                                             horizon, simulations, rng)
+        else:
+            if start < 10 or (horizon / start) >= .2:
+                raise ValueError('Bootstrap forecasting requires at least 10 initial '
+                                 'observations, and the ratio of horizon-to-start < 20%.')
+
+            return self._bootstrap_forecast(parameters, resids, backcast, var_bounds, start,
+                                            horizon, simulations)
 
     def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
         """
@@ -227,22 +482,21 @@ class VolatilityProcess(object):
 
         Parameters
         ----------
-        parameters : 1-d array
+        parameters : array
             Parameters required to simulate the volatility model
         nobs : int
             Number of data points to simulate
         rng : callable
-            Callable function that takes a single integer input and returns a
-            vector of random numbers
+            Callable function that takes a single integer input and returns a vector of random
+            numbers
         burn : int, optional
-            Number of additional observations to generate when initializing the
-            simulation
-        initial_value : 1-d array, optional
+            Number of additional observations to generate when initializing the simulation
+        initial_value : array, optional
             Array of initial values to use when initializing the
 
         Returns
         -------
-        simulated_data : 1-d array
+        simulated_data : array
             The simulated data
         """
         raise NotImplementedError('Must be overridden')  # pragma: no cover
@@ -250,9 +504,8 @@ class VolatilityProcess(object):
     def _gaussian_loglikelihood(self, parameters, resids, backcast,
                                 var_bounds):
         """
-        Private implementation of a Gaussian log-likelihood for use in
-        constructing starting values or other quantities that do not depend on
-        the distribution used by the model.
+        Private implementation of a Gaussian log-likelihood for use in constructing starting
+        values or other quantities that do not depend on the distribution used by the model.
         """
         sigma2 = np.zeros_like(resids)
         self.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
@@ -264,7 +517,7 @@ class VolatilityProcess(object):
 
         Returns
         -------
-        names : list (str)
+         names : list (str)
             Variables names
         """
         raise NotImplementedError('Must be overridden')  # pragma: no cover
@@ -284,8 +537,7 @@ class ConstantVariance(VolatilityProcess):
         self.num_params = 1
         self.name = 'Constant Variance'
 
-    def compute_variance(self, parameters, resids, sigma2, backcast,
-                         var_bounds):
+    def compute_variance(self, parameters, resids, sigma2, backcast, var_bounds):
         sigma2[:] = parameters[0]
         return sigma2
 
@@ -311,33 +563,39 @@ class ConstantVariance(VolatilityProcess):
     def parameter_names(self):
         return ['sigma2']
 
-    def forecast(self, parameters, resids, first_obs=None, horizon=1,
-                 method='analytic', simulations=1000, simulator=None):
-        t = resids.shape
+    def _check_forecasting_method(self, method, horizon):
+        return
+
+    def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+        t = resids.shape[0]
         forecasts = np.empty((t, horizon))
         forecasts.fill(np.nan)
 
-        if method == 'analytic':
-            forecasts[first_obs:, :] = parameters[0]
-            forecast_paths = None
-            return VarianceForecast(forecasts, forecast_paths)
-
-        if method == 'bootstrap':
-            bs_resids = resids if first_obs is None else resids[:first_obs]
-            sim_resids = np.random.choice(bs_resids, (simulations, horizon))
-        elif method == 'simulate':
-            sim_resids = simulator(simulations * horizon)
-            sim_resids = sim_resids.reshape((simulations, horizon))
-        forecast_paths = sim_resids * parameters[0]
-        forecast_paths = np.tile(forecast_paths, (t, 1, 1))
-        forecast_paths[:first_obs, :, :] = np.nan
-
-        forecasts = np.squeeze(forecast_paths.mean(0))
+        forecasts[start:, :] = parameters[0]
+        forecast_paths = None
         return VarianceForecast(forecasts, forecast_paths)
+
+    def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
+                             simulations, rng):
+        t = resids.shape[0]
+        forecasts = np.empty((t, horizon))
+        forecasts.fill(np.nan)
+        forecast_paths = np.empty((t, simulations, horizon))
+        forecast_paths.fill(np.nan)
+        shocks = np.empty((t, simulations, horizon))
+        shocks.fill(np.nan)
+
+        for i in range(start, t):
+            shocks[i, :, :] = np.sqrt(parameters[0]) * rng((simulations, horizon))
+
+        forecasts[start:, :] = parameters[0]
+        forecast_paths[start:, :, :] = parameters[0]
+
+        return VarianceForecast(forecasts, forecast_paths, shocks)
 
 
 class GARCH(VolatilityProcess):
-    """
+    r"""
     GARCH and related model estimation
 
     The following models can be specified using GARCH:
@@ -358,10 +616,9 @@ class GARCH(VolatilityProcess):
     q: int
         Order of the lagged (transformed) conditional variance
     power : float, optional
-        Power to use with the innovations, abs(e) ** power.  Default is 2.0,
-        which produces ARCH and related models. Using 1.0 produces AVARCH and
-        related models.  Other powers can be specified, although these should
-        be strictly positive, and usually larger than 0.25.
+        Power to use with the innovations, abs(e) ** power.  Default is 2.0, which produces ARCH
+        and related models. Using 1.0 produces AVARCH and related models.  Other powers can be
+        specified, although these should be strictly positive, and usually larger than 0.25.
 
     Attributes
     ----------
@@ -390,11 +647,10 @@ class GARCH(VolatilityProcess):
 
     .. math::
 
-        \\sigma_{t}^{\\lambda}=\\omega
-        +\\sum_{i=1}^{p}\\alpha_{i}\\left|\\epsilon_{t-i}\\right|^{\\lambda}
-        +\\sum_{j=1}^{o}\\gamma_{j}\\left|\\epsilon_{t-j}\\right|^{\\lambda}
-        I\\left[\\epsilon_{t-j}<0\\right]
-        +\\sum_{k=1}^{q}\\beta_{k}\\sigma_{t-k}^{\\lambda}
+        \sigma_{t}^{\lambda}=\omega
+        + \sum_{i=1}^{p}\alpha_{i}\left|\epsilon_{t-i}\right|^{\lambda}
+        +\sum_{j=1}^{o}\gamma_{j}\left|\epsilon_{t-j}\right|^{\lambda}
+        I\left[\epsilon_{t-j}<0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}
     """
 
     def __init__(self, p=1, o=0, q=1, power=2.0):
@@ -409,8 +665,7 @@ class GARCH(VolatilityProcess):
         if p == 0 and o == 0:
             raise ValueError('One of p or o must be strictly positive')
         if power <= 0.0:
-            raise ValueError('power must be strictly positive, usually larger '
-                             'than 0.25')
+            raise ValueError('power must be strictly positive, usually larger than 0.25')
         self.name = self._name()
 
     def __str__(self):
@@ -534,8 +789,8 @@ class GARCH(VolatilityProcess):
             else:
                 from warnings import warn
 
-                warn('Parameters are not consistent with a stationary model. '
-                     'Using the intercept to initialize the model.')
+                warn('Parameters are not consistent with a stationary model. Using the intercept '
+                     'to initialize the model.')
                 initial_value = parameters[0]
 
         sigma2 = zeros(nobs + burn)
@@ -611,16 +866,151 @@ class GARCH(VolatilityProcess):
         names.extend(['beta[' + str(i + 1) + ']' for i in range(self.q)])
         return names
 
+    def _check_forecasting_method(self, method, horizon):
+        if horizon == 1:
+            return
+
+        if method == 'analytic' and self.power != 2.0:
+            raise ValueError('Analytic forecasts not available for horizon > 1 when power != 2')
+        return
+
+    def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+
+        sigma2, forecasts = self._one_step_forecast(parameters, resids, backcast,
+                                                    var_bounds, horizon)
+        if horizon == 1:
+            forecasts[:start] = np.nan
+            return VarianceForecast(forecasts)
+
+        t = resids.shape[0]
+        p, o, q = self.p, self.o, self.q
+        omega = parameters[0]
+        alpha = parameters[1:p + 1]
+        gamma = parameters[p + 1: p + o + 1]
+        beta = parameters[p + o + 1:]
+
+        m = np.max([p, o, q])
+        _resids = np.zeros(m + horizon)
+        _asym_resids = np.zeros(m + horizon)
+        _sigma2 = np.zeros(m + horizon)
+
+        for i in range(start, t):
+            if i - m + 1 >= 0:
+                _resids[:m] = resids[i - m + 1:i + 1]
+                _asym_resids[:m] = _resids[:m] * (_resids[:m] < 0)
+                _sigma2[:m] = sigma2[i - m + 1:i + 1]
+            else:  # Back-casting needed
+                _resids[:m - i - 1] = np.sqrt(backcast)
+                _resids[m - i - 1: m] = resids[0:i + 1]
+                _asym_resids = _resids * (_resids < 0)
+                _asym_resids[:m - i - 1] = np.sqrt(0.5 * backcast)
+                _sigma2[:m] = backcast
+                _sigma2[m - i - 1: m] = sigma2[0:i + 1]
+
+            for h in range(0, horizon):
+                forecasts[i, h] = omega
+                start_loc = h + m - 1
+
+                for j in range(p):
+                    forecasts[i, h] += alpha[j] * _resids[start_loc - j] ** 2
+
+                for j in range(o):
+                    forecasts[i, h] += gamma[j] * _asym_resids[start_loc - j] ** 2
+
+                for j in range(q):
+                    forecasts[i, h] += beta[j] * _sigma2[start_loc - j]
+
+                _resids[h + m] = np.sqrt(forecasts[i, h])
+                _asym_resids[h + m] = np.sqrt(0.5 * forecasts[i, h])
+                _sigma2[h + m] = forecasts[i, h]
+
+        forecasts[:start] = np.nan
+        return VarianceForecast(forecasts)
+
+    def _simulate_paths(self, m, parameters, horizon, std_shocks,
+                        scaled_forecast_paths, scaled_shock, asym_scaled_shock):
+
+        power = self.power
+        p, o, q = self.p, self.o, self.q
+        omega = parameters[0]
+        alpha = parameters[1:p + 1]
+        gamma = parameters[p + 1: p + o + 1]
+        beta = parameters[p + o + 1:]
+        shock = np.empty_like(scaled_forecast_paths)
+        shock.fill(np.nan)
+
+        for h in range(horizon):
+            loc = h + m - 1
+
+            scaled_forecast_paths[:, h + m] = omega
+            for j in range(p):
+                scaled_forecast_paths[:, h + m] += alpha[j] * scaled_shock[:, loc - j]
+
+            for j in range(o):
+                scaled_forecast_paths[:, h + m] += gamma[j] * asym_scaled_shock[:, loc - j]
+
+            for j in range(q):
+                scaled_forecast_paths[:, h + m] += beta[j] * scaled_forecast_paths[:, loc - j]
+
+            shock[:, h + m] = std_shocks[:, h] * scaled_forecast_paths[:, h + m] ** (1.0 / power)
+            lt_zero = shock[:, h + m] < 0
+            scaled_shock[:, h + m] = np.abs(shock[:, h + m]) ** power
+            asym_scaled_shock[:, h + m] = scaled_shock[:, h + m] * lt_zero
+
+        forecast_paths = scaled_forecast_paths[:, m:] ** (2.0 / power)
+
+        return np.mean(forecast_paths, 0), forecast_paths, shock[:, m:]
+
+    def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
+                             simulations, rng):
+
+        sigma2, forecasts = self._one_step_forecast(parameters, resids, backcast,
+                                                    var_bounds, horizon)
+        t = resids.shape[0]
+        paths = np.zeros((t, simulations, horizon))
+        shocks = np.zeros((t, simulations, horizon))
+
+        power = self.power
+        m = np.max([self.p, self.o, self.q])
+        scaled_forecast_paths = zeros((simulations, m + horizon))
+        scaled_shock = zeros((simulations, m + horizon))
+        asym_scaled_shock = zeros((simulations, m + horizon))
+
+        for i in range(start, t):
+            std_shocks = rng((simulations, horizon))
+            if i - m < 0:
+                scaled_forecast_paths[:, :m] = backcast ** (power / 2.0)
+                scaled_shock[:, :m] = backcast ** (power / 2.0)
+                asym_scaled_shock[:, :m] = (0.5 * backcast) ** (power / 2.0)
+
+                count = i + 1
+                scaled_forecast_paths[:, m - count:m] = sigma2[:count] ** (power / 2.0)
+                scaled_shock[:, m - count:m] = np.abs(resids[:count]) ** power
+                asym = np.abs(resids[:count]) ** power * (resids[:count] < 0)
+                asym_scaled_shock[:, m - count:m] = asym
+            else:
+                scaled_forecast_paths[:, :m] = sigma2[i - m + 1:i + 1] ** (power / 2.0)
+                scaled_shock[:, :m] = np.abs(resids[i - m + 1:i + 1]) ** power
+                asym_scaled_shock[:, :m] = scaled_shock[:, :m] * (resids[i - m + 1:i + 1] < 0)
+
+            f, p, s = self._simulate_paths(m, parameters, horizon, std_shocks,
+                                           scaled_forecast_paths, scaled_shock, asym_scaled_shock)
+            forecasts[i, :], paths[i], shocks[i] = f, p, s
+
+        paths[:start] = np.nan
+        shocks[:start] = np.nan
+        forecasts[:start] = np.nan
+        return VarianceForecast(forecasts, paths, shocks)
+
 
 class HARCH(VolatilityProcess):
-    """
+    r"""
     Heterogeneous ARCH process
 
     Parameters
     ----------
-    lags : list or 1-d array, int or int
-        List of lags to include in the model, or if scalar, includes all lags
-        up the value
+    lags : {list, array, int}
+        List of lags to include in the model, or if scalar, includes all lags up the value
 
     Attributes
     ----------
@@ -644,23 +1034,19 @@ class HARCH(VolatilityProcess):
 
     .. math::
 
-        \\sigma^{2}=\\omega
-        +\\sum_{i=1}^{m}\\alpha_{l_{i}}
-        \\left(l_{i}^{-1}\\sum_{j=1}^{l_{i}}\\epsilon_{t-j}^{2}\\right)
+        \sigma^{2}=\omega + \sum_{i=1}^{m}\alpha_{l_{i}}
+        \left(l_{i}^{-1}\sum_{j=1}^{l_{i}}\epsilon_{t-j}^{2}\right)
 
     In the common case where lags=[1,5,22], the model is
 
     .. math::
 
-        \\sigma_{t}^{2}=\\omega+\\alpha_{1}\\epsilon_{t-1}^{2}
-        +\\alpha_{5}
-        \\left(\\frac{1}{5}\\sum_{j=1}^{5}\\epsilon_{t-j}^{2}\\right)
-        +\\alpha_{22}
-        \\left(\\frac{1}{22}\\sum_{j=1}^{22}\\epsilon_{t-j}^{2}\\right)
+        \sigma_{t}^{2}=\omega+\alpha_{1}\epsilon_{t-1}^{2}
+        +\alpha_{5} \left(\frac{1}{5}\sum_{j=1}^{5}\epsilon_{t-j}^{2}\right)
+        +\alpha_{22} \left(\frac{1}{22}\sum_{j=1}^{22}\epsilon_{t-j}^{2}\right)
 
-    A HARCH process is a special case of an ARCH process where parameters in
-    the more general ARCH process have been restricted.
-
+    A HARCH process is a special case of an ARCH process where parameters in the more general
+    ARCH process have been restricted.
     """
 
     def __init__(self, lags=1):
@@ -704,8 +1090,7 @@ class HARCH(VolatilityProcess):
         lags = self.lags
         nobs = resids.shape[0]
 
-        harch_recursion(parameters, resids, sigma2,
-                        lags, nobs, backcast, var_bounds)
+        harch_recursion(parameters, resids, sigma2, lags, nobs, backcast, var_bounds)
         return sigma2
 
     def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
@@ -718,8 +1103,8 @@ class HARCH(VolatilityProcess):
             else:
                 from warnings import warn
 
-                warn('Parameters are not consistent with a stationary model. '
-                     'Using the intercept to initialize the model.')
+                warn('Parameters are not consistent with a stationary model. Using the intercept '
+                     'to initialize the model.')
                 initial_value = parameters[0]
 
         sigma2 = empty(nobs + burn)
@@ -749,13 +1134,72 @@ class HARCH(VolatilityProcess):
     def parameter_names(self):
         names = ['omega']
         lags = self.lags
-        names.extend(
-            ['alpha[' + str(lags[i]) + ']' for i in range(self._num_lags)])
+        names.extend(['alpha[' + str(lags[i]) + ']' for i in range(self._num_lags)])
         return names
+
+    def _harch_to_arch(self, params):
+        arch_params = np.zeros((1 + self.lags.max()))
+        arch_params[0] = params[0]
+        for param, lag in zip(params[1:], self.lags):
+            arch_params[1:lag + 1] += param / lag
+
+        return arch_params
+
+    def _common_forecast_components(self, parameters, resids, backcast, horizon):
+        arch_params = self._harch_to_arch(parameters)
+        t = resids.shape[0]
+        m = self.lags.max()
+        resids2 = np.empty((t, m + horizon))
+        resids2[:m, :m] = backcast
+        sq_resids = resids ** 2.0
+        for i in range(m):
+            resids2[m - i - 1:, i] = sq_resids[:(t - (m - i - 1))]
+        const = arch_params[0]
+        arch = arch_params[1:]
+
+        return const, arch, resids2
+
+    def _check_forecasting_method(self, method, horizon):
+        return
+
+    def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+        const, arch, resids2 = self._common_forecast_components(parameters, resids, backcast,
+                                                                horizon)
+        m = self.lags.max()
+        resids2[:start] = np.nan
+        arch_rev = arch[::-1]
+        for i in range(horizon):
+            resids2[:, m + i] = const + resids2[:, i:(m + i)].dot(arch_rev)
+
+        return VarianceForecast(resids2[:, m:].copy())
+
+    def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
+                             simulations, rng):
+        const, arch, resids2 = self._common_forecast_components(parameters, resids, backcast,
+                                                                horizon)
+        t, m = resids.shape[0], self.lags.max()
+
+        shocks = np.empty((t, simulations, horizon))
+        shocks.fill(np.nan)
+
+        paths = np.empty((t, simulations, horizon))
+        paths.fill(np.nan)
+
+        temp_resids2 = np.empty((simulations, m + horizon))
+        arch_rev = arch[::-1]
+        for i in range(start, t):
+            std_shocks = rng((simulations, horizon))
+            temp_resids2[:, :] = resids2[i:(i + 1)]
+            for j in range(horizon):
+                paths[i, :, j] = const + temp_resids2[:, j:(m + j)].dot(arch_rev)
+                shocks[i, :, j] = std_shocks[:, j] * np.sqrt(paths[i, :, j])
+                temp_resids2[:, m + j] = shocks[i, :, j] ** 2.0
+
+        return VarianceForecast(paths.mean(1), paths, shocks)
 
 
 class ARCH(GARCH):
-    """
+    r"""
     ARCH process
 
     Parameters
@@ -784,7 +1228,7 @@ class ARCH(GARCH):
 
     .. math::
 
-        \\sigma_t^{2}=\\omega+\\sum_{i=1}^{p}\\alpha_{i}\\epsilon_{t-i}^{2}
+        \sigma_t^{2}=\omega+\sum_{i=1}^{p}\alpha_{i}\epsilon_{t-i}^{2}
 
     """
 
@@ -804,14 +1248,13 @@ class ARCH(GARCH):
             sv = (1.0 - alpha) * resids.var() * ones((p + 1))
             sv[1:] = alpha / p
             svs.append(sv)
-            llfs[i] = self._gaussian_loglikelihood(sv, resids, backcast,
-                                                   var_bounds)
+            llfs[i] = self._gaussian_loglikelihood(sv, resids, backcast, var_bounds)
         loc = np.argmax(llfs)
         return svs[loc]
 
 
 class EWMAVariance(VolatilityProcess):
-    """
+    r"""
     Exponentially Weighted Moving-Average (RiskMetrics) Variance process
 
     Parameters
@@ -837,7 +1280,7 @@ class EWMAVariance(VolatilityProcess):
 
     .. math::
 
-        \\sigma_t^{2}=\\lambda\\sigma_{t-1}^2 + (1-\\lambda)\\epsilon^2_{t-1}
+        \sigma_t^{2}=\lambda\sigma_{t-1}^2 + (1-\lambda)\epsilon^2_{t-1}
 
     This model has no parameters since the smoothing parameter is fixed.
     """
@@ -868,8 +1311,7 @@ class EWMAVariance(VolatilityProcess):
 
     def compute_variance(self, parameters, resids, sigma2, backcast,
                          var_bounds):
-        return ewma_recursion(self.lam, resids, sigma2, resids.shape[0],
-                              backcast)
+        return ewma_recursion(self.lam, resids, sigma2, resids.shape[0], backcast)
 
     def constraints(self):
         return np.empty((0, 0)), np.empty((0,))
@@ -891,6 +1333,42 @@ class EWMAVariance(VolatilityProcess):
             data[t] = np.sqrt(sigma2[t]) * errors[t]
 
         return data[burn:], sigma2[burn:]
+
+    def _check_forecasting_method(self, method, horizon):
+        return
+
+    def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+        t = resids.shape[0]
+        _resids = np.empty(t + 1)
+        _resids[:t] = resids
+        sigma2 = np.empty(t + 1)
+        self.compute_variance(parameters, _resids, sigma2, backcast, var_bounds)
+        sigma2.shape = (t + 1, 1)
+        forecasts = sigma2[1:]
+        forecasts[:start] = np.nan
+        forecasts = np.tile(forecasts, (1, horizon))
+        return VarianceForecast(forecasts)
+
+    def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
+                             simulations, rng):
+        one_step = self._analytic_forecast(parameters, resids, backcast, var_bounds,
+                                           start, 1)
+        t = resids.shape[0]
+        paths = np.empty((t, simulations, horizon))
+        paths.fill(np.nan)
+        shocks = np.empty((t, simulations, horizon))
+        shocks.fill(np.nan)
+        lam = self.lam
+
+        for i in range(start, t):
+            std_shocks = rng((simulations, horizon))
+            paths[i, :, 0] = one_step.forecasts[i]
+            shocks[i, :, 0] = np.sqrt(one_step.forecasts[i]) * std_shocks[:, 0]
+            for h in range(1, horizon):
+                paths[i, :, h] = (1 - lam) * shocks[i, :, h - 1] ** 2.0 + lam * paths[i, :, h - 1]
+                shocks[i, :, h] = np.sqrt(paths[i, :, h]) * std_shocks[:, h]
+
+        return VarianceForecast(paths.mean(1), paths, shocks)
 
 
 class RiskMetrics2006(VolatilityProcess):
@@ -922,9 +1400,8 @@ class RiskMetrics2006(VolatilityProcess):
 
     Notes
     -----
-    The variance dynamics of the model are given as a weighted average of kmax
-    EWMA variance proceses where the smoothing parameters and weights are
-    determined by tau0, tau1 and rho.
+    The variance dynamics of the model are given as a weighted average of kmax EWMA variance
+    processes where the smoothing parameters and weights are determined by tau0, tau1 and rho.
 
     This model has no parameters since the smoothing parameter is fixed.
     """
@@ -956,6 +1433,12 @@ class RiskMetrics2006(VolatilityProcess):
         return descr
 
     def _ewma_combination_weights(self):
+        """
+        Returns
+        -------
+        weights: array
+            Combination weights for EWMA components
+        """
         tau0, tau1, kmax, rho = self.tau0, self.tau1, self.kmax, self.rho
         taus = tau1 * (rho ** np.arange(kmax))
         w = 1 - log(taus) / log(tau0)
@@ -975,12 +1458,12 @@ class RiskMetrics2006(VolatilityProcess):
 
         Parameters
         ----------
-        resids : 1-d array
+        resids : array
             Vector of (approximate) residuals
 
         Returns
         -------
-        backcast : 1-d array
+        backcast : array
             Backcast values for each EWMA component
         """
 
@@ -1053,9 +1536,61 @@ class RiskMetrics2006(VolatilityProcess):
 
         return data[burn:], sigma2[burn:]
 
+    def _check_forecasting_method(self, method, horizon):
+        return
+
+    def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+        t = resids.shape[0]
+        _resids = np.empty(t + 1)
+        _resids[:t] = resids
+        sigma2 = np.empty(t + 1)
+        self.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
+        sigma2.shape = (t + 1, 1)
+        forecasts = sigma2[1:]
+        forecasts[:start] = np.nan
+        forecasts = np.tile(forecasts, (1, horizon))
+        return VarianceForecast(forecasts)
+
+    def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
+                             simulations, rng):
+
+        kmax = self.kmax
+        w = self._ewma_combination_weights()
+        mus = self._ewma_smoothing_parameters()
+
+        t = resids.shape[0]
+        paths = np.empty((t, simulations, horizon))
+        paths.fill(np.nan)
+        shocks = np.empty((t, simulations, horizon))
+        shocks.fill(np.nan)
+
+        temp_paths = np.empty((kmax, simulations, horizon))
+        component_one_step = np.empty((t + 1, kmax))
+        _resids = np.empty((t + 1))
+        _resids[:-1] = resids
+        for k in range(kmax):
+            mu = mus[k]
+            ewma_recursion(mu, _resids, component_one_step[:, k], t + 1, backcast[k])
+
+        for i in range(start, t):
+            std_shocks = rng((simulations, horizon))
+            for k in range(kmax):
+                temp_paths[k, :, 0] = component_one_step[i, k]
+            paths[i, :, 0] = w.dot(temp_paths[:, :, 0])
+            shocks[i, :, 0] = std_shocks[:, 0] * np.sqrt(paths[i, :, 0])
+            for j in range(1, horizon):
+                for k in range(kmax):
+                    mu = mus[k]
+                    temp_paths[k, :, j] = mu * temp_paths[k, :, j - 1] + \
+                        (1 - mu) * shocks[i, :, j - 1] ** 2.0
+                paths[i, :, j] = w.dot(temp_paths[:, :, j])
+                shocks[i, :, j] = std_shocks[:, j] * np.sqrt(paths[i, :, j])
+
+        return VarianceForecast(paths.mean(1), paths, shocks)
+
 
 class EGARCH(VolatilityProcess):
-    """
+    r"""
     EGARCH model estimation
 
     Parameters
@@ -1094,13 +1629,13 @@ class EGARCH(VolatilityProcess):
 
     .. math::
 
-        \\ln\\sigma_{t}^{2}=\\omega
-        +\\sum_{i=1}^{p}\\alpha_{i}
-        \\left(\\left|e_{t-i}\\right|-\\sqrt{2/\\pi}\\right)
-        +\\sum_{j=1}^{o}\\gamma_{j}\\left|e_{t-j}\\right|
-        +\\sum_{k=1}^{q}\\beta_{k}\\ln\\sigma_{t-k}^{2}
+        \ln\sigma_{t}^{2}=\omega
+        +\sum_{i=1}^{p}\alpha_{i}
+        \left(\left|e_{t-i}\right|-\sqrt{2/\pi}\right)
+        +\sum_{j=1}^{o}\gamma_{j}\left|e_{t-j}\right|
+        +\sum_{k=1}^{q}\beta_{k}\ln\sigma_{t-k}^{2}
 
-    where :math:`e_{t}=\\epsilon_{t}/\\sigma_{t}`.
+    where :math:`e_{t}=\epsilon_{t}/\sigma_{t}`.
     """
 
     def __init__(self, p=1, o=0, q=1):
@@ -1158,8 +1693,8 @@ class EGARCH(VolatilityProcess):
             std_resids = empty(nobs)
             self._arrays = (lnsigma2, abs_std_resids, std_resids)
 
-        egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast,
-                         var_bounds, lnsigma2, std_resids, abs_std_resids)
+        egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast, var_bounds,
+                         lnsigma2, std_resids, abs_std_resids)
 
         return sigma2
 
@@ -1184,8 +1719,8 @@ class EGARCH(VolatilityProcess):
             else:
                 from warnings import warn
 
-                warn('Parameters are not consistent with a stationary model. '
-                     'Using the intercept to initialize the model.')
+                warn('Parameters are not consistent with a stationary model. Using the intercept '
+                     'to initialize the model.')
                 initial_value = parameters[0]
 
         sigma2 = zeros(nobs + burn)
@@ -1204,8 +1739,7 @@ class EGARCH(VolatilityProcess):
             lnsigma2[t] = parameters[loc]
             loc += 1
             for j in range(p):
-                lnsigma2[t] += parameters[loc] * \
-                               (abserrors[t - 1 - j] - norm_const)
+                lnsigma2[t] += parameters[loc] * (abserrors[t - 1 - j] - norm_const)
                 loc += 1
             for j in range(o):
                 lnsigma2[t] += parameters[loc] * errors[t - 1 - j]
@@ -1242,8 +1776,7 @@ class EGARCH(VolatilityProcess):
             if q > 0:
                 sv[1 + p + o:1 + p + o + q] = beta / q
             svs.append(sv)
-            llfs[i] = self._gaussian_loglikelihood(sv, resids, backcast,
-                                                   var_bounds)
+            llfs[i] = self._gaussian_loglikelihood(sv, resids, backcast, var_bounds)
         loc = np.argmax(llfs)
 
         return svs[loc]
@@ -1254,3 +1787,19 @@ class EGARCH(VolatilityProcess):
         names.extend(['gamma[' + str(i + 1) + ']' for i in range(self.o)])
         names.extend(['beta[' + str(i + 1) + ']' for i in range(self.q)])
         return names
+
+    def _check_forecasting_method(self, method, horizon):
+        if method == 'analytic' and horizon > 1:
+            raise ValueError('Analytic forecasts not available for horizon > 1 when power != 2')
+        return
+
+    def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+
+        t = resids.shape[0]
+        _resids = np.empty(t + 1)
+        _resids[:t] = resids
+        sigma2 = np.empty(t + 1)
+        self.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
+        sigma2.shape = (t + 1, 1)
+
+        return VarianceForecast(sigma2[1:])
