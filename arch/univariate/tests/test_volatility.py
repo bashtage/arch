@@ -821,3 +821,53 @@ class TestVolatiltyProcesses(TestCase):
             EGARCH(p=0, o=0, q=1)
         with pytest.raises(ValueError):
             EGARCH(p=1, o=1, q=-1)
+
+    def test_egarch_100(self):
+        egarch = EGARCH(p=1, o=0, q=0)
+
+        sv = egarch.starting_values(self.resids)
+        assert_equal(sv.shape[0], egarch.num_params)
+
+        backcast = egarch.backcast(self.resids)
+        w = 0.94 ** np.arange(75)
+        backcast_test = np.sum((self.resids[:75] ** 2) * (w / w.sum()))
+        assert_almost_equal(backcast, np.log(backcast_test))
+
+        var_bounds = egarch.variance_bounds(self.resids)
+        parameters = np.array([.1, .4])
+        egarch.compute_variance(parameters, self.resids, self.sigma2, backcast,
+                                var_bounds)
+        cond_var_direct = np.zeros_like(self.sigma2)
+        lnsigma2 = np.empty(self.T)
+        std_resids = np.empty(self.T)
+        abs_std_resids = np.empty(self.T)
+        rec.egarch_recursion(parameters, self.resids, cond_var_direct, 1, 0, 0,
+                             self.T, backcast, var_bounds, lnsigma2,
+                             std_resids, abs_std_resids)
+        assert_allclose(self.sigma2, cond_var_direct)
+
+        state = np.random.get_state()
+        rng = Normal()
+        sim_data = egarch.simulate(parameters, self.T, rng.simulate([]))
+        np.random.set_state(state)
+        e = np.random.standard_normal(self.T + 500)
+        initial_value = 0.1 / (1 - 0.95)
+        lnsigma2 = np.zeros(self.T + 500)
+        lnsigma2[0] = initial_value
+        sigma2 = np.zeros(self.T + 500)
+        sigma2[0] = np.exp(lnsigma2[0])
+        data = np.zeros(self.T + 500)
+        data[0] = np.sqrt(sigma2[0]) * e[0]
+        norm_const = np.sqrt(2 / np.pi)
+        for t in range(1, self.T + 500):
+            lnsigma2[t] = parameters[0]
+            lnsigma2[t] += parameters[1] * (np.abs(e[t - 1]) - norm_const)
+
+        sigma2 = np.exp(lnsigma2)
+        data = e * np.sqrt(sigma2)
+
+        data = data[500:]
+        sigma2 = sigma2[500:]
+
+        assert_almost_equal(data - sim_data[0] + 1.0, np.ones_like(data))
+        assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
