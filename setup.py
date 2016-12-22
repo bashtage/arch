@@ -18,7 +18,6 @@ try:
 except ImportError:
     CYTHON_INSTALLED = False
 
-
     class _build_ext(object):
         pass
 

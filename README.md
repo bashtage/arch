@@ -149,8 +149,8 @@ for examples of the multiple comparison procedures.
 
 ### Optional Requirements
 
-* Numba (0.21+) will be used if available **and** when installed using the 
---no-binary option
+* Numba (0.21+) will be used if available **and** when installed using
+the --no-binary option
 * IPython (4.0+) is required to run the notebooks
 
 ### Installing
@@ -160,7 +160,8 @@ for examples of the multiple comparison procedures.
 * sphinx (to build docs)
 * sphinx-napoleon (to build docs)
 
-**Note**: Setup does not verify requirements.  Please ensure these are installed.
+**Note**: Setup does not verify requirements.  Please ensure these are
+installed.
 
 ### Linux/OSX
 
@@ -178,6 +179,14 @@ conda install -c https://conda.binstar.org/bashtage arch
 
 ### Windows
 
+Building extension using the community edition of Visual Studio is
+well supported for Python 3.5.  Building extensions for 64-bit Windows
+for use in Python 2.7 is also supported using Microsoft Visual C++
+Compiler for Python 2.7.  Building on combinations of Python/Windows
+is more difficult and is not necessary when Numba is installed since
+just-in-time compiled code (Numba) runs as fast as ahead-of-time
+compiled extensions.
+
 **With a compiler**
 
 If you are comfortable compiling binaries on Windows:
@@ -186,18 +195,18 @@ If you are comfortable compiling binaries on Windows:
 pip install git+https://github.com/bashtage/arch.git
 ```
 
+
 **No Compiler**
 
-All binary code is backed by a pure Python implementation.  Compiling can be 
-skipped using the flag `--no-binary`
+All binary code is backed by a pure Python implementation.  Compiling
+can be skipped using the flag `--no-binary`
  
 ```
 pip install git+https://github.com/bashtage/arch.git --install-option "--no-binary"
 ```
 
-_Note: the test suite compares the Numba implementations against Cython 
-implementations of some recursions, and so it is not possible to run the 
-test suite when installing with_ `--no-binary` .
+*Note*: If Cython is not installed, the package will be installed as-if
+--no-binary was used.
 
 **Anaconda**
 

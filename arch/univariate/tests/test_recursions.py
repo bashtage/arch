@@ -7,12 +7,20 @@ import numpy as np
 import pytest
 from numpy.testing import assert_almost_equal
 
-import arch.univariate.recursions as rec
 import arch.univariate.recursions_python as recpy
+try:
+    import arch.univariate.recursions as rec_cython
+    missing_extension = False
+except ImportError:
+    missing_extension = True
+
+if missing_extension:
+    rec = recpy
+else:
+    rec = rec_cython
 
 try:
     import numba  # noqa
-
     missing_numba = False
 except ImportError:
     missing_numba = True
@@ -332,7 +340,7 @@ var_bounds = np.ones((T, 2)) * var_bounds
             sigma2[t] = np.exp(lnsigma2[t])
         assert_almost_equal(sigma2_python, sigma2)
 
-    @pytest.mark.skipif(missing_numba, reason='numba not installed')
+    @pytest.mark.skipif(missing_numba or missing_extension, reason='numba not installed')
     def test_garch_performance(self):
         garch_setup = """
 parameters = np.array([.1, .4, .3, .2])
@@ -353,7 +361,7 @@ var_bounds)
         timer.display()
         assert timer.ratio < 10.0
 
-    @pytest.mark.skipif(missing_numba, reason='numba not installed')
+    @pytest.mark.skipif(missing_numba or missing_extension, reason='numba not installed')
     def test_harch_performance(self):
         harch_setup = """
 parameters = np.array([.1, .4, .3, .2])
@@ -374,7 +382,7 @@ rec.harch_recursion(parameters, resids, sigma2, lags, T, backcast, var_bounds)
         timer.display()
         assert timer.ratio < 10.0
 
-    @pytest.mark.skipif(missing_numba, reason='numba not installed')
+    @pytest.mark.skipif(missing_numba or missing_extension, reason='numba not installed')
     def test_egarch_performance(self):
         egarch_setup = """
 nobs = T
