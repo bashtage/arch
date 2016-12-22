@@ -565,9 +565,11 @@ class HARX(ARCHModel):
             if len(names) != num_params:
                 names = ['p' + str(i) for i in range(num_params)]
 
+            fit_start, fit_stop = self._fit_indices
             return ARCHModelResult(params, param_cov, 0.0, y, vol, cov_type,
                                    self._y_series, names, loglikelihood,
-                                   self._is_pandas, _xopt, copy.deepcopy(self))
+                                   self._is_pandas, _xopt, fit_start, fit_stop,
+                                   copy.deepcopy(self))
 
         regression_params = np.linalg.pinv(x).dot(y)
         xpxi = np.linalg.inv(x.T.dot(x) / nobs)
@@ -610,9 +612,11 @@ class HARX(ARCHModel):
         if len(names) != num_params:
             names = ['p' + str(i) for i in range(num_params)]
 
+        fit_start, fit_stop = self._fit_indices
         return ARCHModelResult(params, param_cov, r2, resids, vol, cov_type,
                                self._y_series, names, loglikelihood,
-                               self._is_pandas, _xopt, copy.deepcopy(self))
+                               self._is_pandas, _xopt, fit_start, fit_stop,
+                               copy.deepcopy(self))
 
     def forecast(self, parameters, horizon=1, start=None, align='origin',
                  method='analytic', simulations=1000):
@@ -624,8 +628,10 @@ class HARX(ARCHModel):
         default_start = max(0, default_start - 1)
         start_index = cutoff_to_index(start, self._y_series.index, default_start)
         if start_index < (earliest - 1):
-            raise ValueError('start cannot be less than the first value used '
-                             'to fit the model: {0}'.format(earliest))
+            raise ValueError('Due ot backcasting and/or data availability start cannot be less '
+                             'than the index of the largest value in the right-hand-side '
+                             'variables used to fit the first observation.  In this model, '
+                             'this value is {0}.'.format(max(0, earliest - 1)))
         # Parse params
         parameters = np.asarray(parameters)
         mp, vp, dp = self._parse_parameters(parameters)

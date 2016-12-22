@@ -554,10 +554,11 @@ class ARCHModel(object):
         vol_final.fill(np.nan)
         vol_final[first_obs:last_obs] = vol
 
+        fit_start, fit_stop = self._fit_indices
         model_copy = deepcopy(self)
         return ARCHModelResult(params, None, r2, resids_final, vol_final,
                                cov_type, self._y_series, names, loglikelihood,
-                               self._is_pandas, xopt, model_copy)
+                               self._is_pandas, xopt, fit_start, fit_stop, model_copy)
 
     def parameter_names(self):
         """List of parameters names
@@ -1236,6 +1237,11 @@ class ARCHModelResult(ARCHModelFixedResult):
         Loglikelihood at estimated parameters
     is_pandas : bool
         Whether the original input was pandas
+    fit_start : int
+        Integer index of the first observation used to fit the model
+    fit_stop : int
+        Integer index of the last observation used to fit the model using Pythonic
+        syntax fit_start:fit_stop
     model : ARCHModel
         The model object used to estimate the parameters
 
@@ -1287,11 +1293,12 @@ class ARCHModelResult(ARCHModelFixedResult):
 
     def __init__(self, params, param_cov, r2, resid, volatility, cov_type,
                  dep_var, names, loglikelihood, is_pandas, optim_output,
-                 model):
+                 fit_start, fit_stop, model):
         super(ARCHModelResult, self).__init__(params, resid, volatility,
                                               dep_var, names, loglikelihood,
                                               is_pandas, model)
 
+        self._fit_indices = (fit_start, fit_stop)
         self._param_cov = param_cov
         self._r2 = r2
         self.cov_type = cov_type
@@ -1457,6 +1464,14 @@ WARNING: The optimizer did not indicate sucessful convergence. The message was
         R-squared
         """
         return self._r2
+
+    @cache_readonly
+    def fit_start(self):
+        return self._fit_indices[0]
+
+    @cache_readonly
+    def fit_stop(self):
+        return self._fit_indices[1]
 
     @cache_readonly
     def rsquared_adj(self):
