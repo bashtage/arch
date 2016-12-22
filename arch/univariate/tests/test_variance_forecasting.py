@@ -574,7 +574,9 @@ class TestVarianceForecasts(TestCase):
             vol.forecast(params, self.resid, backcast, var_bounds,
                          horizon=10, start=100, rng=rng, method='bootstrap')
 
-    def test_egarch_111_forecast(self):
+    def test_egarch_111_forecast_smoke(self):
+        dist = Normal()
+        rng = dist.simulate([])
         vol = EGARCH(p=1, o=1, q=1)
         params = np.array([3.0, 0.1, 0.1, 0.95])
         resids = self.resid
@@ -582,17 +584,75 @@ class TestVarianceForecasts(TestCase):
         var_bounds = vol.variance_bounds(resids)
         vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=0)
 
-    @pytest.mark.skipif(True, reason='egarch forecasting not implemented')
-    def test_egarch_101_forecast(self):
-        pass
+        vol.forecast(params, resids, backcast, var_bounds, horizon=1)
 
-    @pytest.mark.skipif(True, reason='egarch forecasting not implemented')
-    def test_egarch_211_forecast(self):
-        pass
+        with preserved_state():
+            vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=0,
+                         method='simulation', rng=rng)
 
-    @pytest.mark.skipif(True, reason='egarch forecasting not implemented')
-    def test_egarch_212_forecast(self):
-        pass
+        with preserved_state():
+            vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=100,
+                         method='bootstrap')
+
+    def test_egarch_101_forecast_smoke(self):
+        dist = Normal()
+        rng = dist.simulate([])
+        vol = EGARCH(p=1, o=0, q=1)
+        params = np.array([3.0, 0.1, 0.95])
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=0)
+
+        vol.forecast(params, resids, backcast, var_bounds, horizon=1)
+
+        with preserved_state():
+            vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=0,
+                         method='simulation', rng=rng)
+
+        with preserved_state():
+            vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=100,
+                         method='bootstrap')
+
+    def test_egarch_211_forecast_smoke(self):
+        dist = Normal()
+        rng = dist.simulate([])
+        vol = EGARCH(p=2, o=1, q=1)
+        params = np.array([3.0, 0.15, 0.05, 0.1, 0.95])
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=0)
+
+        vol.forecast(params, resids, backcast, var_bounds, horizon=1)
+
+        with preserved_state():
+            vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=0,
+                         method='simulation', rng=rng)
+
+        with preserved_state():
+            vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=100,
+                         method='bootstrap')
+
+    def test_egarch_212_forecast_smoke(self):
+        dist = Normal()
+        rng = dist.simulate([])
+        vol = EGARCH(p=2, o=1, q=2)
+        params = np.array([3.0, 0.15, 0.05, 0.1, 1.8, -0.9])
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=0)
+
+        vol.forecast(params, resids, backcast, var_bounds, horizon=1)
+
+        with preserved_state():
+            vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=0,
+                         method='simulation', rng=rng)
+
+        with preserved_state():
+            vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=100,
+                         method='bootstrap')
 
     def test_constant_variance_simulation(self):
         t = self.t
