@@ -364,6 +364,9 @@ class TestMeanModel(TestCase):
             res.plot(annualize='unknown')
         res.plot(scale=360)
         res.hedgehog_plot(start=500)
+        res.hedgehog_plot(start=500, type='mean')
+        res.hedgehog_plot(type='volatility')
+        res.hedgehog_plot(start=500, method='simulation', simulations=100)
 
     def test_arch_arx(self):
         np.random.seed(12345)

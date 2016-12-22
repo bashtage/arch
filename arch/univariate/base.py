@@ -1077,17 +1077,6 @@ class ARCHModelFixedResult(object):
             t by h data frame containing the forecasts.  The alignment of the forecasts is
             controlled by `align`.
 
-        Examples
-        --------
-        >>> import pandas as pd
-        >>> from arch import arch_model
-        >>> am = arch_model(None,mean='HAR',lags=[1,5,22],vol='Constant')
-        >>> sim_data = am.simulate([0.1,0.4,0.3,0.2,1.0], 250)
-        >>> sim_data.index = pd.date_range('2000-01-01',periods=250)
-        >>> am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22],  vol='Constant')
-        >>> res = am.fit()
-        >>> fig = res.hedgehog_plot()
-
         Notes
         -----
         The most basic 1-step ahead forecast will return a vector with the same
@@ -1117,7 +1106,8 @@ class ARCHModelFixedResult(object):
                 raise ValueError('params have incorrect dimensions')
         return self.model.forecast(params, horizon, start, align, method, simulations)
 
-    def hedgehog_plot(self, params=None, horizon=10, step=10, start=None):
+    def hedgehog_plot(self, params=None, horizon=10, step=10, start=None,
+                      type='volatility', method='analytic', simulations=1000):
         """
         Plot forecasts from estimated model
 
@@ -1135,21 +1125,63 @@ class ARCHModelFixedResult(object):
             An integer, datetime or str indicating the first observation to
             produce the forecast for.  Datetimes can only be used with pandas
             inputs that have a datetime index.  Strings must be convertible
-            to a date time, such as in '1945-01-01'.
+            to a date time, such as in '1945-01-01'.  If not provided, the start
+            is set to the earliest forecastable date.
+        type : {'volatility', 'mean'}
+            Quantity to plot, the forecast volatility or the forecast mean
+        method : {'analytic', 'simulation', 'bootstrap'}
+            Method to use when producing the forecast. The default is analytic.
+            The method only affects the variance forecast generation.  Not all
+            volatility models support all methods. In particular, volatility
+            models that do not evolve in squares such as EGARCH or TARCH do not
+            support the 'analytic' method for horizons > 1.
+        simulations : int
+            Number of simulations to run when computing the forecast using
+            either simulation or bootstrap.
 
         Returns
         -------
         fig : figure
             Handle to the figure
+
+        Examples
+        --------
+        >>> import pandas as pd
+        >>> from arch import arch_model
+        >>> am = arch_model(None,mean='HAR',lags=[1,5,22],vol='Constant')
+        >>> sim_data = am.simulate([0.1,0.4,0.3,0.2,1.0], 250)
+        >>> sim_data.index = pd.date_range('2000-01-01',periods=250)
+        >>> am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22],  vol='Constant')
+        >>> res = am.fit()
+        >>> fig = res.hedgehog_plot(type='mean')
         """
-        forecasts = self.forecast(params, horizon=horizon, start=start)
         import matplotlib.pyplot as plt
+
+        plot_mean = type.lower() == 'mean'
+        if start is None:
+            invalid_start = True
+            start = 0
+            while invalid_start:
+                try:
+                    forecasts = self.forecast(params, horizon, start,
+                                              method=method, simulations=simulations)
+                    invalid_start = False
+                except ValueError:
+                    start += 1
+                    pass
+        else:
+            forecasts = self.forecast(params, horizon, start, method=method,
+                                      simulations=simulations)
 
         fig, ax = plt.subplots(1, 1)
         use_date = isinstance(self._dep_var.index, pd.DatetimeIndex)
         plot_fn = ax.plot_date if use_date else ax.plot
         x_values = np.array(self._dep_var.index)
-        y_values = self._dep_var.values
+        if plot_mean:
+            y_values = np.asarray(self._dep_var)
+        else:
+            y_values = np.asarray(self.conditional_volatility)
+
         plot_fn(x_values, y_values, linestyle='-', marker='')
         first_obs = np.min(np.where(np.logical_not(np.isnan(forecasts.mean)))[0])
         spines = []
@@ -1158,14 +1190,19 @@ class ARCHModelFixedResult(object):
             if i + horizon + 1 > x_values.shape[0]:
                 continue
             temp_x = x_values[i:i + horizon + 1]
-            temp_y = np.hstack((y_values[i], forecasts.mean.iloc[i]))
+            if plot_mean:
+                spine_data = forecasts.mean.iloc[i]
+            else:
+                spine_data = np.sqrt(forecasts.variance.iloc[i])
+            temp_y = np.hstack((y_values[i], spine_data))
             line = plot_fn(temp_x, temp_y, linewidth=3, linestyle='-',
                            marker='')
             spines.append(line)
         color = spines[0][0].get_color()
         for spine in spines[1:]:
             spine[0].set_color(color)
-        ax.set_title(self._dep_name + ' Forecast Hedgehog Plot')
+        plot_type = 'Mean' if plot_mean else 'Volatility'
+        ax.set_title(self._dep_name + ' ' + plot_type + ' Forecast Hedgehog Plot')
 
         return fig
 
