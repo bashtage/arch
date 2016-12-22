@@ -2,7 +2,10 @@ from unittest import TestCase
 
 import numpy as np
 import pytest
-from arch.univariate.recursions import garch_recursion
+try:
+    from arch.univariate.recursions import garch_recursion
+except ImportError:
+    from arch.univariate.recursions_python import garch_recursion
 from numpy.testing import assert_allclose
 
 from arch.univariate.distribution import Normal, StudentsT

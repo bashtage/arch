@@ -12,8 +12,12 @@ import scipy.stats as stats
 
 from arch.bootstrap import IIDBootstrap, StationaryBootstrap, \
     MovingBlockBootstrap, CircularBlockBootstrap
-from arch.bootstrap._samplers import \
-    stationary_bootstrap_sample as stationary_bootstrap_sample_cython
+try:
+    from arch.bootstrap._samplers import stationary_bootstrap_sample as \
+        stationary_bootstrap_sample_cython
+    HAS_EXTENSION = True
+except ImportError:
+    HAS_EXTENSION = False
 from arch.bootstrap._samplers_python import (stationary_bootstrap_sample,
                                              stationary_bootstrap_sample_python)  # noqa
 from arch.bootstrap.base import _loo_jackknife
@@ -684,6 +688,7 @@ class TestBootstrap(TestCase):
                    ' <strong>ID</strong>: ' + hex(id(bs)) + ')'
         assert_equal(bs._repr_html(), expected)
 
+    @pytest.mark.skipif(not HAS_EXTENSION, reason='Extension not built.')
     def test_samplers(self):
         """
         Test all three implementations are identical
