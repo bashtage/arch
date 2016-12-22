@@ -1795,11 +1795,63 @@ class EGARCH(VolatilityProcess):
 
     def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
 
-        t = resids.shape[0]
-        _resids = np.empty(t + 1)
-        _resids[:t] = resids
-        sigma2 = np.empty(t + 1)
-        self.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
-        sigma2.shape = (t + 1, 1)
+        _, forecasts = self._one_step_forecast(parameters, resids, backcast, var_bounds, horizon)
 
-        return VarianceForecast(sigma2[1:])
+        return VarianceForecast(forecasts)
+
+    def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
+                             simulations, rng):
+        sigma2, forecasts = self._one_step_forecast(parameters, resids, backcast, var_bounds,
+                                                    horizon)
+        t = resids.shape[0]
+        p, o, q = self.p, self.o, self.q
+        m = np.max([p, o, q])
+
+        lnsigma2 = np.log(sigma2)
+        e = resids / np.sqrt(sigma2)
+
+        lnsigma2_mat = np.zeros((t, m))
+        lnsigma2_mat.fill(np.log(backcast))
+        e_mat = np.zeros((t, m))
+        abs_e_mat = np.empty((t, m))
+        abs_e_mat.fill(np.sqrt(2 / np.pi))
+
+        for i in range(m):
+            lnsigma2_mat[m - i - 1:, i] = lnsigma2[:(t - (m - 1) + i)]
+            e_mat[m - i - 1:, i] = e[:(t - (m - 1) + i)]
+            abs_e_mat[m - i - 1:, i] = np.abs(e[:(t - (m - 1) + i)])
+
+        paths = np.empty((t, simulations, horizon))
+        paths.fill(np.nan)
+        shocks = np.empty((t, simulations, horizon))
+        shocks.fill(np.nan)
+
+        _lnsigma2 = np.empty((simulations, m + horizon))
+        _e = np.empty((simulations, m + horizon))
+        _abs_e = np.empty((simulations, m + horizon))
+        for i in range(start, t):
+            std_shocks = rng((simulations, horizon))
+            _lnsigma2[:, :m] = lnsigma2_mat[i, :]
+            _e[:, :m] = e_mat[i, :]
+            _e[:, m:] = std_shocks
+            _abs_e[:, :m] = abs_e_mat[i, :]
+            _abs_e[:, m:] = np.abs(std_shocks)
+            for j in range(horizon):
+                loc = 0
+                _lnsigma2[:, m + j] = parameters[loc]
+                loc += 1
+                for k in range(p):
+                    _lnsigma2[:, m + j] += parameters[loc] * _e[:, m + j - 1]
+                    loc += 1
+
+                for k in range(o):
+                    _lnsigma2[:, m + j] += parameters[loc] * _abs_e[:, m + j - 1]
+                    loc += 1
+
+                for k in range(q):
+                    _lnsigma2[:, m + j] += parameters[loc] * _lnsigma2[:, m + j - 1]
+                    loc += 1
+            paths[i, :, :] = np.exp(_lnsigma2[:, m:] / 2)
+            shocks[i, :, :] = np.sqrt(paths[i, :, :]) * std_shocks
+
+        return VarianceForecast(paths.mean(1), paths, shocks)
