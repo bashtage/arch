@@ -234,24 +234,6 @@ class TestBootstrap(TestCase):
         direct_cov = errors.T.dot(errors) / num_bootstrap
         assert_allclose(cov, direct_cov)
 
-    def test_smoke(self):
-        # TODO: Upgrade to meaningful test
-        num_bootstrap = 20
-
-        def func(y):
-            return y.mean(axis=0)
-
-        bs = StationaryBootstrap(13, self.y)
-        bs.cov(func, reps=num_bootstrap)
-        bs = MovingBlockBootstrap(13, self.y)
-        bs.cov(func, reps=num_bootstrap)
-        bs = CircularBlockBootstrap(13, self.y)
-        bs.cov(func, reps=num_bootstrap)
-        bs = MovingBlockBootstrap(10, self.y)
-        bs.cov(func, reps=num_bootstrap)
-        bs = CircularBlockBootstrap(10, self.y)
-        bs.cov(func, reps=num_bootstrap)
-
     def test_conf_int_basic(self):
         num_bootstrap = 200
         bs = IIDBootstrap(self.x)
@@ -682,6 +664,20 @@ class TestBootstrap(TestCase):
         expected = expected[:-1] + ', ID: ' + hex(id(bs)) + ')'
         assert_equal(bs.__repr__(), expected)
         expected = '<strong>Circular Block Bootstrap</strong>' + \
+                   '(<strong>block size</strong>: 20, ' \
+                   + '<strong>no. pos. inputs</strong>: 0, ' + \
+                   '<strong>no. keyword inputs</strong>: 2,' + \
+                   ' <strong>ID</strong>: ' + hex(id(bs)) + ')'
+        assert_equal(bs._repr_html(), expected)
+
+        bs = MovingBlockBootstrap(block_size=20, y=self.y_series,
+                                  x=self.x_df)
+        expected = 'Moving Block Bootstrap(block size: 20, no. pos. ' \
+                   'inputs: 0, no. keyword inputs: 2)'
+        assert_equal(str(bs), expected)
+        expected = expected[:-1] + ', ID: ' + hex(id(bs)) + ')'
+        assert_equal(bs.__repr__(), expected)
+        expected = '<strong>Moving Block Bootstrap</strong>' + \
                    '(<strong>block size</strong>: 20, ' \
                    + '<strong>no. pos. inputs</strong>: 0, ' + \
                    '<strong>no. keyword inputs</strong>: 2,' + \

@@ -1544,7 +1544,7 @@ class RiskMetrics2006(VolatilityProcess):
         _resids = np.empty(t + 1)
         _resids[:t] = resids
         sigma2 = np.empty(t + 1)
-        self.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
+        self.compute_variance(parameters, _resids, sigma2, backcast, var_bounds)
         sigma2.shape = (t + 1, 1)
         forecasts = sigma2[1:]
         forecasts[:start] = np.nan
@@ -1796,6 +1796,7 @@ class EGARCH(VolatilityProcess):
     def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
 
         _, forecasts = self._one_step_forecast(parameters, resids, backcast, var_bounds, horizon)
+        forecasts[:start] = np.nan
 
         return VarianceForecast(forecasts)
 
@@ -1826,6 +1827,7 @@ class EGARCH(VolatilityProcess):
         shocks = np.empty((t, simulations, horizon))
         shocks.fill(np.nan)
 
+        sqrt2pi = np.sqrt(2 / np.pi)
         _lnsigma2 = np.empty((simulations, m + horizon))
         _e = np.empty((simulations, m + horizon))
         _abs_e = np.empty((simulations, m + horizon))
@@ -1841,17 +1843,17 @@ class EGARCH(VolatilityProcess):
                 _lnsigma2[:, m + j] = parameters[loc]
                 loc += 1
                 for k in range(p):
-                    _lnsigma2[:, m + j] += parameters[loc] * _e[:, m + j - 1]
+                    _lnsigma2[:, m + j] += parameters[loc] * (_abs_e[:, m + j - 1 - k] - sqrt2pi)
                     loc += 1
 
                 for k in range(o):
-                    _lnsigma2[:, m + j] += parameters[loc] * _abs_e[:, m + j - 1]
+                    _lnsigma2[:, m + j] += parameters[loc] * _e[:, m + j - 1 - k]
                     loc += 1
 
                 for k in range(q):
-                    _lnsigma2[:, m + j] += parameters[loc] * _lnsigma2[:, m + j - 1]
+                    _lnsigma2[:, m + j] += parameters[loc] * _lnsigma2[:, m + j - 1 - k]
                     loc += 1
-            paths[i, :, :] = np.exp(_lnsigma2[:, m:] / 2)
+            paths[i, :, :] = np.exp(_lnsigma2[:, m:])
             shocks[i, :, :] = np.sqrt(paths[i, :, :]) * std_shocks
 
         return VarianceForecast(paths.mean(1), paths, shocks)
