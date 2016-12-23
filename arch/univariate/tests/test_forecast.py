@@ -11,6 +11,7 @@ from ..mean import _ar_to_impulse, _ar_forecast
 from ...univariate import arch_model
 from .test_variance_forecasting import preserved_state
 
+
 class TestForecasting(TestCase):
     @classmethod
     def setup_class(cls):
@@ -355,10 +356,10 @@ class TestForecasting(TestCase):
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
         rng = am.distribution.simulate([])
-        vfcast = vol.forecast(params[2:], resids, backcast, var_bounds, start=0, method='simulation',
-                              rng=rng, horizon=5)
+        vfcast = vol.forecast(params[2:], resids, backcast, var_bounds, start=0,
+                              method='simulation', rng=rng, horizon=5)
         const, ar = params[0], params[1]
-        means = np.zeros((t,5))
+        means = np.zeros((t, 5))
         means[:, 0] = const + ar * y
         for i in range(1, 5):
             means[:, i] = const + ar * means[:, i-1]
