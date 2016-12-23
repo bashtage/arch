@@ -267,6 +267,7 @@ class TestMeanModel(TestCase):
         assert_equal(a, np.empty((0, 4)))
         assert_equal(b, np.empty(0))
         res = arx.fit(last_obs=900, disp=DISPLAY)
+        assert res.fit_stop == 900
 
         nobs = 900 - 10
         rhs = np.zeros((nobs, 4))
@@ -760,6 +761,7 @@ class TestMeanModel(TestCase):
         assert_equal(res.params.values, res_adj.params.values)
 
         res = am.fit(disp='off', first_obs=100)
+        assert res.fit_start == 100
         res_adj = am.fit(disp='off', first_obs=self.y_series.index[100])
         assert_equal(res.params.values, res_adj.params.values)
         assert_equal(res.resid.values, res_adj.resid.values)

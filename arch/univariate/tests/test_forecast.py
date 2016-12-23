@@ -35,6 +35,11 @@ class TestForecasting(TestCase):
         data.index = pd.date_range('2000-01-01', periods=data.index.shape[0])
         cls.har3 = data.data
 
+        am = arch_model(None, mean='AR', vol='GARCH', lags=[1, 2], p=1, q=1)
+        data = am.simulate(np.array([1.0, 1.9, -0.95, 0.1, 0.1, 0.88]), 1000)
+        data.index = pd.date_range('2000-01-01', periods=data.index.shape[0])
+        cls.ar2_garch = data.data
+
     def test_ar_forecasting(self):
         params = np.array([0.9])
         forecasts = _ar_forecast(self.zero_mean, 5, 0, 0.0, params)
@@ -339,20 +344,125 @@ class TestForecasting(TestCase):
 
         res.forecast(horizon=5, start=0, method='simulation')
 
-    def test_arch1(self):
-        pass
-
-    def test_garch11(self):
-        pass
-
-    def test_gjrgarch111(self):
-        pass
-
-    def test_egarch111(self):
-        pass
-
-    def test_harch22(self):
-        pass
-
     def test_ar2_garch11(self):
         pass
+
+    def test_holdback(self):
+        pass
+
+    def test_first_obs(self):
+        y = self.ar2_garch
+        mod = arch_model(y)
+        res = mod.fit(disp='off', first_obs=y.index[100])
+        mod = arch_model(y[100:])
+        res2 = mod.fit(disp='off')
+        assert_allclose(res.params, res2.params)
+        mod = arch_model(y)
+        res3 = mod.fit(disp='off', first_obs=100)
+        assert res.fit_start == 100
+        assert_allclose(res.params, res3.params)
+
+        forecast = res.forecast(horizon=3)
+        assert np.all(np.isnan(forecast.mean.iloc[:-1]))
+        assert np.all(np.isfinite(forecast.mean.iloc[-1]))
+        assert np.all(np.isnan(forecast.variance.iloc[:-1]))
+        assert np.all(np.isfinite(forecast.variance.iloc[-1]))
+
+        forecast = res.forecast(horizon=3, start=y.index[100])
+        assert np.all(np.isnan(forecast.mean.iloc[:100]))
+        assert np.all(np.isfinite(forecast.mean.iloc[100:]))
+        assert np.all(np.isnan(forecast.variance.iloc[:100]))
+        assert np.all(np.isfinite(forecast.variance.iloc[100:]))
+
+        forecast = res.forecast(horizon=3, start=100)
+        assert np.all(np.isnan(forecast.mean.iloc[:100]))
+        assert np.all(np.isfinite(forecast.mean.iloc[100:]))
+        assert np.all(np.isnan(forecast.variance.iloc[:100]))
+        assert np.all(np.isfinite(forecast.variance.iloc[100:]))
+
+        with pytest.raises(ValueError):
+            res.forecast(horizon=3, start=y.index[98])
+
+        res = mod.fit(disp='off')
+        forecast = res.forecast(horizon=3)
+        assert np.all(np.isnan(forecast.mean.iloc[:-1]))
+        assert np.all(np.isfinite(forecast.mean.iloc[-1]))
+        assert np.all(np.isnan(forecast.variance.iloc[:-1]))
+        assert np.all(np.isfinite(forecast.variance.iloc[-1]))
+
+        forecast = res.forecast(horizon=3, start=y.index[100])
+        assert np.all(np.isnan(forecast.mean.iloc[:100]))
+        assert np.all(np.isfinite(forecast.mean.iloc[100:]))
+        assert np.all(np.isnan(forecast.variance.iloc[:100]))
+        assert np.all(np.isfinite(forecast.variance.iloc[100:]))
+        forecast = res.forecast(horizon=3, start=0)
+        assert np.all(np.isfinite(forecast.mean))
+        assert np.all(np.isfinite(forecast.variance))
+
+        mod = arch_model(y, mean='AR', lags=[1, 2])
+        res = mod.fit(disp='off')
+        with pytest.raises(ValueError):
+            res.forecast(horizon=3, start=0)
+
+        forecast = res.forecast(horizon=3, start=1)
+        assert np.all(np.isnan(forecast.mean.iloc[0]))
+        assert np.all(np.isfinite(forecast.mean.iloc[1:]))
+        assert np.all(np.isnan(forecast.variance.iloc[0]))
+        assert np.all(np.isfinite(forecast.variance.iloc[2:]))
+
+    def test_last_obs(self):
+        y = self.ar2_garch
+        mod = arch_model(y)
+        res = mod.fit(disp='off', last_obs=y.index[900])
+        res_2 = mod.fit(disp='off', last_obs=900)
+        assert_allclose(res.params, res_2.params)
+        mod = arch_model(y[:900])
+        res_3 = mod.fit(disp='off')
+        assert_allclose(res.params, res_3.params)
+
+    def test_first_last_obs(self):
+        y = self.ar2_garch
+        mod = arch_model(y)
+        res = mod.fit(disp='off', first_obs=y.index[100], last_obs=y.index[900])
+        res_2 = mod.fit(disp='off', first_obs=100, last_obs=900)
+        assert_allclose(res.params, res_2.params)
+        mod = arch_model(y.iloc[100:900])
+        res_3 = mod.fit(disp='off')
+        assert_allclose(res.params, res_3.params)
+
+        mod = arch_model(y)
+        res_4 = mod.fit(disp='off', first_obs=100, last_obs=y.index[900])
+        assert_allclose(res.params, res_4.params)
+
+    def test_holdback_first_obs(self):
+        y = self.ar2_garch
+        mod = arch_model(y, hold_back=20)
+        res_holdback = mod.fit(disp='off')
+        mod = arch_model(y)
+        res_first_obs = mod.fit(disp='off', first_obs=20)
+        assert_allclose(res_holdback.params, res_first_obs.params)
+
+        with pytest.raises(ValueError):
+            res_holdback.forecast(start=18)
+
+    def test_holdback_lastobs(self):
+        y = self.ar2_garch
+        mod = arch_model(y, hold_back=20)
+        res_holdback_last_obs = mod.fit(disp='off', last_obs=800)
+        mod = arch_model(y)
+        res_first_obs_last_obs = mod.fit(disp='off', first_obs=20, last_obs=800)
+        assert_allclose(res_holdback_last_obs.params, res_first_obs_last_obs.params)
+        mod = arch_model(y[20:800])
+        res_direct = mod.fit(disp='off')
+        assert_allclose(res_direct.params, res_first_obs_last_obs.params)
+
+        with pytest.raises(ValueError):
+            res_holdback_last_obs.forecast(start=18)
+
+    def test_holdback_ar(self):
+        y = self.ar2_garch
+        mod = arch_model(y, mean='AR', lags=1, hold_back=1)
+        res_holdback = mod.fit()
+        mod = arch_model(y, mean='AR', lags=1)
+        res = mod.fit()
+        assert_allclose(res_holdback.params, res.params)
