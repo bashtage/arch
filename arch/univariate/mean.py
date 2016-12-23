@@ -88,7 +88,7 @@ class HARX(ARCHModel):
         nobs element vector containing the dependent variable
     x : array or DataFrame, optional
         nobs by k element array containing exogenous regressors
-    lags : scalar, 1-d array or 2-d array, optional
+    lags : {scalar, array}, optional
         Description of lag structure of the HAR.  Scalar included all lags
         between 1 and the value.  A 1-d array includes the HAR lags 1:lags[0],
         1:lags[1], ... A 2-d array includes the HAR lags of the form
@@ -1072,9 +1072,9 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
 
     Parameters
     ----------
-    y : 1-d array
+    y : array
         The dependent variable
-    x : 2-d array, optional
+    x : array, optional
         Exogenous regressors.  Ignored if model does not permit exogenous
         regressors.
     mean : str, optional

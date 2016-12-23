@@ -9,7 +9,7 @@ from pandas.util.testing import assert_frame_equal
 
 from ..mean import _ar_to_impulse, _ar_forecast
 from ...univariate import arch_model
-
+from .test_variance_forecasting import preserved_state
 
 class TestForecasting(TestCase):
     @classmethod
@@ -338,16 +338,46 @@ class TestForecasting(TestCase):
         res = am.fit(first_obs=100)
         res.forecast()
 
-    def test_ar1_forecast_simulation_smoke(self):
+    def test_ar1_forecast_simulation(self):
         am = arch_model(self.ar1, mean='AR', vol='GARCH', lags=[1])
-        res = am.fit()
+        res = am.fit(disp='off')
 
-        res.forecast(horizon=5, start=0, method='simulation')
+        with preserved_state():
+            forecast = res.forecast(horizon=5, start=0, method='simulation')
+
+        y = np.asarray(self.ar1)
+        index = self.ar1.index
+        t = y.shape[0]
+        params = np.array(res.params)
+        resids = np.asarray(y[1:] - params[0] - params[1] * y[:-1])
+        vol = am.volatility
+        params = np.array(res.params)
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        rng = am.distribution.simulate([])
+        vfcast = vol.forecast(params[2:], resids, backcast, var_bounds, start=0, method='simulation',
+                              rng=rng, horizon=5)
+        const, ar = params[0], params[1]
+        means = np.zeros((t,5))
+        means[:, 0] = const + ar * y
+        for i in range(1, 5):
+            means[:, i] = const + ar * means[:, i-1]
+        means = pd.DataFrame(means, index=index,
+                             columns=['h.{0}'.format(j) for j in range(1, 6)])
+        assert_frame_equal(means, forecast.mean)
+        var = np.concatenate([[[np.nan]*5], vfcast.forecasts])
+        rv = pd.DataFrame(var, index=index,
+                          columns=['h.{0}'.format(j) for j in range(1, 6)])
+        assert_frame_equal(rv, forecast.residual_variance)
+
+        lrv = rv.copy()
+        for i in range(5):
+            weights = (ar ** np.arange(i+1)) ** 2
+            weights = weights[:, None]
+            lrv.iloc[:, i:i+1] = rv.values[:, :i+1].dot(weights[::-1])
+        assert_frame_equal(lrv, forecast.variance)
 
     def test_ar2_garch11(self):
-        pass
-
-    def test_holdback(self):
         pass
 
     def test_first_obs(self):

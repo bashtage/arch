@@ -412,9 +412,9 @@ class VolatilityProcess(object):
 
         Parameters
         ----------
-        parameters : array, 1-d
+        parameters : array
             Parameters required to forecast the volatility model
-        resids : array, 1-d
+        resids : array
             Residuals to use in the recursion
         backcast : float
             Value to use when initializing the recursion

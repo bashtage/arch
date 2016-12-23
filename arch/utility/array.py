@@ -122,7 +122,7 @@ def date_to_index(date, date_index):
     ----------
     date : string, datetime or datetime64
         Date to use when returning the index
-    date_index : 1-d array of datetime64
+    date_index : array
         Index data containing datetime64 values
 
     Returns

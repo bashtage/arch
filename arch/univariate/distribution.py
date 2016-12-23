@@ -40,7 +40,7 @@ class Distribution(object):
 
         Returns
         -------
-        rvs : 1-d array
+        rvs : array
             Simulated pseudo random variables
 
         Notes
@@ -56,7 +56,7 @@ class Distribution(object):
 
         Parameters
         ----------
-        parameters : 1-d array
+        parameters : array
             Distribution parameters
 
         Returns
@@ -72,9 +72,9 @@ class Distribution(object):
         """
         Returns
         -------
-        A : 2-d array
+        A : array
             Constraint loadings
-        b : 1-d array
+        b : array
             Constraint values
 
         Notes
@@ -88,7 +88,7 @@ class Distribution(object):
         """
         Parameters
         ----------
-        resids : 1-d array
+        resids : array
              Residuals to use when computing the bounds
 
         Returns
@@ -103,11 +103,11 @@ class Distribution(object):
         """
         Parameters
         ----------
-        parameters : 1-d array
+        parameters : array
             Distribution shape parameters
-        resids : 1-d array
+        resids : array
             nobs array of model residuals
-        sigma2 : 1-d array
+        sigma2 : array
             nobs array of conditional variances
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
@@ -125,13 +125,13 @@ class Distribution(object):
         """
         Parameters
         ----------
-        std_resid : 1-d array
+        std_resid : array
             Estimated standardized residuals to use in computing starting
             values for the shape parameter
 
         Returns
         -------
-        sv : 1-d array
+        sv : array
             The estimated shape parameters for the distribution
 
         Notes
@@ -186,9 +186,9 @@ class Normal(Distribution):
         ----------
         parameters : empty array
             The normal likelihood has no shape parameters
-        resids  : 1-d array, float
+        resids  : array
             The residuals to use in the log-likelihood calculation
-        sigma2 : 1-d array, float
+        sigma2 : array
             Conditional variances of resids
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
@@ -196,7 +196,7 @@ class Normal(Distribution):
 
         Returns
         -------
-        ll : float64
+        ll : float
             The log-likelihood
 
         Notes
@@ -250,11 +250,11 @@ class StudentsT(Distribution):
 
         Parameters
         ----------
-        parameters : 1-d array
+        parameters : array
             Shape parameter of the t distribution
-        resids  : 1-d array, float
+        resids  : array
             The residuals to use in the log-likelihood calculation
-        sigma2 : 1-d array, float
+        sigma2 : array
             Conditional variances of resids
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
@@ -262,7 +262,7 @@ class StudentsT(Distribution):
 
         Returns
         -------
-        ll : float64
+        ll : float
             The log-likelihood
 
         Notes
@@ -293,13 +293,13 @@ class StudentsT(Distribution):
         """
         Parameters
         ----------
-        std_resid : 1-d array
+        std_resid : array
             Estimated standardized residuals to use in computing starting
             values for the shape parameter
 
         Returns
         -------
-        sv : 1-d array
+        sv : array
             Array containing starting valuer for shape parameter
 
         Notes
@@ -366,11 +366,11 @@ class SkewStudent(Distribution):
 
         Parameters
         ----------
-        parameters : 1-d array
+        parameters : array
             Shape parameter of the skew-t distribution
-        resids  : 1-d array, float
+        resids  : array
             The residuals to use in the log-likelihood calculation
-        sigma2 : 1-d array, float
+        sigma2 : array
             Conditional variances of resids
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
@@ -378,7 +378,7 @@ class SkewStudent(Distribution):
 
         Returns
         -------
-        ll : float64
+        ll : float
             The log-likelihood
 
         Notes
@@ -426,13 +426,13 @@ class SkewStudent(Distribution):
         """
         Parameters
         ----------
-        std_resid : 1-d array
+        std_resid : array
             Estimated standardized residuals to use in computing starting
             values for the shape parameter
 
         Returns
         -------
-        sv : 1-d array
+        sv : array
             Array containing starting valuer for shape parameter
 
         Notes
@@ -466,7 +466,7 @@ class SkewStudent(Distribution):
 
         Parameters
         ----------
-        parameters : 1-d array
+        parameters : array
             Shape parameters of the skew-t distribution
 
         Returns
@@ -484,7 +484,7 @@ class SkewStudent(Distribution):
 
         Parameters
         ----------
-        parameters : 1-d array
+        parameters : array
             Shape parameters of the skew-t distribution
 
         Returns
@@ -501,7 +501,7 @@ class SkewStudent(Distribution):
 
         Parameters
         ----------
-        parameters : 1-d array
+        parameters : array
             Shape parameters of the skew-t distribution
 
         Returns
@@ -520,7 +520,7 @@ class SkewStudent(Distribution):
         ----------
         arg : array
             Grid of point to evaluate ICDF at. Must belong to (0, 1)
-        parameters : 1-d array
+        parameters : array
             Shape parameters of the skew-t distribution
 
         Returns

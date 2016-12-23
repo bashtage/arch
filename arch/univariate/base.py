@@ -23,6 +23,8 @@ from statsmodels.tools.numdiff import approx_fprime, approx_hess
 from .distribution import Distribution, Normal
 from .volatility import VolatilityProcess, ConstantVariance
 from ..utility.array import ensure1d, DocStringInheritor
+from ..utility.exceptions import ConvergenceWarning, StartingValueWarning, \
+    convergence_warning, starting_value_warning
 
 __all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel']
 
@@ -31,32 +33,13 @@ _callback_iter, _callback_llf = 0, 0.0,
 _callback_func_count, _callback_iter_display = 0, 1
 
 
-class ConvergenceWarning(Warning):
-    pass
-
-convergence_warning = """
-The optimizer returned code {code}. The message is:
-{string_message}
-See scipy.optimize.fmin_slsqp for code meaning.
-"""
-
-
-class StartingValueWarning(Warning):
-    pass
-
-starting_value_warning = """
-Starting values do not satisfy the parameter constraints in the model.  The
-provided starting values will be ignored.
-"""
-
-
 def _callback(*args):
     """
     Callback for use in optimization
 
     Parameters
     ----------
-    parameters : 1-d array
+    parameters : array
         Parameter value (not used by function)
 
     Notes
@@ -87,9 +70,9 @@ def constraint(a, b):
 
     Parameters
     ----------
-    a : 2-d array
+    a : array
         Parameter loadings
-    b : 1-d array
+    b : array
         Constraint bounds
 
     Returns
@@ -130,10 +113,11 @@ def implicit_constant(x):
 
     Parameters
     ----------
-    x : 2-d array
+    x : array
         Array to be tested
 
     Returns
+    -------
     constant : bool
         Flag indicating whether the array has an implicit constant - whether
         the array has a set of columns that adds to a constant value
@@ -194,9 +178,9 @@ class ARCHModel(object):
 
         Returns
         -------
-        a : 2-d array
+        a : array
             Number of constraints by number of parameters loading array
-        b : 1-d array
+        b : array
             Number of constraints array of lower bounds
 
         Notes
@@ -398,7 +382,7 @@ class ARCHModel(object):
         disp : str
             Either 'final' to print optimization result or 'off' to display
             nothing
-        starting_values : 1-d array, optional
+        starting_values : array, optional
             Array of starting values to use.  If not provided, starting values
             are constructed by the model components.
         cov_type : str, optional
@@ -577,7 +561,7 @@ class ARCHModel(object):
 
         Returns
         -------
-        sv : 1-d array
+        sv : array
             Starting values
         """
         params = np.asarray(self._fit_no_arch_normal_errors().params)
@@ -604,16 +588,16 @@ class ARCHModel(object):
 
         Parameters
         ----------
-        params : 1-d array
+        params : array
             Model parameters
-        y : 1-d array, optional
+        y : array, optional
             Alternative values to use when computing model residuals
-        regressors : 2-d array, optional
+        regressors : array, optional
             Alternative regressor values to use when computing model residuals
 
         Returns
         -------
-        resids : 1-d array
+        resids : array
             Model residuals
         """
         raise NotImplementedError('Subclasses must implement')
@@ -624,8 +608,10 @@ class ARCHModel(object):
 
         Parameters
         ----------
-        params : 1-d array
+        params : array
             Model parameters
+        backcast : float
+            Value to use for pre-sample observations
         robust : bool, optional
             Flag indicating whether to use robust standard errors (True) or
             classic MLE (False)
@@ -663,7 +649,7 @@ class ARCHModel(object):
 
         Parameters
         ----------
-        params : 1d array-like, optional
+        params : array, optional
             Alternative parameters to use.  If not provided, the parameters
             estimated when fitting the model are used.  Must be identical in
             shape to the parameters computed by fitting the model.
@@ -773,7 +759,7 @@ class ARCHModelFixedResult(object):
         Akaike information criteria
     bic : float
         Schwarz/Bayes information criteria
-    conditional_volatility : 1-d array or Series
+    conditional_volatility : {array, Series}
         nobs element array containing the conditional volatility (square root
         of conditional variance).  The values are aligned with the input data
         so that the value in the t-th position is the variance of t-th error,
@@ -784,7 +770,7 @@ class ARCHModelFixedResult(object):
         Number of observations used in the estimation
     num_params : int
         Number of parameters in the model
-    resid : 1-d array or Series
+    resid : {array, Series}
         nobs element array containing model residuals
     model : ARCHModel
         Model instance used to produce the fit
@@ -1009,9 +995,8 @@ class ARCHModelFixedResult(object):
 
         >>> fig = res.plot(scale=360)
         """
-        import matplotlib.pyplot as plt
-
-        fig = plt.figure()
+        from matplotlib.pyplot import figure
+        fig = figure()
 
         ax = fig.add_subplot(2, 1, 1)
         ax.plot(self._index, self.resid / self.conditional_volatility)
@@ -1044,7 +1029,7 @@ class ARCHModelFixedResult(object):
 
         Parameters
         ----------
-        params : 1d array-like, optional
+        params : array, optional
             Alternative parameters to use.  If not provided, the parameters
             estimated when fitting the model are used.  Must be identical in
             shape to the parameters computed by fitting the model.
@@ -1169,7 +1154,6 @@ class ARCHModelFixedResult(object):
                     invalid_start = False
                 except ValueError:
                     start += 1
-                    pass
         else:
             forecasts = self.forecast(params, horizon, start, method=method,
                                       simulations=simulations)
@@ -1262,7 +1246,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         Akaike information criteria
     bic : float
         Schwarz/Bayes information criteria
-    conditional_volatility : 1-d array or Series
+    conditional_volatility : {array, Series}
         nobs element array containing the conditional volatility (square root
         of conditional variance).  The values are aligned with the input data
         so that the value in the t-th position is the variance of t-th error,
@@ -1285,7 +1269,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         Array of parameter standard errors
     pvalues : Series
         Array of p-values for the t-statistics
-    resid : 1-d array or Series
+    resid : {array, Series}
         nobs element array containing model residuals
     model : ARCHModel
         Model instance used to produce the fit
@@ -1313,7 +1297,7 @@ class ARCHModelResult(ARCHModelFixedResult):
 
         Returns
         -------
-        ci : 2-d array
+        ci : array
             Array where the ith row contains the confidence interval  for the
             ith parameter
         """

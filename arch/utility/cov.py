@@ -7,17 +7,17 @@ def cov_nw(y, lags=0, demean=True, axis=0, ddof=0):
 
     Parameters
     ----------
-    y : array-like, 1d or 2d
-        Values to use when computing the Newey-West covariance estimator.
-        When u is 2d, default behavior is to treat columns as variables and
-        rows as observations.
-    lags : int, non-negative
+    y : array
+        Values to use when computing the Newey-West covariance estimator, either
+        1-d or 2-d. When y is 2d, default behavior is to treat columns as variables
+        and rows as observations.
+    lags : int
         Number of lags to include in the Newey-West covariance estimator
     demean : bool
         Indicates whether to subtract the mean.  Default is True
-    axis : int, (0, 1)
+    axis : int
         The axis to use when y is 2d
-    ddof : int, non-negative
+    ddof : int
         Degree of freedom correction for compatability with simple covariance
         estimators.  Default is 0.
 

@@ -729,7 +729,7 @@ class IIDBootstrap(object):
 
         Returns
         -------
-        var : 1-d array
+        var : array
             Bootstrap variance estimator
 
         Notes

@@ -6,10 +6,10 @@ def stationary_bootstrap_sample_python(indices, u, p):
     """
     Parameters
     -------
-    indices: 1-d array
+    indices: array
         Array containing draws from randint with the same size as the data in
         the range of [0,nobs)
-    u : 1-d array
+    u : array
         Array of standard uniforms
     p : float
         Probability that a new block is started in the stationary bootstrap.
@@ -17,7 +17,7 @@ def stationary_bootstrap_sample_python(indices, u, p):
 
     Returns
     -------
-    indices: 1-d array
+    indices: array
         Indices for an iteration of the stationary bootstrap
     """
     num_items = indices.shape[0]

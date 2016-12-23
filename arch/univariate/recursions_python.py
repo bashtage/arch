@@ -19,19 +19,19 @@ def harch_recursion_python(parameters, resids, sigma2, lags, nobs, backcast,
     """
     Parameters
     ----------
-    parameters : 1-d array, float64
+    parameters : array
         Model parameters
-    resids : 1-d array, float64
+    resids : array
         Residuals to use in the recursion
-    sigma2 : 1-d array, float64
+    sigma2 : array
         Conditional variances with same shape as resids
-    lags : 1-d array, int
+    lags : array
         Lag lengths in the HARCH
     nobs : int
         Length of resids
-    backcast : float64
+    backcast : float
         Value to use when initializing the recursion
-    var_bounds : 2-d array
+    var_bounds : array
         nobs by 2-element array of upper and lower bounds for conditional
         variances for each time period
     """
@@ -65,17 +65,17 @@ def arch_recursion_python(parameters, resids, sigma2, p, nobs, backcast,
     """
     Parameters
     ----------
-    parameters : 1-d array, float64
+    parameters : array
         Model parameters
-    resids : 1-d array, float64
+    resids : array
         Residuals to use in the recursion
-    sigma2 : 1-d array, float64
+    sigma2 : array
         Conditional variances with same shape as resids
     p : int
         Number of lags in ARCH model
     nobs : int
         Length of resids
-    backcast : float64
+    backcast : float
         Value to use when initializing the recursion
     var_bounds : 2-d array
         nobs by 2-element array of upper and lower bounds for conditional
@@ -111,14 +111,14 @@ def garch_recursion_python(parameters, fresids, sresids, sigma2, p, o, q, nobs,
 
     Parameters
     ----------
-    parameters : 1-d array, float64
+    parameters : array
         Model parameters
-    fresids : 1-d array, float64
+    fresids : array
         Absolute value of residuals raised to the power in the model.  For
         example, in a standard GARCH model, the power is 2.0.
-    sresids : 1-d array, float64
+    sresids : array
         Variable containing the sign of the residuals (-1.0, 0.0, 1.0)
-    sigma2 : 1-d array, float64
+    sigma2 : array
         Conditional variances with same shape as resids
     p : int
         Number of symmetric innovations in model
@@ -128,7 +128,7 @@ def garch_recursion_python(parameters, fresids, sresids, sigma2, p, o, q, nobs,
         Number of lags of the (transformed) variance in the model
     nobs : int
         Length of resids
-    backcast : float64
+    backcast : float
         Value to use when initializing the recursion
     var_bounds : 2-d array
         nobs by 2-element array of upper and lower bounds for conditional
@@ -181,11 +181,11 @@ def egarch_recursion_python(parameters, resids, sigma2, p, o, q, nobs,
 
     Parameters
     ----------
-    parameters : 1-d array, float64
+    parameters : array
         Model parameters
-    resids : 1-d array, float64
+    resids : array
         Residuals to use in the recursion
-    sigma2 : 1-d array, float64
+    sigma2 : array
         Conditional variances with same shape as resids
     p : int
         Number of symmetric innovations in model
@@ -195,16 +195,16 @@ def egarch_recursion_python(parameters, resids, sigma2, p, o, q, nobs,
         Number of lags of the (transformed) variance in the model
     nobs : int
         Length of resids
-    backcast : float64
+    backcast : float
         Value to use when initializing the recursion
     var_bounds : 2-d array
         nobs by 2-element array of upper and lower bounds for conditional
         variances for each time period
-    lnsigma2 : 1-d array, float64
+    lnsigma2 : array
         Temporary array (overwritten) with same shape as resids
-    std_resids : 1-d array, float64
+    std_resids : array
         Temporary array (overwritten) with same shape as resids
-    abs_std_resids : 1-d array, float64
+    abs_std_resids : array
         Temporary array (overwritten) with same shape as resids
     """
     norm_const = 0.79788456080286541  # E[abs(e)], e~N(0,1)
