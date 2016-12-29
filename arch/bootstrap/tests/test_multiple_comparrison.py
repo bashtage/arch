@@ -382,10 +382,7 @@ class TestMCS(TestCase):
         direct.index.name = 'Model index'
         assert_frame_equal(mcs.pvalues.iloc[:m], direct)
 
-    def test_smoke(self):
-        # TODO: Upgrade to meaningful test
-        mcs = MCS(self.losses, 0.05, reps=100, block_size=10, method='max')
-        mcs.compute()
+    def test_output_types(self):
         mcs = MCS(self.losses_df, 0.05, reps=100, block_size=10, method='r')
         mcs.compute()
         assert_equal(type(mcs.included), list)

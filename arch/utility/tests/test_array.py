@@ -6,14 +6,10 @@ import numpy as np
 from numpy.testing import assert_equal
 from pandas import Series, DataFrame, date_range
 
-try:
-    from pandas import Timedelta
-
-    pre_timedelta = False
-except ImportError:
-    pre_timedelta = True
+from pandas import Timedelta
 
 import pytest
+from arch import doc
 from arch.utility.array import ensure1d, parse_dataframe, DocStringInheritor, \
     date_to_index, find_index, cutoff_to_index
 from arch.univariate.base import implicit_constant
@@ -81,13 +77,11 @@ class TestUtils(TestCase):
 
     def test_docstring_inheritor(self):
         @add_metaclass(DocStringInheritor)
-        class A:
+        class A(object):
             """
             Docstring
             """
-
-            def __init__(self):
-                pass
+            pass
 
         class B(A):
             pass
@@ -146,8 +140,6 @@ class TestUtils(TestCase):
         assert_equal(index, index_pydt)
         assert_equal(index, index_str)
 
-    @pytest.mark.skipif(pre_timedelta,
-                        reason='Old pandas does not have Timedelta')
     def test_(self):
         dr = date_range('20000101', periods=3000, freq='W')
         y = Series(np.arange(3000.0), index=dr)
@@ -224,5 +216,4 @@ class TestUtils(TestCase):
 @pytest.mark.skipif(os.name != 'nt', reason='XVFB is broken on travis')
 class TestDoc(TestCase):
     def test_doc(self):
-        from arch import doc
         doc()
