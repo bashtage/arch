@@ -1,6 +1,6 @@
 package:
   name: arch
-  version: "3.2"
+  version: "4.0"
 
 source:
   git_url: https://github.com/bashtage/arch.git
