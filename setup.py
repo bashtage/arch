@@ -37,11 +37,11 @@ class build_ext(_build_ext):
         _build_ext.build_extensions(self)
 
 
-SETUP_REQUIREMENTS = {'numpy': '1.8'}
+SETUP_REQUIREMENTS = {'numpy': '1.9'}
 REQUIREMENTS = {'Cython': '0.22',
-                'matplotlib': '1.3',
-                'scipy': '0.14',
-                'pandas': '0.14',
+                'matplotlib': '1.4',
+                'scipy': '0.15',
+                'pandas': '0.16',
                 'statsmodels': '0.6',
                 'patsy': '0.2'}
 
@@ -280,12 +280,12 @@ setup(name='arch',
       include_package_data=True,
       distclass=BinaryDistribution,
       classifiers=[
-          'Development Status :: 4 - Beta',
+          'Development Status :: 5 - Production/Stable',
           'Intended Audience :: End Users/Desktop',
           'Intended Audience :: Financial and Insurance Industry',
           'Programming Language :: Python :: 2.7',
-          'Programming Language :: Python :: 3.3',
           'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
           'License :: OSI Approved',
           'Operating System :: MacOS :: MacOS X',
           'Operating System :: Microsoft :: Windows',
