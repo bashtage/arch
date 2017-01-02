@@ -141,6 +141,7 @@ for examples of the multiple comparison procedures.
 
 ## Requirements
 
+* Python (2.7, 3.4 - 3.6)
 * NumPy (1.9+)
 * SciPy (0.15+)
 * Pandas (0.16+)
@@ -180,7 +181,7 @@ conda install -c https://conda.binstar.org/bashtage arch
 ### Windows
 
 Building extension using the community edition of Visual Studio is
-well supported for Python 3.5.  Building extensions for 64-bit Windows
+well supported for Python 3.5+.  Building extensions for 64-bit Windows
 for use in Python 2.7 is also supported using Microsoft Visual C++
 Compiler for Python 2.7.  Building on combinations of Python/Windows
 is more difficult and is not necessary when Numba is installed since

@@ -22,6 +22,11 @@ from arch.univariate.mean import HARX, ConstantMean, ARX, ZeroMean, LS, \
 from arch.univariate.volatility import ConstantVariance, GARCH, HARCH, ARCH, \
     RiskMetrics2006, EWMAVariance, EGARCH
 from arch.univariate.distribution import Normal, StudentsT
+try:
+    import matplotlib.pyplot  # noqa
+    HAS_MATPLOTLIB = True
+except ImportError:
+    HAS_MATPLOTLIB = False
 
 DISPLAY = 'off'
 
@@ -357,12 +362,18 @@ class TestMeanModel(TestCase):
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
         res = ar.fit(disp=DISPLAY, update_freq=5, cov_type='mle')
         res.param_cov
+
+    @pytest.mark.skipif(not HAS_MATPLOTLIB, reason='matplotlib not installed')
+    def test_ar_plot(self):
+        ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
+        res = ar.fit(disp=DISPLAY, update_freq=5, cov_type='mle')
         res.plot()
         res.plot(annualize='D')
         res.plot(annualize='W')
         res.plot(annualize='M')
         with pytest.raises(ValueError):
             res.plot(annualize='unknown')
+
         res.plot(scale=360)
         res.hedgehog_plot(start=500)
         res.hedgehog_plot(start=500, type='mean')
