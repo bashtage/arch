@@ -242,4 +242,5 @@ def egarch_recursion_python(parameters, resids, sigma2, p, o, q, nobs,
 
     return sigma2
 
+
 egarch_recursion = jit(egarch_recursion_python)
