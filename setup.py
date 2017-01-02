@@ -10,6 +10,7 @@ from distutils.version import StrictVersion
 
 from setuptools import setup, Extension, find_packages, Command
 from setuptools.dist import Distribution
+import versioneer
 
 try:
     from Cython.Distutils.build_ext import build_ext as _build_ext
@@ -21,8 +22,7 @@ except ImportError:
     class _build_ext(object):
         pass
 
-CMDCLASS = {}
-
+cmdclass = versioneer.get_cmdclass()
 
 # prevent setup.py from crashing by calling import numpy before
 # numpy is installed
@@ -54,7 +54,7 @@ if '--no-binary' not in sys.argv and CYTHON_INSTALLED:
                                  ["./arch/univariate/recursions.pyx"]))
     ext_modules.append(Extension("arch.bootstrap._samplers",
                                  ["./arch/bootstrap/_samplers.pyx"]))
-    CMDCLASS['build_ext'] = build_ext
+    cmdclass['build_ext'] = build_ext
 else:
     del REQUIREMENTS['Cython']
     if '--no-binary' in sys.argv:
@@ -106,7 +106,7 @@ class CleanCommand(Command):
                 pass
 
 
-CMDCLASS['clean'] = CleanCommand
+cmdclass['clean'] = CleanCommand
 
 
 def strip_rc(version):
@@ -249,20 +249,20 @@ except:
     print(sys.exc_info()[1])
 
 # Read version information from plain VERSION file
-version = None
-try:
-    version_file = open(os.path.join(cwd, 'VERSION'), 'rt')
-    version = version_file.read().strip()
-    version_file.close()
-    version_py_file = open(os.path.join(cwd, 'arch', '_version.py'), mode='wt')
-    version_py_file.write('__version__ = "' + version + '"\n')
-    version_py_file.close()
-except:
-    raise EnvironmentError('Cannot locate VERSION')
+# version = None
+# try:
+#     version_file = open(os.path.join(cwd, 'VERSION'), 'rt')
+#     version = version_file.read().strip()
+#     version_file.close()
+#     version_py_file = open(os.path.join(cwd, 'arch', '_version.py'), mode='wt')
+#     version_py_file.write('__version__ = "' + version + '"\n')
+#     version_py_file.close()
+# except:
+#     raise EnvironmentError('Cannot locate VERSION')
 
 setup(name='arch',
       license='NCSA',
-      version=version,
+      version=versioneer.get_version(),
       description='ARCH for Python',
       long_description=long_description,
       author='Kevin Sheppard',
@@ -271,7 +271,7 @@ setup(name='arch',
       packages=find_packages(),
       ext_modules=ext_modules,
       package_dir={'arch': './arch'},
-      cmdclass=CMDCLASS,
+      cmdclass=cmdclass,
       keywords=['arch', 'ARCH', 'variance', 'econometrics', 'volatility',
                 'finance', 'GARCH', 'bootstrap', 'random walk', 'unit root',
                 'Dickey Fuller', 'time series', 'confidence intervals',
