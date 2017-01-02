@@ -1,6 +1,10 @@
-.idea/*
+.idea/
 *.pyc
-arch/_version.py
+*.pyd
+*.c
 arch.egg-info/
-build
+build/
 dist
+.benchmarks/
+.cache/
+README.rst
