@@ -1,19 +1,23 @@
 # TODO: Tests for features that are just called
 # TODO: Test for trend='ctt'
 from __future__ import print_function, division
-from arch.compat.python import iteritems
-
-from unittest import TestCase
-import pytest
-
-import numpy as np
-from numpy.testing import assert_almost_equal, assert_equal
-from numpy import log, polyval, diff, ceil
-
-from arch.unitroot import ADF, DFGLS, PhillipsPerron, KPSS, VarianceRatio
-from arch.unitroot.critical_values.dickey_fuller import tau_2010
 
 import warnings
+from unittest import TestCase
+
+import numpy as np
+import pytest
+import scipy.stats as stats
+from numpy import log, polyval, diff, ceil
+from numpy.testing import assert_almost_equal, assert_equal
+from statsmodels.datasets import macrodata
+from statsmodels.regression.linear_model import OLS
+from statsmodels.tsa.stattools import _autolag, lagmat
+
+from arch.compat.python import iteritems
+from arch.unitroot import ADF, DFGLS, PhillipsPerron, KPSS, VarianceRatio
+from arch.unitroot.critical_values.dickey_fuller import tau_2010
+from arch.unitroot.unitroot import _autolag_ols
 
 DECIMAL_5 = 5
 DECIMAL_4 = 4
@@ -23,12 +27,9 @@ DECIMAL_1 = 1
 
 
 class TestUnitRoot(TestCase):
-
     @classmethod
     def setup_class(cls):
-        from statsmodels.datasets.macrodata import load
-
-        cls.cpi = log(load().data['cpi'])
+        cls.cpi = log(macrodata.load().data['cpi'])
         cls.inflation = diff(cls.cpi)
         cls.inflation_change = diff(cls.inflation)
 
@@ -76,7 +77,7 @@ class TestUnitRoot(TestCase):
 
     def test_adf_auto_t_stat(self):
         adf = ADF(self.inflation, method='t-stat')
-        assert_equal(adf.lags, 10)
+        assert_equal(adf.lags, 11)
         old_stat = adf.stat
         adf.lags += 1
         assert adf.stat != old_stat
@@ -241,3 +242,101 @@ class TestUnitRoot(TestCase):
         # TODO: Currently not a test, just makes sure code runs at all
         vr = VarianceRatio(self.inflation, lags=24)
         assert isinstance(vr, VarianceRatio)
+
+
+class TestAutolagOLS(TestCase):
+    @classmethod
+    def setup_class(cls):
+        np.random.seed(12345)
+        t = 1100
+        y = np.zeros(t)
+        e = np.random.randn(t)
+        y[:2] = e[:2]
+        for i in range(3, t):
+            y[i] = 1.5 * y[i - 1] - 0.8 * y[i - 2] + 0.2 * y[i - 3] + e[i]
+        cls.y = y[100:]
+        cls.x = cls.y.std() * np.random.randn(t, 2)
+        cls.x = cls.x[100:]
+        cls.z = cls.y + cls.x.sum(1)
+
+        cls.cpi = log(macrodata.load().data['cpi'])
+        cls.inflation = diff(cls.cpi)
+        cls.inflation_change = diff(cls.inflation)
+
+    def test_aic(self):
+        exog, endog = lagmat(self.inflation, 12, original='sep', trim='both')
+        icbest, sel_lag = _autolag(OLS, endog, exog, 1, 11, 'aic')
+        icbest2, sel_lag2 = _autolag_ols(endog, exog, 0, 12, 'aic')
+        assert np.isscalar(icbest2)
+        assert np.isscalar(sel_lag2)
+        assert sel_lag == sel_lag2
+
+        exog, endog = lagmat(self.y, 12, original='sep', trim='both')
+        icbest, sel_lag = _autolag(OLS, endog, exog, 1, 11, 'aic')
+        icbest2, sel_lag2 = _autolag_ols(endog, exog, 0, 12, 'aic')
+        assert np.isscalar(icbest2)
+        assert np.isscalar(sel_lag2)
+        assert sel_lag == sel_lag2
+
+    def test_bic(self):
+        exog, endog = lagmat(self.inflation, 12, original='sep', trim='both')
+        icbest, sel_lag = _autolag(OLS, endog, exog, 1, 11, 'bic')
+        icbest2, sel_lag2 = _autolag_ols(endog, exog, 0, 12, 'bic')
+        assert np.isscalar(icbest2)
+        assert np.isscalar(sel_lag2)
+        assert sel_lag == sel_lag2
+
+        exog, endog = lagmat(self.y, 12, original='sep', trim='both')
+        icbest, sel_lag = _autolag(OLS, endog, exog, 1, 11, 'bic')
+        icbest2, sel_lag2 = _autolag_ols(endog, exog, 0, 12, 'bic')
+        assert np.isscalar(icbest2)
+        assert np.isscalar(sel_lag2)
+        assert sel_lag == sel_lag2
+
+    def test_tstat(self):
+        exog, endog = lagmat(self.inflation, 12, original='sep', trim='both')
+        icbest, sel_lag = _autolag(OLS, endog, exog, 1, 11, 't-stat')
+        icbest2, sel_lag2 = _autolag_ols(endog, exog, 0, 12, 't-stat')
+        assert np.isscalar(icbest2)
+        assert np.isscalar(sel_lag2)
+        assert sel_lag == sel_lag2
+
+        exog, endog = lagmat(self.y, 12, original='sep', trim='both')
+        icbest, sel_lag = _autolag(OLS, endog, exog, 1, 11, 't-stat')
+        icbest2, sel_lag2 = _autolag_ols(endog, exog, 0, 12, 't-stat')
+        assert np.isscalar(icbest2)
+        assert np.isscalar(sel_lag2)
+        assert sel_lag == sel_lag2
+
+    def test_aic_exogenous(self):
+        exog, endog = lagmat(self.z, 12, original='sep', trim='both')
+        exog = np.concatenate([self.x[12:], exog], axis=1)
+        icbest, sel_lag = _autolag_ols(endog, exog, 2, 12, 'aic')
+        direct = np.zeros(exog.shape[1])
+        direct.fill(np.inf)
+        for i in range(3, exog.shape[1]):
+            res = OLS(endog, exog[:, :i]).fit()
+            direct[i] = res.aic
+        assert np.argmin(direct[2:]) == sel_lag
+
+    def test_bic_exogenous(self):
+        exog, endog = lagmat(self.z, 12, original='sep', trim='both')
+        exog = np.concatenate([self.x[12:], exog], axis=1)
+        icbest, sel_lag = _autolag_ols(endog, exog, 2, 12, 'bic')
+        direct = np.zeros(exog.shape[1])
+        direct.fill(np.inf)
+        for i in range(3, exog.shape[1]):
+            res = OLS(endog, exog[:, :i]).fit()
+            direct[i] = res.bic
+        assert np.argmin(direct[2:]) == sel_lag
+
+    def test_tstat_exogenous(self):
+        exog, endog = lagmat(self.z, 12, original='sep', trim='both')
+        exog = np.concatenate([self.x[12:], exog], axis=1)
+        icbest, sel_lag = _autolag_ols(endog, exog, 2, 12, 't-stat')
+        direct = np.zeros(exog.shape[1])
+        for i in range(3, exog.shape[1]):
+            res = OLS(endog, exog[:, :i]).fit()
+            direct[i] = res.tvalues[-1]
+        crit = stats.norm.ppf(0.95)
+        assert np.max(np.argwhere(np.abs(direct[2:]) > crit)) == sel_lag
