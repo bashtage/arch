@@ -3,8 +3,8 @@ from ..compat.python import add_metaclass, range, lmap, long
 
 import warnings
 
-from numpy import (diff, ceil, power, sqrt, sum, cumsum, int32, int64, interp,
-                   array, inf, abs, log, sort, polyval)
+from numpy import (diff, ceil, power, sqrt, sum, cumsum, int32, int64, interp, pi,
+                   array, inf, abs, log, sort, polyval, empty, argwhere, arange, squeeze)
 from numpy.linalg import pinv
 from scipy.stats import norm
 
@@ -40,6 +40,84 @@ TREND_DESCRIPTION = {'nc': 'No Trend',
                      'ctt': 'Constant, Linear and Quadratic Time Trends'}
 
 
+def _autolag_ols(endog, exog, startlag, maxlag, method, modargs=(), regresults=False):
+    """
+    Returns the results for the lag length that maximizes the info criterion.
+
+    Parameters
+    ----------
+    endog : array-like
+        nobs array containing endogenous variable
+    exog : array-like
+        nobs by (startlag + maxlag) array containing lags and possibly other
+        variables
+    startlag : int
+        The first zero-indexed column to hold a lag.  See Notes.
+    maxlag : int
+        The highest lag order for lag length selection.
+    method : {'aic', 'bic', 't-stat'}
+        aic - Akaike Information Criterion
+        bic - Bayes Information Criterion
+        t-stat - Based on last lag
+    regresults : bool, optional
+        Flag indicating to return optional return results
+
+    Returns
+    -------
+    bestlag : int
+        The lag length that maximizes the information criterion.
+
+    Notes
+    -----
+    Does estimation like mod(endog, exog[:,:i], *modargs).fit(*fitargs)
+    where i goes from lagstart to lagstart+maxlag+1.  Therefore, lags are
+    assumed to be in contiguous columns from low to high lag length with
+    the highest lag in the last column.
+    """
+    method = method.lower()
+    if regresults:
+        return _autolag(OLS, endog, exog, startlag, maxlag, method, regresults=regresults)
+
+    resid = squeeze(endog.copy())
+    x = exog[:, startlag:].copy()
+    sigma2 = empty(maxlag + 1)
+    tstat = empty(maxlag + 1)
+    if len(exog) > 0 and startlag > 0:
+        _x = exog[:, :startlag]
+        resid -= _x.dot(pinv(_x).dot(resid))
+        x -= _x.dot(pinv(_x).dot(x))
+    sigma2[0] = (resid ** 2).mean()
+    tstat[0] = inf
+
+    for i in range(maxlag):
+        _x = x[:, i:i + 1]
+        xpx = _x.T.dot(_x)
+        beta = squeeze(_x.T.dot(resid) / xpx)
+        resid -= squeeze(beta * _x)
+        x[:, i + 1:] -= _x.dot(_x.T.dot(x[:, i + 1:]) / xpx)
+        sigma2[i + 1] = (resid ** 2).mean()
+        tstat[i + 1] = beta / sqrt(sigma2[i + 1] / xpx)
+
+    nobs = float(resid.shape[0])
+    llf = -nobs / 2.0 * (log(2 * pi) + log(sigma2) + 1)
+
+    if method == 'aic':
+        crit = -2 * llf + 2 * arange(float(maxlag + 1))
+        icbest, lag = min(zip(crit, arange(maxlag + 1)))
+    elif method == 'bic':
+        crit = -2 * llf + log(nobs) * arange(float(maxlag + 1))
+        icbest, lag = min(zip(crit, arange(maxlag + 1)))
+    elif method == 't-stat':
+        stop = 1.6448536269514722
+        large_tstat = abs(tstat) >= stop
+        lag = int(squeeze(max(argwhere(large_tstat))))
+        icbest = float(tstat[lag])
+    else:
+        raise ValueError('Unknown method')
+
+    return icbest, lag
+
+
 def _df_select_lags(y, trend, max_lags, method):
     """
     Helper method to determine the best lag length in DF-like regressions
@@ -63,13 +141,10 @@ def _df_select_lags(y, trend, max_lags, method):
         The information criteria at the selected lag
     best_lag : int
         The selected lag
-    all_res : list
-        List of OLS results from fitting max_lag + 1 models
 
     Notes
     -----
-    See statsmodels.tsa.tsatools._autolag for details.  If max_lags is None,
-    the default value of 12 * (nobs/100)**(1/4) is used.
+    If max_lags is None, the default value of 12 * (nobs/100)**(1/4) is used.
     """
     nobs = y.shape[0]
     delta_y = diff(y)
@@ -88,12 +163,9 @@ def _df_select_lags(y, trend, max_lags, method):
         full_rhs = rhs
 
     start_lag = full_rhs.shape[1] - rhs.shape[1] + 1
-    ic_best, best_lag, all_res = _autolag(OLS, lhs, full_rhs, start_lag,
-                                          max_lags, method, regresults=True)
-    # To get the correct number of lags, subtract the start_lag since
-    # lags 0,1,...,start_lag-1 were not actual lags, but other variables
-    best_lag -= start_lag
-    return ic_best, best_lag, all_res
+    ic_best, best_lag = _autolag_ols(lhs, full_rhs, start_lag, max_lags, method)
+
+    return ic_best, best_lag
 
 
 def _estimate_df_regression(y, trend, lags):
@@ -411,11 +483,8 @@ class ADF(UnitRootTest):
         self._summary_text = None
 
     def _select_lag(self):
-        ic_best, best_lag, all_res = _df_select_lags(self._y,
-                                                     self._trend,
-                                                     self._max_lags,
-                                                     self._method)
-        self._autolag_results = all_res
+        ic_best, best_lag = _df_select_lags(self._y, self._trend,
+                                            self._max_lags, self._method)
         self._ic_best = ic_best
         self._lags = best_lag
 
@@ -565,8 +634,7 @@ class DFGLS(UnitRootTest):
         # 2. determine lag length, if needed
         if self._lags is None:
             max_lags, method = self._max_lags, self._method
-            icbest, bestlag, all_res = _df_select_lags(y_detrended, 'nc',
-                                                       max_lags, method)
+            icbest, bestlag = _df_select_lags(y_detrended, 'nc', max_lags, method)
             self._lags = bestlag
 
         # 3. Run Regression
