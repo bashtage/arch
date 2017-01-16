@@ -511,6 +511,7 @@ class HARX(ARCHModel):
         self._fit_y = self._y[_first_obs_index:_last_obs_index]
         reg = self.regressors
         self._fit_regressors = reg[_first_obs_index:_last_obs_index]
+        self.volatility.start, self.volatility.stop = self._fit_indices
 
     def _fit_no_arch_normal_errors(self, cov_type='robust'):
         """
