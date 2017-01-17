@@ -11,7 +11,7 @@ try:
 except:
     from arch.univariate import recursions_python as rec
 from arch.univariate.volatility import GARCH, ARCH, HARCH, ConstantVariance, \
-    EWMAVariance, RiskMetrics2006, EGARCH
+    EWMAVariance, RiskMetrics2006, EGARCH, FixedVariance
 from arch.univariate.distribution import Normal, StudentsT, SkewStudent
 from arch.compat.python import range
 
@@ -871,3 +871,62 @@ class TestVolatiltyProcesses(TestCase):
 
         assert_almost_equal(data - sim_data[0] + 1.0, np.ones_like(data))
         assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
+
+    def test_fixed_variance(self):
+        variance = np.arange(1000.0) + 1.0
+        fv = FixedVariance(variance)
+        fv.start, fv.stop = 0, 1000
+        parameters = np.array([2.0])
+        resids = self.resids
+        sigma2 = np.empty_like(resids)
+        backcast = fv.backcast(resids)
+        var_bounds = fv.variance_bounds(resids, 2.0)
+        fv.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
+        sv = fv.starting_values(resids)
+        cons = fv.constraints()
+        bounds = fv.bounds(resids)
+        assert_allclose(sigma2, 2.0 * variance)
+        assert_allclose(sv, (resids / np.sqrt(variance)).var())
+        assert var_bounds.shape == (resids.shape[0], 2)
+        assert fv.num_params == 1
+        assert fv.parameter_names() == ['scale']
+        assert fv.name == 'Fixed Variance'
+        assert_equal(cons[0], np.ones((1, 1)))
+        assert_equal(cons[1], np.zeros(1))
+        assert_equal(bounds[0][0], sv[0] / 100000.0)
+
+        sigma2 = np.empty(500)
+        fv.start = 250
+        fv.stop = 750
+        fv.compute_variance(parameters, resids[250:750], sigma2, backcast, var_bounds)
+        assert_allclose(sigma2, 2.0 * variance[250:750])
+
+        fv = FixedVariance(variance, unit_scale=True)
+        fv.start, fv.stop = 0, 1000
+        sigma2 = np.empty_like(resids)
+        parameters = np.empty(0)
+        fv.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
+        sv = fv.starting_values(resids)
+        cons = fv.constraints()
+        bounds = fv.bounds(resids)
+
+        assert_allclose(sigma2, variance)
+        assert_allclose(sv, np.empty(0))
+        assert fv.num_params == 0
+        assert fv.parameter_names() == []
+        assert fv.name == 'Fixed Variance (Unit Scale)'
+        assert_equal(cons[0], np.empty((0, 0)))
+        assert_equal(cons[1], np.empty((0)))
+        assert bounds == []
+        rng = Normal()
+        with pytest.raises(NotImplementedError):
+            fv.simulate(parameters, 1000, rng)
+
+        fv = FixedVariance(variance, unit_scale=True)
+        fv.start, fv.stop = 123, 731
+        sigma2 = np.empty_like(resids)
+        parameters = np.empty(0)
+        assert fv.start == 123
+        assert fv.stop == 731
+        with pytest.raises(ValueError):
+            fv.compute_variance(parameters, resids, sigma2, backcast, var_bounds)

@@ -10,7 +10,7 @@ from numpy.testing import assert_allclose
 
 from arch.univariate.distribution import Normal, StudentsT
 from arch.univariate.volatility import GARCH, ConstantVariance, HARCH, EWMAVariance, \
-    RiskMetrics2006, BootstrapRng, EGARCH
+    RiskMetrics2006, BootstrapRng, EGARCH, FixedVariance
 
 
 def _compare_truncated_forecasts(full, trunc, start):
@@ -1393,6 +1393,39 @@ class TestVarianceForecasts(TestCase):
         with preserved_state():
             vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=100,
                          method='bootstrap')
+
+    def test_fixed_variance(self):
+        parameters = np.array([1.0])
+        resids = self.resid
+        variance = np.arange(resids.shape[0]) + 1.0
+        vol = FixedVariance(variance)
+        vol.start = 0
+        vol.stop = 1000
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        forecasts = vol.forecast(parameters, resids, backcast, var_bounds, horizon=1)
+        assert np.all(np.isnan(forecasts.forecasts))
+        assert forecasts.forecast_paths is None
+        assert forecasts.shocks is None
+
+        forecasts = vol.forecast(parameters, resids, backcast, var_bounds, horizon=7)
+        assert np.all(np.isnan(forecasts.forecasts))
+        assert forecasts.forecast_paths is None
+        assert forecasts.shocks is None
+
+        dist = Normal()
+        rng = dist.simulate([])
+        forecasts = vol.forecast(parameters, resids, backcast, var_bounds, 333, horizon=4,
+                                 method='simulation', simulations=100, rng=rng)
+        assert np.all(np.isnan(forecasts.forecasts))
+        assert np.all(np.isnan(forecasts.forecast_paths))
+        assert np.all(np.isnan(forecasts.shocks))
+
+        forecasts = vol.forecast(parameters, resids, backcast, var_bounds, 100, 2, 'bootstrap',
+                                 500)
+        assert np.all(np.isnan(forecasts.forecasts))
+        assert np.all(np.isnan(forecasts.forecast_paths))
+        assert np.all(np.isnan(forecasts.shocks))
 
 
 class TestBootstrapRng(TestCase):

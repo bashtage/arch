@@ -416,8 +416,7 @@ class ARCHModel(object):
         v, d = self.volatility, self.distribution
         offsets = np.array((self.num_params, v.num_params, d.num_params))
         total_params = sum(offsets)
-        has_closed_form = (v.num_params == 1 and d.num_params == 0) or \
-            total_params == 0
+        has_closed_form = (v.closed_form and d.num_params == 0) or total_params == 0
 
         self._adjust_sample(first_obs, last_obs)
 

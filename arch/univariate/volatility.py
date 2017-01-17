@@ -21,10 +21,21 @@ except ImportError:  # pragma: no cover
     from .recursions_python import (garch_recursion, harch_recursion, egarch_recursion)
 
 __all__ = ['GARCH', 'ARCH', 'HARCH', 'ConstantVariance', 'EWMAVariance', 'RiskMetrics2006',
-           'EGARCH']
+           'EGARCH', 'FixedVariance']
 
 
 class BootstrapRng(object):
+    """
+    Simple fake RNG used to transform bootstrap-based forecasting into a standard
+    simulation forecasting problem
+
+    Parameters
+    ----------
+    std_resid : array
+        Array containing standardized residuals
+    start : int
+        Location of first forecast
+    """
     def __init__(self, std_resid, start):
         if start <= 0 or start > std_resid.shape[0]:
             raise ValueError('start must be > 0 and <= len(std_resid).')
@@ -106,14 +117,35 @@ class VolatilityProcess(object):
     def __init__(self):
         self.num_params = 0
         self.name = ''
+        self.closed_form = False
         self._normal = Normal()
         self._min_bootstrap_obs = 100
+        self._start = 0
+        self._stop = -1
 
     def __str__(self):
         return self.name
 
     def __repr__(self):
         return self.__str__() + ', id: ' + hex(id(self))
+
+    @property
+    def start(self):
+        """Index to use to start variance subarray selection"""
+        return self._start
+
+    @start.setter
+    def start(self, value):
+        self._start = value
+
+    @property
+    def stop(self):
+        """Index to use to stop variance subarray selection"""
+        return self._stop
+
+    @stop.setter
+    def stop(self, value):
+        self._stop = value
 
     def _check_forecasting_method(self, method, horizon):
         """
@@ -524,18 +556,19 @@ class VolatilityProcess(object):
 
 
 class ConstantVariance(VolatilityProcess):
-    """
+    r"""
     Constant volatility process
 
     Notes
     -----
-    Model has
+    Model has the same variance in all periods
     """
 
     def __init__(self):
         super(ConstantVariance, self).__init__()
         self.num_params = 1
         self.name = 'Constant Variance'
+        self.closed_form = True
 
     def compute_variance(self, parameters, resids, sigma2, backcast, var_bounds):
         sigma2[:] = parameters[0]
@@ -1857,3 +1890,94 @@ class EGARCH(VolatilityProcess):
             shocks[i, :, :] = np.sqrt(paths[i, :, :]) * std_shocks
 
         return VarianceForecast(paths.mean(1), paths, shocks)
+
+
+class FixedVariance(VolatilityProcess):
+    """
+    Fixed volatility process
+
+    Parameters
+    ----------
+    variance : {array, pd.Series}
+        Array containing the variances to use.  Shoule have the same shape as the data used in the
+        model.
+    unit_scale : bool, optional
+        Flag whether to enfore a unit scale.  If False, a scale parameter will be estimated so
+        that the model variance will be proportional to ``variance``.  If True, the model variance
+        is set of ``variance``
+
+    Notes
+    -----
+    Allows a fixed set of variances to be used when estimating a mean model, allowing GLS
+    estimation.
+    """
+
+    def __init__(self, variance, unit_scale=False):
+        super(FixedVariance, self).__init__()
+        self.num_params = 0 if unit_scale else 1
+        self._unit_scale = unit_scale
+        self.name = 'Fixed Variance'
+        self.name += ' (Unit Scale)' if unit_scale else ''
+        self._variance_series = ensure1d(variance, 'variance', True)
+        self._variance = np.asarray(variance)
+
+    def compute_variance(self, parameters, resids, sigma2, backcast, var_bounds):
+        if self._stop - self._start != sigma2.shape[0]:
+            raise ValueError('start and stop do not have the correct values.')
+        sigma2[:] = self._variance[self._start:self._stop]
+        if not self._unit_scale:
+            sigma2 *= parameters[0]
+        return sigma2
+
+    def starting_values(self, resids):
+        if not self._unit_scale:
+            _resids = resids / np.sqrt(self._variance[self._start:self._stop])
+            return np.array([_resids.var()])
+        return np.empty(0)
+
+    def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
+        raise NotImplementedError('Fixed Variance processes do not support simulation')
+
+    def constraints(self):
+        if not self._unit_scale:
+            return np.ones((1, 1)), np.zeros(1)
+        else:
+            return np.ones((0, 0)), np.zeros(0)
+
+    def backcast(self, resids):
+        return 1.0
+
+    def bounds(self, resids):
+        if not self._unit_scale:
+            v = self.starting_values(resids)
+            _resids = resids / np.sqrt(self._variance[self._start:self._stop])
+            mu = _resids.mean()
+            return [(v / 100000.0, 10.0 * (v + mu ** 2.0))]
+        return []
+
+    def parameter_names(self):
+        if not self._unit_scale:
+            return ['scale']
+        return []
+
+    def _check_forecasting_method(self, method, horizon):
+        return
+
+    def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+        t = resids.shape[0]
+        forecasts = np.empty((t, horizon))
+        forecasts.fill(np.nan)
+
+        return VarianceForecast(forecasts)
+
+    def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
+                             simulations, rng):
+        t = resids.shape[0]
+        forecasts = np.empty((t, horizon))
+        forecasts.fill(np.nan)
+        forecast_paths = np.empty((t, simulations, horizon))
+        forecast_paths.fill(np.nan)
+        shocks = np.empty((t, simulations, horizon))
+        shocks.fill(np.nan)
+
+        return VarianceForecast(forecasts, forecast_paths, shocks)

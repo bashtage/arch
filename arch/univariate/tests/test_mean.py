@@ -20,7 +20,7 @@ from arch.univariate.base import ARCHModelResult, ARCHModelForecast, \
 from arch.univariate.mean import HARX, ConstantMean, ARX, ZeroMean, LS, \
     arch_model
 from arch.univariate.volatility import ConstantVariance, GARCH, HARCH, ARCH, \
-    RiskMetrics2006, EWMAVariance, EGARCH
+    RiskMetrics2006, EWMAVariance, EGARCH, FixedVariance
 from arch.univariate.distribution import Normal, StudentsT
 try:
     import matplotlib.pyplot  # noqa
@@ -820,3 +820,22 @@ class TestMeanModel(TestCase):
         res4 = am.fit(disp='off', first_obs=4, last_obs=900)
         assert_almost_equal(res.params.values, res4.params.values, decimal=4)
         assert am.hold_back == 100
+
+    def test_constant_mean_fixed_variance(self):
+        variance = 2 + np.random.standard_normal(self.y.shape[0]) ** 2.0
+        mod = ConstantMean(self.y_series, volatility=FixedVariance(variance))
+        res = mod.fit()
+        print(res.summary())
+        assert len(res.params) == 2
+        assert 'scale' in res.params.index
+
+        mod = ARX(self.y_series, lags=[1, 2, 3], volatility=FixedVariance(variance))
+        res = mod.fit()
+        assert len(res.params) == 5
+        assert 'scale' in res.params.index
+
+        mod = ARX(self.y_series, lags=[1, 2, 3],
+                  volatility=FixedVariance(variance, unit_scale=True))
+        res = mod.fit()
+        assert len(res.params) == 4
+        assert 'scale' not in res.params.index
