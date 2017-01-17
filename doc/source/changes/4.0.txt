@@ -1,0 +1,6 @@
+Changes since 4.0
+=================
+- Added ``FixedVariance`` volatility process which allows pre-specified variances to be used with
+  a mean model.  This has been added to allow so-called zig-zag estimation where a mean model is
+  estimated with a fixed variance, and then a variance model is estimated on the residuals using
+  a ``ZeroMean`` variance process.
