@@ -49,8 +49,7 @@ def harch_recursion_python(parameters, resids, sigma2, lags, nobs, backcast,
             sigma2[t] = var_bounds[t, 0]
         elif sigma2[t] > var_bounds[t, 1]:
             if not np.isinf(sigma2[t]):
-                sigma2[t] = var_bounds[t, 1] \
-                            + log(sigma2[t] - var_bounds[t, 1])
+                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
             else:
                 sigma2[t] = var_bounds[t, 1] + 1000
 
@@ -93,8 +92,7 @@ def arch_recursion_python(parameters, resids, sigma2, p, nobs, backcast,
             sigma2[t] = var_bounds[t, 0]
         elif sigma2[t] > var_bounds[t, 1]:
             if not np.isinf(sigma2[t]):
-                sigma2[t] = var_bounds[t, 1] \
-                            + log(sigma2[t] - var_bounds[t, 1])
+                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
             else:
                 sigma2[t] = var_bounds[t, 1] + 1000
 
@@ -162,8 +160,7 @@ def garch_recursion_python(parameters, fresids, sresids, sigma2, p, o, q, nobs,
             sigma2[t] = var_bounds[t, 0]
         elif sigma2[t] > var_bounds[t, 1]:
             if not np.isinf(sigma2[t]):
-                sigma2[t] = var_bounds[t, 1] \
-                            + log(sigma2[t] - var_bounds[t, 1])
+                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
             else:
                 sigma2[t] = var_bounds[t, 1] + 1000
 
@@ -233,8 +230,7 @@ def egarch_recursion_python(parameters, resids, sigma2, p, o, q, nobs,
             sigma2[t] = var_bounds[t, 0]
         elif sigma2[t] > var_bounds[t, 1]:
             if not np.isinf(sigma2[t]):
-                sigma2[t] = var_bounds[t, 1] \
-                            + log(sigma2[t] - var_bounds[t, 1])
+                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
             else:
                 sigma2[t] = var_bounds[t, 1] + 1000
         std_resids[t] = resids[t] / np.sqrt(sigma2[t])
