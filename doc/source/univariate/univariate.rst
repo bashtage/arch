@@ -12,5 +12,6 @@ Univariate Volatility Models
     Forecasting Examples <univariate_volatility_forecasting>
     Mean Models <mean>
     Volatility Processes <volatility>
+    Using the Fixed Variance Process <univariate_using_fixed_variance>
     Distributions <distribution>
     Background and References <background>
