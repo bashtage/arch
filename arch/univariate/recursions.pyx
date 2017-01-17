@@ -57,13 +57,13 @@ def harch_recursion(double[:] parameters,
                     sigma2[t] += param * resids[t - j - 1] * resids[t - j - 1]
                 else:
                     sigma2[t] += param * backcast
-        if sigma2[t] < var_bounds[t,0]:
-            sigma2[t] = var_bounds[t,0]
-        elif sigma2[t] > var_bounds[t,1]:
+        if sigma2[t] < var_bounds[t, 0]:
+            sigma2[t] = var_bounds[t, 0]
+        elif sigma2[t] > var_bounds[t, 1]:
             if sigma2[t] > DBL_MAX:
-                sigma2[t] = var_bounds[t,1] + 1000
+                sigma2[t] = var_bounds[t, 1] + 1000
             else:
-                sigma2[t] = var_bounds[t,1] + log(sigma2[t] - var_bounds[t,1])
+                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
 
     return sigma2
 
@@ -109,13 +109,13 @@ def arch_recursion(double[:] parameters,
             else:
                 sigma2[t] += parameters[i + 1] * resids[t - i - 1] * \
                              resids[t - i - 1]
-        if sigma2[t] < var_bounds[t,0]:
-            sigma2[t] = var_bounds[t,0]
-        elif sigma2[t] > var_bounds[t,1]:
+        if sigma2[t] < var_bounds[t, 0]:
+            sigma2[t] = var_bounds[t, 0]
+        elif sigma2[t] > var_bounds[t, 1]:
             if sigma2[t] > DBL_MAX:
-                sigma2[t] = var_bounds[t,1] + 1000
+                sigma2[t] = var_bounds[t, 1] + 1000
             else:
-                sigma2[t] = var_bounds[t,1] + log(sigma2[t] - var_bounds[t,1])
+                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
 
     return sigma2
 
@@ -187,13 +187,13 @@ def garch_recursion(double[:] parameters,
                 sigma2[t] += parameters[loc] * sigma2[t - 1 - j]
             loc += 1
 
-        if sigma2[t] < var_bounds[t,0]:
-            sigma2[t] = var_bounds[t,0]
-        elif sigma2[t] > var_bounds[t,1]:
+        if sigma2[t] < var_bounds[t, 0]:
+            sigma2[t] = var_bounds[t, 0]
+        elif sigma2[t] > var_bounds[t, 1]:
             if sigma2[t] > DBL_MAX:
-                sigma2[t] = var_bounds[t,1] + 1000
+                sigma2[t] = var_bounds[t, 1] + 1000
             else:
-                sigma2[t] = var_bounds[t,1] + log(sigma2[t] - var_bounds[t,1])
+                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
 
     return sigma2
 
@@ -272,7 +272,7 @@ def egarch_recursion(double[:] parameters,
             if sigma2[t] > DBL_MAX:
                 sigma2[t] = var_bounds[t, 1] + 1000
             else:
-                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] - var_bounds[t, 1])
+                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
         std_resids[t] = resids[t] / sqrt(sigma2[t])
         abs_std_resids[t] = fabs(std_resids[t])
 
