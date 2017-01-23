@@ -54,6 +54,14 @@ RiskMetrics (2006)
     :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
     :show-inheritance:
 
+FixedVariance
+-------------
+The ``FixedVariance`` class is a special-purpose volatility process that allows
+the so-called zig-zag algorithm to be used.  See the example for usage.
+
+.. autoclass:: FixedVariance
+    :show-inheritance:
+
 Writing New Volatility Processes
 --------------------------------
 All volatility processes must inherit from :class:VolatilityProcess and provide
