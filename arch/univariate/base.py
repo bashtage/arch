@@ -297,7 +297,7 @@ class ARCHModel(object):
         km, kv = self.num_params, self.volatility.num_params
         return x[:km], x[km:km + kv], x[km + kv:]
 
-    def fix(self, params):
+    def fix(self, params, first_obs=None, last_obs=None):
         """
         Allows an ARCHModelFixedResult to be constructed from fixed parameters.
 
@@ -307,6 +307,10 @@ class ARCHModel(object):
             User specified parameters to use when generating the result. Must
             have the correct number of parameters for a given choice of mean
             model, volatility model and distribution.
+        first_obs : {int, str, datetime, Timestamp}
+            First observation to use when fixing model
+        last_obs : {int, str, datetime, Timestamp}
+            Last observation to use when fixing model
 
         Returns
         -------
@@ -319,6 +323,7 @@ class ARCHModel(object):
         """
         v = self.volatility
 
+        self._adjust_sample(first_obs, last_obs)
         resids = self.resids(self.starting_values())
         sigma2 = np.zeros_like(resids)
         backcast = v.backcast(resids)
