@@ -706,6 +706,30 @@ class TestMeanModel(TestCase):
         # Smoke for summary
         fixed_res.summary()
 
+    def test_fixed_user_parameters_new_model(self):
+        am = arch_model(self.y_series)
+        res = am.fit(disp=DISPLAY)
+        new_am = arch_model(self.y_series)
+        fixed_res = new_am .fix(res.params)
+        assert_series_equal(res.conditional_volatility,
+                            fixed_res.conditional_volatility)
+        assert_series_equal(res.params, fixed_res.params)
+        assert_equal(res.aic, fixed_res.aic)
+        assert_equal(res.bic, fixed_res.bic)
+        assert_equal(res.loglikelihood, fixed_res.loglikelihood)
+        assert_equal(res.num_params, fixed_res.num_params)
+
+        # Test first and last dates
+        am = arch_model(self.y_series)
+        res = am.fit(disp=DISPLAY, first_obs=100, last_obs=900)
+        new_am = arch_model(self.y_series)
+        fixed_res = new_am .fix(res.params, first_obs=100, last_obs=900)
+        assert_series_equal(res.params, fixed_res.params)
+        assert_equal(res.aic, fixed_res.aic)
+        assert_equal(res.bic, fixed_res.bic)
+        assert_equal(res.loglikelihood, fixed_res.loglikelihood)
+        assert_equal(res.num_params, fixed_res.num_params)
+
     def test_output_options(self):
         import sys
         from arch.compat.python import StringIO

@@ -38,6 +38,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.ifconfig',
+    'numpydoc',
     'IPython.sphinxext.ipython_console_highlighting',
     'IPython.sphinxext.ipython_directive'
 ]
@@ -295,3 +296,5 @@ intersphinx_mapping = {
     'numpy': ('http://docs.scipy.org/doc/numpy', None),
     'pandas': ('http://pandas.pydata.org/pandas-docs/stable/', None)
 }
+
+extlinks = {'issue': ('https://github.com/bashtage/arch/%s', 'GH')}
