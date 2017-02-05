@@ -38,7 +38,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.coverage',
     'sphinx.ext.ifconfig',
-    'numpydoc',
+    'sphinx.ext.napoleon',
     'IPython.sphinxext.ipython_console_highlighting',
     'IPython.sphinxext.ipython_directive'
 ]
