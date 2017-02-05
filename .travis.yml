@@ -53,7 +53,7 @@ matrix:
   - python: 2.7
     env:
     - PYTHON=3.6
-    - USE_NUMBA=false
+    - COVERAGE=true
 
 addons:
   apt:
