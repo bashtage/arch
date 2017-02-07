@@ -2,6 +2,7 @@ Mean Models
 ===========
 All ARCH models start by specifying a mean model.
 
+.. module:: arch.univariate.mean
 .. py:currentmodule:: arch.univariate
 
 No Mean

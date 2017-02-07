@@ -1,6 +1,7 @@
 The Unit Root Tests
 ===================
 
+.. module::arch.unitroot
 .. py:currentmodule:: arch.unitroot
 
 

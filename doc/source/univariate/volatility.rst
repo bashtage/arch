@@ -3,6 +3,7 @@ Volatility Processes
 A volatility process is added to a mean model to capture time-varying
 volatility.
 
+.. module:: arch.univariate.volatility
 .. py:currentmodule:: arch.univariate
 
 Constant Variance

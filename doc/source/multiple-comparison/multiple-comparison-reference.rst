@@ -1,6 +1,7 @@
 Module Reference
 ----------------
 
+.. module::arch.bootstrap
 .. py:currentmodule:: arch.bootstrap
 
 Test of Superior Predictive Ability (SPA), Reality Check
