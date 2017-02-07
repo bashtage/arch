@@ -1,6 +1,7 @@
 Bootstrapping
 -------------
 
+.. module:: arch.bootstrap
 .. py:module::arch.bootstrap
 
 The bootstrap module provides both high- and low-level interfaces for

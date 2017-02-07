@@ -2,6 +2,7 @@ Distributions
 =============
 A distribution is the final component of an ARCH Model.
 
+.. module:: arch.univariate.distribution
 .. py:currentmodule:: arch.univariate
 
 Normal
