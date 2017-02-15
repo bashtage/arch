@@ -297,4 +297,4 @@ intersphinx_mapping = {
     'pandas': ('http://pandas.pydata.org/pandas-docs/stable/', None)
 }
 
-extlinks = {'issue': ('https://github.com/bashtage/arch/%s', 'GH')}
+extlinks = {'issue': ('https://github.com/bashtage/arch/issues/%s', 'GH')}
