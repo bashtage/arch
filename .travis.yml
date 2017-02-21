@@ -23,32 +23,28 @@ matrix:
   - python: 2.7
     env:
     - PYTHON=2.7
-    - MATPLOTLIB=1.4
-    - NUMPY=1.9
-    - SCIPY=0.15
     - USE_NUMBA=false
-    - PANDAS=0.16
     - COVERAGE=true
   - python: 2.7
     env:
     - PYTHON=2.7
-    - NUMBA=0.21
+    - NUMBA=0.24
     - NUMPY=1.10
     - SCIPY=0.16
     - MATPLOTLIB=1.5
-    - PANDAS=0.17
+    - PANDAS=0.16
+    - STATSMODELS_MASTER=true
   - python: 2.7
     env:
     - PYTHON=3.4
-    - NUMPY=1.10
-    - SCIPY=0.16
-    - NUMBA=0.24
-    - MATPLOTLIB=1.4
+    - NUMPY=1.11
+    - SCIPY=0.17
+    - NUMBA=0.27
+    - MATPLOTLIB=1.5
     - PANDAS=0.18
   - python: 2.7
     env:
     - PYTHON=3.5
-    - STATSMODELS_MASTER=true
     - COVERAGE=true
   - python: 2.7
     env:
@@ -62,20 +58,16 @@ addons:
 
 # Setup anaconda
 before_install:
-  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
   - ./miniconda.sh -b
-  - export PATH=/home/travis/miniconda/bin:$PATH
-  - export PATH=/home/travis/miniconda2/bin:$PATH
+  - export PATH=/home/travis/miniconda3/bin:$PATH
   - conda update --yes --quiet conda
   # Fix for headless TravisCI
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   # Avoid noise from matplotlib
-  - mkdir $HOME/.config
-  - mkdir $HOME/.config/matplotlib
-  # Location for older version of matplotlib
-  - if [ ${MATPLOTLIB} = "1.2" ]; then mkdir $HOME/.matplotlib; fi
+  - mkdir -p $HOME/.config/matplotlib
   # Build package list to avoid empty package=versions; only needed for versioned pacakges
   - PKGS="python=${PYTHON}"
   - PKGS="${PKGS} numpy"; if [ ${NUMPY} ]; then PKGS="${PKGS}=${NUMPY}"; fi;
@@ -95,18 +87,17 @@ install:
   - source activate arch-test
   - pip install flake8 nbconvert nbformat pytest coverage coveralls pytest-cov codecov pytest-xdist
   - if [ ${STATSMODELS_MASTER} = true ]; then sh ./ci/statsmodels-master.sh; fi;
-  - python setup.py build
-  - python setup.py install
-  - export SRCDIR=${PWD}
-
-script:
+  - python setup.py develop
   # Show versions
   - conda list
+
+script:
   # flake testing
   - flake8 arch
   # Main test
-  - mkdir -p travis-test && cd travis-test
   - py.test -n 2 -s --cov=arch --pyargs arch
+  # performance
+  - python ci/performance.py
 
 after_success:
   - if [ ${COVERAGE} = true ]; then coveralls --rcfile=${SRCDIR}/.travis_coveragerc; fi

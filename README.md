@@ -132,7 +132,8 @@ ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 
 ### Multiple Comparison Procedures
 
-* Test of Superior Predictive Ability (SPA), also known as the Reality Check or Bootstrap Data Snooper
+* Test of Superior Predictive Ability (SPA), also known as the Reality
+  Check or Bootstrap Data Snooper
 * Stepwise (StepM)
 * Model Confidence Set (MCS)
 
@@ -141,22 +142,25 @@ for examples of the multiple comparison procedures.
 
 ## Requirements
 
+These requirements reflect the testing environment.  It is possible
+that arch will work with older versions.
+
 * Python (2.7, 3.4 - 3.6)
-* NumPy (1.9+)
-* SciPy (0.15+)
+* NumPy (1.10+)
+* SciPy (0.16+)
 * Pandas (0.16+)
 * statsmodels (0.6+)
-* matplotlib (1.3+)
+* matplotlib (1.5+)
 
 ### Optional Requirements
 
-* Numba (0.21+) will be used if available **and** when installed using
+* Numba (0.24+) will be used if available **and** when installed using
 the --no-binary option
 * IPython (4.0+) is required to run the notebooks
 
 ### Installing
 
-* Cython (0.20+, if not using --no-binary)
+* Cython (0.24+, if not using --no-binary)
 * py.test (For tests)
 * sphinx (to build docs)
 * sphinx-napoleon (to build docs)

@@ -23,8 +23,7 @@ build_script:
   - cmd: conda update conda --quiet
   - cmd: conda install numpy cython pytest pandas scipy patsy statsmodels matplotlib numba nbconvert nbformat pip pyyaml setuptools pyqt pyparsing --quiet
   - cmd: pip install pytest-xdist
-  - cmd: python setup.py install
+  - cmd: python setup.py develop
 
 test_script:
-  - cmd: cd ..\..
-  - cmd: py.test -n 2 --pyargs arch
+  - cmd: py.test -n 2 arch
