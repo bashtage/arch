@@ -1,4 +1,3 @@
-from unittest import TestCase
 from arch.compat.python import range
 
 import timeit
@@ -62,7 +61,7 @@ class Timer(object):
         return None
 
 
-class TestRecursions(TestCase):
+class TestRecursions(object):
     @classmethod
     def setup_class(cls):
         cls.T = 1000
