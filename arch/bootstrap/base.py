@@ -1,6 +1,7 @@
 from __future__ import absolute_import, division
-from ..compat.python import iteritems, itervalues, add_metaclass, range
-from ..utility.array import DocStringInheritor
+
+from arch.compat.python import iteritems, itervalues, add_metaclass, range
+from arch.utility.array import DocStringInheritor
 
 import copy
 
@@ -13,9 +14,9 @@ __all__ = ['IIDBootstrap', 'StationaryBootstrap', 'CircularBlockBootstrap',
            'MovingBlockBootstrap']
 
 try:
-    from ._samplers import stationary_bootstrap_sample
+    from arch.bootstrap._samplers import stationary_bootstrap_sample
 except ImportError:  # pragma: no cover
-    from ._samplers_python import stationary_bootstrap_sample
+    from arch.bootstrap._samplers_python import stationary_bootstrap_sample
 
 
 def _loo_jackknife(func, nobs, args, kwargs):

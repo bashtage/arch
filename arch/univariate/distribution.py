@@ -3,8 +3,8 @@
 Distributions to use in ARCH models.  All distributions must inherit from
 :class:`Distribution` and provide the same methods with the same inputs.
 """
-from __future__ import division, absolute_import
-from ..compat.python import add_metaclass
+from __future__ import absolute_import, division
+from arch.compat.python import add_metaclass
 
 from numpy.random import standard_normal, standard_t
 from numpy import (empty, array, sqrt, log, exp, sign, pi, sum, asarray,
@@ -12,7 +12,7 @@ from numpy import (empty, array, sqrt, log, exp, sign, pi, sum, asarray,
 from scipy.special import gammaln
 import scipy.stats as stats
 
-from ..utility.array import DocStringInheritor
+from arch.utility.array import DocStringInheritor
 
 
 __all__ = ['Distribution', 'Normal', 'StudentsT', 'SkewStudent']

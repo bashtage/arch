@@ -6,7 +6,7 @@ Most values are from MacKinnon (1994) or (2010).  A small number of these
 did not appear in the original paper and have been computed using an identical
 simulation.
 """
-from ...compat.python import iteritems
+from arch.compat.python import iteritems
 
 from numpy import asarray, inf
 

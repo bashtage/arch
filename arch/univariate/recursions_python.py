@@ -3,9 +3,9 @@ Pure Python implementations of the core recursions in the models. Only used for
 testing and if it isn't possible to install the Cython version using
 python setup.py install --no-binary
 """
-from __future__ import division, absolute_import
-from ..compat.python import range
-from ..compat.numba import jit
+from __future__ import absolute_import, division
+from arch.compat.python import range
+from arch.compat.numba import jit
 
 from numpy import log
 import numpy as np

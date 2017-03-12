@@ -2,8 +2,8 @@
 Utility functions that do not explicitly relate to Volatility modeling
 """
 from __future__ import print_function, division, absolute_import
-from ..compat.pandas import is_datetime64_dtype
-from ..compat.python import long
+from arch.compat.pandas import is_datetime64_dtype
+from arch.compat.python import long
 
 import datetime as dt
 
