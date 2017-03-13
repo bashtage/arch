@@ -1,5 +1,6 @@
 from __future__ import absolute_import, division
-from ..compat.numba import jit
+
+from arch.compat.numba import jit
 
 
 def stationary_bootstrap_sample_python(indices, u, p):

@@ -3,7 +3,7 @@ Volatility processes for ARCH model estimation.  All volatility processes must
 inherit from :class:`VolatilityProcess` and provide the same methods with the
 same inputs.
 """
-from __future__ import division, absolute_import
+from __future__ import absolute_import, division
 
 import itertools
 
@@ -11,14 +11,15 @@ import numpy as np
 from numpy import (sqrt, ones, zeros, isscalar, sign, ones_like, arange, empty, abs, array, finfo,
                    float64, log, exp, floor)
 
-from .distribution import Normal
-from ..compat.python import add_metaclass, range
-from ..utility.array import ensure1d, DocStringInheritor
+from arch.univariate.distribution import Normal
+from arch.compat.python import add_metaclass, range
+from arch.utility.array import ensure1d, DocStringInheritor
 
 try:
-    from .recursions import garch_recursion, harch_recursion, egarch_recursion
+    from arch.univariate.recursions import garch_recursion, harch_recursion, egarch_recursion
 except ImportError:  # pragma: no cover
-    from .recursions_python import (garch_recursion, harch_recursion, egarch_recursion)
+    from arch.univariate.recursions_python import (garch_recursion, harch_recursion,
+                                                   egarch_recursion)
 
 __all__ = ['GARCH', 'ARCH', 'HARCH', 'ConstantVariance', 'EWMAVariance', 'RiskMetrics2006',
            'EGARCH', 'FixedVariance']

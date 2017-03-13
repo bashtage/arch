@@ -1,5 +1,5 @@
-from __future__ import division, absolute_import
-from ..compat.python import add_metaclass, range, lmap, long
+from __future__ import absolute_import, division
+from arch.compat.python import add_metaclass, range, lmap, long
 
 import warnings
 
@@ -14,19 +14,18 @@ from statsmodels.tsa.stattools import _autolag
 from statsmodels.iolib.summary import Summary
 from statsmodels.iolib.table import SimpleTable
 
-from ..utility import cov_nw
-from ..utility.exceptions import InvalidLengthWarning, invalid_length_doc
-from .critical_values.dickey_fuller import (adf_z_cv_approx, adf_z_large_p,
-                                            adf_z_max, adf_z_min,
-                                            adf_z_small_p, adf_z_star,
-                                            tau_2010, tau_large_p, tau_max,
-                                            tau_min, tau_small_p, tau_star)
-from .critical_values.kpss import kpss_critical_values
-from .critical_values.dfgls import (dfgls_large_p, dfgls_small_p,
-                                    dfgls_tau_max, dfgls_tau_min,
-                                    dfgls_tau_star, dfgls_cv_approx)
-from ..utility.array import ensure1d, DocStringInheritor
-from ..utility.timeseries import add_trend
+from arch.utility import cov_nw
+from arch.utility.exceptions import InvalidLengthWarning, invalid_length_doc
+from arch.unitroot.critical_values.dickey_fuller import (adf_z_cv_approx, adf_z_large_p, adf_z_max,
+                                                         adf_z_min, adf_z_small_p, adf_z_star,
+                                                         tau_2010, tau_large_p, tau_max,
+                                                         tau_min, tau_small_p, tau_star)
+from arch.unitroot.critical_values.kpss import kpss_critical_values
+from arch.unitroot.critical_values.dfgls import (dfgls_large_p, dfgls_small_p,
+                                                 dfgls_tau_max, dfgls_tau_min,
+                                                 dfgls_tau_star, dfgls_cv_approx)
+from arch.utility.array import ensure1d, DocStringInheritor
+from arch.utility.timeseries import add_trend
 
 
 __all__ = ['ADF', 'DFGLS', 'PhillipsPerron', 'KPSS', 'VarianceRatio',

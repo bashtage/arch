@@ -1,8 +1,8 @@
 """
 Core classes for ARCH models
 """
-from __future__ import division, absolute_import
-from ..compat.python import add_metaclass, range
+from __future__ import absolute_import, division
+from arch.compat.python import add_metaclass, range
 
 from copy import deepcopy
 from functools import partial
@@ -20,10 +20,10 @@ from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
 from statsmodels.iolib.table import SimpleTable
 from statsmodels.tools.numdiff import approx_fprime, approx_hess
 
-from .distribution import Distribution, Normal
-from .volatility import VolatilityProcess, ConstantVariance
-from ..utility.array import ensure1d, DocStringInheritor
-from ..utility.exceptions import ConvergenceWarning, StartingValueWarning, \
+from arch.univariate.distribution import Distribution, Normal
+from arch.univariate.volatility import VolatilityProcess, ConstantVariance
+from arch.utility.array import ensure1d, DocStringInheritor
+from arch.utility.exceptions import ConvergenceWarning, StartingValueWarning, \
     convergence_warning, starting_value_warning
 
 __all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel']

@@ -10,7 +10,7 @@ Remote clusters can be used by modifying the Client initiation.
 This version has been optimized for execution on a large cluster and should
 scale well with 128 or more engines.
 """
-from __future__ import division, print_function
+from __future__ import absolute_import, division, print_function
 
 import datetime
 import time

@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import absolute_import, division
 
 
 def cov_nw(y, lags=0, demean=True, axis=0, ddof=0):
