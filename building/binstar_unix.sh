@@ -1,10 +1,11 @@
 #!/bin/bash
 
+conda install anaconda-client conda-build --yes
 conda config --set anaconda_upload yes
 
 cd ..
 
-export VERSION=3.2
+export VERSION=4.1
 ## detect OS
 if [ "$(uname)" == "Darwin" ]; then
     export OS=osx-64
@@ -12,11 +13,12 @@ else
     export OS=linux-64
 fi
 
-sudo Xvfb :99 -nolisten tcp -fbdir /var/run &
+# No longer needed
+## sudo Xvfb :99 -nolisten tcp -fbdir /var/run &
 
 ## declare Python and Numpy Versions
-declare -a PY_VERSIONS=( "27" "35" )
-declare -a NPY_VERSIONS=( "110" "111" )
+declare -a PY_VERSIONS=( "27" "35" "36" )
+declare -a NPY_VERSIONS=( "111" "112" )
 
 ## Loop across Python and Numpy
 for PY in "${PY_VERSIONS[@]}"

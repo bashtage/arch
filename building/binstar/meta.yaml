@@ -1,6 +1,6 @@
 package:
   name: arch
-  version: "4.0"
+  version: "4.1"
 
 source:
   git_url: https://github.com/bashtage/arch.git
@@ -20,6 +20,8 @@ requirements:
     - statsmodels
     - matplotlib
     - nbconvert
+    - nbformat
+    - numba
     - pywin32 # [win]
 
   run:
@@ -32,13 +34,16 @@ requirements:
     - patsy
     - statsmodels
     - matplotlib
+    - numba
     - pywin32 # [win]
 
+
 test:
-  imports:
-    - arch
   requires:
     - pytest
+  test:
+    run_test.sh # [unix]
+    run_test.bat # [win]
 
 about:
   home: https://github.com/bashtage/arch

@@ -10,7 +10,7 @@ required for building a binstar package:
  * `build.sh` - Linux/OSX batch file called in the build process
 
 Two other helper files are included to automate building across 
-Python 2.7 and 3.5.
+Python 2.7, 3.5 and 3.6.
 
  * `binstar_windows.bat`
  * `binstar_linux.sh`

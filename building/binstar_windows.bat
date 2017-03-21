@@ -3,11 +3,14 @@ Setlocal EnableDelayedExpansion
 REM Get current directory
 SET CURRENT_WORKING_DIR=%~dp0
 REM Python and NumPy versions
-set VERSION=3.2
-set PY_VERSION=27 35
-set NPY_VERSION=110 111
+set VERSION=4.1
+set PY_VERSION=27 35 36
+set NPY_VERSION=111 112
 
+
+conda install anaconda-client conda-build --yes
 conda config --set anaconda_upload yes
+
 
 (for %%P in (%PY_VERSION%) do (
     IF %%P==27 (
