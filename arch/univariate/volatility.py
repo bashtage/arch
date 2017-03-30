@@ -11,8 +11,8 @@ import numpy as np
 from numpy import (sqrt, ones, zeros, isscalar, sign, ones_like, arange, empty, abs, array, finfo,
                    float64, log, exp, floor)
 
-from arch.univariate.distribution import Normal
 from arch.compat.python import add_metaclass, range
+from arch.univariate.distribution import Normal
 from arch.utility.array import ensure1d, DocStringInheritor
 
 try:
@@ -869,7 +869,7 @@ class GARCH(VolatilityProcess):
 
         target = np.mean(abs(resids) ** power)
         scale = np.mean(resids ** 2) / (target ** (2.0 / power))
-        target *= (scale ** power)
+        target *= (scale ** (power / 2))
 
         svs = []
         var_bounds = self.variance_bounds(resids)
