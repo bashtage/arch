@@ -147,7 +147,7 @@ def date_to_index(date, date_index):
         orig_date = date
         try:
             date = np.datetime64(to_datetime(date, errors='coerce'))
-        except:
+        except TypeError:
             date = np.datetime64(to_datetime(date, coerce=True))
         if date == NaT:
             raise ValueError('date:' + orig_date +
@@ -215,7 +215,7 @@ def find_index(s, index):
         return index
     try:
         date_index = to_datetime(index, errors='coerce')
-    except:
+    except TypeError:
         date_index = to_datetime(index, coerce=True)
 
     if date_index is NaT:
