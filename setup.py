@@ -196,9 +196,8 @@ try:
     notebooks = glob.glob(os.path.join(cwd, 'examples', '*.ipynb'))
     for notebook in notebooks:
         try:
-            f = open(notebook, 'rt')
-            example_nb = f.read()
-            f.close()
+            with open(notebook, 'rt') as f:
+                example_nb = f.read()
 
             rst_path = os.path.join(cwd, 'doc', 'source')
             path_parts = os.path.split(notebook)

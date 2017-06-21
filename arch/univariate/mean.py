@@ -1180,12 +1180,12 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
     else:  # vol == 'harch'
         v = HARCH(lags=p)
 
-    if dist in ('normal', 'gaussian'):
-        d = Normal()
-    elif dist in ('skewstudent', 'skewt'):
+    if dist in ('skewstudent', 'skewt'):
         d = SkewStudent()
     elif dist in ('studentst', 't'):
         d = StudentsT()
+    else:  # ('gaussian', 'normal')
+        d = Normal()
 
     am.volatility = v
     am.distribution = d
