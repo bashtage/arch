@@ -2,14 +2,16 @@ from __future__ import print_function
 
 import glob
 import os
-import pkg_resources
+import re
 import subprocess
 import sys
-import re
+from distutils.errors import CCompilerError, DistutilsExecError, DistutilsPlatformError
 from distutils.version import StrictVersion
 
+import pkg_resources
 from setuptools import setup, Extension, find_packages, Command
 from setuptools.dist import Distribution
+
 import versioneer
 
 try:
@@ -19,10 +21,26 @@ try:
 except ImportError:
     CYTHON_INSTALLED = False
 
+
     class _build_ext(object):
         pass
 
+FAILED_COMPILER_ERROR = """
+******************************************************************************
+*                               WARNING                                      *
+******************************************************************************
+
+Unable to build binary modules for arch.  While these are not required to run 
+any code in the package, it is strongly recommended to either compile the 
+extension modules or to use numba. 
+
+******************************************************************************
+*                               WARNING                                      *
+******************************************************************************
+"""
+
 cmdclass = versioneer.get_cmdclass()
+
 
 # prevent setup.py from crashing by calling import numpy before
 # numpy is installed
@@ -48,16 +66,11 @@ ALL_REQUIREMENTS = SETUP_REQUIREMENTS.copy()
 ALL_REQUIREMENTS.update(REQUIREMENTS)
 
 ext_modules = []
-if '--no-binary' not in sys.argv and CYTHON_INSTALLED:
-    ext_modules.append(Extension("arch.univariate.recursions",
-                                 ["./arch/univariate/recursions.pyx"]))
-    ext_modules.append(Extension("arch.bootstrap._samplers",
-                                 ["./arch/bootstrap/_samplers.pyx"]))
-    cmdclass['build_ext'] = build_ext
-else:
-    del REQUIREMENTS['Cython']
-    if '--no-binary' in sys.argv:
-        sys.argv.remove('--no-binary')
+ext_modules.append(Extension("arch.univariate.recursions",
+                             ["./arch/univariate/recursions.pyx"]))
+ext_modules.append(Extension("arch.bootstrap._samplers",
+                             ["./arch/bootstrap/_samplers.pyx"]))
+cmdclass['build_ext'] = build_ext
 
 
 class BinaryDistribution(Distribution):
@@ -246,54 +259,61 @@ except:
     print(sys.exc_info()[0])
     print(sys.exc_info()[1])
 
-# Read version information from plain VERSION file
-# version = None
-# try:
-#     version_file = open(os.path.join(cwd, 'VERSION'), 'rt')
-#     version = version_file.read().strip()
-#     version_file.close()
-#     version_py_file = open(os.path.join(cwd, 'arch', '_version.py'), mode='wt')
-#     version_py_file.write('__version__ = "' + version + '"\n')
-#     version_py_file.close()
-# except:
-#     raise EnvironmentError('Cannot locate VERSION')
 
-setup(name='arch',
-      license='NCSA',
-      version=versioneer.get_version(),
-      description='ARCH for Python',
-      long_description=long_description,
-      author='Kevin Sheppard',
-      author_email='kevin.sheppard@economics.ox.ac.uk',
-      url='http://github.com/bashtage/arch',
-      packages=find_packages(),
-      ext_modules=ext_modules,
-      package_dir={'arch': './arch'},
-      cmdclass=cmdclass,
-      keywords=['arch', 'ARCH', 'variance', 'econometrics', 'volatility',
-                'finance', 'GARCH', 'bootstrap', 'random walk', 'unit root',
-                'Dickey Fuller', 'time series', 'confidence intervals',
-                'multiple comparisons', 'Reality Check', 'SPA', 'StepM'],
-      zip_safe=False,
-      include_package_data=True,
-      distclass=BinaryDistribution,
-      classifiers=[
-          'Development Status :: 5 - Production/Stable',
-          'Intended Audience :: End Users/Desktop',
-          'Intended Audience :: Financial and Insurance Industry',
-          'Programming Language :: Python :: 2.7',
-          'Programming Language :: Python :: 3.4',
-          'Programming Language :: Python :: 3.5',
-          'License :: OSI Approved',
-          'Operating System :: MacOS :: MacOS X',
-          'Operating System :: Microsoft :: Windows',
-          'Operating System :: POSIX',
-          'Programming Language :: Python',
-          'Programming Language :: Cython',
-          'Topic :: Scientific/Engineering',
-      ],
-      install_requires=[key + '>=' + REQUIREMENTS[key]
-                        for key in REQUIREMENTS],
-      setup_requires=[key + '>=' + SETUP_REQUIREMENTS[key]
-                      for key in SETUP_REQUIREMENTS],
-      )
+def run_setup(binary=True):
+    extensions = ext_modules if binary else []
+    if not binary:
+        del REQUIREMENTS['Cython']
+
+    setup(name='arch',
+          license='NCSA',
+          version=versioneer.get_version(),
+          description='ARCH for Python',
+          long_description=long_description,
+          author='Kevin Sheppard',
+          author_email='kevin.sheppard@economics.ox.ac.uk',
+          url='http://github.com/bashtage/arch',
+          packages=find_packages(),
+          ext_modules=extensions,
+          package_dir={'arch': './arch'},
+          cmdclass=cmdclass,
+          keywords=['arch', 'ARCH', 'variance', 'econometrics', 'volatility',
+                    'finance', 'GARCH', 'bootstrap', 'random walk', 'unit root',
+                    'Dickey Fuller', 'time series', 'confidence intervals',
+                    'multiple comparisons', 'Reality Check', 'SPA', 'StepM'],
+          zip_safe=False,
+          include_package_data=True,
+          distclass=BinaryDistribution,
+          classifiers=[
+              'Development Status :: 5 - Production/Stable',
+              'Intended Audience :: End Users/Desktop',
+              'Intended Audience :: Financial and Insurance Industry',
+              'Programming Language :: Python :: 2.7',
+              'Programming Language :: Python :: 3.4',
+              'Programming Language :: Python :: 3.5',
+              'License :: OSI Approved',
+              'Operating System :: MacOS :: MacOS X',
+              'Operating System :: Microsoft :: Windows',
+              'Operating System :: POSIX',
+              'Programming Language :: Python',
+              'Programming Language :: Cython',
+              'Topic :: Scientific/Engineering',
+          ],
+          install_requires=[key + '>=' + REQUIREMENTS[key]
+                            for key in REQUIREMENTS],
+          setup_requires=[key + '>=' + SETUP_REQUIREMENTS[key]
+                          for key in SETUP_REQUIREMENTS],
+          )
+
+
+try:
+    build_binary = '--no-binary' not in sys.argv and CYTHON_INSTALLED
+    if '--no-binary' in sys.argv:
+        sys.argv.remove('--no-binary')
+
+    run_setup(binary=build_binary)
+except (CCompilerError, DistutilsExecError, DistutilsPlatformError, IOError, ValueError):
+    run_setup(binary=False)
+    import warnings
+
+    warnings.warn(FAILED_COMPILER_ERROR, UserWarning)
