@@ -1,16 +1,17 @@
 from __future__ import print_function
-from statsmodels.compat import iteritems, cStringIO
+from statsmodels.compat import cStringIO
 
 import numpy as np
 import pandas as pd
 
 
-sio = cStringIO.StringIO()
+sio = cStringIO()
 c = pd.read_hdf('kpss_critical_values.h5', 'c')
 ct = pd.read_hdf('kpss_critical_values.h5', 'ct')
 
 data = {'c': c, 'ct': ct}
-for k, v in iteritems(data):
+for k in ('c', 'ct'):
+    v = data[k]
     n = v.shape[0]
     selected = np.zeros((n, 1), dtype=np.bool)
     selected[0] = True
@@ -30,6 +31,7 @@ for k, v in iteritems(data):
         max_diff = np.max(abs_diff)
         if max_diff > 0.05:
             selected[np.where(abs_diff == max_diff)] = True
+    selected[v.index <= 10.0] = True
 
     quantiles = list(np.squeeze(v[selected].index.values))
     critical_values = list(np.squeeze(v[selected].values))
@@ -37,19 +39,19 @@ for k, v in iteritems(data):
     critical_values[0] = 0.0
     sio.write("from numpy import asarray\n\n")
     sio.write("kpss_critical_values = {}\n")
-    sio.write("kpss_critical_values['" + k + "'] = (")
+    sio.write(k + ' = (')
     count = 0
     for c, q in zip(critical_values, quantiles):
         sio.write(
-            '(' + '{0:0.1f}'.format(q) + ', ' + '{0:0.4f}'.format(c) + ')')
+            '(' + '{0:0.3f}'.format(q) + ', ' + '{0:0.4f}'.format(c) + ')')
         count += 1
-        if count % 3 == 0:
-            sio.write(',\n                             ')
+        if count % 4 == 0:
+            sio.write(',\n    ' + ' ' * len(k))
         else:
             sio.write(', ')
     sio.write(")\n")
     sio.write("kpss_critical_values['" + k + "'] = ")
-    sio.write("asarray(kpss_critical_values['" + k + "'])")
+    sio.write('asarray(' + k + ')')
     sio.write("\n")
 
 sio.seek(0)

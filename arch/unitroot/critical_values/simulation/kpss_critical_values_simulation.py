@@ -36,7 +36,7 @@ def simulate_kpss(nobs, B, trend='c', rng=None):
     return kpss
 
 
-def wrapper(nobs, b, trend='c', max_memory=250):
+def wrapper(nobs, b, trend='c', max_memory=1024):
     """
     A wrapper around the main simulation that runs it in blocks so that large
     simulations can be run without constructing very large arrays and running
@@ -49,12 +49,28 @@ def wrapper(nobs, b, trend='c', max_memory=250):
     b_max_memory = max(b_max_memory, 1)
     remaining = b
     results = np.zeros(b)
+    now = dt.datetime.now()
+    time_fmt = '{0:d}:{1:0>2d}:{2:0>2d}'
+    msg = 'trend {0}, {1} reps remaining, ' + \
+          'elapsed {2}, remaining {3}'
     while remaining > 0:
         b_eff = min(remaining, b_max_memory)
         completed = b - remaining
         results[completed:completed + b_eff] = \
             simulate_kpss(nobs, b_eff, trend=trend, rng=rng)
         remaining -= b_max_memory
+        elapsed = (dt.datetime.now() - now).total_seconds()
+        expected_remaining = max(0, remaining) * (elapsed / (b - remaining))
+
+        m, s = divmod(int(elapsed), 60)
+        h, m = divmod(m, 60)
+        elapsed = time_fmt.format(h, m, s)
+
+        m, s = divmod(int(expected_remaining), 60)
+        h, m = divmod(m, 60)
+        expected_remaining = time_fmt.format(h, m, s)
+
+        print(msg.format(trend, max(0, remaining), elapsed, expected_remaining))
 
     return results
 
@@ -66,7 +82,8 @@ if __name__ == '__main__':
     B = 100000000
 
     percentiles = np.concatenate((np.arange(0.0, 99.0, 0.5),
-                                  np.arange(99.0, 100.0, 0.1)))
+                                  np.arange(99.0, 99.9, 0.1),
+                                  np.arange(99.9, 100.0, 0.01)))
 
     critical_values = 100 - percentiles
     critical_values_string = map(lambda x: '{0:0.1f}'.format(x),
@@ -81,7 +98,6 @@ if __name__ == '__main__':
     for tr in ('c', 'ct'):
         now = dt.datetime.now()
         kpss = wrapper(nobs, B, trend=tr)
-        print(dt.datetime.now() - now)
         quantiles = np.percentile(kpss, list(percentiles))
         df = pd.DataFrame(quantiles, index=critical_values, columns=[tr])
         df.to_hdf(hdf_filename, key=tr, mode='a')
