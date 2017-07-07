@@ -6,6 +6,9 @@ import pandas as pd
 
 
 sio = cStringIO()
+sio.write("from numpy import asarray\n\n")
+sio.write("kpss_critical_values = {}\n")
+
 c = pd.read_hdf('kpss_critical_values.h5', 'c')
 ct = pd.read_hdf('kpss_critical_values.h5', 'ct')
 
@@ -37,8 +40,6 @@ for k in ('c', 'ct'):
     critical_values = list(np.squeeze(v[selected].values))
     # Fix for first CV
     critical_values[0] = 0.0
-    sio.write("from numpy import asarray\n\n")
-    sio.write("kpss_critical_values = {}\n")
     sio.write(k + ' = (')
     count = 0
     for c, q in zip(critical_values, quantiles):
