@@ -4,7 +4,6 @@ inherit from :class:`VolatilityProcess` and provide the same methods with the
 same inputs.
 """
 from __future__ import absolute_import, division
-print("start")
 import itertools
 
 import numpy as np
@@ -16,10 +15,10 @@ from arch.univariate.distribution import Normal
 from arch.utility.array import ensure1d, DocStringInheritor
 
 try:
-    from arch.univariate.recursions import garch_recursion, harch_recursion, egarch_recursion
+    from arch.univariate.recursions import garch_recursion, harch_recursion, egarch_recursion, cgarch_recursion
 except ImportError:  # pragma: no cover
     from arch.univariate.recursions_python import (garch_recursion, harch_recursion,
-                                                   egarch_recursion)
+                                                   egarch_recursion, cgarch_recursion)
 
 __all__ = ['GARCH', 'ARCH', 'HARCH', 'ConstantVariance', 'EWMAVariance', 'RiskMetrics2006',
            'EGARCH', 'FixedVariance']
@@ -1982,3 +1981,81 @@ class FixedVariance(VolatilityProcess):
         shocks.fill(np.nan)
 
         return VarianceForecast(forecasts, forecast_paths, shocks)
+
+class CGARCH(VolatilityProcess):
+    def __init__(self):
+        super().__init__()
+        self.num_params = 5
+        self.name = "ComponentGarch"
+        
+    def variance_bounds(self, resids, power=2.0):
+        return super().variance_bounds(resids)
+    
+    def constraints(self):
+        # alpha>0
+        # beta-phi>0
+        # phi-alpha-beta>0
+        # alpha-beta<1 written as 1-alpha-beta >0
+        
+        a = np.array([1,0,0,0,0])
+        other_cons = np.array([[0,1,0,0,-1],[-1,-1,0,1,0],[-1,-1,0,0,0]])
+        a = np.vstack((a,other_cons))
+        b = np.array([0,0,0,-1])
+        return a, b
+    
+    def backcast(self, resids):
+        return super().backcast(resids)
+        
+    def bounds(self, resids):
+        return [(0,1), (0,1), (-1, 1), (-1, 1), (0, 1)]
+    
+    def starting_values(self, resids):
+        return np.array([np.var(resids)/5, 0.1, 0.002, 0.3, 0.5])
+        
+    def compute_variance(self, parameters, resids, sigma2, backcast,
+                         var_bounds):
+        nobs = len(resids)
+        fresids = resids**2
+        
+        cgarch_recursion(parameters, fresids, sigma2, nobs, 
+                     backcast, var_bounds)
+        
+        return sigma2
+
+    def parameter_names(self):
+        names = ["alpha", "beta", "omega", "rho", "phi"]
+        return names
+
+    def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
+        T = nobs + burn
+        errors = rng(T)
+        sigma2 = zeros(T)
+        data = zeros(T)
+
+        # short_term component
+        g2 = zeros(T)
+        #  long_ term
+        q2 = zeros(T)
+
+        if initial_value is None:
+            alpha, beta, omega, rho, phi = parameters
+            # Cgarch can be represented as a restricted garch(2,2) with:
+            a0 = omega*(1-alpha-beta)
+            a1 = phi +alpha
+            a2 = phi*(alpha + beta) + alpha*rho
+            b1 = rho + beta - phi
+            b2 = phi*(alpha + beta) - rho*beta
+            # the unconditional var of this garch(2,2) form is used as initial value
+            initial_value = a0/(1-(a1+a2+b1+b2))
+
+        sigma2[0] = initial_value
+        q2[0] = initial_value * 0.65
+        g2[0] = initial_value - g2[0]
+        data[0] = sqrt(sigma2[0]) * errors[0]
+
+        for i in range(1, T):
+            g2[i] = alpha * (data[i - 1]**2 - q2[i - 1]) + beta * g2[i - 1]
+            q2[i] = omega + rho * q2[i - 1] + phi * (data[i - 1]**2 - sigma2[i - 1])
+            sigma2[i] = g2[i] + q2[i]
+            data[i] = errors[i] * (np.sqrt(sigma2[i])) ** 2
+        return data[burn:], sigma2[burn:]
