@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{407f4449-6194-4c82-b89a-45f9cf6f148f}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>arch\univariate\volatility.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId />
+    <InterpreterVersion />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+    <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="doc\requirements.txt" />
+    <Content Include="doc\source\bootstrap\bootstrap_histogram.png" />
+    <Content Include="doc\source\changes\1.0.txt" />
+    <Content Include="doc\source\changes\2.0.txt" />
+    <Content Include="doc\source\changes\3.0.txt" />
+    <Content Include="doc\source\changes\4.0.txt" />
+    <Content Include="requirements.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="arch\bootstrap\base.py" />
+    <Compile Include="arch\bootstrap\multiple_comparrison.py" />
+    <Compile Include="arch\bootstrap\tests\test_bootstrap.py" />
+    <Compile Include="arch\bootstrap\tests\test_multiple_comparrison.py" />
+    <Compile Include="arch\bootstrap\tests\__init__.py" />
+    <Compile Include="arch\bootstrap\_samplers_python.py" />
+    <Compile Include="arch\bootstrap\__init__.py" />
+    <Compile Include="arch\compat\numba.py" />
+    <Compile Include="arch\compat\pandas.py" />
+    <Compile Include="arch\compat\python.py" />
+    <Compile Include="arch\compat\__init__.py" />
+    <Compile Include="arch\unitroot\critical_values\dfgls.py" />
+    <Compile Include="arch\unitroot\critical_values\dickey_fuller.py" />
+    <Compile Include="arch\unitroot\critical_values\kpss.py" />
+    <Compile Include="arch\unitroot\critical_values\simulation\adf_z_critical_values_simulation.py" />
+    <Compile Include="arch\unitroot\critical_values\simulation\adf_z_critical_values_simulation_joblib.py" />
+    <Compile Include="arch\unitroot\critical_values\simulation\adf_z_critical_values_simulation_large_cluster.py" />
+    <Compile Include="arch\unitroot\critical_values\simulation\adf_z_simlation_process.py" />
+    <Compile Include="arch\unitroot\critical_values\simulation\dfgls_critical_values_simulation.py" />
+    <Compile Include="arch\unitroot\critical_values\simulation\dfgls_simulation_process.py" />
+    <Compile Include="arch\unitroot\critical_values\simulation\kpss_critical_values_simulation.py" />
+    <Compile Include="arch\unitroot\critical_values\simulation\kpss_simulation_process.py" />
+    <Compile Include="arch\unitroot\critical_values\__init__.py" />
+    <Compile Include="arch\unitroot\tests\test_unitroot.py" />
+    <Compile Include="arch\unitroot\tests\__init__.py" />
+    <Compile Include="arch\unitroot\unitroot.py" />
+    <Compile Include="arch\unitroot\__init__.py" />
+    <Compile Include="arch\univariate\base.py" />
+    <Compile Include="arch\univariate\distribution.py" />
+    <Compile Include="arch\univariate\mean.py" />
+    <Compile Include="arch\univariate\recursions_python.py" />
+    <Compile Include="arch\univariate\tests\test_distribution.py" />
+    <Compile Include="arch\univariate\tests\test_forecast.py" />
+    <Compile Include="arch\univariate\tests\test_mean.py" />
+    <Compile Include="arch\univariate\tests\test_recursions.py" />
+    <Compile Include="arch\univariate\tests\test_variance_forecasting.py" />
+    <Compile Include="arch\univariate\tests\test_volatility.py" />
+    <Compile Include="arch\univariate\tests\__init__.py" />
+    <Compile Include="arch\univariate\volatility.py" />
+    <Compile Include="arch\univariate\__init__.py" />
+    <Compile Include="arch\utility\array.py" />
+    <Compile Include="arch\utility\cov.py" />
+    <Compile Include="arch\utility\exceptions.py" />
+    <Compile Include="arch\utility\tests\test_array.py" />
+    <Compile Include="arch\utility\tests\test_cov.py" />
+    <Compile Include="arch\utility\tests\test_timeseries.py" />
+    <Compile Include="arch\utility\tests\__init__.py" />
+    <Compile Include="arch\utility\timeseries.py" />
+    <Compile Include="arch\utility\__init__.py" />
+    <Compile Include="arch\_version.py" />
+    <Compile Include="arch\__init__.py" />
+    <Compile Include="ci\performance.py" />
+    <Compile Include="doc\source\conf.py" />
+    <Compile Include="setup.py" />
+    <Compile Include="versioneer.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="arch" />
+    <Folder Include="arch\bootstrap" />
+    <Folder Include="arch\bootstrap\tests" />
+    <Folder Include="arch\compat" />
+    <Folder Include="arch\unitroot" />
+    <Folder Include="arch\unitroot\critical_values" />
+    <Folder Include="arch\unitroot\critical_values\simulation" />
+    <Folder Include="arch\unitroot\tests" />
+    <Folder Include="arch\univariate" />
+    <Folder Include="arch\univariate\tests" />
+    <Folder Include="arch\utility" />
+    <Folder Include="arch\utility\tests" />
+    <Folder Include="ci" />
+    <Folder Include="doc" />
+    <Folder Include="doc\source" />
+    <Folder Include="doc\source\bootstrap" />
+    <Folder Include="doc\source\changes" />
+  </ItemGroup>
+  <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />
+</Project>

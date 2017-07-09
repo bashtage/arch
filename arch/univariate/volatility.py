@@ -4,7 +4,7 @@ inherit from :class:`VolatilityProcess` and provide the same methods with the
 same inputs.
 """
 from __future__ import absolute_import, division
-
+print("start")
 import itertools
 
 import numpy as np
