@@ -21,7 +21,7 @@ except ImportError:  # pragma: no cover
                                                    egarch_recursion, cgarch_recursion)
 
 __all__ = ['GARCH', 'ARCH', 'HARCH', 'ConstantVariance', 'EWMAVariance', 'RiskMetrics2006',
-           'EGARCH', 'FixedVariance']
+           'EGARCH', 'FixedVariance', 'CGARCH']
 
 
 class BootstrapRng(object):

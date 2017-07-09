@@ -11,7 +11,7 @@ from numpy import log
 import numpy as np
 
 __all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion',
-           'egarch_recursion', "cgarch_recursion"]
+           'egarch_recursion', 'cgarch_recursion']
 
 
 def harch_recursion_python(parameters, resids, sigma2, lags, nobs, backcast,

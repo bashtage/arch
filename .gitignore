@@ -8,3 +8,4 @@ dist
 .benchmarks/
 .cache/
 README.rst
+*.suo
