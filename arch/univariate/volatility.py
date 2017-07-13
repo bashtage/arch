@@ -2059,3 +2059,8 @@ class CGARCH(VolatilityProcess):
             sigma2[i] = g2[i] + q2[i]
             data[i] = errors[i] * (np.sqrt(sigma2[i])) ** 2
         return data[burn:], sigma2[burn:]
+    def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+        
+        return
+    def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon, simulations, rng):
+        return 
