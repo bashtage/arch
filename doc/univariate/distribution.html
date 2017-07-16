@@ -1,0 +1,578 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Distributions &#8212; arch 0+untagged.91.g469dda8 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0+untagged.91.g469dda8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Theoretical Background" href="background.html" />
+    <link rel="prev" title="Using the Fixed Variance process" href="univariate_using_fixed_variance.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="background.html" title="Theoretical Background"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="univariate_using_fixed_variance.html" title="Using the Fixed Variance process"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.91.g469dda8 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    ../index.html" class="text-logo">arch 0.+</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="univariate.html">Univariate Volatility Models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_modeling.html">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forecasting.html">Forecasting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_forecasting.html">Forecasting Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mean.html">Mean Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="volatility.html">Volatility Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="univariate_using_fixed_variance.html">Using the Fixed Variance Process</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../bootstrap/bootstrap.html">Bootstrapping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../unitroot/unitroot.html">Unit Root Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="univariate.html">Univariate Volatility Models</a></li>
+              
+              <li>Distributions</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="distributions">
+<h1>Distributions<a class="headerlink" href="#distributions" title="Permalink to this headline">¶</a></h1>
+<p>A distribution is the final component of an ARCH Model.</p>
+<span class="target" id="module-arch.univariate.distribution"></span><div class="section" id="normal">
+<h2>Normal<a class="headerlink" href="#normal" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arch.univariate.Normal">
+<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">Normal</code><a class="headerlink" href="#arch.univariate.Normal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard normal distribution for use with ARCH models</p>
+<dl class="method">
+<dt id="arch.univariate.Normal.bounds">
+<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.Normal.bounds" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Residuals to use when computing the bounds</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List containing a single tuple with (lower, upper) bounds</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.Normal.constraints">
+<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.Normal.constraints" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>A</strong> (<em>array</em>) – Constraint loadings</li>
+<li><strong>b</strong> (<em>array</em>) – Constraint values</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Parameters satisfy the constraints A.dot(parameters)-b &gt;= 0</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.Normal.loglikelihoood">
+<code class="descname">loglikelihoood</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>individual=False</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.Normal.loglikelihoood" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the log-likelihood of assuming residuals are normally
+distributed, conditional on the variance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parameters</strong> (<em>empty array</em>) – The normal likelihood has no shape parameters</li>
+<li><strong>resids</strong> (<em>array</em>) – The residuals to use in the log-likelihood calculation</li>
+<li><strong>sigma2</strong> (<em>array</em>) – Conditional variances of resids</li>
+<li><strong>individual</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
+likelihoods (True) or the sum (False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ll</strong> – The log-likelihood</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The log-likelihood of a single data point x is</p>
+<div class="math">
+\[\ln f\left(x\right)=-\frac{1}{2}\left(\ln2\pi+\ln\sigma^{2}
++\frac{x^{2}}{\sigma^{2}}\right)\]</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.Normal.simulate">
+<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.Normal.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulates i.i.d. draws from the distribution</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<em>array</em>) – Distribution parameters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>simulator</strong> – Callable that take a single output size argument and returns i.i.d.
+draws from the distribution</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">callable</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.Normal.starting_values">
+<code class="descname">starting_values</code><span class="sig-paren">(</span><em>std_resid</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.Normal.starting_values" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<em>array</em>) – Estimated standardized residuals to use in computing starting
+values for the shape parameter</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – The estimated shape parameters for the distribution</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Size of sv depends on the distribution</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="student-s-t">
+<h2>Student’s t<a class="headerlink" href="#student-s-t" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arch.univariate.StudentsT">
+<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">StudentsT</code><a class="headerlink" href="#arch.univariate.StudentsT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standardized Student’s nobs distribution for use with ARCH models</p>
+<dl class="method">
+<dt id="arch.univariate.StudentsT.bounds">
+<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.StudentsT.bounds" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Residuals to use when computing the bounds</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List containing a single tuple with (lower, upper) bounds</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.StudentsT.constraints">
+<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.StudentsT.constraints" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>A</strong> (<em>array</em>) – Constraint loadings</li>
+<li><strong>b</strong> (<em>array</em>) – Constraint values</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Parameters satisfy the constraints A.dot(parameters)-b &gt;= 0</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.StudentsT.loglikelihoood">
+<code class="descname">loglikelihoood</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>individual=False</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.StudentsT.loglikelihoood" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the log-likelihood of assuming residuals are have a
+standardized (to have unit variance) Student’s t distribution,
+conditional on the variance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parameters</strong> (<em>array</em>) – Shape parameter of the t distribution</li>
+<li><strong>resids</strong> (<em>array</em>) – The residuals to use in the log-likelihood calculation</li>
+<li><strong>sigma2</strong> (<em>array</em>) – Conditional variances of resids</li>
+<li><strong>individual</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
+likelihoods (True) or the sum (False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ll</strong> – The log-likelihood</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The log-likelihood of a single data point x is</p>
+<div class="math">
+\[\ln\Gamma\left(\frac{\nu+1}{2}\right)
+-\ln\Gamma\left(\frac{\nu}{2}\right)
+-\frac{1}{2}\ln(\pi\left(\nu-2\right)\sigma^{2})
+-\frac{\nu+1}{2}\ln(1+x^{2}/(\sigma^{2}(\nu-2)))\]</div>
+<p>where <span class="math">\(\Gamma\)</span> is the gamma function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.StudentsT.simulate">
+<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.StudentsT.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulates i.i.d. draws from the distribution</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<em>array</em>) – Distribution parameters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>simulator</strong> – Callable that take a single output size argument and returns i.i.d.
+draws from the distribution</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">callable</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.StudentsT.starting_values">
+<code class="descname">starting_values</code><span class="sig-paren">(</span><em>std_resid</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.StudentsT.starting_values" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<em>array</em>) – Estimated standardized residuals to use in computing starting
+values for the shape parameter</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array containing starting valuer for shape parameter</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Uses relationship between kurtosis and degree of freedom parameter to
+produce a moment-based estimator for the starting values.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="skew-student-s-t">
+<h2>Skew Student’s t<a class="headerlink" href="#skew-student-s-t" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arch.univariate.SkewStudent">
+<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">SkewStudent</code><a class="headerlink" href="#arch.univariate.SkewStudent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standardized Skewed Student’s <a class="footnote-reference" href="#id2" id="id1">[1]</a> distribution for use with ARCH models</p>
+<p class="rubric">Notes</p>
+<p>The Standardized Skewed Student’s distribution takes two parameters,
+<span class="math">\(\eta\)</span> and <span class="math">\(\lambda\)</span>. <span class="math">\(\eta\)</span> controls the tail shape
+and is similar to the shape parameter in a Standardized Student’s t.
+<span class="math">\(\lambda\)</span> controls the skewness. When <span class="math">\(\lambda=0\)</span> the
+distribution is identical to a standardized Student’s t.</p>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Hansen, B. E. (1994). Autoregressive conditional density estimation.
+<em>International Economic Review</em>, 35(3), 705–730.
+&lt;<a class="reference external" href="http://www.ssc.wisc.edu/~bhansen/papers/ier_94.pdf">http://www.ssc.wisc.edu/~bhansen/papers/ier_94.pdf</a>&gt;</td></tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="arch.univariate.SkewStudent.bounds">
+<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.SkewStudent.bounds" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Residuals to use when computing the bounds</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List containing a single tuple with (lower, upper) bounds</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.SkewStudent.constraints">
+<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.SkewStudent.constraints" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>A</strong> (<em>array</em>) – Constraint loadings</li>
+<li><strong>b</strong> (<em>array</em>) – Constraint values</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Parameters satisfy the constraints A.dot(parameters)-b &gt;= 0</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.SkewStudent.loglikelihoood">
+<code class="descname">loglikelihoood</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>individual=False</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.SkewStudent.loglikelihoood" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the log-likelihood of assuming residuals are have a
+standardized (to have unit variance) Skew Student’s t distribution,
+conditional on the variance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parameters</strong> (<em>array</em>) – Shape parameter of the skew-t distribution</li>
+<li><strong>resids</strong> (<em>array</em>) – The residuals to use in the log-likelihood calculation</li>
+<li><strong>sigma2</strong> (<em>array</em>) – Conditional variances of resids</li>
+<li><strong>individual</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
+likelihoods (True) or the sum (False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ll</strong> – The log-likelihood</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The log-likelihood of a single data point x is</p>
+<div class="math">
+\[\ln\left[\frac{bc}{\sigma}\left(1+\frac{1}{\eta-2}
+    \left(\frac{a+bx/\sigma}
+    {1+sgn(x/\sigma+a/b)\lambda}\right)^{2}\right)
+    ^{-\left(\eta+1\right)/2}\right],\]</div>
+<p>where <span class="math">\(2&lt;\eta&lt;\infty\)</span>, and <span class="math">\(-1&lt;\lambda&lt;1\)</span>.
+The constants <span class="math">\(a\)</span>, <span class="math">\(b\)</span>, and <span class="math">\(c\)</span> are given by</p>
+<div class="math">
+\[a=4\lambda c\frac{\eta-2}{\eta-1},
+    \quad b^{2}=1+3\lambda^{2}-a^{2},
+    \quad c=\frac{\Gamma\left(\frac{\eta+1}{2}\right)}
+    {\sqrt{\pi\left(\eta-2\right)}
+    \Gamma\left(\frac{\eta}{2}\right)},\]</div>
+<p>and <span class="math">\(\Gamma\)</span> is the gamma function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.SkewStudent.simulate">
+<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.SkewStudent.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulates i.i.d. draws from the distribution</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<em>array</em>) – Distribution parameters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>simulator</strong> – Callable that take a single output size argument and returns i.i.d.
+draws from the distribution</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">callable</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.SkewStudent.starting_values">
+<code class="descname">starting_values</code><span class="sig-paren">(</span><em>std_resid</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.SkewStudent.starting_values" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<em>array</em>) – Estimated standardized residuals to use in computing starting
+values for the shape parameter</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array containing starting valuer for shape parameter</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Uses relationship between kurtosis and degree of freedom parameter to
+produce a moment-based estimator for the starting values.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="writing-new-distributions">
+<h2>Writing New Distributions<a class="headerlink" href="#writing-new-distributions" title="Permalink to this headline">¶</a></h2>
+<p>All distributions must inherit from :class:Distribution and provide all public
+methods.</p>
+<dl class="class">
+<dt id="arch.univariate.Distribution">
+<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">Distribution</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.Distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Template for subclassing only</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="univariate_using_fixed_variance.html" title="previous chapter (use the left arrow)">Using the Fixed Variance process</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="background.html" title="next chapter (use the right arrow)">Theoretical Background</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="background.html" title="Theoretical Background"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="univariate_using_fixed_variance.html" title="Using the Fixed Variance process"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.91.g469dda8 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

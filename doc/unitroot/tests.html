@@ -1,0 +1,887 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>The Unit Root Tests &#8212; arch 0+untagged.91.g469dda8 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0+untagged.91.g469dda8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Change Logs" href="../changes.html" />
+    <link rel="prev" title="Unit Root Testing" href="unitroot_examples.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../changes.html" title="Change Logs"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="unitroot_examples.html" title="Unit Root Testing"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.91.g469dda8 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="unitroot.html" accesskey="U">Unit Root Testing</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    ../index.html" class="text-logo">arch 0.+</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../univariate/univariate.html">Univariate Volatility Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bootstrap/bootstrap.html">Bootstrapping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="unitroot.html">Unit Root Tests</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unitroot_examples.html">Examples</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Unit Root Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="unitroot.html">Unit Root Testing</a></li>
+              
+              <li>The Unit Root Tests</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="the-unit-root-tests">
+<h1>The Unit Root Tests<a class="headerlink" href="#the-unit-root-tests" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="augmented-dickey-fuller-testing">
+<h2>Augmented-Dickey Fuller Testing<a class="headerlink" href="#augmented-dickey-fuller-testing" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arch.unitroot.ADF">
+<em class="property">class </em><code class="descclassname">arch.unitroot.</code><code class="descname">ADF</code><span class="sig-paren">(</span><em>y</em>, <em>lags=None</em>, <em>trend='c'</em>, <em>max_lags=None</em>, <em>method='AIC'</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.unitroot.ADF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Augmented Dickey-Fuller unit root test</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>y</strong> (<em>array</em>) – The data to test for a unit root</li>
+<li><strong>lags</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of lags to use in the ADF regression.  If omitted or None,
+<cite>method</cite> is used to automatically select the lag length with no more
+than <cite>max_lags</cite> are included.</li>
+<li><strong>trend</strong> (<em>{'nc'</em><em>, </em><em>'c'</em><em>, </em><em>'ct'</em><em>, </em><em>'ctt'}</em><em>, </em><em>optional</em>) – The trend component to include in the ADF test
+‘nc’ - No trend components
+‘c’ - Include a constant (Default)
+‘ct’ - Include a constant and linear time trend
+‘ctt’ - Include a constant and linear and quadratic time trends</li>
+<li><strong>max_lags</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of lags to use when selecting lag length</li>
+<li><strong>method</strong> (<em>{'AIC'</em><em>, </em><em>'BIC'</em><em>, </em><em>'t-stat'}</em><em>, </em><em>optional</em>) – The method to use when selecting the lag length
+‘AIC’ - Select the minimum of the Akaike IC
+‘BIC’ - Select the minimum of the Schwarz/Bayesian IC
+‘t-stat’ - Select the minimum of the Schwarz/Bayesian IC</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="arch.unitroot.ADF.stat">
+<code class="descname">stat</code><a class="headerlink" href="#arch.unitroot.ADF.stat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.ADF.pvalue">
+<code class="descname">pvalue</code><a class="headerlink" href="#arch.unitroot.ADF.pvalue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.ADF.critical_values">
+<code class="descname">critical_values</code><a class="headerlink" href="#arch.unitroot.ADF.critical_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.ADF.null_hypothesis">
+<code class="descname">null_hypothesis</code><a class="headerlink" href="#arch.unitroot.ADF.null_hypothesis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.ADF.alternative_hypothesis">
+<code class="descname">alternative_hypothesis</code><a class="headerlink" href="#arch.unitroot.ADF.alternative_hypothesis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.ADF.summary">
+<code class="descname">summary</code><a class="headerlink" href="#arch.unitroot.ADF.summary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.ADF.regression">
+<code class="descname">regression</code><a class="headerlink" href="#arch.unitroot.ADF.regression" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.ADF.valid_trends">
+<code class="descname">valid_trends</code><a class="headerlink" href="#arch.unitroot.ADF.valid_trends" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.ADF.y">
+<code class="descname">y</code><a class="headerlink" href="#arch.unitroot.ADF.y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.ADF.trend">
+<code class="descname">trend</code><a class="headerlink" href="#arch.unitroot.ADF.trend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.ADF.lags">
+<code class="descname">lags</code><a class="headerlink" href="#arch.unitroot.ADF.lags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Notes</p>
+<p>The null hypothesis of the Augmented Dickey-Fuller is that there is a unit
+root, with the alternative that there is no unit root. If the pvalue is
+above a critical size, then the null cannot be rejected that there
+and the series appears to be a unit root.</p>
+<p>The p-values are obtained through regression surface approximation from
+MacKinnon (1994) using the updated 2010 tables.
+If the p-value is close to significant, then the critical values should be
+used to judge whether to reject the null.</p>
+<p>The autolag option and maxlag for it are described in Greene.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="k">import</span> <span class="n">ADF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inflation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;cpi&#39;</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span><span class="n">inflation</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">stat</span><span class="p">))</span>
+<span class="go">-3.0931</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">pvalue</span><span class="p">))</span>
+<span class="go">0.0271</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adf</span><span class="o">.</span><span class="n">lags</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adf</span><span class="o">.</span><span class="n">trend</span><span class="o">=</span><span class="s1">&#39;ct&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">stat</span><span class="p">))</span>
+<span class="go">-3.2111</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">pvalue</span><span class="p">))</span>
+<span class="go">0.0822</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<p>Greene, W. H. 2011. Econometric Analysis. Prentice Hall: Upper Saddle
+River, New Jersey.</p>
+<p>Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton
+University Press.</p>
+<p>P-Values (regression surface approximation)
+MacKinnon, J.G. 1994.  “Approximate asymptotic distribution functions for
+unit-root and cointegration bootstrap.  <cite>Journal of Business and Economic
+Statistics</cite> 12, 167-76.</p>
+<p>Critical values
+MacKinnon, J.G. 2010. “Critical Values for Cointegration Tests.”  Queen’s
+University, Dept of Economics, Working Papers.  Available at
+<a class="reference external" href="http://ideas.repec.org/p/qed/wpaper/1227.html">http://ideas.repec.org/p/qed/wpaper/1227.html</a></p>
+<dl class="attribute">
+<dt>
+<code class="descname">alternative_hypothesis</code></dt>
+<dd><p>The alternative hypothesis</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">critical_values</code></dt>
+<dd><p>Dictionary containing critical values specific to the test, number of
+observations and included deterministic trend terms.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">lags</code></dt>
+<dd><p>Sets or gets the number of lags used in the model.
+When bootstrap use DF-type regressions, lags is the number of lags in the
+regression model.  When bootstrap use long-run variance estimators, lags
+is the number of lags used in the long-run variance estimator.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">null_hypothesis</code></dt>
+<dd><p>The null hypothesis</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">pvalue</code></dt>
+<dd><p>Returns the p-value for the test statistic</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">regression</code></dt>
+<dd><p>Returns the OLS regression results from the ADF model estimated</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">stat</code></dt>
+<dd><p>The test statistic for a unit root</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Summary of test, containing statistic, p-value and critical values</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">trend</code></dt>
+<dd><p>Sets or gets the deterministic trend term used in the test. See
+valid_trends for a list of supported trends</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">valid_trends</code></dt>
+<dd><p>List of valid trend terms.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="dickey-fuller-gls-testing">
+<h2>Dickey-Fuller GLS Testing<a class="headerlink" href="#dickey-fuller-gls-testing" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arch.unitroot.DFGLS">
+<em class="property">class </em><code class="descclassname">arch.unitroot.</code><code class="descname">DFGLS</code><span class="sig-paren">(</span><em>y</em>, <em>lags=None</em>, <em>trend='c'</em>, <em>max_lags=None</em>, <em>method='AIC'</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.unitroot.DFGLS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Elliott, Rothenberg and Stock’s GLS version of the Dickey-Fuller test</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>y</strong> (<em>array</em>) – The data to test for a unit root</li>
+<li><strong>lags</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of lags to use in the ADF regression.  If omitted or None,
+<cite>method</cite> is used to automatically select the lag length with no more
+than <cite>max_lags</cite> are included.</li>
+<li><strong>trend</strong> (<em>{'c'</em><em>, </em><em>'ct'}</em><em>, </em><em>optional</em>) – The trend component to include in the ADF test
+‘c’ - Include a constant (Default)
+‘ct’ - Include a constant and linear time trend</li>
+<li><strong>max_lags</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of lags to use when selecting lag length</li>
+<li><strong>method</strong> (<em>{'AIC'</em><em>, </em><em>'BIC'</em><em>, </em><em>'t-stat'}</em><em>, </em><em>optional</em>) – The method to use when selecting the lag length
+‘AIC’ - Select the minimum of the Akaike IC
+‘BIC’ - Select the minimum of the Schwarz/Bayesian IC
+‘t-stat’ - Select the minimum of the Schwarz/Bayesian IC</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="arch.unitroot.DFGLS.stat">
+<code class="descname">stat</code><a class="headerlink" href="#arch.unitroot.DFGLS.stat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.DFGLS.pvalue">
+<code class="descname">pvalue</code><a class="headerlink" href="#arch.unitroot.DFGLS.pvalue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.DFGLS.critical_values">
+<code class="descname">critical_values</code><a class="headerlink" href="#arch.unitroot.DFGLS.critical_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.DFGLS.null_hypothesis">
+<code class="descname">null_hypothesis</code><a class="headerlink" href="#arch.unitroot.DFGLS.null_hypothesis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.DFGLS.alternative_hypothesis">
+<code class="descname">alternative_hypothesis</code><a class="headerlink" href="#arch.unitroot.DFGLS.alternative_hypothesis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.DFGLS.summary">
+<code class="descname">summary</code><a class="headerlink" href="#arch.unitroot.DFGLS.summary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.DFGLS.regression">
+<code class="descname">regression</code><a class="headerlink" href="#arch.unitroot.DFGLS.regression" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.DFGLS.valid_trends">
+<code class="descname">valid_trends</code><a class="headerlink" href="#arch.unitroot.DFGLS.valid_trends" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.DFGLS.y">
+<code class="descname">y</code><a class="headerlink" href="#arch.unitroot.DFGLS.y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.DFGLS.trend">
+<code class="descname">trend</code><a class="headerlink" href="#arch.unitroot.DFGLS.trend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.DFGLS.lags">
+<code class="descname">lags</code><a class="headerlink" href="#arch.unitroot.DFGLS.lags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Notes</p>
+<p>The null hypothesis of the Dickey-Fuller GLS is that there is a unit
+root, with the alternative that there is no unit root. If the pvalue is
+above a critical size, then the null cannot be rejected and the series
+appears to be a unit root.</p>
+<p>DFGLS differs from the ADF test in that an initial GLS detrending step
+is used before a trend-less ADF regression is run.</p>
+<p>Critical values and p-values when trend is ‘c’ are identical to
+the ADF.  When trend is set to ‘ct, they are from …</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="k">import</span> <span class="n">DFGLS</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inflation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;cpi&#39;</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dfgls</span> <span class="o">=</span> <span class="n">DFGLS</span><span class="p">(</span><span class="n">inflation</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dfgls</span><span class="o">.</span><span class="n">stat</span><span class="p">))</span>
+<span class="go">-2.7611</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dfgls</span><span class="o">.</span><span class="n">pvalue</span><span class="p">))</span>
+<span class="go">0.0059</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dfgls</span><span class="o">.</span><span class="n">lags</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dfgls</span><span class="o">.</span><span class="n">trend</span> <span class="o">=</span> <span class="s1">&#39;ct&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dfgls</span><span class="o">.</span><span class="n">stat</span><span class="p">))</span>
+<span class="go">-2.9036</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dfgls</span><span class="o">.</span><span class="n">pvalue</span><span class="p">))</span>
+<span class="go">0.0447</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<p>Elliott, G. R., T. J. Rothenberg, and J. H. Stock. 1996. Efficient bootstrap
+for an autoregressive unit root. Econometrica 64: 813-836</p>
+<dl class="method">
+<dt>
+<code class="descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Summary of test, containing statistic, p-value and critical values</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="phillips-perron-testing">
+<h2>Phillips-Perron Testing<a class="headerlink" href="#phillips-perron-testing" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arch.unitroot.PhillipsPerron">
+<em class="property">class </em><code class="descclassname">arch.unitroot.</code><code class="descname">PhillipsPerron</code><span class="sig-paren">(</span><em>y</em>, <em>lags=None</em>, <em>trend='c'</em>, <em>test_type='tau'</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.unitroot.PhillipsPerron" title="Permalink to this definition">¶</a></dt>
+<dd><p>Phillips-Perron unit root test</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>y</strong> (<em>array</em>) – The data to test for a unit root</li>
+<li><strong>lags</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of lags to use in the Newey-West estimator of the long-run
+covariance.  If omitted or None, the lag length is set automatically to
+12 * (nobs/100) ** (1/4)</li>
+<li><strong>trend</strong> (<em>{'nc'</em><em>, </em><em>'c'</em><em>, </em><em>'ct'}</em><em>, </em><em>optional</em>) – <dl class="docutils">
+<dt>The trend component to include in the ADF test</dt>
+<dd>’nc’ - No trend components
+‘c’ - Include a constant (Default)
+‘ct’ - Include a constant and linear time trend</dd>
+</dl>
+</li>
+<li><strong>test_type</strong> (<em>{'tau'</em><em>, </em><em>'rho'}</em>) – The test to use when computing the test statistic. ‘tau’ is based on
+the t-stat and ‘rho’ uses a test based on nobs times the re-centered
+regression coefficient</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="arch.unitroot.PhillipsPerron.stat">
+<code class="descname">stat</code><a class="headerlink" href="#arch.unitroot.PhillipsPerron.stat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.PhillipsPerron.pvalue">
+<code class="descname">pvalue</code><a class="headerlink" href="#arch.unitroot.PhillipsPerron.pvalue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.PhillipsPerron.critical_values">
+<code class="descname">critical_values</code><a class="headerlink" href="#arch.unitroot.PhillipsPerron.critical_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.PhillipsPerron.test_type">
+<code class="descname">test_type</code><a class="headerlink" href="#arch.unitroot.PhillipsPerron.test_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.PhillipsPerron.null_hypothesis">
+<code class="descname">null_hypothesis</code><a class="headerlink" href="#arch.unitroot.PhillipsPerron.null_hypothesis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.PhillipsPerron.alternative_hypothesis">
+<code class="descname">alternative_hypothesis</code><a class="headerlink" href="#arch.unitroot.PhillipsPerron.alternative_hypothesis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.PhillipsPerron.summary">
+<code class="descname">summary</code><a class="headerlink" href="#arch.unitroot.PhillipsPerron.summary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.PhillipsPerron.valid_trends">
+<code class="descname">valid_trends</code><a class="headerlink" href="#arch.unitroot.PhillipsPerron.valid_trends" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.PhillipsPerron.y">
+<code class="descname">y</code><a class="headerlink" href="#arch.unitroot.PhillipsPerron.y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.PhillipsPerron.trend">
+<code class="descname">trend</code><a class="headerlink" href="#arch.unitroot.PhillipsPerron.trend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.PhillipsPerron.lags">
+<code class="descname">lags</code><a class="headerlink" href="#arch.unitroot.PhillipsPerron.lags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Notes</p>
+<p>The null hypothesis of the Phillips-Perron (PP) test is that there is a
+unit root, with the alternative that there is no unit root. If the pvalue
+is above a critical size, then the null cannot be rejected that there
+and the series appears to be a unit root.</p>
+<p>Unlike the ADF test, the regression estimated includes only one lag of
+the dependant variable, in addition to trend terms. Any serial
+correlation in the regression errors is accounted for using a long-run
+variance estimator (currently Newey-West).</p>
+<p>The p-values are obtained through regression surface approximation from
+MacKinnon (1994) using the updated 2010 tables.
+If the p-value is close to significant, then the critical values should be
+used to judge whether to reject the null.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="k">import</span> <span class="n">PhillipsPerron</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inflation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;cpi&#39;</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span> <span class="o">=</span> <span class="n">PhillipsPerron</span><span class="p">(</span><span class="n">inflation</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">stat</span><span class="p">))</span>
+<span class="go">-8.1356</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">pvalue</span><span class="p">))</span>
+<span class="go">0.0000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">lags</span>
+<span class="go">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">trend</span> <span class="o">=</span> <span class="s1">&#39;ct&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">stat</span><span class="p">))</span>
+<span class="go">-8.2022</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">pvalue</span><span class="p">))</span>
+<span class="go">0.0000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">test_type</span> <span class="o">=</span> <span class="s1">&#39;rho&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">stat</span><span class="p">))</span>
+<span class="go">-120.3271</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">pvalue</span><span class="p">))</span>
+<span class="go">0.0000</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<p>Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton
+University Press.</p>
+<p>Newey, W. K., and K. D. West. 1987. A simple, positive semidefinite,
+heteroskedasticity and autocorrelation consistent covariance matrix.
+Econometrica 55, 703-708.</p>
+<p>Phillips, P. C. B., and P. Perron. 1988. Testing for a unit root in
+time series regression. Biometrika 75, 335-346.</p>
+<p>P-Values (regression surface approximation)
+MacKinnon, J.G. 1994.  “Approximate asymptotic distribution functions for
+unit-root and cointegration bootstrap.  <cite>Journal of Business and Economic
+Statistics</cite> 12, 167-76.</p>
+<p>Critical values
+MacKinnon, J.G. 2010. “Critical Values for Cointegration Tests.”  Queen’s
+University, Dept of Economics, Working Papers.  Available at
+<a class="reference external" href="http://ideas.repec.org/p/qed/wpaper/1227.html">http://ideas.repec.org/p/qed/wpaper/1227.html</a></p>
+<dl class="method">
+<dt>
+<code class="descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Summary of test, containing statistic, p-value and critical values</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="variance-ratios">
+<h2>Variance Ratios<a class="headerlink" href="#variance-ratios" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arch.unitroot.VarianceRatio">
+<em class="property">class </em><code class="descclassname">arch.unitroot.</code><code class="descname">VarianceRatio</code><span class="sig-paren">(</span><em>y</em>, <em>lags=2</em>, <em>trend='c'</em>, <em>debiased=True</em>, <em>robust=True</em>, <em>overlap=True</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.unitroot.VarianceRatio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variance Ratio test of a random walk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>y</strong> (<em>array</em>) – The data to test for a random walk</li>
+<li><strong>lags</strong> (<em>int</em>) – The number of periods to used in the multi-period variance, which is
+the numerator of the test statistic.  Must be at least 2</li>
+<li><strong>trend</strong> (<em>{'nc'</em><em>, </em><em>'c'}</em><em>, </em><em>optional</em>) – ‘c’ allows for a non-zero drift in the random walk, while ‘nc’ requires
+that the increments to y are mean 0</li>
+<li><strong>overlap</strong> (<em>bool</em><em>, </em><em>optional</em>) – Indicates whether to use all overlapping blocks.  Default is True.  If
+False, the number of observations in y minus 1 must be an exact
+multiple of lags.  If this condition is not satistifed, some values at
+the end of y will be discarded.</li>
+<li><strong>robust</strong> (<em>bool</em><em>, </em><em>optional</em>) – Indicates whether to use heteroskedasticity robust inference. Default
+is True.</li>
+<li><strong>debiased</strong> (<em>bool</em><em>, </em><em>optional</em>) – Indicates whether to use a debiased version of the test. Default is
+True. Only applicable if overlap is True.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="arch.unitroot.VarianceRatio.stat">
+<code class="descname">stat</code><a class="headerlink" href="#arch.unitroot.VarianceRatio.stat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.VarianceRatio.pvalue">
+<code class="descname">pvalue</code><a class="headerlink" href="#arch.unitroot.VarianceRatio.pvalue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.VarianceRatio.critical_values">
+<code class="descname">critical_values</code><a class="headerlink" href="#arch.unitroot.VarianceRatio.critical_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.VarianceRatio.null_hypothesis">
+<code class="descname">null_hypothesis</code><a class="headerlink" href="#arch.unitroot.VarianceRatio.null_hypothesis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.VarianceRatio.alternative_hypothesis">
+<code class="descname">alternative_hypothesis</code><a class="headerlink" href="#arch.unitroot.VarianceRatio.alternative_hypothesis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.VarianceRatio.summary">
+<code class="descname">summary</code><a class="headerlink" href="#arch.unitroot.VarianceRatio.summary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.VarianceRatio.valid_trends">
+<code class="descname">valid_trends</code><a class="headerlink" href="#arch.unitroot.VarianceRatio.valid_trends" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.VarianceRatio.y">
+<code class="descname">y</code><a class="headerlink" href="#arch.unitroot.VarianceRatio.y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.VarianceRatio.trend">
+<code class="descname">trend</code><a class="headerlink" href="#arch.unitroot.VarianceRatio.trend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.VarianceRatio.lags">
+<code class="descname">lags</code><a class="headerlink" href="#arch.unitroot.VarianceRatio.lags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.VarianceRatio.overlap">
+<code class="descname">overlap</code><a class="headerlink" href="#arch.unitroot.VarianceRatio.overlap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.VarianceRatio.robust">
+<code class="descname">robust</code><a class="headerlink" href="#arch.unitroot.VarianceRatio.robust" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.VarianceRatio.debiased">
+<code class="descname">debiased</code><a class="headerlink" href="#arch.unitroot.VarianceRatio.debiased" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Notes</p>
+<p>The null hypothesis of a VR is that the process is a random walk, possibly
+plus drift.  Rejection of the null with a positive test statistic indicates
+the presence of positive serial correlation in the time series.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="k">import</span> <span class="n">VarianceRatio</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">matplotlib.finance</span> <span class="k">import</span> <span class="n">fetch_historical_yahoo</span> <span class="k">as</span> <span class="n">yahoo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csv</span> <span class="o">=</span> <span class="n">yahoo</span><span class="p">(</span><span class="s1">&#39;^GSPC&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">1950</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">2010</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_csv</span><span class="p">(</span><span class="n">csv</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Reverse</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">&#39;M&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>  <span class="c1"># End of month</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">returns</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Adj Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vr</span> <span class="o">=</span> <span class="n">VarianceRatio</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">vr</span><span class="o">.</span><span class="n">stat</span><span class="p">))</span>
+<span class="go">-11.4517</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">vr</span><span class="o">.</span><span class="n">pvalue</span><span class="p">))</span>
+<span class="go">0.0000</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<p>Campbell, John Y., Lo, Andrew W. and MacKinlay, A. Craig. (1997) The
+Econometrics of Financial Markets. Princeton, NJ: Princeton University
+Press.</p>
+<dl class="method">
+<dt>
+<code class="descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Summary of test, containing statistic, p-value and critical values</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="kpss-testing">
+<h2>KPSS Testing<a class="headerlink" href="#kpss-testing" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arch.unitroot.KPSS">
+<em class="property">class </em><code class="descclassname">arch.unitroot.</code><code class="descname">KPSS</code><span class="sig-paren">(</span><em>y</em>, <em>lags=None</em>, <em>trend='c'</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.unitroot.KPSS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>y</strong> (<em>array</em>) – The data to test for stationarity</li>
+<li><strong>lags</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of lags to use in the Newey-West estimator of the long-run
+covariance.  If omitted or None, the lag length is set automatically to
+12 * (nobs/100) ** (1/4)</li>
+<li><strong>trend</strong> (<em>{'c'</em><em>, </em><em>'ct'}</em><em>, </em><em>optional</em>) – <dl class="docutils">
+<dt>The trend component to include in the ADF test</dt>
+<dd>’c’ - Include a constant (Default)
+‘ct’ - Include a constant and linear time trend</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="arch.unitroot.KPSS.stat">
+<code class="descname">stat</code><a class="headerlink" href="#arch.unitroot.KPSS.stat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.KPSS.pvalue">
+<code class="descname">pvalue</code><a class="headerlink" href="#arch.unitroot.KPSS.pvalue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.KPSS.critical_values">
+<code class="descname">critical_values</code><a class="headerlink" href="#arch.unitroot.KPSS.critical_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.KPSS.null_hypothesis">
+<code class="descname">null_hypothesis</code><a class="headerlink" href="#arch.unitroot.KPSS.null_hypothesis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.KPSS.alternative_hypothesis">
+<code class="descname">alternative_hypothesis</code><a class="headerlink" href="#arch.unitroot.KPSS.alternative_hypothesis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.KPSS.summary">
+<code class="descname">summary</code><a class="headerlink" href="#arch.unitroot.KPSS.summary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.KPSS.valid_trends">
+<code class="descname">valid_trends</code><a class="headerlink" href="#arch.unitroot.KPSS.valid_trends" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.KPSS.y">
+<code class="descname">y</code><a class="headerlink" href="#arch.unitroot.KPSS.y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.KPSS.trend">
+<code class="descname">trend</code><a class="headerlink" href="#arch.unitroot.KPSS.trend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arch.unitroot.KPSS.lags">
+<code class="descname">lags</code><a class="headerlink" href="#arch.unitroot.KPSS.lags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Notes</p>
+<p>The null hypothesis of the KPSS test is that the series is weakly
+stationary and the alternative is that it is non-stationary. If the
+p-value is above a critical size, then the null cannot be rejected
+that there and the series appears stationary.</p>
+<p>The p-values and critical values were computed using an extensive
+simulation based on 100,000,000 replications using series with 2,000
+observations.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="k">import</span> <span class="n">KPSS</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inflation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;cpi&#39;</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kpss</span> <span class="o">=</span> <span class="n">KPSS</span><span class="p">(</span><span class="n">inflation</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kpss</span><span class="o">.</span><span class="n">stat</span><span class="p">))</span>
+<span class="go">0.2870</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kpss</span><span class="o">.</span><span class="n">pvalue</span><span class="p">))</span>
+<span class="go">0.1474</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kpss</span><span class="o">.</span><span class="n">trend</span> <span class="o">=</span> <span class="s1">&#39;ct&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kpss</span><span class="o">.</span><span class="n">stat</span><span class="p">))</span>
+<span class="go">0.2075</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:0.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kpss</span><span class="o">.</span><span class="n">pvalue</span><span class="p">))</span>
+<span class="go">0.0128</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<p>Kwiatkowski, D.; Phillips, P. C. B.; Schmidt, P.; Shin, Y. (1992). “Testing
+the null hypothesis of stationarity against the alternative of a unit
+root”. Journal of Econometrics 54 (1-3), 159-178</p>
+<dl class="method">
+<dt>
+<code class="descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Summary of test, containing statistic, p-value and critical values</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="unitroot_examples.html" title="previous chapter (use the left arrow)">Unit Root Testing</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="../changes.html" title="next chapter (use the right arrow)">Change Logs</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../changes.html" title="Change Logs"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="unitroot_examples.html" title="Unit Root Testing"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.91.g469dda8 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="unitroot.html" >Unit Root Testing</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

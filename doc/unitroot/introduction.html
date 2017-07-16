@@ -1,0 +1,235 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Introduction &#8212; arch 0+untagged.91.g469dda8 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0+untagged.91.g469dda8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Unit Root Testing" href="unitroot_examples.html" />
+    <link rel="prev" title="Unit Root Testing" href="unitroot.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="unitroot_examples.html" title="Unit Root Testing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="unitroot.html" title="Unit Root Testing"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.91.g469dda8 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="unitroot.html" accesskey="U">Unit Root Testing</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    ../index.html" class="text-logo">arch 0.+</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../univariate/univariate.html">Univariate Volatility Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bootstrap/bootstrap.html">Bootstrapping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="unitroot.html">Unit Root Tests</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unitroot_examples.html">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html">Unit Root Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="unitroot.html">Unit Root Testing</a></li>
+              
+              <li>Introduction</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>All tests expect a 1-d series as the first input.  The input can be any array that
+can <cite>squeeze</cite> into a 1-d array, a pandas <cite>Series</cite> or a pandas <cite>DataFrame</cite> that
+contains a single variable.</p>
+<p>All tests share a common structure.  The key elements are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>stat</cite> - Returns the test statistic</li>
+<li><cite>pvalue</cite> - Returns the p-value of the test statistic</li>
+<li><cite>lags</cite> - Sets or gets the number of lags used in the model.  In most test, can be <cite>None</cite> to trigger automatic selection.</li>
+<li><dl class="first docutils">
+<dt><cite>trend</cite> - Sets of gets the trend used in the model.  Supported trends vary by model, but include:</dt>
+<dd><ul class="first last">
+<li><cite>‘nc’</cite>: No constant</li>
+<li><cite>‘c’</cite>: Constant</li>
+<li><cite>‘ct’</cite>: Constant and time trend</li>
+<li><cite>‘ctt’</cite>: Constant, time trend and quadratic time trend</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><cite>summary()</cite> - Returns a summary object that can be printed to get a formatted table</li>
+</ul>
+</div></blockquote>
+<div class="section" id="basic-example">
+<h2>Basic Example<a class="headerlink" href="#basic-example" title="Permalink to this headline">¶</a></h2>
+<p>This basic example show the use of the Augmented-Dickey fuller to test whether the default premium,
+defined as the difference between the yields of large portfolios of BAA and AAA bonds.  This example
+uses a constant and time trend.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="k">as</span> <span class="nn">web</span>
+<span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="k">import</span> <span class="n">ADF</span>
+
+<span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1919</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">([</span><span class="s2">&quot;AAA&quot;</span><span class="p">,</span> <span class="s2">&quot;BAA&quot;</span><span class="p">],</span> <span class="s2">&quot;fred&quot;</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;diff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;BAA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;AAA&#39;</span><span class="p">]</span>
+<span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;diff&#39;</span><span class="p">])</span>
+<span class="n">adf</span><span class="o">.</span><span class="n">trend</span> <span class="o">=</span> <span class="s1">&#39;ct&#39;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>which yields</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>   <span class="n">Augmented</span> <span class="n">Dickey</span><span class="o">-</span><span class="n">Fuller</span> <span class="n">Results</span>
+<span class="o">=====================================</span>
+<span class="n">Test</span> <span class="n">Statistic</span>                 <span class="o">-</span><span class="mf">3.448</span>
+<span class="n">P</span><span class="o">-</span><span class="n">value</span>                         <span class="mf">0.045</span>
+<span class="n">Lags</span>                               <span class="mi">21</span>
+<span class="o">-------------------------------------</span>
+
+<span class="n">Trend</span><span class="p">:</span> <span class="n">Constant</span> <span class="ow">and</span> <span class="n">Linear</span> <span class="n">Time</span> <span class="n">Trend</span>
+<span class="n">Critical</span> <span class="n">Values</span><span class="p">:</span> <span class="o">-</span><span class="mf">3.97</span> <span class="p">(</span><span class="mi">1</span><span class="o">%</span><span class="p">),</span> <span class="o">-</span><span class="mf">3.41</span> <span class="p">(</span><span class="mi">5</span><span class="o">%</span><span class="p">),</span> <span class="o">-</span><span class="mf">3.13</span> <span class="p">(</span><span class="mi">10</span><span class="o">%</span><span class="p">)</span>
+<span class="n">Null</span> <span class="n">Hypothesis</span><span class="p">:</span> <span class="n">The</span> <span class="n">process</span> <span class="n">contains</span> <span class="n">a</span> <span class="n">unit</span> <span class="n">root</span><span class="o">.</span>
+<span class="n">Alternative</span> <span class="n">Hypothesis</span><span class="p">:</span> <span class="n">The</span> <span class="n">process</span> <span class="ow">is</span> <span class="n">weakly</span> <span class="n">stationary</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="unitroot.html" title="previous chapter (use the left arrow)">Unit Root Testing</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="unitroot_examples.html" title="next chapter (use the right arrow)">Unit Root Testing</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="unitroot_examples.html" title="Unit Root Testing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="unitroot.html" title="Unit Root Testing"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.91.g469dda8 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="unitroot.html" >Unit Root Testing</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

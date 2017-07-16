@@ -1,0 +1,453 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Confidence Intervals &#8212; arch 0+untagged.91.g469dda8 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0+untagged.91.g469dda8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Covariance Estimation" href="parameter-covariance-estimation.html" />
+    <link rel="prev" title="Bootstrap Examples" href="bootstrap_examples.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="parameter-covariance-estimation.html" title="Covariance Estimation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="bootstrap_examples.html" title="Bootstrap Examples"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.91.g469dda8 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="bootstrap.html" accesskey="U">Bootstrapping</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    ../index.html" class="text-logo">arch 0.+</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../univariate/univariate.html">Univariate Volatility Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="bootstrap.html">Bootstrapping</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="bootstrap_examples.html">Examples</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Confidence Interval Construction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameter-covariance-estimation.html">Parameter Covariance Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="low-level-interface.html">Low-level Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semiparametric-parametric-bootstrap.html">Semiparametric Bootstraps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semiparametric-parametric-bootstrap.html#parametric-bootstraps">Parametric Bootstraps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iid-bootstraps.html">Bootstraps for IID data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timeseries-bootstraps.html">Bootstraps for Time-series Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../unitroot/unitroot.html">Unit Root Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="bootstrap.html">Bootstrapping</a></li>
+              
+              <li>Confidence Intervals</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="confidence-intervals">
+<h1>Confidence Intervals<a class="headerlink" href="#confidence-intervals" title="Permalink to this headline">¶</a></h1>
+<p>The confidence interval function allows three types of confidence intervals to
+be constructed:</p>
+<ul class="simple">
+<li>Nonparametric, which only resamples the data</li>
+<li>Semi-parametric, which use resampled residuals</li>
+<li>Parametric, which simulate residuals</li>
+</ul>
+<p>Confidence intervals can then be computed using one of 6 methods:</p>
+<ul class="simple">
+<li>Basic (<code class="docutils literal"><span class="pre">basic</span></code>)</li>
+<li>Percentile (<code class="docutils literal"><span class="pre">percentile</span></code>)</li>
+<li>Studentized (<code class="docutils literal"><span class="pre">studentized</span></code>)</li>
+<li>Asymptotic using parameter covariance (<code class="docutils literal"><span class="pre">norm</span></code>, <code class="docutils literal"><span class="pre">var</span></code> or <code class="docutils literal"><span class="pre">cov</span></code>)</li>
+<li>Bias-corrected (<code class="docutils literal"><span class="pre">bc</span></code>, <code class="docutils literal"><span class="pre">bias-corrected</span></code> or <code class="docutils literal"><span class="pre">debiased</span></code>)</li>
+<li>Bias-corrected and accelerated (<code class="docutils literal"><span class="pre">bca</span></code>)</li>
+</ul>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#setup" id="id1">Setup</a></li>
+<li><a class="reference internal" href="#confidence-interval-types" id="id2">Confidence Interval Types</a><ul>
+<li><a class="reference internal" href="#nonparametric-confidence-intervals" id="id3">Nonparametric Confidence Intervals</a></li>
+<li><a class="reference internal" href="#semi-parametric-confidence-intervals" id="id4">Semi-parametric Confidence Intervals</a></li>
+<li><a class="reference internal" href="#parametric-confidence-intervals" id="id5">Parametric Confidence Intervals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#confidence-interval-methods" id="id6">Confidence Interval Methods</a><ul>
+<li><a class="reference internal" href="#basic-basic" id="id7">Basic (<code class="docutils literal"><span class="pre">basic</span></code>)</a></li>
+<li><a class="reference internal" href="#percentile-percentile" id="id8">Percentile (<code class="docutils literal"><span class="pre">percentile</span></code>)</a></li>
+<li><a class="reference internal" href="#asymptotic-normal-approximation-norm-cov-or-var" id="id9">Asymptotic Normal Approximation (<code class="docutils literal"><span class="pre">norm</span></code>, <code class="docutils literal"><span class="pre">cov</span></code> or <code class="docutils literal"><span class="pre">var</span></code>)</a></li>
+<li><a class="reference internal" href="#studentized-studentized" id="id10">Studentized (<code class="docutils literal"><span class="pre">studentized</span></code>)</a></li>
+<li><a class="reference internal" href="#bias-corrected-bc-bias-corrected-or-debiased" id="id11">Bias-corrected (<code class="docutils literal"><span class="pre">bc</span></code>, <code class="docutils literal"><span class="pre">bias-corrected</span></code> or <code class="docutils literal"><span class="pre">debiased</span></code>)</a></li>
+<li><a class="reference internal" href="#bias-corrected-and-accelerated-bca" id="id12">Bias-corrected and accelerated (<code class="docutils literal"><span class="pre">bca</span></code>)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="setup">
+<h2><a class="toc-backref" href="#id1">Setup</a><a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<p>All examples will construct confidence intervals for the Sharpe ratio of the
+S&amp;P 500, which is the ratio of the assumalized mean to the annualized standard
+deviation.  The parameters will be the annualized mean, the annualized standard
+deviation and the Sharpe ratio.</p>
+<p>The setup makes use of return data downloaded from Yahoo!</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="k">as</span> <span class="nn">web</span>
+
+<span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1951</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sp500</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;^GSPC&#39;</span><span class="p">,</span> <span class="s1">&#39;yahoo&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+<span class="n">low</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="n">high</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">monthly_dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;M&#39;</span><span class="p">)</span>
+<span class="n">monthly</span> <span class="o">=</span> <span class="n">sp500</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">monthly_dates</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;ffill&#39;</span><span class="p">)</span>
+<span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">monthly</span><span class="p">[</span><span class="s1">&#39;Adj Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The main function used will return a 3-element array containing the parameters.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sharpe_ratio</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">var</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">mu</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Functions must return 1-d NumPy arrays or Pandas Series.</p>
+</div>
+</div>
+<div class="section" id="confidence-interval-types">
+<h2><a class="toc-backref" href="#id2">Confidence Interval Types</a><a class="headerlink" href="#confidence-interval-types" title="Permalink to this headline">¶</a></h2>
+<p>Three types of confidence intervals can be computed.  The simplest are
+non-parametric; these only make use of parameter estimates from both the
+original data as well as the resampled data.  Semi-parametric mix the original
+data with a limited form of resampling, usually for residuals.  Finally,
+parametric bootstrap confidence intervals make use of a parametric distribution
+to construct “as-if” exact confidence intervals.</p>
+<div class="section" id="nonparametric-confidence-intervals">
+<h3><a class="toc-backref" href="#id3">Nonparametric Confidence Intervals</a><a class="headerlink" href="#nonparametric-confidence-intervals" title="Permalink to this headline">¶</a></h3>
+<p>Non-parametric sampling is the simplest method to construct confidence
+intervals.</p>
+<p>This example makes use of the percentile bootstrap which is conceptually the
+simplest method - it constructs many bootstrap replications and returns
+order statistics from these empirical distributions.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
+
+<span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;percentile&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">While returns have little serial correlation, squared returns are highly
+persistent.  The IID bootstrap is not a good choice here.  Instead a
+time-series bootstrap with an appropriately chosen block size should be
+used.</p>
+</div>
+</div>
+<div class="section" id="semi-parametric-confidence-intervals">
+<h3><a class="toc-backref" href="#id4">Semi-parametric Confidence Intervals</a><a class="headerlink" href="#semi-parametric-confidence-intervals" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference internal" href="semiparametric-parametric-bootstrap.html"><span class="doc">Semiparametric Bootstraps</span></a></p>
+</div>
+<div class="section" id="parametric-confidence-intervals">
+<h3><a class="toc-backref" href="#id5">Parametric Confidence Intervals</a><a class="headerlink" href="#parametric-confidence-intervals" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference internal" href="semiparametric-parametric-bootstrap.html"><span class="doc">Parametric Bootstraps</span></a></p>
+</div>
+</div>
+<div class="section" id="confidence-interval-methods">
+<h2><a class="toc-backref" href="#id6">Confidence Interval Methods</a><a class="headerlink" href="#confidence-interval-methods" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><code class="docutils literal"><span class="pre">conf_int</span></code> can construct two-sided, upper or lower (one-sided) confidence
+intervals.  All examples use two-sided, 95% confidence intervals (the
+default).  This can be modified using the keyword inputs <code class="docutils literal"><span class="pre">type</span></code>
+(<code class="docutils literal"><span class="pre">'upper'</span></code>, <code class="docutils literal"><span class="pre">'lower'</span></code> or <code class="docutils literal"><span class="pre">'two-sided'</span></code>) and <code class="docutils literal"><span class="pre">size</span></code>.</p>
+</div>
+<div class="section" id="basic-basic">
+<h3><a class="toc-backref" href="#id7">Basic (<code class="docutils literal"><span class="pre">basic</span></code>)</a><a class="headerlink" href="#basic-basic" title="Permalink to this headline">¶</a></h3>
+<p>Basic confidence intervals construct many bootstrap replications
+<span class="math">\(\hat{\theta}_b^\star\)</span> and then constructs the confidence interval as</p>
+<div class="math">
+\[\left[\hat{\theta} + \left(\hat{\theta} - \hat{\theta}^{\star}_{u} \right),
+\hat{\theta} + \left(\hat{\theta} - \hat{\theta}^{\star}_{l} \right) \right]\]</div>
+<p>where <span class="math">\(\hat{\theta}^{\star}_{l}\)</span> and <span class="math">\(\hat{\theta}^{\star}_{u}\)</span> are
+the <span class="math">\(\alpha/2\)</span> and <span class="math">\(1-\alpha/2\)</span> empirical quantiles of the bootstrap
+distribution.  When <span class="math">\(\theta\)</span> is a vector, the empirical quantiles are
+computed element-by-element.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
+
+<span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;basic&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="percentile-percentile">
+<h3><a class="toc-backref" href="#id8">Percentile (<code class="docutils literal"><span class="pre">percentile</span></code>)</a><a class="headerlink" href="#percentile-percentile" title="Permalink to this headline">¶</a></h3>
+<p>The percentile method directly constructs condifence intervals from the emprical
+CDF of the bootstrap parameter estimates, <span class="math">\(\hat{\theta}_b^\star\)</span>.
+The confidence interval is then defined.</p>
+<div class="math">
+\[\left[\hat{\theta}^{\star}_{l}, \hat{\theta}^{\star}_{u} \right]\]</div>
+<p>where <span class="math">\(\hat{\theta}^{\star}_{l}\)</span> and <span class="math">\(\hat{\theta}^{\star}_{u}\)</span> are
+the <span class="math">\(\alpha/2\)</span> and <span class="math">\(1-\alpha/2\)</span> empirical quantiles of the bootstrap
+distribution.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
+
+<span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;percentile&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="asymptotic-normal-approximation-norm-cov-or-var">
+<h3><a class="toc-backref" href="#id9">Asymptotic Normal Approximation (<code class="docutils literal"><span class="pre">norm</span></code>, <code class="docutils literal"><span class="pre">cov</span></code> or <code class="docutils literal"><span class="pre">var</span></code>)</a><a class="headerlink" href="#asymptotic-normal-approximation-norm-cov-or-var" title="Permalink to this headline">¶</a></h3>
+<p>The asymptotic normal approximation method estimates the covairance of
+the parameters and then combines this with the usual quantiles from a normal
+distribution.  The confidence interval is then</p>
+<div class="math">
+\[\left[\hat{\theta} + \hat{\sigma}\Phi^{-1}\left(\alpha/2\right),
+\hat{\theta} - \hat{\sigma}\Phi^{-1}\left(\alpha/2\right), \right]\]</div>
+<p>where <span class="math">\(\hat{\sigma}\)</span> is the bootstrap estimate of the parameter standard
+error.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
+
+<span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;norm&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="studentized-studentized">
+<h3><a class="toc-backref" href="#id10">Studentized (<code class="docutils literal"><span class="pre">studentized</span></code>)</a><a class="headerlink" href="#studentized-studentized" title="Permalink to this headline">¶</a></h3>
+<p>The studentized bootstrap may be more accurate than some of the other methods.
+The studentized bootstrap makes use of either a standard error function, when
+parameter standard errors can be analytically computed, or a nested bootstrap,
+to bootstrap studentized versions of the original statistic.  This can produce
+higher-order refinements in some circumstances.</p>
+<p>The confidence interval is then</p>
+<div class="math">
+\[\left[\hat{\theta} + \hat{\sigma}\hat{G}^{-1}\left(\alpha/2\right),
+\hat{\theta} + \hat{\sigma}\hat{G}^{-1}\left(1-\alpha/2\right), \right]\]</div>
+<p>where <span class="math">\(\hat{G}\)</span> is the estimated quantile function for the studentized
+data and where <span class="math">\(\hat{\sigma}\)</span> is a bootstrap estimate of the parameter
+standard error.</p>
+<p>The version that uses a nested bootstrap is simple to implement although it can
+be slow since it requires <span class="math">\(B\)</span> inner bootstraps of each of the <span class="math">\(B\)</span>
+outer bootstraps.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
+
+<span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;studentized&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In order to use the standard error function, it is necessary to estimate the
+standard error of the parameters.  In this example, this can be done using a
+method-of-moments argument and the delta-method. A detailed description of
+the mathematical formula is beyond the intent of this document.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sharpe_ratio_se</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">sr</span> <span class="o">=</span> <span class="n">params</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">x</span>
+    <span class="n">e1</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">mu</span>
+    <span class="n">e2</span> <span class="o">=</span> <span class="n">y</span> <span class="o">**</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="n">sigma</span> <span class="o">**</span> <span class="mf">2.0</span>
+    <span class="n">errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">vcv</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">/</span> <span class="n">t</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">,</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">3</span><span class="p">)]</span>
+                  <span class="p">])</span>
+    <span class="n">avar</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">vcv</span> <span class="o">/</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">avar</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The studentized bootstrap can then be implemented using the standard error
+function.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
+<span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;studentized&#39;</span><span class="p">,</span>
+                 <span class="n">std_err_func</span><span class="o">=</span><span class="n">sharpe_ratio_se</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Standard error functions must return a 1-d array with the same number
+of element as params.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Standard error functions must match the patters
+<code class="docutils literal"><span class="pre">std_err_func(params,</span> <span class="pre">*args,</span> <span class="pre">**kwargs)</span></code> where <code class="docutils literal"><span class="pre">params</span></code> is an array
+of estimated parameters constructed using <code class="docutils literal"><span class="pre">*args</span></code> and <code class="docutils literal"><span class="pre">**kwargs</span></code>.</p>
+</div>
+</div>
+<div class="section" id="bias-corrected-bc-bias-corrected-or-debiased">
+<h3><a class="toc-backref" href="#id11">Bias-corrected (<code class="docutils literal"><span class="pre">bc</span></code>, <code class="docutils literal"><span class="pre">bias-corrected</span></code> or <code class="docutils literal"><span class="pre">debiased</span></code>)</a><a class="headerlink" href="#bias-corrected-bc-bias-corrected-or-debiased" title="Permalink to this headline">¶</a></h3>
+<p>The bias corrected bootstrap makes use of a bootstrap estimate of the bias to
+improve confidence intervals.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
+<span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;bc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The bias-corrected confidence interval is identical to the bias-corrected and
+accelerated where <span class="math">\(a=0\)</span>.</p>
+</div>
+<div class="section" id="bias-corrected-and-accelerated-bca">
+<h3><a class="toc-backref" href="#id12">Bias-corrected and accelerated (<code class="docutils literal"><span class="pre">bca</span></code>)</a><a class="headerlink" href="#bias-corrected-and-accelerated-bca" title="Permalink to this headline">¶</a></h3>
+<p>Bias-corrected and accelerated confidence intervals make use of both
+a bootstrap bias estimate and a jackknife acceleration term.  BCa intervals may
+offer higher-order accuracy if some conditions are satisfied. Bias-corrected
+confidence intervals are a special case of BCa intervals where the acceleration
+parameter is set to 0.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
+
+<span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;bca&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The confidence interval is based on the empirical  distribution of the bootstrap
+parameter estimates, <span class="math">\(\hat{\theta}_b^\star\)</span>, where the percentiles used
+are</p>
+<div class="math">
+\[\Phi\left(
+\Phi^{-1}\left(\hat{b}\right)+\frac{\Phi^{-1}\left(\hat{b}\right)
++z_{\alpha}}{1-\hat{a}\left(\Phi^{-1}\left(\hat{b}\right)+z_{\alpha}\right)}
+\right)\]</div>
+<p>where <span class="math">\(z_{\alpha}\)</span> is the usual quantile from the normal distribution and
+<span class="math">\(b\)</span> is the empirical bias estimate,</p>
+<div class="math">
+\[\hat{b}=\#\left\{ \hat{\theta}_{b}^{\star}&lt;\hat{\theta}\right\} / B\]</div>
+<p><span class="math">\(a\)</span> is a skewness-like estimator using a leave-one-out jackknife.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="bootstrap_examples.html" title="previous chapter (use the left arrow)">Bootstrap Examples</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="parameter-covariance-estimation.html" title="next chapter (use the right arrow)">Covariance Estimation</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="parameter-covariance-estimation.html" title="Covariance Estimation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="bootstrap_examples.html" title="Bootstrap Examples"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.91.g469dda8 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="bootstrap.html" >Bootstrapping</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

@@ -1,0 +1,967 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Introduction to ARCH Models &#8212; arch 0+untagged.91.g469dda8 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0+untagged.91.g469dda8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ARCH Modeling" href="univariate_volatility_modeling.html" />
+    <link rel="prev" title="Univariate Volatility Models" href="univariate.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="univariate_volatility_modeling.html" title="ARCH Modeling"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="univariate.html" title="Univariate Volatility Models"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.91.g469dda8 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    ../index.html" class="text-logo">arch 0.+</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="univariate.html">Univariate Volatility Models</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_modeling.html">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forecasting.html">Forecasting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_forecasting.html">Forecasting Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mean.html">Mean Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="volatility.html">Volatility Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="univariate_using_fixed_variance.html">Using the Fixed Variance Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distribution.html">Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../bootstrap/bootstrap.html">Bootstrapping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../unitroot/unitroot.html">Unit Root Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="univariate.html">Univariate Volatility Models</a></li>
+              
+              <li>Introduction to ARCH Models</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="introduction-to-arch-models">
+<h1>Introduction to ARCH Models<a class="headerlink" href="#introduction-to-arch-models" title="Permalink to this headline">¶</a></h1>
+<p>ARCH models are a popular class of volatility models that use observed values
+of returns or residuals as volatility shocks.  A basic GARCH model is specified
+as</p>
+<div class="math">
+\begin{eqnarray}
+   r_t    &amp; = &amp; \mu + \epsilon_t \\
+   \epsilon_t &amp; = &amp; \sigma_t e_t \\
+   \sigma^2_t &amp; = &amp; \omega + \alpha \epsilon_t^2 + \beta \sigma^2_{t-1}
+\end{eqnarray}</div><p>A complete ARCH model is divided into three components:</p>
+<p>However, the simplest method to construct this model is to use the constructor
+function <a class="reference internal" href="#arch.arch_model" title="arch.arch_model"><code class="xref py py-meth docutils literal"><span class="pre">arch_model()</span></code></a></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="k">as</span> <span class="nn">web</span>
+
+<span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
+
+<span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sp500</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;^GSPC&#39;</span><span class="p">,</span> <span class="s1">&#39;yahoo&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+<span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">sp500</span><span class="p">[</span><span class="s1">&#39;Adj Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Alternatively, the same model can be manually assembled from the building
+blocks of an ARCH model</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">ConstantMean</span><span class="p">,</span> <span class="n">GARCH</span><span class="p">,</span> <span class="n">Normal</span>
+
+<span class="n">am</span> <span class="o">=</span> <span class="n">ConstantMean</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+<span class="n">am</span><span class="o">.</span><span class="n">volatility</span> <span class="o">=</span> <span class="n">GARCH</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">am</span><span class="o">.</span><span class="n">distribution</span> <span class="o">=</span> <span class="n">Normal</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>In either case, model parameters are estimated using</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>with the following output</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Iteration</span><span class="p">:</span>      <span class="mi">1</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>      <span class="mi">6</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5159.58323938</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">2</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">16</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5156.09760149</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">3</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">24</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5152.29989336</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">4</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">31</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5146.47531817</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">5</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">38</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5143.86337547</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">6</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">45</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5143.02096168</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">7</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">52</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5142.24105141</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">8</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">60</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5142.07138907</span>
+<span class="n">Iteration</span><span class="p">:</span>      <span class="mi">9</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">67</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5141.416653</span>
+<span class="n">Iteration</span><span class="p">:</span>     <span class="mi">10</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">73</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5141.39212288</span>
+<span class="n">Iteration</span><span class="p">:</span>     <span class="mi">11</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">79</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5141.39023885</span>
+<span class="n">Iteration</span><span class="p">:</span>     <span class="mi">12</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">85</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5141.39023359</span>
+<span class="n">Optimization</span> <span class="n">terminated</span> <span class="n">successfully</span><span class="o">.</span>    <span class="p">(</span><span class="n">Exit</span> <span class="n">mode</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">Current</span> <span class="n">function</span> <span class="n">value</span><span class="p">:</span> <span class="mf">5141.39023359</span>
+            <span class="n">Iterations</span><span class="p">:</span> <span class="mi">12</span>
+            <span class="n">Function</span> <span class="n">evaluations</span><span class="p">:</span> <span class="mi">85</span>
+            <span class="n">Gradient</span> <span class="n">evaluations</span><span class="p">:</span> <span class="mi">12</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>yields</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>                     <span class="n">Constant</span> <span class="n">Mean</span> <span class="o">-</span> <span class="n">GARCH</span> <span class="n">Model</span> <span class="n">Results</span>
+<span class="o">==============================================================================</span>
+<span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>              <span class="n">Adj</span> <span class="n">Close</span>   <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                      <span class="o">-</span><span class="mf">0.001</span>
+<span class="n">Mean</span> <span class="n">Model</span><span class="p">:</span>             <span class="n">Constant</span> <span class="n">Mean</span>   <span class="n">Adj</span><span class="o">.</span> <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                 <span class="o">-</span><span class="mf">0.001</span>
+<span class="n">Vol</span> <span class="n">Model</span><span class="p">:</span>                      <span class="n">GARCH</span>   <span class="n">Log</span><span class="o">-</span><span class="n">Likelihood</span><span class="p">:</span>               <span class="o">-</span><span class="mf">5141.39</span>
+<span class="n">Distribution</span><span class="p">:</span>                  <span class="n">Normal</span>   <span class="n">AIC</span><span class="p">:</span>                           <span class="mf">10290.8</span>
+<span class="n">Method</span><span class="p">:</span>            <span class="n">Maximum</span> <span class="n">Likelihood</span>   <span class="n">BIC</span><span class="p">:</span>                           <span class="mf">10315.4</span>
+                                        <span class="n">No</span><span class="o">.</span> <span class="n">Observations</span><span class="p">:</span>                 <span class="mi">3520</span>
+<span class="n">Date</span><span class="p">:</span>                <span class="n">Fri</span><span class="p">,</span> <span class="n">Dec</span> <span class="mi">02</span> <span class="mi">2016</span>   <span class="n">Df</span> <span class="n">Residuals</span><span class="p">:</span>                     <span class="mi">3516</span>
+<span class="n">Time</span><span class="p">:</span>                        <span class="mi">22</span><span class="p">:</span><span class="mi">22</span><span class="p">:</span><span class="mi">28</span>   <span class="n">Df</span> <span class="n">Model</span><span class="p">:</span>                            <span class="mi">4</span>
+                                  <span class="n">Mean</span> <span class="n">Model</span>
+<span class="o">==============================================================================</span>
+                 <span class="n">coef</span>    <span class="n">std</span> <span class="n">err</span>          <span class="n">t</span>      <span class="n">P</span><span class="o">&gt;|</span><span class="n">t</span><span class="o">|</span>        <span class="mf">95.0</span><span class="o">%</span> <span class="n">Conf</span><span class="o">.</span> <span class="n">Int</span><span class="o">.</span>
+<span class="o">------------------------------------------------------------------------------</span>
+<span class="n">mu</span>             <span class="mf">0.0531</span>  <span class="mf">1.487e-02</span>      <span class="mf">3.569</span>  <span class="mf">3.581e-04</span>   <span class="p">[</span><span class="mf">2.392e-02</span><span class="p">,</span><span class="mf">8.220e-02</span><span class="p">]</span>
+                               <span class="n">Volatility</span> <span class="n">Model</span>
+<span class="o">==============================================================================</span>
+                 <span class="n">coef</span>    <span class="n">std</span> <span class="n">err</span>          <span class="n">t</span>      <span class="n">P</span><span class="o">&gt;|</span><span class="n">t</span><span class="o">|</span>        <span class="mf">95.0</span><span class="o">%</span> <span class="n">Conf</span><span class="o">.</span> <span class="n">Int</span><span class="o">.</span>
+<span class="o">------------------------------------------------------------------------------</span>
+<span class="n">omega</span>          <span class="mf">0.0156</span>  <span class="mf">4.932e-03</span>      <span class="mf">3.155</span>  <span class="mf">1.606e-03</span>   <span class="p">[</span><span class="mf">5.892e-03</span><span class="p">,</span><span class="mf">2.523e-02</span><span class="p">]</span>
+<span class="n">alpha</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>       <span class="mf">0.0879</span>  <span class="mf">1.140e-02</span>      <span class="mf">7.710</span>  <span class="mf">1.260e-14</span>     <span class="p">[</span><span class="mf">6.554e-02</span><span class="p">,</span>  <span class="mf">0.110</span><span class="p">]</span>
+<span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>        <span class="mf">0.9014</span>  <span class="mf">1.183e-02</span>     <span class="mf">76.163</span>      <span class="mf">0.000</span>       <span class="p">[</span>  <span class="mf">0.878</span><span class="p">,</span>  <span class="mf">0.925</span><span class="p">]</span>
+<span class="o">==============================================================================</span>
+
+<span class="n">Covariance</span> <span class="n">estimator</span><span class="p">:</span> <span class="n">robust</span>
+</pre></div>
+</div>
+<div class="section" id="core-model-constructor">
+<h2>Core Model Constructor<a class="headerlink" href="#core-model-constructor" title="Permalink to this headline">¶</a></h2>
+<p>While models can be carefully specified using the individual components, most common specifications can be specified
+using a simple model constructor.</p>
+<dl class="function">
+<dt id="arch.arch_model">
+<code class="descclassname">arch.</code><code class="descname">arch_model</code><span class="sig-paren">(</span><em>y</em>, <em>x=None</em>, <em>mean='Constant'</em>, <em>lags=0</em>, <em>vol='Garch'</em>, <em>p=1</em>, <em>o=0</em>, <em>q=1</em>, <em>power=2.0</em>, <em>dist='Normal'</em>, <em>hold_back=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.arch_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience function to simplify initialization of ARCH models</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>y</strong> (<em>array</em>) – The dependent variable</li>
+<li><strong>x</strong> (<em>array</em><em>, </em><em>optional</em>) – Exogenous regressors.  Ignored if model does not permit exogenous
+regressors.</li>
+<li><strong>mean</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the mean model.  Currently supported options are: ‘Constant’,
+‘Zero’, ‘ARX’ and  ‘HARX’</li>
+<li><strong>lags</strong> (<em>int</em><em> or </em><em>list</em><em> (</em><em>int</em><em>)</em><em>, </em><em>optional</em>) – Either a scalar integer value indicating lag length or a list of
+integers specifying lag locations.</li>
+<li><strong>vol</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the volatility model.  Currently supported options are:
+‘GARCH’ (default),  “EGARCH’, ‘ARCH’ and ‘HARCH’</li>
+<li><strong>p</strong> (<em>int</em><em>, </em><em>optional</em>) – Lag order of the symmetric innovation</li>
+<li><strong>o</strong> (<em>int</em><em>, </em><em>optional</em>) – Lag order of the asymmetric innovation</li>
+<li><strong>q</strong> (<em>int</em><em>, </em><em>optional</em>) – Lag order of lagged volatility or equivalent</li>
+<li><strong>power</strong> (<em>float</em><em>, </em><em>optional</em>) – Power to use with GARCH and related models</li>
+<li><strong>dist</strong> (<em>int</em><em>, </em><em>optional</em>) – <dl class="docutils">
+<dt>Name of the error distribution.  Currently supported options are:</dt>
+<dd>’Normal’ (default)
+‘StudentsT’
+‘SkewStudents’</dd>
+</dl>
+</li>
+<li><strong>hold_back</strong> (<em>int</em>) – Number of observations at the start of the sample to exclude when
+estimating model parameters.  Used when comparing models with different
+lag lengths to estimate on the common sample.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>model</strong> – Configured ARCH model</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="mean.html#arch.univariate.base.ARCHModel" title="arch.univariate.base.ARCHModel">ARCHModel</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1990</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="k">as</span> <span class="nn">web</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sp500</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">get_data_yahoo</span><span class="p">(</span><span class="s1">&#39;^GSPC&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">sp500</span><span class="p">[</span><span class="s1">&#39;Adj Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>A basic GARCH(1,1) with a constant mean can be constructed using only
+the return data</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">arch_model</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Alternative mean and volatility processes can be directly specified</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="s1">&#39;AR&#39;</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="s1">&#39;harch&#39;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">22</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>This example demonstrates the construction of a zero mean process
+with a TARCH volatility process and Student t error distribution</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="s1">&#39;zero&#39;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="n">power</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">&#39;StudentsT&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p>Input that are not relevant for a particular specification, such as <cite>lags</cite>
+when <cite>mean=’zero’</cite>, are silently ignored.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="model-results">
+<h2>Model Results<a class="headerlink" href="#model-results" title="Permalink to this headline">¶</a></h2>
+<p>All model return the same object, a results class (<code class="xref py py-class docutils literal"><span class="pre">ARCHModelResult</span></code>)</p>
+<dl class="class">
+<dt id="arch.univariate.base.ARCHModelResult">
+<em class="property">class </em><code class="descclassname">arch.univariate.base.</code><code class="descname">ARCHModelResult</code><span class="sig-paren">(</span><em>params</em>, <em>param_cov</em>, <em>r2</em>, <em>resid</em>, <em>volatility</em>, <em>cov_type</em>, <em>dep_var</em>, <em>names</em>, <em>loglikelihood</em>, <em>is_pandas</em>, <em>optim_output</em>, <em>fit_start</em>, <em>fit_stop</em>, <em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Results from estimation of an ARCHModel model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>params</strong> (<em>array</em>) – Estimated parameters</li>
+<li><strong>param_cov</strong> (<em>array</em><em> or </em><em>None</em>) – Estimated variance-covariance matrix of params.  If none, calls method
+to compute variance from model when parameter covariance is first used
+from result</li>
+<li><strong>r2</strong> (<em>float</em>) – Model R-squared</li>
+<li><strong>resid</strong> (<em>array</em>) – Residuals from model.  Residuals have same shape as original data and
+contain nan-values in locations not used in estimation</li>
+<li><strong>volatility</strong> (<em>array</em>) – Conditional volatility from model</li>
+<li><strong>cov_type</strong> (<em>str</em>) – String describing the covariance estimator used</li>
+<li><strong>dep_var</strong> (<em>Series</em>) – Dependent variable</li>
+<li><strong>names</strong> (<em>list</em><em> (</em><em>str</em><em>)</em>) – Model parameter names</li>
+<li><strong>loglikelihood</strong> (<em>float</em>) – Loglikelihood at estimated parameters</li>
+<li><strong>is_pandas</strong> (<em>bool</em>) – Whether the original input was pandas</li>
+<li><strong>fit_start</strong> (<em>int</em>) – Integer index of the first observation used to fit the model</li>
+<li><strong>fit_stop</strong> (<em>int</em>) – Integer index of the last observation used to fit the model using Pythonic
+syntax fit_start:fit_stop</li>
+<li><strong>model</strong> (<a class="reference internal" href="mean.html#arch.univariate.base.ARCHModel" title="arch.univariate.base.ARCHModel"><em>ARCHModel</em></a>) – The model object used to estimate the parameters</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="arch.univariate.base.ARCHModelResult.summary">
+<code class="descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce a summary of the results</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.base.ARCHModelResult.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce a plot of the volatility and standardized residuals</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.base.ARCHModelResult.conf_int">
+<code class="descname">conf_int</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.conf_int" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confidence intervals</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelResult.loglikelihood">
+<code class="descname">loglikelihood</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.loglikelihood" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – Value of the log-likelihood</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelResult.aic">
+<code class="descname">aic</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.aic" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – Akaike information criteria</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelResult.bic">
+<code class="descname">bic</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.bic" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – Schwarz/Bayes information criteria</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelResult.conditional_volatility">
+<code class="descname">conditional_volatility</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.conditional_volatility" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>{array, Series}</em> – nobs element array containing the conditional volatility (square root
+of conditional variance).  The values are aligned with the input data
+so that the value in the t-th position is the variance of t-th error,
+which is computed using time-(t-1) information.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelResult.params">
+<code class="descname">params</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.params" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Series</em> – Estimated parameters</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelResult.param_cov">
+<code class="descname">param_cov</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.param_cov" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>DataFrame</em> – Estimated variance-covariance of the parameters</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelResult.rsquared">
+<code class="descname">rsquared</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.rsquared" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – R-squared</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelResult.rsquared_adj">
+<code class="descname">rsquared_adj</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.rsquared_adj" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – Degree of freedom adjusted R-squared</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelResult.nobs">
+<code class="descname">nobs</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.nobs" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Number of observations used in the estimation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelResult.num_params">
+<code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.num_params" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Number of parameters in the model</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelResult.tvalues">
+<code class="descname">tvalues</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.tvalues" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Series</em> – Array of t-statistics for the null the coefficient is 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelResult.std_err">
+<code class="descname">std_err</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.std_err" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Series</em> – Array of parameter standard errors</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelResult.pvalues">
+<code class="descname">pvalues</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.pvalues" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Series</em> – Array of p-values for the t-statistics</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelResult.resid">
+<code class="descname">resid</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.resid" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>{array, Series}</em> – nobs element array containing model residuals</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelResult.model">
+<code class="descname">model</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.model" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>ARCHModel</em> – Model instance used to produce the fit</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">conf_int</code><span class="sig-paren">(</span><em>alpha=0.05</em><span class="sig-paren">)</span></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – Size (prob.) to use when constructing the confidence interval.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>ci</strong> – Array where the ith row contains the confidence interval  for the
+ith parameter</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.base.ARCHModelResult.forecast">
+<code class="descname">forecast</code><span class="sig-paren">(</span><em>params=None</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.forecast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct forecasts from estimated model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>params</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+estimated when fitting the model are used.  Must be identical in
+shape to the parameters computed by fitting the model.</li>
+<li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
+<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+produce the forecast for.  Datetimes can only be used with pandas
+inputs that have a datetime index. Strings must be convertible
+to a date time, such as in ‘1945-01-01’.</li>
+<li><strong>align</strong> (<em>str</em><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
+of forecasts contains the forecasts for t+1, t+2, …, t+h. When
+set to ‘target’, the t-th row contains the 1-step ahead forecast
+from time t-1, the 2 step from time t-2, …, and the h-step from
+time t-h.  ‘target’ simplified computing forecast errors since the
+realization and h-step forecast are aligned.</li>
+<li><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em>) – Method to use when producing the forecast. The default is analytic.
+The method only affects the variance forecast generation.  Not all
+volatility models support all methods. In particular, volatility
+models that do not evolve in squares such as EGARCH or TARCH do not
+support the ‘analytic’ method for horizons &gt; 1.</li>
+<li><strong>simulations</strong> (<em>int</em>) – Number of simulations to run when computing the forecast using
+either simulation or bootstrap.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>forecasts</strong> – t by h data frame containing the forecasts.  The alignment of the forecasts is
+controlled by <cite>align</cite>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The most basic 1-step ahead forecast will return a vector with the same
+length as the original data, where the t-th value will be the time-t
+forecast for time t + 1.  When the horizon is &gt; 1, and when using the
+default value for <cite>align</cite>, the forecast value in position [t, h] is the
+time-t, h+1 step ahead forecast.</p>
+<p>If model contains exogenous variables (<cite>model.x is not None</cite>), then
+only 1-step ahead forecasts are available.  Using horizon &gt; 1 will
+produce a warning and all columns, except the first, will be
+nan-filled.</p>
+<p>If <cite>align</cite> is ‘origin’, forecast[t,h] contains the forecast made using
+y[:t] (that is, up to but not including t) for horizon h + 1.  For
+example, y[100,2] contains the 3-step ahead forecast using the first
+100 data points, which will correspond to the realization y[100 + 2].
+If <cite>align</cite> is ‘target’, then the same forecast is in location
+[102, 2], so that it is aligned with the observation to use when
+evaluating, but still in the same column.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.base.ARCHModelResult.hedgehog_plot">
+<code class="descname">hedgehog_plot</code><span class="sig-paren">(</span><em>params=None</em>, <em>horizon=10</em>, <em>step=10</em>, <em>start=None</em>, <em>type='volatility'</em>, <em>method='analytic'</em>, <em>simulations=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.hedgehog_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot forecasts from estimated model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>params</strong> (<em>1d array-like</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+computed by fitting the model are used.  Must be identical in shape
+to the parameters computed by fitting the model.</li>
+<li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
+<li><strong>step</strong> (<em>int</em><em>, </em><em>optional</em>) – Non-negative number of forecasts to skip between spines</li>
+<li><strong>start</strong> (<em>int</em><em>, </em><em>datetime</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+produce the forecast for.  Datetimes can only be used with pandas
+inputs that have a datetime index.  Strings must be convertible
+to a date time, such as in ‘1945-01-01’.  If not provided, the start
+is set to the earliest forecastable date.</li>
+<li><strong>type</strong> (<em>{'volatility'</em><em>, </em><em>'mean'}</em>) – Quantity to plot, the forecast volatility or the forecast mean</li>
+<li><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em>) – Method to use when producing the forecast. The default is analytic.
+The method only affects the variance forecast generation.  Not all
+volatility models support all methods. In particular, volatility
+models that do not evolve in squares such as EGARCH or TARCH do not
+support the ‘analytic’ method for horizons &gt; 1.</li>
+<li><strong>simulations</strong> (<em>int</em>) – Number of simulations to run when computing the forecast using
+either simulation or bootstrap.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fig</strong> – Handle to the figure</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">figure</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="n">mean</span><span class="o">=</span><span class="s1">&#39;HAR&#39;</span><span class="p">,</span><span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">22</span><span class="p">],</span><span class="n">vol</span><span class="o">=</span><span class="s1">&#39;Constant&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">simulate</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span> <span class="mi">250</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s1">&#39;2000-01-01&#39;</span><span class="p">,</span><span class="n">periods</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">sim_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span><span class="n">mean</span><span class="o">=</span><span class="s1">&#39;HAR&#39;</span><span class="p">,</span><span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">22</span><span class="p">],</span>  <span class="n">vol</span><span class="o">=</span><span class="s1">&#39;Constant&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">hedgehog_plot</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">plot</code><span class="sig-paren">(</span><em>annualize=None</em>, <em>scale=None</em><span class="sig-paren">)</span></dt>
+<dd><p>Plot standardized residuals and conditional volatility</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>annualize</strong> (<em>str</em><em>, </em><em>optional</em>) – String containing frequency of data that indicates plot should
+contain annualized volatility.  Supported values are ‘D’ (daily),
+‘W’ (weekly) and ‘M’ (monthly), which scale variance by 252, 52,
+and 12, respectively.</li>
+<li><strong>scale</strong> (<em>float</em><em>, </em><em>optional</em>) – Value to use when scaling returns to annualize.  If scale is
+provides, annualize is ignored and the value in scale is used.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fig</strong> – Handle to the figure</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">figure</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">simulate</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.07</span><span class="p">,</span> <span class="mf">0.92</span><span class="p">],</span> <span class="mi">2520</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">sim_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Produce a plot with annualized volatility</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">annualize</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Override the usual scale of 252 to use 360 for an asset that trades
+most days of the year</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">360</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Constructs a summary of the results from a fit model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>summary</strong> – Object that contains tables and facilitated export to text, html or
+latex</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Summary instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<p>When using the <code class="docutils literal"><span class="pre">fix</span></code> method, a (<a class="reference internal" href="#arch.univariate.base.ARCHModelFixedResult" title="arch.univariate.base.ARCHModelFixedResult"><code class="xref py py-class docutils literal"><span class="pre">ARCHModelFixedResult</span></code></a>) is produced
+that lacks some properties of a (<a class="reference internal" href="#arch.univariate.base.ARCHModelResult" title="arch.univariate.base.ARCHModelResult"><code class="xref py py-class docutils literal"><span class="pre">ARCHModelResult</span></code></a>) that are not
+relevant when parameters are not estimated.</p>
+<dl class="class">
+<dt id="arch.univariate.base.ARCHModelFixedResult">
+<em class="property">class </em><code class="descclassname">arch.univariate.base.</code><code class="descname">ARCHModelFixedResult</code><span class="sig-paren">(</span><em>params</em>, <em>resid</em>, <em>volatility</em>, <em>dep_var</em>, <em>names</em>, <em>loglikelihood</em>, <em>is_pandas</em>, <em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Results for fixed parameters for an ARCHModel model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>params</strong> (<em>array</em>) – Estimated parameters</li>
+<li><strong>resid</strong> (<em>array</em>) – Residuals from model.  Residuals have same shape as original data and
+contain nan-values in locations not used in estimation</li>
+<li><strong>volatility</strong> (<em>array</em>) – Conditional volatility from model</li>
+<li><strong>dep_var</strong> (<em>Series</em>) – Dependent variable</li>
+<li><strong>names</strong> (<em>list</em><em> (</em><em>str</em><em>)</em>) – Model parameter names</li>
+<li><strong>loglikelihood</strong> (<em>float</em>) – Loglikelihood at specified parameters</li>
+<li><strong>is_pandas</strong> (<em>bool</em>) – Whether the original input was pandas</li>
+<li><strong>model</strong> (<a class="reference internal" href="mean.html#arch.univariate.base.ARCHModel" title="arch.univariate.base.ARCHModel"><em>ARCHModel</em></a>) – The model object used to estimate the parameters</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="arch.univariate.base.ARCHModelFixedResult.summary">
+<code class="descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce a summary of the results</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.base.ARCHModelFixedResult.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce a plot of the volatility and standardized residuals</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.base.ARCHModelFixedResult.forecast">
+<code class="descname">forecast</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.forecast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct forecasts from a model</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelFixedResult.loglikelihood">
+<code class="descname">loglikelihood</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.loglikelihood" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – Value of the log-likelihood</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelFixedResult.aic">
+<code class="descname">aic</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.aic" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – Akaike information criteria</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelFixedResult.bic">
+<code class="descname">bic</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.bic" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – Schwarz/Bayes information criteria</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelFixedResult.conditional_volatility">
+<code class="descname">conditional_volatility</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.conditional_volatility" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>{array, Series}</em> – nobs element array containing the conditional volatility (square root
+of conditional variance).  The values are aligned with the input data
+so that the value in the t-th position is the variance of t-th error,
+which is computed using time-(t-1) information.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelFixedResult.params">
+<code class="descname">params</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.params" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Series</em> – Estimated parameters</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelFixedResult.nobs">
+<code class="descname">nobs</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.nobs" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Number of observations used in the estimation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelFixedResult.num_params">
+<code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.num_params" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – Number of parameters in the model</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelFixedResult.resid">
+<code class="descname">resid</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.resid" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>{array, Series}</em> – nobs element array containing model residuals</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.univariate.base.ARCHModelFixedResult.model">
+<code class="descname">model</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.model" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>ARCHModel</em> – Model instance used to produce the fit</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">forecast</code><span class="sig-paren">(</span><em>params=None</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em><span class="sig-paren">)</span></dt>
+<dd><p>Construct forecasts from estimated model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>params</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+estimated when fitting the model are used.  Must be identical in
+shape to the parameters computed by fitting the model.</li>
+<li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
+<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+produce the forecast for.  Datetimes can only be used with pandas
+inputs that have a datetime index. Strings must be convertible
+to a date time, such as in ‘1945-01-01’.</li>
+<li><strong>align</strong> (<em>str</em><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
+of forecasts contains the forecasts for t+1, t+2, …, t+h. When
+set to ‘target’, the t-th row contains the 1-step ahead forecast
+from time t-1, the 2 step from time t-2, …, and the h-step from
+time t-h.  ‘target’ simplified computing forecast errors since the
+realization and h-step forecast are aligned.</li>
+<li><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em>) – Method to use when producing the forecast. The default is analytic.
+The method only affects the variance forecast generation.  Not all
+volatility models support all methods. In particular, volatility
+models that do not evolve in squares such as EGARCH or TARCH do not
+support the ‘analytic’ method for horizons &gt; 1.</li>
+<li><strong>simulations</strong> (<em>int</em>) – Number of simulations to run when computing the forecast using
+either simulation or bootstrap.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>forecasts</strong> – t by h data frame containing the forecasts.  The alignment of the forecasts is
+controlled by <cite>align</cite>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The most basic 1-step ahead forecast will return a vector with the same
+length as the original data, where the t-th value will be the time-t
+forecast for time t + 1.  When the horizon is &gt; 1, and when using the
+default value for <cite>align</cite>, the forecast value in position [t, h] is the
+time-t, h+1 step ahead forecast.</p>
+<p>If model contains exogenous variables (<cite>model.x is not None</cite>), then
+only 1-step ahead forecasts are available.  Using horizon &gt; 1 will
+produce a warning and all columns, except the first, will be
+nan-filled.</p>
+<p>If <cite>align</cite> is ‘origin’, forecast[t,h] contains the forecast made using
+y[:t] (that is, up to but not including t) for horizon h + 1.  For
+example, y[100,2] contains the 3-step ahead forecast using the first
+100 data points, which will correspond to the realization y[100 + 2].
+If <cite>align</cite> is ‘target’, then the same forecast is in location
+[102, 2], so that it is aligned with the observation to use when
+evaluating, but still in the same column.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.base.ARCHModelFixedResult.hedgehog_plot">
+<code class="descname">hedgehog_plot</code><span class="sig-paren">(</span><em>params=None</em>, <em>horizon=10</em>, <em>step=10</em>, <em>start=None</em>, <em>type='volatility'</em>, <em>method='analytic'</em>, <em>simulations=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.hedgehog_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot forecasts from estimated model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>params</strong> (<em>1d array-like</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+computed by fitting the model are used.  Must be identical in shape
+to the parameters computed by fitting the model.</li>
+<li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
+<li><strong>step</strong> (<em>int</em><em>, </em><em>optional</em>) – Non-negative number of forecasts to skip between spines</li>
+<li><strong>start</strong> (<em>int</em><em>, </em><em>datetime</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+produce the forecast for.  Datetimes can only be used with pandas
+inputs that have a datetime index.  Strings must be convertible
+to a date time, such as in ‘1945-01-01’.  If not provided, the start
+is set to the earliest forecastable date.</li>
+<li><strong>type</strong> (<em>{'volatility'</em><em>, </em><em>'mean'}</em>) – Quantity to plot, the forecast volatility or the forecast mean</li>
+<li><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em>) – Method to use when producing the forecast. The default is analytic.
+The method only affects the variance forecast generation.  Not all
+volatility models support all methods. In particular, volatility
+models that do not evolve in squares such as EGARCH or TARCH do not
+support the ‘analytic’ method for horizons &gt; 1.</li>
+<li><strong>simulations</strong> (<em>int</em>) – Number of simulations to run when computing the forecast using
+either simulation or bootstrap.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fig</strong> – Handle to the figure</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">figure</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="n">mean</span><span class="o">=</span><span class="s1">&#39;HAR&#39;</span><span class="p">,</span><span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">22</span><span class="p">],</span><span class="n">vol</span><span class="o">=</span><span class="s1">&#39;Constant&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">simulate</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span> <span class="mi">250</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s1">&#39;2000-01-01&#39;</span><span class="p">,</span><span class="n">periods</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">sim_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span><span class="n">mean</span><span class="o">=</span><span class="s1">&#39;HAR&#39;</span><span class="p">,</span><span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">22</span><span class="p">],</span>  <span class="n">vol</span><span class="o">=</span><span class="s1">&#39;Constant&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">hedgehog_plot</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">plot</code><span class="sig-paren">(</span><em>annualize=None</em>, <em>scale=None</em><span class="sig-paren">)</span></dt>
+<dd><p>Plot standardized residuals and conditional volatility</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>annualize</strong> (<em>str</em><em>, </em><em>optional</em>) – String containing frequency of data that indicates plot should
+contain annualized volatility.  Supported values are ‘D’ (daily),
+‘W’ (weekly) and ‘M’ (monthly), which scale variance by 252, 52,
+and 12, respectively.</li>
+<li><strong>scale</strong> (<em>float</em><em>, </em><em>optional</em>) – Value to use when scaling returns to annualize.  If scale is
+provides, annualize is ignored and the value in scale is used.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fig</strong> – Handle to the figure</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">figure</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">simulate</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.07</span><span class="p">,</span> <span class="mf">0.92</span><span class="p">],</span> <span class="mi">2520</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">sim_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Produce a plot with annualized volatility</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">annualize</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Override the usual scale of 252 to use 360 for an asset that trades
+most days of the year</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">360</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Constructs a summary of the results from a fit model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>summary</strong> – Object that contains tables and facilitated export to text, html or
+latex</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Summary instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="univariate.html" title="previous chapter (use the left arrow)">Univariate Volatility Models</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="univariate_volatility_modeling.html" title="next chapter (use the right arrow)">ARCH Modeling</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="univariate_volatility_modeling.html" title="ARCH Modeling"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="univariate.html" title="Univariate Volatility Models"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.91.g469dda8 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

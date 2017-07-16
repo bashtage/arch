@@ -1,0 +1,672 @@
+
+ARCH Modeling
+=============
+
+*This setup code is required to run in an IPython notebook*
+
+.. code:: ipython3
+
+    import warnings
+    warnings.simplefilter('ignore')
+    
+    %matplotlib inline
+    import seaborn
+    seaborn.mpl.rcParams['figure.figsize'] = (10.0, 6.0)
+    seaborn.mpl.rcParams['savefig.dpi'] = 90
+
+Setup
+~~~~~
+
+These examples will all make use of financial data from Yahoo! Finance
+imported using ``pandas-datareader``.
+
+.. code:: ipython3
+
+    import datetime as dt
+    import pandas_datareader.data as web
+    st = dt.datetime(1990,1,1)
+    en = dt.datetime(2016,1,1)
+    data = web.get_data_yahoo('^GSPC', start=st, end=en)
+    returns = 100 * data['Adj Close'].pct_change().dropna()
+    figure = returns.plot()
+
+
+
+.. image:: output_5_0.png
+
+
+Specifying Common Models
+------------------------
+
+The simplest way to specify a model is to use the model constructor
+``arch.arch_model`` which can specify most common models. The simplest
+invocation of ``arch`` will return a model with a constant mean,
+GARCH(1,1) volatility process and normally distributed errors.
+
+.. math::  r_t  =  \mu + \epsilon_t
+
+.. math:: \sigma^2_t   =  \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2 
+
+.. math:: \epsilon_t  =  \sigma_t e_t,\,\,\, e_t  \sim  N(0,1) 
+
+The model is estimated by calling ``fit``. The optional inputs ``iter``
+controls the frequency of output form the optimizer, and ``disp``
+controls whether convergence information is returned. The results class
+returned offers direct access to the estimated parameters and related
+quantities, as well as a ``summary`` of the estimation results.
+
+GARCH (with a Constant Mean)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The default set of options produces a model with a constant mean,
+GARCH(1,1) conditional variance and normal errors.
+
+.. code:: ipython3
+
+    from arch import arch_model
+    am = arch_model(returns) 
+    res = am.fit(update_freq=5)
+    print(res.summary())
+
+
+.. parsed-literal::
+
+    Iteration:      5,   Func. Count:     39,   Neg. LLF: 8791.774500116655
+    Iteration:     10,   Func. Count:     74,   Neg. LLF: 8788.102549023128
+    Optimization terminated successfully.    (Exit mode 0)
+                Current function value: 8788.10239792
+                Iterations: 11
+                Function evaluations: 80
+                Gradient evaluations: 11
+                         Constant Mean - GARCH Model Results                      
+    ==============================================================================
+    Dep. Variable:              Adj Close   R-squared:                      -0.000
+    Mean Model:             Constant Mean   Adj. R-squared:                 -0.000
+    Vol Model:                      GARCH   Log-Likelihood:               -8788.10
+    Distribution:                  Normal   AIC:                           17584.2
+    Method:            Maximum Likelihood   BIC:                           17611.4
+                                            No. Observations:                 6552
+    Date:                Thu, Aug 04 2016   Df Residuals:                     6548
+    Time:                        17:17:33   Df Model:                            4
+                                     Mean Model                                 
+    ============================================================================
+                     coef    std err          t      P>|t|      95.0% Conf. Int.
+    ----------------------------------------------------------------------------
+    mu             0.0558  9.923e-03      5.626  1.844e-08 [3.638e-02,7.527e-02]
+                                  Volatility Model                              
+    ============================================================================
+                     coef    std err          t      P>|t|      95.0% Conf. Int.
+    ----------------------------------------------------------------------------
+    omega          0.0125  3.312e-03      3.762  1.686e-04 [5.968e-03,1.895e-02]
+    alpha[1]       0.0820  1.097e-02      7.475  7.694e-14   [6.053e-02,  0.104]
+    beta[1]        0.9077  1.194e-02     76.008      0.000     [  0.884,  0.931]
+    ============================================================================
+    
+    Covariance estimator: robust
+
+
+``plot()`` can be used to quickly visualize the standardized residuals
+and conditional volatility.
+
+.. code:: ipython3
+
+    fig = res.plot(annualize='D')
+
+
+
+.. image:: output_12_0.png
+
+
+GJR-GARCH
+~~~~~~~~~
+
+Additional inputs can be used to construct other models. This example
+sets ``o`` to 1, which includes one lag of an asymmetric shock which
+transforms a GARCH model into a GJR-GARCH model with variance dynamics
+given by
+
+.. math::
+
+
+   \sigma^2_t   =  \omega + \alpha \epsilon_{t-1}^2 + \gamma \epsilon_{t-1}^2 I_{[\epsilon_{t-1}<0]}+ \beta \sigma_{t-1}^2 
+
+where :math:`I` is an indicator function that takes the value 1 when its
+argument is true.
+
+The log likelihood improves substantially with the introduction of an
+asymmetric term, and the parameter estimate is highly significant.
+
+.. code:: ipython3
+
+    am = arch_model(returns, p=1, o=1, q=1)
+    res = am.fit(update_freq=5, disp='off')
+    print(res.summary())
+
+
+.. parsed-literal::
+
+                       Constant Mean - GJR-GARCH Model Results                    
+    ==============================================================================
+    Dep. Variable:              Adj Close   R-squared:                      -0.000
+    Mean Model:             Constant Mean   Adj. R-squared:                 -0.000
+    Vol Model:                  GJR-GARCH   Log-Likelihood:               -8672.60
+    Distribution:                  Normal   AIC:                           17355.2
+    Method:            Maximum Likelihood   BIC:                           17389.1
+                                            No. Observations:                 6552
+    Date:                Thu, Aug 04 2016   Df Residuals:                     6547
+    Time:                        17:17:34   Df Model:                            5
+                                     Mean Model                                 
+    ============================================================================
+                     coef    std err          t      P>|t|      95.0% Conf. Int.
+    ----------------------------------------------------------------------------
+    mu             0.0254  9.751e-03      2.606  9.155e-03 [6.302e-03,4.453e-02]
+                                   Volatility Model                              
+    =============================================================================
+                     coef    std err          t      P>|t|       95.0% Conf. Int.
+    -----------------------------------------------------------------------------
+    omega          0.0161  3.668e-03      4.392  1.123e-05  [8.920e-03,2.330e-02]
+    alpha[1]       0.0000  5.520e-03      0.000      1.000 [-1.082e-02,1.082e-02]
+    gamma[1]       0.1457  2.044e-02      7.127  1.025e-12      [  0.106,  0.186]
+    beta[1]        0.9119  1.247e-02     73.107      0.000      [  0.887,  0.936]
+    =============================================================================
+    
+    Covariance estimator: robust
+
+
+TARCH/ZARCH
+~~~~~~~~~~~
+
+TARCH (also known as ZARCH) model the *volatility* using absolute
+values. This model is specified using ``power=1.0`` since the default
+power, 2, corresponds to variance processes that evolve in squares.
+
+The volatility process in a TARCH model is given by
+
+.. math::
+
+
+   \sigma_t  =  \omega + \alpha \left|\epsilon_{t-1}\right| + \gamma \left|\epsilon_{t-1}\right| I_{[\epsilon_{t-1}<0]}+ \beta \sigma_{t-1} 
+
+More general models with other powers (:math:`\kappa`) have volatility
+dynamics given by
+
+.. math::
+
+
+   \sigma_t^\kappa   = \omega + \alpha \left|\epsilon_{t-1}\right|^\kappa + \gamma \left|\epsilon_{t-1}\right|^\kappa I_{[\epsilon_{t-1}<0]}+ \beta \sigma_{t-1}^\kappa 
+
+where the conditional variance is
+:math:`\left(\sigma_t^\kappa\right)^{2/\kappa}`.
+
+The TARCH model also improves the fit, although the change in the log
+likelihood is less dramatic.
+
+.. code:: ipython3
+
+    am = arch_model(returns, p=1, o=1, q=1, power=1.0)
+    res = am.fit(update_freq=5)
+    print(res.summary())
+
+
+.. parsed-literal::
+
+    Iteration:      5,   Func. Count:     46,   Neg. LLF: 8681.97568934476
+    Iteration:     10,   Func. Count:     86,   Neg. LLF: 8656.294806089767
+    Iteration:     15,   Func. Count:    125,   Neg. LLF: 8655.188052112766
+    Optimization terminated successfully.    (Exit mode 0)
+                Current function value: 8655.18802807
+                Iterations: 17
+                Function evaluations: 140
+                Gradient evaluations: 17
+                      Constant Mean - TARCH/ZARCH Model Results                   
+    ==============================================================================
+    Dep. Variable:              Adj Close   R-squared:                      -0.000
+    Mean Model:             Constant Mean   Adj. R-squared:                 -0.000
+    Vol Model:                TARCH/ZARCH   Log-Likelihood:               -8655.19
+    Distribution:                  Normal   AIC:                           17320.4
+    Method:            Maximum Likelihood   BIC:                           17354.3
+                                            No. Observations:                 6552
+    Date:                Thu, Aug 04 2016   Df Residuals:                     6547
+    Time:                        17:17:34   Df Model:                            5
+                                     Mean Model                                 
+    ============================================================================
+                     coef    std err          t      P>|t|      95.0% Conf. Int.
+    ----------------------------------------------------------------------------
+    mu             0.0197  4.341e-03      4.538  5.667e-06 [1.119e-02,2.821e-02]
+                                   Volatility Model                              
+    =============================================================================
+                     coef    std err          t      P>|t|       95.0% Conf. Int.
+    -----------------------------------------------------------------------------
+    omega          0.0211  3.589e-03      5.891  3.832e-09  [1.411e-02,2.818e-02]
+    alpha[1]   5.9723e-03  5.938e-03      1.006      0.314 [-5.665e-03,1.761e-02]
+    gamma[1]       0.1349  1.421e-02      9.495  2.195e-21      [  0.107,  0.163]
+    beta[1]        0.9228  8.562e-03    107.786      0.000      [  0.906,  0.940]
+    =============================================================================
+    
+    Covariance estimator: robust
+
+
+Student's T Errors
+~~~~~~~~~~~~~~~~~~
+
+Financial returns are often heavy tailed, and a Student's T distribution
+is a simple method to capture this feature. The call to ``arch`` changes
+the distribution from a Normal to a Students's T.
+
+The standardized residuals appear to be heavy tailed with an estimated
+degree of freedom near 10. The log-likelihood also shows a large
+increase.
+
+.. code:: ipython3
+
+    am = arch_model(returns, p=1, o=1, q=1, power=1.0, dist='StudentsT')
+    res = am.fit(update_freq=5)
+    print(res.summary())
+
+
+.. parsed-literal::
+
+    Iteration:      5,   Func. Count:     50,   Neg. LLF: 8592.43156639778
+    Iteration:     10,   Func. Count:     95,   Neg. LLF: 8564.682574204755
+    Iteration:     15,   Func. Count:    139,   Neg. LLF: 8564.232620019455
+    Iteration:     20,   Func. Count:    180,   Neg. LLF: 8564.231390133198
+    Optimization terminated successfully.    (Exit mode 0)
+                Current function value: 8564.23138967
+                Iterations: 20
+                Function evaluations: 182
+                Gradient evaluations: 20
+                         Constant Mean - TARCH/ZARCH Model Results                      
+    ====================================================================================
+    Dep. Variable:                    Adj Close   R-squared:                      -0.000
+    Mean Model:                   Constant Mean   Adj. R-squared:                 -0.000
+    Vol Model:                      TARCH/ZARCH   Log-Likelihood:               -8564.23
+    Distribution:      Standardized Student's t   AIC:                           17140.5
+    Method:                  Maximum Likelihood   BIC:                           17181.2
+                                                  No. Observations:                 6552
+    Date:                      Thu, Aug 04 2016   Df Residuals:                     6546
+    Time:                              17:17:34   Df Model:                            6
+                                     Mean Model                                 
+    ============================================================================
+                     coef    std err          t      P>|t|      95.0% Conf. Int.
+    ----------------------------------------------------------------------------
+    mu             0.0343  4.326e-03      7.921  2.352e-15 [2.579e-02,4.275e-02]
+                                   Volatility Model                              
+    =============================================================================
+                     coef    std err          t      P>|t|       95.0% Conf. Int.
+    -----------------------------------------------------------------------------
+    omega          0.0171  3.062e-03      5.576  2.465e-08  [1.107e-02,2.308e-02]
+    alpha[1]   2.7187e-03  5.182e-03      0.525      0.600 [-7.438e-03,1.288e-02]
+    gamma[1]       0.1403  1.381e-02     10.155  3.150e-24      [  0.113,  0.167]
+    beta[1]        0.9271  7.699e-03    120.410      0.000      [  0.912,  0.942]
+                                  Distribution                              
+    ========================================================================
+                     coef    std err          t      P>|t|  95.0% Conf. Int.
+    ------------------------------------------------------------------------
+    nu             7.9801      0.789     10.120  4.522e-24 [  6.434,  9.526]
+    ========================================================================
+    
+    Covariance estimator: robust
+
+
+Fixing Parameters
+~~~~~~~~~~~~~~~~~
+
+In some circumstances, fixed rather than estimated parameters might be
+of interest. A model-result-like class can be generated using the
+``fix()`` method. The class returend is identical to the usual model
+result class except that information about inference (standard errors,
+t-stats, etc) is not available.
+
+In the example, I fix the parameters to a symmetric version of the
+previously estimated model.
+
+.. code:: ipython3
+
+    fixed_res = am.fix([0.0235, 0.01, 0.06, 0.0, 0.9382, 8.0])
+    print(fixed_res.summary())
+
+
+.. parsed-literal::
+
+                          Constant Mean - TARCH/ZARCH Model Results                      
+    =====================================================================================
+    Dep. Variable:                     Adj Close   R-squared:                          --
+    Mean Model:                    Constant Mean   Adj. R-squared:                     --
+    Vol Model:                       TARCH/ZARCH   Log-Likelihood:               -8737.43
+    Distribution:       Standardized Student's t   AIC:                           17486.9
+    Method:            User-specified Parameters   BIC:                           17527.6
+                                                   No. Observations:                 6552
+    Date:                       Thu, Aug 04 2016                                         
+    Time:                               17:17:34                                         
+          Mean Model     
+    =====================
+                     coef
+    ---------------------
+    mu             0.0235
+       Volatility Model  
+    =====================
+                     coef
+    ---------------------
+    omega          0.0100
+    alpha[1]       0.0600
+    gamma[1]       0.0000
+    beta[1]        0.9382
+         Distribution    
+    =====================
+                     coef
+    ---------------------
+    nu             8.0000
+    =====================
+    
+    Results generated with user-specified parameters.
+    Since the model was not estimated, there are no std. errors.
+
+
+.. code:: ipython3
+
+    import pandas as pd
+    df = pd.concat([res.conditional_volatility,fixed_res.conditional_volatility],1)
+    df.columns = ['Estimated', 'Fixed']
+    df.plot()
+
+
+
+
+.. parsed-literal::
+
+    <matplotlib.axes._subplots.AxesSubplot at 0x1d0b4cfd978>
+
+
+
+
+.. image:: output_24_1.png
+
+
+Building a Model From Components
+--------------------------------
+
+Models can also be systematically assembled from the three model
+components:
+
+-  A mean model (``arch.mean``)
+
+   -  Zero mean (``ZeroMean``) - useful if using residuals from a model
+      estimated separately
+   -  Constant mean (``ConstantMean``) - common for most liquid
+      financial assets
+   -  Autoregressive (``ARX``) with optional exogenous regressors
+   -  Heterogeneous (``HARX``) autoregression with optional exogenous
+      regressors
+   -  Exogenous regressors only (``LS``)
+
+-  A volatility process (``arch.volatility``)
+
+   -  ARCH (``ARCH``)
+   -  GARCH (``GARCH``)
+   -  GJR-GARCH (``GARCH`` using ``o`` argument)
+   -  TARCH/ZARCH (``GARCH`` using ``power`` argument set to ``1``)
+   -  Power GARCH and Asymmetric Power GARCH (``GARCH`` using ``power``)
+   -  Heterogeneous ARCH (``HARCH``)
+   -  Parameterless Models
+
+      -  Exponentially Weighted Moving Average Variance, known as
+         RiskMetrics (``EWMAVariance``)
+      -  Weighted averages of EWMAs, known as the RiskMetrics 2006
+         methodology (``RiskMetrics2006``)
+
+-  A distribution (``arch.distribution``)
+
+   -  Normal (``Normal``)
+   -  Standardized Students's T (``StudentsT``)
+
+Mean Models
+~~~~~~~~~~~
+
+The first choice is the mean model. For many liquid financial assets, a
+constant mean (or even zero) is adequate. For other series, such as
+inflation, a more complicated model may be required. These examples make
+use of Core CPI downloaded from the `Federal Reserve Economic
+Data <http://research.stlouisfed.org/fred2/>`__ site.
+
+.. code:: ipython3
+
+    core_cpi = web.DataReader("CPILFESL", "fred", dt.datetime(1957,1,1), dt.datetime(2014,1,1))
+    ann_inflation = 100 * core_cpi.CPILFESL.pct_change(12).dropna()
+    fig = ann_inflation.plot()
+
+
+
+.. image:: output_29_0.png
+
+
+All mean models are initialized with constant variance and normal
+errors. For ``ARX`` models, the ``lags`` argument specifies the lags to
+include in the model.
+
+.. code:: ipython3
+
+    from arch.univariate import ARX
+    ar = ARX(ann_inflation, lags = [1, 3, 12])
+    print(ar.fit().summary())
+
+
+.. parsed-literal::
+
+                         AR - Constant Variance Model Results                     
+    ==============================================================================
+    Dep. Variable:               CPILFESL   R-squared:                       0.991
+    Mean Model:                        AR   Adj. R-squared:                  0.991
+    Vol Model:          Constant Variance   Log-Likelihood:               -13.7025
+    Distribution:                  Normal   AIC:                           37.4050
+    Method:            Maximum Likelihood   BIC:                           59.8738
+                                            No. Observations:                  661
+    Date:                Thu, Aug 04 2016   Df Residuals:                      656
+    Time:                        17:17:36   Df Model:                            5
+                                       Mean Model                                  
+    ===============================================================================
+                       coef    std err          t      P>|t|       95.0% Conf. Int.
+    -------------------------------------------------------------------------------
+    Const            0.0424  2.196e-02      1.932  5.333e-02 [-6.084e-04,8.548e-02]
+    CPILFESL[1]      1.1927  3.513e-02     33.954 1.080e-252      [  1.124,  1.262]
+    CPILFESL[3]     -0.1803  4.122e-02     -4.374  1.221e-05   [ -0.261,-9.951e-02]
+    CPILFESL[12]    -0.0235  1.384e-02     -1.696  8.985e-02 [-5.061e-02,3.651e-03]
+                                  Volatility Model                              
+    ============================================================================
+                     coef    std err          t      P>|t|      95.0% Conf. Int.
+    ----------------------------------------------------------------------------
+    sigma2         0.0610  6.993e-03      8.728  2.603e-18 [4.732e-02,7.473e-02]
+    ============================================================================
+    
+    Covariance estimator: White's Heteroskedasticity Consistent Estimator
+
+
+Volatility Processes
+~~~~~~~~~~~~~~~~~~~~
+
+Volatility processes can be added a a mean model using the
+``volatility`` property. This example adds an ARCH(5) process to model
+volatility. The arguments ``iter`` and ``disp`` are used in ``fit()`` to
+suppress estimation output.
+
+.. code:: ipython3
+
+    from arch.univariate import ARCH, GARCH
+    ar.volatility = ARCH(p=5)
+    res = ar.fit(update_freq=0, disp='off')
+    print(res.summary())
+
+
+.. parsed-literal::
+
+                               AR - ARCH Model Results                            
+    ==============================================================================
+    Dep. Variable:               CPILFESL   R-squared:                       0.991
+    Mean Model:                        AR   Adj. R-squared:                  0.991
+    Vol Model:                       ARCH   Log-Likelihood:                83.8949
+    Distribution:                  Normal   AIC:                          -147.790
+    Method:            Maximum Likelihood   BIC:                          -102.852
+                                            No. Observations:                  661
+    Date:                Thu, Aug 04 2016   Df Residuals:                      651
+    Time:                        17:17:36   Df Model:                           10
+                                       Mean Model                                  
+    ===============================================================================
+                       coef    std err          t      P>|t|       95.0% Conf. Int.
+    -------------------------------------------------------------------------------
+    Const            0.0270  2.204e-02      1.227      0.220 [-1.616e-02,7.025e-02]
+    CPILFESL[1]      1.0852  3.839e-02     28.265 9.274e-176      [  1.010,  1.160]
+    CPILFESL[3]     -0.0753  4.153e-02     -1.814  6.969e-02    [ -0.157,6.065e-03]
+    CPILFESL[12]    -0.0211  1.191e-02     -1.772  7.642e-02 [-4.444e-02,2.240e-03]
+                                  Volatility Model                              
+    ============================================================================
+                     coef    std err          t      P>|t|      95.0% Conf. Int.
+    ----------------------------------------------------------------------------
+    omega      9.8438e-03  2.206e-03      4.463  8.077e-06 [5.521e-03,1.417e-02]
+    alpha[1]       0.1306  4.119e-02      3.171  1.521e-03   [4.987e-02,  0.211]
+    alpha[2]       0.2277  6.464e-02      3.522  4.284e-04     [  0.101,  0.354]
+    alpha[3]       0.1698  7.115e-02      2.386  1.704e-02   [3.031e-02,  0.309]
+    alpha[4]       0.2635  8.307e-02      3.172  1.516e-03     [  0.101,  0.426]
+    alpha[5]       0.1699  7.449e-02      2.281  2.253e-02   [2.393e-02,  0.316]
+    ============================================================================
+    
+    Covariance estimator: robust
+
+
+Plotting the standardized residuals and the conditional volatility shows
+some large (in magnitude) errors, even when standardized.
+
+.. code:: ipython3
+
+    fig = res.plot()
+
+
+
+.. image:: output_36_0.png
+
+
+Distributions
+~~~~~~~~~~~~~
+
+Finally the distribution can be changed from the default normal to a
+standardized Student's T using the ``distribution`` property of a mean
+model.
+
+The Student's t distribution improves the model, and the degree of
+freedom is estimated to be near 8.
+
+.. code:: ipython3
+
+    from arch.univariate import StudentsT
+    ar.distribution = StudentsT()
+    res = ar.fit(update_freq=0, disp='off')
+    print(res.summary())
+
+
+.. parsed-literal::
+
+                                  AR - ARCH Model Results                               
+    ====================================================================================
+    Dep. Variable:                     CPILFESL   R-squared:                       0.991
+    Mean Model:                              AR   Adj. R-squared:                  0.991
+    Vol Model:                             ARCH   Log-Likelihood:                89.5657
+    Distribution:      Standardized Student's t   AIC:                          -157.131
+    Method:                  Maximum Likelihood   BIC:                          -107.700
+                                                  No. Observations:                  661
+    Date:                      Thu, Aug 04 2016   Df Residuals:                      650
+    Time:                              17:17:36   Df Model:                           11
+                                       Mean Model                                  
+    ===============================================================================
+                       coef    std err          t      P>|t|       95.0% Conf. Int.
+    -------------------------------------------------------------------------------
+    Const            0.0283  2.251e-02      1.259      0.208 [-1.579e-02,7.246e-02]
+    CPILFESL[1]      1.0845  3.920e-02     27.666 1.779e-168      [  1.008,  1.161]
+    CPILFESL[3]     -0.0691  4.292e-02     -1.611      0.107    [ -0.153,1.498e-02]
+    CPILFESL[12]    -0.0266  1.517e-02     -1.751  7.988e-02 [-5.631e-02,3.164e-03]
+                                  Volatility Model                              
+    ============================================================================
+                     coef    std err          t      P>|t|      95.0% Conf. Int.
+    ----------------------------------------------------------------------------
+    omega          0.0116  3.154e-03      3.667  2.450e-04 [5.385e-03,1.775e-02]
+    alpha[1]       0.1694  5.287e-02      3.203  1.360e-03   [6.572e-02,  0.273]
+    alpha[2]       0.2183  6.640e-02      3.287  1.012e-03   [8.813e-02,  0.348]
+    alpha[3]       0.1365  6.913e-02      1.975  4.828e-02   [1.034e-03,  0.272]
+    alpha[4]       0.2172  7.724e-02      2.813  4.916e-03   [6.585e-02,  0.369]
+    alpha[5]       0.1618  8.628e-02      1.875  6.075e-02  [-7.302e-03,  0.331]
+                                  Distribution                              
+    ========================================================================
+                     coef    std err          t      P>|t|  95.0% Conf. Int.
+    ------------------------------------------------------------------------
+    nu             9.0750      3.810      2.382  1.722e-02 [  1.608, 16.542]
+    ========================================================================
+    
+    Covariance estimator: robust
+
+
+WTI Crude
+---------
+
+The next example uses West Texas Intermediate Crude data from FRED.
+Theee models are fit using alternative distributional assumptions. The
+results are printed, where we can see that the normal has a much lower
+log-likelihood than either the Standard Student's T or the Standardized
+Skew Student's T -- however, these two are fairly close. The closeness
+ff the T and the Skew T indicate that returns are not heavily skewed.
+
+.. code:: ipython3
+
+    from collections import OrderedDict
+    crude=web.get_data_fred('DCOILWTICO',dt.datetime(2000, 1, 1),dt.datetime(2015, 1, 1))
+    crude_ret = 100 * crude.dropna().pct_change().dropna()
+    res_normal = arch_model(crude_ret).fit(disp='off')
+    res_t = arch_model(crude_ret, dist='t').fit(disp='off')
+    res_skewt = arch_model(crude_ret, dist='skewt').fit(disp='off')
+    lls = pd.Series(OrderedDict((('normal', res_normal.loglikelihood),
+                     ('t', res_t.loglikelihood),
+                     ('skewt', res_skewt.loglikelihood))))
+    print(lls)
+    params = pd.DataFrame(OrderedDict((('normal', res_normal.params),
+                     ('t', res_t.params),
+                     ('skewt', res_skewt.params))))
+    print(params)
+
+
+.. parsed-literal::
+
+    normal   -8227.359031
+    t        -8128.534732
+    skewt    -8126.303934
+    dtype: float64
+                normal         t     skewt
+    alpha[1]  0.054488  0.046069  0.045908
+    beta[1]   0.940953  0.949954  0.950364
+    lambda         NaN       NaN -0.048593
+    mu        0.065643  0.076392  0.057599
+    nu             NaN  6.841493  6.889730
+    omega     0.034733  0.026497  0.025239
+
+
+The standardized residuals can be computed by dividing the residuals by
+the conditional volatility. These are plotted along with the
+(unstandardized, but scaled) residuals. The non-standardized residuals
+are more peaked in the center indicating that the distribution is
+somewhat more heavy tailed than that of the standardized residuals.
+
+.. code:: ipython3
+
+    std_resid = res_normal.resid / res_normal.conditional_volatility
+    unit_var_resid = res_normal.resid / res_normal.resid.std()
+    df = pd.concat([std_resid, unit_var_resid],1)
+    df.columns = ['Std Resids', 'Unit Variance Resids']
+    df.plot(kind='kde', xlim=(-4,4))
+
+
+
+
+.. parsed-literal::
+
+    <matplotlib.axes._subplots.AxesSubplot at 0x1d0b364cc18>
+
+
+
+
+.. image:: output_44_1.png
+

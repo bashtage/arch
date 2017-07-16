@@ -1,0 +1,303 @@
+
+Using the Fixed Variance process
+================================
+
+The ``FixedVariance`` volatility process can be used to implement
+zig-zag model estimation where two steps are repeated until convergence.
+This can be used to estimate models which may not be easy to estimate as
+a single process due to numerical issues or a high-dimensional parameter
+space.
+
+*This setup code is required to run in an IPython notebook*
+
+.. code:: ipython3
+
+    import warnings
+    warnings.simplefilter('ignore')
+    
+    %matplotlib inline
+    import seaborn
+    seaborn.mpl.rcParams['figure.figsize'] = (10.0, 6.0)
+    seaborn.mpl.rcParams['savefig.dpi'] = 90
+
+Setup
+~~~~~
+
+Imports used in this example.
+
+.. code:: ipython3
+
+    import datetime as dt
+    import numpy as np
+    from pandas_datareader import data
+
+Data
+----
+
+The VIX index will be used to illustrate the use of the
+``FixedVariance`` process. The data is read using ``pandas-datareader``.
+
+.. code:: ipython3
+
+    dr = data.YahooDailyReader('^VIX', dt.datetime(2000, 1, 1), dt.datetime(2016, 12, 31))
+    vix_data = dr.read()
+    vix = vix_data.Close.dropna()
+    vix.name = 'VIX Index'
+    ax = vix.plot(title='VIX Index')
+
+
+
+.. image:: output_6_0.png
+
+
+Initial Mean Model Estimation
+-----------------------------
+
+The first step is to estimate the mean to filter the residuals using a
+constant variance.
+
+.. code:: ipython3
+
+    from arch.univariate.mean import HARX, ZeroMean
+    from arch.univariate.volatility import GARCH, FixedVariance
+    mod = HARX(vix, lags=[1,5,22])
+    res = mod.fit()
+    print(res.summary())
+
+
+.. parsed-literal::
+
+                        HAR - Constant Variance Model Results                     
+    ==============================================================================
+    Dep. Variable:              VIX Index   R-squared:                       0.964
+    Mean Model:                       HAR   Adj. R-squared:                  0.964
+    Vol Model:          Constant Variance   Log-Likelihood:               -8207.73
+    Distribution:                  Normal   AIC:                           16425.5
+    Method:            Maximum Likelihood   BIC:                           16457.2
+                                            No. Observations:                 4255
+    Date:                Tue, Jan 17 2017   Df Residuals:                     4250
+    Time:                        16:40:41   Df Model:                            5
+                                        Mean Model                                    
+    ==================================================================================
+                          coef    std err          t      P>|t|       95.0% Conf. Int.
+    ----------------------------------------------------------------------------------
+    Const               0.2421      0.122      1.992  4.642e-02    [3.841e-03,  0.480]
+    VIX Index[0:1]      0.8426  4.177e-02     20.172  1.712e-90      [  0.761,  0.924]
+    VIX Index[0:5]      0.1152  4.851e-02      2.375  1.753e-02    [2.015e-02,  0.210]
+    VIX Index[0:22]     0.0301  2.501e-02      1.206      0.228 [-1.887e-02,7.916e-02]
+                                Volatility Model                            
+    ========================================================================
+                     coef    std err          t      P>|t|  95.0% Conf. Int.
+    ------------------------------------------------------------------------
+    sigma2         2.7733      0.186     14.900  3.286e-50 [  2.409,  3.138]
+    ========================================================================
+    
+    Covariance estimator: White's Heteroskedasticity Consistent Estimator
+
+
+Initial Volatility Model Estimation
+-----------------------------------
+
+Using the previously estimated residuals, a volatility model can be
+estimated using a ``ZeroMean``. In this example, a GJR-GARCH process is
+used for the variance.
+
+.. code:: ipython3
+
+    vol_mod = ZeroMean(res.resid.dropna(), volatility=GARCH(p=1,o=1,q=1))
+    vol_res = vol_mod.fit(disp='off')
+    print(vol_res.summary())
+    ax = vol_res.plot('D')
+
+
+.. parsed-literal::
+
+                         Zero Mean - GJR-GARCH Model Results                      
+    ==============================================================================
+    Dep. Variable:                  resid   R-squared:                       0.000
+    Mean Model:                 Zero Mean   Adj. R-squared:                  0.000
+    Vol Model:                  GJR-GARCH   Log-Likelihood:               -6852.69
+    Distribution:                  Normal   AIC:                           13713.4
+    Method:            Maximum Likelihood   BIC:                           13738.8
+                                            No. Observations:                 4255
+    Date:                Tue, Jan 17 2017   Df Residuals:                     4251
+    Time:                        16:40:41   Df Model:                            4
+                                 Volatility Model                             
+    ==========================================================================
+                     coef    std err          t      P>|t|    95.0% Conf. Int.
+    --------------------------------------------------------------------------
+    omega          0.0698  1.662e-02      4.201  2.659e-05 [3.724e-02,  0.102]
+    alpha[1]       0.2662  3.837e-02      6.938  3.969e-12   [  0.191,  0.341]
+    gamma[1]      -0.2662  3.347e-02     -7.953  1.818e-15   [ -0.332, -0.201]
+    beta[1]        0.8287  2.461e-02     33.680 1.143e-248   [  0.780,  0.877]
+    ==========================================================================
+    
+    Covariance estimator: robust
+
+
+
+.. image:: output_10_1.png
+
+
+Re-estimating the mean with a ``FixedVariance``
+-----------------------------------------------
+
+The ``FixedVariance`` requires that the variance is provided when
+initializing the object. The variance provided should have the same
+shape as the original data. Since the variance estimated from the
+GJR-GARCH model is missing the first 22 observations due to the HAR
+lags, we simply fill these with 1. These values will not be used to
+esimtate the model, and so the value is not important.
+
+The summary shows that there is a single parameter, ``scale``, which is
+close to 1. The mean parameters have changed which reflects the GLS-like
+weighting that this re-estimaion imposes.
+
+.. code:: ipython3
+
+    variance = np.empty_like(vix)
+    variance.fill(1.0)
+    variance[22:] = vol_res.conditional_volatility ** 2.0
+    fv = FixedVariance(variance)
+    mod = HARX(vix, lags=[1,5,22], volatility=fv)
+    res = mod.fit()
+    print(res.summary())
+
+
+.. parsed-literal::
+
+    Iteration:      1,   Func. Count:      7,   Neg. LLF: 6852.686462250487
+    Iteration:      2,   Func. Count:     21,   Neg. LLF: 6852.597081675016
+    Iteration:      3,   Func. Count:     32,   Neg. LLF: 6850.090522673863
+    Iteration:      4,   Func. Count:     43,   Neg. LLF: 6848.07635458317
+    Iteration:      5,   Func. Count:     53,   Neg. LLF: 6848.071807637809
+    Iteration:      6,   Func. Count:     63,   Neg. LLF: 6848.071548129179
+    Iteration:      7,   Func. Count:     70,   Neg. LLF: 6848.071544245005
+    Optimization terminated successfully.    (Exit mode 0)
+                Current function value: 6848.07154425
+                Iterations: 7
+                Function evaluations: 70
+                Gradient evaluations: 7
+                          HAR - Fixed Variance Model Results                      
+    ==============================================================================
+    Dep. Variable:              VIX Index   R-squared:                       0.964
+    Mean Model:                       HAR   Adj. R-squared:                  0.964
+    Vol Model:             Fixed Variance   Log-Likelihood:               -6848.07
+    Distribution:                  Normal   AIC:                           13706.1
+    Method:            Maximum Likelihood   BIC:                           13737.9
+                                            No. Observations:                 4255
+    Date:                Tue, Jan 17 2017   Df Residuals:                     4250
+    Time:                        16:40:41   Df Model:                            5
+                                        Mean Model                                   
+    =================================================================================
+                          coef    std err          t      P>|t|      95.0% Conf. Int.
+    ---------------------------------------------------------------------------------
+    Const               0.2391  5.508e-02      4.341  1.416e-05     [  0.131,  0.347]
+    VIX Index[0:1]      0.8968  1.830e-02     49.016      0.000     [  0.861,  0.933]
+    VIX Index[0:5]      0.0592  2.260e-02      2.621  8.756e-03   [1.495e-02,  0.104]
+    VIX Index[0:22]     0.0322  1.211e-02      2.656  7.914e-03 [8.424e-03,5.589e-02]
+                                Volatility Model                            
+    ========================================================================
+                     coef    std err          t      P>|t|  95.0% Conf. Int.
+    ------------------------------------------------------------------------
+    scale          0.9979  4.052e-02     24.624 7.058e-134 [  0.918,  1.077]
+    ========================================================================
+    
+    Covariance estimator: robust
+
+
+Zig-Zag esimtation
+------------------
+
+A small repetitions of the previous two steps can be used to implement a
+so-called zig-zag estimation strategy.
+
+.. code:: ipython3
+
+    for i in range(5):
+        print(i)
+        vol_mod = ZeroMean(res.resid.dropna(), volatility=GARCH(p=1,o=1,q=1))
+        vol_res = vol_mod.fit(disp='off')
+        variance[22:] = vol_res.conditional_volatility ** 2.0
+        fv = FixedVariance(variance, unit_scale=True)
+        mod = HARX(vix, lags=[1,5,22], volatility=fv)
+        res = mod.fit(disp='off')
+    print(res.summary())
+
+
+.. parsed-literal::
+
+    0
+    1
+    2
+    3
+    4
+                        HAR - Fixed Variance (Unit Scale) Model Results                    
+    =======================================================================================
+    Dep. Variable:                       VIX Index   R-squared:                       0.964
+    Mean Model:                                HAR   Adj. R-squared:                  0.964
+    Vol Model:         Fixed Variance (Unit Scale)   Log-Likelihood:               -6851.05
+    Distribution:                           Normal   AIC:                           13710.1
+    Method:                     Maximum Likelihood   BIC:                           13735.5
+                                                     No. Observations:                 4255
+    Date:                         Tue, Jan 17 2017   Df Residuals:                     4251
+    Time:                                 16:40:41   Df Model:                            4
+                                        Mean Model                                   
+    =================================================================================
+                          coef    std err          t      P>|t|      95.0% Conf. Int.
+    ---------------------------------------------------------------------------------
+    Const               0.2374  5.514e-02      4.306  1.666e-05     [  0.129,  0.346]
+    VIX Index[0:1]      0.8969  1.831e-02     48.978      0.000     [  0.861,  0.933]
+    VIX Index[0:5]      0.0591  2.262e-02      2.611  9.035e-03   [1.472e-02,  0.103]
+    VIX Index[0:22]     0.0323  1.213e-02      2.662  7.765e-03 [8.517e-03,5.606e-02]
+    =================================================================================
+    
+    Covariance estimator: robust
+
+
+Direct Estimation
+-----------------
+
+This model can be directly estimated. The results are provided for
+comparisson to the previous ``FixedVariance`` estimates of the mean
+parameters.
+
+.. code:: ipython3
+
+    mod = HARX(vix, lags=[1,5,22], volatility=GARCH(1,1,1))
+    res = mod.fit(disp='off')
+    print(res.summary())
+
+
+.. parsed-literal::
+
+                            HAR - GJR-GARCH Model Results                         
+    ==============================================================================
+    Dep. Variable:              VIX Index   R-squared:                       0.964
+    Mean Model:                       HAR   Adj. R-squared:                  0.964
+    Vol Model:                  GJR-GARCH   Log-Likelihood:               -6845.94
+    Distribution:                  Normal   AIC:                           13707.9
+    Method:            Maximum Likelihood   BIC:                           13758.7
+                                            No. Observations:                 4255
+    Date:                Tue, Jan 17 2017   Df Residuals:                     4247
+    Time:                        16:40:41   Df Model:                            8
+                                        Mean Model                                   
+    =================================================================================
+                          coef    std err          t      P>|t|      95.0% Conf. Int.
+    ---------------------------------------------------------------------------------
+    Const               0.3232  8.670e-02      3.727  1.935e-04     [  0.153,  0.493]
+    VIX Index[0:1]      0.8708  1.995e-02     43.657      0.000     [  0.832,  0.910]
+    VIX Index[0:5]      0.0801  2.392e-02      3.349  8.105e-04   [3.323e-02,  0.127]
+    VIX Index[0:22]     0.0307  1.515e-02      2.025  4.291e-02 [9.786e-04,6.037e-02]
+                                 Volatility Model                             
+    ==========================================================================
+                     coef    std err          t      P>|t|    95.0% Conf. Int.
+    --------------------------------------------------------------------------
+    omega          0.0725  1.851e-02      3.919  8.879e-05 [3.627e-02,  0.109]
+    alpha[1]       0.2647  4.327e-02      6.118  9.497e-10   [  0.180,  0.350]
+    gamma[1]      -0.2647  4.374e-02     -6.052  1.432e-09   [ -0.350, -0.179]
+    beta[1]        0.8217  3.497e-02     23.499 4.136e-122   [  0.753,  0.890]
+    ==========================================================================
+    
+    Covariance estimator: robust
+

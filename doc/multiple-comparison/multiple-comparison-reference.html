@@ -1,0 +1,456 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Module Reference &#8212; arch 0+untagged.91.g469dda8 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0+untagged.91.g469dda8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="References" href="background.html" />
+    <link rel="prev" title="Multiple Comparisons" href="multiple-comparison_examples.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="background.html" title="References"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="multiple-comparison_examples.html" title="Multiple Comparisons"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.91.g469dda8 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="multiple-comparisons.html" accesskey="U">Multiple Comparison Procedures</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    ../index.html" class="text-logo">arch 0.+</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../univariate/univariate.html">Univariate Volatility Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bootstrap/bootstrap.html">Bootstrapping</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="multiple-comparisons.html">Multiple Comparison Problems</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="multiple-comparison_examples.html">Examples</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Module Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../unitroot/unitroot.html">Unit Root Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="multiple-comparisons.html">Multiple Comparison Procedures</a></li>
+              
+              <li>Module Reference</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="module-reference">
+<h1>Module Reference<a class="headerlink" href="#module-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="test-of-superior-predictive-ability-spa-reality-check">
+<h2>Test of Superior Predictive Ability (SPA), Reality Check<a class="headerlink" href="#test-of-superior-predictive-ability-spa-reality-check" title="Permalink to this headline">¶</a></h2>
+<p>The test of Superior Predictive Ability (Hansen 2005), or SPA, is an improved
+version of the Reality Check (White 2000).  It tests whether the best
+forecasting performance from a set of models is better than that of the
+forecasts from a benchmark model.  A model is “better” if its losses are
+smaller than those from the benchmark.  Formally, it tests the null</p>
+<div class="math">
+\[H_0: \max_i E[L_i] \geq E[L_{bm}]\]</div>
+<p>where <span class="math">\(L_i\)</span> is the loss from model <em>i</em> and <span class="math">\(L_{bm}\)</span> is the loss
+from the benchmark model.  The alternative is</p>
+<div class="math">
+\[H_1: \max_i E[L_i] &gt; E[L_{bm}]\]</div>
+<p>This procedure accounts for dependence between the losses and the fact that
+there are potentially alternative models being considered.</p>
+<p><strong>Note</strong>: Also callable using <code class="xref py py-class docutils literal"><span class="pre">RealityCheck</span></code></p>
+<dl class="class">
+<dt id="arch.bootstrap.SPA">
+<em class="property">class </em><code class="descclassname">arch.bootstrap.</code><code class="descname">SPA</code><span class="sig-paren">(</span><em>benchmark</em>, <em>models</em>, <em>block_size=None</em>, <em>reps=1000</em>, <em>bootstrap='stationary'</em>, <em>studentize=True</em>, <em>nested=False</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.SPA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implementation of the Test of Superior Predictive Ability (SPA),
+which is also known as the Reality Check or Bootstrap Data Snooper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>benchmark</strong> (<em>array-like</em>) – T element array of benchmark model <em>losses</em></li>
+<li><strong>models</strong> (<em>array-like</em>) – T  by k element array of alternative model <em>losses</em></li>
+<li><strong>block_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
+is used.  In general, this should be provided and chosen to be
+appropriate for the data.</li>
+<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</li>
+<li><strong>bootstrap</strong> (<em>str</em><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
+‘stationary’ or ‘sb’: Stationary bootstrap (Default)
+‘circular’ or ‘cbb’: Circular block bootstrap
+‘moving block’ or ‘mbb’: Moving block bootstrap</li>
+<li><strong>studentize</strong> (<em>bool</em>) – Flag indicating to studentize loss differentials. Default is True</li>
+<li><strong>nested=False</strong> – Flag indicating to use a nested bootstrap to compute variances for
+studentization.  Default is False.  Note that this can be slow since
+the procedure requires k extra bootstraps.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="arch.bootstrap.SPA.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.SPA.compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the bootstrap pvalue.  Must be called before accessing the
+pvalue</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.bootstrap.SPA.seed">
+<code class="descname">seed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.SPA.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass seed to bootstrap implementation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.bootstrap.SPA.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.SPA.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the bootstrap to its initial state</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.bootstrap.SPA.better_models">
+<code class="descname">better_models</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.SPA.better_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce a list of column indices or names (if models is a DataFrame)
+that are rejected given a test size</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.bootstrap.SPA.pvalues">
+<code class="descname">pvalues</code><a class="headerlink" href="#arch.bootstrap.SPA.pvalues" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Series</em> – A set of three p-values corresponding to the lower, consistent and
+upper p-values.</p>
+</dd></dl>
+
+<p class="rubric">References</p>
+<p>White, H. (2000). “A reality check for data snooping.” Econometrica 68,
+no. 5, 1097-1126.</p>
+<p>Hansen, P. R. (2005). “A test for superior predictive ability.”
+Journal of Business &amp; Economic Statistics, 23(4)</p>
+<p class="rubric">Notes</p>
+<dl class="docutils">
+<dt>The three p-value correspond to different re-centering decisions.</dt>
+<dd><ul class="first last simple">
+<li>Upper : Never recenter to all models are relevant to distribution</li>
+<li>Consistent : Only recenter if closer than a log(log(t)) bound</li>
+<li>Lower : Never recenter a model if worse than benchmark</li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#arch.bootstrap.StepM" title="arch.bootstrap.StepM"><code class="xref py py-class docutils literal"><span class="pre">StepM</span></code></a></p>
+</div>
+<dl class="method">
+<dt>
+<code class="descname">compute</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Compute the bootstrap p-value</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.bootstrap.SPA.critical_values">
+<code class="descname">critical_values</code><span class="sig-paren">(</span><em>pvalue=0.05</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.SPA.critical_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns data-dependent critical values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pvalue</strong> (<em>float</em><em>, </em><em>optional</em>) – P-value in (0,1) to use when computing the critical values.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>crit_vals</strong> – Series containing critical values for the lower, consistent and
+upper methodologies</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Series</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">pvalues</code></dt>
+<dd><p>Returns Series containing three p-values corresponding to the
+lower, consistent and upper methodologies.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="stepwise-multiple-testing-stepm">
+<h2>Stepwise Multiple Testing (StepM)<a class="headerlink" href="#stepwise-multiple-testing-stepm" title="Permalink to this headline">¶</a></h2>
+<p>The Stepwise Multiple Testing procedure (Romano &amp; Wolf (2005)) is closely
+related to the SPA, except that it returns a set of models that are superior
+to the benchmark model, rather than the p-value from the null.  They are
+so closely related that <a class="reference internal" href="#arch.bootstrap.StepM" title="arch.bootstrap.StepM"><code class="xref py py-class docutils literal"><span class="pre">StepM</span></code></a> is essentially
+a wrapper around <a class="reference internal" href="#arch.bootstrap.SPA" title="arch.bootstrap.SPA"><code class="xref py py-class docutils literal"><span class="pre">SPA</span></code></a> with some small modifications
+to allow multiple calls.</p>
+<dl class="class">
+<dt id="arch.bootstrap.StepM">
+<em class="property">class </em><code class="descclassname">arch.bootstrap.</code><code class="descname">StepM</code><span class="sig-paren">(</span><em>benchmark</em>, <em>models</em>, <em>size=0.05</em>, <em>block_size=None</em>, <em>reps=1000</em>, <em>bootstrap='stationary'</em>, <em>studentize=True</em>, <em>nested=False</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StepM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implementation of Romano and Wolf’s StepM multiple comparison procedure</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>benchmark</strong> (<em>array-like</em>) – T element array of benchmark model <em>losses</em></li>
+<li><strong>models</strong> (<em>array-like</em>) – T  by k element array of alternative model <em>losses</em></li>
+<li><strong>size</strong> (<em>float</em><em>, </em><em>optional</em>) – Value in (0,1) to use as the test size when implementing the
+comparison. Default value is 0.05.</li>
+<li><strong>block_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
+is used.  In general, this should be provided and chosen to be
+appropriate for the data.</li>
+<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</li>
+<li><strong>bootstrap</strong> (<em>str</em><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
+‘stationary’ or ‘sb’: Stationary bootstrap (Default)
+‘circular’ or ‘cbb’: Circular block bootstrap
+‘moving block’ or ‘mbb’: Moving block bootstrap</li>
+<li><strong>studentize</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating to studentize loss differentials. Default is True</li>
+<li><strong>nested</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating to use a nested bootstrap to compute variances for
+studentization.  Default is False.  Note that this can be slow since
+the procedure requires k extra bootstraps.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="arch.bootstrap.StepM.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StepM.compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the set of superior models.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.bootstrap.StepM.superior_models">
+<code class="descname">superior_models</code><a class="headerlink" href="#arch.bootstrap.StepM.superior_models" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> – List of superior models.  Contains column indices if models is an
+array or contains column names if models is a DataFrame.</p>
+</dd></dl>
+
+<p class="rubric">References</p>
+<p>Romano, J. P., &amp; Wolf, M. (2005). “Stepwise multiple testing as formalized
+data snooping.” Econometrica, 73(4), 1237-1282.</p>
+<p class="rubric">Notes</p>
+<p>The size controls the Family Wise Error Rate (FWER) since this is a
+multiple comparison procedure.  Uses SPA and the consistent selection
+procedure.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#arch.bootstrap.SPA" title="arch.bootstrap.SPA"><code class="xref py py-class docutils literal"><span class="pre">SPA</span></code></a></p>
+</div>
+<dl class="method">
+<dt>
+<code class="descname">compute</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Computes the set of superior models</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">superior_models</code></dt>
+<dd><p>Returns a list of the indices or column names of the superior models.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="model-confidence-set-mcs">
+<h2>Model Confidence Set (MCS)<a class="headerlink" href="#model-confidence-set-mcs" title="Permalink to this headline">¶</a></h2>
+<p>The Model Confidence Set (Hansen, Lunde &amp; Nason (2011)) differs from other
+multiple comparison procedures in that there is no benchmark.  The MCS attempts
+to identify the set of models which produce the same expected loss, while
+controlling the probability that a model that is worse than the best model is
+in the model confidence set.  Like the other MCPs, it controls the
+Familywise Error Rate rather than the usual test size.</p>
+<dl class="class">
+<dt id="arch.bootstrap.MCS">
+<em class="property">class </em><code class="descclassname">arch.bootstrap.</code><code class="descname">MCS</code><span class="sig-paren">(</span><em>losses</em>, <em>size</em>, <em>reps=1000</em>, <em>block_size=None</em>, <em>method='R'</em>, <em>bootstrap='stationary'</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MCS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implementation of the Model Confidence Set (MCS)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>losses</strong> (<em>array-like</em>) – T by k array containing losses from a set of models</li>
+<li><strong>size</strong> (<em>float</em><em>, </em><em>optional</em>) – Value in (0,1) to use as the test size when implementing the
+mcs. Default value is 0.05.</li>
+<li><strong>block_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
+is used.  In general, this should be provided and chosen to be
+appropriate for the data.</li>
+<li><strong>method</strong> (<em>str</em><em>, </em><em>optional</em>) – MCS test and elimination implementation method: either ‘max’ or ‘R’.
+Default is ‘R’.</li>
+<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</li>
+<li><strong>bootstrap</strong> (<em>str</em><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
+‘stationary’ or ‘sb’: Stationary bootstrap (Default)
+‘circular’ or ‘cbb’: Circular block bootstrap
+‘moving block’ or ‘mbb’: Moving block bootstrap</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="arch.bootstrap.MCS.pvalues">
+<code class="descname">pvalues</code><a class="headerlink" href="#arch.bootstrap.MCS.pvalues" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>DataFrame</em> – DataFrame where the index is the model index (column or name)
+containing the smallest size where the model is in the MCS.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.bootstrap.MCS.included">
+<code class="descname">included</code><a class="headerlink" href="#arch.bootstrap.MCS.included" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> – List of column indices or names of the included models</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.bootstrap.MCS.excluded">
+<code class="descname">excluded</code><a class="headerlink" href="#arch.bootstrap.MCS.excluded" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> – List of column indices or names of the excluded models</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.bootstrap.MCS.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MCS.compute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">References</p>
+<p>Hansen, P. R., Lunde, A., &amp; Nason, J. M. (2011). The model confidence set.
+Econometrica, 79(2), 453-497.</p>
+<dl class="method">
+<dt>
+<code class="descname">compute</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Computes the model confidence set</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="multiple-comparison_examples.html" title="previous chapter (use the left arrow)">Multiple Comparisons</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="background.html" title="next chapter (use the right arrow)">References</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="background.html" title="References"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="multiple-comparison_examples.html" title="Multiple Comparisons"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.91.g469dda8 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="multiple-comparisons.html" >Multiple Comparison Procedures</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

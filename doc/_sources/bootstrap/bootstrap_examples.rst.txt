@@ -1,0 +1,438 @@
+
+Bootstrap Examples
+==================
+
+*This setup code is required to run in an IPython notebook*
+
+.. code:: ipython3
+
+    import warnings
+    warnings.simplefilter('ignore')
+    
+    %matplotlib inline
+    import seaborn
+    seaborn.mpl.rcParams['figure.figsize'] = (10.0, 6.0)
+    seaborn.mpl.rcParams['savefig.dpi'] = 90
+
+Sharpe Ratio
+------------
+
+The Sharpe Ratio is an important measure of return per unit of risk. The
+example shows how to estimate the variance of the Sharpe Ratio and how
+to construct confidence intervals for the Sharpe Ratio using a long
+series of U.S. equity data. First, the data is imported using pandas.
+
+.. code:: ipython3
+
+    import numpy as np
+    import pandas as pd
+    import pandas_datareader.data as web
+    try:
+        ff=web.DataReader('F-F_Research_Data_Factors', 'famafrench')
+    except:
+        ff=web.DataReader('F-F_Research_Data_Factors_TXT', 'famafrench')
+    ff = ff[0]
+
+
+The data set contains the Fama-French factors, including the excess
+market reutrn.
+
+.. code:: ipython3
+
+    excess_market = ff.iloc[:,0]
+    ff.describe()
+
+
+
+
+.. raw:: html
+
+    <div>
+    <table border="1" class="dataframe">
+      <thead>
+        <tr style="text-align: right;">
+          <th></th>
+          <th>Mkt-RF</th>
+          <th>SMB</th>
+          <th>HML</th>
+          <th>RF</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>count</th>
+          <td>78.000000</td>
+          <td>78.000000</td>
+          <td>78.000000</td>
+          <td>78.000000</td>
+        </tr>
+        <tr>
+          <th>mean</th>
+          <td>1.055000</td>
+          <td>0.030513</td>
+          <td>-0.132179</td>
+          <td>0.003846</td>
+        </tr>
+        <tr>
+          <th>std</th>
+          <td>3.893705</td>
+          <td>2.188646</td>
+          <td>1.900980</td>
+          <td>0.005636</td>
+        </tr>
+        <tr>
+          <th>min</th>
+          <td>-7.890000</td>
+          <td>-4.250000</td>
+          <td>-4.490000</td>
+          <td>0.000000</td>
+        </tr>
+        <tr>
+          <th>25%</th>
+          <td>-1.465000</td>
+          <td>-1.625000</td>
+          <td>-1.555000</td>
+          <td>0.000000</td>
+        </tr>
+        <tr>
+          <th>50%</th>
+          <td>1.235000</td>
+          <td>0.240000</td>
+          <td>-0.200000</td>
+          <td>0.000000</td>
+        </tr>
+        <tr>
+          <th>75%</th>
+          <td>3.467500</td>
+          <td>1.292500</td>
+          <td>1.150000</td>
+          <td>0.010000</td>
+        </tr>
+        <tr>
+          <th>max</th>
+          <td>11.350000</td>
+          <td>4.920000</td>
+          <td>4.600000</td>
+          <td>0.020000</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+
+
+The next step is to construct a function that computes the Sharpe Ratio.
+This function also return the annualized mean and annualized standard
+deviation which will allow the covariance matrix of these parameters to
+be estimated using the bootstrap.
+
+.. code:: ipython3
+
+    def sharpe_ratio(x):
+        mu, sigma = 12 * x.mean(), np.sqrt(12 * x.var())
+        values = np.array([mu, sigma, mu / sigma ]).squeeze()
+        index = ['mu', 'sigma', 'SR']
+        return pd.Series(values, index=index)
+
+
+The function can be called directly on the data to shwo full sample
+estimates.
+
+.. code:: ipython3
+
+    params = sharpe_ratio(excess_market)
+    params
+
+
+
+
+.. parsed-literal::
+
+    mu       12.660000
+    sigma    13.488190
+    SR        0.938599
+    dtype: float64
+
+
+
+*Warning*
+~~~~~~~~~
+
+*The bootstrap chosen must be appropriate for the data. Squared returns
+are serially correlated, and so a time-series bootstrap is required.*
+
+Bootstraps are initialized with any bootstrap specific parameters and
+the data to be used in the bootstrap. Here the ``12`` is the average
+window length in the Stationary Bootstrap, and the next input is the
+data to be bootstrapped.
+
+.. code:: ipython3
+
+    from arch.bootstrap import StationaryBootstrap
+    bs = StationaryBootstrap(12, excess_market)
+    results = bs.apply(sharpe_ratio, 2500)
+    SR = pd.DataFrame(results[:,-1:], columns=['SR'])
+    fig = SR.hist(bins=40)
+
+
+
+.. image:: output_14_0.png
+
+
+.. code:: ipython3
+
+    cov = bs.cov(sharpe_ratio, 1000)
+    cov = pd.DataFrame(cov, index=params.index, columns=params.index)
+    print(cov)
+    se = pd.Series(np.sqrt(np.diag(cov)), index=params.index)
+    se.name = 'Std Errors'
+    print('\n')
+    print(se)
+
+
+.. parsed-literal::
+
+                  mu     sigma        SR
+    mu     12.322736 -1.911279  1.086533
+    sigma  -1.911279  2.093820 -0.307836
+    SR      1.086533 -0.307836  0.108301
+    
+    
+    mu       3.510376
+    sigma    1.447004
+    SR       0.329091
+    Name: Std Errors, dtype: float64
+
+
+.. code:: ipython3
+
+    ci = bs.conf_int(sharpe_ratio, 1000, method='basic')
+    ci = pd.DataFrame(ci, index=['Lower','Upper'], columns=params.index)
+    print(ci)
+
+
+.. parsed-literal::
+
+                  mu      sigma        SR
+    Lower   5.416808  10.915636  0.151793
+    Upper  19.405462  16.704793  1.466774
+
+
+Alternative confidence intervals can be computed using a variety of
+methods. Setting ``reuse=True`` allows the previous bootstrap results to
+be used when constructing confidence intervals using alternative
+methods.
+
+.. code:: ipython3
+
+    ci = bs.conf_int(sharpe_ratio, 1000, method='percentile', reuse=True)
+    ci = pd.DataFrame(ci, index=['Lower','Upper'], columns=params.index)
+    print(ci)
+
+
+.. parsed-literal::
+
+                  mu      sigma        SR
+    Lower   5.914538  10.271588  0.410424
+    Upper  19.903192  16.060744  1.725405
+
+
+Probit (Statsmodels)
+--------------------
+
+The second example makes use of a Probit model from Statsmodels. The
+demo data is university admissions data which contains a binary variable
+for being admitted, GRE score, GPA score and quartile rank. This data is
+downloaded from the internet and imported using pandas.
+
+.. code:: ipython3
+
+    import numpy as np
+    import pandas as pd
+    try:
+        import urllib2
+        import StringIO
+    except ImportError:
+        import urllib.request as urllib2
+        from io import StringIO
+    
+    url = 'http://www.ats.ucla.edu/stat/stata/dae/binary.dta'
+    file_name = url.split('/')[-1]
+    
+    u = urllib2.urlopen(url)
+    f = open(file_name, 'wb')
+    block_sz = 8192
+    while True:
+        buffer = u.read(block_sz)
+        if not buffer:
+            break
+    
+        f.write(buffer)
+    
+    f.close()
+    binary = pd.read_stata(file_name)
+    binary = binary.dropna()
+    print(binary.describe())
+
+
+.. parsed-literal::
+
+                admit         gre         gpa       rank
+    count  400.000000  400.000000  400.000000  400.00000
+    mean     0.317500  587.700012    3.389900    2.48500
+    std      0.466087  115.516541    0.380567    0.94446
+    min      0.000000  220.000000    2.260000    1.00000
+    25%      0.000000  520.000000    3.130000    2.00000
+    50%      0.000000  580.000000    3.395000    2.00000
+    75%      1.000000  660.000000    3.670000    3.00000
+    max      1.000000  800.000000    4.000000    4.00000
+
+
+Fitting the model directly
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The first steps are to build the regressor and the dependent variable
+arrays. Then, using these arrays, the model can be estimated by calling
+``fit``
+
+.. code:: ipython3
+
+    endog = binary[['admit']]
+    exog = binary[['gre','gpa']]
+    const = pd.Series(np.ones(exog.shape[0]), index=endog.index)
+    const.name = 'Const'
+    exog = pd.DataFrame([const, exog.gre, exog.gpa]).T
+    # Estimate the model
+    import statsmodels.api as sm
+    mod = sm.Probit(endog, exog)
+    fit = mod.fit(disp=0)
+    params = fit.params
+    print(params)
+
+
+.. parsed-literal::
+
+    Const   -3.003536
+    gre      0.001643
+    gpa      0.454575
+    dtype: float64
+
+
+The wrapper function
+~~~~~~~~~~~~~~~~~~~~
+
+Most models in Statsmodels are implemented as classes, require an
+explicit call to ``fit`` and return a class containing parameter
+estimates and other quantities. These classes cannot be directly used
+with the bootstrap methods. However, a simple wrapper can be written
+that takes the data as the only inputs and returns parameters estimated
+using a Statsmodel model.
+
+.. code:: ipython3
+
+    def probit_wrap(endog, exog):
+        return sm.Probit(endog, exog).fit(disp=0).params
+
+A call to this function should return the same parameter values.
+
+.. code:: ipython3
+
+    probit_wrap(endog, exog)
+
+
+
+
+.. parsed-literal::
+
+    Const   -3.003536
+    gre      0.001643
+    gpa      0.454575
+    dtype: float64
+
+
+
+The wrapper can be directly used to estimate the parameter covariance or
+to construct confidence intervals.
+
+.. code:: ipython3
+
+    from arch.bootstrap import IIDBootstrap 
+    bs = IIDBootstrap(endog=endog, exog=exog)
+    cov = bs.cov(probit_wrap, 1000)
+    cov = pd.DataFrame(cov, index=exog.columns, columns=exog.columns)
+    print(cov)
+
+
+.. parsed-literal::
+
+              Const           gre       gpa
+    Const  0.431072 -8.828888e-05 -0.109249
+    gre   -0.000088  4.254537e-07 -0.000049
+    gpa   -0.109249 -4.859056e-05  0.040435
+
+
+.. code:: ipython3
+
+    se = pd.Series(np.sqrt(np.diag(cov)), index=exog.columns)
+    print(se)
+    print('T-stats')
+    print(params / se)
+
+
+.. parsed-literal::
+
+    Const    0.656560
+    gre      0.000652
+    gpa      0.201083
+    dtype: float64
+    T-stats
+    Const   -4.574653
+    gre      2.518193
+    gpa      2.260629
+    dtype: float64
+
+
+.. code:: ipython3
+
+    ci = bs.conf_int(probit_wrap, 1000, method='basic')
+    ci = pd.DataFrame(ci, index=['Lower','Upper'], columns=exog.columns)
+    print(ci)
+
+
+.. parsed-literal::
+
+              Const       gre       gpa
+    Lower -4.202384  0.000318  0.073343
+    Upper -1.710969  0.002948  0.826731
+
+
+Speeding things up
+~~~~~~~~~~~~~~~~~~
+
+Starting values can be provided to ``fit`` which can save time finding
+starting values. Since the bootstrap parameter estimates should be close
+to the original sample estimates, the full sample estimated parameters
+are reasonable starting values. These can be passed using the
+``extra_kwargs`` dictionary to a modified wrapper that will accept a
+keyword argument containing starting values.
+
+.. code:: ipython3
+
+    def probit_wrap_start_params(endog, exog, start_params=None):
+        return sm.Probit(endog, exog).fit(start_params=start_params, disp=0).params
+
+.. code:: ipython3
+
+    bs.reset()  # Reset to original state for comparability
+    cov = bs.cov(probit_wrap_start_params, 1000, extra_kwargs={'start_params': params.values})
+    cov = pd.DataFrame(cov, index=exog.columns, columns=exog.columns)
+    print(cov)
+
+
+.. parsed-literal::
+
+              Const           gre       gpa
+    Const  0.431072 -8.828888e-05 -0.109249
+    gre   -0.000088  4.254537e-07 -0.000049
+    gpa   -0.109249 -4.859056e-05  0.040435
+

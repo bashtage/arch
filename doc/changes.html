@@ -1,0 +1,231 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Change Logs &#8212; arch 0+untagged.91.g469dda8 documentation</title>
+    <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0+untagged.91.g469dda8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="The Unit Root Tests" href="unitroot/tests.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="unitroot/tests.html" title="The Unit Root Tests"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">arch 0+untagged.91.g469dda8 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+        <a href="
+    index.html" class="text-logo">arch 0.+</a>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="univariate/univariate.html">Univariate Volatility Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bootstrap/bootstrap.html">Bootstrapping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unitroot/unitroot.html">Unit Root Tests</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#changes-since-4-0">Changes since 4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#changes-since-3-0">Changes since 3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#changes-since-2-1">Changes since 2.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#changes-since-2-0">Changes since 2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#changes-since-1-0">Changes since 1.0</a></li>
+</ul>
+</li>
+</ul>
+
+    
+  </div>
+</div>
+        
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="index.html">Docs</a></li>
+              
+              <li>Change Logs</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="change-logs">
+<h1>Change Logs<a class="headerlink" href="#change-logs" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="changes-since-4-0">
+<h2>Changes since 4.0<a class="headerlink" href="#changes-since-4-0" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Added <code class="docutils literal"><span class="pre">FixedVariance</span></code> volatility process which allows pre-specified variances to be used with
+a mean model.  This has been added to allow so-called zig-zag estimation where a mean model is
+estimated with a fixed variance, and then a variance model is estimated on the residuals using
+a <code class="docutils literal"><span class="pre">ZeroMean</span></code> variance process.</li>
+<li>Fixed a bug that prevented <code class="docutils literal"><span class="pre">fix</span></code> from being used with a new model (<a class="reference external" href="https://github.com/bashtage/arch/issues/156">GH156</a>)</li>
+<li>Added <code class="docutils literal"><span class="pre">first_obs</span></code> and <code class="docutils literal"><span class="pre">last_obs</span></code> parameters to <code class="docutils literal"><span class="pre">fix</span></code> to mimic <code class="docutils literal"><span class="pre">fit</span></code></li>
+</ul>
+</div>
+<div class="section" id="changes-since-3-0">
+<h2>Changes since 3.0<a class="headerlink" href="#changes-since-3-0" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Added forecast code for mean forecasting</li>
+<li>Added volatility hedgehog plot</li>
+<li>Added <code class="docutils literal"><span class="pre">fix</span></code> to arch models which allows for user specified parameters
+instead of estimated parameters.</li>
+<li>Added Hansen’s Skew T distribution to distribution (Stanislav Khrapov)</li>
+<li>Updated IPython notebooks to latest IPython version</li>
+<li>Bug and typo fixes to IPython notebooks</li>
+<li>Changed MCS to give a pvalue of 1.0 to best model.  Previously was NaN</li>
+<li>Removed <code class="docutils literal"><span class="pre">hold_back</span></code> and <code class="docutils literal"><span class="pre">last_obs</span></code> from model initialization and to
+<code class="docutils literal"><span class="pre">fit</span></code> method to simplify estimating a model over alternative samples
+(e.g., rolling window estimation)</li>
+<li>Redefined <code class="docutils literal"><span class="pre">hold_back</span></code> to only accept integers so that is simply defined
+the number of observations held back. This number is now held out of the
+sample irrespective of the value of <code class="docutils literal"><span class="pre">first_obs</span></code>.</li>
+</ul>
+</div>
+<div class="section" id="changes-since-2-1">
+<h2>Changes since 2.1<a class="headerlink" href="#changes-since-2-1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Added multiple comparison procedures</li>
+<li>Typographical and other small changes</li>
+</ul>
+</div>
+<div class="section" id="changes-since-2-0">
+<h2>Changes since 2.0<a class="headerlink" href="#changes-since-2-0" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>Add unit root tests:</dt>
+<dd><ul class="first last">
+<li>Augmented Dickey-Fuller</li>
+<li>Dickey-Fuller GLS</li>
+<li>Phillips-Perron</li>
+<li>KPSS</li>
+<li>Variance Ratio</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>Removed deprecated locations for ARCH modeling functions</li>
+</ul>
+</div>
+<div class="section" id="changes-since-1-0">
+<h2>Changes since 1.0<a class="headerlink" href="#changes-since-1-0" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Refactored to move the univariate routines to <cite>arch.univariate</cite> and added
+deprecation warnings in the old locations</li>
+<li>Enable <cite>numba</cite> jit compilation in the python recursions</li>
+<li>Added a bootstrap framework, which will be used in future versions.
+The bootstrap framework is general purpose and can be used via high-level
+functions such as <cite>conf_int</cite> or <cite>cov</cite>, or as a low level iterator using
+<cite>bootstrap</cite></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="unitroot/tests.html" title="previous chapter (use the left arrow)">The Unit Root Tests</a>
+      </div>
+    
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="unitroot/tests.html" title="The Unit Root Tests"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">arch 0+untagged.91.g469dda8 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

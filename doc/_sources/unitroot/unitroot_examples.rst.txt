@@ -1,0 +1,544 @@
+
+Unit Root Testing
+=================
+
+*This setup code is required to run in an IPython notebook*
+
+.. code:: ipython3
+
+    import warnings
+    warnings.simplefilter('ignore')
+    
+    %matplotlib inline
+    import seaborn
+    seaborn.mpl.rcParams['figure.figsize'] = (10.0, 6.0)
+    seaborn.mpl.rcParams['savefig.dpi'] = 90
+
+Setup
+-----
+
+Most examples will make use of the Default premium, which is the
+difference between the yields of BAA and AAA rated corporate bonds. The
+data is downloaded from FRED using pandas.
+
+.. code:: ipython3
+
+    import datetime as dt
+    import pandas as pd
+    import statsmodels.api as sm
+    import pandas_datareader.data as web
+    aaa = web.DataReader("AAA", "fred", dt.datetime(1919,1,1), dt.datetime(2014,1,1))
+    baa = web.DataReader("BAA", "fred", dt.datetime(1919,1,1), dt.datetime(2014,1,1))
+    baa.columns = aaa.columns = ['default']
+    default = baa - aaa
+    fig = default.plot()
+
+
+
+.. image:: output_5_0.png
+
+
+The Default premium is clearly highly persistent. A simple check of the
+autocorrelations confirms this.
+
+.. code:: ipython3
+
+    acf = pd.DataFrame(sm.tsa.stattools.acf(default), columns=['ACF'])
+    fig = acf[1:].plot(kind='bar', title='Autocorrelations')
+
+
+
+.. image:: output_7_0.png
+
+
+Agumented Dickey-Fuller Testing
+-------------------------------
+
+The Augmented Dickey-Fuller test is the most common unit root test used.
+It is a regression of the first difference of the variable on its lagged
+level as well as additional lags of the first difference. The null is
+that the series contains a unit root, and the (one-sided) alternative is
+that the series is stationary.
+
+By default, the number of lags is selected by minimizing the AIC across
+a range of lag lengths (which can be set using ``max_lag`` when
+initializing the model). Additionally, the basic test includes a
+constant in the ADF regression.
+
+These results indicate that the Default premium is stationary.
+
+.. code:: ipython3
+
+    from arch.unitroot import ADF
+    adf = ADF(default)
+    print(adf.summary().as_text())
+
+
+.. parsed-literal::
+
+       Augmented Dickey-Fuller Results   
+    =====================================
+    Test Statistic                 -3.241
+    P-value                         0.018
+    Lags                               21
+    -------------------------------------
+    
+    Trend: Constant
+    Critical Values: -3.44 (1%), -2.86 (5%), -2.57 (10%)
+    Null Hypothesis: The process contains a unit root.
+    Alternative Hypothesis: The process is weakly stationary.
+
+
+The number of lags can be directly set using ``lags``. Changing the
+number of lags makes no difference to the conclusion.
+
+**Note**: The ADF assumes residuals are white noise, and that the number
+of lags is sufficient to pick up any dependence in the data.
+
+Setting the number of lags
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: ipython3
+
+    adf.lags = 5
+    print(adf.summary().as_text())
+
+
+.. parsed-literal::
+
+       Augmented Dickey-Fuller Results   
+    =====================================
+    Test Statistic                 -3.427
+    P-value                         0.010
+    Lags                                5
+    -------------------------------------
+    
+    Trend: Constant
+    Critical Values: -3.44 (1%), -2.86 (5%), -2.57 (10%)
+    Null Hypothesis: The process contains a unit root.
+    Alternative Hypothesis: The process is weakly stationary.
+
+
+Deterministic terms
+~~~~~~~~~~~~~~~~~~~
+
+The deterministic terms can be altered using ``trend``. The options are:
+
+-  ``'nc'`` : No deterministi terms
+-  ``'c'`` : Constant only
+-  ``'ct'`` : Constant and time trend
+-  ``'ctt'`` : Constant, time trend and time-trend squared
+
+Changing the type of constant also makes no difference for this data.
+
+.. code:: ipython3
+
+    adf.trend = 'ct'
+    print(adf.summary().as_text())
+
+
+.. parsed-literal::
+
+       Augmented Dickey-Fuller Results   
+    =====================================
+    Test Statistic                 -3.661
+    P-value                         0.025
+    Lags                                5
+    -------------------------------------
+    
+    Trend: Constant and Linear Time Trend
+    Critical Values: -3.97 (1%), -3.41 (5%), -3.13 (10%)
+    Null Hypothesis: The process contains a unit root.
+    Alternative Hypothesis: The process is weakly stationary.
+
+
+Regression output
+~~~~~~~~~~~~~~~~~
+
+The ADF uses a standard regression when computing results. These can be
+accesses using ``regression``.
+
+.. code:: ipython3
+
+    reg_res = adf.regression
+    print(reg_res.summary().as_text())
+
+
+.. parsed-literal::
+
+                                OLS Regression Results                            
+    ==============================================================================
+    Dep. Variable:                      y   R-squared:                       0.095
+    Model:                            OLS   Adj. R-squared:                  0.090
+    Method:                 Least Squares   F-statistic:                     17.00
+    Date:                Thu, 04 Aug 2016   Prob (F-statistic):           1.84e-21
+    Time:                        17:19:18   Log-Likelihood:                 575.20
+    No. Observations:                1135   AIC:                            -1134.
+    Df Residuals:                    1127   BIC:                            -1094.
+    Df Model:                           7                                         
+    Covariance Type:            nonrobust                                         
+    ==============================================================================
+                     coef    std err          t      P>|t|      [0.025      0.975]
+    ------------------------------------------------------------------------------
+    x1            -0.0246      0.007     -3.661      0.000      -0.038      -0.011
+    x2             0.2190      0.030      7.344      0.000       0.160       0.277
+    x3            -0.0549      0.030     -1.802      0.072      -0.115       0.005
+    x4            -0.1398      0.030     -4.649      0.000      -0.199      -0.081
+    x5            -0.0519      0.030     -1.716      0.086      -0.111       0.007
+    x6             0.0426      0.030      1.431      0.153      -0.016       0.101
+    const          0.0389      0.014      2.796      0.005       0.012       0.066
+    x7         -1.817e-05   1.41e-05     -1.285      0.199   -4.59e-05    9.58e-06
+    ==============================================================================
+    Omnibus:                      623.301   Durbin-Watson:                   2.001
+    Prob(Omnibus):                  0.000   Jarque-Bera (JB):           128496.439
+    Skew:                          -1.393   Prob(JB):                         0.00
+    Kurtosis:                      55.051   Cond. No.                     5.30e+03
+    ==============================================================================
+    
+    Warnings:
+    [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+    [2] The condition number is large, 5.3e+03. This might indicate that there are
+    strong multicollinearity or other numerical problems.
+
+
+.. code:: ipython3
+
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    resids = pd.DataFrame(reg_res.resid, index=default.index[6:], columns=['resids'])
+    fig = resids.plot()
+
+
+
+.. image:: output_20_0.png
+
+
+Since the number lags was directly set, it is good to check whether the
+residuals appear to be white noise.
+
+.. code:: ipython3
+
+    acf = pd.DataFrame(sm.tsa.stattools.acf(reg_res.resid), columns=['ACF'])
+    fig = acf[1:].plot(kind='bar', title='Residual Autocorrelations')
+
+
+
+.. image:: output_22_0.png
+
+
+Dickey-Fuller GLS Testing
+-------------------------
+
+The Dickey-Fuller GLS test is an improved version of the ADF which uses
+a GLS-detrending regression before running an ADF regression with no
+additional deterministic terms. This test is only available with a
+constant or constant and time trend (``trend='c'`` or ``trend='ct'``).
+
+The results of this test agree with the ADF results.
+
+.. code:: ipython3
+
+    from arch.unitroot import DFGLS
+    dfgls = DFGLS(default)
+    print(dfgls.summary().as_text())
+
+
+.. parsed-literal::
+
+          Dickey-Fuller GLS Results      
+    =====================================
+    Test Statistic                 -2.252
+    P-value                         0.024
+    Lags                               21
+    -------------------------------------
+    
+    Trend: Constant
+    Critical Values: -2.59 (1%), -1.96 (5%), -1.64 (10%)
+    Null Hypothesis: The process contains a unit root.
+    Alternative Hypothesis: The process is weakly stationary.
+
+
+The trend can be altered using ``trend``. The conclusion is the same.
+
+.. code:: ipython3
+
+    dfgls.trend = 'ct'
+    print(dfgls.summary().as_text())
+
+
+.. parsed-literal::
+
+          Dickey-Fuller GLS Results      
+    =====================================
+    Test Statistic                 -3.406
+    P-value                         0.010
+    Lags                               21
+    -------------------------------------
+    
+    Trend: Constant and Linear Time Trend
+    Critical Values: -3.43 (1%), -2.86 (5%), -2.58 (10%)
+    Null Hypothesis: The process contains a unit root.
+    Alternative Hypothesis: The process is weakly stationary.
+
+
+Phillips-Perron Testing
+-----------------------
+
+The Phippips-Perron test is similar to the ADF except that the
+regression run does not include lagged values of the first differences.
+Instead, the PP test fixed the t-statistic using a long run variance
+estimation, implemented using a Newey-West covariance estimator.
+
+By default, the number of lags is automatically set, although this can
+be overridden using ``lags``.
+
+.. code:: ipython3
+
+    from arch.unitroot import PhillipsPerron
+    pp = PhillipsPerron(default)
+    print(pp.summary().as_text())
+
+
+.. parsed-literal::
+
+         Phillips-Perron Test (Z-tau)    
+    =====================================
+    Test Statistic                 -3.761
+    P-value                         0.003
+    Lags                               23
+    -------------------------------------
+    
+    Trend: Constant
+    Critical Values: -3.44 (1%), -2.86 (5%), -2.57 (10%)
+    Null Hypothesis: The process contains a unit root.
+    Alternative Hypothesis: The process is weakly stationary.
+
+
+It is important that the number of lags is sufficient to pick up any
+dependence in the data.
+
+.. code:: ipython3
+
+    pp.lags = 12
+    print(pp.summary().as_text())
+
+
+.. parsed-literal::
+
+         Phillips-Perron Test (Z-tau)    
+    =====================================
+    Test Statistic                 -3.876
+    P-value                         0.002
+    Lags                               12
+    -------------------------------------
+    
+    Trend: Constant
+    Critical Values: -3.44 (1%), -2.86 (5%), -2.57 (10%)
+    Null Hypothesis: The process contains a unit root.
+    Alternative Hypothesis: The process is weakly stationary.
+
+
+The trend can be changed as well.
+
+.. code:: ipython3
+
+    pp.trend = 'ct'
+    print(pp.summary().as_text())
+
+
+.. parsed-literal::
+
+         Phillips-Perron Test (Z-tau)    
+    =====================================
+    Test Statistic                 -4.142
+    P-value                         0.005
+    Lags                               12
+    -------------------------------------
+    
+    Trend: Constant and Linear Time Trend
+    Critical Values: -3.97 (1%), -3.41 (5%), -3.13 (10%)
+    Null Hypothesis: The process contains a unit root.
+    Alternative Hypothesis: The process is weakly stationary.
+
+
+Finally, the PP testing framework includes two types of tests. One which
+uses an ADF-type regression of the first difference on the level, the
+other which regresses the level on the level. The default is the ``tau``
+test, which is similar to an ADF regression, although this can be
+changed using ``test_type='rho'``.
+
+.. code:: ipython3
+
+    pp.test_type = 'rho'
+    print(pp.summary().as_text())
+
+
+.. parsed-literal::
+
+         Phillips-Perron Test (Z-rho)    
+    =====================================
+    Test Statistic                -33.974
+    P-value                         0.000
+    Lags                               12
+    -------------------------------------
+    
+    Trend: Constant and Linear Time Trend
+    Critical Values: -29.15 (1%), -21.60 (5%), -18.16 (10%)
+    Null Hypothesis: The process contains a unit root.
+    Alternative Hypothesis: The process is weakly stationary.
+
+
+KPSS Testing
+------------
+
+The KPSS test differs from the three previous in that the null is a
+stationary process and the alternative is a unit root.
+
+Note that here the null is rejected which indicates that the series
+might be a unit root.
+
+.. code:: ipython3
+
+    from arch.unitroot import KPSS
+    kpss = KPSS(default)
+    print(kpss.summary().as_text())
+
+
+.. parsed-literal::
+
+        KPSS Stationarity Test Results   
+    =====================================
+    Test Statistic                  0.941
+    P-value                         0.004
+    Lags                               23
+    -------------------------------------
+    
+    Trend: Constant
+    Critical Values: 0.74 (1%), 0.46 (5%), 0.35 (10%)
+    Null Hypothesis: The process is weakly stationary.
+    Alternative Hypothesis: The process contains a unit root.
+
+
+Changing the trend does not alter the conclusion.
+
+.. code:: ipython3
+
+    kpss.trend = 'ct'
+    print(kpss.summary().as_text())
+
+
+.. parsed-literal::
+
+        KPSS Stationarity Test Results   
+    =====================================
+    Test Statistic                  0.361
+    P-value                         0.001
+    Lags                               23
+    -------------------------------------
+    
+    Trend: Constant and Linear Time Trend
+    Critical Values: 0.22 (1%), 0.15 (5%), 0.12 (10%)
+    Null Hypothesis: The process is weakly stationary.
+    Alternative Hypothesis: The process contains a unit root.
+
+
+Variance Ratio Testing
+----------------------
+
+Variance ratio tests are not usually used as unit root tests, and are
+instead used for testing whether a financial return series is a pure
+random walk versus having some predictability. This example uses the
+excess return on the market from Ken French's data.
+
+.. code:: ipython3
+
+    import numpy as np
+    import pandas as pd
+    import pandas.io.data as web
+    try:
+        ff=web.DataReader('F-F_Research_Data_Factors', 'famafrench')
+    except:
+        ff=web.DataReader('F-F_Research_Data_Factors_TXT', 'famafrench')
+    ff = ff[0]
+    excess_market = ff.iloc[:,0]  # Excess Market
+    print(ff.describe())
+
+
+.. parsed-literal::
+
+           1 b'Mkt-RF'     2 b'SMB'     3 b'HML'      4 b'RF'
+    count  1080.000000  1080.000000  1080.000000  1080.000000
+    mean      0.647361     0.211491     0.384333     0.279259
+    std       5.381110     3.216523     3.522064     0.254710
+    min     -29.130000   -16.700000   -13.280000    -0.060000
+    25%      -2.022500    -1.560000    -1.290000     0.030000
+    50%       1.000000     0.065000     0.215000     0.250000
+    75%       3.650000     1.772500     1.732500     0.430000
+    max      38.850000    36.700000    35.460000     1.350000
+
+
+The variance ratio compares the variance of a 1-period return to that of
+a multi-period return. The comparison length has to be set when
+initializing the test.
+
+This example compares 1-month to 12-month returns, and the null that the
+series is a pure random walk is rejected. Negative values indicate some
+positive autocorrelation in the returns (momentum).
+
+.. code:: ipython3
+
+    from arch.unitroot import VarianceRatio
+    vr = VarianceRatio(excess_market, 12)
+    print(vr.summary().as_text())
+
+
+.. parsed-literal::
+
+         Variance-Ratio Test Results     
+    =====================================
+    Test Statistic                 -9.987
+    P-value                         0.000
+    Lags                               12
+    -------------------------------------
+    
+    Computed with overlapping blocks (de-biased)
+
+
+By default the VR test uses all overlapping blocks to estimate the
+variance of the long period's return. This can be changed by setting
+``overlap=False``. This lowers the power but doesn't change the
+conclusion.
+
+.. code:: ipython3
+
+    warnings.simplefilter('always')  # Restore warnings
+    
+    vr.overlap = False
+    print(vr.summary().as_text())
+
+
+.. parsed-literal::
+
+         Variance-Ratio Test Results     
+    =====================================
+    Test Statistic                 -6.096
+    P-value                         0.000
+    Lags                               12
+    -------------------------------------
+    
+    Computed with non-overlapping blocks
+
+
+.. parsed-literal::
+
+    c:\git\arch\arch\unitroot\unitroot.py:1041: InvalidLengthWarning: 
+    The length of y is not an exact multiple of 12, and so the final
+    11 observations have been dropped.
+    
+      InvalidLengthWarning)
+
+
+**Note**: The warning is intentional. It appears here since when it is
+not possible to use all data since the data length isn't an integer
+multiple of the long period when using non-overlapping blocks. There is
+little reason to use ``overlap=False``.
