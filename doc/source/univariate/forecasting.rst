@@ -6,7 +6,7 @@ forward recursion, with some caveats.  In particular, models that are
 non-linear in the sense that they do not evolve using squares or residuals
 do not normally have analytically tractable multi-period forecasts available.
 
-All models suppoer three methods of forecasting:
+All models support three methods of forecasting:
 
   * Analytical: analytical forecasts are always available for the 1-step ahead
     forecast due to the structure of ARCH-type models.  Multi-step analytical
@@ -26,7 +26,7 @@ All models suppoer three methods of forecasting:
     the bootstrap forecasting method requids a minimal amount of in-sample
     data to use prior to producing the forecasts.
 
-This documnt will use a standard GARCH(1,1) with a constand mean to explain
+This document will use a standard GARCH(1,1) with a constand mean to explain
 the choices available for forecasting.  The model can be described as
 
 .. math::
