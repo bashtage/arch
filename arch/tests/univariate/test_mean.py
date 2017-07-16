@@ -356,7 +356,7 @@ class TestMeanModel(TestCase):
         res = ar.fit(disp=DISPLAY)
         assert isinstance(res.resid, pd.Series)
         assert isinstance(res.conditional_volatility, pd.Series)
-        # Smoke tests
+        # Smoke bootstrap
         summ = ar.fit(disp=DISPLAY).summary()
         assert 'Constant Variance' in str(summ)
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())

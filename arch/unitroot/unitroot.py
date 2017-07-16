@@ -203,7 +203,7 @@ def _estimate_df_regression(y, trend, lags):
 
 
 class UnitRootTest(object):
-    """Base class to be used for inheritance in unit root tests"""
+    """Base class to be used for inheritance in unit root bootstrap"""
 
     def __init__(self, y, lags, trend, valid_trends):
         self._y = ensure1d(y, 'y')
@@ -268,7 +268,7 @@ class UnitRootTest(object):
     @property
     def nobs(self):
         """The number of observations used when computing the test statistic.
-        Accounts for loss of data due to lags for regression-based tests."""
+        Accounts for loss of data due to lags for regression-based bootstrap."""
         return self._nobs
 
     @property
@@ -338,8 +338,8 @@ class UnitRootTest(object):
     @property
     def lags(self):
         """Sets or gets the number of lags used in the model.
-        When tests use DF-type regressions, lags is the number of lags in the
-        regression model.  When tests use long-run variance estimators, lags
+        When bootstrap use DF-type regressions, lags is the number of lags in the
+        regression model.  When bootstrap use long-run variance estimators, lags
         is the number of lags used in the long-run variance estimator.
         """
         self._compute_if_needed()
@@ -462,7 +462,7 @@ class ADF(UnitRootTest):
 
     P-Values (regression surface approximation)
     MacKinnon, J.G. 1994.  "Approximate asymptotic distribution functions for
-    unit-root and cointegration tests.  `Journal of Business and Economic
+    unit-root and cointegration bootstrap.  `Journal of Business and Economic
     Statistics` 12, 167-76.
 
     Critical values
@@ -596,7 +596,7 @@ class DFGLS(UnitRootTest):
 
     References
     ----------
-    Elliott, G. R., T. J. Rothenberg, and J. H. Stock. 1996. Efficient tests
+    Elliott, G. R., T. J. Rothenberg, and J. H. Stock. 1996. Efficient bootstrap
     for an autoregressive unit root. Econometrica 64: 813-836
     """
 
@@ -778,7 +778,7 @@ class PhillipsPerron(UnitRootTest):
 
     P-Values (regression surface approximation)
     MacKinnon, J.G. 1994.  "Approximate asymptotic distribution functions for
-    unit-root and cointegration tests.  `Journal of Business and Economic
+    unit-root and cointegration bootstrap.  `Journal of Business and Economic
     Statistics` 12, 167-76.
 
     Critical values
@@ -1164,8 +1164,8 @@ def mackinnonp(stat, regression="c", num_unit_roots=1, dist_type='ADF-t'):
         Fuller N = 1.
     dist_type: {'ADF-t', 'ADF-z', 'DFGLS'}
         The test type to use when computing p-values.  Options include
-        'ADF-t' - ADF t-stat based tests
-        'ADF-z' - ADF z tests
+        'ADF-t' - ADF t-stat based bootstrap
+        'ADF-z' - ADF z bootstrap
         'DFGLS' - GLS detrended Dickey Fuller
 
     Returns
@@ -1229,7 +1229,7 @@ def mackinnoncrit(num_unit_roots=1, regression="c", nobs=inf,
     Returns the critical values for cointegrating and the ADF test.
 
     In 2010 MacKinnon updated the values of his 1994 paper with critical values
-    for the augmented Dickey-Fuller tests.  These new values are to be
+    for the augmented Dickey-Fuller bootstrap.  These new values are to be
     preferred and are used here.
 
     Parameters
@@ -1258,7 +1258,7 @@ def mackinnoncrit(num_unit_roots=1, regression="c", nobs=inf,
     Notes
     -----
     Results for ADF t-stats from MacKinnon (1994,2010).  Results for DFGLS and
-    ADF z-tests use the same methodology as MacKinnon.
+    ADF z-bootstrap use the same methodology as MacKinnon.
 
     References
     ----------

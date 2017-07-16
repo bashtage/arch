@@ -58,3 +58,4 @@ which yields
     Critical Values: -3.97 (1%), -3.41 (5%), -3.13 (10%)
     Null Hypothesis: The process contains a unit root.
     Alternative Hypothesis: The process is weakly stationary.
+
