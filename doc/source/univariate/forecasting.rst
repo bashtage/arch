@@ -8,23 +8,23 @@ do not normally have analytically tractable multi-period forecasts available.
 
 All models support three methods of forecasting:
 
-  * Analytical: analytical forecasts are always available for the 1-step ahead
-    forecast due to the structure of ARCH-type models.  Multi-step analytical
-    forecasts are only available for model which are linear in the square of
-    the residual, such as GARCH or HARCH.
-  * Simulation: simulation-based forecasts are always available for any
-    horizon, although they are only useful for horizons larger than 1 since
-    the first out-of-sample forecast from an ARCH-type model is always fixed.
-    Simulation-based forecasts make use fo the structure of an ARCH-type model
-    to forward simulate using the assumed distribution of residuals, e.g., a
-    Normal or Student's t.
-  * Bootstrap: bootstrap-based forecasts are similar to simulation based
-    forecasts except that they makes use of the standardized residuals
-    from the actual data used in the estimation rather than assuming a
-    specific distribution. Like simulation-base forecasts, bootstrap-based
-    forecasts are only useful for horizons larger than 1. Additionally,
-    the bootstrap forecasting method requires a minimal amount of in-sample
-    data to use prior to producing the forecasts.
+* Analytical: analytical forecasts are always available for the 1-step ahead
+  forecast due to the structure of ARCH-type models.  Multi-step analytical
+  forecasts are only available for model which are linear in the square of
+  the residual, such as GARCH or HARCH.
+* Simulation: simulation-based forecasts are always available for any
+  horizon, although they are only useful for horizons larger than 1 since
+  the first out-of-sample forecast from an ARCH-type model is always fixed.
+  Simulation-based forecasts make use fo the structure of an ARCH-type model
+  to forward simulate using the assumed distribution of residuals, e.g., a
+  Normal or Student's t.
+* Bootstrap: bootstrap-based forecasts are similar to simulation based
+  forecasts except that they makes use of the standardized residuals
+  from the actual data used in the estimation rather than assuming a
+  specific distribution. Like simulation-base forecasts, bootstrap-based
+  forecasts are only useful for horizons larger than 1. Additionally,
+  the bootstrap forecasting method requires a minimal amount of in-sample
+  data to use prior to producing the forecasts.
 
 This document will use a standard GARCH(1,1) with a constant mean to explain
 the choices available for forecasting.  The model can be described as
@@ -150,25 +150,25 @@ Forecasting Options
 The :py:meth:`~arch.univariate.base.ARCHModelResult.forecast`  method
 is attached to a model fit result.`
 
-  * ``params`` - The model parameters used to forecast the mean and variance.
-    If not specified, the parameters estimated during the call to ``fit``
-    the produced the result are used.
-  * ``horizon`` - A positve integer value indicating the maximum horizon to
-    produce forecasts.
-  * ``start`` - A positive integer or, if the input to the mode is a DataFrame,
-    a date (string, datetime, datetime64 or Timestamp). Forecasts are produced
-    from ``start`` until the end of the sample.  If not provided, ``start`` is
-    set to the length of the input data minus 1 so that only 1 forecast is
-    produced.
-  * ``align`` - One of 'origin' (default) or 'target' that describes how the
-    forecasts aligned in the output. Origin aligns forecasts to the last
-    observation used in producing the forecast, while target aligns forecasts
-    to the observation index that is being forecast.
-  * ``method`` - One of 'analytic' (default), 'simulation' or 'bootstrap' that
-    describes the method used to produce the forecasts.  Not all methods are
-    available for all horizons.
-  * ``simulations`` - A non-negative integer indicating the number of
-    simulation to use when ``method`` is 'simulation' or 'bootstrap'
+* ``params`` - The model parameters used to forecast the mean and variance.
+  If not specified, the parameters estimated during the call to ``fit``
+  the produced the result are used.
+* ``horizon`` - A positve integer value indicating the maximum horizon to
+  produce forecasts.
+* ``start`` - A positive integer or, if the input to the mode is a DataFrame,
+  a date (string, datetime, datetime64 or Timestamp). Forecasts are produced
+  from ``start`` until the end of the sample.  If not provided, ``start`` is
+  set to the length of the input data minus 1 so that only 1 forecast is
+  produced.
+* ``align`` - One of 'origin' (default) or 'target' that describes how the
+  forecasts aligned in the output. Origin aligns forecasts to the last
+  observation used in producing the forecast, while target aligns forecasts
+  to the observation index that is being forecast.
+* ``method`` - One of 'analytic' (default), 'simulation' or 'bootstrap' that
+  describes the method used to produce the forecasts.  Not all methods are
+  available for all horizons.
+* ``simulations`` - A non-negative integer indicating the number of
+  simulation to use when ``method`` is 'simulation' or 'bootstrap'
 
 
 Understanding Forecast Output
@@ -180,11 +180,11 @@ forecasts.
 
 The three core attributes are
 
-  * ``mean`` - The forecast conditional mean.
-  * ``variance`` - The forecast conditional variance.
-  * ``residual_variance`` - The forecasts conditional variance of residuals.
-    This will differ from ``variance`` whenever the model has dynamics
-    (e.g. an AR model) for horizons larger than 1.
+* ``mean`` - The forecast conditional mean.
+* ``variance`` - The forecast conditional variance.
+* ``residual_variance`` - The forecasts conditional variance of residuals.
+  This will differ from ``variance`` whenever the model has dynamics
+  (e.g. an AR model) for horizons larger than 1.
 
 Each attribute contains a ``DataFrame`` with a common structure.
 
