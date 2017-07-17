@@ -14,13 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>ARCH Modeling &#8212; arch 0+untagged.90.gbc0587f documentation</title>
+    <title>ARCH Modeling &#8212; arch 0+untagged.89.geb3bafb documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0+untagged.90.gbc0587f',
+        VERSION:     '0+untagged.89.geb3bafb',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="introduction.html" title="Introduction to ARCH Models"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.gbc0587f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.89.geb3bafb documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -131,10 +131,28 @@
   <div class="section" id="arch-modeling">
 <h1>ARCH Modeling<a class="headerlink" href="#arch-modeling" title="Permalink to this headline">¶</a></h1>
 <p><em>This setup code is required to run in an IPython notebook</em></p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">import</span> <span class="nn">seaborn</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
+</pre></div>
+</div>
 <div class="section" id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
 <p>These examples will all make use of financial data from Yahoo! Finance
 imported using <code class="docutils literal"><span class="pre">pandas-datareader</span></code>.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="k">as</span> <span class="nn">web</span>
+<span class="n">st</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1990</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">en</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">get_data_yahoo</span><span class="p">(</span><span class="s1">&#39;^GSPC&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">st</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">en</span><span class="p">)</span>
+<span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Adj Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">figure</span> <span class="o">=</span> <span class="n">returns</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
 <img alt="../_images/output_5_01.png" src="../_images/output_5_01.png" />
 <div class="section" id="specifying-common-models">
 <h3>Specifying Common Models<a class="headerlink" href="#specifying-common-models" title="Permalink to this headline">¶</a></h3>
@@ -159,6 +177,12 @@ quantities, as well as a <code class="docutils literal"><span class="pre">summar
 <h2>GARCH (with a Constant Mean)<a class="headerlink" href="#garch-with-a-constant-mean" title="Permalink to this headline">¶</a></h2>
 <p>The default set of options produces a model with a constant mean,
 GARCH(1,1) conditional variance and normal errors.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
+<span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Iteration</span><span class="p">:</span>      <span class="mi">5</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">39</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">8791.774500116655</span>
 <span class="n">Iteration</span><span class="p">:</span>     <span class="mi">10</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">74</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">8788.102549023128</span>
 <span class="n">Optimization</span> <span class="n">terminated</span> <span class="n">successfully</span><span class="o">.</span>    <span class="p">(</span><span class="n">Exit</span> <span class="n">mode</span> <span class="mi">0</span><span class="p">)</span>
@@ -195,6 +219,9 @@ GARCH(1,1) conditional variance and normal errors.</p>
 </div>
 <p><code class="docutils literal"><span class="pre">plot()</span></code> can be used to quickly visualize the standardized residuals
 and conditional volatility.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">annualize</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 <img alt="../_images/output_12_0.png" src="../_images/output_12_0.png" />
 </div>
 <div class="section" id="gjr-garch">
@@ -209,6 +236,11 @@ given by</p>
 argument is true.</p>
 <p>The log likelihood improves substantially with the introduction of an
 asymmetric term, and the parameter estimate is highly significant.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>                   <span class="n">Constant</span> <span class="n">Mean</span> <span class="o">-</span> <span class="n">GJR</span><span class="o">-</span><span class="n">GARCH</span> <span class="n">Model</span> <span class="n">Results</span>
 <span class="o">==============================================================================</span>
 <span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>              <span class="n">Adj</span> <span class="n">Close</span>   <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                      <span class="o">-</span><span class="mf">0.000</span>
@@ -254,6 +286,11 @@ dynamics given by</p>
 <span class="math">\(\left(\sigma_t^\kappa\right)^{2/\kappa}\)</span>.</p>
 <p>The TARCH model also improves the fit, although the change in the log
 likelihood is less dramatic.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Iteration</span><span class="p">:</span>      <span class="mi">5</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">46</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">8681.97568934476</span>
 <span class="n">Iteration</span><span class="p">:</span>     <span class="mi">10</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">86</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">8656.294806089767</span>
 <span class="n">Iteration</span><span class="p">:</span>     <span class="mi">15</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>    <span class="mi">125</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">8655.188052112766</span>
@@ -299,6 +336,11 @@ the distribution from a Normal to a Students’s T.</p>
 <p>The standardized residuals appear to be heavy tailed with an estimated
 degree of freedom near 10. The log-likelihood also shows a large
 increase.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">&#39;StudentsT&#39;</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Iteration</span><span class="p">:</span>      <span class="mi">5</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">50</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">8592.43156639778</span>
 <span class="n">Iteration</span><span class="p">:</span>     <span class="mi">10</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">95</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">8564.682574204755</span>
 <span class="n">Iteration</span><span class="p">:</span>     <span class="mi">15</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>    <span class="mi">139</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">8564.232620019455</span>
@@ -351,6 +393,10 @@ result class except that information about inference (standard errors,
 t-stats, etc) is not available.</p>
 <p>In the example, I fix the parameters to a symmetric version of the
 previously estimated model.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">fixed_res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fix</span><span class="p">([</span><span class="mf">0.0235</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.9382</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fixed_res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>                      <span class="n">Constant</span> <span class="n">Mean</span> <span class="o">-</span> <span class="n">TARCH</span><span class="o">/</span><span class="n">ZARCH</span> <span class="n">Model</span> <span class="n">Results</span>
 <span class="o">=====================================================================================</span>
 <span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>                     <span class="n">Adj</span> <span class="n">Close</span>   <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                          <span class="o">--</span>
@@ -383,6 +429,12 @@ previously estimated model.</p>
 
 <span class="n">Results</span> <span class="n">generated</span> <span class="k">with</span> <span class="n">user</span><span class="o">-</span><span class="n">specified</span> <span class="n">parameters</span><span class="o">.</span>
 <span class="n">Since</span> <span class="n">the</span> <span class="n">model</span> <span class="n">was</span> <span class="ow">not</span> <span class="n">estimated</span><span class="p">,</span> <span class="n">there</span> <span class="n">are</span> <span class="n">no</span> <span class="n">std</span><span class="o">.</span> <span class="n">errors</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">,</span><span class="n">fixed_res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Estimated&#39;</span><span class="p">,</span> <span class="s1">&#39;Fixed&#39;</span><span class="p">]</span>
+<span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">_subplots</span><span class="o">.</span><span class="n">AxesSubplot</span> <span class="n">at</span> <span class="mh">0x1d0b4cfd978</span><span class="o">&gt;</span>
@@ -436,10 +488,20 @@ constant mean (or even zero) is adequate. For other series, such as
 inflation, a more complicated model may be required. These examples make
 use of Core CPI downloaded from the <a class="reference external" href="http://research.stlouisfed.org/fred2/">Federal Reserve Economic
 Data</a> site.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">core_cpi</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;CPILFESL&quot;</span><span class="p">,</span> <span class="s2">&quot;fred&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1957</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">ann_inflation</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">core_cpi</span><span class="o">.</span><span class="n">CPILFESL</span><span class="o">.</span><span class="n">pct_change</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">ann_inflation</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
 <img alt="../_images/output_29_01.png" src="../_images/output_29_01.png" />
 <p>All mean models are initialized with constant variance and normal
 errors. For <code class="docutils literal"><span class="pre">ARX</span></code> models, the <code class="docutils literal"><span class="pre">lags</span></code> argument specifies the lags to
 include in the model.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">ARX</span>
+<span class="n">ar</span> <span class="o">=</span> <span class="n">ARX</span><span class="p">(</span><span class="n">ann_inflation</span><span class="p">,</span> <span class="n">lags</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ar</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>                     <span class="n">AR</span> <span class="o">-</span> <span class="n">Constant</span> <span class="n">Variance</span> <span class="n">Model</span> <span class="n">Results</span>
 <span class="o">==============================================================================</span>
 <span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>               <span class="n">CPILFESL</span>   <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                       <span class="mf">0.991</span>
@@ -475,6 +537,12 @@ include in the model.</p>
 <code class="docutils literal"><span class="pre">volatility</span></code> property. This example adds an ARCH(5) process to model
 volatility. The arguments <code class="docutils literal"><span class="pre">iter</span></code> and <code class="docutils literal"><span class="pre">disp</span></code> are used in <code class="docutils literal"><span class="pre">fit()</span></code> to
 suppress estimation output.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">ARCH</span><span class="p">,</span> <span class="n">GARCH</span>
+<span class="n">ar</span><span class="o">.</span><span class="n">volatility</span> <span class="o">=</span> <span class="n">ARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>                           <span class="n">AR</span> <span class="o">-</span> <span class="n">ARCH</span> <span class="n">Model</span> <span class="n">Results</span>
 <span class="o">==============================================================================</span>
 <span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>               <span class="n">CPILFESL</span>   <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                       <span class="mf">0.991</span>
@@ -510,6 +578,9 @@ suppress estimation output.</p>
 </div>
 <p>Plotting the standardized residuals and the conditional volatility shows
 some large (in magnitude) errors, even when standardized.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
 <img alt="../_images/output_36_0.png" src="../_images/output_36_0.png" />
 </div>
 <div class="section" id="distributions">
@@ -519,6 +590,12 @@ standardized Student’s T using the <code class="docutils literal"><span class=
 model.</p>
 <p>The Student’s t distribution improves the model, and the degree of
 freedom is estimated to be near 8.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">StudentsT</span>
+<span class="n">ar</span><span class="o">.</span><span class="n">distribution</span> <span class="o">=</span> <span class="n">StudentsT</span><span class="p">()</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>                              <span class="n">AR</span> <span class="o">-</span> <span class="n">ARCH</span> <span class="n">Model</span> <span class="n">Results</span>
 <span class="o">====================================================================================</span>
 <span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>                     <span class="n">CPILFESL</span>   <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                       <span class="mf">0.991</span>
@@ -565,6 +642,22 @@ results are printed, where we can see that the normal has a much lower
 log-likelihood than either the Standard Student’s T or the Standardized
 Skew Student’s T – however, these two are fairly close. The closeness
 ff the T and the Skew T indicate that returns are not heavily skewed.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="n">crude</span><span class="o">=</span><span class="n">web</span><span class="o">.</span><span class="n">get_data_fred</span><span class="p">(</span><span class="s1">&#39;DCOILWTICO&#39;</span><span class="p">,</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">crude_ret</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">crude</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">res_normal</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">res_t</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">res_skewt</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">&#39;skewt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">lls</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">(((</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">),</span>
+                 <span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">res_t</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">),</span>
+                 <span class="p">(</span><span class="s1">&#39;skewt&#39;</span><span class="p">,</span> <span class="n">res_skewt</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">))))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">lls</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">(((</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">params</span><span class="p">),</span>
+                 <span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">res_t</span><span class="o">.</span><span class="n">params</span><span class="p">),</span>
+                 <span class="p">(</span><span class="s1">&#39;skewt&#39;</span><span class="p">,</span> <span class="n">res_skewt</span><span class="o">.</span><span class="n">params</span><span class="p">))))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">normal</span>   <span class="o">-</span><span class="mf">8227.359031</span>
 <span class="n">t</span>        <span class="o">-</span><span class="mf">8128.534732</span>
 <span class="n">skewt</span>    <span class="o">-</span><span class="mf">8126.303934</span>
@@ -583,6 +676,13 @@ the conditional volatility. These are plotted along with the
 (unstandardized, but scaled) residuals. The non-standardized residuals
 are more peaked in the center indicating that the distribution is
 somewhat more heavy tailed than that of the standardized residuals.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">std_resid</span> <span class="o">=</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">conditional_volatility</span>
+<span class="n">unit_var_resid</span> <span class="o">=</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">std_resid</span><span class="p">,</span> <span class="n">unit_var_resid</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Std Resids&#39;</span><span class="p">,</span> <span class="s1">&#39;Unit Variance Resids&#39;</span><span class="p">]</span>
+<span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;kde&#39;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">_subplots</span><span class="o">.</span><span class="n">AxesSubplot</span> <span class="n">at</span> <span class="mh">0x1d0b364cc18</span><span class="o">&gt;</span>
 </pre></div>
 </div>
@@ -624,7 +724,7 @@ somewhat more heavy tailed than that of the standardized residuals.</p>
         <li class="right" >
           <a href="introduction.html" title="Introduction to ARCH Models"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.gbc0587f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.89.geb3bafb documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

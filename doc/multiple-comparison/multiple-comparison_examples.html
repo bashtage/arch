@@ -14,13 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Multiple Comparisons &#8212; arch 0+untagged.90.gbc0587f documentation</title>
+    <title>Multiple Comparisons &#8212; arch 0+untagged.89.geb3bafb documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0+untagged.90.gbc0587f',
+        VERSION:     '0+untagged.89.geb3bafb',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="multiple-comparisons.html" title="Multiple Comparison Procedures"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.gbc0587f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.89.geb3bafb documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="multiple-comparisons.html" accesskey="U">Multiple Comparison Procedures</a> &#187;</li> 
       </ul>
     </div>
@@ -125,6 +125,21 @@
   <div class="section" id="multiple-comparisons">
 <h1>Multiple Comparisons<a class="headerlink" href="#multiple-comparisons" title="Permalink to this headline">¶</a></h1>
 <p><em>This setup code is required to run in an IPython notebook</em></p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">import</span> <span class="nn">seaborn</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
+
+<span class="c1"># Reproducability</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">23456</span><span class="p">)</span>
+<span class="c1"># Common seed used throughout</span>
+<span class="n">seed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>The multiple comparison procedures all allow for examining aspects of
 superior predictive ability. There are three available:</p>
 <ul class="simple">
@@ -162,10 +177,38 @@ a large set of correlated variables that all have equal expected MSE.
 The benchmark will have identical measurement error and so all models
 have the same expected loss, although will have different forecasts.</p>
 <p>The first block computed the series to be forecast.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">randn</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="n">t</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">factors</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.1</span><span class="p">])</span>
+<span class="n">e</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">factors</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>The next block computes the benchmark factors and the model factors by
 contaminating the original factors with noise. The models are estimated
 on the first 500 observations and predictions are made for the second
 500. Finally, losses are constructed from these predictions.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Measurement noise</span>
+<span class="n">bm_factors</span> <span class="o">=</span> <span class="n">factors</span> <span class="o">+</span> <span class="n">randn</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="c1"># Fit using first half, predict second half</span>
+<span class="n">bm_beta</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">[:</span><span class="mi">500</span><span class="p">],</span><span class="n">bm_factors</span><span class="p">[:</span><span class="mi">500</span><span class="p">])</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">params</span>
+<span class="c1"># MSE loss</span>
+<span class="n">bm_losses</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">500</span><span class="p">:]</span> <span class="o">-</span> <span class="n">bm_factors</span><span class="p">[</span><span class="mi">500</span><span class="p">:]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">bm_beta</span><span class="p">))</span><span class="o">**</span><span class="mf">2.0</span>
+<span class="c1"># Number of models</span>
+<span class="n">k</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">model_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">k</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">model_losses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">500</span><span class="p">,</span><span class="n">k</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+    <span class="c1"># Add measurement noise</span>
+    <span class="n">model_factors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">factors</span> <span class="o">+</span> <span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="c1"># Compute regression parameters</span>
+    <span class="n">model_beta</span>  <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">[:</span><span class="mi">500</span><span class="p">],</span><span class="n">model_factors</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="mi">500</span><span class="p">])</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">params</span>
+    <span class="c1"># Prediction and losses</span>
+    <span class="n">model_losses</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">500</span><span class="p">:]</span> <span class="o">-</span> <span class="n">model_factors</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">500</span><span class="p">:]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">model_beta</span><span class="p">))</span><span class="o">**</span><span class="mf">2.0</span>
+</pre></div>
+</div>
 <p>Finally the SPA can be used. The SPA requires the <strong>losses</strong> from the
 benchmark and the models as inputs. Other inputs allow the bootstrap
 sued to be changed or for various options regarding studentization of
@@ -177,6 +220,13 @@ p-value should be used. It should always be the case that</p>
 <div class="math">
 \[lower \leq consistent \leq upper .\]</div>
 <p>See the original papers for more details.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">SPA</span>
+<span class="n">spa</span> <span class="o">=</span> <span class="n">SPA</span><span class="p">(</span><span class="n">bm_losses</span><span class="p">,</span> <span class="n">model_losses</span><span class="p">)</span>
+<span class="n">spa</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">spa</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="n">spa</span><span class="o">.</span><span class="n">pvalues</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lower</span>         <span class="mf">0.520</span>
 <span class="n">consistent</span>    <span class="mf">0.723</span>
 <span class="n">upper</span>         <span class="mf">0.733</span>
@@ -188,6 +238,42 @@ only use 100 replications since this should complete in a reasonable
 amount of time. Also I set <code class="docutils literal"><span class="pre">reps=250</span></code> to limit the number of bootstrap
 replications in each application of the SPA (the default is a more
 reasonable 1000).</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Save the pvalues</span>
+<span class="n">pvalues</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">seeds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="c1"># Repeat 100 times</span>
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">j</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+    <span class="n">factors</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.1</span><span class="p">])</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">factors</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
+
+
+    <span class="c1"># Measurement noise</span>
+    <span class="n">bm_factors</span> <span class="o">=</span> <span class="n">factors</span> <span class="o">+</span> <span class="n">randn</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="c1"># Fit using first half, predict second half</span>
+    <span class="n">bm_beta</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">[:</span><span class="mi">500</span><span class="p">],</span><span class="n">bm_factors</span><span class="p">[:</span><span class="mi">500</span><span class="p">])</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">params</span>
+    <span class="c1"># MSE loss</span>
+    <span class="n">bm_losses</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">500</span><span class="p">:]</span> <span class="o">-</span> <span class="n">bm_factors</span><span class="p">[</span><span class="mi">500</span><span class="p">:]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">bm_beta</span><span class="p">))</span><span class="o">**</span><span class="mf">2.0</span>
+    <span class="c1"># Number of models</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mi">500</span>
+    <span class="n">model_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">k</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">model_losses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">500</span><span class="p">,</span><span class="n">k</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+        <span class="n">model_factors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">factors</span> <span class="o">+</span> <span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">model_beta</span>  <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">[:</span><span class="mi">500</span><span class="p">],</span><span class="n">model_factors</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="mi">500</span><span class="p">])</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">params</span>
+        <span class="c1"># MSE loss</span>
+        <span class="n">model_losses</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">500</span><span class="p">:]</span> <span class="o">-</span> <span class="n">model_factors</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">500</span><span class="p">:]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">model_beta</span><span class="p">))</span><span class="o">**</span><span class="mf">2.0</span>
+    <span class="c1"># Lower the bootstrap replications to 250</span>
+    <span class="n">spa</span> <span class="o">=</span> <span class="n">SPA</span><span class="p">(</span><span class="n">bm_losses</span><span class="p">,</span> <span class="n">model_losses</span><span class="p">,</span> <span class="n">reps</span> <span class="o">=</span> <span class="mi">250</span><span class="p">)</span>
+    <span class="n">spa</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seeds</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+    <span class="n">spa</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+    <span class="n">pvalues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spa</span><span class="o">.</span><span class="n">pvalues</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">0</span>
 <span class="mi">10</span>
 <span class="mi">20</span>
@@ -203,6 +289,18 @@ reasonable 1000).</p>
 <p>Finally the pvalues can be plotted. Ideally they should form a
 <span class="math">\(45^o\)</span> line indicating the size is correct. Both the consistent
 and upper perform well. The lower has too many small p-values.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">pvalues</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pvalues</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">pvalues</span><span class="p">:</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">pvalues</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">values</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="n">pvalues</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+<span class="c1"># Change the index so that the x-values are between 0 and 1</span>
+<span class="n">pvalues</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.005</span><span class="p">,</span><span class="o">.</span><span class="mi">995</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">pvalues</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
 <img alt="../_images/output_16_0.png" src="../_images/output_16_0.png" />
 </div>
 <div class="section" id="power">
@@ -212,6 +310,23 @@ simulation will be modified so that the amount of measurement error
 differs across models, and so that some models are actually better than
 the benchmark. The p-values should be small indicating rejection of the
 null.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Number of models</span>
+<span class="n">k</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">model_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">k</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">model_losses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">500</span><span class="p">,</span><span class="n">k</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="p">((</span><span class="mf">2500.0</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2500.0</span><span class="p">)</span>
+    <span class="n">model_factors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">factors</span> <span class="o">+</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">model_beta</span>  <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">[:</span><span class="mi">500</span><span class="p">],</span><span class="n">model_factors</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="mi">500</span><span class="p">])</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">params</span>
+    <span class="c1"># MSE loss</span>
+    <span class="n">model_losses</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">500</span><span class="p">:]</span> <span class="o">-</span> <span class="n">model_factors</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">500</span><span class="p">:]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">model_beta</span><span class="p">))</span><span class="o">**</span><span class="mf">2.0</span>
+
+<span class="n">spa</span> <span class="o">=</span> <span class="n">SPA</span><span class="p">(</span><span class="n">bm_losses</span><span class="p">,</span> <span class="n">model_losses</span><span class="p">)</span>
+<span class="n">spa</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">spa</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="n">spa</span><span class="o">.</span><span class="n">pvalues</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lower</span>         <span class="mf">0.0</span>
 <span class="n">consistent</span>    <span class="mf">0.0</span>
 <span class="n">upper</span>         <span class="mf">0.0</span>
@@ -221,6 +336,11 @@ null.</p>
 <p>Here the average losses are plotted. The higher index models are clearly
 better than the lower index models – and the benchmark model (which is
 identical to model.0).</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">model_losses</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">model_losses</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;model.&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">)])</span>
+<span class="n">avg_model_losses</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">model_losses</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Average loss&#39;</span><span class="p">])</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">avg_model_losses</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;o&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
 <img alt="../_images/output_21_0.png" src="../_images/output_21_0.png" />
 </div>
 </div>
@@ -230,8 +350,24 @@ identical to model.0).</p>
 The primary difference is that it identifies the set of models which are
 better than the benchmark, rather than just asking the basic question if
 any model is better.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">StepM</span>
+<span class="n">stepm</span> <span class="o">=</span> <span class="n">StepM</span><span class="p">(</span><span class="n">bm_losses</span><span class="p">,</span> <span class="n">model_losses</span><span class="p">)</span>
+<span class="n">stepm</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model indices:&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">model</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">stepm</span><span class="o">.</span><span class="n">superior_models</span><span class="p">])</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Model</span> <span class="n">indices</span><span class="p">:</span>
 <span class="p">[</span><span class="s1">&#39;106&#39;</span><span class="p">,</span> <span class="s1">&#39;152&#39;</span><span class="p">,</span> <span class="s1">&#39;156&#39;</span><span class="p">,</span> <span class="s1">&#39;157&#39;</span><span class="p">,</span> <span class="s1">&#39;158&#39;</span><span class="p">,</span> <span class="s1">&#39;169&#39;</span><span class="p">,</span> <span class="s1">&#39;186&#39;</span><span class="p">,</span> <span class="s1">&#39;187&#39;</span><span class="p">,</span> <span class="s1">&#39;197&#39;</span><span class="p">,</span> <span class="s1">&#39;214&#39;</span><span class="p">,</span> <span class="s1">&#39;215&#39;</span><span class="p">,</span> <span class="s1">&#39;219&#39;</span><span class="p">,</span> <span class="s1">&#39;228&#39;</span><span class="p">,</span> <span class="s1">&#39;235&#39;</span><span class="p">,</span> <span class="s1">&#39;248&#39;</span><span class="p">,</span> <span class="s1">&#39;252&#39;</span><span class="p">,</span> <span class="s1">&#39;254&#39;</span><span class="p">,</span> <span class="s1">&#39;257&#39;</span><span class="p">,</span> <span class="s1">&#39;261&#39;</span><span class="p">,</span> <span class="s1">&#39;262&#39;</span><span class="p">,</span> <span class="s1">&#39;263&#39;</span><span class="p">,</span> <span class="s1">&#39;266&#39;</span><span class="p">,</span> <span class="s1">&#39;272&#39;</span><span class="p">,</span> <span class="s1">&#39;275&#39;</span><span class="p">,</span> <span class="s1">&#39;279&#39;</span><span class="p">,</span> <span class="s1">&#39;280&#39;</span><span class="p">,</span> <span class="s1">&#39;281&#39;</span><span class="p">,</span> <span class="s1">&#39;282&#39;</span><span class="p">,</span> <span class="s1">&#39;286&#39;</span><span class="p">,</span> <span class="s1">&#39;294&#39;</span><span class="p">,</span> <span class="s1">&#39;298&#39;</span><span class="p">,</span> <span class="s1">&#39;299&#39;</span><span class="p">,</span> <span class="s1">&#39;300&#39;</span><span class="p">,</span> <span class="s1">&#39;305&#39;</span><span class="p">,</span> <span class="s1">&#39;306&#39;</span><span class="p">,</span> <span class="s1">&#39;310&#39;</span><span class="p">,</span> <span class="s1">&#39;316&#39;</span><span class="p">,</span> <span class="s1">&#39;318&#39;</span><span class="p">,</span> <span class="s1">&#39;325&#39;</span><span class="p">,</span> <span class="s1">&#39;326&#39;</span><span class="p">,</span> <span class="s1">&#39;329&#39;</span><span class="p">,</span> <span class="s1">&#39;330&#39;</span><span class="p">,</span> <span class="s1">&#39;332&#39;</span><span class="p">,</span> <span class="s1">&#39;335&#39;</span><span class="p">,</span> <span class="s1">&#39;336&#39;</span><span class="p">,</span> <span class="s1">&#39;340&#39;</span><span class="p">,</span> <span class="s1">&#39;341&#39;</span><span class="p">,</span> <span class="s1">&#39;342&#39;</span><span class="p">,</span> <span class="s1">&#39;344&#39;</span><span class="p">,</span> <span class="s1">&#39;348&#39;</span><span class="p">,</span> <span class="s1">&#39;349&#39;</span><span class="p">,</span> <span class="s1">&#39;351&#39;</span><span class="p">,</span> <span class="s1">&#39;353&#39;</span><span class="p">,</span> <span class="s1">&#39;354&#39;</span><span class="p">,</span> <span class="s1">&#39;356&#39;</span><span class="p">,</span> <span class="s1">&#39;357&#39;</span><span class="p">,</span> <span class="s1">&#39;359&#39;</span><span class="p">,</span> <span class="s1">&#39;360&#39;</span><span class="p">,</span> <span class="s1">&#39;362&#39;</span><span class="p">,</span> <span class="s1">&#39;363&#39;</span><span class="p">,</span> <span class="s1">&#39;364&#39;</span><span class="p">,</span> <span class="s1">&#39;365&#39;</span><span class="p">,</span> <span class="s1">&#39;368&#39;</span><span class="p">,</span> <span class="s1">&#39;370&#39;</span><span class="p">,</span> <span class="s1">&#39;371&#39;</span><span class="p">,</span> <span class="s1">&#39;372&#39;</span><span class="p">,</span> <span class="s1">&#39;373&#39;</span><span class="p">,</span> <span class="s1">&#39;374&#39;</span><span class="p">,</span> <span class="s1">&#39;377&#39;</span><span class="p">,</span> <span class="s1">&#39;378&#39;</span><span class="p">,</span> <span class="s1">&#39;379&#39;</span><span class="p">,</span> <span class="s1">&#39;380&#39;</span><span class="p">,</span> <span class="s1">&#39;382&#39;</span><span class="p">,</span> <span class="s1">&#39;383&#39;</span><span class="p">,</span> <span class="s1">&#39;385&#39;</span><span class="p">,</span> <span class="s1">&#39;386&#39;</span><span class="p">,</span> <span class="s1">&#39;387&#39;</span><span class="p">,</span> <span class="s1">&#39;388&#39;</span><span class="p">,</span> <span class="s1">&#39;389&#39;</span><span class="p">,</span> <span class="s1">&#39;390&#39;</span><span class="p">,</span> <span class="s1">&#39;391&#39;</span><span class="p">,</span> <span class="s1">&#39;392&#39;</span><span class="p">,</span> <span class="s1">&#39;393&#39;</span><span class="p">,</span> <span class="s1">&#39;394&#39;</span><span class="p">,</span> <span class="s1">&#39;395&#39;</span><span class="p">,</span> <span class="s1">&#39;398&#39;</span><span class="p">,</span> <span class="s1">&#39;399&#39;</span><span class="p">,</span> <span class="s1">&#39;400&#39;</span><span class="p">,</span> <span class="s1">&#39;401&#39;</span><span class="p">,</span> <span class="s1">&#39;402&#39;</span><span class="p">,</span> <span class="s1">&#39;403&#39;</span><span class="p">,</span> <span class="s1">&#39;404&#39;</span><span class="p">,</span> <span class="s1">&#39;405&#39;</span><span class="p">,</span> <span class="s1">&#39;406&#39;</span><span class="p">,</span> <span class="s1">&#39;407&#39;</span><span class="p">,</span> <span class="s1">&#39;408&#39;</span><span class="p">,</span> <span class="s1">&#39;410&#39;</span><span class="p">,</span> <span class="s1">&#39;411&#39;</span><span class="p">,</span> <span class="s1">&#39;412&#39;</span><span class="p">,</span> <span class="s1">&#39;413&#39;</span><span class="p">,</span> <span class="s1">&#39;414&#39;</span><span class="p">,</span> <span class="s1">&#39;417&#39;</span><span class="p">,</span> <span class="s1">&#39;419&#39;</span><span class="p">,</span> <span class="s1">&#39;420&#39;</span><span class="p">,</span> <span class="s1">&#39;421&#39;</span><span class="p">,</span> <span class="s1">&#39;422&#39;</span><span class="p">,</span> <span class="s1">&#39;423&#39;</span><span class="p">,</span> <span class="s1">&#39;424&#39;</span><span class="p">,</span> <span class="s1">&#39;425&#39;</span><span class="p">,</span> <span class="s1">&#39;426&#39;</span><span class="p">,</span> <span class="s1">&#39;427&#39;</span><span class="p">,</span> <span class="s1">&#39;428&#39;</span><span class="p">,</span> <span class="s1">&#39;429&#39;</span><span class="p">,</span> <span class="s1">&#39;431&#39;</span><span class="p">,</span> <span class="s1">&#39;432&#39;</span><span class="p">,</span> <span class="s1">&#39;433&#39;</span><span class="p">,</span> <span class="s1">&#39;434&#39;</span><span class="p">,</span> <span class="s1">&#39;435&#39;</span><span class="p">,</span> <span class="s1">&#39;436&#39;</span><span class="p">,</span> <span class="s1">&#39;437&#39;</span><span class="p">,</span> <span class="s1">&#39;438&#39;</span><span class="p">,</span> <span class="s1">&#39;439&#39;</span><span class="p">,</span> <span class="s1">&#39;440&#39;</span><span class="p">,</span> <span class="s1">&#39;441&#39;</span><span class="p">,</span> <span class="s1">&#39;442&#39;</span><span class="p">,</span> <span class="s1">&#39;443&#39;</span><span class="p">,</span> <span class="s1">&#39;444&#39;</span><span class="p">,</span> <span class="s1">&#39;445&#39;</span><span class="p">,</span> <span class="s1">&#39;447&#39;</span><span class="p">,</span> <span class="s1">&#39;448&#39;</span><span class="p">,</span> <span class="s1">&#39;449&#39;</span><span class="p">,</span> <span class="s1">&#39;450&#39;</span><span class="p">,</span> <span class="s1">&#39;451&#39;</span><span class="p">,</span> <span class="s1">&#39;453&#39;</span><span class="p">,</span> <span class="s1">&#39;454&#39;</span><span class="p">,</span> <span class="s1">&#39;455&#39;</span><span class="p">,</span> <span class="s1">&#39;456&#39;</span><span class="p">,</span> <span class="s1">&#39;457&#39;</span><span class="p">,</span> <span class="s1">&#39;458&#39;</span><span class="p">,</span> <span class="s1">&#39;459&#39;</span><span class="p">,</span> <span class="s1">&#39;460&#39;</span><span class="p">,</span> <span class="s1">&#39;461&#39;</span><span class="p">,</span> <span class="s1">&#39;462&#39;</span><span class="p">,</span> <span class="s1">&#39;463&#39;</span><span class="p">,</span> <span class="s1">&#39;464&#39;</span><span class="p">,</span> <span class="s1">&#39;465&#39;</span><span class="p">,</span> <span class="s1">&#39;466&#39;</span><span class="p">,</span> <span class="s1">&#39;467&#39;</span><span class="p">,</span> <span class="s1">&#39;468&#39;</span><span class="p">,</span> <span class="s1">&#39;469&#39;</span><span class="p">,</span> <span class="s1">&#39;470&#39;</span><span class="p">,</span> <span class="s1">&#39;471&#39;</span><span class="p">,</span> <span class="s1">&#39;473&#39;</span><span class="p">,</span> <span class="s1">&#39;474&#39;</span><span class="p">,</span> <span class="s1">&#39;475&#39;</span><span class="p">,</span> <span class="s1">&#39;476&#39;</span><span class="p">,</span> <span class="s1">&#39;477&#39;</span><span class="p">,</span> <span class="s1">&#39;478&#39;</span><span class="p">,</span> <span class="s1">&#39;479&#39;</span><span class="p">,</span> <span class="s1">&#39;480&#39;</span><span class="p">,</span> <span class="s1">&#39;481&#39;</span><span class="p">,</span> <span class="s1">&#39;482&#39;</span><span class="p">,</span> <span class="s1">&#39;483&#39;</span><span class="p">,</span> <span class="s1">&#39;484&#39;</span><span class="p">,</span> <span class="s1">&#39;485&#39;</span><span class="p">,</span> <span class="s1">&#39;486&#39;</span><span class="p">,</span> <span class="s1">&#39;487&#39;</span><span class="p">,</span> <span class="s1">&#39;488&#39;</span><span class="p">,</span> <span class="s1">&#39;489&#39;</span><span class="p">,</span> <span class="s1">&#39;490&#39;</span><span class="p">,</span> <span class="s1">&#39;491&#39;</span><span class="p">,</span> <span class="s1">&#39;492&#39;</span><span class="p">,</span> <span class="s1">&#39;493&#39;</span><span class="p">,</span> <span class="s1">&#39;494&#39;</span><span class="p">,</span> <span class="s1">&#39;495&#39;</span><span class="p">,</span> <span class="s1">&#39;496&#39;</span><span class="p">,</span> <span class="s1">&#39;497&#39;</span><span class="p">,</span> <span class="s1">&#39;498&#39;</span><span class="p">,</span> <span class="s1">&#39;499&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">better_models</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">model_losses</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="n">model_losses</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)],</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">better_models</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Same or worse&#39;</span><span class="p">,</span><span class="s1">&#39;Better&#39;</span><span class="p">]</span>
+<span class="n">better</span> <span class="o">=</span> <span class="n">better_models</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">stepm</span><span class="o">.</span><span class="n">superior_models</span><span class="p">)</span>
+<span class="n">worse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">better</span><span class="p">)</span>
+<span class="n">better_models</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">better</span><span class="p">,</span><span class="s1">&#39;Same or worse&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">better_models</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">worse</span><span class="p">,</span><span class="s1">&#39;Better&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">better_models</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="s1">&#39;s&#39;</span><span class="p">],</span> <span class="n">rot</span><span class="o">=</span><span class="mi">270</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="../_images/output_25_0.png" src="../_images/output_25_0.png" />
@@ -244,6 +380,21 @@ while controlling the familywise error rate. The primary output is a set
 of p-values, where models with a pvalue above the size are in the MCS.
 Small p-values indicate that the model is easily rejected from the set
 that includes the best.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">MCS</span>
+<span class="c1"># Limit the size of the set</span>
+<span class="n">losses</span> <span class="o">=</span> <span class="n">model_losses</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,::</span><span class="mi">20</span><span class="p">]</span>
+<span class="n">mcs</span> <span class="o">=</span> <span class="n">MCS</span><span class="p">(</span><span class="n">losses</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">0.10</span><span class="p">)</span>
+<span class="n">mcs</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MCS P-values&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mcs</span><span class="o">.</span><span class="n">pvalues</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Included&#39;</span><span class="p">)</span>
+<span class="n">included</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">included</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">model</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">included</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Excluded&#39;</span><span class="p">)</span>
+<span class="n">excluded</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">excluded</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">model</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">excluded</span><span class="p">])</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">MCS</span> <span class="n">P</span><span class="o">-</span><span class="n">values</span>
             <span class="n">Pvalue</span>
 <span class="n">Model</span> <span class="n">name</span>
@@ -276,6 +427,12 @@ that includes the best.</p>
 <span class="p">[</span><span class="s1">&#39;160&#39;</span><span class="p">,</span> <span class="s1">&#39;180&#39;</span><span class="p">,</span> <span class="s1">&#39;200&#39;</span><span class="p">,</span> <span class="s1">&#39;240&#39;</span><span class="p">,</span> <span class="s1">&#39;260&#39;</span><span class="p">,</span> <span class="s1">&#39;280&#39;</span><span class="p">,</span> <span class="s1">&#39;300&#39;</span><span class="p">,</span> <span class="s1">&#39;320&#39;</span><span class="p">,</span> <span class="s1">&#39;340&#39;</span><span class="p">,</span> <span class="s1">&#39;360&#39;</span><span class="p">,</span> <span class="s1">&#39;380&#39;</span><span class="p">,</span> <span class="s1">&#39;400&#39;</span><span class="p">,</span> <span class="s1">&#39;420&#39;</span><span class="p">,</span> <span class="s1">&#39;440&#39;</span><span class="p">,</span> <span class="s1">&#39;460&#39;</span><span class="p">,</span> <span class="s1">&#39;480&#39;</span><span class="p">]</span>
 <span class="n">Excluded</span>
 <span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;100&#39;</span><span class="p">,</span> <span class="s1">&#39;120&#39;</span><span class="p">,</span> <span class="s1">&#39;140&#39;</span><span class="p">,</span> <span class="s1">&#39;20&#39;</span><span class="p">,</span> <span class="s1">&#39;220&#39;</span><span class="p">,</span> <span class="s1">&#39;40&#39;</span><span class="p">,</span> <span class="s1">&#39;60&#39;</span><span class="p">,</span> <span class="s1">&#39;80&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">status</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">losses</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="n">losses</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Excluded&#39;</span><span class="p">,</span><span class="s1">&#39;Included&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+<span class="n">status</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">status</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">included</span><span class="p">),</span> <span class="s1">&#39;Excluded&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">status</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">status</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">excluded</span><span class="p">),</span> <span class="s1">&#39;Included&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="s1">&#39;s&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <img alt="../_images/output_29_0.png" src="../_images/output_29_0.png" />
@@ -315,7 +472,7 @@ that includes the best.</p>
         <li class="right" >
           <a href="multiple-comparisons.html" title="Multiple Comparison Procedures"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.gbc0587f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.89.geb3bafb documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="multiple-comparisons.html" >Multiple Comparison Procedures</a> &#187;</li> 
       </ul>
     </div>

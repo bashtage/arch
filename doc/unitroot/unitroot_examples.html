@@ -14,13 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Unit Root Testing &#8212; arch 0+untagged.90.gbc0587f documentation</title>
+    <title>Unit Root Testing &#8212; arch 0+untagged.89.geb3bafb documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0+untagged.90.gbc0587f',
+        VERSION:     '0+untagged.89.geb3bafb',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="introduction.html" title="Introduction"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.gbc0587f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.89.geb3bafb documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="unitroot.html" accesskey="U">Unit Root Testing</a> &#187;</li> 
       </ul>
     </div>
@@ -125,14 +125,38 @@
   <div class="section" id="unit-root-testing">
 <h1>Unit Root Testing<a class="headerlink" href="#unit-root-testing" title="Permalink to this headline">¶</a></h1>
 <p><em>This setup code is required to run in an IPython notebook</em></p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">import</span> <span class="nn">seaborn</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
+</pre></div>
+</div>
 <div class="section" id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
 <p>Most examples will make use of the Default premium, which is the
 difference between the yields of BAA and AAA rated corporate bonds. The
 data is downloaded from FRED using pandas.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="k">as</span> <span class="nn">web</span>
+<span class="n">aaa</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;AAA&quot;</span><span class="p">,</span> <span class="s2">&quot;fred&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1919</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">baa</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;BAA&quot;</span><span class="p">,</span> <span class="s2">&quot;fred&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1919</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">baa</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">aaa</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]</span>
+<span class="n">default</span> <span class="o">=</span> <span class="n">baa</span> <span class="o">-</span> <span class="n">aaa</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">default</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
 <img alt="../_images/output_5_0.png" src="../_images/output_5_0.png" />
 <p>The Default premium is clearly highly persistent. A simple check of the
 autocorrelations confirms this.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">acf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">stattools</span><span class="o">.</span><span class="n">acf</span><span class="p">(</span><span class="n">default</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ACF&#39;</span><span class="p">])</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">acf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Autocorrelations&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 <img alt="../_images/output_7_0.png" src="../_images/output_7_0.png" />
 </div>
 <div class="section" id="agumented-dickey-fuller-testing">
@@ -147,6 +171,11 @@ a range of lag lengths (which can be set using <code class="docutils literal"><s
 initializing the model). Additionally, the basic test includes a
 constant in the ADF regression.</p>
 <p>These results indicate that the Default premium is stationary.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="k">import</span> <span class="n">ADF</span>
+<span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>   <span class="n">Augmented</span> <span class="n">Dickey</span><span class="o">-</span><span class="n">Fuller</span> <span class="n">Results</span>
 <span class="o">=====================================</span>
 <span class="n">Test</span> <span class="n">Statistic</span>                 <span class="o">-</span><span class="mf">3.241</span>
@@ -166,6 +195,10 @@ number of lags makes no difference to the conclusion.</p>
 of lags is sufficient to pick up any dependence in the data.</p>
 <div class="section" id="setting-the-number-of-lags">
 <h3>Setting the number of lags<a class="headerlink" href="#setting-the-number-of-lags" title="Permalink to this headline">¶</a></h3>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">adf</span><span class="o">.</span><span class="n">lags</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>   <span class="n">Augmented</span> <span class="n">Dickey</span><span class="o">-</span><span class="n">Fuller</span> <span class="n">Results</span>
 <span class="o">=====================================</span>
 <span class="n">Test</span> <span class="n">Statistic</span>                 <span class="o">-</span><span class="mf">3.427</span>
@@ -190,6 +223,10 @@ of lags is sufficient to pick up any dependence in the data.</p>
 <li><code class="docutils literal"><span class="pre">'ctt'</span></code> : Constant, time trend and time-trend squared</li>
 </ul>
 <p>Changing the type of constant also makes no difference for this data.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">adf</span><span class="o">.</span><span class="n">trend</span> <span class="o">=</span> <span class="s1">&#39;ct&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>   <span class="n">Augmented</span> <span class="n">Dickey</span><span class="o">-</span><span class="n">Fuller</span> <span class="n">Results</span>
 <span class="o">=====================================</span>
 <span class="n">Test</span> <span class="n">Statistic</span>                 <span class="o">-</span><span class="mf">3.661</span>
@@ -208,6 +245,10 @@ of lags is sufficient to pick up any dependence in the data.</p>
 <h3>Regression output<a class="headerlink" href="#regression-output" title="Permalink to this headline">¶</a></h3>
 <p>The ADF uses a standard regression when computing results. These can be
 accesses using <code class="docutils literal"><span class="pre">regression</span></code>.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">reg_res</span> <span class="o">=</span> <span class="n">adf</span><span class="o">.</span><span class="n">regression</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reg_res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>                            <span class="n">OLS</span> <span class="n">Regression</span> <span class="n">Results</span>
 <span class="o">==============================================================================</span>
 <span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>                      <span class="n">y</span>   <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                       <span class="mf">0.095</span>
@@ -243,9 +284,19 @@ accesses using <code class="docutils literal"><span class="pre">regression</span
 <span class="n">strong</span> <span class="n">multicollinearity</span> <span class="ow">or</span> <span class="n">other</span> <span class="n">numerical</span> <span class="n">problems</span><span class="o">.</span>
 </pre></div>
 </div>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">resids</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">reg_res</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">default</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">6</span><span class="p">:],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;resids&#39;</span><span class="p">])</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
 <img alt="../_images/output_20_0.png" src="../_images/output_20_0.png" />
 <p>Since the number lags was directly set, it is good to check whether the
 residuals appear to be white noise.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">acf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">stattools</span><span class="o">.</span><span class="n">acf</span><span class="p">(</span><span class="n">reg_res</span><span class="o">.</span><span class="n">resid</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ACF&#39;</span><span class="p">])</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">acf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Residual Autocorrelations&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 <img alt="../_images/output_22_0.png" src="../_images/output_22_0.png" />
 </div>
 </div>
@@ -256,6 +307,11 @@ a GLS-detrending regression before running an ADF regression with no
 additional deterministic terms. This test is only available with a
 constant or constant and time trend (<code class="docutils literal"><span class="pre">trend='c'</span></code> or <code class="docutils literal"><span class="pre">trend='ct'</span></code>).</p>
 <p>The results of this test agree with the ADF results.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="k">import</span> <span class="n">DFGLS</span>
+<span class="n">dfgls</span> <span class="o">=</span> <span class="n">DFGLS</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dfgls</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>      <span class="n">Dickey</span><span class="o">-</span><span class="n">Fuller</span> <span class="n">GLS</span> <span class="n">Results</span>
 <span class="o">=====================================</span>
 <span class="n">Test</span> <span class="n">Statistic</span>                 <span class="o">-</span><span class="mf">2.252</span>
@@ -270,6 +326,10 @@ constant or constant and time trend (<code class="docutils literal"><span class=
 </pre></div>
 </div>
 <p>The trend can be altered using <code class="docutils literal"><span class="pre">trend</span></code>. The conclusion is the same.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">dfgls</span><span class="o">.</span><span class="n">trend</span> <span class="o">=</span> <span class="s1">&#39;ct&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dfgls</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>      <span class="n">Dickey</span><span class="o">-</span><span class="n">Fuller</span> <span class="n">GLS</span> <span class="n">Results</span>
 <span class="o">=====================================</span>
 <span class="n">Test</span> <span class="n">Statistic</span>                 <span class="o">-</span><span class="mf">3.406</span>
@@ -292,6 +352,11 @@ Instead, the PP test fixed the t-statistic using a long run variance
 estimation, implemented using a Newey-West covariance estimator.</p>
 <p>By default, the number of lags is automatically set, although this can
 be overridden using <code class="docutils literal"><span class="pre">lags</span></code>.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="k">import</span> <span class="n">PhillipsPerron</span>
+<span class="n">pp</span> <span class="o">=</span> <span class="n">PhillipsPerron</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>     <span class="n">Phillips</span><span class="o">-</span><span class="n">Perron</span> <span class="n">Test</span> <span class="p">(</span><span class="n">Z</span><span class="o">-</span><span class="n">tau</span><span class="p">)</span>
 <span class="o">=====================================</span>
 <span class="n">Test</span> <span class="n">Statistic</span>                 <span class="o">-</span><span class="mf">3.761</span>
@@ -307,6 +372,10 @@ be overridden using <code class="docutils literal"><span class="pre">lags</span>
 </div>
 <p>It is important that the number of lags is sufficient to pick up any
 dependence in the data.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">lags</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>     <span class="n">Phillips</span><span class="o">-</span><span class="n">Perron</span> <span class="n">Test</span> <span class="p">(</span><span class="n">Z</span><span class="o">-</span><span class="n">tau</span><span class="p">)</span>
 <span class="o">=====================================</span>
 <span class="n">Test</span> <span class="n">Statistic</span>                 <span class="o">-</span><span class="mf">3.876</span>
@@ -321,6 +390,10 @@ dependence in the data.</p>
 </pre></div>
 </div>
 <p>The trend can be changed as well.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">trend</span> <span class="o">=</span> <span class="s1">&#39;ct&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>     <span class="n">Phillips</span><span class="o">-</span><span class="n">Perron</span> <span class="n">Test</span> <span class="p">(</span><span class="n">Z</span><span class="o">-</span><span class="n">tau</span><span class="p">)</span>
 <span class="o">=====================================</span>
 <span class="n">Test</span> <span class="n">Statistic</span>                 <span class="o">-</span><span class="mf">4.142</span>
@@ -339,6 +412,10 @@ uses an ADF-type regression of the first difference on the level, the
 other which regresses the level on the level. The default is the <code class="docutils literal"><span class="pre">tau</span></code>
 test, which is similar to an ADF regression, although this can be
 changed using <code class="docutils literal"><span class="pre">test_type='rho'</span></code>.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">test_type</span> <span class="o">=</span> <span class="s1">&#39;rho&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>     <span class="n">Phillips</span><span class="o">-</span><span class="n">Perron</span> <span class="n">Test</span> <span class="p">(</span><span class="n">Z</span><span class="o">-</span><span class="n">rho</span><span class="p">)</span>
 <span class="o">=====================================</span>
 <span class="n">Test</span> <span class="n">Statistic</span>                <span class="o">-</span><span class="mf">33.974</span>
@@ -359,6 +436,11 @@ changed using <code class="docutils literal"><span class="pre">test_type='rho'</
 stationary process and the alternative is a unit root.</p>
 <p>Note that here the null is rejected which indicates that the series
 might be a unit root.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="k">import</span> <span class="n">KPSS</span>
+<span class="n">kpss</span> <span class="o">=</span> <span class="n">KPSS</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">kpss</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>    <span class="n">KPSS</span> <span class="n">Stationarity</span> <span class="n">Test</span> <span class="n">Results</span>
 <span class="o">=====================================</span>
 <span class="n">Test</span> <span class="n">Statistic</span>                  <span class="mf">0.941</span>
@@ -373,6 +455,10 @@ might be a unit root.</p>
 </pre></div>
 </div>
 <p>Changing the trend does not alter the conclusion.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">kpss</span><span class="o">.</span><span class="n">trend</span> <span class="o">=</span> <span class="s1">&#39;ct&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">kpss</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>    <span class="n">KPSS</span> <span class="n">Stationarity</span> <span class="n">Test</span> <span class="n">Results</span>
 <span class="o">=====================================</span>
 <span class="n">Test</span> <span class="n">Statistic</span>                  <span class="mf">0.361</span>
@@ -393,6 +479,18 @@ might be a unit root.</p>
 instead used for testing whether a financial return series is a pure
 random walk versus having some predictability. This example uses the
 excess return on the market from Ken French’s data.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">pandas.io.data</span> <span class="k">as</span> <span class="nn">web</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">ff</span><span class="o">=</span><span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;F-F_Research_Data_Factors&#39;</span><span class="p">,</span> <span class="s1">&#39;famafrench&#39;</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">ff</span><span class="o">=</span><span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;F-F_Research_Data_Factors_TXT&#39;</span><span class="p">,</span> <span class="s1">&#39;famafrench&#39;</span><span class="p">)</span>
+<span class="n">ff</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">excess_market</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Excess Market</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>       <span class="mi">1</span> <span class="sa">b</span><span class="s1">&#39;Mkt-RF&#39;</span>     <span class="mi">2</span> <span class="sa">b</span><span class="s1">&#39;SMB&#39;</span>     <span class="mi">3</span> <span class="sa">b</span><span class="s1">&#39;HML&#39;</span>      <span class="mi">4</span> <span class="sa">b</span><span class="s1">&#39;RF&#39;</span>
 <span class="n">count</span>  <span class="mf">1080.000000</span>  <span class="mf">1080.000000</span>  <span class="mf">1080.000000</span>  <span class="mf">1080.000000</span>
 <span class="n">mean</span>      <span class="mf">0.647361</span>     <span class="mf">0.211491</span>     <span class="mf">0.384333</span>     <span class="mf">0.279259</span>
@@ -410,6 +508,11 @@ initializing the test.</p>
 <p>This example compares 1-month to 12-month returns, and the null that the
 series is a pure random walk is rejected. Negative values indicate some
 positive autocorrelation in the returns (momentum).</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="k">import</span> <span class="n">VarianceRatio</span>
+<span class="n">vr</span> <span class="o">=</span> <span class="n">VarianceRatio</span><span class="p">(</span><span class="n">excess_market</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vr</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>     <span class="n">Variance</span><span class="o">-</span><span class="n">Ratio</span> <span class="n">Test</span> <span class="n">Results</span>
 <span class="o">=====================================</span>
 <span class="n">Test</span> <span class="n">Statistic</span>                 <span class="o">-</span><span class="mf">9.987</span>
@@ -424,6 +527,12 @@ positive autocorrelation in the returns (momentum).</p>
 variance of the long period’s return. This can be changed by setting
 <code class="docutils literal"><span class="pre">overlap=False</span></code>. This lowers the power but doesn’t change the
 conclusion.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;always&#39;</span><span class="p">)</span>  <span class="c1"># Restore warnings</span>
+
+<span class="n">vr</span><span class="o">.</span><span class="n">overlap</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vr</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>     <span class="n">Variance</span><span class="o">-</span><span class="n">Ratio</span> <span class="n">Test</span> <span class="n">Results</span>
 <span class="o">=====================================</span>
 <span class="n">Test</span> <span class="n">Statistic</span>                 <span class="o">-</span><span class="mf">6.096</span>
@@ -481,7 +590,7 @@ little reason to use <code class="docutils literal"><span class="pre">overlap=Fa
         <li class="right" >
           <a href="introduction.html" title="Introduction"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.gbc0587f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.89.geb3bafb documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="unitroot.html" >Unit Root Testing</a> &#187;</li> 
       </ul>
     </div>
