@@ -51,6 +51,7 @@ matrix:
     - DOCBUILD=true
 
 before_install:
+  - git fetch --tags
   - sudo apt-get -y install pandoc
   - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
@@ -62,7 +63,7 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
   # Avoid noise from matplotlib
   - mkdir -p $HOME/.config/matplotlib
-  # Build package list to avoid empty package=versions; only needed for versioned pacakges
+  # Build package list to avoid empty package=versions
   - PKGS="python=${PYTHON}"
   - PKGS="${PKGS} numpy"; if [[ ${NUMPY} ]]; then PKGS="${PKGS}=${NUMPY}"; fi;
   - PKGS="${PKGS} scipy"; if [[ ${SCIPY} ]]; then PKGS="${PKGS}=${SCIPY}"; fi;
