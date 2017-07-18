@@ -58,7 +58,7 @@ before_install:
   - ./miniconda3.sh -b
   - export PATH=/home/travis/miniconda3/bin:$PATH
   - conda config --set always_yes true
-  - conda update conda
+  - conda update --all --quiet
   # Fix for headless TravisCI
   - export DISPLAY=:99.0
   - "sh -e /etc/init.d/xvfb start"
@@ -74,19 +74,19 @@ before_install:
   - PKGS="${PKGS} matplotlib"; if [[ ${MATPLOTLIB} ]]; then PKGS="${PKGS}=${MATPLOTLIB}"; fi;
   - PKGS="${PKGS} statsmodels"; if [[ ${STATSMODELS} ]]; then PKGS="${PKGS}=${STATSMODELS}"; fi;
   - if [[ ${USE_NUMBA} = true ]]; then PKGS="${PKGS} numba"; if [[ ${NUMBA} ]]; then PKGS="${PKGS}=${NUMBA}";  fi; fi;
-  - conda create --yes --quiet -n arch-test ${PKGS} ${OPTIONAL} statsmodels ipython
+  - conda create --yes --quiet -n arch-test ${PKGS} ${OPTIONAL} statsmodels
   - source activate arch-test
   - pip install flake8 nbconvert nbformat pytest coverage coveralls pytest-cov codecov pytest-xdist
   - if [[ ${STATSMODELS_MASTER} = true ]]; then sh ./ci/statsmodels-master.sh; fi;
-  - if [[ ${DOCBUILD} = true ]]; then pip install sphinx doctr numpydoc guzzle_sphinx_theme; fi;
-  - if [[ ${DOCBUILD} = true ]]; then conda update ipython -c conda-forge; fi;
+  - if [[ ${DOCBUILD} = true ]]; then conda install sphinx ipython doctr numpydoc -c conda-forge; fi;
+  - if [[ ${DOCBUILD} = true ]]; then pip install guzzle_sphinx_theme; fi;
   - export SRCDIR=${PWD}
   - conda list
   - export PYTHONHASHSEED=0
   - export MKL_NUM_THREADS=1
 
 install:
-  - python setup.py develop
+  - python setup.py install
 
 script:
   - set -e
