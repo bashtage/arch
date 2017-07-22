@@ -9,3 +9,4 @@ dist
 .cache/
 README.rst
 /.vs/arch/v14/.suo
+*.pyproj
