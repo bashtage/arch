@@ -19,7 +19,7 @@ All models support three methods of forecasting:
   to forward simulate using the assumed distribution of residuals, e.g., a
   Normal or Student's t.
 * Bootstrap: bootstrap-based forecasts are similar to simulation based
-  forecasts except that they makes use of the standardized residuals
+  forecasts except that they make use of the standardized residuals
   from the actual data used in the estimation rather than assuming a
   specific distribution. Like simulation-base forecasts, bootstrap-based
   forecasts are only useful for horizons larger than 1. Additionally,
@@ -182,7 +182,7 @@ The three core attributes are
 
 * ``mean`` - The forecast conditional mean.
 * ``variance`` - The forecast conditional variance.
-* ``residual_variance`` - The forecasts conditional variance of residuals.
+* ``residual_variance`` - The forecast conditional variance of residuals.
   This will differ from ``variance`` whenever the model has dynamics
   (e.g. an AR model) for horizons larger than 1.
 
