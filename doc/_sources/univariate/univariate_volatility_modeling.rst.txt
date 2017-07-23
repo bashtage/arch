@@ -609,7 +609,7 @@ Theee models are fit using alternative distributional assumptions. The
 results are printed, where we can see that the normal has a much lower
 log-likelihood than either the Standard Student's T or the Standardized
 Skew Student's T -- however, these two are fairly close. The closeness
-ff the T and the Skew T indicate that returns are not heavily skewed.
+of the T and the Skew T indicate that returns are not heavily skewed.
 
 .. code:: ipython3
 
