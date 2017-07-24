@@ -23,7 +23,7 @@ to improve performance)
 Released documentation is hosted on
 [read the docs](http://arch.readthedocs.org/en/latest/).
 Current documentation from the master branch is hosted on
-[my github pages](http://bashtage.github.io/arch/doc/build/html/index.html).
+[my github pages](http://bashtage.github.io/arch/doc/index.html).
 
 ## More about ARCH
 More information about ARCH and related models is available in the notes and 
