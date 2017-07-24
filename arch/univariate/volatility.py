@@ -3,7 +3,7 @@ Volatility processes for ARCH model estimation.  All volatility processes must
 inherit from :class:`VolatilityProcess` and provide the same methods with the
 same inputs.
 """
-from __future__ import absolute_import, division
+from future import absolute_import, division
 import itertools
 
 import numpy as np
@@ -1982,9 +1982,27 @@ class FixedVariance(VolatilityProcess):
 
         return VarianceForecast(forecasts, forecast_paths, shocks)
 
-class CGARCH(VolatilityProcess):
+class CGARCH(GARCH):
+    r"""
+    Component GARCH model. A restricted version of GARCH(2,2)
+    
+    Notes
+    -----
+    In this class of processes, the variance dynamics are
+
+    .. math::
+
+        \sigma_{t}=q_{t}+g_{t}
+        g_{t}=\omega + \rho 
+        + \sum_{i=1}^{p}\alpha_{i}\left|\epsilon_{t-i}\right|^{\lambda}
+        +\sum_{j=1}^{o}\gamma_{j}\left|\epsilon_{t-j}\right|^{\lambda}
+        I\left[\epsilon_{t-j}<0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}
+    """
+
     def __init__(self):
         super().__init__()
+        self.p = 2
+        self.q = 2
         self.num_params = 5
         self.name = "ComponentGarch"
         
@@ -2026,6 +2044,16 @@ class CGARCH(VolatilityProcess):
         names = ["alpha", "beta", "omega", "rho", "phi"]
         return names
 
+    def _covertparams(self, parameters):
+        # this will convert the cgarch params into restricted GARCH(2,2) parameters
+        alpha, beta, omega, rho, phi = parameters
+        a0 = omega*(1-alpha-beta)
+        a1 = phi +alpha
+        a2 = phi*(alpha + beta) + alpha*rho
+        b1 = rho + beta - phi
+        b2 = phi*(alpha + beta) - rho*beta
+        return [a0, a1, a2, b1, b2]
+
     def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
         T = nobs + burn
         errors = rng(T)
@@ -2038,13 +2066,8 @@ class CGARCH(VolatilityProcess):
         q2 = zeros(T)
 
         if initial_value is None:
-            alpha, beta, omega, rho, phi = parameters
             # Cgarch can be represented as a restricted garch(2,2) with:
-            a0 = omega*(1-alpha-beta)
-            a1 = phi +alpha
-            a2 = phi*(alpha + beta) + alpha*rho
-            b1 = rho + beta - phi
-            b2 = phi*(alpha + beta) - rho*beta
+            a0, a1, a2, b1, b2 =  self._covertparams(parameters)
             # the unconditional var of this garch(2,2) form is used as initial value
             initial_value = a0/(1-(a1+a2+b1+b2))
 
@@ -2059,8 +2082,99 @@ class CGARCH(VolatilityProcess):
             sigma2[i] = g2[i] + q2[i]
             data[i] = errors[i] * (np.sqrt(sigma2[i])) ** 2
         return data[burn:], sigma2[burn:]
+
     def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
-        
-        return
+        sigma2, forecasts = self._one_step_forecast(parameters, resids, backcast,
+                                                    var_bounds, horizon)
+        if horizon == 1:
+            forecasts[:start] = np.nan
+            return VarianceForecast(forecasts)
+        parameters = self._covertparams(parameters)
+        t = resids.shape[0]
+        p, o, q = self.p, self.o, self.q
+        omega = parameters[0]
+        alpha = parameters[1:p + 1]
+        gamma = parameters[p + 1: p + o + 1]
+        beta = parameters[p + o + 1:]
+
+        m = np.max([p, o, q])
+        _resids = np.zeros(m + horizon)
+        _asym_resids = np.zeros(m + horizon)
+        _sigma2 = np.zeros(m + horizon)
+
+        for i in range(start, t):
+            if i - m + 1 >= 0:
+                _resids[:m] = resids[i - m + 1:i + 1]
+                _asym_resids[:m] = _resids[:m] * (_resids[:m] < 0)
+                _sigma2[:m] = sigma2[i - m + 1:i + 1]
+            else:  # Back-casting needed
+                _resids[:m - i - 1] = np.sqrt(backcast)
+                _resids[m - i - 1: m] = resids[0:i + 1]
+                _asym_resids = _resids * (_resids < 0)
+                _asym_resids[:m - i - 1] = np.sqrt(0.5 * backcast)
+                _sigma2[:m] = backcast
+                _sigma2[m - i - 1: m] = sigma2[0:i + 1]
+
+            for h in range(0, horizon):
+                forecasts[i, h] = omega
+                start_loc = h + m - 1
+
+                for j in range(p):
+                    forecasts[i, h] += alpha[j] * _resids[start_loc - j] ** 2
+
+                for j in range(o):
+                    forecasts[i, h] += gamma[j] * _asym_resids[start_loc - j] ** 2
+
+                for j in range(q):
+                    forecasts[i, h] += beta[j] * _sigma2[start_loc - j]
+
+                _resids[h + m] = np.sqrt(forecasts[i, h])
+                _asym_resids[h + m] = np.sqrt(0.5 * forecasts[i, h])
+                _sigma2[h + m] = forecasts[i, h]
+
+            forecasts[:start] = np.nan
+        return VarianceForecast(forecasts)
+
+    def _simulate_paths(self, m, parameters, horizon, std_shocks, scaled_forecast_paths, scaled_shock, asym_scaled_shock):
+        parameters = self._covertparams(parameters)
+        return super()._simulate_paths(m, parameters, horizon, std_shocks, scaled_forecast_paths, scaled_shock, asym_scaled_shock)
+
     def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon, simulations, rng):
-        return 
+        sigma2, forecasts = self._one_step_forecast(parameters, resids, backcast,
+                                                    var_bounds, horizon)
+        #Everything is similar to GARCH class vut parameters have to be converted
+        parameters = self._covertparams(parameters)
+        t = resids.shape[0]
+        paths = np.zeros((t, simulations, horizon))
+        shocks = np.zeros((t, simulations, horizon))
+
+        power = self.power
+        m = np.max([self.p, self.o, self.q])
+        scaled_forecast_paths = zeros((simulations, m + horizon))
+        scaled_shock = zeros((simulations, m + horizon))
+        asym_scaled_shock = zeros((simulations, m + horizon))
+        for i in range(start, t):
+            std_shocks = rng((simulations, horizon))
+            if i - m < 0:
+                scaled_forecast_paths[:, :m] = backcast ** (power / 2.0)
+                scaled_shock[:, :m] = backcast ** (power / 2.0)
+                asym_scaled_shock[:, :m] = (0.5 * backcast) ** (power / 2.0)
+
+                count = i + 1
+                scaled_forecast_paths[:, m - count:m] = sigma2[:count] ** (power / 2.0)
+                scaled_shock[:, m - count:m] = np.abs(resids[:count]) ** power
+                asym = np.abs(resids[:count]) ** power * (resids[:count] < 0)
+                asym_scaled_shock[:, m - count:m] = asym
+            else:
+                scaled_forecast_paths[:, :m] = sigma2[i - m + 1:i + 1] ** (power / 2.0)
+                scaled_shock[:, :m] = np.abs(resids[i - m + 1:i + 1]) ** power
+                asym_scaled_shock[:, :m] = scaled_shock[:, :m] * (resids[i - m + 1:i + 1] < 0)
+
+            f, p, s = self._simulate_paths(m, parameters, horizon, std_shocks,
+                                           scaled_forecast_paths, scaled_shock, asym_scaled_shock)
+            forecasts[i, :], paths[i], shocks[i] = f, p, s
+
+        paths[:start] = np.nan
+        shocks[:start] = np.nan
+        forecasts[:start] = np.nan
+        return VarianceForecast(forecasts, paths, shocks)
