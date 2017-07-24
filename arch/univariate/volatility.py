@@ -1984,7 +1984,16 @@ class FixedVariance(VolatilityProcess):
 
 class CGARCH(GARCH):
     r"""
-    Component GARCH model. A restricted version of GARCH(2,2)
+    Component GARCH model. A restricted version of GARCH(2,2) by Engle and Lee
+
+    Parameters
+    ----------
+    All parameters are estimated
+
+    Attributes
+    ----------
+    num_params : int
+        The number of parameters in the model
     
     Notes
     -----
@@ -1992,11 +2001,10 @@ class CGARCH(GARCH):
 
     .. math::
 
-        \sigma_{t}=q_{t}+g_{t}
-        g_{t}=\omega + \rho 
-        + \sum_{i=1}^{p}\alpha_{i}\left|\epsilon_{t-i}\right|^{\lambda}
-        +\sum_{j=1}^{o}\gamma_{j}\left|\epsilon_{t-j}\right|^{\lambda}
-        I\left[\epsilon_{t-j}<0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}
+        \sigma^{2}_{t}=q_{t}+g_{t}
+        q_{t}=\omega + \rho q_{t-1} + \phi(r^{2}_{t-1}-\sigma^{2}_{t-1})
+        g_{t} = \alpha(r^{2}_{t-1}-q_{t-1})+\beta g_{t-1}
+
     """
 
     def __init__(self):
