@@ -10,3 +10,4 @@ dist
 README.rst
 /.vs/arch/v14/.suo
 *.pyproj
+*.sln
