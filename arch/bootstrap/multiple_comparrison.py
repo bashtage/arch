@@ -143,6 +143,11 @@ class MCS(MultipleComparison):
         self._info = OrderedDict([('size', '{0:0.2f}'.format(self.size)),
                                   ('bootstrap', str(bootstrap)),
                                   ('ID', hex(id(self)))])
+        self._results_computed = False
+
+    def _has_been_computed(self):
+        if not self._results_computed:
+            raise RuntimeError('Must call compute before accessing results')
 
     def _format_pvalues(self, eliminated):
         columns = ['Model index', 'Pvalue']
@@ -170,6 +175,7 @@ class MCS(MultipleComparison):
             self._compute_r()
         else:
             self._compute_max()
+        self._results_computed = True
 
     def _compute_r(self):
         """
@@ -263,6 +269,9 @@ class MCS(MultipleComparison):
             eliminated.append([indices.flat[i.squeeze()], pval])
             included[indices.flat[i]] = False
 
+        indices = np.argwhere(included).flatten()
+        for ind in indices:
+            eliminated.append([ind, 1.0])
         self._pvalues = self._format_pvalues(eliminated)
 
     @property
@@ -270,6 +279,7 @@ class MCS(MultipleComparison):
         """
         Returns a list of model indices that are included in the MCS
         """
+        self._has_been_computed()
         included = (self._pvalues.Pvalue > self.size)
         included = list(self._pvalues.index[included])
         included.sort()
@@ -280,6 +290,7 @@ class MCS(MultipleComparison):
         """
         Returns a list of model indices that are excluded from the MCS
         """
+        self._has_been_computed()
         excluded = (self._pvalues.Pvalue <= self.size)
         excluded = list(self._pvalues.index[excluded])
         excluded.sort()
@@ -291,6 +302,7 @@ class MCS(MultipleComparison):
         Returns a DataFrame containing model index and the smallest size
         where it is in the MCS
         """
+        self._has_been_computed()
         return self._pvalues
 
 

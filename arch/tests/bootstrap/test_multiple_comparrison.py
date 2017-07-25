@@ -429,3 +429,12 @@ class TestMCS(TestCase):
         mcs = MCS(losses, 0.05, reps=200)
         mcs.seed(23456)
         mcs.compute()
+
+    def test_missing_included_max(self):
+        losses = self.losses_df.iloc[:, :20].copy()
+        losses = losses.values + 5 * np.arange(20)[None, :]
+        mcs = MCS(losses, 0.05, reps=200, method='max')
+        mcs.seed(23456)
+        mcs.compute()
+        assert len(mcs.included) > 0
+        assert (len(mcs.included) + len(mcs.excluded)) == 20
