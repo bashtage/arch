@@ -9,3 +9,7 @@ dist
 .cache/
 README.rst
 *.suo
+/arch.sln
+/totestimports.py
+*.user
+/.vs/config/applicationhost.config

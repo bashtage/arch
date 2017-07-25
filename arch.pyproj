@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{407f4449-6194-4c82-b89a-45f9cf6f148f}</ProjectGuid>
+    <ProjectGuid>{7b371827-037d-47aa-b84e-1363caa159ad}</ProjectGuid>
     <ProjectHome />
     <StartupFile>arch\univariate\volatility.py</StartupFile>
     <SearchPath />
@@ -21,6 +21,7 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="arch\univariate\recursions.pyx" />
     <Content Include="doc\requirements.txt" />
     <Content Include="doc\source\bootstrap\bootstrap_histogram.png" />
     <Content Include="doc\source\changes\1.0.txt" />
@@ -61,6 +62,9 @@
     <Compile Include="arch\univariate\distribution.py" />
     <Compile Include="arch\univariate\mean.py" />
     <Compile Include="arch\univariate\recursions_python.py" />
+    <Compile Include="arch\univariate\setup.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="arch\univariate\tests\test_distribution.py" />
     <Compile Include="arch\univariate\tests\test_forecast.py" />
     <Compile Include="arch\univariate\tests\test_mean.py" />
@@ -84,6 +88,9 @@
     <Compile Include="ci\performance.py" />
     <Compile Include="doc\source\conf.py" />
     <Compile Include="setup.py" />
+    <Compile Include="totestimports.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="versioneer.py" />
   </ItemGroup>
   <ItemGroup>
