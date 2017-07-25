@@ -13,3 +13,4 @@ README.rst
 /totestimports.py
 *.user
 /.vs/config/applicationhost.config
+/examples/.ipynb_checkpoints/univariate_volatility_modeling-checkpoint.ipynb
