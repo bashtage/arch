@@ -21,7 +21,7 @@ from the benchmark model.  The alternative is
 
 .. math::
 
-    H_1: \max_i E[L_i] > E[L_{bm}]
+    H_1: \min_i E[L_i] < E[L_{bm}]
 
 This procedure accounts for dependence between the losses and the fact that
 there are potentially alternative models being considered.
