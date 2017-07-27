@@ -1,6 +1,6 @@
 Covariance Estimation
 =====================
-The bootstrap can be use to estimate parameter covariances in applications where
+The bootstrap can be used to estimate parameter covariances in applications where
 analytical computation is challenging, or simply as an alternative to
 traditional estimators.
 
@@ -12,7 +12,7 @@ Sharpe ratio of the S&P 500 using Yahoo! Finance data.
     import datetime as dt
     import pandas as pd
     import pandas_datareader.data as web
-    
+
     start = dt.datetime(1951, 1, 1)
     end = dt.datetime(2014, 1, 1)
     sp500 = web.DataReader('^GSPC', 'yahoo', start=start, end=end)
