@@ -542,7 +542,7 @@ class VolatilityProcess(object):
         """
         sigma2 = np.zeros_like(resids)
         self.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
-        return self._normal.loglikelihoood([], resids, sigma2)
+        return self._normal.loglikelihood([], resids, sigma2)
 
     def parameter_names(self):
         """
