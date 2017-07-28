@@ -1056,6 +1056,7 @@ class HARCH(VolatilityProcess):
     >>> from arch.univariate import HARCH
 
     Lag-1 HARCH, which is identical to an ARCH(1)
+
     >>> harch = HARCH()
 
     More useful and realistic lag lengths
@@ -1293,7 +1294,7 @@ class EWMAVariance(VolatilityProcess):
 
     Parameters
     ----------
-    lam : float, optional.
+    lam : float, optional
         Smoothing parameter. Default is 0.94
 
     Attributes
