@@ -241,17 +241,17 @@ def egarch_recursion_python(parameters, resids, sigma2, p, o, q, nobs,
 
 egarch_recursion = jit(egarch_recursion_python)
 
-def cgarch_recursion_python(parameters, fresids, sigma2, nobs, 
-                     backcast, var_bounds):
+def cgarch_recursion_python(parameters, fresids, sigma2, 
+                     backcast, var_bounds, g2, q2):
     sqrd_resids = fresids
+    nobs = len(sqrd_resids)
     alpha, beta, omega, raw, phi = parameters
     
     initial_sigma2 = backcast
     initial_q2 = 0.05
-    initial_g2 = 0.005 - initial_q2 
+    initial_g2 = initial_sigma2 - initial_q2 
        
     # g is short term variance and q is the long term one
-    g2, q2 = ndarray(nobs*2).reshape(2,nobs) 
     g2[0] = initial_g2
     q2[0] = initial_q2
     sigma2[0] = initial_sigma2
@@ -263,9 +263,8 @@ def cgarch_recursion_python(parameters, fresids, sigma2, nobs,
         if sigma2[t]<var_bounds[t,0]:
             sigma2[t] = var_bounds[t,0]
         elif sigma2[t] > var_bounds[t, 1]:
-            if not isinf(sigma2[t]):
-                sigma2[t] = var_bounds[t, 1] + \
-                log(sigma2[t] / var_bounds[t, 1])
+            if not np.isinf(sigma2[t]):
+                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
             else:
                 sigma2[t] = var_bounds[t, 1] + 1000    
     return sigma2  

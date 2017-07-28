@@ -2040,11 +2040,11 @@ class CGARCH(GARCH):
         
     def compute_variance(self, parameters, resids, sigma2, backcast,
                          var_bounds):
-        nobs = len(resids)
         fresids = resids**2
-        
-        cgarch_recursion(parameters, fresids, sigma2, nobs, 
-                     backcast, var_bounds)
+        nobs = len(fresids)
+        g2, q2 = np.ndarray(nobs*2).reshape(2,nobs) 
+        cgarch_recursion(parameters, fresids, sigma2, 
+                     backcast, var_bounds, g2=g2, q2=q2)
         
         return sigma2
 
