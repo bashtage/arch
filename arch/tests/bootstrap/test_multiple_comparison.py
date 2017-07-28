@@ -12,7 +12,7 @@ import scipy.stats as stats
 
 from arch.bootstrap import StationaryBootstrap, CircularBlockBootstrap, \
     MovingBlockBootstrap
-from arch.bootstrap.multiple_comparrison import SPA, StepM, MCS
+from arch.bootstrap.multiple_comparison import SPA, StepM, MCS
 
 
 class TestSPA(TestCase):
