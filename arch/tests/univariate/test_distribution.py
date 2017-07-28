@@ -17,7 +17,7 @@ class TestDistributions(TestCase):
 
     def test_normal(self):
         dist = Normal()
-        ll1 = dist.loglikelihoood([], self.resids, self.sigma2)
+        ll1 = dist.loglikelihood([], self.resids, self.sigma2)
         scipy_dist = stats.norm
         ll2 = scipy_dist.logpdf(self.resids, scale=np.sqrt(self.sigma2)).sum()
         assert_almost_equal(ll1, ll2)
@@ -35,7 +35,7 @@ class TestDistributions(TestCase):
     def test_studentst(self):
         dist = StudentsT()
         v = 4.0
-        ll1 = dist.loglikelihoood(np.array([v]), self.resids, self.sigma2)
+        ll1 = dist.loglikelihood(np.array([v]), self.resids, self.sigma2)
         # Direct calculation of PDF, then log
         constant = np.exp(gammaln(0.5 * (v + 1)) - gammaln(0.5 * v))
         pdf = constant / np.sqrt(np.pi * (v - 2) * self.sigma2)
@@ -62,8 +62,8 @@ class TestDistributions(TestCase):
     def test_skewstudent(self):
         dist = SkewStudent()
         eta, lam = 4.0, .5
-        ll1 = dist.loglikelihoood(np.array([eta, lam]),
-                                  self.resids, self.sigma2)
+        ll1 = dist.loglikelihood(np.array([eta, lam]),
+                                 self.resids, self.sigma2)
         # Direct calculation of PDF, then log
         const_c = gamma((eta+1)/2) / ((np.pi*(eta-2))**.5 * gamma(eta/2))
         const_a = 4*lam*const_c*(eta-2)/(eta-1)

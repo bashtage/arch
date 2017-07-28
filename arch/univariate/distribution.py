@@ -99,7 +99,7 @@ class Distribution(object):
         raise NotImplementedError(
             'Subclasses must implement')  # pragma: no cover
 
-    def loglikelihoood(self, parameters, resids, sigma2, individual=False):
+    def loglikelihood(self, parameters, resids, sigma2, individual=False):
         """
         Parameters
         ----------
@@ -178,7 +178,7 @@ class Normal(Distribution):
     def bounds(self, resids):
         return tuple([])
 
-    def loglikelihoood(self, parameters, resids, sigma2, individual=False):
+    def loglikelihood(self, parameters, resids, sigma2, individual=False):
         r"""Computes the log-likelihood of assuming residuals are normally
         distributed, conditional on the variance
 
@@ -243,7 +243,7 @@ class StudentsT(Distribution):
     def bounds(self, resids):
         return [(2.05, 500.0)]
 
-    def loglikelihoood(self, parameters, resids, sigma2, individual=False):
+    def loglikelihood(self, parameters, resids, sigma2, individual=False):
         r"""Computes the log-likelihood of assuming residuals are have a
         standardized (to have unit variance) Student's t distribution,
         conditional on the variance.
@@ -359,7 +359,7 @@ class SkewStudent(Distribution):
     def bounds(self, resids):
         return [(2.05, 300.0), (-1, 1)]
 
-    def loglikelihoood(self, parameters, resids, sigma2, individual=False):
+    def loglikelihood(self, parameters, resids, sigma2, individual=False):
         r"""Computes the log-likelihood of assuming residuals are have a
         standardized (to have unit variance) Skew Student's t distribution,
         conditional on the variance.
