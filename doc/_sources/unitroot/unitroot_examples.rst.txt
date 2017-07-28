@@ -51,7 +51,7 @@ autocorrelations confirms this.
 .. image:: output_7_0.png
 
 
-Agumented Dickey-Fuller Testing
+Augmented Dickey-Fuller Testing
 -------------------------------
 
 The Augmented Dickey-Fuller test is the most common unit root test used.
@@ -124,7 +124,7 @@ Deterministic terms
 
 The deterministic terms can be altered using ``trend``. The options are:
 
--  ``'nc'`` : No deterministi terms
+-  ``'nc'`` : No deterministic terms
 -  ``'c'`` : Constant only
 -  ``'ct'`` : Constant and time trend
 -  ``'ctt'`` : Constant, time trend and time-trend squared
@@ -284,7 +284,7 @@ The trend can be altered using ``trend``. The conclusion is the same.
 Phillips-Perron Testing
 -----------------------
 
-The Phippips-Perron test is similar to the ADF except that the
+The Phillips-Perron test is similar to the ADF except that the
 regression run does not include lagged values of the first differences.
 Instead, the PP test fixed the t-statistic using a long run variance
 estimation, implemented using a Newey-West covariance estimator.

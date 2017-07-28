@@ -35,7 +35,7 @@ series of U.S. equity data. First, the data is imported using pandas.
 
 
 The data set contains the Fama-French factors, including the excess
-market reutrn.
+market return.
 
 .. code:: ipython3
 
@@ -135,7 +135,7 @@ be estimated using the bootstrap.
         return pd.Series(values, index=index)
 
 
-The function can be called directly on the data to shwo full sample
+The function can be called directly on the data to show full sample
 estimates.
 
 .. code:: ipython3

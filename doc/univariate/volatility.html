@@ -14,13 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Volatility Processes &#8212; arch 4.1+26.g1e2a9f7 documentation</title>
+    <title>Volatility Processes &#8212; arch 4.1+30.g322d132 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.1+26.g1e2a9f7',
+        VERSION:     '4.1+30.g322d132',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="mean.html" title="Mean Models"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.1+26.g1e2a9f7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.1+30.g322d132 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -623,8 +623,10 @@ numbers</li>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">HARCH</span>
 </pre></div>
 </div>
-<p>Lag-1 HARCH, which is identical to an ARCH(1)
-&gt;&gt;&gt; harch = HARCH()</p>
+<p>Lag-1 HARCH, which is identical to an ARCH(1)</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">harch</span> <span class="o">=</span> <span class="n">HARCH</span><span class="p">()</span>
+</pre></div>
+</div>
 <p>More useful and realistic lag lengths</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">harch</span> <span class="o">=</span> <span class="n">HARCH</span><span class="p">(</span><span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">22</span><span class="p">])</span>
 </pre></div>
@@ -924,7 +926,7 @@ are estimable.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>lam</strong> (<em>float</em><em>, </em><em>optional.</em>) – Smoothing parameter. Default is 0.94</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>lam</strong> (<em>float</em><em>, </em><em>optional</em>) – Smoothing parameter. Default is 0.94</td>
 </tr>
 </tbody>
 </table>
@@ -1305,7 +1307,7 @@ separately from the conditional variance, even though parameters are estimated j
         <li class="right" >
           <a href="mean.html" title="Mean Models"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.1+26.g1e2a9f7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.1+30.g322d132 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
