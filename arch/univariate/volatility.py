@@ -2018,15 +2018,12 @@ class CGARCH(GARCH):
         return super().variance_bounds(resids)
     
     def constraints(self):
-        # alpha>0
         # beta-phi>0
-        # phi-alpha-beta>0
-        # alpha-beta<1 written as 1-alpha-beta >0
+        # rho-alpha-beta>0
+        # rho<1
         
-        a = np.array([1,0,0,0,0])
-        other_cons = np.array([[0,1,0,0,-1],[-1,-1,0,1,0],[-1,-1,0,0,0]])
-        a = np.vstack((a,other_cons))
-        b = np.array([0,0,0,-1])
+        a = np.array([[0,1,0,0,-1],[-1,-1,0,1,0],[0,0,0,-1,0]])
+        b = np.array([0,0,-1])
         return a, b
     
     def backcast(self, resids):
