@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from arch.bootstrap import _samplers_python
 from arch.bootstrap.base import IIDBootstrap, CircularBlockBootstrap, MovingBlockBootstrap, \
     StationaryBootstrap
-from arch.bootstrap.multiple_comparrison import SPA, RealityCheck, StepM, MCS
+from arch.bootstrap.multiple_comparison import SPA, RealityCheck, StepM, MCS
 COMPILED_SAMPLERS = True
 try:
     from arch.bootstrap import _samplers
