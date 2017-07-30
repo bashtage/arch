@@ -1,7 +1,5 @@
 from __future__ import absolute_import, division
 
-from unittest import TestCase
-
 import numpy as np
 from numpy import random, linspace
 from numpy.testing import assert_equal, assert_allclose
@@ -15,7 +13,7 @@ from arch.bootstrap import StationaryBootstrap, CircularBlockBootstrap, \
 from arch.bootstrap.multiple_comparison import SPA, StepM, MCS
 
 
-class TestSPA(TestCase):
+class TestSPA(object):
     @classmethod
     def setup_class(cls):
         random.seed(23456)
@@ -172,7 +170,7 @@ class TestSPA(TestCase):
         spa.compute()
 
 
-class TestStepM(TestCase):
+class TestStepM(object):
     @classmethod
     def setup_class(cls):
         random.seed(23456)
@@ -272,7 +270,7 @@ class TestStepM(TestCase):
         assert_equal(len(stepm.superior_models), self.models.shape[1] - 2)
 
 
-class TestMCS(TestCase):
+class TestMCS(object):
     @classmethod
     def setup_class(cls):
         random.seed(23456)
@@ -438,3 +436,7 @@ class TestMCS(TestCase):
         mcs.compute()
         assert len(mcs.included) > 0
         assert (len(mcs.included) + len(mcs.excluded)) == 20
+
+    def test_warning_misspelled(self):
+        with pytest.deprecated_call():
+            import arch.bootstrap.multiple_comparrison  # flake8: noqa
