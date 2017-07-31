@@ -257,7 +257,7 @@ def cgarch_recursion_python(parameters, fresids, sigma2,
     sigma2[0] = initial_sigma2
     
     for t in range(1,nobs):
-        g2[t] = alpha * (sqrd_resids[t-1] - q2[t-1]) + beta * g2[t-1]
+        g2[t] = alpha * (sqrd_resids[t-1] - q2[t-1]) + beta * (sigma2[t-1]-q2[t-1])
         q2[t] = omega + raw * q2[t-1] + phi * (sqrd_resids[t-1] - sigma2[t-1])
         sigma2[t] = g2[t] + q2[t]
         if sigma2[t]<var_bounds[t,0]:
