@@ -2033,7 +2033,7 @@ class CGARCH(GARCH):
         return [(0,1), (0,1), (-1, 1), (-1, 1), (0, 1)]
     
     def starting_values(self, resids):
-        return np.array([np.var(resids)/5, 0.1, 0.002, 0.3, 0.5])
+        return np.array([0.1, 0.4, np.var(resids)/2, 0.8, 0.2])
         
     def compute_variance(self, parameters, resids, sigma2, backcast,
                          var_bounds):
