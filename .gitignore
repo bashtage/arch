@@ -11,3 +11,5 @@ README.rst
 /.vs/arch/v14/.suo
 *.pyproj
 *.sln
+/totestimports.py
+/.vs/config/applicationhost.config
