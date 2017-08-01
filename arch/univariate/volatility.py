@@ -2022,27 +2022,26 @@ class CGARCH(GARCH):
         # rho-alpha-beta>0
         # rho<1
         
-        a = np.array([[0,1,0,0,-1],[-1,-1,0,1,0],[0,0,0,-1,0]])
-        b = np.array([0,0,-1])
+        a = np.array([[0, 1, 0, 0, -1],[-1, -1, 0, 1, 0],[0, 0, 0, -1, 0]])
+        b = np.array([0, 0, -1])
         return a, b
     
     def backcast(self, resids):
         return super().backcast(resids)
         
     def bounds(self, resids):
-        return [(0,1), (0,1), (-1, 1), (0, 1), (0, 1)]
+        return [(0, 1), (0, 1), (-1, 1), (0, 1), (0, 1)]
     
     def starting_values(self, resids):
         return np.array([0.1, 0.4, np.var(resids)/2, 0.8, 0.2])
-        
+
     def compute_variance(self, parameters, resids, sigma2, backcast,
                          var_bounds):
         fresids = resids**2
         nobs = len(fresids)
-        g2, q2 = np.ndarray(nobs*2).reshape(2,nobs) 
+        g2, q2 = np.ndarray(nobs*2).reshape(2, nobs) 
         cgarch_recursion(parameters, fresids, sigma2, 
                      backcast, var_bounds, g2=g2, q2=q2)
-        
         return sigma2
 
     def parameter_names(self):
