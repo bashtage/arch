@@ -2012,7 +2012,10 @@ class CGARCH(GARCH):
         self.p = 2
         self.q = 2
         self.num_params = 5
-        self.name = "ComponentGarch"
+        self.name = "ComponentGARCH"
+
+    def __str__(self):
+        return self.name
         
     def variance_bounds(self, resids, power=2.0):
         return super().variance_bounds(resids)
@@ -2077,7 +2080,7 @@ class CGARCH(GARCH):
 
         sigma2[0] = initial_value
         q2[0] = initial_value * 0.65
-        g2[0] = initial_value - g2[0]
+        g2[0] = initial_value - q2[0]
         data[0] = sqrt(sigma2[0]) * errors[0]
 
         for i in range(1, T):
