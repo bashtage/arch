@@ -112,7 +112,8 @@ class TestVolatiltyProcesses(TestCase):
         cond_var_direct = np.zeros_like(self.sigma2)
         g2 = np.ndarray(self.T)
         q2 = g2.copy()
-        rec.cgarch_recursion(parameters,
+        from arch.univariate import recursions_python as recpy
+        recpy.cgarch_recursion(parameters,
                             self.resids ** 2.0,
                             cond_var_direct,
                             backcast, var_bounds, g2, q2)
