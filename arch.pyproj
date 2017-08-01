@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7b371827-037d-47aa-b84e-1363caa159ad}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>totestimports.py</StartupFile>
+    <StartupFile>arch\univariate\tests\test_recursions.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
