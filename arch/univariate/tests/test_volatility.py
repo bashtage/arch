@@ -96,7 +96,7 @@ class TestVolatiltyProcesses(TestCase):
         cgarch = CGARCH()
         sv = cgarch.starting_values(self.resids)
         assert_equal(sv.shape[0], cgarch.num_params)
-
+        parameters = np.array([0.1, 0.4, 0.75, 0.8, 0.2])
         bounds = cgarch.bounds(self.resids)
         assert_equal(bounds[0], (0, 1))
         assert_equal(bounds[1], (0, 1))
@@ -138,10 +138,10 @@ class TestVolatiltyProcesses(TestCase):
         fromgarch = converted_params[0]/(1-(np.sum(converted_params[1:])))
         fromcg  = omega/(1-rho)
         aver = (fromcg + fromgarch)/2
-        if aver > 0:
+        if aver > 0 & aver < 0.2:
             initial_value = aver
         else:
-            initial_value = 0.5
+            initial_value = 0.1
             initial_value = omega/(1-rho)
         sigma2 = np.zeros(self.T + 500)
         sigma2[0] = initial_value
