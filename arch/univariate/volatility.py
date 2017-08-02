@@ -2082,7 +2082,7 @@ class CGARCH(GARCH):
         q2[0] = initial_value * 0.65
         g2[0] = initial_value - q2[0]
         data[0] = sqrt(sigma2[0]) * errors[0]
-
+        alpha, beta, omega, rho, phi = parameters
         for i in range(1, T):
             g2[i] = alpha * (data[i - 1]**2 - q2[i - 1]) + beta * g2[i - 1]
             q2[i] = omega + rho * q2[i - 1] + phi * (data[i - 1]**2 - sigma2[i - 1])
