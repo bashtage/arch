@@ -2056,11 +2056,11 @@ class CGARCH(GARCH):
     def _covertparams(self, parameters):
         # this will convert the cgarch params into restricted GARCH(2,2) parameters
         alpha, beta, omega, rho, phi = parameters
-        a0 = omega*(1-alpha-beta)
-        a1 = phi +alpha
-        a2 = phi*(alpha + beta) + alpha*rho
+        a0 = omega * (1 - alpha - beta)
+        a1 = phi + alpha
+        a2 = phi * (alpha + beta) + alpha * rho
         b1 = rho + beta - phi
-        b2 = phi*(alpha + beta) - rho*beta
+        b2 = phi * (alpha + beta) - rho*beta
         return [a0, a1, a2, b1, b2]
 
     def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
@@ -2076,7 +2076,7 @@ class CGARCH(GARCH):
         alpha, beta, omega, rho, phi = parameters
         if initial_value is None:
             # Cgarch can be represented as a restricted garch(2,2) with:
-            a0, a1, a2, b1, b2 =  self._covertparams(parameters)
+            a0, a1, a2, b1, b2 = self._covertparams(parameters)
             # the unconditional var of this garch(2,2) form is used as initial value
             fromgarch = a0/(1-(a1+a2+b1+b2))
             fromcg = omega/(1-rho)
@@ -2087,7 +2087,7 @@ class CGARCH(GARCH):
         q2[0] = initial_value * 0.65
         g2[0] = initial_value - q2[0]
         data[0] = sqrt(sigma2[0]) * errors[0]
-        
+
         for i in range(1, T):
             g2[i] = alpha * (data[i - 1]**2 - q2[i - 1]) + beta * g2[i - 1]
             q2[i] = omega + rho * q2[i - 1] + phi * (data[i - 1]**2 - sigma2[i - 1])
@@ -2147,14 +2147,20 @@ class CGARCH(GARCH):
             forecasts[:start] = np.nan
         return VarianceForecast(forecasts)
 
-    def _simulate_paths(self, m, parameters, horizon, std_shocks, scaled_forecast_paths, scaled_shock, asym_scaled_shock):
+    def _simulate_paths(self, m, parameters, horizon, std_shocks,
+                        scaled_forecast_paths, scaled_shock,
+                        asym_scaled_shock):
         parameters = self._covertparams(parameters)
-        return super(CGARCH, self)._simulate_paths(m, parameters, horizon, std_shocks, scaled_forecast_paths, scaled_shock, asym_scaled_shock)
+        return super(CGARCH, self)._simulate_paths(m, parameters,
+                                                   horizon, std_shocks,
+                                                   scaled_forecast_paths,
+                                                   scaled_shock, asym_scaled_shock)
 
-    def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon, simulations, rng):
+    def _simulation_forecast(self, parameters, resids, backcast, var_bounds,
+                             start, horizon, simulations, rng):
         sigma2, forecasts = self._one_step_forecast(parameters, resids, backcast,
                                                     var_bounds, horizon)
-        #Everything is similar to GARCH class vut parameters have to be converted
+        # Everything is similar to GARCH class vut parameters have to be converted
         parameters = self._covertparams(parameters)
         t = resids.shape[0]
         paths = np.zeros((t, simulations, horizon))
