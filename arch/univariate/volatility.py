@@ -2071,18 +2071,19 @@ class CGARCH(GARCH):
         g2 = zeros(T)
         #  long_ term
         q2 = zeros(T)
-
+        alpha, beta, omega, rho, phi = parameters
         if initial_value is None:
             # Cgarch can be represented as a restricted garch(2,2) with:
             a0, a1, a2, b1, b2 =  self._covertparams(parameters)
             # the unconditional var of this garch(2,2) form is used as initial value
-            initial_value = a0/(1-(a1+a2+b1+b2))
+            fromgarch = a0/(1-(a1+a2+b1+b2))
+            initial_value = fromgarch if fromgarch > 0 else omega/(1-rho)
 
         sigma2[0] = initial_value
         q2[0] = initial_value * 0.65
         g2[0] = initial_value - q2[0]
         data[0] = sqrt(sigma2[0]) * errors[0]
-        alpha, beta, omega, rho, phi = parameters
+        
         for i in range(1, T):
             g2[i] = alpha * (data[i - 1]**2 - q2[i - 1]) + beta * g2[i - 1]
             q2[i] = omega + rho * q2[i - 1] + phi * (data[i - 1]**2 - sigma2[i - 1])
