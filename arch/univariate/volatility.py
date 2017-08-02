@@ -2008,7 +2008,7 @@ class CGARCH(GARCH):
     """
 
     def __init__(self):
-        super().__init__()
+        super(CGARCH, self).__init__()
         self.p = 2
         self.q = 2
         self.num_params = 5
@@ -2018,7 +2018,7 @@ class CGARCH(GARCH):
         return self.name
         
     def variance_bounds(self, resids, power=2.0):
-        return super().variance_bounds(resids)
+        return super(CGARCH, self).variance_bounds(resids)
     
     def constraints(self):
         # beta-phi>0
