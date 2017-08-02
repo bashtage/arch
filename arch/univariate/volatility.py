@@ -2079,7 +2079,7 @@ class CGARCH(GARCH):
             fromgarch = a0/(1-(a1+a2+b1+b2))
             fromcg = omega/(1-rho)
             aver = (fromcg + fromgarch)/2
-            initial_value = aver if aver > 0 & aver < 0.2 else 0.1
+            initial_value = aver if aver > 0.0 & aver < 0.2 else 0.1
 
         sigma2[0] = initial_value
         q2[0] = initial_value * 0.65

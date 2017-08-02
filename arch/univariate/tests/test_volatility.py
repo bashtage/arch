@@ -138,7 +138,7 @@ class TestVolatiltyProcesses(TestCase):
         fromgarch = converted_params[0]/(1-(np.sum(converted_params[1:])))
         fromcg  = omega/(1-rho)
         aver = (fromcg + fromgarch)/2
-        if aver > 0 & aver < 0.2:
+        if aver > 0.0 & aver < 0.2:
             initial_value = aver
         else:
             initial_value = 0.1
