@@ -137,7 +137,7 @@ class TestVolatiltyProcesses(TestCase):
         sigma2 = np.zeros(self.T + 500)
         sigma2[0] = initial_value
         g2 = np.ndarray(self.T + 500)
-        q2 = q2.copy()
+        q2 = g2.copy()
         g2[0] = initial_value - q2[0]
         data = np.zeros(self.T + 500)
         data[0] = e[0] * np.sqrt(sigma2[0])
