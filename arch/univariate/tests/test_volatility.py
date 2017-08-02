@@ -108,7 +108,7 @@ class TestVolatiltyProcesses(TestCase):
         assert_almost_equal(backcast,
                             np.sum((self.resids[:75] ** 2) * (w / w.sum())))
         var_bounds = cgarch.variance_bounds(self.resids)
-        parameters = np.array([0.1, 0.4, 0.75, 0.8, 0.2])
+        
         cgarch.compute_variance(parameters, self.resids, self.sigma2, \
                                 backcast, var_bounds)
         cond_var_direct = np.zeros_like(self.sigma2)
@@ -136,9 +136,12 @@ class TestVolatiltyProcesses(TestCase):
         alpha, beta, omega, rho, phi = parameters
         converted_params = cgarch._covertparams(parameters)
         fromgarch = converted_params[0]/(1-(np.sum(converted_params[1:])))
-        if fromgarch > 0:
-            initial_value = fromgarch
+        fromcg  = omega/(1-rho)
+        aver = (fromcg + fromgarch)/2
+        if aver > 0:
+            initial_value = aver
         else:
+            initial_value = 0.5
             initial_value = omega/(1-rho)
         sigma2 = np.zeros(self.T + 500)
         sigma2[0] = initial_value

@@ -2077,7 +2077,9 @@ class CGARCH(GARCH):
             a0, a1, a2, b1, b2 =  self._covertparams(parameters)
             # the unconditional var of this garch(2,2) form is used as initial value
             fromgarch = a0/(1-(a1+a2+b1+b2))
-            initial_value = fromgarch if fromgarch > 0 else omega/(1-rho)
+            fromcg = omega/(1-rho)
+            aver = (fromcg + fromgarch)/2
+            initial_value = aver if aver > 0 else 0.5
 
         sigma2[0] = initial_value
         q2[0] = initial_value * 0.65
