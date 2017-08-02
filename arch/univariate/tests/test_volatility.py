@@ -109,20 +109,21 @@ class TestVolatiltyProcesses(TestCase):
                             np.sum((self.resids[:75] ** 2) * (w / w.sum())))
         var_bounds = cgarch.variance_bounds(self.resids)
         parameters = np.array([0.1, 0.4, 0.75, 0.8, 0.2])
-        cgarch.compute_variance(parameters, self.resids, self.sigma2,
-                               backcast, var_bounds)
+        cgarch.compute_variance(parameters, self.resids, self.sigma2, \
+                                backcast, var_bounds)
         cond_var_direct = np.zeros_like(self.sigma2)
         g2 = np.ndarray(self.T)
         q2 = g2.copy()
         from arch.univariate import recursions_python as recpy
-        recpy.cgarch_recursion(parameters,
-                            self.resids ** 2.0,
-                            cond_var_direct,
-                            backcast, var_bounds, g2, q2)
+        recpy.cgarch_recursion(parameters, 
+                               self.resids ** 2.0,
+                               cond_var_direct,
+                               backcast, 
+                               var_bounds, g2, q2)
         assert_allclose(self.sigma2, cond_var_direct)
 
         a, b = cgarch.constraints()
-        a_target = np.array([[0, 1, 0, 0, -1],[-1, -1, 0, 1, 0],[0, 0, 0, -1, 0]])
+        a_target = np.array([[0, 1, 0, 0, -1], [-1, -1, 0, 1, 0], [0, 0, 0, -1, 0]])
         b_target = np.array([0, 0, -1])
         assert_array_equal(a, a_target)
         assert_array_equal(b, b_target)
@@ -146,7 +147,7 @@ class TestVolatiltyProcesses(TestCase):
             q2[i] = omega + rho * q2[i - 1] + phi * (data[i - 1]**2 - sigma2[i - 1])
             sigma2[i] = g2[i] + q2[i]
             data[i] = e[i] * (np.sqrt(sigma2[i])) ** 2
-            
+
         data = data[500:]
         sigma2 = sigma2[500:]
         assert_almost_equal(data / sim_data[0], np.ones_like(data))
@@ -162,7 +163,7 @@ class TestVolatiltyProcesses(TestCase):
         assert_equal(cgarch.num_params, 5)
         assert_equal(cgarch.p, 2)
         assert_equal(cgarch.q, 2)
-    
+
     def test_garch_power(self):
         garch = GARCH(power=1.0)
         assert_equal(garch.num_params, 3)
