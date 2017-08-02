@@ -15,7 +15,8 @@ from arch.univariate.distribution import Normal
 from arch.utility.array import ensure1d, DocStringInheritor
 
 try:
-    from arch.univariate.recursions import garch_recursion, harch_recursion, egarch_recursion, cgarch_recursion
+    from arch.univariate.recursions import (garch_recursion, harch_recursion,
+                                            egarch_recursion, cgarch_recursion)
 except ImportError:  # pragma: no cover
     from arch.univariate.recursions_python import (garch_recursion, harch_recursion,
                                                    egarch_recursion, cgarch_recursion)
@@ -1982,6 +1983,7 @@ class FixedVariance(VolatilityProcess):
 
         return VarianceForecast(forecasts, forecast_paths, shocks)
 
+
 class CGARCH(GARCH):
     r"""
     Component GARCH model. A restricted version of GARCH(2,2) by Engle and Lee
@@ -1993,8 +1995,8 @@ class CGARCH(GARCH):
     Attributes
     ----------
     num_params : int
-        The number of parameters in the model
-    
+    The number of parameters in the model
+
     Notes
     -----
     In this class of processes, the variance dynamics are
@@ -2016,7 +2018,7 @@ class CGARCH(GARCH):
 
     def __str__(self):
         return self.name
-        
+
     def variance_bounds(self, resids, power=2.0):
         return super(CGARCH, self).variance_bounds(resids)
     
@@ -2028,7 +2030,7 @@ class CGARCH(GARCH):
         a = np.array([[0, 1, 0, 0, -1],[-1, -1, 0, 1, 0],[0, 0, 0, -1, 0]])
         b = np.array([0, 0, -1])
         return a, b
-    
+
     def backcast(self, resids):
         return super(CGARCH, self).backcast(resids)
         
@@ -2042,7 +2044,7 @@ class CGARCH(GARCH):
                          var_bounds):
         fresids = resids**2
         nobs = len(fresids)
-        g2, q2 = np.ndarray(nobs*2).reshape(2, nobs) 
+        g2, q2 = np.ndarray(nobs*2).reshape(2, nobs)
         cgarch_recursion(parameters, fresids, sigma2, 
                      backcast, var_bounds, g2=g2, q2=q2)
         return sigma2
