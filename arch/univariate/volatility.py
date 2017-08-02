@@ -2030,7 +2030,7 @@ class CGARCH(GARCH):
         return a, b
     
     def backcast(self, resids):
-        return super().backcast(resids)
+        return super(CGARCH, self).backcast(resids)
         
     def bounds(self, resids):
         return [(0, 1), (0, 1), (-1, 1), (0, 1), (0, 1)]
@@ -2144,7 +2144,7 @@ class CGARCH(GARCH):
 
     def _simulate_paths(self, m, parameters, horizon, std_shocks, scaled_forecast_paths, scaled_shock, asym_scaled_shock):
         parameters = self._covertparams(parameters)
-        return super()._simulate_paths(m, parameters, horizon, std_shocks, scaled_forecast_paths, scaled_shock, asym_scaled_shock)
+        return super(CGARCH, self)._simulate_paths(m, parameters, horizon, std_shocks, scaled_forecast_paths, scaled_shock, asym_scaled_shock)
 
     def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon, simulations, rng):
         sigma2, forecasts = self._one_step_forecast(parameters, resids, backcast,
