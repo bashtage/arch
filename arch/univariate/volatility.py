@@ -188,7 +188,7 @@ class VolatilityProcess(object):
         -------
         sigma2 : array
             t element array containing the one-step ahead forecasts
-        forecsts : array
+        forecasts : array
             t by horizon array containing the one-step ahead forecasts in the first location
         """
         t = resids.shape[0]
@@ -2101,58 +2101,19 @@ class CGARCH(GARCH):
         _sigma2 = np.ndarray(t)
         self.compute_variance(parameters, resids, _sigma2, backcast, var_bounds)
         _q2 = np.zeros_like(_sigma2) # find a way to get real q2 array
+        _q2.fill(0.02)
         alpha, beta, omega, rho, phi = parameters
         if horizon == 1:
             forecasts[:start] = np.nan
             return VarianceForecast(forecasts)
-        _g2 = 
+        
+        _g2 = _sigma2 - _g2
+        
         for h in range(1, horizon):
            q2_forecast = (rho**h)*_q2 + omega * (1 -rho **h)/(1 - rho)
-           forecast = q2_forecast + (alpha + beta) ** h * ( )
-        parameters = self._covertparams(parameters)
-        t = resids.shape[0]
-        p, o, q = self.p, self.o, self.q
-        omega = parameters[0]
-        alpha = parameters[1:p + 1]
-        gamma = parameters[p + 1: p + o + 1]
-        beta = parameters[p + o + 1:]
-
-        m = np.max([p, o, q])
-        _resids = np.zeros(m + horizon)
-        _asym_resids = np.zeros(m + horizon)
-        _sigma2 = np.zeros(m + horizon)
-
-        for i in range(start, t):
-            if i - m + 1 >= 0:
-                _resids[:m] = resids[i - m + 1:i + 1]
-                _asym_resids[:m] = _resids[:m] * (_resids[:m] < 0)
-                _sigma2[:m] = sigma2[i - m + 1:i + 1]
-            else:  # Back-casting needed
-                _resids[:m - i - 1] = np.sqrt(backcast)
-                _resids[m - i - 1: m] = resids[0:i + 1]
-                _asym_resids = _resids * (_resids < 0)
-                _asym_resids[:m - i - 1] = np.sqrt(0.5 * backcast)
-                _sigma2[:m] = backcast
-                _sigma2[m - i - 1: m] = sigma2[0:i + 1]
-
-            for h in range(0, horizon):
-                forecasts[i, h] = omega
-                start_loc = h + m - 1
-
-                for j in range(p):
-                    forecasts[i, h] += alpha[j] * _resids[start_loc - j] ** 2
-
-                for j in range(o):
-                    forecasts[i, h] += gamma[j] * _asym_resids[start_loc - j] ** 2
-
-                for j in range(q):
-                    forecasts[i, h] += beta[j] * _sigma2[start_loc - j]
-
-                _resids[h + m] = np.sqrt(forecasts[i, h])
-                _asym_resids[h + m] = np.sqrt(0.5 * forecasts[i, h])
-                _sigma2[h + m] = forecasts[i, h]
-
-            forecasts[:start] = np.nan
+           sigma2_forecasts = q2_forecast + (alpha + beta) ** h * _g2
+           forecasts[:, h] = sigma2_forecasts
+        forecasts[:start] = np.nan
         return VarianceForecast(forecasts)
 
     def _simulate_paths(self, m, parameters, horizon, std_shocks,
