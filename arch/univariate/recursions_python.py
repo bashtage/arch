@@ -250,7 +250,6 @@ def cgarch_recursion_python(parameters, fresids, sigma2,
     initial_sigma2 = backcast
     initial_q2 = 0.05
     initial_g2 = initial_sigma2 - initial_q2
-  
     # g is short term variance and q is the long term one
     g2[0] = initial_g2
     q2[0] = initial_q2

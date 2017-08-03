@@ -721,7 +721,7 @@ class GARCH(VolatilityProcess):
         return super(GARCH, self).variance_bounds(resids, self.power)
 
     def _name(self):
-        p, o, q, power = self.p, self.o, self.q, self.power  # noqa: F841
+        o, q, power = self.o, self.q, self.power  # noqa: F841
         if power == 2.0:
             if o == 0 and q == 0:
                 return 'ARCH'
@@ -1836,7 +1836,7 @@ class EGARCH(VolatilityProcess):
 
     def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
                              simulations, rng):
-        sigma2, forecasts = self._one_step_forecast(parameters, resids, backcast, var_bounds,
+        sigma2, _ = self._one_step_forecast(parameters, resids, backcast, var_bounds,
                                                     horizon)
         t = resids.shape[0]
         p, o, q = self.p, self.o, self.q
@@ -2021,7 +2021,7 @@ class CGARCH(GARCH):
 
     def variance_bounds(self, resids, power=2.0):
         return super(CGARCH, self).variance_bounds(resids)
-    
+
     def constraints(self):
         # beta-phi>0
         # rho-alpha-beta>0
@@ -2045,8 +2045,8 @@ class CGARCH(GARCH):
         fresids = resids**2
         nobs = len(fresids)
         g2, q2 = np.ndarray(nobs*2).reshape(2, nobs)
-        cgarch_recursion(parameters, fresids, sigma2, 
-                     backcast, var_bounds, g2=g2, q2=q2)
+        cgarch_recursion(parameters, fresids, sigma2,
+                         backcast, var_bounds, g2=g2, q2=q2)
         return sigma2
 
     def parameter_names(self):

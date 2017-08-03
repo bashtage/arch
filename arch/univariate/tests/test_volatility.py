@@ -108,17 +108,16 @@ class TestVolatiltyProcesses(TestCase):
         assert_almost_equal(backcast,
                             np.sum((self.resids[:75] ** 2) * (w / w.sum())))
         var_bounds = cgarch.variance_bounds(self.resids)
-        
         cgarch.compute_variance(parameters, self.resids, self.sigma2, \
                                 backcast, var_bounds)
         cond_var_direct = np.zeros_like(self.sigma2)
         g2 = np.ndarray(self.T)
         q2 = g2.copy()
         from arch.univariate import recursions_python as recpy
-        recpy.cgarch_recursion(parameters, 
+        recpy.cgarch_recursion(parameters,
                                self.resids ** 2.0,
                                cond_var_direct,
-                               backcast, 
+                               backcast,
                                var_bounds, g2, q2)
         assert_allclose(self.sigma2, cond_var_direct)
 

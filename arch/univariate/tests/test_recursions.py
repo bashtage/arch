@@ -347,15 +347,15 @@ var_bounds = np.ones((T, 2)) * var_bounds
         fresids = resids ** 2.0
         q2 = np.ndarray(T)
         g2 = np.ndarray(T)
-        recpy.cgarch_recursion(parameters, fresids, sigma2, backcast, 
+        recpy.cgarch_recursion(parameters, fresids, sigma2, backcast,
                                self.var_bounds, g2, q2)
         sigma2_numba = sigma2.copy()
-        recpy.cgarch_recursion_python(parameters, fresids, sigma2, 
-                                     backcast, self.var_bounds, g2, q2)
+        recpy.cgarch_recursion_python(parameters, fresids, sigma2,
+                                      backcast, self.var_bounds, g2, q2)
         sigma2_python = sigma2.copy()
         rec = recpy # change this after implementing cythonised recursion
-        rec.cgarch_recursion(parameters, fresids, sigma2, backcast, 
-                            self.var_bounds, g2, q2)
+        rec.cgarch_recursion(parameters, fresids, sigma2, backcast,
+                             self.var_bounds, g2, q2)
 
         assert_almost_equal(sigma2_numba, sigma2)
         assert_almost_equal(sigma2_python, sigma2)
