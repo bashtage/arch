@@ -563,7 +563,7 @@ class ARCHModel(object):
         vol_final[first_obs:last_obs] = vol
         long_var_final = np.empty_like(self._y, dtype=np.float64)
         long_var_final.fill(np.nan)
-        if self.tuple_variance = True:
+        if self.tuple_variance == True:
             long_var_final[first_obs:last_obs] = long_var
 
         fit_start, fit_stop = self._fit_indices
