@@ -276,7 +276,7 @@ class ARCHModel(object):
         # 2. Compute sigma2 using VolatilityModel
         sigma2 = self.volatility.compute_variance(vp, resids, sigma2, backcast,
                                                var_bounds)
-        if isinstance(sig, tuple):
+        if isinstance(sigma2, tuple):
             self.tuple_variance = True
             sigma2 = sigma2[0]
 
