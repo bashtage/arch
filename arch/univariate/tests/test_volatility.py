@@ -149,7 +149,7 @@ class TestVolatiltyProcesses(TestCase):
         g2[0] = initial_value - q2[0]
         data = np.zeros(self.T + 500)
         data[0] = e[0] * np.sqrt(sigma2[0])
- 
+
         for i in range(1, self.T + 500):
             g2[i] = alpha * (data[i - 1]**2 - q2[i - 1]) + beta * g2[i - 1]
             q2[i] = omega + rho * q2[i - 1] + phi * (data[i - 1]**2 - sigma2[i - 1])

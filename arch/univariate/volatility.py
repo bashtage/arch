@@ -2035,7 +2035,7 @@ class CGARCH(GARCH):
 
     def bounds(self, resids):
         return [(0, 1), (0, 1), (-1, 1), (0, 1), (0, 1)]
-  
+
     def starting_values(self, resids):
         return np.array([0.1, 0.4, np.var(resids)/2, 0.8, 0.2])
 
