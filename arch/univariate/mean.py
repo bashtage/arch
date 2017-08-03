@@ -567,7 +567,7 @@ class HARX(ARCHModel):
                 names = ['p' + str(i) for i in range(num_params)]
 
             fit_start, fit_stop = self._fit_indices
-            return ARCHModelResult(params, param_cov, 0.0, y, vol, cov_type,
+            return ARCHModelResult(params, param_cov, 0.0, y, vol, None, cov_type,
                                    self._y_series, names, loglikelihood,
                                    self._is_pandas, _xopt, fit_start, fit_stop,
                                    copy.deepcopy(self))
@@ -614,7 +614,7 @@ class HARX(ARCHModel):
             names = ['p' + str(i) for i in range(num_params)]
 
         fit_start, fit_stop = self._fit_indices
-        return ARCHModelResult(params, param_cov, r2, resids, vol, cov_type,
+        return ARCHModelResult(params, param_cov, r2, resids, vol, None, cov_type,
                                self._y_series, names, loglikelihood,
                                self._is_pandas, _xopt, fit_start, fit_stop,
                                copy.deepcopy(self))
