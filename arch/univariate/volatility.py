@@ -2105,14 +2105,12 @@ class CGARCH(GARCH):
         alpha, beta, omega, rho, phi = parameters
         if horizon == 1:
             forecasts[:start] = np.nan
-            return VarianceForecast(forecasts)
-        
-        _g2 = _sigma2 - _g2
-        
+            return VarianceForecast(forecasts)   
+        _g2 = _sigma2 - _q2
         for h in range(1, horizon):
-           q2_forecast = (rho**h)*_q2 + omega * (1 -rho **h)/(1 - rho)
-           sigma2_forecasts = q2_forecast + (alpha + beta) ** h * _g2
-           forecasts[:, h] = sigma2_forecasts
+            q2_forecast = (rho**h)*_q2 + omega * (1 -rho **h)/(1 - rho)
+            sigma2_forecasts = q2_forecast + (alpha + beta) ** h * _g2
+            forecasts[:, h] = sigma2_forecasts
         forecasts[:start] = np.nan
         return VarianceForecast(forecasts)
 
