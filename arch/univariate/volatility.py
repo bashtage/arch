@@ -1837,7 +1837,7 @@ class EGARCH(VolatilityProcess):
     def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
                              simulations, rng):
         sigma2, _ = self._one_step_forecast(parameters, resids, backcast, var_bounds,
-                                                    horizon)
+                                            horizon)
         t = resids.shape[0]
         p, o, q = self.p, self.o, self.q
         m = np.max([p, o, q])
@@ -2026,17 +2026,16 @@ class CGARCH(GARCH):
         # beta-phi>0
         # rho-alpha-beta>0
         # rho<1
-        
-        a = np.array([[0, 1, 0, 0, -1],[-1, -1, 0, 1, 0],[0, 0, 0, -1, 0]])
+        a = np.array([[0, 1, 0, 0, -1], [-1, -1, 0, 1, 0], [0, 0, 0, -1, 0]])
         b = np.array([0, 0, -1])
         return a, b
 
     def backcast(self, resids):
         return super(CGARCH, self).backcast(resids)
-        
+
     def bounds(self, resids):
         return [(0, 1), (0, 1), (-1, 1), (0, 1), (0, 1)]
-    
+  
     def starting_values(self, resids):
         return np.array([0.1, 0.4, np.var(resids)/2, 0.8, 0.2])
 

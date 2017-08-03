@@ -108,7 +108,7 @@ class TestVolatiltyProcesses(TestCase):
         assert_almost_equal(backcast,
                             np.sum((self.resids[:75] ** 2) * (w / w.sum())))
         var_bounds = cgarch.variance_bounds(self.resids)
-        cgarch.compute_variance(parameters, self.resids, self.sigma2, \
+        cgarch.compute_variance(parameters, self.resids, self.sigma2,
                                 backcast, var_bounds)
         cond_var_direct = np.zeros_like(self.sigma2)
         g2 = np.ndarray(self.T)
@@ -126,7 +126,7 @@ class TestVolatiltyProcesses(TestCase):
         b_target = np.array([0, 0, -1])
         assert_array_equal(a, a_target)
         assert_array_equal(b, b_target)
-        #test simulated data
+        # test simulated data
         state = np.random.get_state()
         rng = Normal()
         sim_data = cgarch.simulate(parameters, self.T, rng.simulate([]))
@@ -135,7 +135,7 @@ class TestVolatiltyProcesses(TestCase):
         alpha, beta, omega, rho, phi = parameters
         converted_params = cgarch._covertparams(parameters)
         fromgarch = converted_params[0]/(1-(np.sum(converted_params[1:])))
-        fromcg  = omega/(1-rho)
+        fromcg = omega/(1-rho)
         aver = (fromcg + fromgarch)/2
         if (aver > 0.0) and (aver < 0.2):
             initial_value = aver
@@ -149,7 +149,7 @@ class TestVolatiltyProcesses(TestCase):
         g2[0] = initial_value - q2[0]
         data = np.zeros(self.T + 500)
         data[0] = e[0] * np.sqrt(sigma2[0])
-        
+ 
         for i in range(1, self.T + 500):
             g2[i] = alpha * (data[i - 1]**2 - q2[i - 1]) + beta * g2[i - 1]
             q2[i] = omega + rho * q2[i - 1] + phi * (data[i - 1]**2 - sigma2[i - 1])
