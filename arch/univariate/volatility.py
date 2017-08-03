@@ -2115,7 +2115,7 @@ class CGARCH(GARCH):
             return VarianceForecast(forecasts)
         _g2 = _sigma2 - _q2
         for h in range(2, horizon):
-            q2_forecast = (rho ** h) * _q2 + omega * (1 -rho ** h) / (1 - rho)
+            q2_forecast = (rho ** h) * _q2 + omega * (1 - rho ** h) / (1 - rho)
             sigma2_forecasts = q2_forecast + (alpha + beta) ** h * _g2
             forecasts[:, h-1] = sigma2_forecasts
         forecasts[:start] = np.nan
