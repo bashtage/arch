@@ -15,7 +15,7 @@ from statsmodels.tsa.tsatools import lagmat
 
 from arch.univariate.base import ARCHModel, implicit_constant, ARCHModelResult, ARCHModelForecast
 from arch.univariate.distribution import Normal, StudentsT, SkewStudent
-from arch.univariate.volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH
+from arch.univariate.volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH, CGARCH
 from arch.compat.python import range, iteritems
 from arch.utility.array import ensure1d, parse_dataframe, cutoff_to_index
 
@@ -1141,7 +1141,7 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
     when `mean='zero'`, are silently ignored.
     """
     known_mean = ('zero', 'constant', 'harx', 'har', 'ar', 'arx', 'ls')
-    known_vol = ('arch', 'garch', 'harch', 'constant', 'egarch')
+    known_vol = ('arch', 'garch', 'harch', 'constant', 'egarch', 'cgarch')
     known_dist = ('normal', 'gaussian', 'studentst', 't', 'skewstudent',
                   'skewt')
     mean = mean.lower()
@@ -1173,6 +1173,8 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
         v = ConstantVariance()
     elif vol == 'arch':
         v = ARCH(p=p)
+    elif vol == 'cgarch':
+        v = CGARCH()
     elif vol == 'garch':
         v = GARCH(p=p, o=o, q=q, power=power)
     elif vol == 'egarch':
