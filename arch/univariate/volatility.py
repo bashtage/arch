@@ -2041,12 +2041,13 @@ class CGARCH(GARCH):
 
     def compute_variance(self, parameters, resids, sigma2, backcast,
                          var_bounds):
+        # this returns both sigma and long term variance
         fresids = resids**2
         nobs = len(fresids)
         g2, q2 = np.ndarray(nobs*2).reshape(2, nobs)
         cgarch_recursion(parameters, fresids, sigma2,
                          backcast, var_bounds, g2=g2, q2=q2)
-        return sigma2
+        return sigma2, q2
 
     def _compute_q(self, parameters, resids, sigma2, backcast, var_bounds):
         # is same as compute variance but allows us to get q2 back

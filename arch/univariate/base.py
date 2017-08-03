@@ -273,8 +273,12 @@ class ARCHModel(object):
         resids = self.resids(mp)
 
         # 2. Compute sigma2 using VolatilityModel
-        sigma2 = self.volatility.compute_variance(vp, resids, sigma2, backcast,
-                                                  var_bounds)
+        sig = self.volatility.compute_variance(vp, resids, sigma2, backcast,
+                                               var_bounds)
+        if isinstance(sig, tuple):
+            sigma2 = sig[0]
+        else:
+            sigma2 = sig
         # 3. Compute log likelihood using Distribution
         llf = self.distribution.loglikelihoood(dp, resids, sigma2, individual)
 
