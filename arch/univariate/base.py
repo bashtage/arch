@@ -541,6 +541,7 @@ class ARCHModel(object):
         vol = np.zeros_like(resids)
         vol = self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
         if isinstance(vol, tuple):
+            self.tuple_variance = True
             vol = vol[0]
             long_var = vol[1]
         vol = np.sqrt(vol)
@@ -562,7 +563,8 @@ class ARCHModel(object):
         vol_final[first_obs:last_obs] = vol
         long_var_final = np.empty_like(self._y, dtype=np.float64)
         long_var_final.fill(np.nan)
-        long_var_final[first_obs:last_obs] = long_var
+        if self.tuple_variance = True:
+            long_var_final[first_obs:last_obs] = long_var
 
         fit_start, fit_stop = self._fit_indices
         model_copy = deepcopy(self)
