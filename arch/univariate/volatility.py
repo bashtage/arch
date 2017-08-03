@@ -2047,7 +2047,7 @@ class CGARCH(GARCH):
         cgarch_recursion(parameters, fresids, sigma2,
                          backcast, var_bounds, g2=g2, q2=q2)
         return sigma2
-    
+
     def _compute_q(self, parameters, resids, sigma2, backcast, var_bounds):
         # is same as compute variance but allows us to get q2 back
         fresids = resids**2
@@ -2056,6 +2056,7 @@ class CGARCH(GARCH):
         cgarch_recursion(parameters, fresids, sigma2,
                          backcast, var_bounds, g2=g2, q2=q2)
         return q2
+
     def parameter_names(self):
         names = ["alpha", "beta", "omega", "rho", "phi"]
         return names
@@ -2111,10 +2112,10 @@ class CGARCH(GARCH):
         alpha, beta, omega, rho, phi = parameters
         if horizon == 1:
             forecasts[:start] = np.nan
-            return VarianceForecast(forecasts)   
+            return VarianceForecast(forecasts)
         _g2 = _sigma2 - _q2
         for h in range(2, horizon):
-            q2_forecast = (rho**h)*_q2 + omega * (1 -rho **h)/(1 - rho)
+            q2_forecast = (rho ** h) * _q2 + omega * (1 -rho ** h)/(1 - rho)
             sigma2_forecasts = q2_forecast + (alpha + beta) ** h * _g2
             forecasts[:, h-1] = sigma2_forecasts
         forecasts[:start] = np.nan
