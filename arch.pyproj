@@ -87,6 +87,9 @@
     <Compile Include="arch\__init__.py" />
     <Compile Include="ci\performance.py" />
     <Compile Include="doc\source\conf.py" />
+    <Compile Include="local_cythonrecursion.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="setup.py" />
     <Compile Include="totestimports.py">
       <SubType>Code</SubType>

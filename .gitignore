@@ -14,3 +14,4 @@ README.rst
 *.user
 /.vs/config/applicationhost.config
 /examples/.ipynb_checkpoints/univariate_volatility_modeling-checkpoint.ipynb
+/local_cythonrecursion.py
