@@ -2097,9 +2097,18 @@ class CGARCH(GARCH):
     def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
         sigma2, forecasts = self._one_step_forecast(parameters, resids, backcast,
                                                     var_bounds, horizon)
+        t = resids.shape[0]
+        _sigma2 = np.ndarray(t)
+        self.compute_variance(parameters, resids, _sigma2, backcast, var_bounds)
+        _q2 = np.zeros_like(_sigma2) # find a way to get real q2 array
+        alpha, beta, omega, rho, phi = parameters
         if horizon == 1:
             forecasts[:start] = np.nan
             return VarianceForecast(forecasts)
+        _g2 = 
+        for h in range(1, horizon):
+           q2_forecast = (rho**h)*_q2 + omega * (1 -rho **h)/(1 - rho)
+           forecast = q2_forecast + (alpha + beta) ** h * ( )
         parameters = self._covertparams(parameters)
         t = resids.shape[0]
         p, o, q = self.p, self.o, self.q
