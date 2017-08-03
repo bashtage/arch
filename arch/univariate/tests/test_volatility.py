@@ -114,10 +114,10 @@ class TestVolatiltyProcesses(TestCase):
         g2 = np.ndarray(self.T)
         q2 = g2.copy()
         rec.cgarch_recursion(parameters,
-                               self.resids ** 2.0,
-                               cond_var_direct,
-                               backcast,
-                               var_bounds, g2, q2)
+                             self.resids ** 2.0,
+                             cond_var_direct,
+                             backcast,
+                             var_bounds, g2, q2)
         assert_allclose(self.sigma2, cond_var_direct)
 
         a, b = cgarch.constraints()
