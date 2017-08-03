@@ -2049,15 +2049,6 @@ class CGARCH(GARCH):
                          backcast, var_bounds, g2=g2, q2=q2)
         return sigma2, q2
 
-    def _compute_q(self, parameters, resids, sigma2, backcast, var_bounds):
-        # is same as compute variance but allows us to get q2 back
-        fresids = resids**2
-        nobs = len(fresids)
-        g2, q2 = np.ndarray(nobs*2).reshape(2, nobs)
-        cgarch_recursion(parameters, fresids, sigma2,
-                         backcast, var_bounds, g2=g2, q2=q2)
-        return q2
-
     def parameter_names(self):
         names = ["alpha", "beta", "omega", "rho", "phi"]
         return names
@@ -2105,11 +2096,11 @@ class CGARCH(GARCH):
         return data[burn:], sigma2[burn:]
 
     def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
-        sigma2, forecasts = self._one_step_forecast(parameters, resids, backcast,
+        _, forecasts = self._one_step_forecast(parameters, resids, backcast,
                                                     var_bounds, horizon)
         t = resids.shape[0]
         _sigma2 = np.ndarray(t)
-        _q2 = self._compute_q(parameters, resids, _sigma2, backcast, var_bounds)
+        _sigma2, _q2 = self.compute_variance(parameters, resids, _sigma2, backcast, var_bounds)
         alpha, beta, omega, rho, phi = parameters
         if horizon == 1:
             forecasts[:start] = np.nan
