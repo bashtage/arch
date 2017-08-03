@@ -276,7 +276,7 @@ class ARCHModel(object):
         sigma2 = self.volatility.compute_variance(vp, resids, sigma2, backcast,
                                                   var_bounds)
         # 3. Compute log likelihood using Distribution
-        llf = self.distribution.loglikelihoood(dp, resids, sigma2, individual)
+        llf = self.distribution.loglikelihood(dp, resids, sigma2, individual)
 
         _callback_llf = -1.0 * llf
         return -1.0 * llf

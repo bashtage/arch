@@ -4,7 +4,7 @@ Semiparametric Bootstraps
 -------------------------
 
 Functions for semi-parametric bootstraps differ from those used in
-nonparametric bootstraps.  At a minimum they much accept the keyword
+nonparametric bootstraps.  At a minimum they must accept the keyword
 argument ``params`` which will contain the parameters estimated on
 the original (non-bootstrap) data.  This keyword argument must be
 optional so that the function can be called without the keyword
@@ -168,5 +168,3 @@ This function can then be used to form parametric bootstrap confidence intervals
 
     The parameter vector in this example includes the variance since this is
     required when specifying a complete model.
-
-
