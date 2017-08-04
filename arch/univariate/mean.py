@@ -28,6 +28,8 @@ COV_TYPES = {'white': 'White\'s Heteroskedasticity Consistent Estimator',
 
 
 def _forecast_pad(count, forecasts):
+    if isinstance(forecasts, type(None)):
+        return None
     shape = list(forecasts.shape)
     shape[0] = count
     fill = np.empty(tuple(shape))
@@ -652,7 +654,9 @@ class HARX(ARCHModel):
                                            horizon=horizon, method=method,
                                            simulations=simulations, rng=rng)
         var_fcasts = vfcast.forecasts
+        long_component = vfcast.longterm_forecasts
         var_fcasts = _forecast_pad(earliest, var_fcasts)
+        long_component = _forecast_pad(earliest, long_component)
 
         arp = self._har_to_ar(mp)
         constant = arp[0] if self.constant else 0.0
@@ -691,7 +695,8 @@ class HARX(ARCHModel):
 
         index = self._y_series.index
         return ARCHModelForecast(index, mean_fcast, longrun_var_fcasts,
-                                 var_fcasts, align=align,
+                                 var_fcasts, long_component
+                                 align=align,
                                  simulated_paths=mean_paths,
                                  simulated_residuals=shocks,
                                  simulated_variances=long_run_variance_paths,
