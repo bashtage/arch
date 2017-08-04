@@ -2063,7 +2063,20 @@ class CGARCH(GARCH):
         return [(0, 1), (0, 1), (-1, 1), (0, 1), (0, 1)]
 
     def starting_values(self, resids):
-        return np.array([0.1, 0.4, np.var(resids)/2, 0.8, 0.2])
+        alphas = [0.07, 0.1]
+        betas = [0.5, 0.6, 0.4]
+        omegas = [np.var(resids) * 5, 0.05]
+        rhos = [0.65, 0.8, 0.9]
+        phis = [0.1, 0.05, 0.2, 0.3]
+        combos = list(itertools.product(*[alphas, betas, omegas, rhos, phis]))
+        llfs = np.ndarray(len(combos))
+
+        for i, values in enumerate(combos):
+            llfs[i] = self._gaussian_loglikelihood(np.array(values), resids,
+                                                   self.backcast(resids),
+                                                   self.variance_bounds(resids))
+
+        return combos[np.argmax(llfs)]
 
     def compute_variance(self, parameters, resids, sigma2, backcast,
                          var_bounds):
