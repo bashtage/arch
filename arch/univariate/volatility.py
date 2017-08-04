@@ -2114,8 +2114,9 @@ class CGARCH(GARCH):
         return data[burn:], sigma2[burn:]
 
     def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
-        _, forecasts = self._one_step_forecast(parameters, resids, backcast,
-                                                    var_bounds, horizon)
+        _, forecasts, q2_forecast= self._one_step_forecast(parameters, resids, backcast,
+                                                    var_bounds, horizon,
+                                                    lterm_component=True)
         t = resids.shape[0]
         _sigma2 = np.ndarray(t)
         _sigma2, _q2 = self.compute_variance(parameters, resids, _sigma2, backcast, var_bounds)
@@ -2125,11 +2126,13 @@ class CGARCH(GARCH):
             return VarianceForecast(forecasts)
         _g2 = _sigma2 - _q2
         for h in range(2, horizon):
-            q2_forecast = (rho ** h) * _q2 + omega * (1 - rho ** h) / (1 - rho)
-            sigma2_forecasts = q2_forecast + (alpha + beta) ** h * _g2
+            _q2_forecast = (rho ** h) * _q2 + omega * (1 - rho ** h) / (1 - rho)
+            sigma2_forecasts = _q2_forecast + (alpha + beta) ** h * _g2
             forecasts[:, h-1] = sigma2_forecasts
-        forecasts[:start] = np.nan
-        return VarianceForecast(forecasts)
+            q2_forecast[:, h-1] = _q2_forecast
+
+        forecasts[:start] = q2_forecast[:start] = np.nan
+        return VarianceForecast(forecasts, longterm_forecasts=q2_forecast)
 
     def _check_forecasting_method(self, method, horizon):
         if method == "simulation" or method == "bootstrap":
