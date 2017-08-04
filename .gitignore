@@ -8,18 +8,15 @@ dist
 .benchmarks/
 .cache/
 README.rst
-<<<<<<< HEAD
 *.suo
-/arch.sln
+
 /totestimports.py
 *.user
 /.vs/config/applicationhost.config
 /examples/.ipynb_checkpoints/univariate_volatility_modeling-checkpoint.ipynb
 /local_cythonrecursion.py
-=======
 /.vs/arch/v14/.suo
 *.pyproj
 *.sln
-/totestimports.py
+
 /.vs/config/applicationhost.config
->>>>>>> 1b901cc286d0184f1366da122f7c03bc4536aea7
