@@ -977,7 +977,7 @@ class ARCHModelFixedResult(object):
     @cache_readonly
     def longterm_variance(self):
         """
-        Estimated conditional volatility
+        Estimated Longterm variance
         """
         if self._is_pandas:
             return pd.Series(self._longterm_var,
