@@ -347,8 +347,8 @@ class ARCHModel(object):
         vol = self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
         if isinstance(vol, tuple):
             self.tuple_variance = True
-            vol = vol[0]
             long_var = vol[1]
+            vol = vol[0] 
         vol = np.sqrt(vol)
 
         names = self._all_parameter_names()
@@ -542,8 +542,8 @@ class ARCHModel(object):
         vol = self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
         if isinstance(vol, tuple):
             self.tuple_variance = True
-            vol = vol[0]
             long_var = vol[1]
+            vol = vol[0]
         vol = np.sqrt(vol)
 
         try:

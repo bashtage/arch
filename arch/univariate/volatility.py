@@ -201,6 +201,7 @@ class VolatilityProcess(object):
         forecasts : array
             t by horizon array containing the one-step ahead forecasts in the first location
         """
+        lterm_component = False
         t = resids.shape[0]
         _resids = np.concatenate((resids, [0]))
         _var_bounds = np.concatenate((var_bounds, [[0, np.inf]]))
@@ -208,8 +209,8 @@ class VolatilityProcess(object):
         sigma2 = self.compute_variance(parameters, _resids, sigma2, backcast,
                                        _var_bounds)
         if isinstance(sigma2, tuple):
-            sigma2 = sigma2[0]
-            component = sigma2[1]
+            lterm_component = True
+            sigma2, component = sigma2
             component_forecasts = np.ndarray((t, horizon))
             component_forecasts[:, 0] = component[1:]
 
