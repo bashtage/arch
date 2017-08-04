@@ -175,7 +175,8 @@ class VolatilityProcess(object):
         """
         raise NotImplementedError('Must be overridden')  # pragma: no cover
 
-    def _one_step_forecast(self, parameters, resids, backcast, var_bounds, horizon):
+    def _one_step_forecast(self, parameters, resids, backcast, var_bounds,
+                           horizon, lterm_component=False):
         """
         One-step ahead forecast
 
@@ -204,11 +205,19 @@ class VolatilityProcess(object):
         _resids = np.concatenate((resids, [0]))
         _var_bounds = np.concatenate((var_bounds, [[0, np.inf]]))
         sigma2 = np.zeros(t + 1)
-        self.compute_variance(parameters, _resids, sigma2, backcast, _var_bounds)
+        sigma2 = self.compute_variance(parameters, _resids, sigma2, backcast,
+                                       _var_bounds)
+        if lterm_component:
+            sigma2 = sigma2[0]
+            component = sigma2[1]
+            component_forecasts = np.ndarray((t, horizon))
+            component_forecasts[:, 0] = component[1:]
+
         forecasts = np.zeros((t, horizon))
         forecasts[:, 0] = sigma2[1:]
         sigma2 = sigma2[:-1]
-
+        if lterm_component:
+            return sigma2, forecasts, component_forecasts
         return sigma2, forecasts
 
     def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
