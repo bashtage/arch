@@ -88,14 +88,23 @@ class VarianceForecast(object):
     _forecasts = None
     _forecast_paths = None
 
-    def __init__(self, forecasts, forecast_paths=None, shocks=None):
+    def __init__(self, forecasts, forecast_paths=None, shocks=None,
+                 longterm_forecasts=None):
         self._forecasts = forecasts
         self._forecast_paths = forecast_paths
         self._shocks = shocks
+        self._longterm_forecasts = None
 
     @property
     def forecasts(self):
         return self._forecasts
+
+    @property
+    def longterm_forecasts(self):
+        """
+        Used if volatility process outputs a long term component
+        """
+        return self._longterm_forecasts
 
     @property
     def forecast_paths(self):
