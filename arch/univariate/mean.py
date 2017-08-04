@@ -695,7 +695,7 @@ class HARX(ARCHModel):
 
         index = self._y_series.index
         return ARCHModelForecast(index, mean_fcast, longrun_var_fcasts,
-                                 var_fcasts, long_component
+                                 var_fcasts, long_component,
                                  align=align,
                                  simulated_paths=mean_paths,
                                  simulated_residuals=shocks,
