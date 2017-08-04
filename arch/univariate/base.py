@@ -1560,6 +1560,8 @@ def _align_forecast(f, align):
 
 
 def _format_forecasts(values, index):
+    if isinstance(values, type(None)):
+        return None
     horizon = values.shape[1]
     format_str = '{0:>0' + str(int(np.ceil(np.log10(horizon + 0.5)))) + '}'
     columns = ['h.' + format_str.format(h + 1) for h in range(horizon)]
@@ -1624,6 +1626,7 @@ class ARCHModelForecast(object):
     mean : array
     variance : array
     residual_variance : array
+    lterm_residual_variance : array
     simulated_paths : array, optional
     simulated_variances : array, optional
     simulated_residual_variances : array, optional
@@ -1638,10 +1641,13 @@ class ARCHModelForecast(object):
         Forecast values for the conditional variance of the process
     residual_variance : DataFrame
         Forecast values for the conditional variance of the residuals
+    longterm_component : DataFrame
+        Forecast values for the conditional variance of the residuals
     simulations : ARCHModelForecastSimulation
         Object containing detailed simulation results if using a simulation-based method
     """
     def __init__(self, index, mean, variance, residual_variance,
+                 lterm_residual_variance=None,
                  simulated_paths=None, simulated_variances=None,
                  simulated_residual_variances=None, simulated_residuals=None,
                  align='origin'):
@@ -1649,11 +1655,13 @@ class ARCHModelForecast(object):
         mean = _format_forecasts(mean, index)
         variance = _format_forecasts(variance, index)
         residual_variance = _format_forecasts(residual_variance, index)
+        lterm_residual_variance = _format_forecasts(lterm_residual_variance, index)
 
         self._mean = _align_forecast(mean, align=align)
         self._variance = _align_forecast(variance, align=align)
         self._residual_variance = _align_forecast(residual_variance, align=align)
-
+        self._lterm_residual_variance = _align_forecast(lterm_residual_variance,
+                                                        align=align)
         self._sim = ARCHModelForecastSimulation(simulated_paths,
                                                 simulated_residuals,
                                                 simulated_variances,
@@ -1670,6 +1678,10 @@ class ARCHModelForecast(object):
     @property
     def residual_variance(self):
         return self._residual_variance
+
+    @property
+    def longterm_component(self):
+        return self._lterm_residual_variance
 
     @property
     def simulations(self):
