@@ -2132,7 +2132,7 @@ class CGARCH(GARCH):
             q2_forecast[:, h-1] = _q2_forecast
 
         forecasts[:start] = q2_forecast[:start] = np.nan
-        return VarianceForecast(forecasts)
+        return VarianceForecast(forecasts, longterm_forecasts=q2_forecast)
 
     def _check_forecasting_method(self, method, horizon):
         if method == "simulation" or method == "bootstrap":
