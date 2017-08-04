@@ -353,7 +353,6 @@ var_bounds = np.ones((T, 2)) * var_bounds
         recpy.cgarch_recursion_python(parameters, fresids, sigma2,
                                       backcast, self.var_bounds, g2, q2)
         sigma2_python = sigma2.copy()
-        # rec = recpy  # change this after implementing cythonised recursion
         rec.cgarch_recursion(parameters, fresids, sigma2, backcast,
                              self.var_bounds, g2, q2)
 

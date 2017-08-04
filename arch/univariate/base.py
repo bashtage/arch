@@ -795,6 +795,10 @@ class ARCHModelFixedResult(object):
         of conditional variance).  The values are aligned with the input data
         so that the value in the t-th position is the variance of t-th error,
         which is computed using time-(t-1) information.
+    longterm_variance : array
+        nobs array containing the Long-term variance from model.Is aligned
+        with the input data.
+        Is only present if the volatility process outputs it.
     params : Series
         Estimated parameters
     nobs : int
@@ -1299,7 +1303,10 @@ class ARCHModelResult(ARCHModelFixedResult):
         of conditional variance).  The values are aligned with the input data
         so that the value in the t-th position is the variance of t-th error,
         which is computed using time-(t-1) information.
-
+    longterm_var : array
+        nobs array containing the Long-term variance from model.Is aligned
+        with the input data.
+        Is only present if the volatility process outputs it else it returns None.
     params : Series
         Estimated parameters
     param_cov : DataFrame
