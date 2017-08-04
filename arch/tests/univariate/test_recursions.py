@@ -339,6 +339,26 @@ var_bounds = np.ones((T, 2)) * var_bounds
             sigma2[t] = np.exp(lnsigma2[t])
         assert_almost_equal(sigma2_python, sigma2)
 
+    def test_cgarch(self):
+        T, resids, = self.T, self.resids
+        sigma2, backcast = self.sigma2, self.backcast
+
+        parameters = np.array([0.1, 0.4, 0.75, 0.8, 0.2])
+        fresids = resids ** 2.0
+        q2 = np.ndarray(T)
+        g2 = np.ndarray(T)
+        recpy.cgarch_recursion(parameters, fresids, sigma2, backcast,
+                               self.var_bounds, g2, q2)
+        sigma2_numba = sigma2.copy()
+        recpy.cgarch_recursion_python(parameters, fresids, sigma2,
+                                      backcast, self.var_bounds, g2, q2)
+        sigma2_python = sigma2.copy()
+        rec.cgarch_recursion(parameters, fresids, sigma2, backcast,
+                             self.var_bounds, g2, q2)
+
+        assert_almost_equal(sigma2_numba, sigma2)
+        assert_almost_equal(sigma2_python, sigma2)
+
     @pytest.mark.skipif(missing_numba or missing_extension, reason='numba not installed')
     def test_garch_performance(self):
         garch_setup = """

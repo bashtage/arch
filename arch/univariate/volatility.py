@@ -4,7 +4,6 @@ inherit from :class:`VolatilityProcess` and provide the same methods with the
 same inputs.
 """
 from __future__ import absolute_import, division
-
 import itertools
 
 import numpy as np
@@ -16,13 +15,14 @@ from arch.univariate.distribution import Normal
 from arch.utility.array import ensure1d, DocStringInheritor
 
 try:
-    from arch.univariate.recursions import garch_recursion, harch_recursion, egarch_recursion
+    from arch.univariate.recursions import (garch_recursion, harch_recursion,
+                                            egarch_recursion, cgarch_recursion)
 except ImportError:  # pragma: no cover
     from arch.univariate.recursions_python import (garch_recursion, harch_recursion,
-                                                   egarch_recursion)
+                                                   egarch_recursion, cgarch_recursion)
 
 __all__ = ['GARCH', 'ARCH', 'HARCH', 'ConstantVariance', 'EWMAVariance', 'RiskMetrics2006',
-           'EGARCH', 'FixedVariance']
+           'EGARCH', 'FixedVariance', 'CGARCH']
 
 
 class BootstrapRng(object):
@@ -88,14 +88,23 @@ class VarianceForecast(object):
     _forecasts = None
     _forecast_paths = None
 
-    def __init__(self, forecasts, forecast_paths=None, shocks=None):
+    def __init__(self, forecasts, forecast_paths=None, shocks=None,
+                 longterm_forecasts=None):
         self._forecasts = forecasts
         self._forecast_paths = forecast_paths
         self._shocks = shocks
+        self._longterm_forecasts = longterm_forecasts
 
     @property
     def forecasts(self):
         return self._forecasts
+
+    @property
+    def longterm_forecasts(self):
+        """
+        Used if volatility process outputs a long term component
+        """
+        return self._longterm_forecasts
 
     @property
     def forecast_paths(self):
@@ -166,7 +175,8 @@ class VolatilityProcess(object):
         """
         raise NotImplementedError('Must be overridden')  # pragma: no cover
 
-    def _one_step_forecast(self, parameters, resids, backcast, var_bounds, horizon):
+    def _one_step_forecast(self, parameters, resids, backcast, var_bounds,
+                           horizon):
         """
         One-step ahead forecast
 
@@ -188,18 +198,27 @@ class VolatilityProcess(object):
         -------
         sigma2 : array
             t element array containing the one-step ahead forecasts
-        forecsts : array
+        forecasts : array
             t by horizon array containing the one-step ahead forecasts in the first location
         """
+        lterm_component = False
         t = resids.shape[0]
         _resids = np.concatenate((resids, [0]))
         _var_bounds = np.concatenate((var_bounds, [[0, np.inf]]))
         sigma2 = np.zeros(t + 1)
-        self.compute_variance(parameters, _resids, sigma2, backcast, _var_bounds)
+        sigma2 = self.compute_variance(parameters, _resids, sigma2, backcast,
+                                       _var_bounds)
+        if isinstance(sigma2, tuple):
+            lterm_component = True
+            sigma2, component = sigma2
+            component_forecasts = np.ndarray((t, horizon))
+            component_forecasts[:, 0] = component[1:]
+
         forecasts = np.zeros((t, horizon))
         forecasts[:, 0] = sigma2[1:]
         sigma2 = sigma2[:-1]
-
+        if lterm_component:
+            return sigma2, forecasts, component_forecasts
         return sigma2, forecasts
 
     def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
@@ -721,7 +740,7 @@ class GARCH(VolatilityProcess):
         return super(GARCH, self).variance_bounds(resids, self.power)
 
     def _name(self):
-        p, o, q, power = self.p, self.o, self.q, self.power  # noqa: F841
+        o, q, power = self.o, self.q, self.power  # noqa: F841
         if power == 2.0:
             if o == 0 and q == 0:
                 return 'ARCH'
@@ -1837,8 +1856,8 @@ class EGARCH(VolatilityProcess):
 
     def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
                              simulations, rng):
-        sigma2, forecasts = self._one_step_forecast(parameters, resids, backcast, var_bounds,
-                                                    horizon)
+        sigma2, _ = self._one_step_forecast(parameters, resids, backcast, var_bounds,
+                                            horizon)
         t = resids.shape[0]
         p, o, q = self.p, self.o, self.q
         m = np.max([p, o, q])
@@ -1983,3 +2002,140 @@ class FixedVariance(VolatilityProcess):
         shocks.fill(np.nan)
 
         return VarianceForecast(forecasts, forecast_paths, shocks)
+
+
+class CGARCH(GARCH):
+    r"""
+    Component GARCH model. A restricted version of GARCH(2,2) by Engle and Lee
+
+    Parameters
+    ----------
+    All parameters are estimated
+
+    Attributes
+    ----------
+    num_params : int
+    The number of parameters in the model
+
+    Notes
+    -----
+    In this class of processes, the variance dynamics are
+
+    .. math::
+
+        \sigma^{2}_{t}=q_{t}+g_{t}
+        q_{t}=\omega + \rho q_{t-1} + \phi(r^{2}_{t-1}-\sigma^{2}_{t-1})
+        g_{t} = \alpha(r^{2}_{t-1}-q_{t-1})+\beta g_{t-1}
+
+    """
+
+    def __init__(self):
+        super(CGARCH, self).__init__()
+        self.p = 2
+        self.q = 2
+        self.num_params = 5
+        self.name = "ComponentGARCH"
+
+    def __str__(self):
+        return self.name
+
+    def variance_bounds(self, resids, power=2.0):
+        return super(CGARCH, self).variance_bounds(resids)
+
+    def constraints(self):
+        # beta-phi>0
+        # rho-alpha-beta>0
+        # rho<1
+        a = np.array([[0, 1, 0, 0, -1], [-1, -1, 0, 1, 0], [0, 0, 0, -1, 0]])
+        b = np.array([0, 0, -1])
+        return a, b
+
+    def backcast(self, resids):
+        return super(CGARCH, self).backcast(resids)
+
+    def bounds(self, resids):
+        return [(0, 1), (0, 1), (-1, 1), (0, 1), (0, 1)]
+
+    def starting_values(self, resids):
+        return np.array([0.1, 0.4, np.var(resids)/2, 0.8, 0.2])
+
+    def compute_variance(self, parameters, resids, sigma2, backcast,
+                         var_bounds):
+        # this returns both sigma and long term variance
+        fresids = resids**2
+        nobs = len(fresids)
+        g2, q2 = np.ndarray(nobs*2).reshape(2, nobs)
+        cgarch_recursion(parameters, fresids, sigma2,
+                         backcast, var_bounds, g2=g2, q2=q2)
+        return sigma2, q2
+
+    def parameter_names(self):
+        names = ["alpha", "beta", "omega", "rho", "phi"]
+        return names
+
+    def _covertparams(self, parameters):
+        # this will convert the cgarch params into restricted GARCH(2,2) parameters
+        alpha, beta, omega, rho, phi = parameters
+        a0 = omega * (1 - alpha - beta)
+        a1 = phi + alpha
+        a2 = phi * (alpha + beta) + alpha * rho
+        b1 = rho + beta - phi
+        b2 = phi * (alpha + beta) - rho*beta
+        return [a0, a1, a2, b1, b2]
+
+    def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
+        T = nobs + burn
+        errors = rng(T)
+        sigma2 = zeros(T)
+        data = zeros(T)
+
+        # short_term component
+        g2 = zeros(T)
+        #  long_ term
+        q2 = zeros(T)
+        alpha, beta, omega, rho, phi = parameters
+        if initial_value is None:
+            # Cgarch can be represented as a restricted garch(2,2) with:
+            a0, a1, a2, b1, b2 = self._covertparams(parameters)
+            # the unconditional var of this garch(2,2) form is used as initial value
+            fromgarch = a0/(1-(a1+a2+b1+b2))
+            fromcg = omega/(1-rho)
+            aver = (fromcg + fromgarch)/2
+            initial_value = aver if (aver > 0.0) and (aver < 0.2) else 0.1
+
+        sigma2[0] = initial_value
+        q2[0] = initial_value * 0.65
+        g2[0] = initial_value - q2[0]
+        data[0] = sqrt(sigma2[0]) * errors[0]
+
+        for i in range(1, T):
+            g2[i] = alpha * (data[i - 1]**2 - q2[i - 1]) + beta * g2[i - 1]
+            q2[i] = omega + rho * q2[i - 1] + phi * (data[i - 1]**2 - sigma2[i - 1])
+            sigma2[i] = g2[i] + q2[i]
+            data[i] = errors[i] * (np.sqrt(sigma2[i])) ** 2
+        return data[burn:], sigma2[burn:]
+
+    def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+        _, forecasts, q2_forecast = self._one_step_forecast(parameters, resids, backcast,
+                                                            var_bounds, horizon)
+        t = resids.shape[0]
+        _sigma2 = np.ndarray(t)
+        _sigma2, _q2 = self.compute_variance(parameters, resids, _sigma2, backcast, var_bounds)
+        alpha, beta, omega, rho, phi = parameters
+        if horizon == 1:
+            forecasts[:start] = np.nan
+            return VarianceForecast(forecasts)
+        _g2 = _sigma2 - _q2
+        for h in range(2, horizon):
+            _q2_forecast = (rho ** h) * _q2 + omega * (1 - rho ** h) / (1 - rho)
+            sigma2_forecasts = _q2_forecast + (alpha + beta) ** h * _g2
+            forecasts[:, h-1] = sigma2_forecasts
+            q2_forecast[:, h-1] = _q2_forecast
+
+        forecasts[:start] = q2_forecast[:start] = np.nan
+        return VarianceForecast(forecasts, longterm_forecasts=q2_forecast)
+
+    def _check_forecasting_method(self, method, horizon):
+        if method == "simulation" or method == "bootstrap":
+            raise NotImplementedError("Only analytic method is supported for CGARCH ")
+        return

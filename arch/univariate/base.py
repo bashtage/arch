@@ -161,7 +161,8 @@ class ARCHModel(object):
         self._distribution = None
         self._backcast = None
         self._var_bounds = None
-
+        # used when two  arrays are returned in compute_variance
+        self.tuple_variance = False
         if volatility is not None:
             self.volatility = volatility
         else:
@@ -275,6 +276,10 @@ class ARCHModel(object):
         # 2. Compute sigma2 using VolatilityModel
         sigma2 = self.volatility.compute_variance(vp, resids, sigma2, backcast,
                                                   var_bounds)
+        if isinstance(sigma2, tuple):
+            self.tuple_variance = True
+            sigma2 = sigma2[0]
+
         # 3. Compute log likelihood using Distribution
         llf = self.distribution.loglikelihood(dp, resids, sigma2, individual)
 
@@ -339,11 +344,16 @@ class ARCHModel(object):
 
         resids = self.resids(mp)
         vol = np.zeros_like(resids)
-        self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
+        vol = self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
+        if isinstance(vol, tuple):
+            self.tuple_variance = True
+            long_var = vol[1]
+            vol = vol[0]
         vol = np.sqrt(vol)
 
         names = self._all_parameter_names()
         # Reshape resids and vol
+        # this part is too repetitive
         first_obs, last_obs = self._fit_indices
         resids_final = np.empty_like(self._y, dtype=np.float64)
         resids_final.fill(np.nan)
@@ -351,9 +361,14 @@ class ARCHModel(object):
         vol_final = np.empty_like(self._y, dtype=np.float64)
         vol_final.fill(np.nan)
         vol_final[first_obs:last_obs] = vol
+        long_var_final = np.empty_like(self._y, dtype=np.float64)
+        long_var_final.fill(np.nan)
+        if self.tuple_variance:
+            long_var_final[first_obs:last_obs] = long_var
 
         model_copy = deepcopy(self)
-        return ARCHModelFixedResult(params, resids, vol, self._y_series, names,
+        return ARCHModelFixedResult(params, resids, vol, long_var_final,
+                                    self._y_series, names,
                                     loglikelihood, self._is_pandas, model_copy)
 
     def _adjust_sample(self, first_obs, last_obs):
@@ -524,7 +539,11 @@ class ARCHModel(object):
 
         resids = self.resids(mp)
         vol = np.zeros_like(resids)
-        self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
+        vol = self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
+        if isinstance(vol, tuple):
+            self.tuple_variance = True
+            long_var = vol[1]
+            vol = vol[0]
         vol = np.sqrt(vol)
 
         try:
@@ -534,6 +553,7 @@ class ARCHModel(object):
 
         names = self._all_parameter_names()
         # Reshape resids and vol
+        # this part is too repetitive come back to this when done
         first_obs, last_obs = self._fit_indices
         resids_final = np.empty_like(self._y, dtype=np.float64)
         resids_final.fill(np.nan)
@@ -541,12 +561,17 @@ class ARCHModel(object):
         vol_final = np.empty_like(self._y, dtype=np.float64)
         vol_final.fill(np.nan)
         vol_final[first_obs:last_obs] = vol
+        long_var_final = np.empty_like(self._y, dtype=np.float64)
+        long_var_final.fill(np.nan)
+        if self.tuple_variance:
+            long_var_final[first_obs:last_obs] = long_var
 
         fit_start, fit_stop = self._fit_indices
         model_copy = deepcopy(self)
         return ARCHModelResult(params, None, r2, resids_final, vol_final,
-                               cov_type, self._y_series, names, loglikelihood,
-                               self._is_pandas, xopt, fit_start, fit_stop, model_copy)
+                               long_var_final, cov_type, self._y_series, names,
+                               loglikelihood, self._is_pandas,
+                               xopt, fit_start, fit_stop, model_copy)
 
     def parameter_names(self):
         """List of parameters names
@@ -735,6 +760,8 @@ class ARCHModelFixedResult(object):
         contain nan-values in locations not used in estimation
     volatility : array
         Conditional volatility from model
+    longterm_var : array
+        Long term variance from model
     dep_var: Series
         Dependent variable
     names: list (str)
@@ -768,6 +795,10 @@ class ARCHModelFixedResult(object):
         of conditional variance).  The values are aligned with the input data
         so that the value in the t-th position is the variance of t-th error,
         which is computed using time-(t-1) information.
+    longterm_variance : array
+        nobs array containing the Long-term variance from model.Is aligned
+        with the input data.
+        Is only present if the volatility process outputs it.
     params : Series
         Estimated parameters
     nobs : int
@@ -780,8 +811,10 @@ class ARCHModelFixedResult(object):
         Model instance used to produce the fit
     """
 
-    def __init__(self, params, resid, volatility, dep_var, names,
-                 loglikelihood, is_pandas, model):
+    def __init__(self, params, resid, volatility,
+                 longterm_var,
+                 dep_var, names, loglikelihood,
+                 is_pandas, model):
         self._params = params
         self._resid = resid
         self._is_pandas = is_pandas
@@ -795,6 +828,7 @@ class ARCHModelFixedResult(object):
         self._nobs = self.model._fit_y.shape[0]
         self._index = dep_var.index
         self._volatility = volatility
+        self._longterm_var = longterm_var
 
     def summary(self):
         """
@@ -943,6 +977,18 @@ class ARCHModelFixedResult(object):
                              index=self._index)
         else:
             return self._volatility
+
+    @cache_readonly
+    def longterm_variance(self):
+        """
+        Estimated Longterm variance
+        """
+        if self._is_pandas:
+            return pd.Series(self._longterm_var,
+                             name='Longterm variance',
+                             index=self._index)
+        else:
+            return self._longterm_var
 
     @cache_readonly
     def nobs(self):
@@ -1215,6 +1261,8 @@ class ARCHModelResult(ARCHModelFixedResult):
         contain nan-values in locations not used in estimation
     volatility : array
         Conditional volatility from model
+    longterm_var : array
+        Longterm variance from model
     cov_type : str
         String describing the covariance estimator used
     dep_var: Series
@@ -1255,6 +1303,10 @@ class ARCHModelResult(ARCHModelFixedResult):
         of conditional variance).  The values are aligned with the input data
         so that the value in the t-th position is the variance of t-th error,
         which is computed using time-(t-1) information.
+    longterm_var : array
+        nobs array containing the Long-term variance from model.Is aligned
+        with the input data.
+        Is only present if the volatility process outputs it else it returns None.
     params : Series
         Estimated parameters
     param_cov : DataFrame
@@ -1279,12 +1331,12 @@ class ARCHModelResult(ARCHModelFixedResult):
         Model instance used to produce the fit
     """
 
-    def __init__(self, params, param_cov, r2, resid, volatility, cov_type,
-                 dep_var, names, loglikelihood, is_pandas, optim_output,
-                 fit_start, fit_stop, model):
+    def __init__(self, params, param_cov, r2, resid, volatility, longterm_var,
+                 cov_type, dep_var, names, loglikelihood, is_pandas,
+                 optim_output, fit_start, fit_stop, model):
         super(ARCHModelResult, self).__init__(params, resid, volatility,
-                                              dep_var, names, loglikelihood,
-                                              is_pandas, model)
+                                              longterm_var, dep_var, names,
+                                              loglikelihood, is_pandas, model)
 
         self._fit_indices = (fit_start, fit_stop)
         self._param_cov = param_cov
@@ -1515,6 +1567,8 @@ def _align_forecast(f, align):
 
 
 def _format_forecasts(values, index):
+    if isinstance(values, type(None)):
+        return None
     horizon = values.shape[1]
     format_str = '{0:>0' + str(int(np.ceil(np.log10(horizon + 0.5)))) + '}'
     columns = ['h.' + format_str.format(h + 1) for h in range(horizon)]
@@ -1579,6 +1633,7 @@ class ARCHModelForecast(object):
     mean : array
     variance : array
     residual_variance : array
+    lterm_residual_variance : array
     simulated_paths : array, optional
     simulated_variances : array, optional
     simulated_residual_variances : array, optional
@@ -1593,10 +1648,13 @@ class ARCHModelForecast(object):
         Forecast values for the conditional variance of the process
     residual_variance : DataFrame
         Forecast values for the conditional variance of the residuals
+    longterm_component : DataFrame
+        Forecast values for the conditional variance of the residuals
     simulations : ARCHModelForecastSimulation
         Object containing detailed simulation results if using a simulation-based method
     """
     def __init__(self, index, mean, variance, residual_variance,
+                 lterm_residual_variance=None,
                  simulated_paths=None, simulated_variances=None,
                  simulated_residual_variances=None, simulated_residuals=None,
                  align='origin'):
@@ -1604,11 +1662,13 @@ class ARCHModelForecast(object):
         mean = _format_forecasts(mean, index)
         variance = _format_forecasts(variance, index)
         residual_variance = _format_forecasts(residual_variance, index)
+        lterm_residual_variance = _format_forecasts(lterm_residual_variance, index)
 
         self._mean = _align_forecast(mean, align=align)
         self._variance = _align_forecast(variance, align=align)
         self._residual_variance = _align_forecast(residual_variance, align=align)
-
+        self._lterm_residual_variance = _align_forecast(lterm_residual_variance,
+                                                        align=align)
         self._sim = ARCHModelForecastSimulation(simulated_paths,
                                                 simulated_residuals,
                                                 simulated_variances,
@@ -1625,6 +1685,10 @@ class ARCHModelForecast(object):
     @property
     def residual_variance(self):
         return self._residual_variance
+
+    @property
+    def longterm_component(self):
+        return self._lterm_residual_variance
 
     @property
     def simulations(self):

@@ -11,7 +11,7 @@ try:
 except:
     from arch.univariate import recursions_python as rec
 from arch.univariate.volatility import GARCH, ARCH, HARCH, ConstantVariance, \
-    EWMAVariance, RiskMetrics2006, EGARCH, FixedVariance
+    EWMAVariance, RiskMetrics2006, EGARCH, FixedVariance, CGARCH
 from arch.univariate.distribution import Normal, StudentsT, SkewStudent
 from arch.compat.python import range
 
@@ -91,6 +91,85 @@ class TestVolatiltyProcesses(TestCase):
         assert_equal(garch.p, 1)
         assert_equal(garch.o, 0)
         assert_equal(garch.q, 1)
+
+    def test_cgarch(self):
+        cgarch = CGARCH()
+        sv = cgarch.starting_values(self.resids)
+        assert_equal(sv.shape[0], cgarch.num_params)
+        parameters = np.array([0.1, 0.4, 0.06, 0.8, 0.2])
+        bounds = cgarch.bounds(self.resids)
+        assert_equal(bounds[0], (0, 1))
+        assert_equal(bounds[1], (0, 1))
+        assert_equal(bounds[2], (-1, 1))
+        assert_equal(bounds[3], (0, 1))
+        assert_equal(bounds[4], (0, 1))
+        backcast = cgarch.backcast(self.resids)
+        w = 0.94 ** np.arange(75)
+        assert_almost_equal(backcast,
+                            np.sum((self.resids[:75] ** 2) * (w / w.sum())))
+        var_bounds = cgarch.variance_bounds(self.resids)
+        cgarch.compute_variance(parameters, self.resids, self.sigma2,
+                                backcast, var_bounds)
+        cond_var_direct = np.zeros_like(self.sigma2)
+        g2 = np.ndarray(self.T)
+        q2 = g2.copy()
+        rec.cgarch_recursion(parameters,
+                             self.resids ** 2.0,
+                             cond_var_direct,
+                             backcast,
+                             var_bounds, g2, q2)
+        assert_allclose(self.sigma2, cond_var_direct)
+
+        a, b = cgarch.constraints()
+        a_target = np.array([[0, 1, 0, 0, -1], [-1, -1, 0, 1, 0], [0, 0, 0, -1, 0]])
+        b_target = np.array([0, 0, -1])
+        assert_array_equal(a, a_target)
+        assert_array_equal(b, b_target)
+        # test simulated data
+        state = np.random.get_state()
+        rng = Normal()
+        sim_data = cgarch.simulate(parameters, self.T, rng.simulate([]))
+        np.random.set_state(state)
+        e = np.random.standard_normal(self.T + 500)
+        alpha, beta, omega, rho, phi = parameters
+        converted_params = cgarch._covertparams(parameters)
+        fromgarch = converted_params[0]/(1-(np.sum(converted_params[1:])))
+        fromcg = omega/(1-rho)
+        aver = (fromcg + fromgarch)/2
+        if (aver > 0.0) and (aver < 0.2):
+            initial_value = aver
+        else:
+            initial_value = 0.1
+        sigma2 = np.zeros(self.T + 500)
+        sigma2[0] = initial_value
+        g2 = np.ndarray(self.T + 500)
+        q2 = g2.copy()
+        q2[0] = initial_value * 0.65
+        g2[0] = initial_value - q2[0]
+        data = np.zeros(self.T + 500)
+        data[0] = e[0] * np.sqrt(sigma2[0])
+
+        for i in range(1, self.T + 500):
+            g2[i] = alpha * (data[i - 1]**2 - q2[i - 1]) + beta * g2[i - 1]
+            q2[i] = omega + rho * q2[i - 1] + phi * (data[i - 1]**2 - sigma2[i - 1])
+            sigma2[i] = g2[i] + q2[i]
+            data[i] = e[i] * (np.sqrt(sigma2[i])) ** 2
+
+        data = data[500:]
+        sigma2 = sigma2[500:]
+        assert_almost_equal(data / sim_data[0], np.ones_like(data))
+        assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
+
+        names = cgarch.parameter_names()
+        names_target = ["alpha", "beta", "omega", "rho", "phi"]
+        assert_equal(names, names_target)
+
+        assert isinstance(cgarch.__str__(), str)
+
+        assert_equal(cgarch.name, 'ComponentGARCH')
+        assert_equal(cgarch.num_params, 5)
+        assert_equal(cgarch.p, 2)
+        assert_equal(cgarch.q, 2)
 
     def test_garch_power(self):
         garch = GARCH(power=1.0)
