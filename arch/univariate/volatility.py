@@ -176,7 +176,7 @@ class VolatilityProcess(object):
         raise NotImplementedError('Must be overridden')  # pragma: no cover
 
     def _one_step_forecast(self, parameters, resids, backcast, var_bounds,
-                           horizon, lterm_component=False):
+                           horizon):
         """
         One-step ahead forecast
 
@@ -207,7 +207,7 @@ class VolatilityProcess(object):
         sigma2 = np.zeros(t + 1)
         sigma2 = self.compute_variance(parameters, _resids, sigma2, backcast,
                                        _var_bounds)
-        if lterm_component:
+        if isinstance(sigma2, tuple):
             sigma2 = sigma2[0]
             component = sigma2[1]
             component_forecasts = np.ndarray((t, horizon))
@@ -2115,8 +2115,7 @@ class CGARCH(GARCH):
 
     def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
         _, forecasts, q2_forecast= self._one_step_forecast(parameters, resids, backcast,
-                                                    var_bounds, horizon,
-                                                    lterm_component=True)
+                                                    var_bounds, horizon)
         t = resids.shape[0]
         _sigma2 = np.ndarray(t)
         _sigma2, _q2 = self.compute_variance(parameters, resids, _sigma2, backcast, var_bounds)
@@ -2132,7 +2131,7 @@ class CGARCH(GARCH):
             q2_forecast[:, h-1] = _q2_forecast
 
         forecasts[:start] = q2_forecast[:start] = np.nan
-        return VarianceForecast(forecasts, longterm_forecasts=q2_forecast)
+        return VarianceForecast(forecasts)
 
     def _check_forecasting_method(self, method, horizon):
         if method == "simulation" or method == "bootstrap":
