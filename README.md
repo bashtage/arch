@@ -8,8 +8,9 @@
 
 # ARCH
 
-This is a work-in-progress for ARCH and other tools for financial econometrics, 
-written in Python (and Cython)
+Autoregressive Conditional Heteroskedasticity (ARCH) and other tools for
+financial econometrics, written in Python (with Cython and/or Numba used
+to improve performance)
 
 ## What is in this repository?
 
@@ -19,7 +20,10 @@ written in Python (and Cython)
 * [Multiple Comparison Tests](#multiple-comparison)
 
 ## Documentation
-Documentation is hosted on [read the docs](http://arch.readthedocs.org/en/latest/)
+Released documentation is hosted on
+[read the docs](http://arch.readthedocs.org/en/latest/).
+Current documentation from the master branch is hosted on
+[my github pages](http://bashtage.github.io/arch/doc/index.html).
 
 ## More about ARCH
 More information about ARCH and related models is available in the notes and 
@@ -163,7 +167,9 @@ the --no-binary option
 * Cython (0.24+, if not using --no-binary)
 * py.test (For tests)
 * sphinx (to build docs)
-* sphinx-napoleon (to build docs)
+* guzzle_sphinx_theme (to build docs)
+* ipython (to build docs)
+* numpydoc (to build docs)
 
 **Note**: Setup does not verify requirements.  Please ensure these are
 installed.
@@ -179,7 +185,7 @@ pip install git+https://github.com/bashtage/arch.git
 _Anaconda builds are not currently available for OSX._
 
 ```
-conda install -c https://conda.binstar.org/bashtage arch
+conda install arch -c bashtage
 ```
 
 ### Windows
@@ -187,7 +193,7 @@ conda install -c https://conda.binstar.org/bashtage arch
 Building extension using the community edition of Visual Studio is
 well supported for Python 3.5+.  Building extensions for 64-bit Windows
 for use in Python 2.7 is also supported using Microsoft Visual C++
-Compiler for Python 2.7.  Building on combinations of Python/Windows
+Compiler for Python 2.7.  Building on other combinations of Python/Windows
 is more difficult and is not necessary when Numba is installed since
 just-in-time compiled code (Numba) runs as fast as ahead-of-time
 compiled extensions.
@@ -200,7 +206,6 @@ If you are comfortable compiling binaries on Windows:
 pip install git+https://github.com/bashtage/arch.git
 ```
 
-
 **No Compiler**
 
 All binary code is backed by a pure Python implementation.  Compiling
@@ -212,10 +217,3 @@ pip install git+https://github.com/bashtage/arch.git --install-option "--no-bina
 
 *Note*: If Cython is not installed, the package will be installed as-if
 --no-binary was used.
-
-**Anaconda**
-
-```
-conda install -c https://conda.binstar.org/bashtage arch
-```
-

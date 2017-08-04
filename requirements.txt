@@ -6,3 +6,4 @@ cython>=0.24
 numba>=0.24
 pytest
 statsmodels>=0.6
+guzzle_sphinx_theme

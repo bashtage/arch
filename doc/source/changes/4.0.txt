@@ -1,5 +1,7 @@
 Changes since 4.0
 =================
+- Fixed a bug in MCS when using the max method that prevented all included models from being
+  listed
 - Added ``FixedVariance`` volatility process which allows pre-specified variances to be used with
   a mean model.  This has been added to allow so-called zig-zag estimation where a mean model is
   estimated with a fixed variance, and then a variance model is estimated on the residuals using

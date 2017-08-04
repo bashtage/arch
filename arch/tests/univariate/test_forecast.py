@@ -7,9 +7,9 @@ import pytest
 from numpy.testing import assert_allclose
 from pandas.util.testing import assert_frame_equal
 
-from arch.univariate.mean import _ar_to_impulse, _ar_forecast
+from arch.tests.univariate.test_variance_forecasting import preserved_state
 from arch.univariate import arch_model
-from arch.univariate.tests.test_variance_forecasting import preserved_state
+from arch.univariate.mean import _ar_to_impulse, _ar_forecast
 
 
 class TestForecasting(TestCase):

@@ -3,7 +3,8 @@ Script to run performance tests to show speed.
 """
 
 import sys
-from arch.univariate.tests.test_recursions import TestRecursions
+
+from arch.tests.univariate.test_recursions import TestRecursions
 
 if __name__ == '__main__':
     try:

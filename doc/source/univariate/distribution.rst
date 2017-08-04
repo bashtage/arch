@@ -9,19 +9,19 @@ Normal
 ------
 
 .. autoclass:: Normal
-    :members: starting_values, bounds, constraints, simulate, loglikelihoood
+    :members: starting_values, bounds, constraints, simulate, loglikelihood
 
 Student's t
 -----------
 
 .. autoclass:: StudentsT
-    :members: starting_values, bounds, constraints, simulate, loglikelihoood
+    :members: starting_values, bounds, constraints, simulate, loglikelihood
 
 Skew Student's t
 ----------------
 
 .. autoclass:: SkewStudent
-    :members: starting_values, bounds, constraints, simulate, loglikelihoood
+    :members: starting_values, bounds, constraints, simulate, loglikelihood
 
 Writing New Distributions
 -------------------------

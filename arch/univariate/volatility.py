@@ -561,7 +561,7 @@ class VolatilityProcess(object):
         """
         sigma2 = np.zeros_like(resids)
         self.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
-        return self._normal.loglikelihoood([], resids, sigma2)
+        return self._normal.loglikelihood([], resids, sigma2)
 
     def parameter_names(self):
         """
@@ -1075,6 +1075,7 @@ class HARCH(VolatilityProcess):
     >>> from arch.univariate import HARCH
 
     Lag-1 HARCH, which is identical to an ARCH(1)
+
     >>> harch = HARCH()
 
     More useful and realistic lag lengths
@@ -1312,7 +1313,7 @@ class EWMAVariance(VolatilityProcess):
 
     Parameters
     ----------
-    lam : float, optional.
+    lam : float, optional
         Smoothing parameter. Default is 0.94
 
     Attributes

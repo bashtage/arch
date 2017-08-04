@@ -6,11 +6,11 @@ Changes since 2.1
 Changes since 2.0
 =================
 - Add unit root tests:
-    * Augmented Dickey-Fuller
-    * Dickey-Fuller GLS
-    * Phillips-Perron
-    * KPSS
-    * Variance Ratio
+  * Augmented Dickey-Fuller
+  * Dickey-Fuller GLS
+  * Phillips-Perron
+  * KPSS
+  * Variance Ratio
 - Removed deprecated locations for ARCH modeling functions
 
 

@@ -281,7 +281,7 @@ class ARCHModel(object):
             sigma2 = sigma2[0]
 
         # 3. Compute log likelihood using Distribution
-        llf = self.distribution.loglikelihoood(dp, resids, sigma2, individual)
+        llf = self.distribution.loglikelihood(dp, resids, sigma2, individual)
 
         _callback_llf = -1.0 * llf
         return -1.0 * llf
