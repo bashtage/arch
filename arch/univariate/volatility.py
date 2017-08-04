@@ -2115,8 +2115,8 @@ class CGARCH(GARCH):
         return data[burn:], sigma2[burn:]
 
     def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
-        _, forecasts, q2_forecast= self._one_step_forecast(parameters, resids, backcast,
-                                                    var_bounds, horizon)
+        _, forecasts, q2_forecast = self._one_step_forecast(parameters, resids, backcast,
+                                                            var_bounds, horizon)
         t = resids.shape[0]
         _sigma2 = np.ndarray(t)
         _sigma2, _q2 = self.compute_variance(parameters, resids, _sigma2, backcast, var_bounds)

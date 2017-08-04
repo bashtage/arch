@@ -275,7 +275,7 @@ class ARCHModel(object):
 
         # 2. Compute sigma2 using VolatilityModel
         sigma2 = self.volatility.compute_variance(vp, resids, sigma2, backcast,
-                                               var_bounds)
+                                                  var_bounds)
         if isinstance(sigma2, tuple):
             self.tuple_variance = True
             sigma2 = sigma2[0]
@@ -348,7 +348,7 @@ class ARCHModel(object):
         if isinstance(vol, tuple):
             self.tuple_variance = True
             long_var = vol[1]
-            vol = vol[0] 
+            vol = vol[0]
         vol = np.sqrt(vol)
 
         names = self._all_parameter_names()
@@ -563,13 +563,13 @@ class ARCHModel(object):
         vol_final[first_obs:last_obs] = vol
         long_var_final = np.empty_like(self._y, dtype=np.float64)
         long_var_final.fill(np.nan)
-        if self.tuple_variance == True:
+        if self.tuple_variance:
             long_var_final[first_obs:last_obs] = long_var
 
         fit_start, fit_stop = self._fit_indices
         model_copy = deepcopy(self)
         return ARCHModelResult(params, None, r2, resids_final, vol_final,
-                               long_var_final,cov_type, self._y_series, names,
+                               long_var_final, cov_type, self._y_series, names,
                                loglikelihood, self._is_pandas,
                                xopt, fit_start, fit_stop, model_copy)
 
@@ -1299,7 +1299,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         of conditional variance).  The values are aligned with the input data
         so that the value in the t-th position is the variance of t-th error,
         which is computed using time-(t-1) information.
-    
+
     params : Series
         Estimated parameters
     param_cov : DataFrame
@@ -1325,8 +1325,8 @@ class ARCHModelResult(ARCHModelFixedResult):
     """
 
     def __init__(self, params, param_cov, r2, resid, volatility, longterm_var,
-                 cov_type,dep_var, names, loglikelihood, is_pandas,
-                 optim_output,fit_start, fit_stop, model):
+                 cov_type, dep_var, names, loglikelihood, is_pandas,
+                 optim_output, fit_start, fit_stop, model):
         super(ARCHModelResult, self).__init__(params, resid, volatility,
                                               longterm_var, dep_var, names,
                                               loglikelihood, is_pandas, model)
