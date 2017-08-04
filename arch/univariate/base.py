@@ -1262,7 +1262,7 @@ class ARCHModelResult(ARCHModelFixedResult):
     volatility : array
         Conditional volatility from model
     longterm_var : array
-        Longterm variance from model
+        Longterm variance from model if the volatility process outputs it
     cov_type : str
         String describing the covariance estimator used
     dep_var: Series

@@ -2006,7 +2006,8 @@ class FixedVariance(VolatilityProcess):
 
 class CGARCH(GARCH):
     r"""
-    Component GARCH model. A restricted version of GARCH(2,2) by Engle and Lee
+    Component GARCH model. A restricted version of GARCH(2,2) by Engle and Lee.
+    Decomposes volatility into its long term and short term components.
 
     Parameters
     ----------
@@ -2016,6 +2017,11 @@ class CGARCH(GARCH):
     ----------
     num_params : int
     The number of parameters in the model
+
+    Examples
+    --------
+    >>> from arch.univariate import CGARCH
+    >>> cgarch = CGARCH()
 
     Notes
     -----

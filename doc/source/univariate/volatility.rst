@@ -36,6 +36,12 @@ ARCH
 .. autoclass:: ARCH
     :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
 
+CGARCH
+------
+
+.. autoclass:: CGARCH
+    :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
+
 Parameterless Variance Processes
 --------------------------------
 Some volatility processes use fixed parameters and so have no parameters that
