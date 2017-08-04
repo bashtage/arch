@@ -93,7 +93,7 @@ class VarianceForecast(object):
         self._forecasts = forecasts
         self._forecast_paths = forecast_paths
         self._shocks = shocks
-        self._longterm_forecasts = None
+        self._longterm_forecasts = longterm_forecasts
 
     @property
     def forecasts(self):
