@@ -20,3 +20,4 @@ README.rst
 *.sln
 
 /.vs/config/applicationhost.config
+.vscode/settings.json

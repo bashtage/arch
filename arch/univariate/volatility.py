@@ -2060,14 +2060,14 @@ class CGARCH(GARCH):
         return super(CGARCH, self).backcast(resids)
 
     def bounds(self, resids):
-        return [(0, 1), (0, 1), (-1, 1), (0, 1), (0, 1)]
+        return [(0, 1), (0, 1), (0, 0.4), (0.98, 1), (0, 1)]
 
     def starting_values(self, resids):
-        alphas = [0.07, 0.1]
-        betas = [0.5, 0.6, 0.4]
-        omegas = [np.var(resids) * 5, 0.05]
-        rhos = [0.65, 0.8, 0.9]
-        phis = [0.1, 0.05, 0.2, 0.3]
+        alphas = [0.08, 0.3]
+        betas = [0.6, 0.7]
+        omegas = [np.var(resids) * 5]
+        rhos = [0.991]
+        phis = [ 0.1, 0.2]
         combos = list(itertools.product(*[alphas, betas, omegas, rhos, phis]))
         llfs = np.ndarray(len(combos))
 
@@ -2076,7 +2076,7 @@ class CGARCH(GARCH):
                                                    self.backcast(resids),
                                                    self.variance_bounds(resids))
 
-        return combos[np.argmax(llfs)]
+        return np.array(combos[np.argmax(llfs)])
 
     def compute_variance(self, parameters, resids, sigma2, backcast,
                          var_bounds):
