@@ -100,7 +100,7 @@ class TestVolatiltyProcesses(TestCase):
         bounds = cgarch.bounds(self.resids)
         assert_equal(bounds[0], (0, 1))
         assert_equal(bounds[1], (0, 1))
-        assert_equal(bounds[2], (0, 0.05))
+        assert_equal(bounds[2], (0, 0.1))
         assert_equal(bounds[3], (0.8, 1))
         assert_equal(bounds[4], (0, 1))
         backcast = cgarch.backcast(self.resids)
