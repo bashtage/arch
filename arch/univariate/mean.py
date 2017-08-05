@@ -1054,7 +1054,7 @@ class LS(HARX):
 
     Notes
     -----
-    The AR-X model is described by
+    The LS model is described by
 
     .. math::
 
