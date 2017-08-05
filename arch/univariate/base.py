@@ -515,7 +515,7 @@ class ARCHModel(object):
         f_ieqcons = constraint(a, b)
 
         xopt = fmin_slsqp(func, sv, f_ieqcons=f_ieqcons, bounds=bounds,
-                          args=args, iter=100, acc=1e-06, iprint=1,
+                          args=args, iter=200, acc=1e-06, iprint=1,
                           full_output=True, epsilon=1.4901161193847656e-08,
                           callback=_callback, disp=disp)
 
