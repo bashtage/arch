@@ -2060,13 +2060,13 @@ class CGARCH(GARCH):
         return super(CGARCH, self).backcast(resids)
 
     def bounds(self, resids):
-        return [(0, 1), (0, 1), (0, 0.05), (0.97, 1), (0, 1)]
+        return [(0, 1), (0, 1), (0, 0.05), (0.8, 1), (0, 1)]
 
     def starting_values(self, resids):
         alphas = [0.08, 0.2]
         betas = [0.6, 0.4, 0.1]
         omegas = [np.var(resids)/2, 0.00001]
-        rhos = [0.991]
+        rhos = [0.98, 0.8]
         phis = [0.01, 0.2]
         combos = list(itertools.product(*[alphas, betas, omegas, rhos, phis]))
         llfs = np.ndarray(len(combos))
