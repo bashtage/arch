@@ -435,6 +435,11 @@ class VolatilityProcess(object):
             Value to use when initializing ARCH recursion
         var_bounds : array
             Array containing columns of lower and upper bounds
+
+        Returns
+        -------
+        sigma : array
+            array of computed variances.
         """
         raise NotImplementedError('Must be overridden')  # pragma: no cover
 
@@ -2006,16 +2011,19 @@ class FixedVariance(VolatilityProcess):
 
 class CGARCH(GARCH):
     r"""
-    Component GARCH model. A restricted version of GARCH(2,2) by Engle and Lee
-
-    Parameters
-    ----------
-    All parameters are estimated
+    Component GARCH model. A restricted version of GARCH(2,2) by Engle and Lee.
+    Decomposes volatility into its long term and short term components.
+    No parameters needed
 
     Attributes
     ----------
     num_params : int
-    The number of parameters in the model
+        The number of parameters in the model
+
+    Examples
+    --------
+    >>> from arch.univariate import CGARCH
+    >>> cgarch = CGARCH()
 
     Notes
     -----
@@ -2023,10 +2031,9 @@ class CGARCH(GARCH):
 
     .. math::
 
-        \sigma^{2}_{t}=q_{t}+g_{t}
-        q_{t}=\omega + \rho q_{t-1} + \phi(r^{2}_{t-1}-\sigma^{2}_{t-1})
-        g_{t} = \alpha(r^{2}_{t-1}-q_{t-1})+\beta g_{t-1}
-
+        \sigma^{2}_{t}=q_{t}+g_{t}\\
+        q_{t}=\omega + \rho q_{t-1} + \phi(r^{2}_{t-1}-\sigma^{2}_{t-1})\\
+        g_{t} = \alpha(r^{2}_{t-1}-q_{t-1})+\beta g_{t-1}\\.
     """
 
     def __init__(self):
@@ -2054,14 +2061,47 @@ class CGARCH(GARCH):
         return super(CGARCH, self).backcast(resids)
 
     def bounds(self, resids):
-        return [(0, 1), (0, 1), (-1, 1), (0, 1), (0, 1)]
+        return [(0, 1), (0, 1), (0, 1), (0.79, 1), (0, 1)]
 
     def starting_values(self, resids):
-        return np.array([0.1, 0.4, np.var(resids)/2, 0.8, 0.2])
+        alphas = [0.08, 0.2]
+        betas = [0.6, 0.3, 0.01]
+        omegas = [np.var(resids), 0.1]
+        rhos = [0.98, 0.8, 0.7]
+        phis = [0.01, 0.2]
+        combos = list(itertools.product(*[alphas, betas, omegas, rhos, phis]))
+        llfs = np.ndarray(len(combos))
+
+        for i, values in enumerate(combos):
+            llfs[i] = self._gaussian_loglikelihood(np.array(values), resids,
+                                                   self.backcast(resids),
+                                                   self.variance_bounds(resids))
+
+        return np.array(combos[np.argmax(llfs)])
 
     def compute_variance(self, parameters, resids, sigma2, backcast,
                          var_bounds):
-        # this returns both sigma and long term variance
+        """
+        Compute the variance for the ARCH model
+
+        Parameters
+        ----------
+        resids : array
+            Vector of mean zero residuals
+        sigma2 : array
+            Array with same size as resids to store the conditional variance
+        backcast : float
+            Value to use when initializing ARCH recursion
+        var_bounds : array
+            Array containing columns of lower and upper bounds
+
+        Returns
+        -------
+        sigma : array
+            array of computed variances.
+        q2 : array
+            array of computed longterm variances.
+        """
         fresids = resids**2
         nobs = len(fresids)
         g2, q2 = np.ndarray(nobs*2).reshape(2, nobs)

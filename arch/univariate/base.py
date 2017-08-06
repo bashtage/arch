@@ -1262,7 +1262,7 @@ class ARCHModelResult(ARCHModelFixedResult):
     volatility : array
         Conditional volatility from model
     longterm_var : array
-        Longterm variance from model
+        Longterm variance from model if the volatility process outputs it
     cov_type : str
         String describing the covariance estimator used
     dep_var: Series
@@ -1328,7 +1328,7 @@ class ARCHModelResult(ARCHModelFixedResult):
     resid : {array, Series}
         nobs element array containing model residuals
     model : ARCHModel
-        Model instance used to produce the fit
+        Model instance used to produce the fit.
     """
 
     def __init__(self, params, param_cov, r2, resid, volatility, longterm_var,

@@ -178,13 +178,16 @@ Any call to :py:meth:`~arch.univariate.base.ARCHModelResult.forecast` returns a
 attributes and 1 which may be useful when using simulation- or bootstrap-based
 forecasts.
 
-The three core attributes are
+The four core attributes are
 
 * ``mean`` - The forecast conditional mean.
 * ``variance`` - The forecast conditional variance.
 * ``residual_variance`` - The forecast conditional variance of residuals.
   This will differ from ``variance`` whenever the model has dynamics
   (e.g. an AR model) for horizons larger than 1.
+* ``longterm_component`` - The forecast longterm conditional variance of residuals.
+  This is present only if the volatility process supports it
+  (e.g. ``CGARCH process``)
 
 Each attribute contains a ``DataFrame`` with a common structure.
 
