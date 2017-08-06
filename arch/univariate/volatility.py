@@ -435,6 +435,11 @@ class VolatilityProcess(object):
             Value to use when initializing ARCH recursion
         var_bounds : array
             Array containing columns of lower and upper bounds
+        
+        Returns
+        -------
+        sigma : array
+            array of computed variances.
         """
         raise NotImplementedError('Must be overridden')  # pragma: no cover
 
@@ -2008,15 +2013,12 @@ class CGARCH(GARCH):
     r"""
     Component GARCH model. A restricted version of GARCH(2,2) by Engle and Lee.
     Decomposes volatility into its long term and short term components.
-
-    Parameters
-    ----------
-    All parameters are estimated
+    No parameters needed
 
     Attributes
     ----------
     num_params : int
-    The number of parameters in the model
+        The number of parameters in the model
 
     Examples
     --------
@@ -2029,10 +2031,9 @@ class CGARCH(GARCH):
 
     .. math::
 
-        \sigma^{2}_{t}=q_{t}+g_{t}
-        q_{t}=\omega + \rho q_{t-1} + \phi(r^{2}_{t-1}-\sigma^{2}_{t-1})
-        g_{t} = \alpha(r^{2}_{t-1}-q_{t-1})+\beta g_{t-1}
-
+        \sigma^{2}_{t}=q_{t}+g_{t}\\
+        q_{t}=\omega + \rho q_{t-1} + \phi(r^{2}_{t-1}-\sigma^{2}_{t-1})\\
+        g_{t} = \alpha(r^{2}_{t-1}-q_{t-1})+\beta g_{t-1}\\.
     """
 
     def __init__(self):
@@ -2080,7 +2081,27 @@ class CGARCH(GARCH):
 
     def compute_variance(self, parameters, resids, sigma2, backcast,
                          var_bounds):
-        # this returns both sigma and long term variance
+        """
+        Compute the variance for the ARCH model
+
+        Parameters
+        ----------
+        resids : array
+            Vector of mean zero residuals
+        sigma2 : array
+            Array with same size as resids to store the conditional variance
+        backcast : float
+            Value to use when initializing ARCH recursion
+        var_bounds : array
+            Array containing columns of lower and upper bounds
+        
+        Returns
+        -------
+        sigma : array
+            array of computed variances.
+        q2 : array
+            array of computed longterm variances.
+        """
         fresids = resids**2
         nobs = len(fresids)
         g2, q2 = np.ndarray(nobs*2).reshape(2, nobs)

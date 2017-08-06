@@ -1328,7 +1328,7 @@ class ARCHModelResult(ARCHModelFixedResult):
     resid : {array, Series}
         nobs element array containing model residuals
     model : ARCHModel
-        Model instance used to produce the fit
+        Model instance used to produce the fit.
     """
 
     def __init__(self, params, param_cov, r2, resid, volatility, longterm_var,

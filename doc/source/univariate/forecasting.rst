@@ -186,7 +186,7 @@ The four core attributes are
   This will differ from ``variance`` whenever the model has dynamics
   (e.g. an AR model) for horizons larger than 1.
 * ``longterm_component`` - The forecast longterm conditional variance of residuals.
-  This is present only if the volatility process supports integer
+  This is present only if the volatility process supports it
   (e.g. ``CGARCH process``)
 
 Each attribute contains a ``DataFrame`` with a common structure.
