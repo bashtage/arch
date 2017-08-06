@@ -435,7 +435,7 @@ class VolatilityProcess(object):
             Value to use when initializing ARCH recursion
         var_bounds : array
             Array containing columns of lower and upper bounds
-        
+
         Returns
         -------
         sigma : array
@@ -2094,7 +2094,7 @@ class CGARCH(GARCH):
             Value to use when initializing ARCH recursion
         var_bounds : array
             Array containing columns of lower and upper bounds
-        
+
         Returns
         -------
         sigma : array
