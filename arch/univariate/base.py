@@ -722,7 +722,23 @@ class ARCHModel(object):
         raise NotImplementedError('Subclasses must implement')
 
 
-class ARCHModelFixedResult(object):
+class _SummaryRepr(object):
+    """Base class for returning summary as repr and str"""
+
+    def summary(self):
+        return Summary()
+
+    def __repr__(self):
+        out = self.__str__() + '\n'
+        out += self.__class__.__name__
+        out += ', id: {0}'.format(hex(id(self)))
+        return out
+
+    def __str__(self):
+        return self.summary().as_text()
+
+
+class ARCHModelFixedResult(_SummaryRepr):
     """
     Results for fixed parameters for an ARCHModel model
 
@@ -1596,11 +1612,11 @@ class ARCHModelForecast(object):
     simulations : ARCHModelForecastSimulation
         Object containing detailed simulation results if using a simulation-based method
     """
+
     def __init__(self, index, mean, variance, residual_variance,
                  simulated_paths=None, simulated_variances=None,
                  simulated_residual_variances=None, simulated_residuals=None,
                  align='origin'):
-
         mean = _format_forecasts(mean, index)
         variance = _format_forecasts(variance, index)
         residual_variance = _format_forecasts(residual_variance, index)
