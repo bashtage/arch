@@ -406,6 +406,8 @@ components:
    -  GJR-GARCH (``GARCH`` using ``o`` argument)
    -  TARCH/ZARCH (``GARCH`` using ``power`` argument set to ``1``)
    -  Power GARCH and Asymmetric Power GARCH (``GARCH`` using ``power``)
+   -  Exponentially Weighted Moving Average Variance with estimated
+      coefficient (``EWMAVariance``)
    -  Heterogeneous ARCH (``HARCH``)
    -  Parameterless Models
 
