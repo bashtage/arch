@@ -8,3 +8,4 @@ Changes since 4.0
   a ``ZeroMean`` variance process.
 - Fixed a bug that prevented ``fix`` from being used with a new model (:issue:`156`)
 - Added ``first_obs`` and ``last_obs`` parameters to ``fix`` to mimic ``fit``
+- Added ability to jointly estimate smoothing parameter in EWMA variance when fitting the model

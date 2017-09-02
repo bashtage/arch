@@ -1,10 +1,9 @@
-import warnings
-from unittest import TestCase
-
 import numpy as np
 import pytest
+import warnings
 from numpy.testing import assert_almost_equal, assert_equal, assert_allclose, \
     assert_array_equal
+from unittest import TestCase
 
 try:
     from arch.univariate import _recursions as rec
@@ -692,6 +691,55 @@ class TestVolatiltyProcesses(TestCase):
         assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
 
         assert_equal(ewma.num_params, 0)
+        assert_equal(ewma.name, 'EWMA/RiskMetrics')
+        assert isinstance(ewma.__str__(), str)
+        txt = ewma.__repr__()
+        assert str(hex(id(ewma))) in txt
+
+    def test_ewma_estimated(self):
+        ewma = EWMAVariance(lam=None)
+
+        sv = ewma.starting_values(self.resids)
+        assert sv == 0.94
+        assert sv.shape[0] == ewma.num_params
+
+        bounds = ewma.bounds(self.resids)
+        assert len(bounds) == 1
+        assert bounds == [(0, 1)]
+
+        var_bounds = ewma.variance_bounds(self.resids)
+
+        backcast = ewma.backcast(self.resids)
+        w = 0.94 ** np.arange(75)
+        assert_almost_equal(backcast,
+                            np.sum((self.resids[:75] ** 2) * (w / w.sum())))
+
+        parameters = np.array([0.9234])
+
+        var_bounds = ewma.variance_bounds(self.resids)
+        ewma.compute_variance(parameters, self.resids, self.sigma2, backcast, var_bounds)
+        cond_var_direct = np.zeros_like(self.sigma2)
+        cond_var_direct[0] = backcast
+        parameters = np.array([0, 1-parameters[0], parameters[0]])
+        rec.garch_recursion(parameters,
+                            self.resids ** 2.0,
+                            np.sign(self.resids),
+                            cond_var_direct,
+                            1, 0, 1, self.T, backcast, var_bounds)
+        assert_allclose(self.sigma2, cond_var_direct)
+        assert_allclose(self.sigma2 / cond_var_direct, np.ones_like(self.sigma2))
+
+        names = ewma.parameter_names()
+        names_target = ['lam']
+        assert_equal(names, names_target)
+
+        a, b = ewma.constraints()
+        a_target = np.ones((1, 1))
+        b_target = np.zeros((1,))
+        assert_array_equal(a, a_target)
+        assert_array_equal(b, b_target)
+
+        assert_equal(ewma.num_params, 1)
         assert_equal(ewma.name, 'EWMA/RiskMetrics')
         assert isinstance(ewma.__str__(), str)
         txt = ewma.__repr__()
