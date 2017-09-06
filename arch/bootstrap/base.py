@@ -461,7 +461,7 @@ class IIDBootstrap(object):
                                   'too small to use BCa'
                         raise RuntimeError(message.format(jk_var=denom))
                     a = numer / denom
-                    a = a[:, None]
+                    a = np.atleast_1d(a)
                 else:
                     a = 0.0
 
