@@ -5,7 +5,6 @@ same inputs.
 """
 from __future__ import absolute_import, division
 import itertools
-
 import numpy as np
 from numpy import (sqrt, ones, zeros, isscalar, sign, ones_like, arange, empty, abs, array, finfo,
                    float64, log, exp, floor)
@@ -37,6 +36,7 @@ class BootstrapRng(object):
     start : int
         Location of first forecast
     """
+
     def __init__(self, std_resid, start):
         if start <= 0 or start > std_resid.shape[0]:
             raise ValueError('start must be > 0 and <= len(std_resid).')
@@ -1318,8 +1318,9 @@ class EWMAVariance(VolatilityProcess):
 
     Parameters
     ----------
-    lam : float, optional
-        Smoothing parameter. Default is 0.94
+    lam : {float, None}, optional
+        Smoothing parameter. Default is 0.94. Set to None to estimate lam
+        jointly with other model parameters
 
     Attributes
     ----------
@@ -1341,38 +1342,52 @@ class EWMAVariance(VolatilityProcess):
 
         \sigma_t^{2}=\lambda\sigma_{t-1}^2 + (1-\lambda)\epsilon^2_{t-1}
 
-    This model has no parameters since the smoothing parameter is fixed.
+    When lam is provided, this model has no parameters since the smoothing
+    parameter is treated as fixed. Sel lam to `None` to jointly estimate this
+    parameter when fitting the model.
     """
 
     def __init__(self, lam=0.94):
         super(EWMAVariance, self).__init__()
         self.lam = lam
-        self.num_params = 0
-        if not 0.0 < lam < 1.0:
+        self._estimate_lam = lam is None
+        self.num_params = 1 if self._estimate_lam else 0
+        if lam is not None and not 0.0 < lam < 1.0:
             raise ValueError('lam must be strictly between 0 and 1')
         self.name = 'EWMA/RiskMetrics'
 
     def __str__(self):
-        descr = self.name + '(lam: ' + '{0:0.2f}'.format(self.lam) + ')'
+        if self._estimate_lam:
+            descr = self.name + '(lam: Estimated)'
+        else:
+            descr = self.name + '(lam: ' + '{0:0.2f}'.format(self.lam) + ')'
         return descr
 
     def starting_values(self, resids):
-        return np.empty((0,))
+        if self._estimate_lam:
+            return np.array([0.94])
+        return np.array([])
 
     def parameter_names(self):
+        if self._estimate_lam:
+            return ['lam']
         return []
 
-    def variance_bounds(self, resids, power=2.0):
-        return ones((resids.shape[0], 1)) * array([-1.0, finfo(float64).max])
-
     def bounds(self, resids):
+        if self._estimate_lam:
+            return [(0, 1)]
         return []
 
     def compute_variance(self, parameters, resids, sigma2, backcast,
                          var_bounds):
-        return ewma_recursion(self.lam, resids, sigma2, resids.shape[0], backcast)
+        lam = parameters[0] if self._estimate_lam else self.lam
+        return ewma_recursion(lam, resids, sigma2, resids.shape[0], backcast)
 
     def constraints(self):
+        if self._estimate_lam:
+            a = ones((1, 1))
+            b = zeros((1,))
+            return a, b
         return np.empty((0, 0)), np.empty((0,))
 
     def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
@@ -1386,7 +1401,11 @@ class EWMAVariance(VolatilityProcess):
 
         sigma2[0] = initial_value
         data[0] = sqrt(sigma2[0])
-        lam, one_m_lam = self.lam, 1.0 - self.lam
+        if self._estimate_lam:
+            lam = parameters[0]
+        else:
+            lam = self.lam
+        one_m_lam = 1.0 - lam
         for t in range(1, nobs + burn):
             sigma2[t] = lam * sigma2[t - 1] + one_m_lam * data[t - 1] ** 2.0
             data[t] = np.sqrt(sigma2[t]) * errors[t]
@@ -1417,7 +1436,10 @@ class EWMAVariance(VolatilityProcess):
         paths.fill(np.nan)
         shocks = np.empty((t, simulations, horizon))
         shocks.fill(np.nan)
-        lam = self.lam
+        if self._estimate_lam:
+            lam = parameters[0]
+        else:
+            lam = self.lam
 
         for i in range(start, t):
             std_shocks = rng((simulations, horizon))

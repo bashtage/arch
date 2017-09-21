@@ -457,6 +457,19 @@ class TestBootstrap(TestCase):
         ci = ci.T
         assert_allclose(ci_db, ci)
 
+    def test_conf_int_bca_scaler(self):
+        num_bootstrap = 100
+        bs = IIDBootstrap(self.y)
+        bs.seed(23456)
+
+        try:
+            ci = bs.conf_int(np.mean, reps=num_bootstrap, method='bca')
+            assert(ci.shape == (2, 1))
+        except IndexError:
+            pytest.fail('conf_int(method=\'bca\') scaler input regression. '
+                        'Ensure output is at least 1D with '
+                        'numpy.atleast_1d().')
+
     def test_conf_int_parametric(self):
         def param_func(x, params=None, state=None):
             if state is not None:
