@@ -2152,7 +2152,7 @@ class CGARCH(GARCH):
             g2[i] = alpha * (data[i - 1]**2 - q2[i - 1]) + beta * g2[i - 1]
             q2[i] = omega + rho * q2[i - 1] + phi * (data[i - 1]**2 - sigma2[i - 1])
             sigma2[i] = g2[i] + q2[i]
-            data[i] = errors[i] * (np.sqrt(sigma2[i])) ** 2
+            data[i] = errors[i] * (np.sqrt(sigma2[i]))
         return data[burn:], sigma2[burn:]
 
     def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
