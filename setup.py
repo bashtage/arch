@@ -9,19 +9,27 @@ from distutils.errors import CCompilerError, DistutilsExecError, DistutilsPlatfo
 from distutils.version import StrictVersion
 
 import pkg_resources
-from setuptools import setup, Extension, find_packages, Command
+import versioneer
+from Cython.Build import cythonize
+from setuptools import Command, Extension, find_packages, setup
 from setuptools.dist import Distribution
 
-import versioneer
+CYTHON_COVERAGE = os.environ.get('ARCH_CYTHON_COVERAGE', '0') in ('true', '1', 'True')
+if CYTHON_COVERAGE:
+    print('Building with coverage for cython modules, ARCH_CYTHON_COVERAGE=' +
+          os.environ['ARCH_CYTHON_COVERAGE'])
 
 try:
     from Cython.Distutils.build_ext import build_ext as _build_ext
-
+    
     CYTHON_INSTALLED = True
 except ImportError:
     CYTHON_INSTALLED = False
-
-
+    if CYTHON_COVERAGE:
+        raise ImportError('cython is required for cython coverage. Unset '
+                          'ARCH_CYTHON_COVERAGE')
+    
+    
     class _build_ext(object):
         pass
 
@@ -47,7 +55,7 @@ cmdclass = versioneer.get_cmdclass()
 class build_ext(_build_ext):
     def build_extensions(self):
         numpy_incl = pkg_resources.resource_filename('numpy', 'core/include')
-
+        
         for ext in self.extensions:
             if (hasattr(ext, 'include_dirs') and
                         numpy_incl not in ext.include_dirs):
@@ -59,17 +67,12 @@ SETUP_REQUIREMENTS = {'numpy': '1.10'}
 REQUIREMENTS = {'Cython': '0.24',
                 'matplotlib': '1.5',
                 'scipy': '0.16',
-                'pandas': '0.16',
-                'statsmodels': '0.6'}
+                'pandas': '0.18',
+                'statsmodels': '0.8'}
 
 ALL_REQUIREMENTS = SETUP_REQUIREMENTS.copy()
 ALL_REQUIREMENTS.update(REQUIREMENTS)
 
-ext_modules = []
-ext_modules.append(Extension("arch.univariate.recursions",
-                             ["./arch/univariate/recursions.pyx"]))
-ext_modules.append(Extension("arch.bootstrap._samplers",
-                             ["./arch/bootstrap/_samplers.pyx"]))
 cmdclass['build_ext'] = build_ext
 
 
@@ -79,43 +82,16 @@ class BinaryDistribution(Distribution):
 
 
 class CleanCommand(Command):
-    """Custom distutils command to clean the .so and .pyc files."""
-
-    user_options = [("all", "a", "")]
-
+    user_options = []
+    
+    def run(self):
+        raise NotImplementedError('Use git clean -xfd instead')
+    
     def initialize_options(self):
-        self.all = True
-        self._clean_files = []
-        self._clean_trees = []
-        for root, dirs, files in list(os.walk('arch')):
-            for f in files:
-                if os.path.splitext(f)[-1] == '.pyx':
-                    search = os.path.join(root, os.path.splitext(f)[0] + '.*')
-                    candidates = glob.glob(search)
-                    for c in candidates:
-                        if os.path.splitext(c)[-1] in ('.pyc', '.c', '.so',
-                                                       '.pyd', '.dll'):
-                            self._clean_files.append(c)
-
-        for d in ('build',):
-            if os.path.exists(d):
-                self._clean_trees.append(d)
-
+        pass
+    
     def finalize_options(self):
         pass
-
-    def run(self):
-        for f in self._clean_files:
-            try:
-                os.unlink(f)
-            except Exception:
-                pass
-        for clean_tree in self._clean_trees:
-            try:
-                import shutil
-                shutil.rmtree(clean_tree)
-            except Exception:
-                pass
 
 
 cmdclass['clean'] = CleanCommand
@@ -141,25 +117,25 @@ for key in PACKAGE_CHECKS:
     if key == 'numpy':
         try:
             import numpy
-
+            
             try:
                 from numpy.version import short_version as version
             except ImportError:
                 satisfies_req = False
         except ImportError:
             pass
-
+    
     elif key == 'scipy':
         try:
             import scipy
-
+            
             try:
                 from scipy.version import short_version as version
             except ImportError:
                 satisfies_req = False
         except ImportError:
             pass
-
+    
     elif key == 'pandas':
         try:
             from pandas.version import short_version as version
@@ -169,7 +145,7 @@ for key in PACKAGE_CHECKS:
             satisfies_req = False
     else:
         raise NotImplementedError('Unknown package')
-
+    
     if version:
         existing_version = StrictVersion(strip_rc(version))
         satisfies_req = existing_version >= ALL_REQUIREMENTS[key]
@@ -191,7 +167,7 @@ try:
     long_description = open(os.path.join(cwd, "README.rst")).read()
 except IOError as e:
     import warnings
-
+    
     warnings.warn('Unable to convert README.md.  Most likely because pandoc '
                   'is not installed')
 
@@ -205,13 +181,13 @@ except ImportError as e:
 try:
     import nbformat as nbformat
     from nbconvert import RSTExporter
-
+    
     notebooks = glob.glob(os.path.join(cwd, 'examples', '*.ipynb'))
     for notebook in notebooks:
         try:
             with open(notebook, 'rt') as f:
                 example_nb = f.read()
-
+            
             rst_path = os.path.join(cwd, 'doc', 'source')
             path_parts = os.path.split(notebook)
             nb_filename = path_parts[-1]
@@ -219,23 +195,23 @@ try:
             source_dir = nb_filename.split('_')[0]
             rst_filename = os.path.join(cwd, 'doc', 'source',
                                         source_dir, nb_filename + '.rst')
-
+            
             example_nb = nbformat.reader.reads(example_nb)
             rst_export = RSTExporter()
             (body, resources) = rst_export.from_notebook_node(example_nb)
             with open(rst_filename, 'wt') as rst:
                 rst.write(body)
-
+            
             for key in resources['outputs'].keys():
                 if key.endswith('.png'):
                     resource_filename = os.path.join(cwd, 'doc', 'source',
                                                      source_dir, key)
                     with open(resource_filename, 'wb') as resource:
                         resource.write(resources['outputs'][key])
-
+        
         except:
             import warnings
-
+            
             warnings.warn('Unable to convert {original} to {target}.  This '
                           'only affects documentation generation and not the '
                           'operation of the '
@@ -243,28 +219,44 @@ try:
                                            target=rst_filename))
             print('The last error was:')
             import sys
-
+            
             print(sys.exc_info()[0])
             print(sys.exc_info()[1])
 
 except:
     import warnings
-
+    
     warnings.warn('Unable to import required modules from the jupyter project.'
                   ' This only affects documentation generation and not the '
                   'operation of the module.')
     print('The last error was:')
     import sys
-
+    
     print(sys.exc_info()[0])
     print(sys.exc_info()[1])
 
 
 def run_setup(binary=True):
-    extensions = ext_modules if binary else []
     if not binary:
         del REQUIREMENTS['Cython']
-
+        extensions = []
+    else:
+        directives = {'linetrace': CYTHON_COVERAGE}
+        macros = []
+        if CYTHON_COVERAGE:
+            macros.append(('CYTHON_TRACE', '1'))
+        
+        ext_modules = []
+        ext_modules.append(Extension("arch.univariate.recursions",
+                                     ["./arch/univariate/recursions.pyx"],
+                                     define_macros=macros))
+        ext_modules.append(Extension("arch.bootstrap._samplers",
+                                     ["./arch/bootstrap/_samplers.pyx"],
+                                     define_macros=macros))
+        extensions = cythonize(ext_modules,
+                               force=CYTHON_COVERAGE,
+                               compiler_directives=directives)
+    
     setup(name='arch',
           license='NCSA',
           version=versioneer.get_version(),
@@ -310,10 +302,10 @@ try:
     build_binary = '--no-binary' not in sys.argv and CYTHON_INSTALLED
     if '--no-binary' in sys.argv:
         sys.argv.remove('--no-binary')
-
+    
     run_setup(binary=build_binary)
 except (CCompilerError, DistutilsExecError, DistutilsPlatformError, IOError, ValueError):
     run_setup(binary=False)
     import warnings
-
+    
     warnings.warn(FAILED_COMPILER_ERROR, UserWarning)
