@@ -7,7 +7,7 @@ from unittest import TestCase
 
 try:
     from arch.univariate import _recursions as rec
-except:
+except ImportError:
     from arch.univariate import recursions_python as rec
 from arch.univariate.volatility import GARCH, ARCH, HARCH, ConstantVariance, \
     EWMAVariance, RiskMetrics2006, EGARCH, FixedVariance

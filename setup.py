@@ -141,7 +141,7 @@ for key in PACKAGE_CHECKS:
             from pandas.version import short_version as version
         except ImportError:
             pass
-        except:  # very old version
+        finally:  # very old version
             satisfies_req = False
     else:
         raise NotImplementedError('Unknown package')
@@ -209,7 +209,7 @@ try:
                     with open(resource_filename, 'wb') as resource:
                         resource.write(resources['outputs'][key])
         
-        except:
+        except Exception:
             import warnings
             
             warnings.warn('Unable to convert {original} to {target}.  This '
@@ -223,7 +223,7 @@ try:
             print(sys.exc_info()[0])
             print(sys.exc_info()[1])
 
-except:
+except Exception:
     import warnings
     
     warnings.warn('Unable to import required modules from the jupyter project.'
