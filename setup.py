@@ -138,11 +138,14 @@ for key in PACKAGE_CHECKS:
     
     elif key == 'pandas':
         try:
-            from pandas.version import short_version as version
-        except ImportError:
-            pass
-        finally:  # very old version
-            satisfies_req = False
+            import pandas
+            if not hasattr(pandas, '__version__'):
+                raise AttributeError
+        except AttributeError:
+            try:
+                from pandas.version import short_version as version
+            except ImportError:
+                satisfies_req = False
     else:
         raise NotImplementedError('Unknown package')
     
