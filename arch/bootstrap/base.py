@@ -577,7 +577,7 @@ class IIDBootstrap(object):
         base = func(*self._args, **kwargs)
         try:
             num_params = base.shape[0]
-        except AttributeError:
+        except (IndexError, AttributeError):
             num_params = 1
         results = np.zeros((reps, num_params))
         count = 0
