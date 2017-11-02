@@ -699,7 +699,7 @@ class HARX(ARCHModel):
 
 
 class ConstantMean(HARX):
-    """
+    r"""
     Constant mean model estimation and simulation.
 
     Parameters
@@ -730,7 +730,6 @@ class ConstantMean(HARX):
     .. math::
 
         y_t = \mu + \epsilon_t
-
     """
 
     def __init__(self, y=None, hold_back=None,
@@ -808,7 +807,7 @@ class ConstantMean(HARX):
 
 
 class ZeroMean(HARX):
-    """
+    r"""
     Model with zero conditional mean estimation and simulation
 
     Parameters
@@ -921,7 +920,7 @@ class ZeroMean(HARX):
 
 
 class ARX(HARX):
-    """
+    r"""
     Autoregressive model with optional exogenous regressors estimation and
     simulation
 
@@ -1022,7 +1021,7 @@ class ARX(HARX):
 
 
 class LS(HARX):
-    """
+    r"""
     Least squares model estimation and simulation
 
     Parameters
