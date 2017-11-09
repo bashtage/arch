@@ -10,6 +10,7 @@ from collections import OrderedDict
 import numpy as np
 from numpy import zeros, empty, ones, isscalar, log
 from pandas import DataFrame
+from scipy.optimize import OptimizeResult
 from statsmodels.tools.decorators import cache_readonly
 from statsmodels.tsa.tsatools import lagmat
 
@@ -40,11 +41,11 @@ def _ar_forecast(y, horizon, start_index, constant, arp):
 
     Parameters
     ----------
-    y : array
+    y : np.ndarray
     horizon : int
     start_index : int
     constant : float
-    arp : array
+    arp : np.ndarray
 
     Returns
     -------
@@ -84,9 +85,9 @@ class HARX(ARCHModel):
 
     Parameters
     ----------
-    y : array or Series
+    y : {np.ndarray, Series}
         nobs element vector containing the dependent variable
-    x : array or DataFrame, optional
+    x : {np.ndarrayor, DataFrame}, optional
         nobs by k element array containing exogenous regressors
     lags : {scalar, array}, optional
         Description of lag structure of the HAR.  Scalar included all lags
@@ -258,7 +259,7 @@ class HARX(ARCHModel):
 
         Parameters
         ----------
-        params : array
+        params : np.ndarray
             Parameters to use when simulating the model.  Parameter order is
             [mean volatility distribution] where the parameters of the mean
             model are ordered [constant lag[0] lag[1] ... lag[p] ex[0] ...
@@ -270,13 +271,13 @@ class HARX(ARCHModel):
         burn : int, optional
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
-        initial_value : array or float, optional
+        initial_value : {np.ndarray, float}, optional
             Either a scalar value or `max(lags)` array set of initial values to
             use when initializing the model.  If omitted, 0.0 is used.
         x : array, optional
             nobs + burn by k array of exogenous variables to include in the
             simulation.
-        initial_value_vol : array or float, optional
+        initial_value_vol : {np.ndarray, float}, optional
             An array or scalar to use when initializing the volatility process.
 
         Returns
@@ -552,7 +553,7 @@ class HARX(ARCHModel):
         y = self._fit_y
 
         # Fake convergence results, see GH #87
-        _xopt = ['', '', 0, '', '']
+        opt = OptimizeResult({'status': 0, 'message': ''})
 
         if x.shape[1] == 0:
             loglikelihood = self._static_gaussian_loglikelihood(y)
@@ -569,7 +570,7 @@ class HARX(ARCHModel):
             fit_start, fit_stop = self._fit_indices
             return ARCHModelResult(params, param_cov, 0.0, y, vol, cov_type,
                                    self._y_series, names, loglikelihood,
-                                   self._is_pandas, _xopt, fit_start, fit_stop,
+                                   self._is_pandas, opt, fit_start, fit_stop,
                                    copy.deepcopy(self))
 
         regression_params = np.linalg.pinv(x).dot(y)
@@ -616,7 +617,7 @@ class HARX(ARCHModel):
         fit_start, fit_stop = self._fit_indices
         return ARCHModelResult(params, param_cov, r2, resids, vol, cov_type,
                                self._y_series, names, loglikelihood,
-                               self._is_pandas, _xopt, fit_start, fit_stop,
+                               self._is_pandas, opt, fit_start, fit_stop,
                                copy.deepcopy(self))
 
     def forecast(self, parameters, horizon=1, start=None, align='origin',
@@ -1072,9 +1073,9 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
 
     Parameters
     ----------
-    y : array
+    y : {np.ndarray, Series, None}
         The dependent variable
-    x : array, optional
+    x : {np.array, DataFrame}, optional
         Exogenous regressors.  Ignored if model does not permit exogenous
         regressors.
     mean : str, optional
