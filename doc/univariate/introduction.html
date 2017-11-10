@@ -14,13 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Introduction to ARCH Models &#8212; arch 0+untagged.90.g28d8ca6 documentation</title>
+    <title>Introduction to ARCH Models &#8212; arch 4.2+14.g4747ffa documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0+untagged.90.g28d8ca6',
+        VERSION:     '4.2+14.g4747ffa',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="univariate.html" title="Univariate Volatility Models"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g4747ffa documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -67,7 +67,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    ../index.html" class="text-logo">arch 0.+</a>
+    ../index.html" class="text-logo">arch 4.2</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -231,27 +231,27 @@ using a simple model constructor.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>y</strong> (<em>{np.ndarray</em><em>, </em><em>Series</em><em>, </em><em>None}</em>) – The dependent variable</li>
+<li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series</em><em>, </em><em>None}</em>) – The dependent variable</li>
 <li><strong>x</strong> (<em>{np.array</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – Exogenous regressors.  Ignored if model does not permit exogenous
 regressors.</li>
-<li><strong>mean</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the mean model.  Currently supported options are: ‘Constant’,
+<li><strong>mean</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the mean model.  Currently supported options are: ‘Constant’,
 ‘Zero’, ‘ARX’ and  ‘HARX’</li>
-<li><strong>lags</strong> (<em>int</em><em> or </em><em>list</em><em> (</em><em>int</em><em>)</em><em>, </em><em>optional</em>) – Either a scalar integer value indicating lag length or a list of
+<li><strong>lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em> (</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>)</em><em>, </em><em>optional</em>) – Either a scalar integer value indicating lag length or a list of
 integers specifying lag locations.</li>
-<li><strong>vol</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the volatility model.  Currently supported options are:
+<li><strong>vol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the volatility model.  Currently supported options are:
 ‘GARCH’ (default),  “EGARCH’, ‘ARCH’ and ‘HARCH’</li>
-<li><strong>p</strong> (<em>int</em><em>, </em><em>optional</em>) – Lag order of the symmetric innovation</li>
-<li><strong>o</strong> (<em>int</em><em>, </em><em>optional</em>) – Lag order of the asymmetric innovation</li>
-<li><strong>q</strong> (<em>int</em><em>, </em><em>optional</em>) – Lag order of lagged volatility or equivalent</li>
-<li><strong>power</strong> (<em>float</em><em>, </em><em>optional</em>) – Power to use with GARCH and related models</li>
-<li><strong>dist</strong> (<em>int</em><em>, </em><em>optional</em>) – <dl class="docutils">
+<li><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Lag order of the symmetric innovation</li>
+<li><strong>o</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Lag order of the asymmetric innovation</li>
+<li><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Lag order of lagged volatility or equivalent</li>
+<li><strong>power</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Power to use with GARCH and related models</li>
+<li><strong>dist</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – <dl class="docutils">
 <dt>Name of the error distribution.  Currently supported options are:</dt>
 <dd>’Normal’ (default)
 ‘StudentsT’
 ‘SkewStudents’</dd>
 </dl>
 </li>
-<li><strong>hold_back</strong> (<em>int</em>) – Number of observations at the start of the sample to exclude when
+<li><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
 estimating model parameters.  Used when comparing models with different
 lag lengths to estimate on the common sample.</li>
 </ul>
@@ -308,21 +308,21 @@ when <cite>mean=’zero’</cite>, are silently ignored.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>params</strong> (<em>np.ndarray</em>) – Estimated parameters</li>
-<li><strong>param_cov</strong> (<em>{np.ndarray</em><em>, </em><em>None}</em>) – Estimated variance-covariance matrix of params.  If none, calls method
+<li><strong>params</strong> (<em>ndarray</em>) – Estimated parameters</li>
+<li><strong>param_cov</strong> (<em>{ndarray</em><em>, </em><em>None}</em>) – Estimated variance-covariance matrix of params.  If none, calls method
 to compute variance from model when parameter covariance is first used
 from result</li>
-<li><strong>r2</strong> (<em>float</em>) – Model R-squared</li>
-<li><strong>resid</strong> (<em>np.ndarray</em>) – Residuals from model.  Residuals have same shape as original data and
+<li><strong>r2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Model R-squared</li>
+<li><strong>resid</strong> (<em>ndarray</em>) – Residuals from model.  Residuals have same shape as original data and
 contain nan-values in locations not used in estimation</li>
-<li><strong>volatility</strong> (<em>np.ndarray</em>) – Conditional volatility from model</li>
-<li><strong>cov_type</strong> (<em>str</em>) – String describing the covariance estimator used</li>
+<li><strong>volatility</strong> (<em>ndarray</em>) – Conditional volatility from model</li>
+<li><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – String describing the covariance estimator used</li>
 <li><strong>dep_var</strong> (<em>Series</em>) – Dependent variable</li>
-<li><strong>names</strong> (<em>list</em><em> (</em><em>str</em><em>)</em>) – Model parameter names</li>
-<li><strong>loglikelihood</strong> (<em>float</em>) – Loglikelihood at estimated parameters</li>
-<li><strong>is_pandas</strong> (<em>bool</em>) – Whether the original input was pandas</li>
-<li><strong>fit_start</strong> (<em>int</em>) – Integer index of the first observation used to fit the model</li>
-<li><strong>fit_stop</strong> (<em>int</em>) – Integer index of the last observation used to fit the model using Pythonic
+<li><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em> (</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>)</em>) – Model parameter names</li>
+<li><strong>loglikelihood</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Loglikelihood at estimated parameters</li>
+<li><strong>is_pandas</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Whether the original input was pandas</li>
+<li><strong>fit_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Integer index of the first observation used to fit the model</li>
+<li><strong>fit_stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Integer index of the last observation used to fit the model using Pythonic
 syntax fit_start:fit_stop</li>
 <li><strong>model</strong> (<a class="reference internal" href="mean.html#arch.univariate.base.ARCHModel" title="arch.univariate.base.ARCHModel"><em>ARCHModel</em></a>) – The model object used to estimate the parameters</li>
 </ul>
@@ -369,7 +369,7 @@ syntax fit_start:fit_stop</li>
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.conditional_volatility">
 <code class="descname">conditional_volatility</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.conditional_volatility" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>{np.ndarray, Series}</em> – nobs element array containing the conditional volatility (square root
+<dd><p><em>{ndarray, Series}</em> – nobs element array containing the conditional volatility (square root
 of conditional variance).  The values are aligned with the input data
 so that the value in the t-th position is the variance of t-th error,
 which is computed using time-(t-1) information.</p>
@@ -432,7 +432,7 @@ which is computed using time-(t-1) information.</p>
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.resid">
 <code class="descname">resid</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.resid" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>{np.ndarray, Series}</em> – nobs element array containing model residuals</p>
+<dd><p><em>{ndarray, Series}</em> – nobs element array containing model residuals</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -448,12 +448,12 @@ which is computed using time-(t-1) information.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – Size (prob.) to use when constructing the confidence interval.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Size (prob.) to use when constructing the confidence interval.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>ci</strong> – Array where the ith row contains the confidence interval  for the
 ith parameter</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
 </tr>
 </tbody>
 </table>
@@ -468,15 +468,15 @@ ith parameter</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
-<li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
+<li><strong>start</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
 to a date time, such as in ‘1945-01-01’.</li>
-<li><strong>align</strong> (<em>str</em><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
+<li><strong>align</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
 of forecasts contains the forecasts for t+1, t+2, …, t+h. When
 set to ‘target’, the t-th row contains the 1-step ahead forecast
 from time t-1, the 2 step from time t-2, …, and the h-step from
@@ -487,7 +487,7 @@ The method only affects the variance forecast generation.  Not all
 volatility models support all methods. In particular, volatility
 models that do not evolve in squares such as EGARCH or TARCH do not
 support the ‘analytic’ method for horizons &gt; 1.</li>
-<li><strong>simulations</strong> (<em>int</em>) – Number of simulations to run when computing the forecast using
+<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
 either simulation or bootstrap.</li>
 </ul>
 </td>
@@ -529,12 +529,12 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>{np.ndarray</em><em>, </em><em>Series}</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Alternative parameters to use.  If not provided, the parameters
 computed by fitting the model are used.  Must be 1-d and identical
 in shape to the parameters computed by fitting the model.</li>
-<li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>step</strong> (<em>int</em><em>, </em><em>optional</em>) – Non-negative number of forecasts to skip between spines</li>
-<li><strong>start</strong> (<em>int</em><em>, </em><em>datetime</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
+<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Non-negative number of forecasts to skip between spines</li>
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index.  Strings must be convertible
 to a date time, such as in ‘1945-01-01’.  If not provided, the start
@@ -545,7 +545,7 @@ The method only affects the variance forecast generation.  Not all
 volatility models support all methods. In particular, volatility
 models that do not evolve in squares such as EGARCH or TARCH do not
 support the ‘analytic’ method for horizons &gt; 1.</li>
-<li><strong>simulations</strong> (<em>int</em>) – Number of simulations to run when computing the forecast using
+<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
 either simulation or bootstrap.</li>
 </ul>
 </td>
@@ -580,11 +580,11 @@ either simulation or bootstrap.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>annualize</strong> (<em>str</em><em>, </em><em>optional</em>) – String containing frequency of data that indicates plot should
+<li><strong>annualize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – String containing frequency of data that indicates plot should
 contain annualized volatility.  Supported values are ‘D’ (daily),
 ‘W’ (weekly) and ‘M’ (monthly), which scale variance by 252, 52,
 and 12, respectively.</li>
-<li><strong>scale</strong> (<em>float</em><em>, </em><em>optional</em>) – Value to use when scaling returns to annualize.  If scale is
+<li><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use when scaling returns to annualize.  If scale is
 provides, annualize is ignored and the value in scale is used.</li>
 </ul>
 </td>
@@ -648,14 +648,14 @@ relevant when parameters are not estimated.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>params</strong> (<em>np.ndarray</em>) – Estimated parameters</li>
-<li><strong>resid</strong> (<em>np.ndarray</em>) – Residuals from model.  Residuals have same shape as original data and
+<li><strong>params</strong> (<em>ndarray</em>) – Estimated parameters</li>
+<li><strong>resid</strong> (<em>ndarray</em>) – Residuals from model.  Residuals have same shape as original data and
 contain nan-values in locations not used in estimation</li>
-<li><strong>volatility</strong> (<em>np.ndarray</em>) – Conditional volatility from model</li>
+<li><strong>volatility</strong> (<em>ndarray</em>) – Conditional volatility from model</li>
 <li><strong>dep_var</strong> (<em>Series</em>) – Dependent variable</li>
-<li><strong>names</strong> (<em>list</em><em> (</em><em>str</em><em>)</em>) – Model parameter names</li>
-<li><strong>loglikelihood</strong> (<em>float</em>) – Loglikelihood at specified parameters</li>
-<li><strong>is_pandas</strong> (<em>bool</em>) – Whether the original input was pandas</li>
+<li><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em> (</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>)</em>) – Model parameter names</li>
+<li><strong>loglikelihood</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Loglikelihood at specified parameters</li>
+<li><strong>is_pandas</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Whether the original input was pandas</li>
 <li><strong>model</strong> (<a class="reference internal" href="mean.html#arch.univariate.base.ARCHModel" title="arch.univariate.base.ARCHModel"><em>ARCHModel</em></a>) – The model object used to estimate the parameters</li>
 </ul>
 </td>
@@ -701,7 +701,7 @@ contain nan-values in locations not used in estimation</li>
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.conditional_volatility">
 <code class="descname">conditional_volatility</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.conditional_volatility" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>{np.ndarray, Series}</em> – nobs element array containing the conditional volatility (square root
+<dd><p><em>{ndarray, Series}</em> – nobs element array containing the conditional volatility (square root
 of conditional variance).  The values are aligned with the input data
 so that the value in the t-th position is the variance of t-th error,
 which is computed using time-(t-1) information.</p>
@@ -728,7 +728,7 @@ which is computed using time-(t-1) information.</p>
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.resid">
 <code class="descname">resid</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.resid" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>{np.ndarray, Series}</em> – nobs element array containing model residuals</p>
+<dd><p><em>{ndarray, Series}</em> – nobs element array containing model residuals</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -746,15 +746,15 @@ which is computed using time-(t-1) information.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
-<li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
+<li><strong>start</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
 to a date time, such as in ‘1945-01-01’.</li>
-<li><strong>align</strong> (<em>str</em><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
+<li><strong>align</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
 of forecasts contains the forecasts for t+1, t+2, …, t+h. When
 set to ‘target’, the t-th row contains the 1-step ahead forecast
 from time t-1, the 2 step from time t-2, …, and the h-step from
@@ -765,7 +765,7 @@ The method only affects the variance forecast generation.  Not all
 volatility models support all methods. In particular, volatility
 models that do not evolve in squares such as EGARCH or TARCH do not
 support the ‘analytic’ method for horizons &gt; 1.</li>
-<li><strong>simulations</strong> (<em>int</em>) – Number of simulations to run when computing the forecast using
+<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
 either simulation or bootstrap.</li>
 </ul>
 </td>
@@ -807,12 +807,12 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>{np.ndarray</em><em>, </em><em>Series}</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Alternative parameters to use.  If not provided, the parameters
 computed by fitting the model are used.  Must be 1-d and identical
 in shape to the parameters computed by fitting the model.</li>
-<li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>step</strong> (<em>int</em><em>, </em><em>optional</em>) – Non-negative number of forecasts to skip between spines</li>
-<li><strong>start</strong> (<em>int</em><em>, </em><em>datetime</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
+<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Non-negative number of forecasts to skip between spines</li>
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index.  Strings must be convertible
 to a date time, such as in ‘1945-01-01’.  If not provided, the start
@@ -823,7 +823,7 @@ The method only affects the variance forecast generation.  Not all
 volatility models support all methods. In particular, volatility
 models that do not evolve in squares such as EGARCH or TARCH do not
 support the ‘analytic’ method for horizons &gt; 1.</li>
-<li><strong>simulations</strong> (<em>int</em>) – Number of simulations to run when computing the forecast using
+<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
 either simulation or bootstrap.</li>
 </ul>
 </td>
@@ -858,11 +858,11 @@ either simulation or bootstrap.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>annualize</strong> (<em>str</em><em>, </em><em>optional</em>) – String containing frequency of data that indicates plot should
+<li><strong>annualize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – String containing frequency of data that indicates plot should
 contain annualized volatility.  Supported values are ‘D’ (daily),
 ‘W’ (weekly) and ‘M’ (monthly), which scale variance by 252, 52,
 and 12, respectively.</li>
-<li><strong>scale</strong> (<em>float</em><em>, </em><em>optional</em>) – Value to use when scaling returns to annualize.  If scale is
+<li><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use when scaling returns to annualize.  If scale is
 provides, annualize is ignored and the value in scale is used.</li>
 </ul>
 </td>
@@ -950,7 +950,7 @@ latex</td>
         <li class="right" >
           <a href="univariate.html" title="Univariate Volatility Models"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g4747ffa documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

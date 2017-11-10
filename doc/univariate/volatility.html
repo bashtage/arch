@@ -14,13 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Volatility Processes &#8212; arch 0+untagged.90.g28d8ca6 documentation</title>
+    <title>Volatility Processes &#8212; arch 4.2+14.g4747ffa documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0+untagged.90.g28d8ca6',
+        VERSION:     '4.2+14.g4747ffa',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="mean.html" title="Mean Models"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g4747ffa documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -67,7 +67,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    ../index.html" class="text-logo">arch 0.+</a>
+    ../index.html" class="text-logo">arch 4.2</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -148,11 +148,11 @@ volatility.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Vector of (approximate) residuals</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of (approximate) residuals</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)">float</a></td>
 </tr>
 </tbody>
 </table>
@@ -166,7 +166,7 @@ volatility.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Vector of (approximate) residuals</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of (approximate) residuals</td>
 </tr>
 </tbody>
 </table>
@@ -181,10 +181,10 @@ volatility.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>resids</strong> (<em>array</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>array</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>float</em>) – Value to use when initializing ARCH recursion</li>
-<li><strong>var_bounds</strong> (<em>array</em>) – Array containing columns of lower and upper bounds</li>
+<li><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of mean zero residuals</li>
+<li><strong>sigma2</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array with same size as resids to store the conditional variance</li>
+<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Value to use when initializing ARCH recursion</li>
+<li><strong>var_bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array containing columns of lower and upper bounds</li>
 </ul>
 </td>
 </tr>
@@ -223,19 +223,19 @@ A.dot(parameters) - b &gt;= 0</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>array</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<em>int</em>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns a vector of random
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Parameters required to simulate the volatility model</li>
+<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of data points to simulate</li>
+<li><strong>rng</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Callable function that takes a single integer input and returns a vector of random
 numbers</li>
-<li><strong>burn</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing the simulation</li>
-<li><strong>initial_value</strong> (<em>array</em><em>, </em><em>optional</em>) – Array of initial values to use when initializing the</li>
+<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing the simulation</li>
+<li><strong>initial_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em>, </em><em>optional</em>) – Array of initial values to use when initializing the</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>simulated_data</strong> – The simulated data</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -250,11 +250,11 @@ numbers</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Array of (approximate) residuals to use when computing starting values</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array of (approximate) residuals to use when computing starting values</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></td>
 </tr>
 </tbody>
 </table>
@@ -287,10 +287,10 @@ numbers</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>p</strong> (<em>int</em>) – Order of the symmetric innovation</li>
-<li><strong>o</strong> (<em>int</em>) – Order of the asymmetric innovation</li>
-<li><strong>q</strong> (<em>int</em>) – Order of the lagged (transformed) conditional variance</li>
-<li><strong>power</strong> (<em>float</em><em>, </em><em>optional</em>) – Power to use with the innovations, abs(e) ** power.  Default is 2.0, which produces ARCH
+<li><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Order of the symmetric innovation</li>
+<li><strong>o</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Order of the asymmetric innovation</li>
+<li><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Order of the lagged (transformed) conditional variance</li>
+<li><strong>power</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Power to use with the innovations, abs(e) ** power.  Default is 2.0, which produces ARCH
 and related models. Using 1.0 produces AVARCH and related models.  Other powers can be
 specified, although these should be strictly positive, and usually larger than 0.25.</li>
 </ul>
@@ -341,7 +341,7 @@ I\left[\epsilon_{t-j}&lt;0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}\
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Vector of (approximate) residuals</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of (approximate) residuals</td>
 </tr>
 </tbody>
 </table>
@@ -356,10 +356,10 @@ I\left[\epsilon_{t-j}&lt;0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}\
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>resids</strong> (<em>array</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>array</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>float</em>) – Value to use when initializing ARCH recursion</li>
-<li><strong>var_bounds</strong> (<em>array</em>) – Array containing columns of lower and upper bounds</li>
+<li><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of mean zero residuals</li>
+<li><strong>sigma2</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array with same size as resids to store the conditional variance</li>
+<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Value to use when initializing ARCH recursion</li>
+<li><strong>var_bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array containing columns of lower and upper bounds</li>
 </ul>
 </td>
 </tr>
@@ -398,19 +398,19 @@ A.dot(parameters) - b &gt;= 0</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>array</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<em>int</em>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns a vector of random
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Parameters required to simulate the volatility model</li>
+<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of data points to simulate</li>
+<li><strong>rng</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Callable function that takes a single integer input and returns a vector of random
 numbers</li>
-<li><strong>burn</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing the simulation</li>
-<li><strong>initial_value</strong> (<em>array</em><em>, </em><em>optional</em>) – Array of initial values to use when initializing the</li>
+<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing the simulation</li>
+<li><strong>initial_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em>, </em><em>optional</em>) – Array of initial values to use when initializing the</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>simulated_data</strong> – The simulated data</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -425,11 +425,11 @@ numbers</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Array of (approximate) residuals to use when computing starting values</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array of (approximate) residuals to use when computing starting values</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></td>
 </tr>
 </tbody>
 </table>
@@ -449,9 +449,9 @@ numbers</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>p</strong> (<em>int</em>) – Order of the symmetric innovation</li>
-<li><strong>o</strong> (<em>int</em>) – Order of the asymmetric innovation</li>
-<li><strong>q</strong> (<em>int</em>) – Order of the lagged (transformed) conditional variance</li>
+<li><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Order of the symmetric innovation</li>
+<li><strong>o</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Order of the asymmetric innovation</li>
+<li><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Order of the lagged (transformed) conditional variance</li>
 </ul>
 </td>
 </tr>
@@ -502,7 +502,7 @@ numbers</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Vector of (approximate) residuals</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of (approximate) residuals</td>
 </tr>
 </tbody>
 </table>
@@ -517,10 +517,10 @@ numbers</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>resids</strong> (<em>array</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>array</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>float</em>) – Value to use when initializing ARCH recursion</li>
-<li><strong>var_bounds</strong> (<em>array</em>) – Array containing columns of lower and upper bounds</li>
+<li><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of mean zero residuals</li>
+<li><strong>sigma2</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array with same size as resids to store the conditional variance</li>
+<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Value to use when initializing ARCH recursion</li>
+<li><strong>var_bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array containing columns of lower and upper bounds</li>
 </ul>
 </td>
 </tr>
@@ -559,19 +559,19 @@ A.dot(parameters) - b &gt;= 0</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>array</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<em>int</em>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns a vector of random
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Parameters required to simulate the volatility model</li>
+<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of data points to simulate</li>
+<li><strong>rng</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Callable function that takes a single integer input and returns a vector of random
 numbers</li>
-<li><strong>burn</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing the simulation</li>
-<li><strong>initial_value</strong> (<em>array</em><em>, </em><em>optional</em>) – Array of initial values to use when initializing the</li>
+<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing the simulation</li>
+<li><strong>initial_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em>, </em><em>optional</em>) – Array of initial values to use when initializing the</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>simulated_data</strong> – The simulated data</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -586,11 +586,11 @@ numbers</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Array of (approximate) residuals to use when computing starting values</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array of (approximate) residuals to use when computing starting values</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></td>
 </tr>
 </tbody>
 </table>
@@ -609,7 +609,7 @@ numbers</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>lags</strong> (<em>{list</em><em>, </em><em>array</em><em>, </em><em>int}</em>) – List of lags to include in the model, or if scalar, includes all lags up the value</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>lags</strong> (<em>{list</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em>, </em><em>int}</em>) – List of lags to include in the model, or if scalar, includes all lags up the value</td>
 </tr>
 </tbody>
 </table>
@@ -651,11 +651,11 @@ ARCH process have been restricted.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Vector of (approximate) residuals</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of (approximate) residuals</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)">float</a></td>
 </tr>
 </tbody>
 </table>
@@ -669,7 +669,7 @@ ARCH process have been restricted.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Vector of (approximate) residuals</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of (approximate) residuals</td>
 </tr>
 </tbody>
 </table>
@@ -684,10 +684,10 @@ ARCH process have been restricted.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>resids</strong> (<em>array</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>array</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>float</em>) – Value to use when initializing ARCH recursion</li>
-<li><strong>var_bounds</strong> (<em>array</em>) – Array containing columns of lower and upper bounds</li>
+<li><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of mean zero residuals</li>
+<li><strong>sigma2</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array with same size as resids to store the conditional variance</li>
+<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Value to use when initializing ARCH recursion</li>
+<li><strong>var_bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array containing columns of lower and upper bounds</li>
 </ul>
 </td>
 </tr>
@@ -726,19 +726,19 @@ A.dot(parameters) - b &gt;= 0</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>array</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<em>int</em>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns a vector of random
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Parameters required to simulate the volatility model</li>
+<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of data points to simulate</li>
+<li><strong>rng</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Callable function that takes a single integer input and returns a vector of random
 numbers</li>
-<li><strong>burn</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing the simulation</li>
-<li><strong>initial_value</strong> (<em>array</em><em>, </em><em>optional</em>) – Array of initial values to use when initializing the</li>
+<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing the simulation</li>
+<li><strong>initial_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em>, </em><em>optional</em>) – Array of initial values to use when initializing the</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>simulated_data</strong> – The simulated data</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -753,11 +753,11 @@ numbers</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Array of (approximate) residuals to use when computing starting values</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array of (approximate) residuals to use when computing starting values</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></td>
 </tr>
 </tbody>
 </table>
@@ -776,7 +776,7 @@ numbers</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>p</strong> (<em>int</em>) – Order of the symmetric innovation</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Order of the symmetric innovation</td>
 </tr>
 </tbody>
 </table>
@@ -813,7 +813,7 @@ numbers</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Vector of (approximate) residuals</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of (approximate) residuals</td>
 </tr>
 </tbody>
 </table>
@@ -828,10 +828,10 @@ numbers</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>resids</strong> (<em>array</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>array</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>float</em>) – Value to use when initializing ARCH recursion</li>
-<li><strong>var_bounds</strong> (<em>array</em>) – Array containing columns of lower and upper bounds</li>
+<li><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of mean zero residuals</li>
+<li><strong>sigma2</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array with same size as resids to store the conditional variance</li>
+<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Value to use when initializing ARCH recursion</li>
+<li><strong>var_bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array containing columns of lower and upper bounds</li>
 </ul>
 </td>
 </tr>
@@ -870,19 +870,19 @@ A.dot(parameters) - b &gt;= 0</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>array</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<em>int</em>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns a vector of random
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Parameters required to simulate the volatility model</li>
+<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of data points to simulate</li>
+<li><strong>rng</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Callable function that takes a single integer input and returns a vector of random
 numbers</li>
-<li><strong>burn</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing the simulation</li>
-<li><strong>initial_value</strong> (<em>array</em><em>, </em><em>optional</em>) – Array of initial values to use when initializing the</li>
+<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing the simulation</li>
+<li><strong>initial_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em>, </em><em>optional</em>) – Array of initial values to use when initializing the</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>simulated_data</strong> – The simulated data</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -897,11 +897,11 @@ numbers</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Array of (approximate) residuals to use when computing starting values</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array of (approximate) residuals to use when computing starting values</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></td>
 </tr>
 </tbody>
 </table>
@@ -958,11 +958,11 @@ parameter when fitting the model.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Vector of (approximate) residuals</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of (approximate) residuals</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)">float</a></td>
 </tr>
 </tbody>
 </table>
@@ -976,7 +976,7 @@ parameter when fitting the model.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Vector of (approximate) residuals</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of (approximate) residuals</td>
 </tr>
 </tbody>
 </table>
@@ -991,10 +991,10 @@ parameter when fitting the model.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>resids</strong> (<em>array</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>array</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>float</em>) – Value to use when initializing ARCH recursion</li>
-<li><strong>var_bounds</strong> (<em>array</em>) – Array containing columns of lower and upper bounds</li>
+<li><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of mean zero residuals</li>
+<li><strong>sigma2</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array with same size as resids to store the conditional variance</li>
+<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Value to use when initializing ARCH recursion</li>
+<li><strong>var_bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array containing columns of lower and upper bounds</li>
 </ul>
 </td>
 </tr>
@@ -1033,19 +1033,19 @@ A.dot(parameters) - b &gt;= 0</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>array</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<em>int</em>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns a vector of random
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Parameters required to simulate the volatility model</li>
+<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of data points to simulate</li>
+<li><strong>rng</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Callable function that takes a single integer input and returns a vector of random
 numbers</li>
-<li><strong>burn</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing the simulation</li>
-<li><strong>initial_value</strong> (<em>array</em><em>, </em><em>optional</em>) – Array of initial values to use when initializing the</li>
+<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing the simulation</li>
+<li><strong>initial_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em>, </em><em>optional</em>) – Array of initial values to use when initializing the</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>simulated_data</strong> – The simulated data</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -1060,11 +1060,11 @@ numbers</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Array of (approximate) residuals to use when computing starting values</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array of (approximate) residuals to use when computing starting values</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></td>
 </tr>
 </tbody>
 </table>
@@ -1085,10 +1085,10 @@ numbers</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>tau0</strong> (<em>int</em><em>, </em><em>optional</em>) – Length of long cycle</li>
-<li><strong>tau1</strong> (<em>int</em><em>, </em><em>optional</em>) – Length of short cycle</li>
-<li><strong>kmax</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of components</li>
-<li><strong>rho</strong> (<em>float</em><em>, </em><em>optional</em>) – Relative scale of adjacent cycles</li>
+<li><strong>tau0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Length of long cycle</li>
+<li><strong>tau1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Length of short cycle</li>
+<li><strong>kmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of components</li>
+<li><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Relative scale of adjacent cycles</li>
 </ul>
 </td>
 </tr>
@@ -1118,11 +1118,11 @@ processes where the smoothing parameters and weights are determined by tau0, tau
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Vector of (approximate) residuals</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of (approximate) residuals</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>backcast</strong> – Backcast values for each EWMA component</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></td>
 </tr>
 </tbody>
 </table>
@@ -1136,7 +1136,7 @@ processes where the smoothing parameters and weights are determined by tau0, tau
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Vector of (approximate) residuals</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of (approximate) residuals</td>
 </tr>
 </tbody>
 </table>
@@ -1151,10 +1151,10 @@ processes where the smoothing parameters and weights are determined by tau0, tau
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>resids</strong> (<em>array</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>array</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>float</em>) – Value to use when initializing ARCH recursion</li>
-<li><strong>var_bounds</strong> (<em>array</em>) – Array containing columns of lower and upper bounds</li>
+<li><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Vector of mean zero residuals</li>
+<li><strong>sigma2</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array with same size as resids to store the conditional variance</li>
+<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Value to use when initializing ARCH recursion</li>
+<li><strong>var_bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array containing columns of lower and upper bounds</li>
 </ul>
 </td>
 </tr>
@@ -1193,19 +1193,19 @@ A.dot(parameters) - b &gt;= 0</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>array</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<em>int</em>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns a vector of random
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Parameters required to simulate the volatility model</li>
+<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of data points to simulate</li>
+<li><strong>rng</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Callable function that takes a single integer input and returns a vector of random
 numbers</li>
-<li><strong>burn</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing the simulation</li>
-<li><strong>initial_value</strong> (<em>array</em><em>, </em><em>optional</em>) – Array of initial values to use when initializing the</li>
+<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing the simulation</li>
+<li><strong>initial_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em>, </em><em>optional</em>) – Array of initial values to use when initializing the</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>simulated_data</strong> – The simulated data</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -1220,11 +1220,11 @@ numbers</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Array of (approximate) residuals to use when computing starting values</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Array of (approximate) residuals to use when computing starting values</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></td>
 </tr>
 </tbody>
 </table>
@@ -1247,9 +1247,9 @@ the so-called zig-zag algorithm to be used.  See the example for usage.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>variance</strong> (<em>{array</em><em>, </em><em>pd.Series}</em>) – Array containing the variances to use.  Shoule have the same shape as the data used in the
+<li><strong>variance</strong> (<em>{array</em><em>, </em><em>Series}</em>) – Array containing the variances to use.  Shoule have the same shape as the data used in the
 model.</li>
-<li><strong>unit_scale</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag whether to enfore a unit scale.  If False, a scale parameter will be estimated so
+<li><strong>unit_scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag whether to enfore a unit scale.  If False, a scale parameter will be estimated so
 that the model variance will be proportional to <code class="docutils literal"><span class="pre">variance</span></code>.  If True, the model variance
 is set of <code class="docutils literal"><span class="pre">variance</span></code></li>
 </ul>
@@ -1310,7 +1310,7 @@ separately from the conditional variance, even though parameters are estimated j
         <li class="right" >
           <a href="mean.html" title="Mean Models"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g4747ffa documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

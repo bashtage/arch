@@ -14,13 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Distributions &#8212; arch 0+untagged.90.g28d8ca6 documentation</title>
+    <title>Distributions &#8212; arch 4.2+14.g4747ffa documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0+untagged.90.g28d8ca6',
+        VERSION:     '4.2+14.g4747ffa',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="univariate_using_fixed_variance.html" title="Using the Fixed Variance process"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g4747ffa documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -67,7 +67,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    ../index.html" class="text-logo">arch 0.+</a>
+    ../index.html" class="text-logo">arch 4.2</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -144,11 +144,11 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Residuals to use when computing the bounds</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Residuals to use when computing the bounds</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List containing a single tuple with (lower, upper) bounds</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)">list</a></td>
 </tr>
 </tbody>
 </table>
@@ -184,9 +184,9 @@ distributed, conditional on the variance</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>parameters</strong> (<em>empty array</em>) – The normal likelihood has no shape parameters</li>
-<li><strong>resids</strong> (<em>array</em>) – The residuals to use in the log-likelihood calculation</li>
-<li><strong>sigma2</strong> (<em>array</em>) – Conditional variances of resids</li>
-<li><strong>individual</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
+<li><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – The residuals to use in the log-likelihood calculation</li>
+<li><strong>sigma2</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Conditional variances of resids</li>
+<li><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
 likelihoods (True) or the sum (False)</li>
 </ul>
 </td>
@@ -194,7 +194,7 @@ likelihoods (True) or the sum (False)</li>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ll</strong> – The log-likelihood</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)">float</a></p>
 </td>
 </tr>
 </tbody>
@@ -214,12 +214,12 @@ likelihoods (True) or the sum (False)</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<em>array</em>) – Distribution parameters</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Distribution parameters</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>simulator</strong> – Callable that take a single output size argument and returns i.i.d.
 draws from the distribution</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">callable</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)">callable</a></td>
 </tr>
 </tbody>
 </table>
@@ -232,12 +232,12 @@ draws from the distribution</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<em>array</em>) – Estimated standardized residuals to use in computing starting
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Estimated standardized residuals to use in computing starting
 values for the shape parameter</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – The estimated shape parameters for the distribution</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></td>
 </tr>
 </tbody>
 </table>
@@ -261,11 +261,11 @@ values for the shape parameter</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Residuals to use when computing the bounds</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Residuals to use when computing the bounds</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List containing a single tuple with (lower, upper) bounds</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)">list</a></td>
 </tr>
 </tbody>
 </table>
@@ -301,10 +301,10 @@ conditional on the variance.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>array</em>) – Shape parameter of the t distribution</li>
-<li><strong>resids</strong> (<em>array</em>) – The residuals to use in the log-likelihood calculation</li>
-<li><strong>sigma2</strong> (<em>array</em>) – Conditional variances of resids</li>
-<li><strong>individual</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Shape parameter of the t distribution</li>
+<li><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – The residuals to use in the log-likelihood calculation</li>
+<li><strong>sigma2</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Conditional variances of resids</li>
+<li><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
 likelihoods (True) or the sum (False)</li>
 </ul>
 </td>
@@ -312,7 +312,7 @@ likelihoods (True) or the sum (False)</li>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ll</strong> – The log-likelihood</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)">float</a></p>
 </td>
 </tr>
 </tbody>
@@ -335,12 +335,12 @@ likelihoods (True) or the sum (False)</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<em>array</em>) – Distribution parameters</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Distribution parameters</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>simulator</strong> – Callable that take a single output size argument and returns i.i.d.
 draws from the distribution</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">callable</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)">callable</a></td>
 </tr>
 </tbody>
 </table>
@@ -353,12 +353,12 @@ draws from the distribution</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<em>array</em>) – Estimated standardized residuals to use in computing starting
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Estimated standardized residuals to use in computing starting
 values for the shape parameter</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array containing starting valuer for shape parameter</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></td>
 </tr>
 </tbody>
 </table>
@@ -398,11 +398,11 @@ distribution is identical to a standardized Student’s t.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Residuals to use when computing the bounds</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Residuals to use when computing the bounds</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List containing a single tuple with (lower, upper) bounds</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)">list</a></td>
 </tr>
 </tbody>
 </table>
@@ -438,10 +438,10 @@ conditional on the variance.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>array</em>) – Shape parameter of the skew-t distribution</li>
-<li><strong>resids</strong> (<em>array</em>) – The residuals to use in the log-likelihood calculation</li>
-<li><strong>sigma2</strong> (<em>array</em>) – Conditional variances of resids</li>
-<li><strong>individual</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Shape parameter of the skew-t distribution</li>
+<li><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – The residuals to use in the log-likelihood calculation</li>
+<li><strong>sigma2</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Conditional variances of resids</li>
+<li><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
 likelihoods (True) or the sum (False)</li>
 </ul>
 </td>
@@ -449,7 +449,7 @@ likelihoods (True) or the sum (False)</li>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ll</strong> – The log-likelihood</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)">float</a></p>
 </td>
 </tr>
 </tbody>
@@ -480,12 +480,12 @@ The constants <span class="math">\(a\)</span>, <span class="math">\(b\)</span>, 
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<em>array</em>) – Distribution parameters</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Distribution parameters</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>simulator</strong> – Callable that take a single output size argument and returns i.i.d.
 draws from the distribution</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">callable</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)">callable</a></td>
 </tr>
 </tbody>
 </table>
@@ -498,12 +498,12 @@ draws from the distribution</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<em>array</em>) – Estimated standardized residuals to use in computing starting
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Estimated standardized residuals to use in computing starting
 values for the shape parameter</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array containing starting valuer for shape parameter</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></td>
 </tr>
 </tbody>
 </table>
@@ -561,7 +561,7 @@ methods.</p>
         <li class="right" >
           <a href="univariate_using_fixed_variance.html" title="Using the Fixed Variance process"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g4747ffa documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

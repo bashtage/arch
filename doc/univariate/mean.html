@@ -14,13 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Mean Models &#8212; arch 0+untagged.90.g28d8ca6 documentation</title>
+    <title>Mean Models &#8212; arch 4.2+14.g4747ffa documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0+untagged.90.g28d8ca6',
+        VERSION:     '4.2+14.g4747ffa',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g4747ffa documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -67,7 +67,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    ../index.html" class="text-logo">arch 0.+</a>
+    ../index.html" class="text-logo">arch 4.2</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -142,8 +142,8 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>y</strong> (<em>array</em><em> or </em><em>Series</em>) – nobs element vector containing the dependent variable</li>
-<li><strong>hold_back</strong> (<em>int</em>) – Number of observations at the start of the sample to exclude when
+<li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</li>
+<li><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
 estimating model parameters.  Used when comparing models with different
 lag lengths to estimate on the common sample.</li>
 <li><strong>volatility</strong> (<a class="reference internal" href="volatility.html#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess"><em>VolatilityProcess</em></a><em>, </em><em>optional</em>) – Volatility process to use in the model</li>
@@ -174,21 +174,21 @@ lag lengths to estimate on the common sample.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>update_freq</strong> (<em>int</em><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
+<li><strong>update_freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
 <cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</li>
-<li><strong>disp</strong> (<em>str</em>) – Either ‘final’ to print optimization result or ‘off’ to display
+<li><strong>disp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Either ‘final’ to print optimization result or ‘off’ to display
 nothing</li>
-<li><strong>starting_values</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
+<li><strong>starting_values</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
 are constructed by the model components.</li>
-<li><strong>cov_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
+<li><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
 corresponds to Bollerslev-Wooldridge covariance estimator.</li>
-<li><strong>show_warning</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
-<li><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for termination.</li>
-<li><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
+<li><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
+<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
+<li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
 </ul>
 </td>
@@ -219,8 +219,8 @@ difficulty finding the optimum.</p>
 <li><strong>params</strong> (<em>ndarray-like</em>) – User specified parameters to use when generating the result. Must
 have the correct number of parameters for a given choice of mean
 model, volatility model and distribution.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
 </ul>
 </td>
 </tr>
@@ -245,15 +245,15 @@ model, volatility model and distribution.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
-<li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
+<li><strong>start</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
 to a date time, such as in ‘1945-01-01’.</li>
-<li><strong>align</strong> (<em>str</em><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
+<li><strong>align</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
 of forecasts contains the forecasts for t+1, t+2, …, t+h. When
 set to ‘target’, the t-th row contains the 1-step ahead forecast
 from time t-1, the 2 step from time t-2, …, and the h-step from
@@ -264,7 +264,7 @@ The method only affects the variance forecast generation.  Not all
 volatility models support all methods. In particular, volatility
 models that do not evolve in squares such as EGARCH or TARCH do not
 support the ‘analytic’ method for horizons &gt; 1.</li>
-<li><strong>simulations</strong> (<em>int</em>) – Number of simulations to run when computing the forecast using
+<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
 either simulation or bootstrap.</li>
 </ul>
 </td>
@@ -317,16 +317,16 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>np.ndarray</em>) – Model parameters</li>
-<li><strong>y</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
-<li><strong>regressors</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
+<li><strong>params</strong> (<em>ndarray</em>) – Model parameters</li>
+<li><strong>y</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
+<li><strong>regressors</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>resids</strong> – Model residuals</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -342,12 +342,12 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em>) – Parameters to use when simulating the model.  Parameter order is
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Parameters to use when simulating the model.  Parameter order is
 [volatility distribution]. There are no mean parameters.</li>
-<li><strong>nobs</strong> (<em>int</em>) – Length of series to simulate</li>
-<li><strong>burn</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
+<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Length of series to simulate</li>
+<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
 dependence on initial values.</li>
-<li><strong>initial_value_vol</strong> (<em>array</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+<li><strong>initial_value_vol</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
 </td>
 </tr>
@@ -390,8 +390,8 @@ containing the errors used in the simulation</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>y</strong> (<em>array</em><em> or </em><em>Series</em>) – nobs element vector containing the dependent variable</li>
-<li><strong>hold_back</strong> (<em>int</em>) – Number of observations at the start of the sample to exclude when
+<li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</li>
+<li><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
 estimating model parameters.  Used when comparing models with different
 lag lengths to estimate on the common sample.</li>
 <li><strong>volatility</strong> (<a class="reference internal" href="volatility.html#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess"><em>VolatilityProcess</em></a><em>, </em><em>optional</em>) – Volatility process to use in the model</li>
@@ -422,21 +422,21 @@ lag lengths to estimate on the common sample.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>update_freq</strong> (<em>int</em><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
+<li><strong>update_freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
 <cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</li>
-<li><strong>disp</strong> (<em>str</em>) – Either ‘final’ to print optimization result or ‘off’ to display
+<li><strong>disp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Either ‘final’ to print optimization result or ‘off’ to display
 nothing</li>
-<li><strong>starting_values</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
+<li><strong>starting_values</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
 are constructed by the model components.</li>
-<li><strong>cov_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
+<li><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
 corresponds to Bollerslev-Wooldridge covariance estimator.</li>
-<li><strong>show_warning</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
-<li><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for termination.</li>
-<li><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
+<li><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
+<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
+<li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
 </ul>
 </td>
@@ -464,15 +464,15 @@ difficulty finding the optimum.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
-<li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
+<li><strong>start</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
 to a date time, such as in ‘1945-01-01’.</li>
-<li><strong>align</strong> (<em>str</em><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
+<li><strong>align</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
 of forecasts contains the forecasts for t+1, t+2, …, t+h. When
 set to ‘target’, the t-th row contains the 1-step ahead forecast
 from time t-1, the 2 step from time t-2, …, and the h-step from
@@ -483,7 +483,7 @@ The method only affects the variance forecast generation.  Not all
 volatility models support all methods. In particular, volatility
 models that do not evolve in squares such as EGARCH or TARCH do not
 support the ‘analytic’ method for horizons &gt; 1.</li>
-<li><strong>simulations</strong> (<em>int</em>) – Number of simulations to run when computing the forecast using
+<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
 either simulation or bootstrap.</li>
 </ul>
 </td>
@@ -536,16 +536,16 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>np.ndarray</em>) – Model parameters</li>
-<li><strong>y</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
-<li><strong>regressors</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
+<li><strong>params</strong> (<em>ndarray</em>) – Model parameters</li>
+<li><strong>y</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
+<li><strong>regressors</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>resids</strong> – Model residuals</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -561,13 +561,13 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em>) – Parameters to use when simulating the model.  Parameter order is
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Parameters to use when simulating the model.  Parameter order is
 [mean volatility distribution]. There is one parameter in the mean
 model, mu.</li>
-<li><strong>nobs</strong> (<em>int</em>) – Length of series to simulate</li>
-<li><strong>burn</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
+<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Length of series to simulate</li>
+<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
 dependence on initial values.</li>
-<li><strong>initial_value_vol</strong> (<em>array</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+<li><strong>initial_value_vol</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
 </td>
 </tr>
@@ -610,13 +610,13 @@ simulation</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>y</strong> (<em>array</em><em> or </em><em>Series</em>) – nobs element vector containing the dependent variable</li>
-<li><strong>x</strong> (<em>array</em><em> or </em><em>DataFrame</em><em>, </em><em>optional</em>) – nobs by k element array containing exogenous regressors</li>
+<li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</li>
+<li><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs by k element array containing exogenous regressors</li>
 <li><strong>lags</strong> (<em>scalar</em><em>, </em><em>1-d array</em><em>, </em><em>optional</em>) – Description of lag structure of the HAR.  Scalar included all lags
 between 1 and the value.  A 1-d array includes the AR lags lags[0],
 lags[1], …</li>
-<li><strong>constant</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag whether the model should include a constant</li>
-<li><strong>hold_back</strong> (<em>int</em>) – Number of observations at the start of the sample to exclude when
+<li><strong>constant</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag whether the model should include a constant</li>
+<li><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
 estimating model parameters.  Used when comparing models with different
 lag lengths to estimate on the common sample.</li>
 </ul>
@@ -650,21 +650,21 @@ lag lengths to estimate on the common sample.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>update_freq</strong> (<em>int</em><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
+<li><strong>update_freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
 <cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</li>
-<li><strong>disp</strong> (<em>str</em>) – Either ‘final’ to print optimization result or ‘off’ to display
+<li><strong>disp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Either ‘final’ to print optimization result or ‘off’ to display
 nothing</li>
-<li><strong>starting_values</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
+<li><strong>starting_values</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
 are constructed by the model components.</li>
-<li><strong>cov_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
+<li><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
 corresponds to Bollerslev-Wooldridge covariance estimator.</li>
-<li><strong>show_warning</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
-<li><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for termination.</li>
-<li><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
+<li><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
+<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
+<li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
 </ul>
 </td>
@@ -695,8 +695,8 @@ difficulty finding the optimum.</p>
 <li><strong>params</strong> (<em>ndarray-like</em>) – User specified parameters to use when generating the result. Must
 have the correct number of parameters for a given choice of mean
 model, volatility model and distribution.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
 </ul>
 </td>
 </tr>
@@ -721,15 +721,15 @@ model, volatility model and distribution.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
-<li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
+<li><strong>start</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
 to a date time, such as in ‘1945-01-01’.</li>
-<li><strong>align</strong> (<em>str</em><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
+<li><strong>align</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
 of forecasts contains the forecasts for t+1, t+2, …, t+h. When
 set to ‘target’, the t-th row contains the 1-step ahead forecast
 from time t-1, the 2 step from time t-2, …, and the h-step from
@@ -740,7 +740,7 @@ The method only affects the variance forecast generation.  Not all
 volatility models support all methods. In particular, volatility
 models that do not evolve in squares such as EGARCH or TARCH do not
 support the ‘analytic’ method for horizons &gt; 1.</li>
-<li><strong>simulations</strong> (<em>int</em>) – Number of simulations to run when computing the forecast using
+<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
 either simulation or bootstrap.</li>
 </ul>
 </td>
@@ -793,16 +793,16 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>np.ndarray</em>) – Model parameters</li>
-<li><strong>y</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
-<li><strong>regressors</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
+<li><strong>params</strong> (<em>ndarray</em>) – Model parameters</li>
+<li><strong>y</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
+<li><strong>regressors</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>resids</strong> – Model residuals</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -818,20 +818,20 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>np.ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
+<li><strong>params</strong> (<em>ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
 [mean volatility distribution] where the parameters of the mean
 model are ordered [constant lag[0] lag[1] … lag[p] ex[0] …
 ex[k-1]] where lag[j] indicates the coefficient on the jth lag in
 the model and ex[j] is the coefficient on the jth exogenous
 variable.</li>
-<li><strong>nobs</strong> (<em>int</em>) – Length of series to simulate</li>
-<li><strong>burn</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
+<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Length of series to simulate</li>
+<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
 dependence on initial values.</li>
-<li><strong>initial_value</strong> (<em>{np.ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
+<li><strong>initial_value</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
 use when initializing the model.  If omitted, 0.0 is used.</li>
-<li><strong>x</strong> (<em>array</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
+<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
 simulation.</li>
-<li><strong>initial_value_vol</strong> (<em>{np.ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+<li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
 </td>
 </tr>
@@ -883,16 +883,16 @@ model estimation and simulation</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>y</strong> (<em>{np.ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</li>
-<li><strong>x</strong> (<em>{np.ndarrayor</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs by k element array containing exogenous regressors</li>
+<li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</li>
+<li><strong>x</strong> (<em>{ndarrayor</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs by k element array containing exogenous regressors</li>
 <li><strong>lags</strong> (<em>{scalar</em><em>, </em><em>array}</em><em>, </em><em>optional</em>) – Description of lag structure of the HAR.  Scalar included all lags
 between 1 and the value.  A 1-d array includes the HAR lags 1:lags[0],
 1:lags[1], … A 2-d array includes the HAR lags of the form
 lags[0,j]:lags[1,j] for all columns of lags.</li>
-<li><strong>constant</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag whether the model should include a constant</li>
-<li><strong>use_rotated</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating to use the alternative rotated form of the HAR where
+<li><strong>constant</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag whether the model should include a constant</li>
+<li><strong>use_rotated</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating to use the alternative rotated form of the HAR where
 HAR lags do not overlap</li>
-<li><strong>hold_back</strong> (<em>int</em>) – Number of observations at the start of the sample to exclude when
+<li><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
 estimating model parameters.  Used when comparing models with different
 lag lengths to estimate on the common sample.</li>
 <li><strong>volatility</strong> (<a class="reference internal" href="volatility.html#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess"><em>VolatilityProcess</em></a><em>, </em><em>optional</em>) – Volatility process to use in the model</li>
@@ -932,21 +932,21 @@ lag lengths to estimate on the common sample.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>update_freq</strong> (<em>int</em><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
+<li><strong>update_freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
 <cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</li>
-<li><strong>disp</strong> (<em>str</em>) – Either ‘final’ to print optimization result or ‘off’ to display
+<li><strong>disp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Either ‘final’ to print optimization result or ‘off’ to display
 nothing</li>
-<li><strong>starting_values</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
+<li><strong>starting_values</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
 are constructed by the model components.</li>
-<li><strong>cov_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
+<li><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
 corresponds to Bollerslev-Wooldridge covariance estimator.</li>
-<li><strong>show_warning</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
-<li><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for termination.</li>
-<li><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
+<li><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
+<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
+<li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
 </ul>
 </td>
@@ -977,8 +977,8 @@ difficulty finding the optimum.</p>
 <li><strong>params</strong> (<em>ndarray-like</em>) – User specified parameters to use when generating the result. Must
 have the correct number of parameters for a given choice of mean
 model, volatility model and distribution.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
 </ul>
 </td>
 </tr>
@@ -1003,15 +1003,15 @@ model, volatility model and distribution.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
-<li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
+<li><strong>start</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
 to a date time, such as in ‘1945-01-01’.</li>
-<li><strong>align</strong> (<em>str</em><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
+<li><strong>align</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
 of forecasts contains the forecasts for t+1, t+2, …, t+h. When
 set to ‘target’, the t-th row contains the 1-step ahead forecast
 from time t-1, the 2 step from time t-2, …, and the h-step from
@@ -1022,7 +1022,7 @@ The method only affects the variance forecast generation.  Not all
 volatility models support all methods. In particular, volatility
 models that do not evolve in squares such as EGARCH or TARCH do not
 support the ‘analytic’ method for horizons &gt; 1.</li>
-<li><strong>simulations</strong> (<em>int</em>) – Number of simulations to run when computing the forecast using
+<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
 either simulation or bootstrap.</li>
 </ul>
 </td>
@@ -1075,16 +1075,16 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>np.ndarray</em>) – Model parameters</li>
-<li><strong>y</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
-<li><strong>regressors</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
+<li><strong>params</strong> (<em>ndarray</em>) – Model parameters</li>
+<li><strong>y</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
+<li><strong>regressors</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>resids</strong> – Model residuals</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -1100,20 +1100,20 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>np.ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
+<li><strong>params</strong> (<em>ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
 [mean volatility distribution] where the parameters of the mean
 model are ordered [constant lag[0] lag[1] … lag[p] ex[0] …
 ex[k-1]] where lag[j] indicates the coefficient on the jth lag in
 the model and ex[j] is the coefficient on the jth exogenous
 variable.</li>
-<li><strong>nobs</strong> (<em>int</em>) – Length of series to simulate</li>
-<li><strong>burn</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
+<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Length of series to simulate</li>
+<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
 dependence on initial values.</li>
-<li><strong>initial_value</strong> (<em>{np.ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
+<li><strong>initial_value</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
 use when initializing the model.  If omitted, 0.0 is used.</li>
-<li><strong>x</strong> (<em>array</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
+<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
 simulation.</li>
-<li><strong>initial_value_vol</strong> (<em>{np.ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+<li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
 </td>
 </tr>
@@ -1164,10 +1164,10 @@ to have nobs plus burn data points</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>y</strong> (<em>array</em><em> or </em><em>Series</em>) – nobs element vector containing the dependent variable</li>
-<li><strong>x</strong> (<em>array</em><em> or </em><em>DataFrame</em><em>, </em><em>optional</em>) – nobs by k element array containing exogenous regressors</li>
-<li><strong>constant</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag whether the model should include a constant</li>
-<li><strong>hold_back</strong> (<em>int</em>) – Number of observations at the start of the sample to exclude when
+<li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs element vector containing the dependent variable</li>
+<li><strong>y</strong> – nobs by k element array containing exogenous regressors</li>
+<li><strong>constant</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag whether the model should include a constant</li>
+<li><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
 estimating model parameters.  Used when comparing models with different
 lag lengths to estimate on the common sample.</li>
 </ul>
@@ -1197,21 +1197,21 @@ lag lengths to estimate on the common sample.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>update_freq</strong> (<em>int</em><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
+<li><strong>update_freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
 <cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</li>
-<li><strong>disp</strong> (<em>str</em>) – Either ‘final’ to print optimization result or ‘off’ to display
+<li><strong>disp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Either ‘final’ to print optimization result or ‘off’ to display
 nothing</li>
-<li><strong>starting_values</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
+<li><strong>starting_values</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
 are constructed by the model components.</li>
-<li><strong>cov_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
+<li><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
 corresponds to Bollerslev-Wooldridge covariance estimator.</li>
-<li><strong>show_warning</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
-<li><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for termination.</li>
-<li><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
+<li><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
+<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
+<li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
 </ul>
 </td>
@@ -1242,8 +1242,8 @@ difficulty finding the optimum.</p>
 <li><strong>params</strong> (<em>ndarray-like</em>) – User specified parameters to use when generating the result. Must
 have the correct number of parameters for a given choice of mean
 model, volatility model and distribution.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
 </ul>
 </td>
 </tr>
@@ -1268,16 +1268,16 @@ model, volatility model and distribution.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>np.ndarray</em>) – Model parameters</li>
-<li><strong>y</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
-<li><strong>regressors</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
+<li><strong>params</strong> (<em>ndarray</em>) – Model parameters</li>
+<li><strong>y</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
+<li><strong>regressors</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>resids</strong> – Model residuals</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -1293,20 +1293,20 @@ model, volatility model and distribution.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>np.ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
+<li><strong>params</strong> (<em>ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
 [mean volatility distribution] where the parameters of the mean
 model are ordered [constant lag[0] lag[1] … lag[p] ex[0] …
 ex[k-1]] where lag[j] indicates the coefficient on the jth lag in
 the model and ex[j] is the coefficient on the jth exogenous
 variable.</li>
-<li><strong>nobs</strong> (<em>int</em>) – Length of series to simulate</li>
-<li><strong>burn</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
+<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Length of series to simulate</li>
+<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
 dependence on initial values.</li>
-<li><strong>initial_value</strong> (<em>{np.ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
+<li><strong>initial_value</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
 use when initializing the model.  If omitted, 0.0 is used.</li>
-<li><strong>x</strong> (<em>array</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
+<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
 simulation.</li>
-<li><strong>initial_value_vol</strong> (<em>{np.ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+<li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
 </td>
 </tr>
@@ -1397,7 +1397,7 @@ to override but recommended where applicable.</p>
         <li class="right" >
           <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g4747ffa documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

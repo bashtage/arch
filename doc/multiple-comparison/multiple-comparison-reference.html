@@ -14,13 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Module Reference &#8212; arch 0+untagged.90.g28d8ca6 documentation</title>
+    <title>Module Reference &#8212; arch 4.2+14.g4747ffa documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0+untagged.90.g28d8ca6',
+        VERSION:     '4.2+14.g4747ffa',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="multiple-comparison_examples.html" title="Multiple Comparisons"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g4747ffa documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="multiple-comparisons.html" accesskey="U">Multiple Comparison Procedures</a> &#187;</li> 
       </ul>
     </div>
@@ -67,7 +67,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    ../index.html" class="text-logo">arch 0.+</a>
+    ../index.html" class="text-logo">arch 4.2</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -152,15 +152,15 @@ which is also known as the Reality Check or Bootstrap Data Snooper.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>benchmark</strong> (<em>array-like</em>) – T element array of benchmark model <em>losses</em></li>
 <li><strong>models</strong> (<em>array-like</em>) – T  by k element array of alternative model <em>losses</em></li>
-<li><strong>block_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
+<li><strong>block_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
 is used.  In general, this should be provided and chosen to be
 appropriate for the data.</li>
-<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</li>
-<li><strong>bootstrap</strong> (<em>str</em><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
+<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</li>
+<li><strong>bootstrap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
 ‘stationary’ or ‘sb’: Stationary bootstrap (Default)
 ‘circular’ or ‘cbb’: Circular block bootstrap
 ‘moving block’ or ‘mbb’: Moving block bootstrap</li>
-<li><strong>studentize</strong> (<em>bool</em>) – Flag indicating to studentize loss differentials. Default is True</li>
+<li><strong>studentize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Flag indicating to studentize loss differentials. Default is True</li>
 <li><strong>nested=False</strong> – Flag indicating to use a nested bootstrap to compute variances for
 studentization.  Default is False.  Note that this can be slow since
 the procedure requires k extra bootstraps.</li>
@@ -235,7 +235,7 @@ Journal of Business &amp; Economic Statistics, 23(4)</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pvalue</strong> (<em>float</em><em>, </em><em>optional</em>) – P-value in (0,1) to use when computing the critical values.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pvalue</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – P-value in (0,1) to use when computing the critical values.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>crit_vals</strong> – Series containing critical values for the lower, consistent and
 upper methodologies</td>
@@ -275,18 +275,18 @@ to allow multiple calls.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>benchmark</strong> (<em>array-like</em>) – T element array of benchmark model <em>losses</em></li>
 <li><strong>models</strong> (<em>array-like</em>) – T  by k element array of alternative model <em>losses</em></li>
-<li><strong>size</strong> (<em>float</em><em>, </em><em>optional</em>) – Value in (0,1) to use as the test size when implementing the
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Value in (0,1) to use as the test size when implementing the
 comparison. Default value is 0.05.</li>
-<li><strong>block_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
+<li><strong>block_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
 is used.  In general, this should be provided and chosen to be
 appropriate for the data.</li>
-<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</li>
-<li><strong>bootstrap</strong> (<em>str</em><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
+<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</li>
+<li><strong>bootstrap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
 ‘stationary’ or ‘sb’: Stationary bootstrap (Default)
 ‘circular’ or ‘cbb’: Circular block bootstrap
 ‘moving block’ or ‘mbb’: Moving block bootstrap</li>
-<li><strong>studentize</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating to studentize loss differentials. Default is True</li>
-<li><strong>nested</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating to use a nested bootstrap to compute variances for
+<li><strong>studentize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating to studentize loss differentials. Default is True</li>
+<li><strong>nested</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating to use a nested bootstrap to compute variances for
 studentization.  Default is False.  Note that this can be slow since
 the procedure requires k extra bootstraps.</li>
 </ul>
@@ -351,15 +351,15 @@ Familywise Error Rate rather than the usual test size.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>losses</strong> (<em>array-like</em>) – T by k array containing losses from a set of models</li>
-<li><strong>size</strong> (<em>float</em><em>, </em><em>optional</em>) – Value in (0,1) to use as the test size when implementing the
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Value in (0,1) to use as the test size when implementing the
 mcs. Default value is 0.05.</li>
-<li><strong>block_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
+<li><strong>block_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
 is used.  In general, this should be provided and chosen to be
 appropriate for the data.</li>
-<li><strong>method</strong> (<em>str</em><em>, </em><em>optional</em>) – MCS test and elimination implementation method: either ‘max’ or ‘R’.
+<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – MCS test and elimination implementation method: either ‘max’ or ‘R’.
 Default is ‘R’.</li>
-<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</li>
-<li><strong>bootstrap</strong> (<em>str</em><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
+<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</li>
+<li><strong>bootstrap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
 ‘stationary’ or ‘sb’: Stationary bootstrap (Default)
 ‘circular’ or ‘cbb’: Circular block bootstrap
 ‘moving block’ or ‘mbb’: Moving block bootstrap</li>
@@ -439,7 +439,7 @@ Econometrica, 79(2), 453-497.</p>
         <li class="right" >
           <a href="multiple-comparison_examples.html" title="Multiple Comparisons"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g4747ffa documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="multiple-comparisons.html" >Multiple Comparison Procedures</a> &#187;</li> 
       </ul>
     </div>

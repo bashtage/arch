@@ -14,13 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Time-series Bootstraps &#8212; arch 0+untagged.90.g28d8ca6 documentation</title>
+    <title>Time-series Bootstraps &#8212; arch 4.2+14.g4747ffa documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0+untagged.90.g28d8ca6',
+        VERSION:     '4.2+14.g4747ffa',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="iid-bootstraps.html" title="Independent, Identical Distributed Data (i.i.d.)"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g4747ffa documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" accesskey="U">Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
@@ -67,7 +67,7 @@
   <div id="left-column">
     <div class="sphinxsidebar">
         <a href="
-    ../index.html" class="text-logo">arch 0.+</a>
+    ../index.html" class="text-logo">arch 4.2</a>
         
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
@@ -151,7 +151,7 @@ for this reason.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>block_size</strong> (<em>int</em>) – Average size of block to use</li>
+<li><strong>block_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Average size of block to use</li>
 <li><strong>args</strong> – Positional arguments to bootstrap</li>
 <li><strong>kwargs</strong> – Keyword arguments to bootstrap</li>
 </ul>
@@ -221,9 +221,9 @@ on kw_data.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<em>callable</em>) – Function the computes parameter values.  See Notes for requirements</li>
-<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
-<li><strong>extra_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Extra keyword arguments to use when calling func.  Must not
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Function the computes parameter values.  See Notes for requirements</li>
+<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
+<li><strong>extra_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Extra keyword arguments to use when calling func.  Must not
 conflict with keyword arguments used to initialize bootstrap</li>
 </ul>
 </td>
@@ -232,7 +232,7 @@ conflict with keyword arguments used to initialize bootstrap</li>
 corresponds to a bootstrap iteration</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -265,7 +265,7 @@ these are appended to kwargs before calling func</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>reps</strong> (<em>int</em>) – Number of bootstrap replications</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of bootstrap replications</td>
 </tr>
 </tbody>
 </table>
@@ -299,28 +299,28 @@ dictionary</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<em>callable</em>) – Function the computes parameter values.  See Notes for requirements</li>
-<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
-<li><strong>method</strong> (<em>string</em><em>, </em><em>optional</em>) – One of ‘basic’, ‘percentile’, ‘studentized’, ‘norm’ (identical to
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Function the computes parameter values.  See Notes for requirements</li>
+<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
+<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em>, </em><em>optional</em>) – One of ‘basic’, ‘percentile’, ‘studentized’, ‘norm’ (identical to
 ‘var’, ‘cov’), ‘bc’ (identical to ‘debiased’, ‘bias-corrected’), or
 ‘bca’</li>
-<li><strong>size</strong> (<em>float</em><em>, </em><em>optional</em>) – Coverage of confidence interval</li>
-<li><strong>tail</strong> (<em>string</em><em>, </em><em>optional</em>) – One of ‘two’, ‘upper’ or ‘lower’.</li>
-<li><strong>reuse</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to reuse previously computed bootstrap
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Coverage of confidence interval</li>
+<li><strong>tail</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em>, </em><em>optional</em>) – One of ‘two’, ‘upper’ or ‘lower’.</li>
+<li><strong>reuse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to reuse previously computed bootstrap
 results.  This allows alternative methods to be compared without
 rerunning the bootstrap simulation.  Reuse is ignored if reps is
 not the same across multiple runs, func changes across calls, or
 method is ‘studentized’.</li>
-<li><strong>sampling</strong> (<em>string</em><em>, </em><em>optional</em>) – Type of sampling to use: ‘nonparametric’, ‘semi-parametric’ (or
+<li><strong>sampling</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em>, </em><em>optional</em>) – Type of sampling to use: ‘nonparametric’, ‘semi-parametric’ (or
 ‘semi’) or ‘parametric’.  The default is ‘nonparametric’.  See
 notes about the changes to func required when using ‘semi’ or
 ‘parametric’.</li>
-<li><strong>extra_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Extra keyword arguments to use when calling func and std_err_func,
+<li><strong>extra_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Extra keyword arguments to use when calling func and std_err_func,
 when appropriate</li>
-<li><strong>std_err_func</strong> (<em>callable</em><em>, </em><em>optional</em>) – Function to use when standardizing estimated parameters when using
+<li><strong>std_err_func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a><em>, </em><em>optional</em>) – Function to use when standardizing estimated parameters when using
 the studentized bootstrap.  Providing an analytical function
 eliminates the need for a nested bootstrap</li>
-<li><strong>studentize_reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstraps to use in the innter component when using the
+<li><strong>studentize_reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstraps to use in the innter component when using the
 studentized bootstrap.  Ignored when <code class="docutils literal"><span class="pre">std_err_func</span></code> is provided</li>
 </ul>
 </td>
@@ -387,20 +387,20 @@ to ‘bc’ method</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<em>callable</em>) – Callable function that returns the statistic of interest as a
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Callable function that returns the statistic of interest as a
 1-d array</li>
-<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
-<li><strong>recenter</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to center the bootstrap variance estimator on the average
+<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
+<li><strong>recenter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to center the bootstrap variance estimator on the average
 of the bootstrap samples (True) or to center on the original sample
 estimate (False).  Default is True.</li>
-<li><strong>extra_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Dictionary of extra keyword arguments to pass to func</li>
+<li><strong>extra_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Dictionary of extra keyword arguments to pass to func</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cov</strong> – Bootstrap covariance estimator</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -466,7 +466,7 @@ name of the required bootstrap</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>use_seed</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to use the last seed if provided.  If
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>use_seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to use the last seed if provided.  If
 False or if no seed has been set, the bootstrap will be reset
 to the initial state.  Default is True</td>
 </tr>
@@ -482,7 +482,7 @@ to the initial state.  Default is True</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<em>int</em>) – Integer to use as the seed</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Integer to use as the seed</td>
 </tr>
 </tbody>
 </table>
@@ -511,20 +511,20 @@ to the initial state.  Default is True</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<em>callable</em>) – Callable function that returns the statistic of interest as a
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Callable function that returns the statistic of interest as a
 1-d array</li>
-<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
-<li><strong>recenter</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to center the bootstrap variance estimator on the average
+<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
+<li><strong>recenter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to center the bootstrap variance estimator on the average
 of the bootstrap samples (True) or to center on the original sample
 estimate (False).  Default is True.</li>
-<li><strong>extra_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Dictionary of extra keyword arguments to pass to func</li>
+<li><strong>extra_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Dictionary of extra keyword arguments to pass to func</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>var</strong> – Bootstrap variance estimator</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -580,7 +580,7 @@ name of the required bootstrap</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>block_size</strong> (<em>int</em>) – Size of block to use</li>
+<li><strong>block_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of block to use</li>
 <li><strong>args</strong> – Positional arguments to bootstrap</li>
 <li><strong>kwargs</strong> – Keyword arguments to bootstrap</li>
 </ul>
@@ -650,9 +650,9 @@ on kw_data.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<em>callable</em>) – Function the computes parameter values.  See Notes for requirements</li>
-<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
-<li><strong>extra_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Extra keyword arguments to use when calling func.  Must not
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Function the computes parameter values.  See Notes for requirements</li>
+<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
+<li><strong>extra_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Extra keyword arguments to use when calling func.  Must not
 conflict with keyword arguments used to initialize bootstrap</li>
 </ul>
 </td>
@@ -661,7 +661,7 @@ conflict with keyword arguments used to initialize bootstrap</li>
 corresponds to a bootstrap iteration</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -694,7 +694,7 @@ these are appended to kwargs before calling func</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>reps</strong> (<em>int</em>) – Number of bootstrap replications</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of bootstrap replications</td>
 </tr>
 </tbody>
 </table>
@@ -728,28 +728,28 @@ dictionary</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<em>callable</em>) – Function the computes parameter values.  See Notes for requirements</li>
-<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
-<li><strong>method</strong> (<em>string</em><em>, </em><em>optional</em>) – One of ‘basic’, ‘percentile’, ‘studentized’, ‘norm’ (identical to
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Function the computes parameter values.  See Notes for requirements</li>
+<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
+<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em>, </em><em>optional</em>) – One of ‘basic’, ‘percentile’, ‘studentized’, ‘norm’ (identical to
 ‘var’, ‘cov’), ‘bc’ (identical to ‘debiased’, ‘bias-corrected’), or
 ‘bca’</li>
-<li><strong>size</strong> (<em>float</em><em>, </em><em>optional</em>) – Coverage of confidence interval</li>
-<li><strong>tail</strong> (<em>string</em><em>, </em><em>optional</em>) – One of ‘two’, ‘upper’ or ‘lower’.</li>
-<li><strong>reuse</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to reuse previously computed bootstrap
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Coverage of confidence interval</li>
+<li><strong>tail</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em>, </em><em>optional</em>) – One of ‘two’, ‘upper’ or ‘lower’.</li>
+<li><strong>reuse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to reuse previously computed bootstrap
 results.  This allows alternative methods to be compared without
 rerunning the bootstrap simulation.  Reuse is ignored if reps is
 not the same across multiple runs, func changes across calls, or
 method is ‘studentized’.</li>
-<li><strong>sampling</strong> (<em>string</em><em>, </em><em>optional</em>) – Type of sampling to use: ‘nonparametric’, ‘semi-parametric’ (or
+<li><strong>sampling</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em>, </em><em>optional</em>) – Type of sampling to use: ‘nonparametric’, ‘semi-parametric’ (or
 ‘semi’) or ‘parametric’.  The default is ‘nonparametric’.  See
 notes about the changes to func required when using ‘semi’ or
 ‘parametric’.</li>
-<li><strong>extra_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Extra keyword arguments to use when calling func and std_err_func,
+<li><strong>extra_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Extra keyword arguments to use when calling func and std_err_func,
 when appropriate</li>
-<li><strong>std_err_func</strong> (<em>callable</em><em>, </em><em>optional</em>) – Function to use when standardizing estimated parameters when using
+<li><strong>std_err_func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a><em>, </em><em>optional</em>) – Function to use when standardizing estimated parameters when using
 the studentized bootstrap.  Providing an analytical function
 eliminates the need for a nested bootstrap</li>
-<li><strong>studentize_reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstraps to use in the innter component when using the
+<li><strong>studentize_reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstraps to use in the innter component when using the
 studentized bootstrap.  Ignored when <code class="docutils literal"><span class="pre">std_err_func</span></code> is provided</li>
 </ul>
 </td>
@@ -816,20 +816,20 @@ to ‘bc’ method</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<em>callable</em>) – Callable function that returns the statistic of interest as a
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Callable function that returns the statistic of interest as a
 1-d array</li>
-<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
-<li><strong>recenter</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to center the bootstrap variance estimator on the average
+<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
+<li><strong>recenter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to center the bootstrap variance estimator on the average
 of the bootstrap samples (True) or to center on the original sample
 estimate (False).  Default is True.</li>
-<li><strong>extra_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Dictionary of extra keyword arguments to pass to func</li>
+<li><strong>extra_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Dictionary of extra keyword arguments to pass to func</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cov</strong> – Bootstrap covariance estimator</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -895,7 +895,7 @@ name of the required bootstrap</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>use_seed</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to use the last seed if provided.  If
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>use_seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to use the last seed if provided.  If
 False or if no seed has been set, the bootstrap will be reset
 to the initial state.  Default is True</td>
 </tr>
@@ -911,7 +911,7 @@ to the initial state.  Default is True</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<em>int</em>) – Integer to use as the seed</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Integer to use as the seed</td>
 </tr>
 </tbody>
 </table>
@@ -940,20 +940,20 @@ to the initial state.  Default is True</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<em>callable</em>) – Callable function that returns the statistic of interest as a
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Callable function that returns the statistic of interest as a
 1-d array</li>
-<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
-<li><strong>recenter</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to center the bootstrap variance estimator on the average
+<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
+<li><strong>recenter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to center the bootstrap variance estimator on the average
 of the bootstrap samples (True) or to center on the original sample
 estimate (False).  Default is True.</li>
-<li><strong>extra_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Dictionary of extra keyword arguments to pass to func</li>
+<li><strong>extra_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Dictionary of extra keyword arguments to pass to func</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>var</strong> – Bootstrap variance estimator</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -1009,7 +1009,7 @@ name of the required bootstrap</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>block_size</strong> (<em>int</em>) – Size of block to use</li>
+<li><strong>block_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of block to use</li>
 <li><strong>args</strong> – Positional arguments to bootstrap</li>
 <li><strong>kwargs</strong> – Keyword arguments to bootstrap</li>
 </ul>
@@ -1079,9 +1079,9 @@ on kw_data.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<em>callable</em>) – Function the computes parameter values.  See Notes for requirements</li>
-<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
-<li><strong>extra_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Extra keyword arguments to use when calling func.  Must not
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Function the computes parameter values.  See Notes for requirements</li>
+<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
+<li><strong>extra_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Extra keyword arguments to use when calling func.  Must not
 conflict with keyword arguments used to initialize bootstrap</li>
 </ul>
 </td>
@@ -1090,7 +1090,7 @@ conflict with keyword arguments used to initialize bootstrap</li>
 corresponds to a bootstrap iteration</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -1123,7 +1123,7 @@ these are appended to kwargs before calling func</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>reps</strong> (<em>int</em>) – Number of bootstrap replications</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of bootstrap replications</td>
 </tr>
 </tbody>
 </table>
@@ -1157,28 +1157,28 @@ dictionary</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<em>callable</em>) – Function the computes parameter values.  See Notes for requirements</li>
-<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
-<li><strong>method</strong> (<em>string</em><em>, </em><em>optional</em>) – One of ‘basic’, ‘percentile’, ‘studentized’, ‘norm’ (identical to
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Function the computes parameter values.  See Notes for requirements</li>
+<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
+<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em>, </em><em>optional</em>) – One of ‘basic’, ‘percentile’, ‘studentized’, ‘norm’ (identical to
 ‘var’, ‘cov’), ‘bc’ (identical to ‘debiased’, ‘bias-corrected’), or
 ‘bca’</li>
-<li><strong>size</strong> (<em>float</em><em>, </em><em>optional</em>) – Coverage of confidence interval</li>
-<li><strong>tail</strong> (<em>string</em><em>, </em><em>optional</em>) – One of ‘two’, ‘upper’ or ‘lower’.</li>
-<li><strong>reuse</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to reuse previously computed bootstrap
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Coverage of confidence interval</li>
+<li><strong>tail</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em>, </em><em>optional</em>) – One of ‘two’, ‘upper’ or ‘lower’.</li>
+<li><strong>reuse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to reuse previously computed bootstrap
 results.  This allows alternative methods to be compared without
 rerunning the bootstrap simulation.  Reuse is ignored if reps is
 not the same across multiple runs, func changes across calls, or
 method is ‘studentized’.</li>
-<li><strong>sampling</strong> (<em>string</em><em>, </em><em>optional</em>) – Type of sampling to use: ‘nonparametric’, ‘semi-parametric’ (or
+<li><strong>sampling</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em>, </em><em>optional</em>) – Type of sampling to use: ‘nonparametric’, ‘semi-parametric’ (or
 ‘semi’) or ‘parametric’.  The default is ‘nonparametric’.  See
 notes about the changes to func required when using ‘semi’ or
 ‘parametric’.</li>
-<li><strong>extra_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Extra keyword arguments to use when calling func and std_err_func,
+<li><strong>extra_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Extra keyword arguments to use when calling func and std_err_func,
 when appropriate</li>
-<li><strong>std_err_func</strong> (<em>callable</em><em>, </em><em>optional</em>) – Function to use when standardizing estimated parameters when using
+<li><strong>std_err_func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a><em>, </em><em>optional</em>) – Function to use when standardizing estimated parameters when using
 the studentized bootstrap.  Providing an analytical function
 eliminates the need for a nested bootstrap</li>
-<li><strong>studentize_reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstraps to use in the innter component when using the
+<li><strong>studentize_reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstraps to use in the innter component when using the
 studentized bootstrap.  Ignored when <code class="docutils literal"><span class="pre">std_err_func</span></code> is provided</li>
 </ul>
 </td>
@@ -1245,20 +1245,20 @@ to ‘bc’ method</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<em>callable</em>) – Callable function that returns the statistic of interest as a
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Callable function that returns the statistic of interest as a
 1-d array</li>
-<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
-<li><strong>recenter</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to center the bootstrap variance estimator on the average
+<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
+<li><strong>recenter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to center the bootstrap variance estimator on the average
 of the bootstrap samples (True) or to center on the original sample
 estimate (False).  Default is True.</li>
-<li><strong>extra_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Dictionary of extra keyword arguments to pass to func</li>
+<li><strong>extra_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Dictionary of extra keyword arguments to pass to func</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cov</strong> – Bootstrap covariance estimator</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -1324,7 +1324,7 @@ name of the required bootstrap</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>use_seed</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to use the last seed if provided.  If
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>use_seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to use the last seed if provided.  If
 False or if no seed has been set, the bootstrap will be reset
 to the initial state.  Default is True</td>
 </tr>
@@ -1340,7 +1340,7 @@ to the initial state.  Default is True</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<em>int</em>) – Integer to use as the seed</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Integer to use as the seed</td>
 </tr>
 </tbody>
 </table>
@@ -1369,20 +1369,20 @@ to the initial state.  Default is True</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<em>callable</em>) – Callable function that returns the statistic of interest as a
+<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Callable function that returns the statistic of interest as a
 1-d array</li>
-<li><strong>reps</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
-<li><strong>recenter</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to center the bootstrap variance estimator on the average
+<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
+<li><strong>recenter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to center the bootstrap variance estimator on the average
 of the bootstrap samples (True) or to center on the original sample
 estimate (False).  Default is True.</li>
-<li><strong>extra_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Dictionary of extra keyword arguments to pass to func</li>
+<li><strong>extra_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Dictionary of extra keyword arguments to pass to func</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>var</strong> – Bootstrap variance estimator</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
 </td>
 </tr>
 </tbody>
@@ -1462,7 +1462,7 @@ name of the required bootstrap</p>
         <li class="right" >
           <a href="iid-bootstraps.html" title="Independent, Identical Distributed Data (i.i.d.)"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g4747ffa documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" >Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
