@@ -22,8 +22,10 @@ from arch.univariate.mean import HARX, ConstantMean, ARX, ZeroMean, LS, \
 from arch.univariate.volatility import ConstantVariance, GARCH, HARCH, ARCH, \
     RiskMetrics2006, EWMAVariance, EGARCH, FixedVariance
 from arch.univariate.distribution import Normal, StudentsT
+
 try:
     import matplotlib.pyplot  # noqa
+
     HAS_MATPLOTLIB = True
 except ImportError:
     HAS_MATPLOTLIB = False
@@ -715,7 +717,7 @@ class TestMeanModel(TestCase):
         am = arch_model(self.y_series)
         res = am.fit(disp=DISPLAY)
         new_am = arch_model(self.y_series)
-        fixed_res = new_am .fix(res.params)
+        fixed_res = new_am.fix(res.params)
         assert_series_equal(res.conditional_volatility,
                             fixed_res.conditional_volatility)
         assert_series_equal(res.params, fixed_res.params)
@@ -728,7 +730,7 @@ class TestMeanModel(TestCase):
         am = arch_model(self.y_series)
         res = am.fit(disp=DISPLAY, first_obs=100, last_obs=900)
         new_am = arch_model(self.y_series)
-        fixed_res = new_am .fix(res.params, first_obs=100, last_obs=900)
+        fixed_res = new_am.fix(res.params, first_obs=100, last_obs=900)
         assert_series_equal(res.params, fixed_res.params)
         assert_equal(res.aic, fixed_res.aic)
         assert_equal(res.bic, fixed_res.bic)
@@ -868,3 +870,16 @@ class TestMeanModel(TestCase):
         res = mod.fit()
         assert len(res.params) == 4
         assert 'scale' not in res.params.index
+
+    def test_optimization_options(self):
+        am = arch_model(None)
+        data = am.simulate([0.0, 0.1, 0.1, 0.85], 2500)
+        am = arch_model(data.data)
+        std = am.fit(disp='off')
+        loose = am.fit(tol=1e-2, disp='off')
+        assert std.loglikelihood != loose.loglikelihood
+        with warnings.catch_warnings(record=True) as w:
+            short = am.fit(options={'maxiter': 3}, disp='off')
+        assert len(w) == 1
+        assert std.loglikelihood != short.loglikelihood
+        assert short.convergence_flag != 0

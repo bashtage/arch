@@ -5,14 +5,12 @@ from __future__ import absolute_import, division
 from arch.compat.python import add_metaclass, range
 
 from copy import deepcopy
-from functools import partial
 import datetime as dt
 import warnings
 
 import numpy as np
 from numpy.linalg import matrix_rank
 from numpy import ones, zeros, sqrt, diag, empty, ceil
-from scipy.optimize import fmin_slsqp
 import scipy.stats as stats
 import pandas as pd
 from statsmodels.tools.decorators import cache_readonly, resettable_cache
@@ -39,7 +37,7 @@ def _callback(*args):
 
     Parameters
     ----------
-    parameters : array
+    parameters : np.ndarray
         Parameter value (not used by function)
 
     Notes
@@ -56,37 +54,39 @@ def _callback(*args):
     return None
 
 
-def linear_constraint(x, *args, **kwargs):
-    """
-    Used for constraints of the forms
-    A.dot(x) - b >= 0
-    """
-    return kwargs['a'].dot(x) - kwargs['b']
-
-
 def constraint(a, b):
     """
-    Constructor allowing linear_constraint to be used with arbitrary inputs
+    Constructor generatins constraints from arrays
 
     Parameters
     ----------
-    a : array
+    a : np.ndarray
         Parameter loadings
-    b : array
+    b : np.ndarray
         Constraint bounds
 
     Returns
     -------
-    partial : callable
-        Callable constraint which accepts the parameters as the first input and
-        returns a.dot(parameters) - b
+    constraints : dict
+        Dictionary of inequality constraints, one for each row of a
 
     Notes
     -----
     Parameter constraints satisfy a.dot(parameters) - b >= 0
-
     """
-    return partial(linear_constraint, a=a, b=b)
+
+    def factory(coeff, val):
+        def f(params, *args):
+            return np.dot(coeff, params) - val
+
+        return f
+
+    constraints = []
+    for i in range(a.shape[0]):
+        con = {'type': 'ineq', 'fun': factory(a[i], b[i])}
+        constraints.append(con)
+
+    return constraints
 
 
 def format_float_fixed(x, max_digits=10, decimal=4):
@@ -113,7 +113,7 @@ def implicit_constant(x):
 
     Parameters
     ----------
-    x : array
+    x : np.ndarray
         Array to be tested
 
     Returns
@@ -178,9 +178,9 @@ class ARCHModel(object):
 
         Returns
         -------
-        a : array
+        a : np.ndarray
             Number of constraints by number of parameters loading array
-        b : array
+        b : np.ndarray
             Number of constraints array of lower bounds
 
         Notes
@@ -375,7 +375,7 @@ class ARCHModel(object):
 
     def fit(self, update_freq=1, disp='final', starting_values=None,
             cov_type='robust', show_warning=True, first_obs=None,
-            last_obs=None):
+            last_obs=None, tol=None, options=None):
         """
         Fits the model given a nobs by 1 vector of sigma2 values
 
@@ -387,7 +387,7 @@ class ARCHModel(object):
         disp : str
             Either 'final' to print optimization result or 'off' to display
             nothing
-        starting_values : array, optional
+        starting_values : np.ndarray, optional
             Array of starting values to use.  If not provided, starting values
             are constructed by the model components.
         cov_type : str, optional
@@ -401,6 +401,11 @@ class ARCHModel(object):
             First observation to use when estimating model
         last_obs : {int, str, datetime, Timestamp}
             Last observation to use when estimating model
+        tol : float, optional
+            Tolerance for termination.
+        options : dict, optional
+            Options to pass to `scipy.optimize.minimize`.  Valid entries
+            include 'ftol', 'eps', 'disp', and 'maxiter'.
 
         Returns
         -------
@@ -412,6 +417,7 @@ class ARCHModel(object):
         A ConvergenceWarning is raised if SciPy's optimizer indicates
         difficulty finding the optimum.
 
+        Parameters are optimized using SLSQP.
         """
         if self._y_original is None:
             raise RuntimeError('Cannot estimate model without data.')
@@ -493,32 +499,33 @@ class ARCHModel(object):
 
         else:
             _callback_iter_display = update_freq
-        disp = 1 if disp == 'final' else 0
+        disp = True if disp == 'final' else False
 
         func = self._loglikelihood
         args = (sigma2, backcast, var_bounds)
-        f_ieqcons = constraint(a, b)
+        ineq_constraints = constraint(a, b)
 
-        xopt = fmin_slsqp(func, sv, f_ieqcons=f_ieqcons, bounds=bounds,
-                          args=args, iter=100, acc=1e-06, iprint=1,
-                          full_output=True, epsilon=1.4901161193847656e-08,
-                          callback=_callback, disp=disp)
+        from scipy.optimize import minimize
 
-        # Check convergence
-        imode, smode = xopt[3:]
+        options = {} if options is None else options
+        options.setdefault('disp', disp)
+        opt = minimize(func, sv, args=args, method='SLSQP', bounds=bounds,
+                       constraints=ineq_constraints, tol=tol, callback=_callback,
+                       options=options)
+
         if show_warning:
             warnings.filterwarnings('always', '', ConvergenceWarning)
         else:
             warnings.filterwarnings('ignore', '', ConvergenceWarning)
 
-        if imode != 0 and show_warning:
-            warnings.warn(convergence_warning.format(code=imode,
-                                                     string_message=smode),
+        if opt.status != 0 and show_warning:
+            warnings.warn(convergence_warning.format(code=opt.status,
+                                                     string_message=opt.message),
                           ConvergenceWarning)
 
         # 5. Return results
-        params = xopt[0]
-        loglikelihood = -1.0 * xopt[1]
+        params = opt.x
+        loglikelihood = -1.0 * opt.fun
 
         mp, vp, dp = self._parse_parameters(params)
 
@@ -546,7 +553,7 @@ class ARCHModel(object):
         model_copy = deepcopy(self)
         return ARCHModelResult(params, None, r2, resids_final, vol_final,
                                cov_type, self._y_series, names, loglikelihood,
-                               self._is_pandas, xopt, fit_start, fit_stop, model_copy)
+                               self._is_pandas, opt, fit_start, fit_stop, model_copy)
 
     def parameter_names(self):
         """List of parameters names
@@ -565,7 +572,7 @@ class ARCHModel(object):
 
         Returns
         -------
-        sv : array
+        sv : np.ndarray
             Starting values
         """
         params = np.asarray(self._fit_no_arch_normal_errors().params)
@@ -592,16 +599,16 @@ class ARCHModel(object):
 
         Parameters
         ----------
-        params : array
+        params : np.ndarray
             Model parameters
-        y : array, optional
+        y : np.ndarray, optional
             Alternative values to use when computing model residuals
-        regressors : array, optional
+        regressors : np.ndarray, optional
             Alternative regressor values to use when computing model residuals
 
         Returns
         -------
-        resids : array
+        resids : np.ndarray
             Model residuals
         """
         raise NotImplementedError('Subclasses must implement')
@@ -612,7 +619,7 @@ class ARCHModel(object):
 
         Parameters
         ----------
-        params : array
+        params : np.ndarray
             Model parameters
         backcast : float
             Value to use for pre-sample observations
@@ -653,7 +660,7 @@ class ARCHModel(object):
 
         Parameters
         ----------
-        params : array, optional
+        params : np.ndarray, optional
             Alternative parameters to use.  If not provided, the parameters
             estimated when fitting the model are used.  Must be identical in
             shape to the parameters computed by fitting the model.
@@ -744,12 +751,12 @@ class ARCHModelFixedResult(_SummaryRepr):
 
     Parameters
     ----------
-    params : array
+    params : np.ndarray
         Estimated parameters
-    resid : array
+    resid : np.ndarray
         Residuals from model.  Residuals have same shape as original data and
         contain nan-values in locations not used in estimation
-    volatility : array
+    volatility : np.ndarray
         Conditional volatility from model
     dep_var: Series
         Dependent variable
@@ -779,7 +786,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         Akaike information criteria
     bic : float
         Schwarz/Bayes information criteria
-    conditional_volatility : {array, Series}
+    conditional_volatility : {np.ndarray, Series}
         nobs element array containing the conditional volatility (square root
         of conditional variance).  The values are aligned with the input data
         so that the value in the t-th position is the variance of t-th error,
@@ -790,7 +797,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         Number of observations used in the estimation
     num_params : int
         Number of parameters in the model
-    resid : {array, Series}
+    resid : {np.ndarray, Series}
         nobs element array containing model residuals
     model : ARCHModel
         Model instance used to produce the fit
@@ -1049,7 +1056,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         Parameters
         ----------
-        params : array, optional
+        params : np.ndarray, optional
             Alternative parameters to use.  If not provided, the parameters
             estimated when fitting the model are used.  Must be identical in
             shape to the parameters computed by fitting the model.
@@ -1119,10 +1126,10 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         Parameters
         ----------
-        params : 1d array-like, optional
+        params : {np.ndarray, Series}
             Alternative parameters to use.  If not provided, the parameters
-            computed by fitting the model are used.  Must be identical in shape
-            to the parameters computed by fitting the model.
+            computed by fitting the model are used.  Must be 1-d and identical
+            in shape to the parameters computed by fitting the model.
         horizon : int, optional
             Number of steps to forecast
         step : int, optional
@@ -1218,18 +1225,18 @@ class ARCHModelResult(ARCHModelFixedResult):
 
     Parameters
     ----------
-    params : array
+    params : np.ndarray
         Estimated parameters
-    param_cov : array or None
+    param_cov : {np.ndarray, None}
         Estimated variance-covariance matrix of params.  If none, calls method
         to compute variance from model when parameter covariance is first used
         from result
     r2 : float
         Model R-squared
-    resid : array
+    resid : np.ndarray
         Residuals from model.  Residuals have same shape as original data and
         contain nan-values in locations not used in estimation
-    volatility : array
+    volatility : np.ndarray
         Conditional volatility from model
     cov_type : str
         String describing the covariance estimator used
@@ -1266,7 +1273,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         Akaike information criteria
     bic : float
         Schwarz/Bayes information criteria
-    conditional_volatility : {array, Series}
+    conditional_volatility : {np.ndarray, Series}
         nobs element array containing the conditional volatility (square root
         of conditional variance).  The values are aligned with the input data
         so that the value in the t-th position is the variance of t-th error,
@@ -1289,7 +1296,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         Array of parameter standard errors
     pvalues : Series
         Array of p-values for the t-statistics
-    resid : {array, Series}
+    resid : {np.ndarray, Series}
         nobs element array containing model residuals
     model : ARCHModel
         Model instance used to produce the fit
@@ -1317,7 +1324,7 @@ class ARCHModelResult(ARCHModelFixedResult):
 
         Returns
         -------
-        ci : array
+        ci : np.ndarray
             Array where the ith row contains the confidence interval  for the
             ith parameter
         """
@@ -1443,7 +1450,7 @@ class ARCHModelResult(ARCHModelFixedResult):
             extra_text.append("""
 WARNING: The optimizer did not indicate sucessful convergence. The message was
 {string_message}. See convergence_flag.""".format(
-                string_message=self._optim_output[-1]))
+                string_message=self._optim_output.message))
 
         smry.add_extra_txt(extra_text)
         return smry
@@ -1514,9 +1521,9 @@ WARNING: The optimizer did not indicate sucessful convergence. The message was
     @cache_readonly
     def convergence_flag(self):
         """
-        scipy.optimize.fmin_slsqp result flag
+        scipy.optimize.minimize result flag
         """
-        return self._optim_output[3]
+        return self._optim_output.status
 
 
 def _align_forecast(f, align):
@@ -1591,14 +1598,14 @@ class ARCHModelForecast(object):
 
     Parameters
     ----------
-    index : {list, array}
-    mean : array
-    variance : array
-    residual_variance : array
-    simulated_paths : array, optional
-    simulated_variances : array, optional
-    simulated_residual_variances : array, optional
-    simulated_residuals : array, optional
+    index : {list, np.ndarray}
+    mean : np.ndarray
+    variance : np.ndarray
+    residual_variance : np.ndarray
+    simulated_paths : np.ndarray, optional
+    simulated_variances : np.ndarray, optional
+    simulated_residual_variances : np.ndarray, optional
+    simulated_residuals : np.ndarray, optional
     align : {'origin', 'target'}
 
     Attributes
