@@ -45,9 +45,9 @@ def _autolag_ols(endog, exog, startlag, maxlag, method, modargs=(), regresults=F
 
     Parameters
     ----------
-    endog : array-like
+    endog : {ndarray, Series}
         nobs array containing endogenous variable
-    exog : array-like
+    exog : {ndarray, DataFrame}
         nobs by (startlag + maxlag) array containing lags and possibly other
         variables
     startlag : int
@@ -123,7 +123,7 @@ def _df_select_lags(y, trend, max_lags, method):
 
     Parameters
     ----------
-    y : array
+    y : ndarray
         The data for the lag selection exercise
     trend : {'nc','c','ct','ctt'}
         The trend order
@@ -172,7 +172,7 @@ def _estimate_df_regression(y, trend, lags):
 
     Parameters
     ----------
-    y : array
+    y : ndarray
         The data for the lag selection
     trend : {'nc','c','ct','ctt'}
         The trend order
@@ -384,7 +384,7 @@ class ADF(UnitRootTest):
 
     Parameters
     ----------
-    y : array
+    y : {ndarray, Series}
         The data to test for a unit root
     lags : int, optional
         The number of lags to use in the ADF regression.  If omitted or None,
@@ -529,7 +529,7 @@ class DFGLS(UnitRootTest):
 
     Parameters
     ----------
-    y : array
+    y : {ndarray, Series}
         The data to test for a unit root
     lags : int, optional
         The number of lags to use in the ADF regression.  If omitted or None,
@@ -692,7 +692,7 @@ class PhillipsPerron(UnitRootTest):
 
     Parameters
     ----------
-    y : array
+    y : {ndarray, Series}
         The data to test for a unit root
     lags : int, optional
         The number of lags to use in the Newey-West estimator of the long-run
@@ -870,7 +870,7 @@ class KPSS(UnitRootTest):
 
     Parameters
     ----------
-    y : array
+    y : {ndarray, Series}
         The data to test for stationarity
     lags : int, optional
         The number of lags to use in the Newey-West estimator of the long-run
@@ -963,7 +963,7 @@ class VarianceRatio(UnitRootTest):
 
     Parameters
     ----------
-    y : array
+    y : {ndarray, Series}
         The data to test for a random walk
     lags : int
         The number of periods to used in the multi-period variance, which is
@@ -1252,7 +1252,7 @@ def mackinnoncrit(num_unit_roots=1, regression="c", nobs=inf,
 
     Returns
     -------
-    crit_vals : array
+    crit_vals : ndarray
         Three critical values corresponding to 1%, 5% and 10% cut-offs.
 
     Notes
@@ -1311,7 +1311,7 @@ def kpss_crit(stat, trend='c'):
     -------
     pvalue : float
         The interpolated p-value
-    crit_val : array
+    crit_val : ndarray
         Three element array containing the 10%, 5% and 1% critical values,
         in order
 

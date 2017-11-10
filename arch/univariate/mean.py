@@ -41,11 +41,11 @@ def _ar_forecast(y, horizon, start_index, constant, arp):
 
     Parameters
     ----------
-    y : np.ndarray
+    y : ndarray
     horizon : int
     start_index : int
     constant : float
-    arp : np.ndarray
+    arp : ndarray
 
     Returns
     -------
@@ -85,9 +85,9 @@ class HARX(ARCHModel):
 
     Parameters
     ----------
-    y : {np.ndarray, Series}
+    y : {ndarray, Series}
         nobs element vector containing the dependent variable
-    x : {np.ndarrayor, DataFrame}, optional
+    x : {ndarrayor, DataFrame}, optional
         nobs by k element array containing exogenous regressors
     lags : {scalar, array}, optional
         Description of lag structure of the HAR.  Scalar included all lags
@@ -259,7 +259,7 @@ class HARX(ARCHModel):
 
         Parameters
         ----------
-        params : np.ndarray
+        params : ndarray
             Parameters to use when simulating the model.  Parameter order is
             [mean volatility distribution] where the parameters of the mean
             model are ordered [constant lag[0] lag[1] ... lag[p] ex[0] ...
@@ -271,13 +271,13 @@ class HARX(ARCHModel):
         burn : int, optional
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
-        initial_value : {np.ndarray, float}, optional
+        initial_value : {ndarray, float}, optional
             Either a scalar value or `max(lags)` array set of initial values to
             use when initializing the model.  If omitted, 0.0 is used.
         x : array, optional
             nobs + burn by k array of exogenous variables to include in the
             simulation.
-        initial_value_vol : {np.ndarray, float}, optional
+        initial_value_vol : {ndarray, float}, optional
             An array or scalar to use when initializing the volatility process.
 
         Returns
@@ -705,7 +705,7 @@ class ConstantMean(HARX):
 
     Parameters
     ----------
-    y : array or Series
+    y : {ndarray, Series}
         nobs element vector containing the dependent variable
     hold_back : int
         Number of observations at the start of the sample to exclude when
@@ -813,7 +813,7 @@ class ZeroMean(HARX):
 
     Parameters
     ----------
-    y : array or Series
+    y : {ndarray, Series}
         nobs element vector containing the dependent variable
     hold_back : int
         Number of observations at the start of the sample to exclude when
@@ -927,9 +927,9 @@ class ARX(HARX):
 
     Parameters
     ----------
-    y : array or Series
+    y : {ndarray, Series}
         nobs element vector containing the dependent variable
-    x : array or DataFrame, optional
+    x : {ndarray, DataFrame}, optional
         nobs by k element array containing exogenous regressors
     lags : scalar, 1-d array, optional
         Description of lag structure of the HAR.  Scalar included all lags
@@ -1027,9 +1027,9 @@ class LS(HARX):
 
     Parameters
     ----------
-    y : array or Series
+    y : {ndarray, Series}
         nobs element vector containing the dependent variable
-    x : array or DataFrame, optional
+    y : {ndarray, DataFrame}, optional
         nobs by k element array containing exogenous regressors
     constant : bool, optional
         Flag whether the model should include a constant
@@ -1073,7 +1073,7 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
 
     Parameters
     ----------
-    y : {np.ndarray, Series, None}
+    y : {ndarray, Series, None}
         The dependent variable
     x : {np.array, DataFrame}, optional
         Exogenous regressors.  Ignored if model does not permit exogenous

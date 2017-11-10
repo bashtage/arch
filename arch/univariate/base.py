@@ -37,7 +37,7 @@ def _callback(*args):
 
     Parameters
     ----------
-    parameters : np.ndarray
+    parameters : : ndarray
         Parameter value (not used by function)
 
     Notes
@@ -60,9 +60,9 @@ def constraint(a, b):
 
     Parameters
     ----------
-    a : np.ndarray
+    a : ndarray
         Parameter loadings
-    b : np.ndarray
+    b : ndarray
         Constraint bounds
 
     Returns
@@ -113,7 +113,7 @@ def implicit_constant(x):
 
     Parameters
     ----------
-    x : np.ndarray
+    x : ndarray
         Array to be tested
 
     Returns
@@ -178,9 +178,9 @@ class ARCHModel(object):
 
         Returns
         -------
-        a : np.ndarray
+        a : ndarray
             Number of constraints by number of parameters loading array
-        b : np.ndarray
+        b : ndarray
             Number of constraints array of lower bounds
 
         Notes
@@ -387,7 +387,7 @@ class ARCHModel(object):
         disp : str
             Either 'final' to print optimization result or 'off' to display
             nothing
-        starting_values : np.ndarray, optional
+        starting_values : ndarray, optional
             Array of starting values to use.  If not provided, starting values
             are constructed by the model components.
         cov_type : str, optional
@@ -572,7 +572,7 @@ class ARCHModel(object):
 
         Returns
         -------
-        sv : np.ndarray
+        sv : ndarray
             Starting values
         """
         params = np.asarray(self._fit_no_arch_normal_errors().params)
@@ -599,16 +599,16 @@ class ARCHModel(object):
 
         Parameters
         ----------
-        params : np.ndarray
+        params : ndarray
             Model parameters
-        y : np.ndarray, optional
+        y : ndarray, optional
             Alternative values to use when computing model residuals
-        regressors : np.ndarray, optional
+        regressors : ndarray, optional
             Alternative regressor values to use when computing model residuals
 
         Returns
         -------
-        resids : np.ndarray
+        resids : ndarray
             Model residuals
         """
         raise NotImplementedError('Subclasses must implement')
@@ -619,7 +619,7 @@ class ARCHModel(object):
 
         Parameters
         ----------
-        params : np.ndarray
+        params : ndarray
             Model parameters
         backcast : float
             Value to use for pre-sample observations
@@ -660,7 +660,7 @@ class ARCHModel(object):
 
         Parameters
         ----------
-        params : np.ndarray, optional
+        params : ndarray, optional
             Alternative parameters to use.  If not provided, the parameters
             estimated when fitting the model are used.  Must be identical in
             shape to the parameters computed by fitting the model.
@@ -751,12 +751,12 @@ class ARCHModelFixedResult(_SummaryRepr):
 
     Parameters
     ----------
-    params : np.ndarray
+    params : ndarray
         Estimated parameters
-    resid : np.ndarray
+    resid : ndarray
         Residuals from model.  Residuals have same shape as original data and
         contain nan-values in locations not used in estimation
-    volatility : np.ndarray
+    volatility : ndarray
         Conditional volatility from model
     dep_var: Series
         Dependent variable
@@ -786,7 +786,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         Akaike information criteria
     bic : float
         Schwarz/Bayes information criteria
-    conditional_volatility : {np.ndarray, Series}
+    conditional_volatility : {ndarray, Series}
         nobs element array containing the conditional volatility (square root
         of conditional variance).  The values are aligned with the input data
         so that the value in the t-th position is the variance of t-th error,
@@ -797,7 +797,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         Number of observations used in the estimation
     num_params : int
         Number of parameters in the model
-    resid : {np.ndarray, Series}
+    resid : {ndarray, Series}
         nobs element array containing model residuals
     model : ARCHModel
         Model instance used to produce the fit
@@ -1056,7 +1056,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         Parameters
         ----------
-        params : np.ndarray, optional
+        params : ndarray, optional
             Alternative parameters to use.  If not provided, the parameters
             estimated when fitting the model are used.  Must be identical in
             shape to the parameters computed by fitting the model.
@@ -1126,7 +1126,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         Parameters
         ----------
-        params : {np.ndarray, Series}
+        params : {ndarray, Series}
             Alternative parameters to use.  If not provided, the parameters
             computed by fitting the model are used.  Must be 1-d and identical
             in shape to the parameters computed by fitting the model.
@@ -1225,18 +1225,18 @@ class ARCHModelResult(ARCHModelFixedResult):
 
     Parameters
     ----------
-    params : np.ndarray
+    params : ndarray
         Estimated parameters
-    param_cov : {np.ndarray, None}
+    param_cov : {ndarray, None}
         Estimated variance-covariance matrix of params.  If none, calls method
         to compute variance from model when parameter covariance is first used
         from result
     r2 : float
         Model R-squared
-    resid : np.ndarray
+    resid : ndarray
         Residuals from model.  Residuals have same shape as original data and
         contain nan-values in locations not used in estimation
-    volatility : np.ndarray
+    volatility : ndarray
         Conditional volatility from model
     cov_type : str
         String describing the covariance estimator used
@@ -1273,7 +1273,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         Akaike information criteria
     bic : float
         Schwarz/Bayes information criteria
-    conditional_volatility : {np.ndarray, Series}
+    conditional_volatility : {ndarray, Series}
         nobs element array containing the conditional volatility (square root
         of conditional variance).  The values are aligned with the input data
         so that the value in the t-th position is the variance of t-th error,
@@ -1296,7 +1296,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         Array of parameter standard errors
     pvalues : Series
         Array of p-values for the t-statistics
-    resid : {np.ndarray, Series}
+    resid : {ndarray, Series}
         nobs element array containing model residuals
     model : ARCHModel
         Model instance used to produce the fit
@@ -1324,7 +1324,7 @@ class ARCHModelResult(ARCHModelFixedResult):
 
         Returns
         -------
-        ci : np.ndarray
+        ci : ndarray
             Array where the ith row contains the confidence interval  for the
             ith parameter
         """
@@ -1598,14 +1598,14 @@ class ARCHModelForecast(object):
 
     Parameters
     ----------
-    index : {list, np.ndarray}
-    mean : np.ndarray
-    variance : np.ndarray
-    residual_variance : np.ndarray
-    simulated_paths : np.ndarray, optional
-    simulated_variances : np.ndarray, optional
-    simulated_residual_variances : np.ndarray, optional
-    simulated_residuals : np.ndarray, optional
+    index : {list, ndarray}
+    mean : ndarray
+    variance : ndarray
+    residual_variance : ndarray
+    simulated_paths : ndarray, optional
+    simulated_variances : ndarray, optional
+    simulated_residual_variances : ndarray, optional
+    simulated_residuals : ndarray, optional
     align : {'origin', 'target'}
 
     Attributes
