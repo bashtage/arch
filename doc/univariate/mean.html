@@ -14,13 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Mean Models &#8212; arch 0+untagged.89.g8b036a7 documentation</title>
+    <title>Mean Models &#8212; arch 0+untagged.90.g28d8ca6 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0+untagged.89.g8b036a7',
+        VERSION:     '0+untagged.90.g28d8ca6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.89.g8b036a7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -167,7 +167,7 @@ lag lengths to estimate on the common sample.</li>
 \[y_t = \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.ZeroMean.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -178,7 +178,7 @@ lag lengths to estimate on the common sample.</li>
 <cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</li>
 <li><strong>disp</strong> (<em>str</em>) – Either ‘final’ to print optimization result or ‘off’ to display
 nothing</li>
-<li><strong>starting_values</strong> (<em>array</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
+<li><strong>starting_values</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
 are constructed by the model components.</li>
 <li><strong>cov_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
@@ -187,6 +187,9 @@ corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <li><strong>show_warning</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
 <li><strong>first_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
 <li><strong>last_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
+<li><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for termination.</li>
+<li><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
+include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
 </ul>
 </td>
 </tr>
@@ -201,6 +204,7 @@ corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <p class="rubric">Notes</p>
 <p>A ConvergenceWarning is raised if SciPy’s optimizer indicates
 difficulty finding the optimum.</p>
+<p>Parameters are optimized using SLSQP.</p>
 </dd></dl>
 
 <dl class="method">
@@ -241,7 +245,7 @@ model, volatility model and distribution.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
@@ -313,16 +317,16 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em>) – Model parameters</li>
-<li><strong>y</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
-<li><strong>regressors</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
+<li><strong>params</strong> (<em>np.ndarray</em>) – Model parameters</li>
+<li><strong>y</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
+<li><strong>regressors</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>resids</strong> – Model residuals</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -411,7 +415,7 @@ lag lengths to estimate on the common sample.</li>
 \[y_t = \mu + \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.ConstantMean.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -422,7 +426,7 @@ lag lengths to estimate on the common sample.</li>
 <cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</li>
 <li><strong>disp</strong> (<em>str</em>) – Either ‘final’ to print optimization result or ‘off’ to display
 nothing</li>
-<li><strong>starting_values</strong> (<em>array</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
+<li><strong>starting_values</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
 are constructed by the model components.</li>
 <li><strong>cov_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
@@ -431,6 +435,9 @@ corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <li><strong>show_warning</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
 <li><strong>first_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
 <li><strong>last_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
+<li><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for termination.</li>
+<li><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
+include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
 </ul>
 </td>
 </tr>
@@ -445,6 +452,7 @@ corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <p class="rubric">Notes</p>
 <p>A ConvergenceWarning is raised if SciPy’s optimizer indicates
 difficulty finding the optimum.</p>
+<p>Parameters are optimized using SLSQP.</p>
 </dd></dl>
 
 <dl class="method">
@@ -456,7 +464,7 @@ difficulty finding the optimum.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
@@ -528,16 +536,16 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em>) – Model parameters</li>
-<li><strong>y</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
-<li><strong>regressors</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
+<li><strong>params</strong> (<em>np.ndarray</em>) – Model parameters</li>
+<li><strong>y</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
+<li><strong>regressors</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>resids</strong> – Model residuals</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -635,7 +643,7 @@ lag lengths to estimate on the common sample.</li>
 + \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.ARX.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -646,7 +654,7 @@ lag lengths to estimate on the common sample.</li>
 <cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</li>
 <li><strong>disp</strong> (<em>str</em>) – Either ‘final’ to print optimization result or ‘off’ to display
 nothing</li>
-<li><strong>starting_values</strong> (<em>array</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
+<li><strong>starting_values</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
 are constructed by the model components.</li>
 <li><strong>cov_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
@@ -655,6 +663,9 @@ corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <li><strong>show_warning</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
 <li><strong>first_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
 <li><strong>last_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
+<li><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for termination.</li>
+<li><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
+include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
 </ul>
 </td>
 </tr>
@@ -669,6 +680,7 @@ corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <p class="rubric">Notes</p>
 <p>A ConvergenceWarning is raised if SciPy’s optimizer indicates
 difficulty finding the optimum.</p>
+<p>Parameters are optimized using SLSQP.</p>
 </dd></dl>
 
 <dl class="method">
@@ -709,7 +721,7 @@ model, volatility model and distribution.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
@@ -781,16 +793,16 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em>) – Model parameters</li>
-<li><strong>y</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
-<li><strong>regressors</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
+<li><strong>params</strong> (<em>np.ndarray</em>) – Model parameters</li>
+<li><strong>y</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
+<li><strong>regressors</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>resids</strong> – Model residuals</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -806,7 +818,7 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em>) – Parameters to use when simulating the model.  Parameter order is
+<li><strong>params</strong> (<em>np.ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
 [mean volatility distribution] where the parameters of the mean
 model are ordered [constant lag[0] lag[1] … lag[p] ex[0] …
 ex[k-1]] where lag[j] indicates the coefficient on the jth lag in
@@ -815,11 +827,11 @@ variable.</li>
 <li><strong>nobs</strong> (<em>int</em>) – Length of series to simulate</li>
 <li><strong>burn</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
 dependence on initial values.</li>
-<li><strong>initial_value</strong> (<em>array</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
+<li><strong>initial_value</strong> (<em>{np.ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
 use when initializing the model.  If omitted, 0.0 is used.</li>
 <li><strong>x</strong> (<em>array</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
 simulation.</li>
-<li><strong>initial_value_vol</strong> (<em>array</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+<li><strong>initial_value_vol</strong> (<em>{np.ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
 </td>
 </tr>
@@ -871,8 +883,8 @@ model estimation and simulation</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>y</strong> (<em>array</em><em> or </em><em>Series</em>) – nobs element vector containing the dependent variable</li>
-<li><strong>x</strong> (<em>array</em><em> or </em><em>DataFrame</em><em>, </em><em>optional</em>) – nobs by k element array containing exogenous regressors</li>
+<li><strong>y</strong> (<em>{np.ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</li>
+<li><strong>x</strong> (<em>{np.ndarrayor</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs by k element array containing exogenous regressors</li>
 <li><strong>lags</strong> (<em>{scalar</em><em>, </em><em>array}</em><em>, </em><em>optional</em>) – Description of lag structure of the HAR.  Scalar included all lags
 between 1 and the value.  A 1-d array includes the HAR lags 1:lags[0],
 1:lags[1], … A 2-d array includes the HAR lags of the form
@@ -913,7 +925,7 @@ lag lengths to estimate on the common sample.</li>
 <span class="math">\(y_t\)</span> between <span class="math">\(t-L_{i,0}\)</span> and <span class="math">\(t - L_{i,1}\)</span>.</p>
 <dl class="method">
 <dt id="arch.univariate.HARX.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -924,7 +936,7 @@ lag lengths to estimate on the common sample.</li>
 <cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</li>
 <li><strong>disp</strong> (<em>str</em>) – Either ‘final’ to print optimization result or ‘off’ to display
 nothing</li>
-<li><strong>starting_values</strong> (<em>array</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
+<li><strong>starting_values</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
 are constructed by the model components.</li>
 <li><strong>cov_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
@@ -933,6 +945,9 @@ corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <li><strong>show_warning</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
 <li><strong>first_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
 <li><strong>last_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
+<li><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for termination.</li>
+<li><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
+include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
 </ul>
 </td>
 </tr>
@@ -947,6 +962,7 @@ corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <p class="rubric">Notes</p>
 <p>A ConvergenceWarning is raised if SciPy’s optimizer indicates
 difficulty finding the optimum.</p>
+<p>Parameters are optimized using SLSQP.</p>
 </dd></dl>
 
 <dl class="method">
@@ -987,7 +1003,7 @@ model, volatility model and distribution.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
@@ -1059,16 +1075,16 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em>) – Model parameters</li>
-<li><strong>y</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
-<li><strong>regressors</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
+<li><strong>params</strong> (<em>np.ndarray</em>) – Model parameters</li>
+<li><strong>y</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
+<li><strong>regressors</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>resids</strong> – Model residuals</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -1084,7 +1100,7 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em>) – Parameters to use when simulating the model.  Parameter order is
+<li><strong>params</strong> (<em>np.ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
 [mean volatility distribution] where the parameters of the mean
 model are ordered [constant lag[0] lag[1] … lag[p] ex[0] …
 ex[k-1]] where lag[j] indicates the coefficient on the jth lag in
@@ -1093,11 +1109,11 @@ variable.</li>
 <li><strong>nobs</strong> (<em>int</em>) – Length of series to simulate</li>
 <li><strong>burn</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
 dependence on initial values.</li>
-<li><strong>initial_value</strong> (<em>array</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
+<li><strong>initial_value</strong> (<em>{np.ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
 use when initializing the model.  If omitted, 0.0 is used.</li>
 <li><strong>x</strong> (<em>array</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
 simulation.</li>
-<li><strong>initial_value_vol</strong> (<em>array</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+<li><strong>initial_value_vol</strong> (<em>{np.ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
 </td>
 </tr>
@@ -1174,7 +1190,7 @@ lag lengths to estimate on the common sample.</li>
 \[y_t = \mu + \gamma' x_t + \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.LS.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1185,7 +1201,7 @@ lag lengths to estimate on the common sample.</li>
 <cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</li>
 <li><strong>disp</strong> (<em>str</em>) – Either ‘final’ to print optimization result or ‘off’ to display
 nothing</li>
-<li><strong>starting_values</strong> (<em>array</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
+<li><strong>starting_values</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
 are constructed by the model components.</li>
 <li><strong>cov_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
@@ -1194,6 +1210,9 @@ corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <li><strong>show_warning</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
 <li><strong>first_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
 <li><strong>last_obs</strong> (<em>{int</em><em>, </em><em>str</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
+<li><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for termination.</li>
+<li><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
+include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
 </ul>
 </td>
 </tr>
@@ -1208,6 +1227,7 @@ corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <p class="rubric">Notes</p>
 <p>A ConvergenceWarning is raised if SciPy’s optimizer indicates
 difficulty finding the optimum.</p>
+<p>Parameters are optimized using SLSQP.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1248,16 +1268,16 @@ model, volatility model and distribution.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em>) – Model parameters</li>
-<li><strong>y</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
-<li><strong>regressors</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
+<li><strong>params</strong> (<em>np.ndarray</em>) – Model parameters</li>
+<li><strong>y</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
+<li><strong>regressors</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>resids</strong> – Model residuals</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -1273,7 +1293,7 @@ model, volatility model and distribution.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em>) – Parameters to use when simulating the model.  Parameter order is
+<li><strong>params</strong> (<em>np.ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
 [mean volatility distribution] where the parameters of the mean
 model are ordered [constant lag[0] lag[1] … lag[p] ex[0] …
 ex[k-1]] where lag[j] indicates the coefficient on the jth lag in
@@ -1282,11 +1302,11 @@ variable.</li>
 <li><strong>nobs</strong> (<em>int</em>) – Length of series to simulate</li>
 <li><strong>burn</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
 dependence on initial values.</li>
-<li><strong>initial_value</strong> (<em>array</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
+<li><strong>initial_value</strong> (<em>{np.ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
 use when initializing the model.  If omitted, 0.0 is used.</li>
 <li><strong>x</strong> (<em>array</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
 simulation.</li>
-<li><strong>initial_value_vol</strong> (<em>array</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+<li><strong>initial_value_vol</strong> (<em>{np.ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
 </td>
 </tr>
@@ -1377,7 +1397,7 @@ to override but recommended where applicable.</p>
         <li class="right" >
           <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.89.g8b036a7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

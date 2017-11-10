@@ -14,13 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Introduction to ARCH Models &#8212; arch 0+untagged.89.g8b036a7 documentation</title>
+    <title>Introduction to ARCH Models &#8212; arch 0+untagged.90.g28d8ca6 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0+untagged.89.g8b036a7',
+        VERSION:     '0+untagged.90.g28d8ca6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="univariate.html" title="Univariate Volatility Models"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.89.g8b036a7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -231,8 +231,8 @@ using a simple model constructor.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>y</strong> (<em>array</em>) – The dependent variable</li>
-<li><strong>x</strong> (<em>array</em><em>, </em><em>optional</em>) – Exogenous regressors.  Ignored if model does not permit exogenous
+<li><strong>y</strong> (<em>{np.ndarray</em><em>, </em><em>Series</em><em>, </em><em>None}</em>) – The dependent variable</li>
+<li><strong>x</strong> (<em>{np.array</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – Exogenous regressors.  Ignored if model does not permit exogenous
 regressors.</li>
 <li><strong>mean</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the mean model.  Currently supported options are: ‘Constant’,
 ‘Zero’, ‘ARX’ and  ‘HARX’</li>
@@ -308,14 +308,14 @@ when <cite>mean=’zero’</cite>, are silently ignored.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>params</strong> (<em>array</em>) – Estimated parameters</li>
-<li><strong>param_cov</strong> (<em>array</em><em> or </em><em>None</em>) – Estimated variance-covariance matrix of params.  If none, calls method
+<li><strong>params</strong> (<em>np.ndarray</em>) – Estimated parameters</li>
+<li><strong>param_cov</strong> (<em>{np.ndarray</em><em>, </em><em>None}</em>) – Estimated variance-covariance matrix of params.  If none, calls method
 to compute variance from model when parameter covariance is first used
 from result</li>
 <li><strong>r2</strong> (<em>float</em>) – Model R-squared</li>
-<li><strong>resid</strong> (<em>array</em>) – Residuals from model.  Residuals have same shape as original data and
+<li><strong>resid</strong> (<em>np.ndarray</em>) – Residuals from model.  Residuals have same shape as original data and
 contain nan-values in locations not used in estimation</li>
-<li><strong>volatility</strong> (<em>array</em>) – Conditional volatility from model</li>
+<li><strong>volatility</strong> (<em>np.ndarray</em>) – Conditional volatility from model</li>
 <li><strong>cov_type</strong> (<em>str</em>) – String describing the covariance estimator used</li>
 <li><strong>dep_var</strong> (<em>Series</em>) – Dependent variable</li>
 <li><strong>names</strong> (<em>list</em><em> (</em><em>str</em><em>)</em>) – Model parameter names</li>
@@ -369,7 +369,7 @@ syntax fit_start:fit_stop</li>
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.conditional_volatility">
 <code class="descname">conditional_volatility</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.conditional_volatility" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>{array, Series}</em> – nobs element array containing the conditional volatility (square root
+<dd><p><em>{np.ndarray, Series}</em> – nobs element array containing the conditional volatility (square root
 of conditional variance).  The values are aligned with the input data
 so that the value in the t-th position is the variance of t-th error,
 which is computed using time-(t-1) information.</p>
@@ -432,7 +432,7 @@ which is computed using time-(t-1) information.</p>
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.resid">
 <code class="descname">resid</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.resid" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>{array, Series}</em> – nobs element array containing model residuals</p>
+<dd><p><em>{np.ndarray, Series}</em> – nobs element array containing model residuals</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -453,7 +453,7 @@ which is computed using time-(t-1) information.</p>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>ci</strong> – Array where the ith row contains the confidence interval  for the
 ith parameter</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray</td>
 </tr>
 </tbody>
 </table>
@@ -468,7 +468,7 @@ ith parameter</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
@@ -529,9 +529,9 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>1d array-like</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
-computed by fitting the model are used.  Must be identical in shape
-to the parameters computed by fitting the model.</li>
+<li><strong>params</strong> (<em>{np.ndarray</em><em>, </em><em>Series}</em>) – Alternative parameters to use.  If not provided, the parameters
+computed by fitting the model are used.  Must be 1-d and identical
+in shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
 <li><strong>step</strong> (<em>int</em><em>, </em><em>optional</em>) – Non-negative number of forecasts to skip between spines</li>
 <li><strong>start</strong> (<em>int</em><em>, </em><em>datetime</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
@@ -648,10 +648,10 @@ relevant when parameters are not estimated.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>params</strong> (<em>array</em>) – Estimated parameters</li>
-<li><strong>resid</strong> (<em>array</em>) – Residuals from model.  Residuals have same shape as original data and
+<li><strong>params</strong> (<em>np.ndarray</em>) – Estimated parameters</li>
+<li><strong>resid</strong> (<em>np.ndarray</em>) – Residuals from model.  Residuals have same shape as original data and
 contain nan-values in locations not used in estimation</li>
-<li><strong>volatility</strong> (<em>array</em>) – Conditional volatility from model</li>
+<li><strong>volatility</strong> (<em>np.ndarray</em>) – Conditional volatility from model</li>
 <li><strong>dep_var</strong> (<em>Series</em>) – Dependent variable</li>
 <li><strong>names</strong> (<em>list</em><em> (</em><em>str</em><em>)</em>) – Model parameter names</li>
 <li><strong>loglikelihood</strong> (<em>float</em>) – Loglikelihood at specified parameters</li>
@@ -701,7 +701,7 @@ contain nan-values in locations not used in estimation</li>
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.conditional_volatility">
 <code class="descname">conditional_volatility</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.conditional_volatility" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>{array, Series}</em> – nobs element array containing the conditional volatility (square root
+<dd><p><em>{np.ndarray, Series}</em> – nobs element array containing the conditional volatility (square root
 of conditional variance).  The values are aligned with the input data
 so that the value in the t-th position is the variance of t-th error,
 which is computed using time-(t-1) information.</p>
@@ -728,7 +728,7 @@ which is computed using time-(t-1) information.</p>
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.resid">
 <code class="descname">resid</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.resid" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>{array, Series}</em> – nobs element array containing model residuals</p>
+<dd><p><em>{np.ndarray, Series}</em> – nobs element array containing model residuals</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -746,7 +746,7 @@ which is computed using time-(t-1) information.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
@@ -807,9 +807,9 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>1d array-like</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
-computed by fitting the model are used.  Must be identical in shape
-to the parameters computed by fitting the model.</li>
+<li><strong>params</strong> (<em>{np.ndarray</em><em>, </em><em>Series}</em>) – Alternative parameters to use.  If not provided, the parameters
+computed by fitting the model are used.  Must be 1-d and identical
+in shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps to forecast</li>
 <li><strong>step</strong> (<em>int</em><em>, </em><em>optional</em>) – Non-negative number of forecasts to skip between spines</li>
 <li><strong>start</strong> (<em>int</em><em>, </em><em>datetime</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
@@ -950,7 +950,7 @@ latex</td>
         <li class="right" >
           <a href="univariate.html" title="Univariate Volatility Models"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.89.g8b036a7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 0+untagged.90.g28d8ca6 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
