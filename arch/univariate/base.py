@@ -54,17 +54,9 @@ def _callback(*args):
     return None
 
 
-def linear_constraint(x, *args, **kwargs):
-    """
-    Used for constraints of the forms
-    A.dot(x) - b >= 0
-    """
-    return kwargs['a'].dot(x) - kwargs['b']
-
-
 def constraint(a, b):
     """
-    Constructor allowing linear_constraint to be used with arbitrary inputs
+    Constructor generatins constraints from arrays
 
     Parameters
     ----------
