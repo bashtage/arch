@@ -8,3 +8,17 @@ dist
 .benchmarks/
 .cache/
 README.rst
+*.suo
+
+/totestimports.py
+*.user
+/.vs/config/applicationhost.config
+/local_cythonrecursion.py
+/.vs/arch/v14/.suo
+*.pyproj
+*.sln
+
+/.vs/config/applicationhost.config
+.vscode/settings.json
+**/*.ipynb_checkpoints/
+

@@ -11,7 +11,7 @@ from numpy import log
 import numpy as np
 
 __all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion',
-           'egarch_recursion']
+           'egarch_recursion', 'cgarch_recursion']
 
 LNSIGMA_MAX = np.log(np.finfo(np.double).max) - .1
 
@@ -241,3 +241,33 @@ def egarch_recursion_python(parameters, resids, sigma2, p, o, q, nobs,
 
 
 egarch_recursion = jit(egarch_recursion_python)
+
+
+def cgarch_recursion_python(parameters, fresids, sigma2,
+                            backcast, var_bounds, g2, q2):
+    sqrd_resids = fresids
+    nobs = len(sqrd_resids)
+    alpha, beta, omega, raw, phi = parameters
+    initial_sigma2 = backcast
+    initial_q2 = 0.05
+    initial_g2 = initial_sigma2 - initial_q2
+    # g is short term variance and q is the long term one
+    g2[0] = initial_g2
+    q2[0] = initial_q2
+    sigma2[0] = initial_sigma2
+
+    for t in range(1, nobs):
+        g2[t] = alpha * (sqrd_resids[t-1] - q2[t-1]) + beta * g2[t-1]
+        q2[t] = omega + raw * q2[t-1] + phi * (sqrd_resids[t-1] - sigma2[t-1])
+        sigma2[t] = g2[t] + q2[t]
+        if sigma2[t] < var_bounds[t, 0]:
+            sigma2[t] = var_bounds[t, 0]
+        elif sigma2[t] > var_bounds[t, 1]:
+            if not np.isinf(sigma2[t]):
+                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
+            else:
+                sigma2[t] = var_bounds[t, 1] + 1000
+    return sigma2
+
+
+cgarch_recursion = jit(cgarch_recursion_python)

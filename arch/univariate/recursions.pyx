@@ -3,7 +3,7 @@ cimport numpy as np
 cimport cython
 
 __all__ = ['harch_recursion','arch_recursion','garch_recursion',
-           'egarch_recursion']
+           'egarch_recursion', 'cgarch_recursion']
 
 cdef extern from 'math.h':
     double log(double x)
@@ -277,4 +277,44 @@ def egarch_recursion(double[:] parameters,
         std_resids[t] = resids[t] / sqrt(sigma2[t])
         abs_std_resids[t] = fabs(std_resids[t])
 
+    return sigma2
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+def cgarch_recursion(double[:] parameters,
+                            double[:] fresids,
+                            double[:] sigma2,
+                            double backcast,
+                            double[:, :] var_bounds,
+                            double[:] g2,
+                            double[:] q2):
+    cdef double[:] sqrd_resids
+    cdef int nobs
+    cdef double alpha, beta, omega, raw, phi, initial_sigma2, initial_q2
+    cdef double initial_g2
+    cdef Py_ssize_t t
+
+    sqrd_resids = fresids
+    nobs = len(sqrd_resids)
+    alpha, beta, omega, raw, phi = parameters
+    initial_sigma2 = backcast
+    initial_q2 = 0.05
+    initial_g2 = initial_sigma2 - initial_q2
+    # g is short term variance and q is the long term one
+    g2[0] = initial_g2
+    q2[0] = initial_q2
+    sigma2[0] = initial_sigma2
+
+    for t in range(1, nobs):
+        g2[t] = alpha * (sqrd_resids[t-1] - q2[t-1]) + beta * g2[t-1]
+        q2[t] = omega + raw * q2[t-1] + phi * (sqrd_resids[t-1] - sigma2[t-1])
+        sigma2[t] = g2[t] + q2[t]
+        if sigma2[t] < var_bounds[t, 0]:
+            sigma2[t] = var_bounds[t, 0]
+        elif sigma2[t] > var_bounds[t, 1]:
+            if sigma2[t] > DBL_MAX:
+                sigma2[t] = var_bounds[t, 1] + 1000
+            else:
+                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
     return sigma2

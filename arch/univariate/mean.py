@@ -16,7 +16,7 @@ from statsmodels.tsa.tsatools import lagmat
 
 from arch.univariate.base import ARCHModel, implicit_constant, ARCHModelResult, ARCHModelForecast
 from arch.univariate.distribution import Normal, StudentsT, SkewStudent
-from arch.univariate.volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH
+from arch.univariate.volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH, CGARCH
 from arch.compat.python import range, iteritems
 from arch.utility.array import ensure1d, parse_dataframe, cutoff_to_index
 
@@ -29,6 +29,8 @@ COV_TYPES = {'white': 'White\'s Heteroskedasticity Consistent Estimator',
 
 
 def _forecast_pad(count, forecasts):
+    if isinstance(forecasts, type(None)):
+        return None
     shape = list(forecasts.shape)
     shape[0] = count
     fill = np.empty(tuple(shape))
@@ -568,7 +570,7 @@ class HARX(ARCHModel):
                 names = ['p' + str(i) for i in range(num_params)]
 
             fit_start, fit_stop = self._fit_indices
-            return ARCHModelResult(params, param_cov, 0.0, y, vol, cov_type,
+            return ARCHModelResult(params, param_cov, 0.0, y, vol, None, cov_type,
                                    self._y_series, names, loglikelihood,
                                    self._is_pandas, opt, fit_start, fit_stop,
                                    copy.deepcopy(self))
@@ -615,7 +617,7 @@ class HARX(ARCHModel):
             names = ['p' + str(i) for i in range(num_params)]
 
         fit_start, fit_stop = self._fit_indices
-        return ARCHModelResult(params, param_cov, r2, resids, vol, cov_type,
+        return ARCHModelResult(params, param_cov, r2, resids, vol, None, cov_type,
                                self._y_series, names, loglikelihood,
                                self._is_pandas, opt, fit_start, fit_stop,
                                copy.deepcopy(self))
@@ -653,7 +655,9 @@ class HARX(ARCHModel):
                                            horizon=horizon, method=method,
                                            simulations=simulations, rng=rng)
         var_fcasts = vfcast.forecasts
+        long_component = vfcast.longterm_forecasts
         var_fcasts = _forecast_pad(earliest, var_fcasts)
+        long_component = _forecast_pad(earliest, long_component)
 
         arp = self._har_to_ar(mp)
         constant = arp[0] if self.constant else 0.0
@@ -692,7 +696,8 @@ class HARX(ARCHModel):
 
         index = self._y_series.index
         return ARCHModelForecast(index, mean_fcast, longrun_var_fcasts,
-                                 var_fcasts, align=align,
+                                 var_fcasts, long_component,
+                                 align=align,
                                  simulated_paths=mean_paths,
                                  simulated_residuals=shocks,
                                  simulated_variances=long_run_variance_paths,
@@ -1049,7 +1054,7 @@ class LS(HARX):
 
     Notes
     -----
-    The AR-X model is described by
+    The LS model is described by
 
     .. math::
 
@@ -1141,7 +1146,7 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
     when `mean='zero'`, are silently ignored.
     """
     known_mean = ('zero', 'constant', 'harx', 'har', 'ar', 'arx', 'ls')
-    known_vol = ('arch', 'garch', 'harch', 'constant', 'egarch')
+    known_vol = ('arch', 'garch', 'harch', 'constant', 'egarch', 'cgarch')
     known_dist = ('normal', 'gaussian', 'studentst', 't', 'skewstudent',
                   'skewt')
     mean = mean.lower()
@@ -1173,6 +1178,8 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
         v = ConstantVariance()
     elif vol == 'arch':
         v = ARCH(p=p)
+    elif vol == 'cgarch':
+        v = CGARCH()
     elif vol == 'garch':
         v = GARCH(p=p, o=o, q=q, power=power)
     elif vol == 'egarch':
