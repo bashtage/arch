@@ -395,7 +395,12 @@ class TestMeanModel(TestCase):
                       'omega', 'alpha[1]', 'alpha[2]'])
 
         am = ARX(y=y, lags=2, x=x)
-        am.fit(disp=DISPLAY).summary()
+        res = am.fit(disp=DISPLAY)
+        summ = res.summary().as_text()
+        repr = res.__repr__()
+        assert str(hex(id(res))) in repr
+        assert summ[:10] == repr[:10]
+
         am.volatility = ARCH(p=2)
         results = am.fit(update_freq=0, disp='off')
         assert isinstance(results.pvalues, pd.Series)

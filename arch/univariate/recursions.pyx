@@ -14,6 +14,8 @@ cdef extern from 'math.h':
 cdef extern from 'float.h':
     double DBL_MAX
 
+cdef double LNSIGMA_MAX = log(DBL_MAX)
+
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
@@ -265,14 +267,13 @@ def egarch_recursion(double[:] parameters,
             else:
                 lnsigma2[t] += parameters[loc] * lnsigma2[t - 1 - j]
             loc += 1
+        if lnsigma2[t] > LNSIGMA_MAX:
+            lnsigma2[t] = LNSIGMA_MAX
         sigma2[t] = exp(lnsigma2[t])
         if sigma2[t] < var_bounds[t, 0]:
             sigma2[t] = var_bounds[t, 0]
         elif sigma2[t] > var_bounds[t, 1]:
-            if sigma2[t] > DBL_MAX:
-                sigma2[t] = var_bounds[t, 1] + 1000
-            else:
-                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
+            sigma2[t] = var_bounds[t, 1] + log(sigma2[t]) - log(var_bounds[t, 1])
         std_resids[t] = resids[t] / sqrt(sigma2[t])
         abs_std_resids[t] = fabs(std_resids[t])
 
