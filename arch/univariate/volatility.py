@@ -1946,7 +1946,7 @@ class FixedVariance(VolatilityProcess):
 
     Parameters
     ----------
-    variance : {array, pd.Series}
+    variance : {array, Series}
         Array containing the variances to use.  Shoule have the same shape as the data used in the
         model.
     unit_scale : bool, optional

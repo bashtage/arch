@@ -43,7 +43,7 @@ def add_trend(x=None, trend="c", prepend=False, nobs=None,
 
     Parameters
     ----------
-    x : array-like or None
+    x : {ndarray, DataFrame}
         Original array of data. If None, then nobs must be a positive integer
     trend : str {"c","t","ct","ctt"}
         "c" add constant only

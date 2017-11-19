@@ -7,7 +7,7 @@ def cov_nw(y, lags=0, demean=True, axis=0, ddof=0):
 
     Parameters
     ----------
-    y : array
+    y : ndarray
         Values to use when computing the Newey-West covariance estimator, either
         1-d or 2-d. When y is 2d, default behavior is to treat columns as variables
         and rows as observations.
@@ -23,7 +23,7 @@ def cov_nw(y, lags=0, demean=True, axis=0, ddof=0):
 
     Returns
     -------
-    cov : array
+    cov : ndarray
         The estimated covariance
 
     """
