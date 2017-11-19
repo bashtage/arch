@@ -11,3 +11,4 @@ Changes since 4.0
 - Added ability to jointly estimate smoothing parameter in EWMA variance when fitting the model
 - Added Component GARCH process which decomposes volatility into long run and short run components.
   The model comes with an extra ``longterm_var`` attribute when fit.
+- Added ability to pass optimization options to ARCH model estimation (:issue:`195`)
