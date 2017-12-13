@@ -188,7 +188,7 @@ class VolatilityProcess(object):
         -------
         sigma2 : array
             t element array containing the one-step ahead forecasts
-        forecsts : array
+        forecasts : array
             t by horizon array containing the one-step ahead forecasts in the first location
         """
         t = resids.shape[0]
@@ -1923,10 +1923,10 @@ class FixedVariance(VolatilityProcess):
     Parameters
     ----------
     variance : {array, Series}
-        Array containing the variances to use.  Shoule have the same shape as the data used in the
+        Array containing the variances to use.  Should have the same shape as the data used in the
         model.
     unit_scale : bool, optional
-        Flag whether to enfore a unit scale.  If False, a scale parameter will be estimated so
+        Flag whether to enforce a unit scale.  If False, a scale parameter will be estimated so
         that the model variance will be proportional to ``variance``.  If True, the model variance
         is set of ``variance``
 

@@ -68,10 +68,10 @@ def ensure2d(x, name):
             return x
         else:
             raise ValueError(
-                'Variable ' + name + 'must be 2d or reshapeable to 2d')
+                'Variable ' + name + 'must be 2d or reshapable to 2d')
     else:
         raise ValueError('Variable ' + name + 'must be 2d or ' +
-                         'reshapeable to 2d')
+                         'reshapable to 2d')
 
 
 def parse_dataframe(x, name):

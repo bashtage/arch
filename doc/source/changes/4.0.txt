@@ -1,5 +1,7 @@
 Changes since 4.0
 =================
+- Fixed a bug that prevented 1-step forecasts with exogenous regressors
+- Added the Generalized Error Distribution for univariate ARCH models
 - Fixed a bug in MCS when using the max method that prevented all included models from being
   listed
 - Added ``FixedVariance`` volatility process which allows pre-specified variances to be used with

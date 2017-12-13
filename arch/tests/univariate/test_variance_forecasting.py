@@ -47,8 +47,8 @@ def _simple_direct_gjrgarch_forecaster(resids, params, p, o, q, backcast, var_bo
 
     Parameters
     ----------
-    resids : arrah
-    params : arrah
+    resids : array
+    params : array
     p : int
     o : int
     q : int

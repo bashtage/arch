@@ -23,6 +23,12 @@ Skew Student's t
 .. autoclass:: SkewStudent
     :members: starting_values, bounds, constraints, simulate, loglikelihood
 
+Generalized Error (GED)
+-----------------------
+
+.. autoclass:: GeneralizedError
+    :members: starting_values, bounds, constraints, simulate, loglikelihood
+
 Writing New Distributions
 -------------------------
 All distributions must inherit from :class:Distribution and provide all public

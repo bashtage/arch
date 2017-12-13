@@ -4,18 +4,18 @@ Distributions to use in ARCH models.  All distributions must inherit from
 :class:`Distribution` and provide the same methods with the same inputs.
 """
 from __future__ import absolute_import, division
-from arch.compat.python import add_metaclass
 
-from numpy.random import standard_normal, standard_t
-from numpy import (empty, array, sqrt, log, exp, sign, pi, sum, asarray,
-                   ones_like)
-from scipy.special import gammaln
 import scipy.stats as stats
+from numpy import (empty, array, sqrt, log, exp, sign, pi, sum, asarray,
+                   ones_like, abs)
+from numpy.random import standard_normal, standard_t, standard_gamma, randint
+from scipy.special import gammaln, gamma
 
+from arch.compat.python import add_metaclass
 from arch.utility.array import DocStringInheritor
 
-
-__all__ = ['Distribution', 'Normal', 'StudentsT', 'SkewStudent']
+__all__ = ['Distribution', 'Normal', 'StudentsT', 'SkewStudent',
+           'GeneralizedError']
 
 
 @add_metaclass(DocStringInheritor)
@@ -143,7 +143,7 @@ class Distribution(object):
 
     def parameter_names(self):
         """
-        Names of distribution shepe parameters
+        Names of distribution shape parameters
 
         Returns
         -------
@@ -230,7 +230,7 @@ class Normal(Distribution):
 
 class StudentsT(Distribution):
     """
-    Standardized Student's nobs distribution for use with ARCH models
+    Standardized Student's distribution for use with ARCH models
     """
 
     def __init__(self):
@@ -477,7 +477,7 @@ class SkewStudent(Distribution):
         """
         eta, lam = parameters
         c = self.__const_c(parameters)
-        return 4 * lam * exp(c) * (eta-2) / (eta - 1)
+        return 4 * lam * exp(c) * (eta - 2) / (eta - 1)
 
     def __const_b(self, parameters):
         """Compute b constant.
@@ -494,7 +494,7 @@ class SkewStudent(Distribution):
         """
         eta, lam = parameters
         a = self.__const_a(parameters)
-        return (1 + 3*lam**2 - a**2)**.5
+        return (1 + 3 * lam ** 2 - a ** 2) ** .5
 
     def __const_c(self, parameters):
         """Compute c constant.
@@ -510,8 +510,8 @@ class SkewStudent(Distribution):
             Log of the constant used in loglikelihood
         """
         eta, lam = parameters
-#        return gamma((eta+1)/2) / ((pi*(eta-2))**.5 * gamma(eta/2))
-        return gammaln((eta+1)/2) - gammaln(eta/2) - log(pi*(eta-2))/2
+        #        return gamma((eta+1)/2) / ((pi*(eta-2))**.5 * gamma(eta/2))
+        return gammaln((eta + 1) / 2) - gammaln(eta / 2) - log(pi * (eta - 2)) / 2
 
     def ppf(self, arg, parameters):
         """Inverse cumulative density function (ICDF).
@@ -547,3 +547,107 @@ class SkewStudent(Distribution):
         icdf = icdf / b
 
         return icdf
+
+
+class GeneralizedError(Distribution):
+    """
+    Generalized Error distribution for use with ARCH models
+    """
+
+    def __init__(self):
+        super(GeneralizedError, self).__init__('Generalized Error Distribution')
+        self.num_params = 1
+
+    def constraints(self):
+        return array([[1], [-1]]), array([1.01, -500.0])
+
+    def bounds(self, resids):
+        return [(1.01, 500.0)]
+
+    def loglikelihood(self, parameters, resids, sigma2, individual=False):
+        r"""Computes the log-likelihood of assuming residuals are have a
+        Generalized Error Distribution, conditional on the variance.
+
+        Parameters
+        ----------
+        parameters : array
+            Shape parameter of the GED distribution
+        resids  : array
+            The residuals to use in the log-likelihood calculation
+        sigma2 : array
+            Conditional variances of resids
+        individual : bool, optional
+            Flag indicating whether to return the vector of individual log
+            likelihoods (True) or the sum (False)
+
+        Returns
+        -------
+        ll : float
+            The log-likelihood
+
+        Notes
+        -----
+        The log-likelihood of a single data point x is
+
+        .. math::
+
+            \ln\nu-\ln c-\ln\Gamma(\frac{1}{\nu})+(1+\frac{1}{\nu})\ln2
+            -\frac{1}{2}\ln\sigma^{2}
+            -\frac{1}{2}\left|\frac{x}{c\sigma}\right|^{\nu}
+
+        where :math:`\Gamma` is the gamma function and :math:`\ln c` is
+
+        .. math::
+
+            \ln c=\frac{1}{2}\left(\frac{-2}{\nu}\ln2+\ln\Gamma(\frac{1}{\nu})
+            -\ln\Gamma(\frac{3}{\nu})\right).
+        """
+        nu = parameters[0]
+        log_c = 0.5 * (-2 / nu * log(2) + gammaln(1 / nu) - gammaln(3 / nu))
+        c = exp(log_c)
+        lls = log(nu) - log_c - gammaln(1 / nu) - (1 + 1 / nu) * log(2)
+        lls -= 0.5 * log(sigma2)
+        lls -= 0.5 * abs(resids / (sqrt(sigma2) * c)) ** nu
+
+        if individual:
+            return lls
+        else:
+            return sum(lls)
+
+    def starting_values(self, std_resid):
+        """
+        Parameters
+        ----------
+        std_resid : array
+            Estimated standardized residuals to use in computing starting
+            values for the shape parameter
+
+        Returns
+        -------
+        sv : array
+            Array containing starting valuer for shape parameter
+
+        Notes
+        -----
+        Defaults to 1.5 which is implies heavier tails than a normal
+        """
+        return array([1.5])
+
+    def _simulator(self, size):
+        parameters = self._parameters
+        nu = parameters[0]
+        randoms = standard_gamma(1 / nu, size) ** (1.0 / nu)
+        randoms *= 2 * randint(0, 2, size) - 1
+        scale = sqrt(gamma(3.0 / nu) / gamma(1.0 / nu))
+
+        return randoms / scale
+
+    def simulate(self, parameters):
+        parameters = asarray(parameters)[None]
+        if parameters[0] <= 1.0:
+            raise ValueError('The shape parameter must be larger than 1')
+        self._parameters = parameters
+        return self._simulator
+
+    def parameter_names(self):
+        return ['nu']

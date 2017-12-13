@@ -302,7 +302,7 @@ class TestMCS(object):
                     loss_diffs[i, j] = mean_diffs[i] - mean_diffs[j]
                     loss_diffs[j, i] = mean_diffs[j] - mean_diffs[i]
                     for n in range(b):
-                        # Compute bootstraped versions
+                        # Compute bootstrapped versions
                         bs_diffs[n] = loss_diffs_vec[indices[n]].mean()
                     variances[j, i] = variances[i, j] = (bs_diffs ** 2).mean()
                     std_diffs = np.abs(bs_diffs) / np.sqrt(variances[i, j])
@@ -345,7 +345,7 @@ class TestMCS(object):
             loss_errors = losses - losses.mean(0)
             stats = np.zeros((b, k))
             for n in range(b):
-                # Compute bootstraped versions
+                # Compute bootstrapped versions
                 bs_loss_errors = loss_errors[indices[n]]
                 stats[n] = bs_loss_errors.mean(0) - bs_loss_errors.mean()
             variances = (stats ** 2).mean(0)
