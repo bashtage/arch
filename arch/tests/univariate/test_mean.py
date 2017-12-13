@@ -1,15 +1,16 @@
 from __future__ import absolute_import, division
-from arch.compat.python import range, iteritems
 
 import warnings
 from unittest import TestCase
 
 import numpy as np
 import pandas as pd
-from pandas.util.testing import assert_frame_equal, assert_series_equal
 import pytest
 from numpy.random import randn
 from numpy.testing import assert_almost_equal, assert_equal
+from pandas.util.testing import assert_frame_equal, assert_series_equal
+
+from arch.compat.python import range, iteritems
 
 try:
     import arch.univariate.recursions as rec
@@ -143,8 +144,6 @@ class TestMeanModel(TestCase):
         assert_equal(a, np.empty((0, 5)))
         assert_equal(b, np.empty(0))
         res = harx.fit(disp=DISPLAY)
-        with pytest.raises(RuntimeError):
-            res.forecast(horizon=10)
         with pytest.raises(ValueError):
             res.forecast(params=np.array([1.0, 1.0]))
         nobs = self.T - 22
@@ -287,8 +286,6 @@ class TestMeanModel(TestCase):
         rhs[:, 3] = self.x[10:900, 0]
         params = np.linalg.pinv(rhs).dot(lhs)
         assert_almost_equal(params, res.params[:-1])
-        with pytest.raises(RuntimeError):
-            res.forecast()
         assert_equal(arx.hold_back, 10)
         assert_equal(arx.lags, np.array([[0, 1, 2], [1, 2, 3]]))
         assert_equal(arx.name, 'AR-X')
@@ -391,7 +388,7 @@ class TestMeanModel(TestCase):
         am.fit(disp=DISPLAY).summary()
         am.volatility = ARCH(p=2)
         results = am.fit(update_freq=0, disp='off')
-        assert isinstance(results.pvalues, pd.Series), True
+        assert isinstance(results.pvalues, pd.Series)
         assert_equal(list(results.pvalues.index),
                      ['Const', 'x0', 'x1', 'x2',
                       'omega', 'alpha[1]', 'alpha[2]'])
@@ -489,6 +486,14 @@ class TestMeanModel(TestCase):
         res.summary()
 
         am = arch_model(self.y, mean='ar', lags=[1, 3, 5], dist='studentst')
+        res = am.fit(update_freq=0, disp=DISPLAY)
+        res.summary()
+
+        am = arch_model(self.y, mean='ar', lags=[1, 3, 5], dist='ged')
+        res = am.fit(update_freq=0, disp=DISPLAY)
+        res.summary()
+
+        am = arch_model(self.y, mean='ar', lags=[1, 3, 5], dist='skewt')
         res = am.fit(update_freq=0, disp=DISPLAY)
         res.summary()
 
