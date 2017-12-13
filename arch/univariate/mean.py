@@ -14,10 +14,10 @@ from scipy.optimize import OptimizeResult
 from statsmodels.tools.decorators import cache_readonly
 from statsmodels.tsa.tsatools import lagmat
 
+from arch.compat.python import range, iteritems
 from arch.univariate.base import ARCHModel, implicit_constant, ARCHModelResult, ARCHModelForecast
 from arch.univariate.distribution import Normal, StudentsT, SkewStudent
 from arch.univariate.volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH
-from arch.compat.python import range, iteritems
 from arch.utility.array import ensure1d, parse_dataframe, cutoff_to_index
 
 __all__ = ['HARX', 'ConstantMean', 'ZeroMean', 'ARX', 'arch_model', 'LS']
@@ -36,8 +36,9 @@ def _forecast_pad(count, forecasts):
     return np.concatenate((fill, forecasts))
 
 
-def _ar_forecast(y, horizon, start_index, constant, arp):
+def _ar_forecast(y, horizon, start_index, constant, arp, exogp=None, x=None):
     """
+    Generate mean forecasts from an AR-X model
 
     Parameters
     ----------
@@ -46,6 +47,8 @@ def _ar_forecast(y, horizon, start_index, constant, arp):
     start_index : int
     constant : float
     arp : ndarray
+    exogp : ndarray
+    x : ndarray
 
     Returns
     -------
@@ -57,10 +60,16 @@ def _ar_forecast(y, horizon, start_index, constant, arp):
     for i in range(p):
         fcasts[p - 1:, i] = y[i:(-p + i + 1)] if i < p - 1 else y[i:]
     for i in range(p, horizon + p):
-        fcasts[:, i] = constant + fcasts[:, i-p:i].dot(arp[::-1])
-    fcasts[: start_index] = np.nan
+        fcasts[:, i] = constant + fcasts[:, i - p:i].dot(arp[::-1])
+    fcasts[:start_index] = np.nan
+    fcasts = fcasts[:, p:]
+    if x is not None:
+        exog_comp = np.dot(x, exogp[:, None])
+        fcasts[:-1] += exog_comp[1:]
+        fcasts[-1] = np.nan
+        fcasts[:, 1:] = np.nan
 
-    return fcasts[:, p:]
+    return fcasts
 
 
 def _ar_to_impulse(steps, params):
@@ -622,9 +631,6 @@ class HARX(ARCHModel):
 
     def forecast(self, parameters, horizon=1, start=None, align='origin',
                  method='analytic', simulations=1000):
-        if self._x is not None:
-            raise RuntimeError('Forecasts are not available when the model '
-                               'contains exogenous regressors.')
         # Check start
         earliest, default_start = self._fit_indices
         default_start = max(0, default_start - 1)
@@ -641,7 +647,7 @@ class HARX(ARCHModel):
         #####################################
         # Compute residual variance forecasts
         #####################################
-        # Backcast should use only the sample used in fitting
+        # Back cast should use only the sample used in fitting
         resids = self.resids(mp)
         backcast = self._volatility.backcast(resids)
         full_resids = self.resids(mp, self._y[earliest:], self.regressors[earliest:])
@@ -656,9 +662,11 @@ class HARX(ARCHModel):
         var_fcasts = _forecast_pad(earliest, var_fcasts)
 
         arp = self._har_to_ar(mp)
+        nexog = 0 if self._x is None else self._x.shape[1]
+        exog_p = np.empty([]) if self._x is None else mp[-nexog:]
         constant = arp[0] if self.constant else 0.0
         dynp = arp[int(self.constant):]
-        mean_fcast = _ar_forecast(self._y, horizon, start_index, constant, dynp)
+        mean_fcast = _ar_forecast(self._y, horizon, start_index, constant, dynp, exog_p, self._x)
         # Compute total variance forecasts, which depend on model
         impulse = _ar_to_impulse(horizon, dynp)
         longrun_var_fcasts = var_fcasts.copy()
@@ -1049,7 +1057,7 @@ class LS(HARX):
 
     Notes
     -----
-    The AR-X model is described by
+    The LS model is described by
 
     .. math::
 
@@ -1097,9 +1105,12 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
         Power to use with GARCH and related models
     dist : int, optional
         Name of the error distribution.  Currently supported options are:
-            'Normal' (default)
-            'StudentsT'
-            'SkewStudents'
+
+            * Normal: 'normal', 'gaussian' (default)
+            * Students's t: 't', 'studentst'
+            * Skewed Student's t: 'skewstudent', 'skewt'
+            * Generalized Error Distribution: 'ged', 'generalized error"
+
     hold_back : int
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
@@ -1143,7 +1154,7 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
     known_mean = ('zero', 'constant', 'harx', 'har', 'ar', 'arx', 'ls')
     known_vol = ('arch', 'garch', 'harch', 'constant', 'egarch')
     known_dist = ('normal', 'gaussian', 'studentst', 't', 'skewstudent',
-                  'skewt')
+                  'skewt', 'ged', 'generalized error')
     mean = mean.lower()
     vol = vol.lower()
     dist = dist.lower()

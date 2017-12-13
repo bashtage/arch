@@ -713,7 +713,7 @@ class ARCHModel(object):
         default value for `align`, the forecast value in position [t, h] is the
         time-t, h+1 step ahead forecast.
 
-        If model contains exogenous variables (`model.x is not None`), then
+        If model contains exogenous variables (model.x is not None), then
         only 1-step ahead forecasts are available.  Using horizon > 1 will
         produce a warning and all columns, except the first, will be
         nan-filled.

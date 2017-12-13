@@ -8,6 +8,7 @@ from numpy.testing import assert_allclose
 from pandas.util.testing import assert_frame_equal
 
 from arch.tests.univariate.test_variance_forecasting import preserved_state
+from arch.univariate import HARX
 from arch.univariate import arch_model
 from arch.univariate.mean import _ar_to_impulse, _ar_forecast
 
@@ -362,20 +363,20 @@ class TestForecasting(TestCase):
         means = np.zeros((t, 5))
         means[:, 0] = const + ar * y
         for i in range(1, 5):
-            means[:, i] = const + ar * means[:, i-1]
+            means[:, i] = const + ar * means[:, i - 1]
         means = pd.DataFrame(means, index=index,
                              columns=['h.{0}'.format(j) for j in range(1, 6)])
         assert_frame_equal(means, forecast.mean)
-        var = np.concatenate([[[np.nan]*5], vfcast.forecasts])
+        var = np.concatenate([[[np.nan] * 5], vfcast.forecasts])
         rv = pd.DataFrame(var, index=index,
                           columns=['h.{0}'.format(j) for j in range(1, 6)])
         assert_frame_equal(rv, forecast.residual_variance)
 
         lrv = rv.copy()
         for i in range(5):
-            weights = (ar ** np.arange(i+1)) ** 2
+            weights = (ar ** np.arange(i + 1)) ** 2
             weights = weights[:, None]
-            lrv.iloc[:, i:i+1] = rv.values[:, :i+1].dot(weights[::-1])
+            lrv.iloc[:, i:i + 1] = rv.values[:, :i + 1].dot(weights[::-1])
         assert_frame_equal(lrv, forecast.variance)
 
     def test_ar2_garch11(self):
@@ -497,3 +498,25 @@ class TestForecasting(TestCase):
         mod = arch_model(y, mean='AR', lags=1)
         res = mod.fit()
         assert_allclose(res_holdback.params, res.params)
+
+    def test_forecast_exogenous_regressors(self):
+        y = np.random.randn(1000, 1)
+        x = np.random.randn(1000, 2)
+        am = HARX(y=y, x=x, lags=[1, 2])
+        res = am.fit()
+        fcasts = res.forecast(horizon=1, start=1)
+
+        const, har01, har02, ex0, ex1, _ = res.params
+        y_01 = y[1:-1]
+        y_02 = (y[1:-1] + y[0:-2]) / 2
+        x0 = x[2:, :1]
+        x1 = x[2:, 1:2]
+        direct = const + har01 * y_01 + har02 * y_02 + ex0 * x0 + ex1 * x1
+        direct = np.vstack(([[np.nan]], direct, [[np.nan]]))
+        direct = pd.DataFrame(direct, columns=['h.1'])
+        assert_allclose(direct.values, fcasts.mean)
+
+        fcasts2 = res.forecast(horizon=2, start=1)
+        assert fcasts2.mean.shape == (1000, 2)
+        assert fcasts2.mean.isnull().all()['h.2']
+        assert_frame_equal(fcasts.mean, fcasts2.mean[['h.1']])
