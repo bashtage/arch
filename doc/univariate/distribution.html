@@ -14,13 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Distributions &#8212; arch 4.2+14.g2db76fa documentation</title>
+    <title>Distributions &#8212; arch 4.2+18.g3aa6971 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.2+14.g2db76fa',
+        VERSION:     '4.2+18.g3aa6971',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="univariate_using_fixed_variance.html" title="Using the Fixed Variance process"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g2db76fa documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+18.g3aa6971 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -253,7 +253,7 @@ values for the shape parameter</td>
 <dl class="class">
 <dt id="arch.univariate.StudentsT">
 <em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">StudentsT</code><a class="headerlink" href="#arch.univariate.StudentsT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Standardized Student’s nobs distribution for use with ARCH models</p>
+<dd><p>Standardized Student’s distribution for use with ARCH models</p>
 <dl class="method">
 <dt id="arch.univariate.StudentsT.bounds">
 <code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.StudentsT.bounds" title="Permalink to this definition">¶</a></dt>
@@ -515,6 +515,128 @@ produce a moment-based estimator for the starting values.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="generalized-error-ged">
+<h2>Generalized Error (GED)<a class="headerlink" href="#generalized-error-ged" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arch.univariate.GeneralizedError">
+<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">GeneralizedError</code><a class="headerlink" href="#arch.univariate.GeneralizedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generalized Error distribution for use with ARCH models</p>
+<dl class="method">
+<dt id="arch.univariate.GeneralizedError.bounds">
+<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.GeneralizedError.bounds" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Residuals to use when computing the bounds</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List containing a single tuple with (lower, upper) bounds</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)">list</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.GeneralizedError.constraints">
+<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.GeneralizedError.constraints" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>A</strong> (<em>array</em>) – Constraint loadings</li>
+<li><strong>b</strong> (<em>array</em>) – Constraint values</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Parameters satisfy the constraints A.dot(parameters)-b &gt;= 0</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.GeneralizedError.loglikelihood">
+<code class="descname">loglikelihood</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>individual=False</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.GeneralizedError.loglikelihood" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the log-likelihood of assuming residuals are have a
+Generalized Error Distribution, conditional on the variance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Shape parameter of the GED distribution</li>
+<li><strong>resids</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – The residuals to use in the log-likelihood calculation</li>
+<li><strong>sigma2</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Conditional variances of resids</li>
+<li><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
+likelihoods (True) or the sum (False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ll</strong> – The log-likelihood</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The log-likelihood of a single data point x is</p>
+<div class="math">
+\[\ln\nu-\ln c-\ln\Gamma(\frac{1}{\nu})+(1+\frac{1}{\nu})\ln2
+-\frac{1}{2}\ln\sigma^{2}
+-\frac{1}{2}\left|\frac{x}{c\sigma}\right|^{\nu}\]</div>
+<p>where <span class="math">\(\Gamma\)</span> is the gamma function and <span class="math">\(\ln c\)</span> is</p>
+<div class="math">
+\[\ln c=\frac{1}{2}\left(\frac{-2}{\nu}\ln2+\ln\Gamma(\frac{1}{\nu})
+-\ln\Gamma(\frac{3}{\nu})\right).\]</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.GeneralizedError.simulate">
+<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.GeneralizedError.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulates i.i.d. draws from the distribution</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Distribution parameters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>simulator</strong> – Callable that take a single output size argument and returns i.i.d.
+draws from the distribution</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)">callable</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="arch.univariate.GeneralizedError.starting_values">
+<code class="descname">starting_values</code><span class="sig-paren">(</span><em>std_resid</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.GeneralizedError.starting_values" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Estimated standardized residuals to use in computing starting
+values for the shape parameter</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array containing starting valuer for shape parameter</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Defaults to 1.5 which is implies heavier tails than a normal</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="writing-new-distributions">
 <h2>Writing New Distributions<a class="headerlink" href="#writing-new-distributions" title="Permalink to this headline">¶</a></h2>
 <p>All distributions must inherit from :class:Distribution and provide all public
@@ -561,7 +683,7 @@ methods.</p>
         <li class="right" >
           <a href="univariate_using_fixed_variance.html" title="Using the Fixed Variance process"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g2db76fa documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+18.g3aa6971 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

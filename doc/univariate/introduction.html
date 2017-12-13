@@ -14,13 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Introduction to ARCH Models &#8212; arch 4.2+14.g2db76fa documentation</title>
+    <title>Introduction to ARCH Models &#8212; arch 4.2+18.g3aa6971 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.2+14.g2db76fa',
+        VERSION:     '4.2+18.g3aa6971',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="univariate.html" title="Univariate Volatility Models"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g2db76fa documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+18.g3aa6971 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -244,12 +244,15 @@ integers specifying lag locations.</li>
 <li><strong>o</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Lag order of the asymmetric innovation</li>
 <li><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Lag order of lagged volatility or equivalent</li>
 <li><strong>power</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Power to use with GARCH and related models</li>
-<li><strong>dist</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – <dl class="docutils">
-<dt>Name of the error distribution.  Currently supported options are:</dt>
-<dd>’Normal’ (default)
-‘StudentsT’
-‘SkewStudents’</dd>
-</dl>
+<li><strong>dist</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – <p>Name of the error distribution.  Currently supported options are:</p>
+<blockquote>
+<div><ul>
+<li>Normal: ‘normal’, ‘gaussian’ (default)</li>
+<li>Students’s t: ‘t’, ‘studentst’</li>
+<li>Skewed Student’s t: ‘skewstudent’, ‘skewt’</li>
+<li>Generalized Error Distribution: ‘ged’, ‘generalized error”</li>
+</ul>
+</div></blockquote>
 </li>
 <li><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
 estimating model parameters.  Used when comparing models with different
@@ -322,8 +325,8 @@ contain nan-values in locations not used in estimation</li>
 <li><strong>loglikelihood</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Loglikelihood at estimated parameters</li>
 <li><strong>is_pandas</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – Whether the original input was pandas</li>
 <li><strong>fit_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Integer index of the first observation used to fit the model</li>
-<li><strong>fit_stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Integer index of the last observation used to fit the model using Pythonic
-syntax fit_start:fit_stop</li>
+<li><strong>fit_stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Integer index of the last observation used to fit the model using
+slice notation <cite>fit_start:fit_stop</cite></li>
 <li><strong>model</strong> (<a class="reference internal" href="mean.html#arch.univariate.base.ARCHModel" title="arch.univariate.base.ARCHModel"><em>ARCHModel</em></a>) – The model object used to estimate the parameters</li>
 </ul>
 </td>
@@ -950,7 +953,7 @@ latex</td>
         <li class="right" >
           <a href="univariate.html" title="Univariate Volatility Models"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g2db76fa documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+18.g3aa6971 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

@@ -14,13 +14,13 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Mean Models &#8212; arch 4.2+14.g2db76fa documentation</title>
+    <title>Mean Models &#8212; arch 4.2+18.g3aa6971 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.2+14.g2db76fa',
+        VERSION:     '4.2+18.g3aa6971',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g2db76fa documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+18.g3aa6971 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -295,7 +295,7 @@ length as the original data, where the t-th value will be the time-t
 forecast for time t + 1.  When the horizon is &gt; 1, and when using the
 default value for <cite>align</cite>, the forecast value in position [t, h] is the
 time-t, h+1 step ahead forecast.</p>
-<p>If model contains exogenous variables (<cite>model.x is not None</cite>), then
+<p>If model contains exogenous variables (model.x is not None), then
 only 1-step ahead forecasts are available.  Using horizon &gt; 1 will
 produce a warning and all columns, except the first, will be
 nan-filled.</p>
@@ -514,7 +514,7 @@ length as the original data, where the t-th value will be the time-t
 forecast for time t + 1.  When the horizon is &gt; 1, and when using the
 default value for <cite>align</cite>, the forecast value in position [t, h] is the
 time-t, h+1 step ahead forecast.</p>
-<p>If model contains exogenous variables (<cite>model.x is not None</cite>), then
+<p>If model contains exogenous variables (model.x is not None), then
 only 1-step ahead forecasts are available.  Using horizon &gt; 1 will
 produce a warning and all columns, except the first, will be
 nan-filled.</p>
@@ -771,7 +771,7 @@ length as the original data, where the t-th value will be the time-t
 forecast for time t + 1.  When the horizon is &gt; 1, and when using the
 default value for <cite>align</cite>, the forecast value in position [t, h] is the
 time-t, h+1 step ahead forecast.</p>
-<p>If model contains exogenous variables (<cite>model.x is not None</cite>), then
+<p>If model contains exogenous variables (model.x is not None), then
 only 1-step ahead forecasts are available.  Using horizon &gt; 1 will
 produce a warning and all columns, except the first, will be
 nan-filled.</p>
@@ -884,7 +884,7 @@ model estimation and simulation</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</li>
-<li><strong>x</strong> (<em>{ndarrayor</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs by k element array containing exogenous regressors</li>
+<li><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs by k element array containing exogenous regressors</li>
 <li><strong>lags</strong> (<em>{scalar</em><em>, </em><em>array}</em><em>, </em><em>optional</em>) – Description of lag structure of the HAR.  Scalar included all lags
 between 1 and the value.  A 1-d array includes the HAR lags 1:lags[0],
 1:lags[1], … A 2-d array includes the HAR lags of the form
@@ -1053,7 +1053,7 @@ length as the original data, where the t-th value will be the time-t
 forecast for time t + 1.  When the horizon is &gt; 1, and when using the
 default value for <cite>align</cite>, the forecast value in position [t, h] is the
 time-t, h+1 step ahead forecast.</p>
-<p>If model contains exogenous variables (<cite>model.x is not None</cite>), then
+<p>If model contains exogenous variables (model.x is not None), then
 only 1-step ahead forecasts are available.  Using horizon &gt; 1 will
 produce a warning and all columns, except the first, will be
 nan-filled.</p>
@@ -1185,7 +1185,7 @@ lag lengths to estimate on the common sample.</li>
 </pre></div>
 </div>
 <p class="rubric">Notes</p>
-<p>The AR-X model is described by</p>
+<p>The LS model is described by</p>
 <div class="math">
 \[y_t = \mu + \gamma' x_t + \epsilon_t\]</div>
 <dl class="method">
@@ -1397,7 +1397,7 @@ to override but recommended where applicable.</p>
         <li class="right" >
           <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+14.g2db76fa documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.2+18.g3aa6971 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
