@@ -96,7 +96,7 @@ class HARX(ARCHModel):
     ----------
     y : {ndarray, Series}
         nobs element vector containing the dependent variable
-    x : {ndarrayor, DataFrame}, optional
+    x : {ndarray, DataFrame}, optional
         nobs by k element array containing exogenous regressors
     lags : {scalar, array}, optional
         Description of lag structure of the HAR.  Scalar included all lags
@@ -408,7 +408,7 @@ class HARX(ARCHModel):
 
     def _reformat_lags(self):
         """
-        Reformats the input lags to a 2 by m array, which simplifies other
+        Reformat input lags to be a 2 by m array, which simplifies other
         operations.  Output is stored in _lags
         """
         lags = self.lags
@@ -533,7 +533,7 @@ class HARX(ARCHModel):
             Covariance estimator to use when estimating parameter variances and
             covariances.  One of 'hetero' or 'heteroskedastic' for Whites's
             covariance estimator, or 'mle' for the classic
-            OLS estimator appropriate for homoskedatic data.  'hetero' is the
+            OLS estimator appropriate for homoskedastic data.  'hetero' is the
             the default.
 
         Returns

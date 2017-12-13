@@ -466,7 +466,7 @@ class TestBootstrap(TestCase):
             ci = bs.conf_int(np.mean, reps=num_bootstrap, method='bca')
             assert(ci.shape == (2, 1))
         except IndexError:
-            pytest.fail('conf_int(method=\'bca\') scaler input regression. '
+            pytest.fail('conf_int(method=\'bca\') scalar input regression. '
                         'Ensure output is at least 1D with '
                         'numpy.atleast_1d().')
 

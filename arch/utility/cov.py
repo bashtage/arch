@@ -18,7 +18,7 @@ def cov_nw(y, lags=0, demean=True, axis=0, ddof=0):
     axis : int
         The axis to use when y is 2d
     ddof : int
-        Degree of freedom correction for compatability with simple covariance
+        Degree of freedom correction for compatibility with simple covariance
         estimators.  Default is 0.
 
     Returns

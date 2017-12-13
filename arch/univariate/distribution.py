@@ -143,7 +143,7 @@ class Distribution(object):
 
     def parameter_names(self):
         """
-        Names of distribution shepe parameters
+        Names of distribution shape parameters
 
         Returns
         -------

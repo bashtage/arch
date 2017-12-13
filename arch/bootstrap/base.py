@@ -328,7 +328,7 @@ class IIDBootstrap(object):
             the studentized bootstrap.  Providing an analytical function
             eliminates the need for a nested bootstrap
         studentize_reps : int, optional
-            Number of bootstraps to use in the innter component when using the
+            Number of bootstraps to use in the inner bootstrap when using the
             studentized bootstrap.  Ignored when ``std_err_func`` is provided
 
         Returns
@@ -624,7 +624,7 @@ class IIDBootstrap(object):
             elif studentize_reps > 0:
                 # Need new bootstrap of same type
                 nested_bs = self.clone(*pos_data, **kw_data)
-                # Set the seed to ensure reproducability
+                # Set the seed to ensure reproducibility
                 seed = self.random_state.randint(2 ** 31 - 1)
                 nested_bs.seed(seed)
                 cov = nested_bs.cov(func, studentize_reps,

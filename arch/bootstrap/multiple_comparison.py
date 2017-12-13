@@ -425,7 +425,7 @@ class StepM(MultipleComparison):
         Returns a list of the indices or column names of the superior models.
         """
         if self._superior_models is None:
-            msg = 'compute must be callded before accessing superior_models'
+            msg = 'compute must be called before accessing superior_models'
             raise RuntimeError(msg)
         return self._superior_models
 
@@ -671,7 +671,7 @@ class SPA(MultipleComparison):
         self._check_compute()
         if not (0.0 < pvalue < 1.0):
             raise ValueError('pvalue must be in (0,1)')
-        # Subset if neded
+        # Subset if needed
         simulated_values = self._simulated_vals[self._selector, :, :]
         max_simulated_values = np.max(simulated_values, axis=0)
         crit_vals = np.percentile(max_simulated_values,

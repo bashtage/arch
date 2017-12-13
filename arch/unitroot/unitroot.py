@@ -974,7 +974,7 @@ class VarianceRatio(UnitRootTest):
     overlap : bool, optional
         Indicates whether to use all overlapping blocks.  Default is True.  If
         False, the number of observations in y minus 1 must be an exact
-        multiple of lags.  If this condition is not satistifed, some values at
+        multiple of lags.  If this condition is not satisfied, some values at
         the end of y will be discarded.
     robust : bool, optional
         Indicates whether to use heteroskedasticity robust inference. Default
@@ -1059,8 +1059,8 @@ class VarianceRatio(UnitRootTest):
 
     @property
     def overlap(self):
-        """Sets of gets the indicator to use overlaping returns in the
-        long-period vairance estimator"""
+        """Sets of gets the indicator to use overlapping returns in the
+        long-period variance estimator"""
         return self._overlap
 
     @overlap.setter

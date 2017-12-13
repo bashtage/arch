@@ -56,7 +56,7 @@ def _callback(*args):
 
 def constraint(a, b):
     """
-    Constructor generatins constraints from arrays
+    Generate constraints from arrays
 
     Parameters
     ----------
@@ -946,7 +946,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         """
         Schwarz/Bayesian Information Criteria
 
-        -2 * loglikelihod + log(nobs) * num_params
+        -2 * loglikelihood + log(nobs) * num_params
         """
         return -2 * self.loglikelihood + np.log(self.nobs) * self.num_params
 
@@ -1251,8 +1251,8 @@ class ARCHModelResult(ARCHModelFixedResult):
     fit_start : int
         Integer index of the first observation used to fit the model
     fit_stop : int
-        Integer index of the last observation used to fit the model using Pythonic
-        syntax fit_start:fit_stop
+        Integer index of the last observation used to fit the model using
+        slice notation `fit_start:fit_stop`
     model : ARCHModel
         The model object used to estimate the parameters
 
@@ -1448,7 +1448,7 @@ class ARCHModelResult(ARCHModelFixedResult):
 
         if self.convergence_flag:
             extra_text.append("""
-WARNING: The optimizer did not indicate sucessful convergence. The message was
+WARNING: The optimizer did not indicate successful convergence. The message was
 {string_message}. See convergence_flag.""".format(
                 string_message=self._optim_output.message))
 

@@ -1,3 +1,5 @@
+from __future__ import division
+
 from unittest import TestCase
 
 import numpy as np
@@ -12,6 +14,7 @@ from arch.univariate.distribution import Normal, StudentsT, SkewStudent, General
 class TestDistributions(TestCase):
     @classmethod
     def setup_class(cls):
+        np.random.seed(12345)
         cls.T = 1000
         cls.resids = np.random.randn(cls.T)
         cls.sigma2 = 1 + np.random.random(cls.resids.shape)
@@ -73,9 +76,9 @@ class TestDistributions(TestCase):
         resids = self.resids / self.sigma2 ** .5
         pow = (-(eta + 1) / 2)
         pdf = const_b * const_c / self.sigma2 ** .5 * \
-              (1 + 1 / (eta - 2) *
-               ((const_b * resids + const_a) /
-                (1 + np.sign(resids + const_a / const_b) * lam)) ** 2) ** pow
+            (1 + 1 / (eta - 2) *
+             ((const_b * resids + const_a) /
+              (1 + np.sign(resids + const_a / const_b) * lam)) ** 2) ** pow
 
         ll2 = np.log(pdf).sum()
         assert_almost_equal(ll1, ll2)
@@ -133,3 +136,5 @@ class TestDistributions(TestCase):
         simulator = dist.simulate(1.5)
         rvs = simulator(1000)
         assert rvs.shape[0] == 1000
+        assert str(hex(id(dist))) in dist.__repr__()
+        assert dist.parameter_names() == ['nu']
