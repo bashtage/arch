@@ -413,6 +413,8 @@ class SkewStudent(Distribution):
 
         resids = resids / sigma2 ** .5
         lls = log(const_b) + const_c - log(sigma2) / 2
+        if abs(lam) >= 1.0:
+            lam = sign(lam) * (1.0 - 1e-6)
         llf_resid = ((const_b * resids + const_a) /
                      (1 + sign(resids + const_a / const_b) * lam)) ** 2
         lls -= (eta + 1) / 2 * log(1 + llf_resid / (eta - 2))

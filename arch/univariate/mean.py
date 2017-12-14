@@ -16,7 +16,7 @@ from statsmodels.tsa.tsatools import lagmat
 
 from arch.compat.python import range, iteritems
 from arch.univariate.base import ARCHModel, implicit_constant, ARCHModelResult, ARCHModelForecast
-from arch.univariate.distribution import Normal, StudentsT, SkewStudent
+from arch.univariate.distribution import Normal, StudentsT, SkewStudent, GeneralizedError
 from arch.univariate.volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH
 from arch.utility.array import ensure1d, parse_dataframe, cutoff_to_index
 
@@ -1195,6 +1195,8 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
         d = SkewStudent()
     elif dist in ('studentst', 't'):
         d = StudentsT()
+    elif dist in ('ged', 'generalized error'):
+        d = GeneralizedError()
     else:  # ('gaussian', 'normal')
         d = Normal()
 

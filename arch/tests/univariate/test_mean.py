@@ -22,7 +22,7 @@ from arch.univariate.mean import HARX, ConstantMean, ARX, ZeroMean, LS, \
     arch_model
 from arch.univariate.volatility import ConstantVariance, GARCH, HARCH, ARCH, \
     RiskMetrics2006, EWMAVariance, EGARCH, FixedVariance
-from arch.univariate.distribution import Normal, StudentsT
+from arch.univariate.distribution import Normal, StudentsT, SkewStudent, GeneralizedError
 
 try:
     import matplotlib.pyplot  # noqa
@@ -486,15 +486,18 @@ class TestMeanModel(TestCase):
         res.summary()
 
         am = arch_model(self.y, mean='ar', lags=[1, 3, 5], dist='studentst')
+        assert isinstance(am.distribution, StudentsT)
         res = am.fit(update_freq=0, disp=DISPLAY)
         res.summary()
 
         am = arch_model(self.y, mean='ar', lags=[1, 3, 5], dist='ged')
+        assert isinstance(am.distribution, GeneralizedError)
         res = am.fit(update_freq=0, disp=DISPLAY)
         res.summary()
 
         am = arch_model(self.y, mean='ar', lags=[1, 3, 5], dist='skewt')
         res = am.fit(update_freq=0, disp=DISPLAY)
+        assert isinstance(am.distribution, SkewStudent)
         res.summary()
 
     def test_errors(self):
