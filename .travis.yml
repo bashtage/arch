@@ -93,8 +93,16 @@ script:
   - set -e
   - pytest --cov-config .coveragerc --cov=arch arch --durations=10
   - python ci/performance.py
-  - if [[ ${DOCBUILD} = true ]]; then python setup.py install && cd doc && make html && cd .. ; fi
-  - if [[ ${DOCBUILD} = true && ${TRAVIS_BRANCH} = "master" ]]; then doctr deploy doc --build-tags; fi
+  - |
+    if [[ ${DOCBUILD} = true ]]; then
+      python setup.py install
+      cd doc
+      make html
+      cd ..
+      if [[ ${TRAVIS_BRANCH} = "master" || ! -z ${TRAVIS_TAG} ]]; then
+        doctr deploy doc --build-tags
+      fi
+    fi
   - flake8 arch
 
 after_success:
