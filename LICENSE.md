@@ -1,4 +1,4 @@
-**Copyright (c) 2014 Kevin Sheppard. All rights reserved.**
+**Copyright (c) 2017 Kevin Sheppard. All rights reserved.**
 
 Developed by: Kevin Sheppard (<kevin.sheppard@economics.ox.ac.uk>,  
 <kevin.k.sheppard@gmail.com>)
