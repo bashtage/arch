@@ -4,6 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -17,16 +18,7 @@
     <title>Using the Fixed Variance process &#8212; arch 4.3.1 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '4.3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -38,8 +30,7 @@
   
    
 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -66,39 +57,41 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar">
-        <a href="
-    ../index.html" class="text-logo">arch 4.3</a>
-        
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
-    <h2>Table Of Contents</h2>
-  </div>
-  <div class="sidebar-toc">
-    
-    
-      <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="univariate.html">Univariate Volatility Models</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="introduction.html">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_modeling.html">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="forecasting.html">Forecasting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_forecasting.html">Forecasting Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mean.html">Mean Models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="volatility.html">Volatility Processes</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Using the Fixed Variance Process</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distribution.html">Distributions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
+    <h2>Contents</h2>
+    <div class="sidebar-localtoc">
+      <ul>
+<li><a class="reference internal" href="#">Using the Fixed Variance process</a><ul>
+<li><a class="reference internal" href="#setup">Setup</a><ul>
+<li><a class="reference internal" href="#data">Data</a></li>
+<li><a class="reference internal" href="#initial-mean-model-estimation">Initial Mean Model Estimation</a></li>
+<li><a class="reference internal" href="#initial-volatility-model-estimation">Initial Volatility Model Estimation</a></li>
+<li><a class="reference internal" href="#re-estimating-the-mean-with-a-fixedvariance">Re-estimating the mean with a <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code></a></li>
+<li><a class="reference internal" href="#zig-zag-estimation">Zig-Zag estimation</a></li>
+<li><a class="reference internal" href="#direct-estimation">Direct Estimation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../bootstrap/bootstrap.html">Bootstrapping</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../unitroot/unitroot.html">Unit Root Tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
+</ul>
+</li>
 </ul>
 
-    
+    </div>
   </div>
 </div>
-        
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="volatility.html"
+                        title="previous chapter">Volatility Processes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="distribution.html"
+                        title="next chapter">Distributions</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/univariate/univariate_using_fixed_variance.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -112,6 +105,7 @@
     </div>
   </div>
 </div>
+      
     </div>
   </div>
         <div id="right-column">
@@ -130,13 +124,13 @@
             
   <div class="section" id="using-the-fixed-variance-process">
 <h1>Using the Fixed Variance process<a class="headerlink" href="#using-the-fixed-variance-process" title="Permalink to this headline">¶</a></h1>
-<p>The <code class="docutils literal"><span class="pre">FixedVariance</span></code> volatility process can be used to implement
+<p>The <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> volatility process can be used to implement
 zig-zag model estimation where two steps are repeated until convergence.
 This can be used to estimate models which may not be easy to estimate as
 a single process due to numerical issues or a high-dimensional parameter
 space.</p>
 <p><em>This setup code is required to run in an IPython notebook</em></p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
 
 <span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
@@ -148,7 +142,7 @@ space.</p>
 <div class="section" id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
 <p>Imports used in this example.</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">pandas_datareader</span> <span class="k">import</span> <span class="n">data</span>
 </pre></div>
@@ -156,8 +150,8 @@ space.</p>
 <div class="section" id="data">
 <h3>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h3>
 <p>The VIX index will be used to illustrate the use of the
-<code class="docutils literal"><span class="pre">FixedVariance</span></code> process. The data is read using <code class="docutils literal"><span class="pre">pandas-datareader</span></code>.</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">dr</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">YahooDailyReader</span><span class="p">(</span><span class="s1">&#39;^VIX&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">))</span>
+<code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> process. The data is read using <code class="docutils literal notranslate"><span class="pre">pandas-datareader</span></code>.</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dr</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">YahooDailyReader</span><span class="p">(</span><span class="s1">&#39;^VIX&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">))</span>
 <span class="n">vix_data</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 <span class="n">vix</span> <span class="o">=</span> <span class="n">vix_data</span><span class="o">.</span><span class="n">Close</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">vix</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;VIX Index&#39;</span>
@@ -170,14 +164,14 @@ space.</p>
 <h3>Initial Mean Model Estimation<a class="headerlink" href="#initial-mean-model-estimation" title="Permalink to this headline">¶</a></h3>
 <p>The first step is to estimate the mean to filter the residuals using a
 constant variance.</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.univariate.mean</span> <span class="k">import</span> <span class="n">HARX</span><span class="p">,</span> <span class="n">ZeroMean</span>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.univariate.mean</span> <span class="k">import</span> <span class="n">HARX</span><span class="p">,</span> <span class="n">ZeroMean</span>
 <span class="kn">from</span> <span class="nn">arch.univariate.volatility</span> <span class="k">import</span> <span class="n">GARCH</span><span class="p">,</span> <span class="n">FixedVariance</span>
 <span class="n">mod</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">vix</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">22</span><span class="p">])</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span>                    <span class="n">HAR</span> <span class="o">-</span> <span class="n">Constant</span> <span class="n">Variance</span> <span class="n">Model</span> <span class="n">Results</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                    <span class="n">HAR</span> <span class="o">-</span> <span class="n">Constant</span> <span class="n">Variance</span> <span class="n">Model</span> <span class="n">Results</span>
 <span class="o">==============================================================================</span>
 <span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>              <span class="n">VIX</span> <span class="n">Index</span>   <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                       <span class="mf">0.964</span>
 <span class="n">Mean</span> <span class="n">Model</span><span class="p">:</span>                       <span class="n">HAR</span>   <span class="n">Adj</span><span class="o">.</span> <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                  <span class="mf">0.964</span>
@@ -209,15 +203,15 @@ constant variance.</p>
 <div class="section" id="initial-volatility-model-estimation">
 <h3>Initial Volatility Model Estimation<a class="headerlink" href="#initial-volatility-model-estimation" title="Permalink to this headline">¶</a></h3>
 <p>Using the previously estimated residuals, a volatility model can be
-estimated using a <code class="docutils literal"><span class="pre">ZeroMean</span></code>. In this example, a GJR-GARCH process is
+estimated using a <code class="docutils literal notranslate"><span class="pre">ZeroMean</span></code>. In this example, a GJR-GARCH process is
 used for the variance.</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">vol_mod</span> <span class="o">=</span> <span class="n">ZeroMean</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">volatility</span><span class="o">=</span><span class="n">GARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vol_mod</span> <span class="o">=</span> <span class="n">ZeroMean</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">volatility</span><span class="o">=</span><span class="n">GARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 <span class="n">vol_res</span> <span class="o">=</span> <span class="n">vol_mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">vol_res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">vol_res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span>                     <span class="n">Zero</span> <span class="n">Mean</span> <span class="o">-</span> <span class="n">GJR</span><span class="o">-</span><span class="n">GARCH</span> <span class="n">Model</span> <span class="n">Results</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                     <span class="n">Zero</span> <span class="n">Mean</span> <span class="o">-</span> <span class="n">GJR</span><span class="o">-</span><span class="n">GARCH</span> <span class="n">Model</span> <span class="n">Results</span>
 <span class="o">==============================================================================</span>
 <span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>                  <span class="n">resid</span>   <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                       <span class="mf">0.000</span>
 <span class="n">Mean</span> <span class="n">Model</span><span class="p">:</span>                 <span class="n">Zero</span> <span class="n">Mean</span>   <span class="n">Adj</span><span class="o">.</span> <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                  <span class="mf">0.000</span>
@@ -243,17 +237,17 @@ used for the variance.</p>
 <img alt="../_images/output_10_1.png" src="../_images/output_10_1.png" />
 </div>
 <div class="section" id="re-estimating-the-mean-with-a-fixedvariance">
-<h3>Re-estimating the mean with a <code class="docutils literal"><span class="pre">FixedVariance</span></code><a class="headerlink" href="#re-estimating-the-mean-with-a-fixedvariance" title="Permalink to this headline">¶</a></h3>
-<p>The <code class="docutils literal"><span class="pre">FixedVariance</span></code> requires that the variance is provided when
+<h3>Re-estimating the mean with a <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code><a class="headerlink" href="#re-estimating-the-mean-with-a-fixedvariance" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> requires that the variance is provided when
 initializing the object. The variance provided should have the same
 shape as the original data. Since the variance estimated from the
 GJR-GARCH model is missing the first 22 observations due to the HAR
 lags, we simply fill these with 1. These values will not be used to
 estimate the model, and so the value is not important.</p>
-<p>The summary shows that there is a single parameter, <code class="docutils literal"><span class="pre">scale</span></code>, which is
+<p>The summary shows that there is a single parameter, <code class="docutils literal notranslate"><span class="pre">scale</span></code>, which is
 close to 1. The mean parameters have changed which reflects the GLS-like
 weighting that this re-estimaion imposes.</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">variance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">vix</span><span class="p">)</span>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">variance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">vix</span><span class="p">)</span>
 <span class="n">variance</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
 <span class="n">variance</span><span class="p">[</span><span class="mi">22</span><span class="p">:]</span> <span class="o">=</span> <span class="n">vol_res</span><span class="o">.</span><span class="n">conditional_volatility</span> <span class="o">**</span> <span class="mf">2.0</span>
 <span class="n">fv</span> <span class="o">=</span> <span class="n">FixedVariance</span><span class="p">(</span><span class="n">variance</span><span class="p">)</span>
@@ -262,7 +256,7 @@ weighting that this re-estimaion imposes.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Iteration</span><span class="p">:</span>      <span class="mi">1</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>      <span class="mi">7</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">6852.686462250487</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Iteration</span><span class="p">:</span>      <span class="mi">1</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>      <span class="mi">7</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">6852.686462250487</span>
 <span class="n">Iteration</span><span class="p">:</span>      <span class="mi">2</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">21</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">6852.597081675016</span>
 <span class="n">Iteration</span><span class="p">:</span>      <span class="mi">3</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">32</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">6850.090522673863</span>
 <span class="n">Iteration</span><span class="p">:</span>      <span class="mi">4</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">43</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">6848.07635458317</span>
@@ -307,7 +301,7 @@ weighting that this re-estimaion imposes.</p>
 <h3>Zig-Zag estimation<a class="headerlink" href="#zig-zag-estimation" title="Permalink to this headline">¶</a></h3>
 <p>A small repetitions of the previous two steps can be used to implement a
 so-called zig-zag estimation strategy.</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
     <span class="n">vol_mod</span> <span class="o">=</span> <span class="n">ZeroMean</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">volatility</span><span class="o">=</span><span class="n">GARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
     <span class="n">vol_res</span> <span class="o">=</span> <span class="n">vol_mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
@@ -318,7 +312,7 @@ so-called zig-zag estimation strategy.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">0</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span>
 <span class="mi">1</span>
 <span class="mi">2</span>
 <span class="mi">3</span>
@@ -350,14 +344,14 @@ so-called zig-zag estimation strategy.</p>
 <div class="section" id="direct-estimation">
 <h3>Direct Estimation<a class="headerlink" href="#direct-estimation" title="Permalink to this headline">¶</a></h3>
 <p>This model can be directly estimated. The results are provided for
-comparisson to the previous <code class="docutils literal"><span class="pre">FixedVariance</span></code> estimates of the mean
+comparisson to the previous <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> estimates of the mean
 parameters.</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">mod</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">vix</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">22</span><span class="p">],</span> <span class="n">volatility</span><span class="o">=</span><span class="n">GARCH</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mod</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">vix</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">22</span><span class="p">],</span> <span class="n">volatility</span><span class="o">=</span><span class="n">GARCH</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span>                        <span class="n">HAR</span> <span class="o">-</span> <span class="n">GJR</span><span class="o">-</span><span class="n">GARCH</span> <span class="n">Model</span> <span class="n">Results</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                        <span class="n">HAR</span> <span class="o">-</span> <span class="n">GJR</span><span class="o">-</span><span class="n">GARCH</span> <span class="n">Model</span> <span class="n">Results</span>
 <span class="o">==============================================================================</span>
 <span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>              <span class="n">VIX</span> <span class="n">Index</span>   <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                       <span class="mf">0.964</span>
 <span class="n">Mean</span> <span class="n">Model</span><span class="p">:</span>                       <span class="n">HAR</span>   <span class="n">Adj</span><span class="o">.</span> <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                  <span class="mf">0.964</span>

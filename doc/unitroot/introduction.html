@@ -4,6 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -17,16 +18,7 @@
     <title>Introduction &#8212; arch 4.3.1 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '4.3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -38,8 +30,7 @@
   
    
 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -66,33 +57,33 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar">
-        <a href="
-    ../index.html" class="text-logo">arch 4.3</a>
-        
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
-    <h2>Table Of Contents</h2>
-  </div>
-  <div class="sidebar-toc">
-    
-    
-      <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../univariate/univariate.html">Univariate Volatility Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../bootstrap/bootstrap.html">Bootstrapping</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="unitroot.html">Unit Root Tests</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="unitroot_examples.html">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tests.html">Unit Root Tests</a></li>
+    <h2>Contents</h2>
+    <div class="sidebar-localtoc">
+      <ul>
+<li><a class="reference internal" href="#">Introduction</a><ul>
+<li><a class="reference internal" href="#basic-example">Basic Example</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
 </ul>
 
-    
+    </div>
   </div>
 </div>
-        
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="unitroot.html"
+                        title="previous chapter">Unit Root Testing</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="unitroot_examples.html"
+                        title="next chapter">Unit Root Testing</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/unitroot/introduction.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -106,6 +97,7 @@
     </div>
   </div>
 </div>
+      
     </div>
   </div>
         <div id="right-column">
@@ -150,7 +142,7 @@ contains a single variable.</p>
 <p>This basic example show the use of the Augmented-Dickey fuller to test whether the default premium,
 defined as the difference between the yields of large portfolios of BAA and AAA bonds.  This example
 uses a constant and time trend.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 
 <span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="k">as</span> <span class="nn">web</span>
 <span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="k">import</span> <span class="n">ADF</span>
@@ -167,7 +159,7 @@ uses a constant and time trend.</p>
 </pre></div>
 </div>
 <p>which yields</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>   <span class="n">Augmented</span> <span class="n">Dickey</span><span class="o">-</span><span class="n">Fuller</span> <span class="n">Results</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">Augmented</span> <span class="n">Dickey</span><span class="o">-</span><span class="n">Fuller</span> <span class="n">Results</span>
 <span class="o">=====================================</span>
 <span class="n">Test</span> <span class="n">Statistic</span>                 <span class="o">-</span><span class="mf">3.448</span>
 <span class="n">P</span><span class="o">-</span><span class="n">value</span>                         <span class="mf">0.045</span>

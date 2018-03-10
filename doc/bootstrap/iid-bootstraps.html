@@ -4,6 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -17,16 +18,7 @@
     <title>Independent, Identical Distributed Data (i.i.d.) &#8212; arch 4.3.1 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '4.3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -38,8 +30,7 @@
   
    
 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -66,39 +57,19 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar">
-        <a href="
-    ../index.html" class="text-logo">arch 4.3</a>
-        
-<div class="sidebar-block">
-  <div class="sidebar-wrapper">
-    <h2>Table Of Contents</h2>
-  </div>
-  <div class="sidebar-toc">
-    
-    
-      <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../univariate/univariate.html">Univariate Volatility Models</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="bootstrap.html">Bootstrapping</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="bootstrap_examples.html">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="confidence-intervals.html">Confidence Interval Construction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="parameter-covariance-estimation.html">Parameter Covariance Estimation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="low-level-interface.html">Low-level Interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="semiparametric-parametric-bootstrap.html">Semiparametric Bootstraps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="semiparametric-parametric-bootstrap.html#parametric-bootstraps">Parametric Bootstraps</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Bootstraps for IID data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="timeseries-bootstraps.html">Bootstraps for Time-series Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../unitroot/unitroot.html">Unit Root Tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
-</ul>
-
-    
-  </div>
-</div>
-        
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="semiparametric-parametric-bootstrap.html"
+                        title="previous chapter">Semiparametric Bootstraps</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="timeseries-bootstraps.html"
+                        title="next chapter">Time-series Bootstraps</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/bootstrap/iid-bootstraps.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -112,6 +83,7 @@
     </div>
   </div>
 </div>
+      
     </div>
   </div>
         <div id="right-column">
@@ -130,7 +102,7 @@
             
   <div class="section" id="independent-identical-distributed-data-i-i-d">
 <h1>Independent, Identical Distributed Data (i.i.d.)<a class="headerlink" href="#independent-identical-distributed-data-i-i-d" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference internal" href="#arch.bootstrap.IIDBootstrap" title="arch.bootstrap.IIDBootstrap"><code class="xref py py-class docutils literal"><span class="pre">IIDBootstrap</span></code></a> is the standard bootstrap that is appropriate for data that is
+<p><a class="reference internal" href="#arch.bootstrap.IIDBootstrap" title="arch.bootstrap.IIDBootstrap"><code class="xref py py-class docutils literal notranslate"><span class="pre">IIDBootstrap</span></code></a> is the standard bootstrap that is appropriate for data that is
 either i.i.d. or at least not serially dependant.</p>
 <dl class="class">
 <dt id="arch.bootstrap.IIDBootstrap">
@@ -189,7 +161,7 @@ attribute.</p>
 the same order as it was entered when the bootstrap was initialized.
 Keyword data is available both as an attribute or using a dictionary syntax
 on kw_data.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">standard_normal</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">standard_normal</span><span class="p">((</span><span class="mi">500</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">standard_normal</span><span class="p">((</span><span class="mi">500</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
@@ -210,7 +182,7 @@ on kw_data.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Function the computes parameter values.  See Notes for requirements</li>
+<li><strong>func</strong> (<em>callable</em>) – Function the computes parameter values.  See Notes for requirements</li>
 <li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
 <li><strong>extra_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Extra keyword arguments to use when calling func.  Must not
 conflict with keyword arguments used to initialize bootstrap</li>
@@ -221,21 +193,21 @@ conflict with keyword arguments used to initialize bootstrap</li>
 corresponds to a bootstrap iteration</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
 <p>When there are no extra keyword arguments, the function is called</p>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where args and kwargs are the bootstrap version of the data provided
 when setting up the bootstrap.  When extra keyword arguments are used,
 these are appended to kwargs before calling func</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -261,7 +233,7 @@ these are appended to kwargs before calling func</p>
 <p class="rubric">Example</p>
 <p>The key steps are problem dependent and so this example shows the use
 as an iterator that does not produce any output</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">posdata</span><span class="p">,</span> <span class="n">kwdata</span> <span class="ow">in</span> <span class="n">bs</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
@@ -288,29 +260,29 @@ dictionary</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Function the computes parameter values.  See Notes for requirements</li>
+<li><strong>func</strong> (<em>callable</em>) – Function the computes parameter values.  See Notes for requirements</li>
 <li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
-<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em>, </em><em>optional</em>) – One of ‘basic’, ‘percentile’, ‘studentized’, ‘norm’ (identical to
+<li><strong>method</strong> (<em>string</em><em>, </em><em>optional</em>) – One of ‘basic’, ‘percentile’, ‘studentized’, ‘norm’ (identical to
 ‘var’, ‘cov’), ‘bc’ (identical to ‘debiased’, ‘bias-corrected’), or
 ‘bca’</li>
 <li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Coverage of confidence interval</li>
-<li><strong>tail</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em>, </em><em>optional</em>) – One of ‘two’, ‘upper’ or ‘lower’.</li>
+<li><strong>tail</strong> (<em>string</em><em>, </em><em>optional</em>) – One of ‘two’, ‘upper’ or ‘lower’.</li>
 <li><strong>reuse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to reuse previously computed bootstrap
 results.  This allows alternative methods to be compared without
 rerunning the bootstrap simulation.  Reuse is ignored if reps is
 not the same across multiple runs, func changes across calls, or
 method is ‘studentized’.</li>
-<li><strong>sampling</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a><em>, </em><em>optional</em>) – Type of sampling to use: ‘nonparametric’, ‘semi-parametric’ (or
+<li><strong>sampling</strong> (<em>string</em><em>, </em><em>optional</em>) – Type of sampling to use: ‘nonparametric’, ‘semi-parametric’ (or
 ‘semi’) or ‘parametric’.  The default is ‘nonparametric’.  See
 notes about the changes to func required when using ‘semi’ or
 ‘parametric’.</li>
 <li><strong>extra_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Extra keyword arguments to use when calling func and std_err_func,
 when appropriate</li>
-<li><strong>std_err_func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a><em>, </em><em>optional</em>) – Function to use when standardizing estimated parameters when using
+<li><strong>std_err_func</strong> (<em>callable</em><em>, </em><em>optional</em>) – Function to use when standardizing estimated parameters when using
 the studentized bootstrap.  Providing an analytical function
 eliminates the need for a nested bootstrap</li>
 <li><strong>studentize_reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstraps to use in the inner bootstrap when using the
-studentized bootstrap.  Ignored when <code class="docutils literal"><span class="pre">std_err_func</span></code> is provided</li>
+studentized bootstrap.  Ignored when <code class="docutils literal notranslate"><span class="pre">std_err_func</span></code> is provided</li>
 </ul>
 </td>
 </tr>
@@ -326,7 +298,7 @@ Similarly, ‘upper’ sets all lower bounds to -inf.</p>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
@@ -337,7 +309,7 @@ Similarly, ‘upper’ sets all lower bounds to -inf.</p>
 </div>
 <p class="rubric">Notes</p>
 <p>When there are no extra keyword arguments, the function is called</p>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where args and kwargs are the bootstrap version of the data provided
@@ -345,10 +317,10 @@ when setting up the bootstrap.  When extra keyword arguments are used,
 these are appended to kwargs before calling func.</p>
 <p>The standard error function, if provided, must return a vector of
 parameter standard errors and is called</p>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">std_err_func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">std_err_func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>where <code class="docutils literal"><span class="pre">params</span></code> is the vector of estimated parameters using the same
+<p>where <code class="docutils literal notranslate"><span class="pre">params</span></code> is the vector of estimated parameters using the same
 bootstrap data as in args and kwargs.</p>
 <p>The bootstraps are:</p>
 <ul class="simple">
@@ -376,7 +348,7 @@ to ‘bc’ method</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Callable function that returns the statistic of interest as a
+<li><strong>func</strong> (<em>callable</em>) – Callable function that returns the statistic of interest as a
 1-d array</li>
 <li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
 <li><strong>recenter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to center the bootstrap variance estimator on the average
@@ -389,14 +361,14 @@ estimate (False).  Default is True.</li>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cov</strong> – Bootstrap covariance estimator</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
 <p>func must have the signature</p>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where params are a 1-dimensional array, and <cite>*args</cite> and <cite>**kwargs</cite> are
@@ -406,7 +378,7 @@ computed using the original data in bootstrap replications.  This
 parameter is passed to allow parametric bootstrap simulation.</p>
 <p class="rubric">Example</p>
 <p>Bootstrap covariance of the mean</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -416,7 +388,7 @@ parameter is passed to allow parametric bootstrap simulation.</p>
 </pre></div>
 </div>
 <p>Bootstrap covariance using a function that takes additional input</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">if</span> <span class="n">stat</span><span class="o">==</span><span class="s1">&#39;mean&#39;</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">elif</span> <span class="n">stat</span><span class="o">==</span><span class="s1">&#39;var&#39;</span><span class="p">:</span>
@@ -500,7 +472,7 @@ to the initial state.  Default is True</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – Callable function that returns the statistic of interest as a
+<li><strong>func</strong> (<em>callable</em>) – Callable function that returns the statistic of interest as a
 1-d array</li>
 <li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications</li>
 <li><strong>recenter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to center the bootstrap variance estimator on the average
@@ -513,14 +485,14 @@ estimate (False).  Default is True.</li>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>var</strong> – Bootstrap variance estimator</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)">array</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
 <p>func must have the signature</p>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where params are a 1-dimensional array, and <cite>*args</cite> and <cite>**kwargs</cite> are
@@ -530,7 +502,7 @@ computed using the original data in bootstrap replications.  This
 parameter is passed to allow parametric bootstrap simulation.</p>
 <p class="rubric">Example</p>
 <p>Bootstrap covariance of the mean</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -540,7 +512,7 @@ parameter is passed to allow parametric bootstrap simulation.</p>
 </pre></div>
 </div>
 <p>Bootstrap covariance using a function that takes additional input</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">if</span> <span class="n">stat</span><span class="o">==</span><span class="s1">&#39;mean&#39;</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">elif</span> <span class="n">stat</span><span class="o">==</span><span class="s1">&#39;var&#39;</span><span class="p">:</span>

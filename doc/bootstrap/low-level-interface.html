@@ -4,6 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -17,16 +18,7 @@
     <title>Low-level Interfaces &#8212; arch 4.3.1 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '4.3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -38,8 +30,7 @@
   
    
 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -66,39 +57,34 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar">
-        <a href="
-    ../index.html" class="text-logo">arch 4.3</a>
-        
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
-    <h2>Table Of Contents</h2>
-  </div>
-  <div class="sidebar-toc">
-    
-    
-      <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../univariate/univariate.html">Univariate Volatility Models</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="bootstrap.html">Bootstrapping</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="bootstrap_examples.html">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="confidence-intervals.html">Confidence Interval Construction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="parameter-covariance-estimation.html">Parameter Covariance Estimation</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Low-level Interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="semiparametric-parametric-bootstrap.html">Semiparametric Bootstraps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="semiparametric-parametric-bootstrap.html#parametric-bootstraps">Parametric Bootstraps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="iid-bootstraps.html">Bootstraps for IID data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="timeseries-bootstraps.html">Bootstraps for Time-series Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
+    <h2>Contents</h2>
+    <div class="sidebar-localtoc">
+      <ul>
+<li><a class="reference internal" href="#">Low-level Interfaces</a><ul>
+<li><a class="reference internal" href="#constructing-parameter-estimates">Constructing Parameter Estimates</a></li>
+<li><a class="reference internal" href="#the-bootstrap-iterator">The Bootstrap Iterator</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../unitroot/unitroot.html">Unit Root Tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
 </ul>
 
-    
+    </div>
   </div>
 </div>
-        
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="parameter-covariance-estimation.html"
+                        title="previous chapter">Covariance Estimation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="semiparametric-parametric-bootstrap.html"
+                        title="next chapter">Semiparametric Bootstraps</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/bootstrap/low-level-interface.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -112,6 +98,7 @@
     </div>
   </div>
 </div>
+      
     </div>
   </div>
         <div id="right-column">
@@ -135,7 +122,7 @@
 <p>The bootstrap method apply can be use to directly compute parameter estimates
 from a function and the bootstrapped data.</p>
 <p>This example makes use of monthly S&amp;P 500 data.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="k">as</span> <span class="nn">web</span>
@@ -152,13 +139,13 @@ from a function and the bootstrapped data.</p>
 </div>
 <p>The function will compute the Sharpe ratio – the (annualized) mean divided by
 the (annualized) standard deviation.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="k">def</span> <span class="nf">sharpe_ratio</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">12</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">var</span><span class="p">())])</span>
 </pre></div>
 </div>
 <p>The bootstrapped Sharpe ratios can be directly computed using <cite>apply</cite>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span>
 <span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
 <span class="n">sharpe_ratios</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">sr</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
@@ -178,7 +165,7 @@ constructing the bootstrap instance, and the second contains the all keyword
 arguments passed when constructing the instance.</p>
 <p>This example makes uses of simulated data to demonstrate how to use the
 bootstrap iterator.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>

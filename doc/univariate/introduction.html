@@ -4,6 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -17,16 +18,7 @@
     <title>Introduction to ARCH Models &#8212; arch 4.3.1 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '4.3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -38,8 +30,7 @@
   
    
 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -66,39 +57,34 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar">
-        <a href="
-    ../index.html" class="text-logo">arch 4.3</a>
-        
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
-    <h2>Table Of Contents</h2>
-  </div>
-  <div class="sidebar-toc">
-    
-    
-      <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="univariate.html">Univariate Volatility Models</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_modeling.html">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="forecasting.html">Forecasting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_forecasting.html">Forecasting Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mean.html">Mean Models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="volatility.html">Volatility Processes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="univariate_using_fixed_variance.html">Using the Fixed Variance Process</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distribution.html">Distributions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
+    <h2>Contents</h2>
+    <div class="sidebar-localtoc">
+      <ul>
+<li><a class="reference internal" href="#">Introduction to ARCH Models</a><ul>
+<li><a class="reference internal" href="#core-model-constructor">Core Model Constructor</a></li>
+<li><a class="reference internal" href="#model-results">Model Results</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../bootstrap/bootstrap.html">Bootstrapping</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../unitroot/unitroot.html">Unit Root Tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
 </ul>
 
-    
+    </div>
   </div>
 </div>
-        
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="univariate.html"
+                        title="previous chapter">Univariate Volatility Models</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="univariate_volatility_modeling.html"
+                        title="next chapter">ARCH Modeling</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/univariate/introduction.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -112,6 +98,7 @@
     </div>
   </div>
 </div>
+      
     </div>
   </div>
         <div id="right-column">
@@ -133,15 +120,15 @@
 <p>ARCH models are a popular class of volatility models that use observed values
 of returns or residuals as volatility shocks.  A basic GARCH model is specified
 as</p>
-<div class="math">
+<div class="math notranslate">
 \begin{eqnarray}
    r_t    &amp; = &amp; \mu + \epsilon_t \\
    \epsilon_t &amp; = &amp; \sigma_t e_t \\
    \sigma^2_t &amp; = &amp; \omega + \alpha \epsilon_t^2 + \beta \sigma^2_{t-1}
 \end{eqnarray}</div><p>A complete ARCH model is divided into three components:</p>
 <p>However, the simplest method to construct this model is to use the constructor
-function <a class="reference internal" href="#arch.arch_model" title="arch.arch_model"><code class="xref py py-meth docutils literal"><span class="pre">arch_model()</span></code></a></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+function <a class="reference internal" href="#arch.arch_model" title="arch.arch_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">arch_model()</span></code></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 
 <span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="k">as</span> <span class="nn">web</span>
 
@@ -156,7 +143,7 @@ function <a class="reference internal" href="#arch.arch_model" title="arch.arch_
 </div>
 <p>Alternatively, the same model can be manually assembled from the building
 blocks of an ARCH model</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">ConstantMean</span><span class="p">,</span> <span class="n">GARCH</span><span class="p">,</span> <span class="n">Normal</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">ConstantMean</span><span class="p">,</span> <span class="n">GARCH</span><span class="p">,</span> <span class="n">Normal</span>
 
 <span class="n">am</span> <span class="o">=</span> <span class="n">ConstantMean</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
 <span class="n">am</span><span class="o">.</span><span class="n">volatility</span> <span class="o">=</span> <span class="n">GARCH</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -164,11 +151,11 @@ blocks of an ARCH model</p>
 </pre></div>
 </div>
 <p>In either case, model parameters are estimated using</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>with the following output</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Iteration</span><span class="p">:</span>      <span class="mi">1</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>      <span class="mi">6</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5159.58323938</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Iteration</span><span class="p">:</span>      <span class="mi">1</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>      <span class="mi">6</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5159.58323938</span>
 <span class="n">Iteration</span><span class="p">:</span>      <span class="mi">2</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">16</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5156.09760149</span>
 <span class="n">Iteration</span><span class="p">:</span>      <span class="mi">3</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">24</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5152.29989336</span>
 <span class="n">Iteration</span><span class="p">:</span>      <span class="mi">4</span><span class="p">,</span>   <span class="n">Func</span><span class="o">.</span> <span class="n">Count</span><span class="p">:</span>     <span class="mi">31</span><span class="p">,</span>   <span class="n">Neg</span><span class="o">.</span> <span class="n">LLF</span><span class="p">:</span> <span class="mf">5146.47531817</span>
@@ -187,11 +174,11 @@ blocks of an ARCH model</p>
             <span class="n">Gradient</span> <span class="n">evaluations</span><span class="p">:</span> <span class="mi">12</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
 <p>yields</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>                     <span class="n">Constant</span> <span class="n">Mean</span> <span class="o">-</span> <span class="n">GARCH</span> <span class="n">Model</span> <span class="n">Results</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                     <span class="n">Constant</span> <span class="n">Mean</span> <span class="o">-</span> <span class="n">GARCH</span> <span class="n">Model</span> <span class="n">Results</span>
 <span class="o">==============================================================================</span>
 <span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>              <span class="n">Adj</span> <span class="n">Close</span>   <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                      <span class="o">-</span><span class="mf">0.001</span>
 <span class="n">Mean</span> <span class="n">Model</span><span class="p">:</span>             <span class="n">Constant</span> <span class="n">Mean</span>   <span class="n">Adj</span><span class="o">.</span> <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="p">:</span>                 <span class="o">-</span><span class="mf">0.001</span>
@@ -269,7 +256,7 @@ lag lengths to estimate on the common sample.</li>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1990</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="k">as</span> <span class="nn">web</span>
@@ -279,17 +266,17 @@ lag lengths to estimate on the common sample.</li>
 </div>
 <p>A basic GARCH(1,1) with a constant mean can be constructed using only
 the return data</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">arch_model</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">arch_model</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Alternative mean and volatility processes can be directly specified</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="s1">&#39;AR&#39;</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="s1">&#39;harch&#39;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">22</span><span class="p">])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="s1">&#39;AR&#39;</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="s1">&#39;harch&#39;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">22</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>This example demonstrates the construction of a zero mean process
 with a TARCH volatility process and Student t error distribution</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="s1">&#39;zero&#39;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="s1">&#39;zero&#39;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="gp">... </span>                <span class="n">power</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">&#39;StudentsT&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -301,7 +288,7 @@ when <cite>mean=’zero’</cite>, are silently ignored.</p>
 </div>
 <div class="section" id="model-results">
 <h2>Model Results<a class="headerlink" href="#model-results" title="Permalink to this headline">¶</a></h2>
-<p>All model return the same object, a results class (<code class="xref py py-class docutils literal"><span class="pre">ARCHModelResult</span></code>)</p>
+<p>All model return the same object, a results class (<code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHModelResult</span></code>)</p>
 <dl class="class">
 <dt id="arch.univariate.base.ARCHModelResult">
 <em class="property">class </em><code class="descclassname">arch.univariate.base.</code><code class="descname">ARCHModelResult</code><span class="sig-paren">(</span><em>params</em>, <em>param_cov</em>, <em>r2</em>, <em>resid</em>, <em>volatility</em>, <em>cov_type</em>, <em>dep_var</em>, <em>names</em>, <em>loglikelihood</em>, <em>is_pandas</em>, <em>optim_output</em>, <em>fit_start</em>, <em>fit_stop</em>, <em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult" title="Permalink to this definition">¶</a></dt>
@@ -475,7 +462,7 @@ ith parameter</td>
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
 to a date time, such as in ‘1945-01-01’.</li>
@@ -537,7 +524,7 @@ computed by fitting the model are used.  Must be 1-d and identical
 in shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Non-negative number of forecasts to skip between spines</li>
-<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>datetime</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index.  Strings must be convertible
 to a date time, such as in ‘1945-01-01’.  If not provided, the start
@@ -562,7 +549,7 @@ either simulation or bootstrap.</li>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="n">mean</span><span class="o">=</span><span class="s1">&#39;HAR&#39;</span><span class="p">,</span><span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">22</span><span class="p">],</span><span class="n">vol</span><span class="o">=</span><span class="s1">&#39;Constant&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">simulate</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span> <span class="mi">250</span><span class="p">)</span>
@@ -601,7 +588,7 @@ provides, annualize is ignored and the value in scale is used.</li>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">simulate</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.07</span><span class="p">,</span> <span class="mf">0.92</span><span class="p">],</span> <span class="mi">2520</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">sim_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
@@ -610,12 +597,12 @@ provides, annualize is ignored and the value in scale is used.</li>
 </pre></div>
 </div>
 <p>Produce a plot with annualized volatility</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">annualize</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">annualize</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Override the usual scale of 252 to use 360 for an asset that trades
 most days of the year</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">360</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">360</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -639,8 +626,8 @@ latex</td>
 
 </dd></dl>
 
-<p>When using the <code class="docutils literal"><span class="pre">fix</span></code> method, a (<a class="reference internal" href="#arch.univariate.base.ARCHModelFixedResult" title="arch.univariate.base.ARCHModelFixedResult"><code class="xref py py-class docutils literal"><span class="pre">ARCHModelFixedResult</span></code></a>) is produced
-that lacks some properties of a (<a class="reference internal" href="#arch.univariate.base.ARCHModelResult" title="arch.univariate.base.ARCHModelResult"><code class="xref py py-class docutils literal"><span class="pre">ARCHModelResult</span></code></a>) that are not
+<p>When using the <code class="docutils literal notranslate"><span class="pre">fix</span></code> method, a (<a class="reference internal" href="#arch.univariate.base.ARCHModelFixedResult" title="arch.univariate.base.ARCHModelFixedResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHModelFixedResult</span></code></a>) is produced
+that lacks some properties of a (<a class="reference internal" href="#arch.univariate.base.ARCHModelResult" title="arch.univariate.base.ARCHModelResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHModelResult</span></code></a>) that are not
 relevant when parameters are not estimated.</p>
 <dl class="class">
 <dt id="arch.univariate.base.ARCHModelFixedResult">
@@ -753,7 +740,7 @@ which is computed using time-(t-1) information.</p>
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
 to a date time, such as in ‘1945-01-01’.</li>
@@ -815,7 +802,7 @@ computed by fitting the model are used.  Must be 1-d and identical
 in shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Non-negative number of forecasts to skip between spines</li>
-<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>datetime</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index.  Strings must be convertible
 to a date time, such as in ‘1945-01-01’.  If not provided, the start
@@ -840,7 +827,7 @@ either simulation or bootstrap.</li>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="n">mean</span><span class="o">=</span><span class="s1">&#39;HAR&#39;</span><span class="p">,</span><span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">22</span><span class="p">],</span><span class="n">vol</span><span class="o">=</span><span class="s1">&#39;Constant&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">simulate</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span> <span class="mi">250</span><span class="p">)</span>
@@ -879,7 +866,7 @@ provides, annualize is ignored and the value in scale is used.</li>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">simulate</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.07</span><span class="p">,</span> <span class="mf">0.92</span><span class="p">],</span> <span class="mi">2520</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">sim_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
@@ -888,12 +875,12 @@ provides, annualize is ignored and the value in scale is used.</li>
 </pre></div>
 </div>
 <p>Produce a plot with annualized volatility</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">annualize</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">annualize</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Override the usual scale of 252 to use 360 for an asset that trades
 most days of the year</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">360</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">360</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>

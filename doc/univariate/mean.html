@@ -4,6 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -17,16 +18,7 @@
     <title>Mean Models &#8212; arch 4.3.1 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '4.3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -38,8 +30,7 @@
   
    
 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -66,39 +57,38 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar">
-        <a href="
-    ../index.html" class="text-logo">arch 4.3</a>
-        
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
-    <h2>Table Of Contents</h2>
-  </div>
-  <div class="sidebar-toc">
-    
-    
-      <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="univariate.html">Univariate Volatility Models</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="introduction.html">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_modeling.html">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="forecasting.html">Forecasting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_forecasting.html">Forecasting Examples</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Mean Models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="volatility.html">Volatility Processes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="univariate_using_fixed_variance.html">Using the Fixed Variance Process</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distribution.html">Distributions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
+    <h2>Contents</h2>
+    <div class="sidebar-localtoc">
+      <ul>
+<li><a class="reference internal" href="#">Mean Models</a><ul>
+<li><a class="reference internal" href="#no-mean">No Mean</a></li>
+<li><a class="reference internal" href="#constant-mean">Constant Mean</a></li>
+<li><a class="reference internal" href="#autoregressions">Autoregressions</a></li>
+<li><a class="reference internal" href="#heterogeneous-autoregressions">Heterogeneous Autoregressions</a></li>
+<li><a class="reference internal" href="#least-squares">Least Squares</a></li>
+<li><a class="reference internal" href="#writing-new-mean-models">Writing New Mean Models</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../bootstrap/bootstrap.html">Bootstrapping</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../unitroot/unitroot.html">Unit Root Tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
 </ul>
 
-    
+    </div>
   </div>
 </div>
-        
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="univariate_volatility_forecasting.html"
+                        title="previous chapter">Volatility Forecasting</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="volatility.html"
+                        title="next chapter">Volatility Processes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/univariate/mean.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -112,6 +102,7 @@
     </div>
   </div>
 </div>
+      
     </div>
   </div>
         <div id="right-column">
@@ -154,7 +145,7 @@ lag lengths to estimate on the common sample.</li>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">ZeroMean</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">zm</span> <span class="o">=</span> <span class="n">ZeroMean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
@@ -163,7 +154,7 @@ lag lengths to estimate on the common sample.</li>
 </div>
 <p class="rubric">Notes</p>
 <p>The zero mean model is described by</p>
-<div class="math">
+<div class="math notranslate">
 \[y_t = \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.ZeroMean.fit">
@@ -185,8 +176,8 @@ are constructed by the model components.</li>
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
 corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <li><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
 <li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
 <li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
@@ -219,8 +210,8 @@ difficulty finding the optimum.</p>
 <li><strong>params</strong> (<em>ndarray-like</em>) – User specified parameters to use when generating the result. Must
 have the correct number of parameters for a given choice of mean
 model, volatility model and distribution.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
 </ul>
 </td>
 </tr>
@@ -249,7 +240,7 @@ model, volatility model and distribution.</li>
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
 to a date time, such as in ‘1945-01-01’.</li>
@@ -279,7 +270,7 @@ controlled by <cite>align</cite>.</p>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="n">mean</span><span class="o">=</span><span class="s1">&#39;HAR&#39;</span><span class="p">,</span><span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">22</span><span class="p">],</span><span class="n">vol</span><span class="o">=</span><span class="s1">&#39;Constant&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">simulate</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span> <span class="mi">250</span><span class="p">)</span>
@@ -342,12 +333,12 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Parameters to use when simulating the model.  Parameter order is
+<li><strong>params</strong> (<em>array</em>) – Parameters to use when simulating the model.  Parameter order is
 [volatility distribution]. There are no mean parameters.</li>
 <li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Length of series to simulate</li>
 <li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
 dependence on initial values.</li>
-<li><strong>initial_value_vol</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+<li><strong>initial_value_vol</strong> (<em>array</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
 </td>
 </tr>
@@ -363,13 +354,13 @@ containing the errors used in the simulation</p>
 </table>
 <p class="rubric">Examples</p>
 <p>Basic data simulation with no mean and constant volatility</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">ZeroMean</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">ZeroMean</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">zm</span> <span class="o">=</span> <span class="n">ZeroMean</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">zm</span><span class="o">.</span><span class="n">simulate</span><span class="p">([</span><span class="mf">1.0</span><span class="p">],</span> <span class="mi">1000</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Simulating data with a non-trivial volatility process</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">GARCH</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">GARCH</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">zm</span><span class="o">.</span><span class="n">volatility</span> <span class="o">=</span> <span class="n">GARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">zm</span><span class="o">.</span><span class="n">simulate</span><span class="p">([</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="mi">300</span><span class="p">)</span>
 </pre></div>
@@ -402,7 +393,7 @@ lag lengths to estimate on the common sample.</li>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">ConstantMean</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span> <span class="o">=</span> <span class="n">ConstantMean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
@@ -411,7 +402,7 @@ lag lengths to estimate on the common sample.</li>
 </div>
 <p class="rubric">Notes</p>
 <p>The constant mean model is described by</p>
-<div class="math">
+<div class="math notranslate">
 \[y_t = \mu + \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.ConstantMean.fit">
@@ -433,8 +424,8 @@ are constructed by the model components.</li>
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
 corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <li><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
 <li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
 <li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
@@ -468,7 +459,7 @@ difficulty finding the optimum.</p>
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
 to a date time, such as in ‘1945-01-01’.</li>
@@ -498,7 +489,7 @@ controlled by <cite>align</cite>.</p>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="n">mean</span><span class="o">=</span><span class="s1">&#39;HAR&#39;</span><span class="p">,</span><span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">22</span><span class="p">],</span><span class="n">vol</span><span class="o">=</span><span class="s1">&#39;Constant&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">simulate</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span> <span class="mi">250</span><span class="p">)</span>
@@ -561,13 +552,13 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a>) – Parameters to use when simulating the model.  Parameter order is
+<li><strong>params</strong> (<em>array</em>) – Parameters to use when simulating the model.  Parameter order is
 [mean volatility distribution]. There is one parameter in the mean
 model, mu.</li>
 <li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Length of series to simulate</li>
 <li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
 dependence on initial values.</li>
-<li><strong>initial_value_vol</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+<li><strong>initial_value_vol</strong> (<em>array</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
 </td>
 </tr>
@@ -583,7 +574,7 @@ containing the errors used in the simulation</p>
 </table>
 <p class="rubric">Examples</p>
 <p>Basic data simulation with a constant mean and volatility</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">ConstantMean</span><span class="p">,</span> <span class="n">GARCH</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span> <span class="o">=</span> <span class="n">ConstantMean</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span><span class="o">.</span><span class="n">volatility</span> <span class="o">=</span> <span class="n">GARCH</span><span class="p">()</span>
@@ -625,7 +616,7 @@ lag lengths to estimate on the common sample.</li>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">ARX</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">arx</span> <span class="o">=</span> <span class="n">ARX</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">22</span><span class="p">])</span>
@@ -638,7 +629,7 @@ lag lengths to estimate on the common sample.</li>
 &gt;&gt;&gt; res = arx.fit(update_freq=0, disp=’off’)</p>
 <p class="rubric">Notes</p>
 <p>The AR-X model is described by</p>
-<div class="math">
+<div class="math notranslate">
 \[y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} y_{t-L_{i}} + \gamma' x_t
 + \epsilon_t\]</div>
 <dl class="method">
@@ -661,8 +652,8 @@ are constructed by the model components.</li>
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
 corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <li><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
 <li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
 <li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
@@ -695,8 +686,8 @@ difficulty finding the optimum.</p>
 <li><strong>params</strong> (<em>ndarray-like</em>) – User specified parameters to use when generating the result. Must
 have the correct number of parameters for a given choice of mean
 model, volatility model and distribution.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
 </ul>
 </td>
 </tr>
@@ -725,7 +716,7 @@ model, volatility model and distribution.</li>
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
 to a date time, such as in ‘1945-01-01’.</li>
@@ -755,7 +746,7 @@ controlled by <cite>align</cite>.</p>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="n">mean</span><span class="o">=</span><span class="s1">&#39;HAR&#39;</span><span class="p">,</span><span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">22</span><span class="p">],</span><span class="n">vol</span><span class="o">=</span><span class="s1">&#39;Constant&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">simulate</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span> <span class="mi">250</span><span class="p">)</span>
@@ -829,7 +820,7 @@ variable.</li>
 dependence on initial values.</li>
 <li><strong>initial_value</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
 use when initializing the model.  If omitted, 0.0 is used.</li>
-<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
+<li><strong>x</strong> (<em>array</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
 simulation.</li>
 <li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
@@ -846,7 +837,7 @@ containing the errors used in the simulation</p>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">HARX</span><span class="p">,</span> <span class="n">GARCH</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">harx</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">22</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">harx</span><span class="o">.</span><span class="n">volatility</span> <span class="o">=</span> <span class="n">GARCH</span><span class="p">()</span>
@@ -858,7 +849,7 @@ containing the errors used in the simulation</p>
 </div>
 <p>Simulating models with exogenous regressors requires the regressors
 to have nobs plus burn data points</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nobs</span> <span class="o">=</span> <span class="mi">100</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nobs</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">burn</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
@@ -903,14 +894,14 @@ lag lengths to estimate on the common sample.</li>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">HARX</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">harx</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">22</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">harx</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">Series</span><span class="p">,</span> <span class="n">date_range</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">Series</span><span class="p">,</span> <span class="n">date_range</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">index</span> <span class="o">=</span> <span class="n">date_range</span><span class="p">(</span><span class="s1">&#39;2000-01-01&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">har</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">hold_back</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -918,11 +909,11 @@ lag lengths to estimate on the common sample.</li>
 </div>
 <p class="rubric">Notes</p>
 <p>The HAR-X model is described by</p>
-<div class="math">
+<div class="math notranslate">
 \[y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} \bar{y}_{t-L_{i,0}:L_{i,1}}
 + \gamma' x_t + \epsilon_t\]</div>
-<p>where <span class="math">\(\bar{y}_{t-L_{i,0}:L_{i,1}}\)</span> is the average value of
-<span class="math">\(y_t\)</span> between <span class="math">\(t-L_{i,0}\)</span> and <span class="math">\(t - L_{i,1}\)</span>.</p>
+<p>where <span class="math notranslate">\(\bar{y}_{t-L_{i,0}:L_{i,1}}\)</span> is the average value of
+<span class="math notranslate">\(y_t\)</span> between <span class="math notranslate">\(t-L_{i,0}\)</span> and <span class="math notranslate">\(t - L_{i,1}\)</span>.</p>
 <dl class="method">
 <dt id="arch.univariate.HARX.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.fit" title="Permalink to this definition">¶</a></dt>
@@ -943,8 +934,8 @@ are constructed by the model components.</li>
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
 corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <li><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
 <li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
 <li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
@@ -977,8 +968,8 @@ difficulty finding the optimum.</p>
 <li><strong>params</strong> (<em>ndarray-like</em>) – User specified parameters to use when generating the result. Must
 have the correct number of parameters for a given choice of mean
 model, volatility model and distribution.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
 </ul>
 </td>
 </tr>
@@ -1007,7 +998,7 @@ model, volatility model and distribution.</li>
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
 to a date time, such as in ‘1945-01-01’.</li>
@@ -1037,7 +1028,7 @@ controlled by <cite>align</cite>.</p>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="n">mean</span><span class="o">=</span><span class="s1">&#39;HAR&#39;</span><span class="p">,</span><span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">22</span><span class="p">],</span><span class="n">vol</span><span class="o">=</span><span class="s1">&#39;Constant&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">simulate</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span> <span class="mi">250</span><span class="p">)</span>
@@ -1111,7 +1102,7 @@ variable.</li>
 dependence on initial values.</li>
 <li><strong>initial_value</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
 use when initializing the model.  If omitted, 0.0 is used.</li>
-<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
+<li><strong>x</strong> (<em>array</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
 simulation.</li>
 <li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
@@ -1128,7 +1119,7 @@ containing the errors used in the simulation</p>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">HARX</span><span class="p">,</span> <span class="n">GARCH</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">harx</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">22</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">harx</span><span class="o">.</span><span class="n">volatility</span> <span class="o">=</span> <span class="n">GARCH</span><span class="p">()</span>
@@ -1140,7 +1131,7 @@ containing the errors used in the simulation</p>
 </div>
 <p>Simulating models with exogenous regressors requires the regressors
 to have nobs plus burn data points</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nobs</span> <span class="o">=</span> <span class="mi">100</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nobs</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">burn</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
@@ -1176,7 +1167,7 @@ lag lengths to estimate on the common sample.</li>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">LS</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
@@ -1186,7 +1177,7 @@ lag lengths to estimate on the common sample.</li>
 </div>
 <p class="rubric">Notes</p>
 <p>The LS model is described by</p>
-<div class="math">
+<div class="math notranslate">
 \[y_t = \mu + \gamma' x_t + \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.LS.fit">
@@ -1208,8 +1199,8 @@ are constructed by the model components.</li>
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
 corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <li><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
 <li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
 <li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
@@ -1242,8 +1233,8 @@ difficulty finding the optimum.</p>
 <li><strong>params</strong> (<em>ndarray-like</em>) – User specified parameters to use when generating the result. Must
 have the correct number of parameters for a given choice of mean
 model, volatility model and distribution.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.6)"><em>datetime</em></a><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
+<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
+<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
 </ul>
 </td>
 </tr>
@@ -1304,7 +1295,7 @@ variable.</li>
 dependence on initial values.</li>
 <li><strong>initial_value</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
 use when initializing the model.  If omitted, 0.0 is used.</li>
-<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.6)"><em>array</em></a><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
+<li><strong>x</strong> (<em>array</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
 simulation.</li>
 <li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
@@ -1321,7 +1312,7 @@ containing the errors used in the simulation</p>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">HARX</span><span class="p">,</span> <span class="n">GARCH</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">harx</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">22</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">harx</span><span class="o">.</span><span class="n">volatility</span> <span class="o">=</span> <span class="n">GARCH</span><span class="p">()</span>
@@ -1333,7 +1324,7 @@ containing the errors used in the simulation</p>
 </div>
 <p>Simulating models with exogenous regressors requires the regressors
 to have nobs plus burn data points</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nobs</span> <span class="o">=</span> <span class="mi">100</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nobs</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">burn</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>

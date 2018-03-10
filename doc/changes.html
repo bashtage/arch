@@ -4,6 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -17,16 +18,7 @@
     <title>Change Logs &#8212; arch 4.3.1 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '4.3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -37,8 +29,7 @@
   
    
 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -61,35 +52,34 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar">
-        <a href="
-    index.html" class="text-logo">arch 4.3</a>
-        
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
-    <h2>Table Of Contents</h2>
-  </div>
-  <div class="sidebar-toc">
-    
-    
-      <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="univariate/univariate.html">Univariate Volatility Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bootstrap/bootstrap.html">Bootstrapping</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="unitroot/unitroot.html">Unit Root Tests</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Change Log</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#changes-since-4-0">Changes since 4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#changes-since-3-0">Changes since 3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#changes-since-2-1">Changes since 2.1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#changes-since-2-0">Changes since 2.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#changes-since-1-0">Changes since 1.0</a></li>
+    <h2>Contents</h2>
+    <div class="sidebar-localtoc">
+      <ul>
+<li><a class="reference internal" href="#">Change Logs</a><ul>
+<li><a class="reference internal" href="#changes-since-4-0">Changes since 4.0</a></li>
+<li><a class="reference internal" href="#changes-since-3-0">Changes since 3.0</a></li>
+<li><a class="reference internal" href="#changes-since-2-1">Changes since 2.1</a></li>
+<li><a class="reference internal" href="#changes-since-2-0">Changes since 2.0</a></li>
+<li><a class="reference internal" href="#changes-since-1-0">Changes since 1.0</a></li>
 </ul>
 </li>
 </ul>
 
-    
+    </div>
   </div>
 </div>
-        
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="unitroot/tests.html"
+                        title="previous chapter">The Unit Root Tests</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/changes.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -103,6 +93,7 @@
     </div>
   </div>
 </div>
+      
     </div>
   </div>
         <div id="right-column">
@@ -126,12 +117,12 @@
 <li>Added the Generalized Error Distribution for univariate ARCH models</li>
 <li>Fixed a bug in MCS when using the max method that prevented all included models from being
 listed</li>
-<li>Added <code class="docutils literal"><span class="pre">FixedVariance</span></code> volatility process which allows pre-specified variances to be used with
+<li>Added <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> volatility process which allows pre-specified variances to be used with
 a mean model.  This has been added to allow so-called zig-zag estimation where a mean model is
 estimated with a fixed variance, and then a variance model is estimated on the residuals using
-a <code class="docutils literal"><span class="pre">ZeroMean</span></code> variance process.</li>
-<li>Fixed a bug that prevented <code class="docutils literal"><span class="pre">fix</span></code> from being used with a new model (<a class="reference external" href="https://github.com/bashtage/arch/issues/156">GH156</a>)</li>
-<li>Added <code class="docutils literal"><span class="pre">first_obs</span></code> and <code class="docutils literal"><span class="pre">last_obs</span></code> parameters to <code class="docutils literal"><span class="pre">fix</span></code> to mimic <code class="docutils literal"><span class="pre">fit</span></code></li>
+a <code class="docutils literal notranslate"><span class="pre">ZeroMean</span></code> variance process.</li>
+<li>Fixed a bug that prevented <code class="docutils literal notranslate"><span class="pre">fix</span></code> from being used with a new model (<a class="reference external" href="https://github.com/bashtage/arch/issues/156">GH156</a>)</li>
+<li>Added <code class="docutils literal notranslate"><span class="pre">first_obs</span></code> and <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> parameters to <code class="docutils literal notranslate"><span class="pre">fix</span></code> to mimic <code class="docutils literal notranslate"><span class="pre">fit</span></code></li>
 <li>Added ability to jointly estimate smoothing parameter in EWMA variance when fitting the model</li>
 <li>Added ability to pass optimization options to ARCH model estimation (<a class="reference external" href="https://github.com/bashtage/arch/issues/195">GH195</a>)</li>
 </ul>
@@ -141,18 +132,18 @@ a <code class="docutils literal"><span class="pre">ZeroMean</span></code> varian
 <ul class="simple">
 <li>Added forecast code for mean forecasting</li>
 <li>Added volatility hedgehog plot</li>
-<li>Added <code class="docutils literal"><span class="pre">fix</span></code> to arch models which allows for user specified parameters
+<li>Added <code class="docutils literal notranslate"><span class="pre">fix</span></code> to arch models which allows for user specified parameters
 instead of estimated parameters.</li>
 <li>Added Hansen’s Skew T distribution to distribution (Stanislav Khrapov)</li>
 <li>Updated IPython notebooks to latest IPython version</li>
 <li>Bug and typo fixes to IPython notebooks</li>
 <li>Changed MCS to give a pvalue of 1.0 to best model.  Previously was NaN</li>
-<li>Removed <code class="docutils literal"><span class="pre">hold_back</span></code> and <code class="docutils literal"><span class="pre">last_obs</span></code> from model initialization and to
-<code class="docutils literal"><span class="pre">fit</span></code> method to simplify estimating a model over alternative samples
+<li>Removed <code class="docutils literal notranslate"><span class="pre">hold_back</span></code> and <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> from model initialization and to
+<code class="docutils literal notranslate"><span class="pre">fit</span></code> method to simplify estimating a model over alternative samples
 (e.g., rolling window estimation)</li>
-<li>Redefined <code class="docutils literal"><span class="pre">hold_back</span></code> to only accept integers so that is simply defined
+<li>Redefined <code class="docutils literal notranslate"><span class="pre">hold_back</span></code> to only accept integers so that is simply defined
 the number of observations held back. This number is now held out of the
-sample irrespective of the value of <code class="docutils literal"><span class="pre">first_obs</span></code>.</li>
+sample irrespective of the value of <code class="docutils literal notranslate"><span class="pre">first_obs</span></code>.</li>
 </ul>
 </div>
 <div class="section" id="changes-since-2-1">

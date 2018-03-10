@@ -4,6 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -17,16 +18,7 @@
     <title>Forecasting &#8212; arch 4.3.1 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '4.3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -38,8 +30,7 @@
   
    
 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -66,39 +57,38 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar">
-        <a href="
-    ../index.html" class="text-logo">arch 4.3</a>
-        
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
-    <h2>Table Of Contents</h2>
-  </div>
-  <div class="sidebar-toc">
-    
-    
-      <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="univariate.html">Univariate Volatility Models</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="introduction.html">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_modeling.html">Examples</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Forecasting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_forecasting.html">Forecasting Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mean.html">Mean Models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="volatility.html">Volatility Processes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="univariate_using_fixed_variance.html">Using the Fixed Variance Process</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distribution.html">Distributions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
+    <h2>Contents</h2>
+    <div class="sidebar-localtoc">
+      <ul>
+<li><a class="reference internal" href="#">Forecasting</a><ul>
+<li><a class="reference internal" href="#analytical-forecasts">Analytical Forecasts</a></li>
+<li><a class="reference internal" href="#simulation-forecasts">Simulation Forecasts</a></li>
+<li><a class="reference internal" href="#bootstrap-forecasts">Bootstrap Forecasts</a></li>
+<li><a class="reference internal" href="#forecasting-options">Forecasting Options</a></li>
+<li><a class="reference internal" href="#understanding-forecast-output">Understanding Forecast Output</a></li>
+<li><a class="reference internal" href="#output-classes">Output Classes</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../bootstrap/bootstrap.html">Bootstrapping</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../unitroot/unitroot.html">Unit Root Tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
 </ul>
 
-    
+    </div>
   </div>
 </div>
-        
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="univariate_volatility_modeling.html"
+                        title="previous chapter">ARCH Modeling</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="univariate_volatility_forecasting.html"
+                        title="next chapter">Volatility Forecasting</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/univariate/forecasting.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -112,6 +102,7 @@
     </div>
   </div>
 </div>
+      
     </div>
   </div>
         <div id="right-column">
@@ -156,14 +147,14 @@ data to use prior to producing the forecasts.</li>
 </ul>
 <p>This document will use a standard GARCH(1,1) with a constant mean to explain
 the choices available for forecasting.  The model can be described as</p>
-<div class="math">
+<div class="math notranslate">
 \begin{eqnarray}
    r_t        &amp; =    &amp; \mu + \epsilon_t \\
    \epsilon_t &amp; =    &amp; \sigma_t e_t \\
    \sigma^2_t &amp; =    &amp; \omega + \alpha \epsilon_t^2 + \beta \sigma^2_{t-1} \\
    e_t        &amp; \sim &amp; N(0,1)
 \end{eqnarray}</div><p>In code this model can be constructed using data from the S&amp;P 500 using</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 <span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="k">as</span> <span class="nn">web</span>
 <span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
@@ -175,7 +166,7 @@ the choices available for forecasting.  The model can be described as</p>
 </div>
 <p>The model will be estimated using the first 10 years to estimate parameters
 and then forecasts will be produced for the final 5.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">split_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2010</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">split_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2010</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">last_obs</span><span class="o">=</span><span class="n">split_date</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -183,15 +174,15 @@ and then forecasts will be produced for the final 5.</p>
 <h2>Analytical Forecasts<a class="headerlink" href="#analytical-forecasts" title="Permalink to this headline">¶</a></h2>
 <p>Analytical forecasts are available for most models that evolve in terms of
 the squares of the model residuals, e.g., GARCH, HARCH, etc. These forecasts
-exploit the relationship <span class="math">\(E_t[\epsilon_{t+1}^2] = \sigma_{t+1}^2\)</span> to
+exploit the relationship <span class="math notranslate">\(E_t[\epsilon_{t+1}^2] = \sigma_{t+1}^2\)</span> to
 recursively compute forecasts.</p>
 <p>Variance forecasts are constructed for the conditional variances as</p>
-<div class="math">
+<div class="math notranslate">
 \begin{eqnarray}
    \sigma^2_{t+1} &amp; = &amp; \omega + \alpha \epsilon_t^2 + \beta \sigma^2_{t-1} \\
    \sigma^2_{t+h} &amp; = &amp; \omega + \alpha  E_{t}[\epsilon_{t+h-1}^2] + \beta E_{t}[\sigma^2_{t+h-1}] \, h \geq 2 \\
                   &amp; = &amp; \omega + \left(\alpha  + \beta\right) E_{t}[\sigma^2_{t+h-1}] \, h \geq 2
-\end{eqnarray}</div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">split_date</span><span class="p">)</span>
+\end{eqnarray}</div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">split_date</span><span class="p">)</span>
 <span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">split_date</span><span class="p">:]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -199,28 +190,28 @@ recursively compute forecasts.</p>
 <div class="section" id="simulation-forecasts">
 <h2>Simulation Forecasts<a class="headerlink" href="#simulation-forecasts" title="Permalink to this headline">¶</a></h2>
 <p>Simulation-based forecasts use the model random number generator to simulate
-draws of the standardized residuals, <span class="math">\(e_{t+h}\)</span>.  These are used to
+draws of the standardized residuals, <span class="math notranslate">\(e_{t+h}\)</span>.  These are used to
 generate a pre-specified number of paths fof the variances which are then
 averaged to produce the forecasts.  In models like GARCH which evolve in the
 squares of the residuals, there are few advantages to simulation-based
 forecasting. These methods are more valuable when producing multi-step
 forecasts from models that do not have closed form multi-step forecasts
 such as EGARCH models.</p>
-<p>Assume there are <span class="math">\(B\)</span> simulated paths.  A single simulated path is
+<p>Assume there are <span class="math notranslate">\(B\)</span> simulated paths.  A single simulated path is
 generated using</p>
-<div class="math">
+<div class="math notranslate">
 \begin{eqnarray}
    \sigma^2_{t+h, b} &amp; = &amp; \omega + \alpha \epsilon_{t+h-1, b}^2 + \beta \sigma^2_{t+h-1, b} \\
    \epsilon_{t+h, b} &amp; = &amp; e_{t+h, b} \sqrt{\sigma^2_{t+h, b}}
 \end{eqnarray}</div><p>where the simulated shocks are
-<span class="math">\(e_{t+1, b}, e_{t+2, b},\ldots, e_{t+h, b}\)</span> where <span class="math">\(b\)</span> is included
+<span class="math notranslate">\(e_{t+1, b}, e_{t+2, b},\ldots, e_{t+h, b}\)</span> where <span class="math notranslate">\(b\)</span> is included
 to indicate that the simulations are independent across paths. Note that the
-first residual, <span class="math">\(\epsilon_{t}\)</span>, is in-sample and so is not simulated.</p>
-<p>The final variance forecasts are then computed using the <span class="math">\(B\)</span> simulations</p>
-<div class="math">
+first residual, <span class="math notranslate">\(\epsilon_{t}\)</span>, is in-sample and so is not simulated.</p>
+<p>The final variance forecasts are then computed using the <span class="math notranslate">\(B\)</span> simulations</p>
+<div class="math notranslate">
 \begin{equation}
      E_t[\epsilon^2_{t+h}] = \sigma^2_{t+h} = B^{-1}\sum_{b=1}^B \sigma^2_{t+h,b}.
-\end{equation}</div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">split_date</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;simulation&#39;</span><span class="p">)</span>
+\end{equation}</div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">split_date</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;simulation&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -230,60 +221,60 @@ first residual, <span class="math">\(\epsilon_{t}\)</span>, is in-sample and so 
 except that the standardized residuals are generated by the model.  These
 standardized residuals are generated using the observed data and the
 estimated parameters as</p>
-<div class="math">
+<div class="math notranslate">
 \begin{equation}
      \hat{e}_t = \frac{r_t-\hat{\mu}}{\hat{\sigma}_t}
 \end{equation}</div><p>The generation scheme is identical to the simulation-based method except that
 the simulated shocks are drawn (i.i.d., with replacement) from
-<span class="math">\(\hat{e}_{1}, \hat{e}_{2},\ldots, \hat{e}_{t}\)</span>.  so that only
-data available at time <span class="math">\(t\)</span> are used to simulate the paths.</p>
+<span class="math notranslate">\(\hat{e}_{1}, \hat{e}_{2},\ldots, \hat{e}_{t}\)</span>.  so that only
+data available at time <span class="math notranslate">\(t\)</span> are used to simulate the paths.</p>
 </div>
 <div class="section" id="forecasting-options">
 <h2>Forecasting Options<a class="headerlink" href="#forecasting-options" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelResult.forecast" title="arch.univariate.base.ARCHModelResult.forecast"><code class="xref py py-meth docutils literal"><span class="pre">forecast()</span></code></a>  method
+<p>The <a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelResult.forecast" title="arch.univariate.base.ARCHModelResult.forecast"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forecast()</span></code></a>  method
 is attached to a model fit result.`</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">params</span></code> - The model parameters used to forecast the mean and variance.
-If not specified, the parameters estimated during the call to <code class="docutils literal"><span class="pre">fit</span></code>
+<li><code class="docutils literal notranslate"><span class="pre">params</span></code> - The model parameters used to forecast the mean and variance.
+If not specified, the parameters estimated during the call to <code class="docutils literal notranslate"><span class="pre">fit</span></code>
 the produced the result are used.</li>
-<li><code class="docutils literal"><span class="pre">horizon</span></code> - A positve integer value indicating the maximum horizon to
+<li><code class="docutils literal notranslate"><span class="pre">horizon</span></code> - A positve integer value indicating the maximum horizon to
 produce forecasts.</li>
-<li><code class="docutils literal"><span class="pre">start</span></code> - A positive integer or, if the input to the mode is a DataFrame,
+<li><code class="docutils literal notranslate"><span class="pre">start</span></code> - A positive integer or, if the input to the mode is a DataFrame,
 a date (string, datetime, datetime64 or Timestamp). Forecasts are produced
-from <code class="docutils literal"><span class="pre">start</span></code> until the end of the sample.  If not provided, <code class="docutils literal"><span class="pre">start</span></code> is
+from <code class="docutils literal notranslate"><span class="pre">start</span></code> until the end of the sample.  If not provided, <code class="docutils literal notranslate"><span class="pre">start</span></code> is
 set to the length of the input data minus 1 so that only 1 forecast is
 produced.</li>
-<li><code class="docutils literal"><span class="pre">align</span></code> - One of ‘origin’ (default) or ‘target’ that describes how the
+<li><code class="docutils literal notranslate"><span class="pre">align</span></code> - One of ‘origin’ (default) or ‘target’ that describes how the
 forecasts aligned in the output. Origin aligns forecasts to the last
 observation used in producing the forecast, while target aligns forecasts
 to the observation index that is being forecast.</li>
-<li><code class="docutils literal"><span class="pre">method</span></code> - One of ‘analytic’ (default), ‘simulation’ or ‘bootstrap’ that
+<li><code class="docutils literal notranslate"><span class="pre">method</span></code> - One of ‘analytic’ (default), ‘simulation’ or ‘bootstrap’ that
 describes the method used to produce the forecasts.  Not all methods are
 available for all horizons.</li>
-<li><code class="docutils literal"><span class="pre">simulations</span></code> - A non-negative integer indicating the number of
-simulation to use when <code class="docutils literal"><span class="pre">method</span></code> is ‘simulation’ or ‘bootstrap’</li>
+<li><code class="docutils literal notranslate"><span class="pre">simulations</span></code> - A non-negative integer indicating the number of
+simulation to use when <code class="docutils literal notranslate"><span class="pre">method</span></code> is ‘simulation’ or ‘bootstrap’</li>
 </ul>
 </div>
 <div class="section" id="understanding-forecast-output">
 <h2>Understanding Forecast Output<a class="headerlink" href="#understanding-forecast-output" title="Permalink to this headline">¶</a></h2>
-<p>Any call to <a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelResult.forecast" title="arch.univariate.base.ARCHModelResult.forecast"><code class="xref py py-meth docutils literal"><span class="pre">forecast()</span></code></a> returns a
-<a class="reference internal" href="#arch.univariate.base.ARCHModelForecast" title="arch.univariate.base.ARCHModelForecast"><code class="xref py py-class docutils literal"><span class="pre">ARCHModelForecast</span></code></a> object with has 3 core
+<p>Any call to <a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelResult.forecast" title="arch.univariate.base.ARCHModelResult.forecast"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forecast()</span></code></a> returns a
+<a class="reference internal" href="#arch.univariate.base.ARCHModelForecast" title="arch.univariate.base.ARCHModelForecast"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHModelForecast</span></code></a> object with has 3 core
 attributes and 1 which may be useful when using simulation- or bootstrap-based
 forecasts.</p>
 <p>The three core attributes are</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">mean</span></code> - The forecast conditional mean.</li>
-<li><code class="docutils literal"><span class="pre">variance</span></code> - The forecast conditional variance.</li>
-<li><code class="docutils literal"><span class="pre">residual_variance</span></code> - The forecast conditional variance of residuals.
-This will differ from <code class="docutils literal"><span class="pre">variance</span></code> whenever the model has dynamics
+<li><code class="docutils literal notranslate"><span class="pre">mean</span></code> - The forecast conditional mean.</li>
+<li><code class="docutils literal notranslate"><span class="pre">variance</span></code> - The forecast conditional variance.</li>
+<li><code class="docutils literal notranslate"><span class="pre">residual_variance</span></code> - The forecast conditional variance of residuals.
+This will differ from <code class="docutils literal notranslate"><span class="pre">variance</span></code> whenever the model has dynamics
 (e.g. an AR model) for horizons larger than 1.</li>
 </ul>
-<p>Each attribute contains a <code class="docutils literal"><span class="pre">DataFrame</span></code> with a common structure.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">tail</span><span class="p">())</span>
+<p>Each attribute contains a <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> with a common structure.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">tail</span><span class="p">())</span>
 </pre></div>
 </div>
 <p>which returns</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>                 <span class="n">h</span><span class="o">.</span><span class="mi">1</span>       <span class="n">h</span><span class="o">.</span><span class="mi">2</span>       <span class="n">h</span><span class="o">.</span><span class="mi">3</span>       <span class="n">h</span><span class="o">.</span><span class="mi">4</span>       <span class="n">h</span><span class="o">.</span><span class="mi">5</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                 <span class="n">h</span><span class="o">.</span><span class="mi">1</span>       <span class="n">h</span><span class="o">.</span><span class="mi">2</span>       <span class="n">h</span><span class="o">.</span><span class="mi">3</span>       <span class="n">h</span><span class="o">.</span><span class="mi">4</span>       <span class="n">h</span><span class="o">.</span><span class="mi">5</span>
 <span class="n">Date</span>
 <span class="mi">2013</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">24</span>  <span class="mf">0.489534</span>  <span class="mf">0.495875</span>  <span class="mf">0.501122</span>  <span class="mf">0.509194</span>  <span class="mf">0.518614</span>
 <span class="mi">2013</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">26</span>  <span class="mf">0.474691</span>  <span class="mf">0.480416</span>  <span class="mf">0.483664</span>  <span class="mf">0.491932</span>  <span class="mf">0.502419</span>
@@ -292,19 +283,19 @@ This will differ from <code class="docutils literal"><span class="pre">variance<
 <span class="mi">2013</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">31</span>  <span class="mf">0.407544</span>  <span class="mf">0.415616</span>  <span class="mf">0.422848</span>  <span class="mf">0.430246</span>  <span class="mf">0.439451</span>
 </pre></div>
 </div>
-<p>The values in the columns <code class="docutils literal"><span class="pre">h.1</span></code> are one-step ahead forecast, while values in
-<code class="docutils literal"><span class="pre">h.2</span></code>, …, <code class="docutils literal"><span class="pre">h.5</span></code> are 2, …, 5-observation ahead forecasts.  The output
+<p>The values in the columns <code class="docutils literal notranslate"><span class="pre">h.1</span></code> are one-step ahead forecast, while values in
+<code class="docutils literal notranslate"><span class="pre">h.2</span></code>, …, <code class="docutils literal notranslate"><span class="pre">h.5</span></code> are 2, …, 5-observation ahead forecasts.  The output
 is aligned so that the Date column is the final data used to generate the
-forecast, so that <code class="docutils literal"><span class="pre">h.1</span></code> in row <code class="docutils literal"><span class="pre">2013-12-31</span></code> is the one-step ahead forecast
+forecast, so that <code class="docutils literal notranslate"><span class="pre">h.1</span></code> in row <code class="docutils literal notranslate"><span class="pre">2013-12-31</span></code> is the one-step ahead forecast
 made using data <strong>up to and including</strong> December 31, 2013.</p>
 <p>By default forecasts are only produced for observations after the final
 observation used to estimate the model.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">day</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">day</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">split_date</span> <span class="o">-</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">day</span><span class="p">:</span><span class="n">split_date</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">day</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>which produces</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>                <span class="n">h</span><span class="o">.</span><span class="mi">1</span>       <span class="n">h</span><span class="o">.</span><span class="mi">2</span>       <span class="n">h</span><span class="o">.</span><span class="mi">3</span>       <span class="n">h</span><span class="o">.</span><span class="mi">4</span>       <span class="n">h</span><span class="o">.</span><span class="mi">5</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                <span class="n">h</span><span class="o">.</span><span class="mi">1</span>       <span class="n">h</span><span class="o">.</span><span class="mi">2</span>       <span class="n">h</span><span class="o">.</span><span class="mi">3</span>       <span class="n">h</span><span class="o">.</span><span class="mi">4</span>       <span class="n">h</span><span class="o">.</span><span class="mi">5</span>
 <span class="n">Date</span>
 <span class="mi">2009</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">28</span>       <span class="n">NaN</span>       <span class="n">NaN</span>       <span class="n">NaN</span>       <span class="n">NaN</span>       <span class="n">NaN</span>
 <span class="mi">2009</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">29</span>       <span class="n">NaN</span>       <span class="n">NaN</span>       <span class="n">NaN</span>       <span class="n">NaN</span>       <span class="n">NaN</span>
@@ -316,7 +307,7 @@ observation used to estimate the model.</p>
 </pre></div>
 </div>
 <p>The output will always have as many rows as the data input.  Values
-that are not forecast are <code class="docutils literal"><span class="pre">nan</span></code> filled.</p>
+that are not forecast are <code class="docutils literal notranslate"><span class="pre">nan</span></code> filled.</p>
 </div>
 <div class="section" id="output-classes">
 <h2>Output Classes<a class="headerlink" href="#output-classes" title="Permalink to this headline">¶</a></h2>

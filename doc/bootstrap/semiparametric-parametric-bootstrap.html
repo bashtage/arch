@@ -4,6 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -17,16 +18,7 @@
     <title>Semiparametric Bootstraps &#8212; arch 4.3.1 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '4.3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -38,8 +30,7 @@
   
    
 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -66,39 +57,35 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar">
-        <a href="
-    ../index.html" class="text-logo">arch 4.3</a>
-        
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
-    <h2>Table Of Contents</h2>
-  </div>
-  <div class="sidebar-toc">
-    
-    
-      <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../univariate/univariate.html">Univariate Volatility Models</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="bootstrap.html">Bootstrapping</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="bootstrap_examples.html">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="confidence-intervals.html">Confidence Interval Construction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="parameter-covariance-estimation.html">Parameter Covariance Estimation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="low-level-interface.html">Low-level Interface</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Semiparametric Bootstraps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#parametric-bootstraps">Parametric Bootstraps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="iid-bootstraps.html">Bootstraps for IID data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="timeseries-bootstraps.html">Bootstraps for Time-series Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
+    <h2>Contents</h2>
+    <div class="sidebar-localtoc">
+      <ul>
+<li><a class="reference internal" href="#">Semiparametric Bootstraps</a><ul>
+<li><a class="reference internal" href="#using-partial-instead-of-extra-kwargs">Using <code class="docutils literal notranslate"><span class="pre">partial</span></code> instead of <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code></a></li>
+<li><a class="reference internal" href="#semiparametric-bootstrap-alternative-method">Semiparametric Bootstrap (Alternative Method)</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../unitroot/unitroot.html">Unit Root Tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
+<li><a class="reference internal" href="#parametric-bootstraps">Parametric Bootstraps</a></li>
 </ul>
 
-    
+    </div>
   </div>
 </div>
-        
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="low-level-interface.html"
+                        title="previous chapter">Low-level Interfaces</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="iid-bootstraps.html"
+                        title="next chapter">Independent, Identical Distributed Data (i.i.d.)</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/bootstrap/semiparametric-parametric-bootstrap.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -112,6 +99,7 @@
     </div>
   </div>
 </div>
+      
     </div>
   </div>
         <div id="right-column">
@@ -132,12 +120,12 @@
 <span id="id1"></span><h1>Semiparametric Bootstraps<a class="headerlink" href="#semiparametric-bootstraps" title="Permalink to this headline">¶</a></h1>
 <p>Functions for semi-parametric bootstraps differ from those used in
 nonparametric bootstraps.  At a minimum they must accept the keyword
-argument <code class="docutils literal"><span class="pre">params</span></code> which will contain the parameters estimated on
+argument <code class="docutils literal notranslate"><span class="pre">params</span></code> which will contain the parameters estimated on
 the original (non-bootstrap) data.  This keyword argument must be
 optional so that the function can be called without the keyword
 argument to estimate parameters.  In most applications other inputs
 will also be needed to perform the semi-parametric step - these can
-be input using the <code class="docutils literal"><span class="pre">extra_kwargs</span></code> keyword input.</p>
+be input using the <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code> keyword input.</p>
 <p>For simplicity, consider a semiparametric bootstrap of an OLS regression.
 The bootstrap step will combine the original parameter estimates and original
 regressors with bootstrapped residuals to construct a bootstrapped
@@ -145,12 +133,12 @@ regressand.  The bootstrap regressand and regressors can then be used to
 produce a bootstraped parameter estimate.</p>
 <p>The user-provided function must:</p>
 <ul class="simple">
-<li>Estimate the parameters when <code class="docutils literal"><span class="pre">params</span></code> is not provided</li>
-<li>Estimate residuals from bootstrapped data when <code class="docutils literal"><span class="pre">params</span></code> is provided
+<li>Estimate the parameters when <code class="docutils literal notranslate"><span class="pre">params</span></code> is not provided</li>
+<li>Estimate residuals from bootstrapped data when <code class="docutils literal notranslate"><span class="pre">params</span></code> is provided
 to construct bootstrapped residuals, simulate the regressand, and then
 estimate the bootstrapped parameters</li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="k">def</span> <span class="nf">ols</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x_orig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
@@ -165,7 +153,7 @@ estimate the bootstrapped parameters</li>
 </pre></div>
 </div>
 <p>This function can then be used to perform a semiparametric bootstrap</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
@@ -176,11 +164,11 @@ estimate the bootstrapped parameters</li>
 </pre></div>
 </div>
 <div class="section" id="using-partial-instead-of-extra-kwargs">
-<h2>Using <code class="docutils literal"><span class="pre">partial</span></code> instead of <code class="docutils literal"><span class="pre">extra_kwargs</span></code><a class="headerlink" href="#using-partial-instead-of-extra-kwargs" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">functools.partial</span></code> can be used instead to provide a wrapper function which
-can then be used in the bootstrap.  This example fixed the value of <code class="docutils literal"><span class="pre">x_orig</span></code>
-so that it is not necessary to use <code class="docutils literal"><span class="pre">extra_kwargs</span></code>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+<h2>Using <code class="docutils literal notranslate"><span class="pre">partial</span></code> instead of <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code><a class="headerlink" href="#using-partial-instead-of-extra-kwargs" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">functools.partial</span></code> can be used instead to provide a wrapper function which
+can then be used in the bootstrap.  This example fixed the value of <code class="docutils literal notranslate"><span class="pre">x_orig</span></code>
+so that it is not necessary to use <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
 <span class="n">ols_partial</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">ols</span><span class="p">,</span> <span class="n">x_orig</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
 <span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">ols_partial</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="s1">&#39;semi&#39;</span><span class="p">)</span>
 </pre></div>
@@ -193,7 +181,7 @@ alternative method can be used to conduct a semiparametric bootstrap. This
 requires passing both the data and the estimated residuals when intializing
 the bootstrap.</p>
 <p>First, the function used must be account for this structure.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ols_semi_v2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">resids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x_orig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ols_semi_v2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">resids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x_orig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
@@ -206,7 +194,7 @@ the bootstrap.</p>
 <p>This version can then be used to <em>directly</em> implement a semiparametric
 bootstrap, although ultimately it is not meaningfully simpler than the
 previous method.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">resids</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ols_semi_v2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">resids</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ols_semi_v2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">))</span>
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">resids</span><span class="o">=</span><span class="n">resids</span><span class="p">)</span>
 <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">ols_semi_v2</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="s1">&#39;semi&#39;</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x_orig&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">})</span>
 </pre></div>
@@ -234,21 +222,21 @@ intervals should be exact, bootstrap methods which make use of
 asymptotic normality are required (and may not be desirable).</p>
 </div>
 <p>Implementing a parametric bootstrap, like implementing a semi-parametric
-bootstrap, requires specific keyword arguments. The first is <code class="docutils literal"><span class="pre">params</span></code>,
+bootstrap, requires specific keyword arguments. The first is <code class="docutils literal notranslate"><span class="pre">params</span></code>,
 which, when present, will contain the parameters estimated on the original
-data.  The second is <code class="docutils literal"><span class="pre">rng</span></code> which will contain the
-<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.RandomState.html#numpy.random.RandomState" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">numpy.random.RandomState</span></code></a> instance that is used by the bootstrap.
+data.  The second is <code class="docutils literal notranslate"><span class="pre">rng</span></code> which will contain the
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.RandomState.html#numpy.random.RandomState" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.RandomState</span></code></a> instance that is used by the bootstrap.
 This is provided to facilitate simulation in a reproducible manner.</p>
 <p>A parametric bootstrap function must:</p>
 <ul class="simple">
-<li>Estimate the parameters when <code class="docutils literal"><span class="pre">params</span></code> is not provided</li>
-<li>Simulate data when <code class="docutils literal"><span class="pre">params</span></code> is provided and then
+<li>Estimate the parameters when <code class="docutils literal notranslate"><span class="pre">params</span></code> is not provided</li>
+<li>Simulate data when <code class="docutils literal notranslate"><span class="pre">params</span></code> is provided and then
 estimate the bootstrapped parameters on the simulated data</li>
 </ul>
 <p>This example continues the OLS example from the semiparametric example,
 only assuming that residuals are normally distributed.  The variance
 estimator is the MLE.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ols_para</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x_orig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ols_para</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x_orig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="n">e</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
@@ -265,7 +253,7 @@ estimator is the MLE.</p>
 </pre></div>
 </div>
 <p>This function can then be used to form parametric bootstrap confidence intervals.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
 <span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">ols_para</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;percentile&#39;</span><span class="p">,</span>
                  <span class="n">sampling</span><span class="o">=</span><span class="s1">&#39;parametric&#39;</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x_orig&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">})</span>
 </pre></div>
