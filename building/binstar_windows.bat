@@ -3,22 +3,15 @@ Setlocal EnableDelayedExpansion
 REM Get current directory
 SET CURRENT_WORKING_DIR=%~dp0
 REM Python and NumPy versions
-set VERSION=4.1
-set PY_VERSION=27 35 36
-set NPY_VERSION=111 112
+set VERSION=4.3.1
+set PY_VERSION=36 35 27
+set NPY_VERSION=114 113 112
 
+call conda install anaconda-client conda-build --yes
+call conda config --set anaconda_upload yes
 
-conda install anaconda-client conda-build --yes
-conda config --set anaconda_upload yes
-
-
-(for %%P in (%PY_VERSION%) do (
-    IF %%P==27 (
-        call python2_setup.bat
-    ) ELSE (
-        call python3_setup.bat
-    )
-    (for %%N in (%NPY_VERSION%) do (
+FOR %%P in (%PY_VERSION%) DO (
+    FOR %%N in (%NPY_VERSION%) DO (
 
         REM Trick to force a delay. Windows sometimes has issues with rapid file deletion
         REM call PING 1.1.1.1 -n 1 -w 5000 >NUL
@@ -40,10 +33,10 @@ conda config --set anaconda_upload yes
 
         REM Remove from binstar
         anaconda remove bashtage/arch/!VERSION!/win-64/arch-!VERSION!-np!CONDA_NPY!py!CONDA_PY!_0.tar.bz2 --force
-        conda build --numpy !CONDA_NPY! --python !CONDA_PY! binstar
+        conda build --numpy !CONDA_NPY! --python !CONDA_PY! arch
 
         REM Trick to force a delay. Windows sometimes has issues with rapid file deletion
         REM call PING 1.1.1.1 -n 1 -w 5000 >NUL
         REM rd /s /q C:\Anaconda\envs\_build
-        ))
-)) 
+        )
+)

@@ -5,7 +5,7 @@ conda config --set anaconda_upload yes
 
 cd ..
 
-export VERSION=4.1
+export VERSION=4.3.1
 ## detect OS
 if [ "$(uname)" == "Darwin" ]; then
     export OS=osx-64
@@ -18,7 +18,7 @@ fi
 
 ## declare Python and Numpy Versions
 declare -a PY_VERSIONS=( "27" "35" "36" )
-declare -a NPY_VERSIONS=( "111" "112" )
+declare -a NPY_VERSIONS=( "112" "113" "114" )
 
 ## Loop across Python and Numpy
 for PY in "${PY_VERSIONS[@]}"
@@ -28,6 +28,6 @@ do
     do
         export CONDA_NPY=${NPY}
         anaconda remove bashtage/arch/${VERSION}/${OS}/arch-${VERSION}-np${NPY}py${PY}_0.tar.bz2 -f
-        conda build --python ${PY} --numpy ${NPY} ./building/binstar
+        conda build --python ${PY} --numpy ${NPY} ./building/arch
     done
 done
