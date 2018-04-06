@@ -35,7 +35,7 @@ the choices available for forecasting.  The model can be described as
    \begin{eqnarray}
       r_t        & =    & \mu + \epsilon_t \\
       \epsilon_t & =    & \sigma_t e_t \\
-      \sigma^2_t & =    & \omega + \alpha \epsilon_t^2 + \beta \sigma^2_{t-1} \\
+      \sigma^2_t & =    & \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma^2_{t-1} \\
       e_t        & \sim & N(0,1)
    \end{eqnarray}
 

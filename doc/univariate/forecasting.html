@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Forecasting &#8212; arch 4.3.1+2.g3beffd6 documentation</title>
+    <title>Forecasting &#8212; arch 4.3.1+4.g03cd0dd documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="univariate_volatility_modeling.html" title="ARCH Modeling"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.3.1+2.g3beffd6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.3.1+4.g03cd0dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -149,7 +149,7 @@ the choices available for forecasting.  The model can be described as</p>
 \begin{eqnarray}
    r_t        &amp; =    &amp; \mu + \epsilon_t \\
    \epsilon_t &amp; =    &amp; \sigma_t e_t \\
-   \sigma^2_t &amp; =    &amp; \omega + \alpha \epsilon_t^2 + \beta \sigma^2_{t-1} \\
+   \sigma^2_t &amp; =    &amp; \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma^2_{t-1} \\
    e_t        &amp; \sim &amp; N(0,1)
 \end{eqnarray}</div><p>In code this model can be constructed using data from the S&amp;P 500 using</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
@@ -438,7 +438,7 @@ that are not forecast are <code class="docutils literal notranslate"><span class
         <li class="right" >
           <a href="univariate_volatility_modeling.html" title="ARCH Modeling"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.3.1+2.g3beffd6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.3.1+4.g03cd0dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
