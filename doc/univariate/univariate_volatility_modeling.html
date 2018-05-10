@@ -149,11 +149,11 @@ imported using <code class="docutils literal notranslate"><span class="pre">pand
 <code class="docutils literal notranslate"><span class="pre">arch.arch_model</span></code> which can specify most common models. The simplest
 invocation of <code class="docutils literal notranslate"><span class="pre">arch</span></code> will return a model with a constant mean,
 GARCH(1,1) volatility process and normally distributed errors.</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[r_t  =  \mu + \epsilon_t\]</div>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\sigma^2_t   =  \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2\]</div>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\epsilon_t  =  \sigma_t e_t,\,\,\, e_t  \sim  N(0,1)\]</div>
 <p>The model is estimated by calling <code class="docutils literal notranslate"><span class="pre">fit</span></code>. The optional inputs <code class="docutils literal notranslate"><span class="pre">iter</span></code>
 controls the frequency of output form the optimizer, and <code class="docutils literal notranslate"><span class="pre">disp</span></code>
@@ -219,9 +219,9 @@ and conditional volatility.</p>
 sets <code class="docutils literal notranslate"><span class="pre">o</span></code> to 1, which includes one lag of an asymmetric shock which
 transforms a GARCH model into a GJR-GARCH model with variance dynamics
 given by</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\sigma^2_t   =  \omega + \alpha \epsilon_{t-1}^2 + \gamma \epsilon_{t-1}^2 I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}^2\]</div>
-<p>where <span class="math notranslate">\(I\)</span> is an indicator function that takes the value 1 when its
+<p>where <span class="math notranslate nohighlight">\(I\)</span> is an indicator function that takes the value 1 when its
 argument is true.</p>
 <p>The log likelihood improves substantially with the introduction of an
 asymmetric term, and the parameter estimate is highly significant.</p>
@@ -265,14 +265,14 @@ asymmetric term, and the parameter estimate is highly significant.</p>
 values. This model is specified using <code class="docutils literal notranslate"><span class="pre">power=1.0</span></code> since the default
 power, 2, corresponds to variance processes that evolve in squares.</p>
 <p>The volatility process in a TARCH model is given by</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\sigma_t  =  \omega + \alpha \left|\epsilon_{t-1}\right| + \gamma \left|\epsilon_{t-1}\right| I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}\]</div>
-<p>More general models with other powers (<span class="math notranslate">\(\kappa\)</span>) have volatility
+<p>More general models with other powers (<span class="math notranslate nohighlight">\(\kappa\)</span>) have volatility
 dynamics given by</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\sigma_t^\kappa   = \omega + \alpha \left|\epsilon_{t-1}\right|^\kappa + \gamma \left|\epsilon_{t-1}\right|^\kappa I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}^\kappa\]</div>
 <p>where the conditional variance is
-<span class="math notranslate">\(\left(\sigma_t^\kappa\right)^{2/\kappa}\)</span>.</p>
+<span class="math notranslate nohighlight">\(\left(\sigma_t^\kappa\right)^{2/\kappa}\)</span>.</p>
 <p>The TARCH model also improves the fit, although the change in the log
 likelihood is less dramatic.</p>
 <div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>

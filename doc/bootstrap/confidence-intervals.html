@@ -238,13 +238,13 @@ default).  This can be modified using the keyword inputs <code class="docutils l
 <div class="section" id="basic-basic">
 <h3><a class="toc-backref" href="#id7">Basic (<code class="docutils literal notranslate"><span class="pre">basic</span></code>)</a><a class="headerlink" href="#basic-basic" title="Permalink to this headline">¶</a></h3>
 <p>Basic confidence intervals construct many bootstrap replications
-<span class="math notranslate">\(\hat{\theta}_b^\star\)</span> and then constructs the confidence interval as</p>
-<div class="math notranslate">
+<span class="math notranslate nohighlight">\(\hat{\theta}_b^\star\)</span> and then constructs the confidence interval as</p>
+<div class="math notranslate nohighlight">
 \[\left[\hat{\theta} + \left(\hat{\theta} - \hat{\theta}^{\star}_{u} \right),
 \hat{\theta} + \left(\hat{\theta} - \hat{\theta}^{\star}_{l} \right) \right]\]</div>
-<p>where <span class="math notranslate">\(\hat{\theta}^{\star}_{l}\)</span> and <span class="math notranslate">\(\hat{\theta}^{\star}_{u}\)</span> are
-the <span class="math notranslate">\(\alpha/2\)</span> and <span class="math notranslate">\(1-\alpha/2\)</span> empirical quantiles of the bootstrap
-distribution.  When <span class="math notranslate">\(\theta\)</span> is a vector, the empirical quantiles are
+<p>where <span class="math notranslate nohighlight">\(\hat{\theta}^{\star}_{l}\)</span> and <span class="math notranslate nohighlight">\(\hat{\theta}^{\star}_{u}\)</span> are
+the <span class="math notranslate nohighlight">\(\alpha/2\)</span> and <span class="math notranslate nohighlight">\(1-\alpha/2\)</span> empirical quantiles of the bootstrap
+distribution.  When <span class="math notranslate nohighlight">\(\theta\)</span> is a vector, the empirical quantiles are
 computed element-by-element.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
 
@@ -256,12 +256,12 @@ computed element-by-element.</p>
 <div class="section" id="percentile-percentile">
 <h3><a class="toc-backref" href="#id8">Percentile (<code class="docutils literal notranslate"><span class="pre">percentile</span></code>)</a><a class="headerlink" href="#percentile-percentile" title="Permalink to this headline">¶</a></h3>
 <p>The percentile method directly constructs condifence intervals from the emprical
-CDF of the bootstrap parameter estimates, <span class="math notranslate">\(\hat{\theta}_b^\star\)</span>.
+CDF of the bootstrap parameter estimates, <span class="math notranslate nohighlight">\(\hat{\theta}_b^\star\)</span>.
 The confidence interval is then defined.</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\left[\hat{\theta}^{\star}_{l}, \hat{\theta}^{\star}_{u} \right]\]</div>
-<p>where <span class="math notranslate">\(\hat{\theta}^{\star}_{l}\)</span> and <span class="math notranslate">\(\hat{\theta}^{\star}_{u}\)</span> are
-the <span class="math notranslate">\(\alpha/2\)</span> and <span class="math notranslate">\(1-\alpha/2\)</span> empirical quantiles of the bootstrap
+<p>where <span class="math notranslate nohighlight">\(\hat{\theta}^{\star}_{l}\)</span> and <span class="math notranslate nohighlight">\(\hat{\theta}^{\star}_{u}\)</span> are
+the <span class="math notranslate nohighlight">\(\alpha/2\)</span> and <span class="math notranslate nohighlight">\(1-\alpha/2\)</span> empirical quantiles of the bootstrap
 distribution.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
 
@@ -275,10 +275,10 @@ distribution.</p>
 <p>The asymptotic normal approximation method estimates the covairance of
 the parameters and then combines this with the usual quantiles from a normal
 distribution.  The confidence interval is then</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\left[\hat{\theta} + \hat{\sigma}\Phi^{-1}\left(\alpha/2\right),
 \hat{\theta} - \hat{\sigma}\Phi^{-1}\left(\alpha/2\right), \right]\]</div>
-<p>where <span class="math notranslate">\(\hat{\sigma}\)</span> is the bootstrap estimate of the parameter standard
+<p>where <span class="math notranslate nohighlight">\(\hat{\sigma}\)</span> is the bootstrap estimate of the parameter standard
 error.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
 
@@ -295,14 +295,14 @@ parameter standard errors can be analytically computed, or a nested bootstrap,
 to bootstrap studentized versions of the original statistic.  This can produce
 higher-order refinements in some circumstances.</p>
 <p>The confidence interval is then</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\left[\hat{\theta} + \hat{\sigma}\hat{G}^{-1}\left(\alpha/2\right),
 \hat{\theta} + \hat{\sigma}\hat{G}^{-1}\left(1-\alpha/2\right), \right]\]</div>
-<p>where <span class="math notranslate">\(\hat{G}\)</span> is the estimated quantile function for the studentized
-data and where <span class="math notranslate">\(\hat{\sigma}\)</span> is a bootstrap estimate of the parameter
+<p>where <span class="math notranslate nohighlight">\(\hat{G}\)</span> is the estimated quantile function for the studentized
+data and where <span class="math notranslate nohighlight">\(\hat{\sigma}\)</span> is a bootstrap estimate of the parameter
 standard error.</p>
 <p>The version that uses a nested bootstrap is simple to implement although it can
-be slow since it requires <span class="math notranslate">\(B\)</span> inner bootstraps of each of the <span class="math notranslate">\(B\)</span>
+be slow since it requires <span class="math notranslate nohighlight">\(B\)</span> inner bootstraps of each of the <span class="math notranslate nohighlight">\(B\)</span>
 outer bootstraps.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
 
@@ -360,7 +360,7 @@ improve confidence intervals.</p>
 </pre></div>
 </div>
 <p>The bias-corrected confidence interval is identical to the bias-corrected and
-accelerated where <span class="math notranslate">\(a=0\)</span>.</p>
+accelerated where <span class="math notranslate nohighlight">\(a=0\)</span>.</p>
 </div>
 <div class="section" id="bias-corrected-and-accelerated-bca">
 <h3><a class="toc-backref" href="#id12">Bias-corrected and accelerated (<code class="docutils literal notranslate"><span class="pre">bca</span></code>)</a><a class="headerlink" href="#bias-corrected-and-accelerated-bca" title="Permalink to this headline">¶</a></h3>
@@ -376,18 +376,18 @@ parameter is set to 0.</p>
 </pre></div>
 </div>
 <p>The confidence interval is based on the empirical  distribution of the bootstrap
-parameter estimates, <span class="math notranslate">\(\hat{\theta}_b^\star\)</span>, where the percentiles used
+parameter estimates, <span class="math notranslate nohighlight">\(\hat{\theta}_b^\star\)</span>, where the percentiles used
 are</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\Phi\left(
 \Phi^{-1}\left(\hat{b}\right)+\frac{\Phi^{-1}\left(\hat{b}\right)
 +z_{\alpha}}{1-\hat{a}\left(\Phi^{-1}\left(\hat{b}\right)+z_{\alpha}\right)}
 \right)\]</div>
-<p>where <span class="math notranslate">\(z_{\alpha}\)</span> is the usual quantile from the normal distribution and
-<span class="math notranslate">\(b\)</span> is the empirical bias estimate,</p>
-<div class="math notranslate">
+<p>where <span class="math notranslate nohighlight">\(z_{\alpha}\)</span> is the usual quantile from the normal distribution and
+<span class="math notranslate nohighlight">\(b\)</span> is the empirical bias estimate,</p>
+<div class="math notranslate nohighlight">
 \[\hat{b}=\#\left\{ \hat{\theta}_{b}^{\star}&lt;\hat{\theta}\right\} / B\]</div>
-<p><span class="math notranslate">\(a\)</span> is a skewness-like estimator using a leave-one-out jackknife.</p>
+<p><span class="math notranslate nohighlight">\(a\)</span> is a skewness-like estimator using a leave-one-out jackknife.</p>
 </div>
 </div>
 </div>

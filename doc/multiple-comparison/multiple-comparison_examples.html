@@ -148,12 +148,12 @@ of the forecast error that is increasing in the absolute error. Leading
 examples are Mean Square Error (MSE) and Mean Absolute Deviation (MAD).</p>
 <div class="section" id="the-test-of-superior-predictive-ability-spa">
 <h2>The test of Superior Predictive Ability (SPA)<a class="headerlink" href="#the-test-of-superior-predictive-ability-spa" title="Permalink to this headline">¶</a></h2>
-<p>This procedure requires a <span class="math notranslate">\(t\)</span>-element array of benchmark losses
-and a <span class="math notranslate">\(t\)</span> by <span class="math notranslate">\(k\)</span>-element array of model losses. The null
+<p>This procedure requires a <span class="math notranslate nohighlight">\(t\)</span>-element array of benchmark losses
+and a <span class="math notranslate nohighlight">\(t\)</span> by <span class="math notranslate nohighlight">\(k\)</span>-element array of model losses. The null
 hypothesis is that no model is better than the benchmark, or</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[H_0: \max_i E[L_i] \geq E[L_{bm}]\]</div>
-<p>where <span class="math notranslate">\(L_i\)</span> is the loss from model <span class="math notranslate">\(i\)</span> and <span class="math notranslate">\(L_{bm}\)</span> is
+<p>where <span class="math notranslate nohighlight">\(L_i\)</span> is the loss from model <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(L_{bm}\)</span> is
 the loss from the benchmark model.</p>
 <p>This procedure is normally used when there are many competing
 forecasting models such as in the study of technical trading rules. The
@@ -206,7 +206,7 @@ contains the probability that the null is true given the realizations.</p>
 <p>In this case, one would not reject. The three p-values correspond to
 different re-centerings of the losses. In general, the <code class="docutils literal notranslate"><span class="pre">consistent</span></code>
 p-value should be used. It should always be the case that</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[lower \leq consistent \leq upper .\]</div>
 <p>See the original papers for more details.</p>
 <div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">SPA</span>
@@ -276,7 +276,7 @@ reasonable 1000).</p>
 </pre></div>
 </div>
 <p>Finally the pvalues can be plotted. Ideally they should form a
-<span class="math notranslate">\(45^o\)</span> line indicating the size is correct. Both the consistent
+<span class="math notranslate nohighlight">\(45^o\)</span> line indicating the size is correct. Both the consistent
 and upper perform well. The lower has too many small p-values.</p>
 <div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 

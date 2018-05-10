@@ -190,7 +190,7 @@ likelihoods (True) or the sum (False)</li>
 </table>
 <p class="rubric">Notes</p>
 <p>The log-likelihood of a single data point x is</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\ln f\left(x\right)=-\frac{1}{2}\left(\ln2\pi+\ln\sigma^{2}
 +\frac{x^{2}}{\sigma^{2}}\right)\]</div>
 </dd></dl>
@@ -308,12 +308,12 @@ likelihoods (True) or the sum (False)</li>
 </table>
 <p class="rubric">Notes</p>
 <p>The log-likelihood of a single data point x is</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\ln\Gamma\left(\frac{\nu+1}{2}\right)
 -\ln\Gamma\left(\frac{\nu}{2}\right)
 -\frac{1}{2}\ln(\pi\left(\nu-2\right)\sigma^{2})
 -\frac{\nu+1}{2}\ln(1+x^{2}/(\sigma^{2}(\nu-2)))\]</div>
-<p>where <span class="math notranslate">\(\Gamma\)</span> is the gamma function.</p>
+<p>where <span class="math notranslate nohighlight">\(\Gamma\)</span> is the gamma function.</p>
 </dd></dl>
 
 <dl class="method">
@@ -367,9 +367,9 @@ produce a moment-based estimator for the starting values.</p>
 <dd><p>Standardized Skewed Student’s <a class="footnote-reference" href="#id2" id="id1">[1]</a> distribution for use with ARCH models</p>
 <p class="rubric">Notes</p>
 <p>The Standardized Skewed Student’s distribution takes two parameters,
-<span class="math notranslate">\(\eta\)</span> and <span class="math notranslate">\(\lambda\)</span>. <span class="math notranslate">\(\eta\)</span> controls the tail shape
+<span class="math notranslate nohighlight">\(\eta\)</span> and <span class="math notranslate nohighlight">\(\lambda\)</span>. <span class="math notranslate nohighlight">\(\eta\)</span> controls the tail shape
 and is similar to the shape parameter in a Standardized Student’s t.
-<span class="math notranslate">\(\lambda\)</span> controls the skewness. When <span class="math notranslate">\(\lambda=0\)</span> the
+<span class="math notranslate nohighlight">\(\lambda\)</span> controls the skewness. When <span class="math notranslate nohighlight">\(\lambda=0\)</span> the
 distribution is identical to a standardized Student’s t.</p>
 <p class="rubric">References</p>
 <table class="docutils footnote" frame="void" id="id2" rules="none">
@@ -445,20 +445,20 @@ likelihoods (True) or the sum (False)</li>
 </table>
 <p class="rubric">Notes</p>
 <p>The log-likelihood of a single data point x is</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\ln\left[\frac{bc}{\sigma}\left(1+\frac{1}{\eta-2}
     \left(\frac{a+bx/\sigma}
     {1+sgn(x/\sigma+a/b)\lambda}\right)^{2}\right)
     ^{-\left(\eta+1\right)/2}\right],\]</div>
-<p>where <span class="math notranslate">\(2&lt;\eta&lt;\infty\)</span>, and <span class="math notranslate">\(-1&lt;\lambda&lt;1\)</span>.
-The constants <span class="math notranslate">\(a\)</span>, <span class="math notranslate">\(b\)</span>, and <span class="math notranslate">\(c\)</span> are given by</p>
-<div class="math notranslate">
+<p>where <span class="math notranslate nohighlight">\(2&lt;\eta&lt;\infty\)</span>, and <span class="math notranslate nohighlight">\(-1&lt;\lambda&lt;1\)</span>.
+The constants <span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(b\)</span>, and <span class="math notranslate nohighlight">\(c\)</span> are given by</p>
+<div class="math notranslate nohighlight">
 \[a=4\lambda c\frac{\eta-2}{\eta-1},
     \quad b^{2}=1+3\lambda^{2}-a^{2},
     \quad c=\frac{\Gamma\left(\frac{\eta+1}{2}\right)}
     {\sqrt{\pi\left(\eta-2\right)}
     \Gamma\left(\frac{\eta}{2}\right)},\]</div>
-<p>and <span class="math notranslate">\(\Gamma\)</span> is the gamma function.</p>
+<p>and <span class="math notranslate nohighlight">\(\Gamma\)</span> is the gamma function.</p>
 </dd></dl>
 
 <dl class="method">
@@ -574,12 +574,12 @@ likelihoods (True) or the sum (False)</li>
 </table>
 <p class="rubric">Notes</p>
 <p>The log-likelihood of a single data point x is</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\ln\nu-\ln c-\ln\Gamma(\frac{1}{\nu})+(1+\frac{1}{\nu})\ln2
 -\frac{1}{2}\ln\sigma^{2}
 -\frac{1}{2}\left|\frac{x}{c\sigma}\right|^{\nu}\]</div>
-<p>where <span class="math notranslate">\(\Gamma\)</span> is the gamma function and <span class="math notranslate">\(\ln c\)</span> is</p>
-<div class="math notranslate">
+<p>where <span class="math notranslate nohighlight">\(\Gamma\)</span> is the gamma function and <span class="math notranslate nohighlight">\(\ln c\)</span> is</p>
+<div class="math notranslate nohighlight">
 \[\ln c=\frac{1}{2}\left(\frac{-2}{\nu}\ln2+\ln\Gamma(\frac{1}{\nu})
 -\ln\Gamma(\frac{3}{\nu})\right).\]</div>
 </dd></dl>

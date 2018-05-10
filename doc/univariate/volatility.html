@@ -311,7 +311,7 @@ specified, although these should be strictly positive, and usually larger than 0
 </div>
 <p class="rubric">Notes</p>
 <p>In this class of processes, the variance dynamics are</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\sigma_{t}^{\lambda}=\omega
 + \sum_{i=1}^{p}\alpha_{i}\left|\epsilon_{t-i}\right|^{\lambda}
 +\sum_{j=1}^{o}\gamma_{j}\left|\epsilon_{t-j}\right|^{\lambda}
@@ -470,13 +470,13 @@ numbers</li>
 </div>
 <p class="rubric">Notes</p>
 <p>In this class of processes, the variance dynamics are</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\ln\sigma_{t}^{2}=\omega
 +\sum_{i=1}^{p}\alpha_{i}
 \left(\left|e_{t-i}\right|-\sqrt{2/\pi}\right)
 +\sum_{j=1}^{o}\gamma_{j}\left|e_{t-j}\right|
 +\sum_{k=1}^{q}\beta_{k}\ln\sigma_{t-k}^{2}\]</div>
-<p>where <span class="math notranslate">\(e_{t}=\epsilon_{t}/\sigma_{t}\)</span>.</p>
+<p>where <span class="math notranslate nohighlight">\(e_{t}=\epsilon_{t}/\sigma_{t}\)</span>.</p>
 <dl class="method">
 <dt id="arch.univariate.EGARCH.backcast">
 <code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.EGARCH.backcast" title="Permalink to this definition">¶</a></dt>
@@ -622,11 +622,11 @@ numbers</li>
 </div>
 <p class="rubric">Notes</p>
 <p>In a Heterogeneous ARCH process, variance dynamics are</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\sigma^{2}=\omega + \sum_{i=1}^{m}\alpha_{l_{i}}
 \left(l_{i}^{-1}\sum_{j=1}^{l_{i}}\epsilon_{t-j}^{2}\right)\]</div>
 <p>In the common case where lags=[1,5,22], the model is</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\sigma_{t}^{2}=\omega+\alpha_{1}\epsilon_{t-1}^{2}
 +\alpha_{5} \left(\frac{1}{5}\sum_{j=1}^{5}\epsilon_{t-j}^{2}\right)
 +\alpha_{22} \left(\frac{1}{22}\sum_{j=1}^{22}\epsilon_{t-j}^{2}\right)\]</div>
@@ -786,7 +786,7 @@ numbers</li>
 </div>
 <p class="rubric">Notes</p>
 <p>The variance dynamics of the model estimated</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\sigma_t^{2}=\omega+\sum_{i=1}^{p}\alpha_{i}\epsilon_{t-i}^{2}\]</div>
 <dl class="method">
 <dt id="arch.univariate.ARCH.backcast">
@@ -934,7 +934,7 @@ jointly with other model parameters</td>
 </div>
 <p class="rubric">Notes</p>
 <p>The variance dynamics of the model</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[\sigma_t^{2}=\lambda\sigma_{t-1}^2 + (1-\lambda)\epsilon^2_{t-1}\]</div>
 <p>When lam is provided, this model has no parameters since the smoothing
 parameter is treated as fixed. Sel lam to <cite>None</cite> to jointly estimate this

@@ -152,7 +152,7 @@ lag lengths to estimate on the common sample.</li>
 </div>
 <p class="rubric">Notes</p>
 <p>The zero mean model is described by</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[y_t = \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.ZeroMean.fit">
@@ -400,7 +400,7 @@ lag lengths to estimate on the common sample.</li>
 </div>
 <p class="rubric">Notes</p>
 <p>The constant mean model is described by</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[y_t = \mu + \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.ConstantMean.fit">
@@ -627,7 +627,7 @@ lag lengths to estimate on the common sample.</li>
 &gt;&gt;&gt; res = arx.fit(update_freq=0, disp=’off’)</p>
 <p class="rubric">Notes</p>
 <p>The AR-X model is described by</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} y_{t-L_{i}} + \gamma' x_t
 + \epsilon_t\]</div>
 <dl class="method">
@@ -907,11 +907,11 @@ lag lengths to estimate on the common sample.</li>
 </div>
 <p class="rubric">Notes</p>
 <p>The HAR-X model is described by</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[y_t = \mu + \sum_{i=1}^p \phi_{L_{i}} \bar{y}_{t-L_{i,0}:L_{i,1}}
 + \gamma' x_t + \epsilon_t\]</div>
-<p>where <span class="math notranslate">\(\bar{y}_{t-L_{i,0}:L_{i,1}}\)</span> is the average value of
-<span class="math notranslate">\(y_t\)</span> between <span class="math notranslate">\(t-L_{i,0}\)</span> and <span class="math notranslate">\(t - L_{i,1}\)</span>.</p>
+<p>where <span class="math notranslate nohighlight">\(\bar{y}_{t-L_{i,0}:L_{i,1}}\)</span> is the average value of
+<span class="math notranslate nohighlight">\(y_t\)</span> between <span class="math notranslate nohighlight">\(t-L_{i,0}\)</span> and <span class="math notranslate nohighlight">\(t - L_{i,1}\)</span>.</p>
 <dl class="method">
 <dt id="arch.univariate.HARX.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.fit" title="Permalink to this definition">¶</a></dt>
@@ -1175,7 +1175,7 @@ lag lengths to estimate on the common sample.</li>
 </div>
 <p class="rubric">Notes</p>
 <p>The LS model is described by</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[y_t = \mu + \gamma' x_t + \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.LS.fit">
