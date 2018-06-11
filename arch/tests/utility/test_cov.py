@@ -2,10 +2,11 @@ from __future__ import absolute_import, division
 
 from unittest import TestCase
 
-import numpy as np
 from numpy import log, diff
+from numpy.random import RandomState
 from numpy.testing import assert_almost_equal
 import pytest
+from statsmodels.datasets.macrodata import load
 
 from arch.utility import cov_nw
 
@@ -14,8 +15,8 @@ class TestVarNW(TestCase):
 
     @classmethod
     def setup_class(cls):
-        from statsmodels.datasets.macrodata import load
 
+        cls.rng = RandomState(12345)
         cls.cpi = log(load().data['cpi'])
         cls.inflation = diff(cls.cpi)
 
@@ -38,13 +39,13 @@ class TestVarNW(TestCase):
         assert_almost_equal(y.dot(y) / y.shape[0], simple_cov)
 
     def test_cov_nw_2d(self):
-        y = np.random.randn(100, 2)
+        y = self.rng.randn(100, 2)
         simple_cov = cov_nw(y, lags=0)
         e = y - y.mean(0)
         assert_almost_equal(e.T.dot(e) / e.shape[0], simple_cov)
 
     def test_cov_nw_2d_2lags(self):
-        y = np.random.randn(100, 2)
+        y = self.rng.randn(100, 2)
         e = y - y.mean(0)
         gamma_0 = e.T.dot(e)
         gamma_1 = e[1:].T.dot(e[:-1])
@@ -55,7 +56,7 @@ class TestVarNW(TestCase):
         assert_almost_equal(cov_nw(y, lags=2), expected)
 
     def test_cov_nw_axis(self):
-        y = np.random.randn(100, 2)
+        y = self.rng.randn(100, 2)
         e = y - y.mean(0)
         gamma_0 = e.T.dot(e)
         gamma_1 = e[1:].T.dot(e[:-1])
@@ -66,7 +67,7 @@ class TestVarNW(TestCase):
         assert_almost_equal(cov_nw(y.T, lags=2, axis=1), expected)
 
     def test_errors(self):
-        y = np.random.randn(100, 2)
+        y = self.rng.randn(100, 2)
         with pytest.raises(ValueError):
             cov_nw(y, 200)
         with pytest.raises(ValueError):

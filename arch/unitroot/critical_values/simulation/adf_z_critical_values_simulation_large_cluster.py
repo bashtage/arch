@@ -33,7 +33,7 @@ rc = Client()
 dview = rc.direct_view()
 with dview.sync_imports():
     from numpy import ones, vstack, arange, cumsum, sum, dot, zeros
-    from numpy.random import RandomState, seed, random_integers
+    from numpy.random import RandomState
     from numpy.linalg import pinv
 
 
@@ -79,10 +79,8 @@ def adf_simulation(n, trend, b, rng=None):
     Simulates the empirical distribution of the ADF z-test statistic
     """
     if rng is None:
-        seed(0)
-        from numpy.random import standard_normal
-    else:
-        standard_normal = rng.standard_normal
+        rng = RandomState(0)
+    standard_normal = rng.standard_normal
 
     nobs = n - 1
     z = None
@@ -129,8 +127,8 @@ T = array(
 T = T[::-1]
 m = T.shape[0]
 percentiles = list(arange(0.5, 100.0, 0.5))
-seed(0)
-seeds = list(random_integers(0, 2 ** 31 - 2, size=EX_NUM))
+rng = RandomState(0)
+seeds = list(rng.random_integers(0, 2 ** 31 - 2, size=EX_NUM))
 
 for tr in trends:
     results = zeros((len(percentiles), m, EX_NUM)) * nan

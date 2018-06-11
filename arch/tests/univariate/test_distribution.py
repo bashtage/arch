@@ -5,6 +5,7 @@ from unittest import TestCase
 import numpy as np
 import pytest
 import scipy.stats as stats
+from numpy.random import RandomState
 from numpy.testing import assert_almost_equal, assert_equal, assert_array_equal
 from scipy.special import gammaln, gamma
 
@@ -14,10 +15,10 @@ from arch.univariate.distribution import Normal, StudentsT, SkewStudent, General
 class TestDistributions(TestCase):
     @classmethod
     def setup_class(cls):
-        np.random.seed(12345)
+        cls.rng = RandomState(12345)
         cls.T = 1000
-        cls.resids = np.random.randn(cls.T)
-        cls.sigma2 = 1 + np.random.random(cls.resids.shape)
+        cls.resids = cls.rng.randn(cls.T)
+        cls.sigma2 = 1 + cls.rng.random_sample(cls.resids.shape)
 
     def test_normal(self):
         dist = Normal()

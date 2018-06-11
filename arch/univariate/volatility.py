@@ -9,6 +9,7 @@ import itertools
 import numpy as np
 from numpy import (sqrt, ones, zeros, isscalar, sign, ones_like, arange, empty, abs, array, finfo,
                    float64, log, exp, floor)
+from numpy.random import RandomState
 
 from arch.compat.python import add_metaclass, range
 from arch.univariate.distribution import Normal
@@ -35,21 +36,32 @@ class BootstrapRng(object):
         Array containing standardized residuals
     start : int
         Location of first forecast
+    random_state : RandomState, optional
+        NumPy RandomState instance
     """
 
-    def __init__(self, std_resid, start):
+    def __init__(self, std_resid, start, random_state=None):
         if start <= 0 or start > std_resid.shape[0]:
             raise ValueError('start must be > 0 and <= len(std_resid).')
 
         self.std_resid = std_resid
         self.start = start
         self._index = start
+        if random_state is None:
+            random_state = RandomState()
+        if not isinstance(random_state, RandomState):
+            raise TypeError('random_state must be a RandomState instance')
+        self._random_state = random_state
+
+    @property
+    def random_state(self):
+        return self._random_state
 
     def rng(self):
         def _rng(size):
             if self._index >= self.std_resid.shape[0]:
                 raise IndexError('not enough data points.')
-            index = np.random.random_sample(size)
+            index = self._random_state.random_sample(size)
             int_index = np.floor((self._index + 1) * index)
             int_index = int_index.astype(np.int64)
             self._index += 1
@@ -270,7 +282,7 @@ class VolatilityProcess(object):
         raise NotImplementedError('Must be overridden')  # pragma: no cover
 
     def _bootstrap_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
-                            simulations):
+                            simulations, random_state):
         """
         Simulation-based volatility forecasts using model residuals
 
@@ -297,6 +309,8 @@ class VolatilityProcess(object):
             Callable random number generator required if method is
             'simulation'. Must take a single shape input and return random
             samples numbers with that shape.
+        random_state : {RandomState, None}
+            NumPy RandomState instance to use in the BootstrapRng
 
         Returns
         -------
@@ -310,7 +324,7 @@ class VolatilityProcess(object):
         if start < self._min_bootstrap_obs:
             raise ValueError('start must include more than {0} '
                              'observations'.format(self._min_bootstrap_obs))
-        rng = BootstrapRng(std_resid, start).rng()
+        rng = BootstrapRng(std_resid, start, random_state=random_state).rng()
         return self._simulation_forecast(parameters, resids, backcast, var_bounds,
                                          start, horizon, simulations, rng)
 
@@ -439,7 +453,7 @@ class VolatilityProcess(object):
         raise NotImplementedError('Must be overridden')  # pragma: no cover
 
     def forecast(self, parameters, resids, backcast, var_bounds, start=None, horizon=1,
-                 method='analytic', simulations=1000, rng=None):
+                 method='analytic', simulations=1000, rng=None, random_state=None):
         """
         Forecast volatility from the model
 
@@ -468,6 +482,8 @@ class VolatilityProcess(object):
             Callable random number generator required if method is
             'simulation'. Must take a single shape input and return random
             samples numbers with that shape.
+        random_state : RandomState, optional
+            NumPy RandomState instance to use when method is 'bootstrap'
 
         Returns
         -------
@@ -507,7 +523,7 @@ class VolatilityProcess(object):
                                  'observations, and the ratio of horizon-to-start < 20%.')
 
             return self._bootstrap_forecast(parameters, resids, backcast, var_bounds, start,
-                                            horizon, simulations)
+                                            horizon, simulations, random_state)
 
     def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
         """

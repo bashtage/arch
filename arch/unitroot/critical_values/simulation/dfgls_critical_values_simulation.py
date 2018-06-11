@@ -10,6 +10,7 @@ import datetime
 import numpy as np
 from numpy import ones, vstack, arange, diff, cumsum, sqrt, sum
 from numpy.linalg import pinv
+from numpy.random import RandomState
 from statsmodels.compat import range
 from statsmodels.tools.parallel import parallel_func
 
@@ -25,7 +26,7 @@ def wrapper(n, trend, b, seed=0):
     Wraps and blocks the main simulation so that the maximum amount of memory
     can be controlled on multi processor systems when executing in parallel
     """
-    rng = np.random.RandomState()
+    rng = RandomState()
     rng.seed(seed)
     remaining = b
     res = np.zeros(b)
@@ -50,10 +51,8 @@ def dfgsl_simulation(n, trend, b, rng=None):
     Simulates the empirical distribution of the DFGLS test statistic
     """
     if rng is None:
-        np.random.seed(0)
-        from numpy.random import standard_normal
-    else:
-        standard_normal = rng.standard_normal
+        rng = RandomState(0)
+    standard_normal = rng.standard_normal
 
     nobs = n
     if trend == 'c':

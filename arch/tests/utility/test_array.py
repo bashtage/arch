@@ -3,6 +3,7 @@ import os
 from unittest import TestCase
 
 import numpy as np
+from numpy.random import RandomState
 from numpy.testing import assert_equal
 from pandas import Series, DataFrame, date_range
 
@@ -17,6 +18,10 @@ from arch.compat.python import add_metaclass, long
 
 
 class TestUtils(TestCase):
+    @classmethod
+    def setup_class(cls):
+        cls.rng = RandomState(12345)
+
     def test_ensure1d(self):
         out = ensure1d(1.0, 'y')
         assert_equal(out, np.array([1.0]))
@@ -66,11 +71,11 @@ class TestUtils(TestCase):
         assert_equal(out[0], ['y'])
 
     def test_implicit_constant(self):
-        x = np.random.standard_normal((1000, 2))
+        x = self.rng.standard_normal((1000, 2))
         assert not implicit_constant(x)
         x[:, 0] = 1.0
         assert implicit_constant(x)
-        x = np.random.standard_normal((1000, 3))
+        x = self.rng.standard_normal((1000, 3))
         x[:, 0] = x[:, 0] > 0
         x[:, 1] = 1 - x[:, 0]
         assert implicit_constant(x)
