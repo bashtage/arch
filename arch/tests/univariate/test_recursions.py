@@ -4,6 +4,7 @@ import timeit
 
 import numpy as np
 import pytest
+from numpy.random import RandomState
 from numpy.testing import assert_almost_equal
 
 import arch.univariate.recursions_python as recpy
@@ -65,7 +66,8 @@ class TestRecursions(object):
     @classmethod
     def setup_class(cls):
         cls.T = 1000
-        cls.resids = np.random.randn(cls.T)
+        cls.rng = RandomState(12345)
+        cls.resids = cls.rng.randn(cls.T)
         cls.sigma2 = np.zeros_like(cls.resids)
         var = cls.resids.var()
         var_bounds = np.array([var / 1000000.0, var * 1000000.0])

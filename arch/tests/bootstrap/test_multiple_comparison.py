@@ -1,7 +1,8 @@
 from __future__ import absolute_import, division
 
 import numpy as np
-from numpy import random, linspace
+from numpy import linspace
+from numpy.random import RandomState
 from numpy.testing import assert_equal, assert_allclose
 import pandas as pd
 from pandas.util.testing import assert_series_equal, assert_frame_equal
@@ -16,7 +17,7 @@ from arch.bootstrap.multiple_comparison import SPA, StepM, MCS
 class TestSPA(object):
     @classmethod
     def setup_class(cls):
-        random.seed(23456)
+        cls.rng = RandomState(23456)
         fixed_rng = stats.chi2(10)
         cls.t = t = 1000
         cls.k = k = 500
@@ -173,7 +174,7 @@ class TestSPA(object):
 class TestStepM(object):
     @classmethod
     def setup_class(cls):
-        random.seed(23456)
+        cls.rng = RandomState(23456)
         fixed_rng = stats.chi2(10)
         cls.t = t = 1000
         cls.k = k = 500
@@ -205,7 +206,7 @@ class TestStepM(object):
         assert_equal(np.array(stepm.superior_models), numeric_locs)
 
     def test_superior_models(self):
-        adj_models = self.models - linspace(-0.4, 0.4, self.k)
+        adj_models = self.models - linspace(-1.0, 1.0, self.k)
         stepm = StepM(self.benchmark, adj_models, reps=120)
         stepm.compute()
         superior_models = stepm.superior_models
@@ -273,7 +274,7 @@ class TestStepM(object):
 class TestMCS(object):
     @classmethod
     def setup_class(cls):
-        random.seed(23456)
+        cls.rng = RandomState(23456)
         fixed_rng = stats.chi2(10)
         cls.t = t = 1000
         cls.k = k = 50
@@ -436,7 +437,3 @@ class TestMCS(object):
         mcs.compute()
         assert len(mcs.included) > 0
         assert (len(mcs.included) + len(mcs.excluded)) == 20
-
-    def test_warning_misspelled(self):
-        with pytest.deprecated_call():
-            import arch.bootstrap.multiple_comparrison  # flake8: noqa

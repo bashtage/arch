@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 import warnings
+from numpy.random import RandomState
 from numpy.testing import assert_almost_equal, assert_equal, assert_allclose, \
     assert_array_equal
 from unittest import TestCase
@@ -18,9 +19,9 @@ from arch.compat.python import range
 class TestVolatiltyProcesses(TestCase):
     @classmethod
     def setup_class(cls):
-        np.random.seed(1234)
+        cls.rng = RandomState(1234)
         cls.T = 1000
-        cls.resids = np.random.randn(cls.T)
+        cls.resids = cls.rng.randn(cls.T)
         cls.resid_var = np.var(cls.resids)
         cls.sigma2 = np.zeros_like(cls.resids)
         cls.backcast = 1.0
@@ -56,11 +57,12 @@ class TestVolatiltyProcesses(TestCase):
         b_target = np.array([0.0, 0.0, 0.0, -1.0])
         assert_array_equal(a, a_target)
         assert_array_equal(b, b_target)
-        state = np.random.get_state()
+        state = self.rng.get_state()
         rng = Normal()
+        rng.random_state.set_state(state)
         sim_data = garch.simulate(parameters, self.T, rng.simulate([]))
-        np.random.set_state(state)
-        e = np.random.standard_normal(self.T + 500)
+        self.rng.set_state(state)
+        e = self.rng.standard_normal(self.T + 500)
         initial_value = 1.0
         sigma2 = np.zeros(self.T + 500)
         data = np.zeros(self.T + 500)
@@ -127,11 +129,12 @@ class TestVolatiltyProcesses(TestCase):
         b_target = np.array([0.0, 0.0, 0.0, -1.0])
         assert_array_equal(a, a_target)
         assert_array_equal(b, b_target)
-        state = np.random.get_state()
+        state = self.rng.get_state()
         rng = Normal()
+        rng.random_state.set_state(state)
         sim_data = garch.simulate(parameters, self.T, rng.simulate([]))
-        np.random.set_state(state)
-        e = np.random.standard_normal(self.T + 500)
+        self.rng.set_state(state)
+        e = self.rng.standard_normal(self.T + 500)
         initial_value = 1.0
         sigma = np.zeros(self.T + 500)
         data = np.zeros(self.T + 500)
@@ -176,11 +179,12 @@ class TestVolatiltyProcesses(TestCase):
         b_target = np.array([0.0, 0.0, -1.0])
         assert_array_equal(a, a_target)
         assert_array_equal(b, b_target)
-        state = np.random.get_state()
+        state = self.rng.get_state()
         rng = Normal()
+        rng.random_state.set_state(state)
         sim_data = arch.simulate(parameters, self.T, rng.simulate([]))
-        np.random.set_state(state)
-        e = np.random.standard_normal(self.T + 500)
+        self.rng.set_state(state)
+        e = self.rng.standard_normal(self.T + 500)
         initial_value = 1.0
         sigma2 = np.zeros(self.T + 500)
         data = np.zeros(self.T + 500)
@@ -273,11 +277,12 @@ class TestVolatiltyProcesses(TestCase):
         b_target = np.array([0.0, 0.0, 0.0, 0.0, -1.0])
         assert_array_equal(a, a_target)
         assert_array_equal(b, b_target)
-        state = np.random.get_state()
+        state = self.rng.get_state()
         rng = Normal()
+        rng.random_state.set_state(state)
         sim_data = harch.simulate(parameters, self.T, rng.simulate([]))
-        np.random.set_state(state)
-        e = np.random.standard_normal(self.T + 500)
+        self.rng.set_state(state)
+        e = self.rng.standard_normal(self.T + 500)
         sigma2 = np.zeros(self.T + 500)
         data = np.zeros(self.T + 500)
         lagged = np.zeros(22)
@@ -352,11 +357,12 @@ class TestVolatiltyProcesses(TestCase):
         assert_array_equal(a, a_target)
         assert_array_equal(b, b_target)
 
-        state = np.random.get_state()
+        state = self.rng.get_state()
         rng = Normal()
+        rng.random_state.set_state(state)
         sim_data = cv.simulate(parameters, self.T, rng.simulate([]))
-        np.random.set_state(state)
-        e = np.random.standard_normal(self.T + 500)
+        self.rng.set_state(state)
+        e = self.rng.standard_normal(self.T + 500)
         sigma2 = np.zeros(self.T + 500)
         sigma2[:] = parameters[0]
         data = np.zeros(self.T + 500)
@@ -410,11 +416,12 @@ class TestVolatiltyProcesses(TestCase):
         b_target = np.array([0.0, 0.0, 0.0, -1.0])
         assert_array_equal(a, a_target)
         assert_array_equal(b, b_target)
-        state = np.random.get_state()
+        state = self.rng.get_state()
         rng = Normal()
+        rng.random_state.set_state(state)
         sim_data = garch.simulate(parameters, self.T, rng.simulate([]))
-        np.random.set_state(state)
-        e = np.random.standard_normal(self.T + 500)
+        self.rng.set_state(state)
+        e = self.rng.standard_normal(self.T + 500)
         initial_value = 1.0
         sigma2 = np.zeros(self.T + 500)
         data = np.zeros(self.T + 500)
@@ -467,11 +474,12 @@ class TestVolatiltyProcesses(TestCase):
         b_target = np.array([0.0, 0.0, 0.0, -1.0])
         assert_array_equal(a, a_target)
         assert_array_equal(b, b_target)
-        state = np.random.get_state()
+        state = self.rng.get_state()
         rng = Normal()
+        rng.random_state.set_state(state)
         sim_data = garch.simulate(parameters, self.T, rng.simulate([]))
-        np.random.set_state(state)
-        e = np.random.standard_normal(self.T + 500)
+        self.rng.set_state(state)
+        e = self.rng.standard_normal(self.T + 500)
         initial_value = 1.0
         sigma2 = np.zeros(self.T + 500)
         data = np.zeros(self.T + 500)
@@ -520,11 +528,12 @@ class TestVolatiltyProcesses(TestCase):
         b_target = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0])
         assert_array_equal(a, a_target)
         assert_array_equal(b, b_target)
-        state = np.random.get_state()
+        state = self.rng.get_state()
         rng = Normal()
+        rng.random_state.set_state(state)
         sim_data = arch.simulate(parameters, self.T, rng.simulate([]))
-        np.random.set_state(state)
-        e = np.random.standard_normal(self.T + 500)
+        self.rng.set_state(state)
+        e = self.rng.standard_normal(self.T + 500)
         initial_value = 1.0
         sigma2 = np.zeros(self.T + 500)
         data = np.zeros(self.T + 500)
@@ -670,11 +679,12 @@ class TestVolatiltyProcesses(TestCase):
         b_target = np.empty((0,))
         assert_array_equal(a, a_target)
         assert_array_equal(b, b_target)
-        state = np.random.get_state()
+        state = self.rng.get_state()
         rng = Normal()
+        rng.random_state.set_state(state)
         sim_data = ewma.simulate(parameters, self.T, rng.simulate([]))
-        np.random.set_state(state)
-        e = np.random.standard_normal(self.T + 500)
+        self.rng.set_state(state)
+        e = self.rng.standard_normal(self.T + 500)
         initial_value = 1.0
 
         sigma2 = np.zeros(self.T + 500)
@@ -773,9 +783,10 @@ class TestVolatiltyProcesses(TestCase):
         assert_array_equal(b, b_target)
 
         # TODO: Test RM06 Simulation
-        state = np.random.get_state()
+        state = self.rng.get_state()
         assert isinstance(state, tuple)
         rng = Normal()
+        rng.random_state.set_state(state)
         sim_data = rm06.simulate(parameters, self.T, rng.simulate([]))
         assert isinstance(sim_data, tuple)
         assert len(sim_data) == 2
@@ -824,11 +835,12 @@ class TestVolatiltyProcesses(TestCase):
         assert_array_equal(a, a_target)
         assert_array_equal(b, b_target)
 
-        state = np.random.get_state()
+        state = self.rng.get_state()
         rng = Normal()
+        rng.random_state.set_state(state)
         sim_data = egarch.simulate(parameters, self.T, rng.simulate([]))
-        np.random.set_state(state)
-        e = np.random.standard_normal(self.T + 500)
+        self.rng.set_state(state)
+        e = self.rng.standard_normal(self.T + 500)
         initial_value = 0.1 / (1 - 0.95)
         lnsigma2 = np.zeros(self.T + 500)
         lnsigma2[0] = initial_value
@@ -894,11 +906,12 @@ class TestVolatiltyProcesses(TestCase):
                              std_resids, abs_std_resids)
         assert_allclose(self.sigma2, cond_var_direct)
 
-        state = np.random.get_state()
+        state = self.rng.get_state()
         rng = Normal()
+        rng.random_state.set_state(state)
         sim_data = egarch.simulate(parameters, self.T, rng.simulate([]))
-        np.random.set_state(state)
-        e = np.random.standard_normal(self.T + 500)
+        self.rng.set_state(state)
+        e = self.rng.standard_normal(self.T + 500)
         initial_value = 0.1 / (1 - 0.95)
         lnsigma2 = np.zeros(self.T + 500)
         lnsigma2[0] = initial_value

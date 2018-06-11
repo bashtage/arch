@@ -4,6 +4,7 @@ import warnings
 from unittest import TestCase
 
 import numpy as np
+from numpy.random import RandomState
 from numpy.testing import assert_equal, assert_allclose
 from pandas.util.testing import assert_frame_equal, assert_series_equal
 import pandas as pd
@@ -22,20 +23,16 @@ from arch.bootstrap._samplers_python import (stationary_bootstrap_sample,
                                              stationary_bootstrap_sample_python)  # noqa
 from arch.bootstrap.base import _loo_jackknife
 
-warnings.simplefilter("always", RuntimeWarning)
-warnings.simplefilter("always")
-
 
 class TestBootstrap(TestCase):
     @classmethod
     def setup_class(cls):
         warnings.simplefilter("always", RuntimeWarning)
-        warnings.simplefilter("always")
 
-        np.random.seed(1234)
-        cls.y = np.random.randn(1000)
-        cls.x = np.random.randn(1000, 2)
-        cls.z = np.random.randn(1000, 1)
+        cls.rng = RandomState(1234)
+        cls.y = cls.rng.randn(1000)
+        cls.x = cls.rng.randn(1000, 2)
+        cls.z = cls.rng.randn(1000, 1)
 
         cls.y_series = pd.Series(cls.y)
         cls.z_df = pd.DataFrame(cls.z)
@@ -702,8 +699,8 @@ class TestBootstrap(TestCase):
         """
         Test all three implementations are identical
         """
-        indices = np.array(np.random.randint(0, 1000, 1000), dtype=np.int64)
-        u = np.random.random_sample(1000)
+        indices = np.array(self.rng.randint(0, 1000, 1000), dtype=np.int64)
+        u = self.rng.random_sample(1000)
         p = 0.1
         indices_orig = indices.copy()
 

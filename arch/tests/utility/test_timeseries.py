@@ -6,7 +6,7 @@ import warnings
 import numpy as np
 import pandas as pd
 import pytest
-from numpy.random import randn
+from numpy.random import RandomState
 from numpy.testing import (assert_equal, assert_array_almost_equal,
                            assert_array_equal)
 from pandas.util.testing import assert_frame_equal, assert_produces_warning
@@ -15,16 +15,20 @@ from arch.utility.timeseries import add_trend, ColumnNameConflict
 
 
 class TestAddTrend(TestCase):
+    @classmethod
+    def setup_class(cls):
+        cls.rng = RandomState(12345)
+
     def test_add_trend_prepend(self):
         n = 10
-        x = randn(n, 1)
+        x = self.rng.randn(n, 1)
         trend_1 = add_trend(x, trend='ct', prepend=True)
         trend_2 = add_trend(x, trend='ct', prepend=False)
         assert_equal(trend_1[:, :2], trend_2[:, 1:])
 
     def test_add_time_trend_dataframe(self):
         n = 10
-        x = randn(n, 1)
+        x = self.rng.randn(n, 1)
         x = pd.DataFrame(x, columns=['col1'])
         trend_1 = add_trend(x, trend='t')
         assert_array_almost_equal(np.asarray(trend_1['trend']),
@@ -32,7 +36,7 @@ class TestAddTrend(TestCase):
 
     def test_add_trend_prepend_dataframe(self):
         n = 10
-        x = randn(n, 1)
+        x = self.rng.randn(n, 1)
         x = pd.DataFrame(x, columns=['col1'])
         trend_1 = add_trend(x, trend='ct', prepend=True)
         trend_2 = add_trend(x, trend='ct', prepend=False)

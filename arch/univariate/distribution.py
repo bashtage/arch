@@ -8,7 +8,7 @@ from __future__ import absolute_import, division
 import scipy.stats as stats
 from numpy import (empty, array, sqrt, log, exp, sign, pi, sum, asarray,
                    ones_like, abs)
-from numpy.random import standard_normal, standard_t, standard_gamma, randint
+from numpy.random import RandomState
 from scipy.special import gammaln, gamma
 
 from arch.compat.python import add_metaclass
@@ -24,10 +24,20 @@ class Distribution(object):
     Template for subclassing only
     """
 
-    def __init__(self, name):
+    def __init__(self, name, random_state=None):
         self.name = name
         self.num_params = 0
         self._parameters = None
+        self._random_state = random_state
+        if random_state is None:
+            self._random_state = RandomState()
+        if not isinstance(self._random_state, RandomState):
+            raise TypeError('random_state must by a NumPy RandomState instance')
+
+    @property
+    def random_state(self):
+        """The NumPy RandomState attached to the distribution"""
+        return self._random_state
 
     def _simulator(self, size):
         """
@@ -168,8 +178,8 @@ class Normal(Distribution):
     Standard normal distribution for use with ARCH models
     """
 
-    def __init__(self):
-        super(Normal, self).__init__('Normal')
+    def __init__(self, random_state=None):
+        super(Normal, self).__init__('Normal', random_state=random_state)
         self.name = 'Normal'
 
     def constraints(self):
@@ -219,7 +229,7 @@ class Normal(Distribution):
         return empty(0)
 
     def _simulator(self, size):
-        return standard_normal(size)
+        return self._random_state.standard_normal(size)
 
     def simulate(self, parameters):
         return self._simulator
@@ -233,8 +243,9 @@ class StudentsT(Distribution):
     Standardized Student's distribution for use with ARCH models
     """
 
-    def __init__(self):
-        super(StudentsT, self).__init__('Standardized Student\'s t')
+    def __init__(self, random_state=None):
+        super(StudentsT, self).__init__('Standardized Student\'s t',
+                                        random_state=random_state)
         self.num_params = 1
 
     def constraints(self):
@@ -314,7 +325,7 @@ class StudentsT(Distribution):
     def _simulator(self, size):
         parameters = self._parameters
         std_dev = sqrt(parameters[0] / (parameters[0] - 2))
-        return standard_t(self._parameters[0], size=size) / std_dev
+        return self._random_state.standard_t(self._parameters[0], size=size) / std_dev
 
     def simulate(self, parameters):
         parameters = asarray(parameters)[None]
@@ -348,8 +359,9 @@ class SkewStudent(Distribution):
 
     """
 
-    def __init__(self):
-        super(SkewStudent, self).__init__('Standardized Skew Student\'s t')
+    def __init__(self, random_state=None):
+        super(SkewStudent, self).__init__('Standardized Skew Student\'s t',
+                                          random_state=random_state)
         self.num_params = 2
 
     def constraints(self):
@@ -556,8 +568,9 @@ class GeneralizedError(Distribution):
     Generalized Error distribution for use with ARCH models
     """
 
-    def __init__(self):
-        super(GeneralizedError, self).__init__('Generalized Error Distribution')
+    def __init__(self, random_state=None):
+        super(GeneralizedError, self).__init__('Generalized Error Distribution',
+                                               random_state=random_state)
         self.num_params = 1
 
     def constraints(self):
@@ -638,8 +651,8 @@ class GeneralizedError(Distribution):
     def _simulator(self, size):
         parameters = self._parameters
         nu = parameters[0]
-        randoms = standard_gamma(1 / nu, size) ** (1.0 / nu)
-        randoms *= 2 * randint(0, 2, size) - 1
+        randoms = self._random_state.standard_gamma(1 / nu, size) ** (1.0 / nu)
+        randoms *= 2 * self._random_state.randint(0, 2, size) - 1
         scale = sqrt(gamma(3.0 / nu) / gamma(1.0 / nu))
 
         return randoms / scale

@@ -9,6 +9,7 @@ import numpy as np
 import pytest
 import scipy.stats as stats
 from numpy import log, polyval, diff, ceil
+from numpy.random import RandomState
 from numpy.testing import assert_almost_equal, assert_equal
 from statsmodels.datasets import macrodata
 from statsmodels.regression.linear_model import OLS
@@ -29,6 +30,7 @@ DECIMAL_1 = 1
 class TestUnitRoot(TestCase):
     @classmethod
     def setup_class(cls):
+        cls.rng = RandomState(12345)
         cls.cpi = log(macrodata.load().data['cpi'])
         cls.inflation = diff(cls.cpi)
         cls.inflation_change = diff(cls.inflation)
@@ -221,7 +223,7 @@ class TestUnitRoot(TestCase):
         assert vr.stat != orig_stat
 
     def test_variance_ratio_no_constant(self):
-        y = np.random.randn(100)
+        y = self.rng.randn(100)
         vr = VarianceRatio(y, trend='nc', debiased=False)
         dy = np.diff(y)
         mu = 0.0
@@ -247,15 +249,15 @@ class TestUnitRoot(TestCase):
 class TestAutolagOLS(TestCase):
     @classmethod
     def setup_class(cls):
-        np.random.seed(12345)
+        cls.rng = RandomState(12345)
         t = 1100
         y = np.zeros(t)
-        e = np.random.randn(t)
+        e = cls.rng.randn(t)
         y[:2] = e[:2]
         for i in range(3, t):
             y[i] = 1.5 * y[i - 1] - 0.8 * y[i - 2] + 0.2 * y[i - 3] + e[i]
         cls.y = y[100:]
-        cls.x = cls.y.std() * np.random.randn(t, 2)
+        cls.x = cls.y.std() * cls.rng.randn(t, 2)
         cls.x = cls.x[100:]
         cls.z = cls.y + cls.x.sum(1)
 

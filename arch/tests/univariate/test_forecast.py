@@ -4,6 +4,7 @@ from unittest import TestCase
 import numpy as np
 import pandas as pd
 import pytest
+from numpy.random import RandomState
 from numpy.testing import assert_allclose
 from pandas.util.testing import assert_frame_equal
 
@@ -16,7 +17,7 @@ from arch.univariate.mean import _ar_to_impulse, _ar_forecast
 class TestForecasting(TestCase):
     @classmethod
     def setup_class(cls):
-        np.random.seed(12345)
+        cls.rng = RandomState(12345)
         am = arch_model(None, mean='Constant', vol='Constant')
         data = am.simulate(np.array([0.0, 1.0]), 1000)
         data.index = pd.date_range('2000-01-01', periods=data.index.shape[0])
@@ -344,7 +345,7 @@ class TestForecasting(TestCase):
         am = arch_model(self.ar1, mean='AR', vol='GARCH', lags=[1])
         res = am.fit(disp='off')
 
-        with preserved_state():
+        with preserved_state(self.rng):
             forecast = res.forecast(horizon=5, start=0, method='simulation')
 
         y = np.asarray(self.ar1)
@@ -500,8 +501,8 @@ class TestForecasting(TestCase):
         assert_allclose(res_holdback.params, res.params)
 
     def test_forecast_exogenous_regressors(self):
-        y = np.random.randn(1000, 1)
-        x = np.random.randn(1000, 2)
+        y = self.rng.randn(1000, 1)
+        x = self.rng.randn(1000, 2)
         am = HARX(y=y, x=x, lags=[1, 2])
         res = am.fit()
         fcasts = res.forecast(horizon=1, start=1)

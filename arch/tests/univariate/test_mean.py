@@ -6,7 +6,7 @@ from unittest import TestCase
 import numpy as np
 import pandas as pd
 import pytest
-from numpy.random import randn
+from numpy.random import RandomState
 from numpy.testing import assert_almost_equal, assert_equal
 from pandas.util.testing import assert_frame_equal, assert_series_equal
 
@@ -37,10 +37,9 @@ DISPLAY = 'off'
 class TestMeanModel(TestCase):
     @classmethod
     def setup_class(cls):
-        np.random.seed(1234)
+        cls.rng = RandomState(1234)
         cls.T = 1000
-        cls.resids = randn(cls.T)
-        np.random.seed(1234)
+        cls.resids = cls.rng.randn(cls.T)
         zm = ZeroMean()
         zm.volatility = GARCH()
         sim_data = zm.simulate(np.array([0.1, 0.1, 0.8]), 1000)
@@ -53,7 +52,7 @@ class TestMeanModel(TestCase):
         cls.y_series = pd.Series(cls.y,
                                  name='VeryVeryLongLongVariableName',
                                  index=date_index)
-        x = cls.resids + randn(cls.T)
+        x = cls.resids + cls.rng.randn(cls.T)
         cls.x = x[:, None]
         cls.x_df = pd.DataFrame(cls.x, columns=['LongExogenousName'])
         cls.resid_var = np.var(cls.resids)
@@ -123,9 +122,9 @@ class TestMeanModel(TestCase):
     def test_harx(self):
         harx = HARX(self.y, self.x, lags=[1, 5, 22])
         params = np.array([1.0, 0.4, 0.3, 0.2, 1.0, 1.0])
-        data = harx.simulate(params, self.T, x=randn(self.T + 500, 1))
-        iv = randn(22, 1)
-        data = harx.simulate(params, self.T, x=randn(self.T + 500, 1),
+        data = harx.simulate(params, self.T, x=self.rng.randn(self.T + 500, 1))
+        iv = self.rng.randn(22, 1)
+        data = harx.simulate(params, self.T, x=self.rng.randn(self.T + 500, 1),
                              initial_value=iv)
         assert_equal(data.shape, (self.T, 3))
         cols = ['data', 'volatility', 'errors']
@@ -259,7 +258,7 @@ class TestMeanModel(TestCase):
     def test_arx(self):
         arx = ARX(self.y, self.x, lags=3, hold_back=10, constant=False)
         params = np.array([0.4, 0.3, 0.2, 1.0, 1.0])
-        data = arx.simulate(params, self.T, x=randn(self.T + 500, 1))
+        data = arx.simulate(params, self.T, x=self.rng.randn(self.T + 500, 1))
         assert isinstance(data, pd.DataFrame)
         bounds = arx.bounds()
         for b in bounds:
@@ -380,9 +379,9 @@ class TestMeanModel(TestCase):
         res.hedgehog_plot(start=500, method='simulation', simulations=100)
 
     def test_arch_arx(self):
-        np.random.seed(12345)
-        x = np.random.randn(500, 3)
-        y = x.sum(1) + 3 * np.random.randn(500)
+        self.rng.seed(12345)
+        x = self.rng.randn(500, 3)
+        y = x.sum(1) + 3 * self.rng.randn(500)
 
         am = ARX(y=y, x=x)
         am.fit(disp=DISPLAY).summary()
@@ -503,7 +502,7 @@ class TestMeanModel(TestCase):
     def test_errors(self):
         with pytest.raises(ValueError):
             ARX(self.y, lags=np.array([[1, 2], [3, 4]]))
-        x = randn(self.y.shape[0] + 1, 1)
+        x = self.rng.randn(self.y.shape[0] + 1, 1)
         with pytest.raises(ValueError):
             ARX(self.y, x=x)
         with pytest.raises(ValueError):
@@ -511,7 +510,7 @@ class TestMeanModel(TestCase):
         with pytest.raises(ValueError):
             ARX(self.y, lags=-1)
         with pytest.raises(ValueError):
-            ARX(self.y, x=randn(1, 1), lags=-1)
+            ARX(self.y, x=self.rng.randn(1, 1), lags=-1)
 
         ar = ARX(self.y, lags=1)
         with self.assertRaises(ValueError):
@@ -521,13 +520,13 @@ class TestMeanModel(TestCase):
         with self.assertRaises(ValueError):
             v = GARCH()
             ar.distribution = v
-        x = randn(1000, 1)
+        x = self.rng.randn(1000, 1)
         with pytest.raises(ValueError):
             ar.simulate(np.ones(5), 100, x=x)
         with pytest.raises(ValueError):
             ar.simulate(np.ones(5), 100)
         with pytest.raises(ValueError):
-            ar.simulate(np.ones(3), 100, initial_value=randn(10))
+            ar.simulate(np.ones(3), 100, initial_value=self.rng.randn(10))
 
         with self.assertRaises(ValueError):
             ar.volatility = ConstantVariance()
@@ -690,7 +689,7 @@ class TestMeanModel(TestCase):
     def test_align(self):
         dates = pd.date_range('2000-01-01', '2010-01-01', freq='M')
         columns = ['h.' + '{0:>02}'.format(str(h + 1)) for h in range(10)]
-        forecasts = pd.DataFrame(np.random.randn(120, 10),
+        forecasts = pd.DataFrame(self.rng.randn(120, 10),
                                  index=dates,
                                  columns=columns)
 
@@ -864,7 +863,7 @@ class TestMeanModel(TestCase):
         assert am.hold_back == 100
 
     def test_constant_mean_fixed_variance(self):
-        variance = 2 + np.random.standard_normal(self.y.shape[0]) ** 2.0
+        variance = 2 + self.rng.standard_normal(self.y.shape[0]) ** 2.0
         mod = ConstantMean(self.y_series, volatility=FixedVariance(variance))
         res = mod.fit()
         print(res.summary())

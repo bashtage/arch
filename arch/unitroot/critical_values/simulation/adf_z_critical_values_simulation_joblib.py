@@ -13,7 +13,7 @@ from statsmodels.tools.parallel import parallel_func
 import datetime
 from numpy import array, savez, percentile, nan
 from numpy import ones, vstack, arange, cumsum, sum, dot, zeros
-from numpy.random import RandomState, seed, random_integers
+from numpy.random import RandomState
 from numpy.linalg import pinv
 
 # Number of workers
@@ -60,10 +60,8 @@ def adf_simulation(n, trend, b, rng=None):
     Simulates the empirical distribution of the ADF z-test statistic
     """
     if rng is None:
-        seed(0)
-        from numpy.random import standard_normal
-    else:
-        standard_normal = rng.standard_normal
+        rng = RandomState(0)
+    standard_normal = rng.standard_normal
 
     nobs = n - 1
     z = None
@@ -104,8 +102,8 @@ if __name__ == '__main__':
     T = T[::-1]
     m = T.shape[0]
     percentiles = list(arange(0.5, 100.0, 0.5))
-    seed(0)
-    seeds = random_integers(0, 2 ** 31 - 2, size=EX_NUM)
+    rng = RandomState(0)
+    seeds = rng.random_integers(0, 2 ** 31 - 2, size=EX_NUM)
 
     parallel, p_func, n_jobs = parallel_func(wrapper,
                                              n_jobs=NUM_JOBS,
