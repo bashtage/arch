@@ -1,14 +1,15 @@
 """
 Utility functions that do not explicitly relate to Volatility modeling
 """
-from __future__ import print_function, division, absolute_import
+from __future__ import absolute_import, division, print_function
+
 from arch.compat.pandas import is_datetime64_dtype
 from arch.compat.python import long
 
 import datetime as dt
 
 import numpy as np
-from pandas import DataFrame, Series, to_datetime, NaT, Timestamp
+from pandas import DataFrame, NaT, Series, Timestamp, to_datetime
 
 __all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor',
            'date_to_index']
@@ -31,7 +32,7 @@ def ensure1d(x, name, series=False):
         if x.shape[1] != 1:
             raise ValueError(name + ' must be squeezable to 1 dimension')
         else:
-            x = Series(x[x.columns[0]], x.index)
+            x = Series(x.iloc[:, 0], x.index)
             if not isinstance(x.name, str):
                 x.name = str(x.name)
         if series:
@@ -67,11 +68,9 @@ def ensure2d(x, name):
         elif x.ndim == 2:
             return x
         else:
-            raise ValueError(
-                'Variable ' + name + 'must be 2d or reshapable to 2d')
+            raise ValueError('Variable ' + name + 'must be 2d or reshapable to 2d')
     else:
-        raise ValueError('Variable ' + name + 'must be 2d or ' +
-                         'reshapable to 2d')
+        raise TypeError('Variable ' + name + 'must be a Series, DataFrame or ndarray.')
 
 
 def parse_dataframe(x, name):
@@ -147,11 +146,11 @@ def date_to_index(date, date_index):
         orig_date = date
         try:
             date = np.datetime64(to_datetime(date, errors='coerce'))
-        except TypeError:
-            date = np.datetime64(to_datetime(date, coerce=True))
-        if date == NaT:
-            raise ValueError('date:' + orig_date +
-                             ' cannot be parsed to a date.')
+        except (ValueError, TypeError):
+            try:
+                date = np.datetime64(to_datetime(date, coerce=True))
+            except (ValueError, TypeError):
+                raise ValueError('date:' + orig_date + ' cannot be parsed to a date.')
 
     date_index = np.asarray(date_index)
 
