@@ -147,10 +147,7 @@ def date_to_index(date, date_index):
         try:
             date = np.datetime64(to_datetime(date, errors='coerce'))
         except (ValueError, TypeError):
-            try:
-                date = np.datetime64(to_datetime(date, coerce=True))
-            except (ValueError, TypeError):
-                raise ValueError('date:' + orig_date + ' cannot be parsed to a date.')
+            raise ValueError('date:' + orig_date + ' cannot be parsed to a date.')
 
     date_index = np.asarray(date_index)
 
@@ -212,10 +209,7 @@ def find_index(s, index):
     """
     if isinstance(index, (int, long, np.int, np.int64)):
         return index
-    try:
-        date_index = to_datetime(index, errors='coerce')
-    except TypeError:
-        date_index = to_datetime(index, coerce=True)
+    date_index = to_datetime(index, errors='coerce')
 
     if date_index is NaT:
         raise ValueError(index + ' cannot be converted to datetime')

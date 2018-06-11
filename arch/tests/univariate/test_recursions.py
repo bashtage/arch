@@ -8,8 +8,10 @@ from numpy.random import RandomState
 from numpy.testing import assert_almost_equal
 
 import arch.univariate.recursions_python as recpy
+
 try:
     import arch.univariate.recursions as rec_cython
+
     missing_extension = False
 except ImportError:
     missing_extension = True
@@ -21,6 +23,7 @@ else:
 
 try:
     import numba  # noqa
+
     missing_numba = False
 except ImportError:
     missing_numba = True
@@ -107,6 +110,18 @@ var_bounds = np.ones((T, 2)) * var_bounds
         assert_almost_equal(sigma2_numba, sigma2)
         assert_almost_equal(sigma2_python, sigma2)
 
+        parameters = np.array([.1, -.4, .3, .2])
+        recpy.garch_recursion_python(parameters, fresids, sresids, sigma2, 1,
+                                     1, 1, T, backcast, self.var_bounds)
+        assert np.all(sigma2 >= self.var_bounds[:, 0])
+        assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
+
+        parameters = np.array([.1, .4, 3, 2])
+        recpy.garch_recursion_python(parameters, fresids, sresids, sigma2, 1,
+                                     1, 1, T, backcast, self.var_bounds)
+        assert np.all(sigma2 >= self.var_bounds[:, 0])
+        assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
+
     def test_harch(self):
         T, resids, = self.T, self.resids
         sigma2, backcast = self.sigma2, self.backcast
@@ -123,6 +138,18 @@ var_bounds = np.ones((T, 2)) * var_bounds
                             self.var_bounds)
         assert_almost_equal(sigma2_numba, sigma2)
         assert_almost_equal(sigma2_python, sigma2)
+
+        parameters = np.array([-.1, -.4, .3, .2])
+        recpy.harch_recursion_python(parameters, resids, sigma2, lags, T,
+                                     backcast, self.var_bounds)
+        assert np.all(sigma2 >= self.var_bounds[:, 0])
+        assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
+
+        parameters = np.array([.1, 4e8, 3, 2])
+        recpy.harch_recursion_python(parameters, resids, sigma2, lags, T,
+                                     backcast, self.var_bounds)
+        assert np.all(sigma2 >= self.var_bounds[:, 0])
+        assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
 
     def test_arch(self):
         T, resids, = self.T, self.resids
@@ -141,6 +168,18 @@ var_bounds = np.ones((T, 2)) * var_bounds
                            self.var_bounds)
         assert_almost_equal(sigma2_numba, sigma2)
         assert_almost_equal(sigma2_python, sigma2)
+
+        parameters = np.array([-.1, -.4, .3, .2])
+        recpy.arch_recursion_python(parameters, resids, sigma2, p, T,
+                                    backcast, self.var_bounds)
+        assert np.all(sigma2 >= self.var_bounds[:, 0])
+        assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
+
+        parameters = np.array([.1, 4e8, 3, 2])
+        recpy.arch_recursion_python(parameters, resids, sigma2, p, T,
+                                    backcast, self.var_bounds)
+        assert np.all(sigma2 >= self.var_bounds[:, 0])
+        assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
 
     def test_garch_power_1(self):
         T, resids, = self.T, self.resids
@@ -254,7 +293,8 @@ var_bounds = np.ones((T, 2)) * var_bounds
         rec.harch_recursion(parameters, resids, sigma2, lags, T, backcast,
                             self.var_bounds)
         assert_almost_equal(sigma2_python, sigma2)
-        assert (sigma2 >= self.var_bounds[:, 1]).all()
+        assert np.all(sigma2 >= self.var_bounds[:, 0])
+        assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
 
         parameters = np.array([-1e100, .4, .3, .2])
         recpy.harch_recursion(parameters, resids, sigma2, lags, T, backcast,
@@ -275,7 +315,8 @@ var_bounds = np.ones((T, 2)) * var_bounds
         rec.garch_recursion(parameters, fresids, sresids, sigma2, 1, 1,
                             1, T, backcast, self.var_bounds)
         assert_almost_equal(sigma2_python, sigma2)
-        assert (sigma2 >= self.var_bounds[:, 1]).all()
+        assert np.all(sigma2 >= self.var_bounds[:, 0])
+        assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
 
         parameters = np.array([-1e100, .4, .3, .2])
         recpy.garch_recursion(parameters, fresids, sresids, sigma2,
@@ -293,7 +334,8 @@ var_bounds = np.ones((T, 2)) * var_bounds
         rec.arch_recursion(parameters, resids, sigma2, 3, T, backcast,
                            self.var_bounds)
         assert_almost_equal(sigma2_python, sigma2)
-        assert (sigma2 >= self.var_bounds[:, 1]).all()
+        assert np.all(sigma2 >= self.var_bounds[:, 0])
+        assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
 
         parameters = np.array([-1e100, .4, .3, .2])
         recpy.arch_recursion(parameters, resids, sigma2, 3, T, backcast,
@@ -340,6 +382,20 @@ var_bounds = np.ones((T, 2)) * var_bounds
                 lnsigma2[t] += parameters[3] * lnsigma2[t - 1]
             sigma2[t] = np.exp(lnsigma2[t])
         assert_almost_equal(sigma2_python, sigma2)
+
+        parameters = np.array([-100.0, 0.1, -0.1, 0.95])
+        recpy.egarch_recursion_python(parameters, resids, sigma2, p, o, q,
+                                      nobs, backcast, var_bounds, lnsigma2,
+                                      std_resids, abs_std_resids)
+        assert np.all(sigma2 >= self.var_bounds[:, 0])
+        assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
+
+        parameters = np.array([0.0, 0.1, -0.1, 9.5])
+        recpy.egarch_recursion_python(parameters, resids, sigma2, p, o, q,
+                                      nobs, backcast, var_bounds, lnsigma2,
+                                      std_resids, abs_std_resids)
+        assert np.all(sigma2 >= self.var_bounds[:, 0])
+        assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
 
     @pytest.mark.skipif(missing_numba or missing_extension, reason='numba not installed')
     def test_garch_performance(self):

@@ -98,6 +98,11 @@ class TestUtils(TestCase):
         assert_equal(out[1], np.arange(10.0))
         assert_equal(out[0], ['y'])
 
+        out = parse_dataframe(None, 'name')
+        assert out[0] == ['name']
+        assert isinstance(out[1], np.ndarray)
+        assert out[1].shape == (0,)
+
     def test_implicit_constant(self):
         x = self.rng.standard_normal((1000, 2))
         assert not implicit_constant(x)
@@ -119,10 +124,7 @@ class TestUtils(TestCase):
         class B(A):
             pass
 
-        ds = """
-            Docstring
-            """
-        assert_equal(B.__doc__, ds)
+        assert_equal(B.__doc__, A.__doc__)
 
     def test_date_to_index(self):
         dr = date_range('20000101', periods=3000, freq='W')
@@ -235,8 +237,7 @@ class TestUtils(TestCase):
         assert_equal(find_index(series, '2000-01-01'), 0)
         assert_equal(find_index(series, series.index[0]), 0)
         assert_equal(find_index(series, series.index[3000]), 3000)
-        assert_equal(find_index(series, series.index[3000].to_pydatetime()),
-                     3000)
+        assert_equal(find_index(series, series.index[3000].to_pydatetime()), 3000)
         npy_date = np.datetime64(series.index[3000].to_pydatetime())
         found_loc = find_index(series, npy_date)
         assert_equal(found_loc, 3000)
@@ -249,8 +250,7 @@ class TestUtils(TestCase):
         assert_equal(find_index(df, df.index[0]), 0)
         assert_equal(find_index(df, df.index[3000]), 3000)
         assert_equal(find_index(df, df.index[3000].to_pydatetime()), 3000)
-        found_loc = find_index(df,
-                               np.datetime64(df.index[3000].to_pydatetime()))
+        found_loc = find_index(df, np.datetime64(df.index[3000].to_pydatetime()))
         assert_equal(found_loc, 3000)
         with pytest.raises(ValueError):
             find_index(df, 'bad-date')

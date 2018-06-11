@@ -853,8 +853,8 @@ class TestMeanModel(TestCase):
         res2 = am.fit(disp='off', first_obs=100, last_obs=900)
         index = self.y_series.index
         res3 = am.fit(disp='off', first_obs=index[100], last_obs=index[900])
-        assert_almost_equal(res.params.values, res2.params.values)
-        assert_almost_equal(res2.params.values, res3.params.values)
+        assert_almost_equal(res.params.values, res2.params.values, decimal=4)
+        assert_almost_equal(res2.params.values, res3.params.values, decimal=4)
 
         am = arch_model(self.y_series, mean='AR', lags=[1, 2, 4],
                         hold_back=100)
