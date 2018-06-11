@@ -1,20 +1,19 @@
+from arch.compat.python import add_metaclass, long
+
 import datetime as dt
 import os
 from unittest import TestCase
 
 import numpy as np
+import pytest
 from numpy.random import RandomState
 from numpy.testing import assert_equal
-from pandas import Series, DataFrame, date_range
+from pandas import DataFrame, Series, Timedelta, date_range
 
-from pandas import Timedelta
-
-import pytest
 from arch import doc
-from arch.utility.array import ensure1d, parse_dataframe, DocStringInheritor, \
-    date_to_index, find_index, cutoff_to_index
 from arch.univariate.base import implicit_constant
-from arch.compat.python import add_metaclass, long
+from arch.utility.array import DocStringInheritor, cutoff_to_index, date_to_index, ensure1d, \
+    ensure2d, find_index, parse_dataframe
 
 
 class TestUtils(TestCase):
@@ -43,6 +42,10 @@ class TestUtils(TestCase):
         assert isinstance(ys, np.ndarray)
         ys = ensure1d(y, 'y', True)
         assert isinstance(ys, Series)
+        y.columns = [1]
+        ys = ensure1d(y, 'y', True)
+        assert isinstance(ys, Series)
+        assert ys.name == '1'
         y = Series(np.arange(5.0), name='series')
         ys = ensure1d(y, 'y')
         assert isinstance(ys, np.ndarray)
@@ -53,9 +56,34 @@ class TestUtils(TestCase):
         assert isinstance(ys, np.ndarray)
         ys = ensure1d(y, 'y', True)
         assert isinstance(ys, Series)
+        ys.name = 1
+        ys = ensure1d(ys, None, True)
+        assert isinstance(ys, Series)
+        assert ys.name == '1'
         y = DataFrame(np.reshape(np.arange(10), (5, 2)))
         with pytest.raises(ValueError):
             ensure1d(y, 'y')
+
+    def test_ensure2d(self):
+        s = Series([1, 2, 3], name='x')
+        df = ensure2d(s, 'x')
+        assert isinstance(df, DataFrame)
+
+        df2 = ensure2d(df, 'x')
+        assert df is df2
+
+        npa = ensure2d(s.values, 'x')
+        assert isinstance(npa, np.ndarray)
+        assert npa.ndim == 2
+
+        npa = ensure2d(np.array(1.0), 'x')
+        assert isinstance(npa, np.ndarray)
+        assert npa.ndim == 2
+
+        with pytest.raises(ValueError):
+            ensure2d(np.array([[[1]]]), 'x')
+        with pytest.raises(TypeError):
+            ensure2d([1], 'x')
 
     def test_parse_dataframe(self):
         s = Series(np.arange(10.0), name='variable')
@@ -69,6 +97,11 @@ class TestUtils(TestCase):
         out = parse_dataframe(np.arange(10.0), 'y')
         assert_equal(out[1], np.arange(10.0))
         assert_equal(out[0], ['y'])
+
+        out = parse_dataframe(None, 'name')
+        assert out[0] == ['name']
+        assert isinstance(out[1], np.ndarray)
+        assert out[1].shape == (0,)
 
     def test_implicit_constant(self):
         x = self.rng.standard_normal((1000, 2))
@@ -91,10 +124,7 @@ class TestUtils(TestCase):
         class B(A):
             pass
 
-        ds = """
-            Docstring
-            """
-        assert_equal(B.__doc__, ds)
+        assert_equal(B.__doc__, A.__doc__)
 
     def test_date_to_index(self):
         dr = date_range('20000101', periods=3000, freq='W')
@@ -121,6 +151,18 @@ class TestUtils(TestCase):
         num_index = z.index
         with pytest.raises(ValueError):
             date_to_index(dt.datetime(2009, 8, 1), num_index)
+        idx = date_range('1999-12-31', periods=3)
+
+        df = DataFrame([1, 2, 3], index=idx[::-1])
+        with pytest.raises(ValueError):
+            date_to_index(idx[0], df.index)
+
+        df = DataFrame([1, 2, 3], index=[idx[0]] * 3)
+        with pytest.raises(ValueError):
+            date_to_index(idx[0], df.index)
+
+        with pytest.raises(ValueError):
+            date_to_index('NaT', idx)
 
     def test_date_to_index_timestamp(self):
         dr = date_range('20000101', periods=3000, freq='W')
@@ -195,8 +237,7 @@ class TestUtils(TestCase):
         assert_equal(find_index(series, '2000-01-01'), 0)
         assert_equal(find_index(series, series.index[0]), 0)
         assert_equal(find_index(series, series.index[3000]), 3000)
-        assert_equal(find_index(series, series.index[3000].to_pydatetime()),
-                     3000)
+        assert_equal(find_index(series, series.index[3000].to_pydatetime()), 3000)
         npy_date = np.datetime64(series.index[3000].to_pydatetime())
         found_loc = find_index(series, npy_date)
         assert_equal(found_loc, 3000)
@@ -209,13 +250,15 @@ class TestUtils(TestCase):
         assert_equal(find_index(df, df.index[0]), 0)
         assert_equal(find_index(df, df.index[3000]), 3000)
         assert_equal(find_index(df, df.index[3000].to_pydatetime()), 3000)
-        found_loc = find_index(df,
-                               np.datetime64(df.index[3000].to_pydatetime()))
+        found_loc = find_index(df, np.datetime64(df.index[3000].to_pydatetime()))
         assert_equal(found_loc, 3000)
         with pytest.raises(ValueError):
             find_index(df, 'bad-date')
         with pytest.raises(ValueError):
             find_index(df, '1900-01-01')
+
+        idx = find_index(df, 1)
+        assert idx == 1
 
 
 @pytest.mark.skipif(os.name != 'nt', reason='XVFB is broken on travis')
