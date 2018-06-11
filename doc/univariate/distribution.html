@@ -15,10 +15,10 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Distributions &#8212; arch 4.3.1+4.g03cd0dd documentation</title>
+    <title>Distributions &#8212; arch 4.3.1+6.g0250cae documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="univariate_using_fixed_variance.html" title="Using the Fixed Variance process"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.3.1+4.g03cd0dd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.3.1+6.g0250cae documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -124,7 +124,7 @@
 <h2>Normal<a class="headerlink" href="#normal" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.Normal">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">Normal</code><a class="headerlink" href="#arch.univariate.Normal" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">Normal</code><span class="sig-paren">(</span><em>random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.Normal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Standard normal distribution for use with ARCH models</p>
 <dl class="method">
 <dt id="arch.univariate.Normal.bounds">
@@ -241,7 +241,7 @@ values for the shape parameter</td>
 <h2>Student’s t<a class="headerlink" href="#student-s-t" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.StudentsT">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">StudentsT</code><a class="headerlink" href="#arch.univariate.StudentsT" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">StudentsT</code><span class="sig-paren">(</span><em>random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.StudentsT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Standardized Student’s distribution for use with ARCH models</p>
 <dl class="method">
 <dt id="arch.univariate.StudentsT.bounds">
@@ -363,7 +363,7 @@ produce a moment-based estimator for the starting values.</p>
 <h2>Skew Student’s t<a class="headerlink" href="#skew-student-s-t" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.SkewStudent">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">SkewStudent</code><a class="headerlink" href="#arch.univariate.SkewStudent" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">SkewStudent</code><span class="sig-paren">(</span><em>random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.SkewStudent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Standardized Skewed Student’s <a class="footnote-reference" href="#id2" id="id1">[1]</a> distribution for use with ARCH models</p>
 <p class="rubric">Notes</p>
 <p>The Standardized Skewed Student’s distribution takes two parameters,
@@ -508,7 +508,7 @@ produce a moment-based estimator for the starting values.</p>
 <h2>Generalized Error (GED)<a class="headerlink" href="#generalized-error-ged" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.GeneralizedError">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">GeneralizedError</code><a class="headerlink" href="#arch.univariate.GeneralizedError" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">GeneralizedError</code><span class="sig-paren">(</span><em>random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.GeneralizedError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generalized Error distribution for use with ARCH models</p>
 <dl class="method">
 <dt id="arch.univariate.GeneralizedError.bounds">
@@ -632,7 +632,7 @@ values for the shape parameter</td>
 methods.</p>
 <dl class="class">
 <dt id="arch.univariate.Distribution">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">Distribution</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.Distribution" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">Distribution</code><span class="sig-paren">(</span><em>name</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.Distribution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Template for subclassing only</p>
 </dd></dl>
 
@@ -672,7 +672,7 @@ methods.</p>
         <li class="right" >
           <a href="univariate_using_fixed_variance.html" title="Using the Fixed Variance process"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.3.1+4.g03cd0dd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.3.1+6.g0250cae documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
