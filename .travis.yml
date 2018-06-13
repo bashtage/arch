@@ -26,24 +26,23 @@ matrix:
   - python: 2.7
     env:
     - PYTHON=2.7
-    - NUMBA=0.24
-    - NUMPY=1.10
-    - SCIPY=0.17
-    - MATPLOTLIB=1.5
-    - PANDAS=0.18
+    - NUMBA=0.32
+    - NUMPY=1.12
+    - SCIPY=0.19
+    - PANDAS=0.20
     - STATSMODELS_MASTER=true
-  - python: 2.7
-    env:
-    - PYTHON=3.4
-    - NUMPY=1.11
-    - SCIPY=0.18
-    - NUMBA=0.27
-    - MATPLOTLIB=1.5
-    - PANDAS=0.18
   - python: 2.7
     env:
     - PYTHON=3.5
     - COVERAGE=true
+  - python: 2.7
+    env:
+    - PYTHON=3.6
+    - NUMBA=0.35
+    - NUMPY=1.13
+    - SCIPY=1.0
+    - MATPLOTLIB=2.0
+    - PANDAS=0.22
   - python: 2.7
     env:
     - PYTHON=3.6

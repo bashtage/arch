@@ -149,18 +149,18 @@ for examples of the multiple comparison procedures.
 These requirements reflect the testing environment.  It is possible
 that arch will work with older versions.
 
-* Python (2.7, 3.4 - 3.6)
-* NumPy (1.10+)
-* SciPy (0.16+)
-* Pandas (0.16+)
-* statsmodels (0.6+)
+* Python (2.7, 3.5 - 3.6)
+* NumPy (1.12+)
+* SciPy (0.19+)
+* Pandas (0.20+)
+* statsmodels (0.8+)
 * matplotlib (1.5+)
 
 ### Optional Requirements
 
-* Numba (0.24+) will be used if available **and** when installed using
+* Numba (0.32+) will be used if available **and** when installed using
 the --no-binary option
-* IPython (4.0+) is required to run the notebooks
+* IPython (5.0+) is required to run the notebooks
 
 ### Installing
 
