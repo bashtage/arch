@@ -1,9 +1,9 @@
-numpy>=1.10
-scipy>=0.16
-pandas>=0.16
+numpy>=1.12
+scipy>=0.19
+pandas>=0.20
 matplotlib>=1.5
 cython>=0.24
-numba>=0.24
+numba>=0.32
 pytest
-statsmodels>=0.6
+statsmodels>=0.8
 guzzle_sphinx_theme

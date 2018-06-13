@@ -63,11 +63,11 @@ class build_ext(_build_ext):
         _build_ext.build_extensions(self)
 
 
-SETUP_REQUIREMENTS = {'numpy': '1.10'}
+SETUP_REQUIREMENTS = {'numpy': '1.12'}
 REQUIREMENTS = {'Cython': '0.24',
                 'matplotlib': '1.5',
-                'scipy': '0.16',
-                'pandas': '0.18',
+                'scipy': '0.19',
+                'pandas': '0.20',
                 'statsmodels': '0.8'}
 
 ALL_REQUIREMENTS = SETUP_REQUIREMENTS.copy()
