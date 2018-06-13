@@ -474,7 +474,7 @@ class ARCHModel(object):
         # 3. Construct starting values from all models
         sv = starting_values
         if starting_values is not None:
-            sv = ensure1d(starting_values, 'starting_values')
+            sv = ensure1d(sv, 'starting_values')
             valid = (sv.shape[0] == num_params)
             if a.shape[0] > 0:
                 satisfies_constraints = a.dot(sv) - b > 0
