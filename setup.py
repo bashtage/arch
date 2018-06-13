@@ -117,10 +117,9 @@ for key in PACKAGE_CHECKS:
     if key == 'numpy':
         try:
             import numpy
-            
             try:
-                from numpy.version import short_version as version
-            except ImportError:
+                version = numpy.version.short_version
+            except AttributeError:
                 satisfies_req = False
         except ImportError:
             pass
@@ -128,9 +127,8 @@ for key in PACKAGE_CHECKS:
     elif key == 'scipy':
         try:
             import scipy
-            
             try:
-                from scipy.version import short_version as version
+                version = scipy.version.short_version
             except ImportError:
                 satisfies_req = False
         except ImportError:
@@ -176,12 +174,6 @@ except IOError as e:
 
 # Convert examples notebook to rst for docs
 try:
-    from nbconvert.utils.exceptions import ConversionException
-    from nbconvert.utils.pandoc import PandocMissing
-except ImportError as e:
-    ConversionException = PandocMissing = ValueError
-
-try:
     import nbformat as nbformat
     from nbconvert import RSTExporter
     
@@ -221,8 +213,6 @@ try:
                           'module.'.format(original=notebook,
                                            target=rst_filename))
             print('The last error was:')
-            import sys
-            
             print(sys.exc_info()[0])
             print(sys.exc_info()[1])
 
@@ -233,8 +223,6 @@ except Exception:
                   ' This only affects documentation generation and not the '
                   'operation of the module.')
     print('The last error was:')
-    import sys
-    
     print(sys.exc_info()[0])
     print(sys.exc_info()[1])
 

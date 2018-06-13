@@ -1000,14 +1000,15 @@ class ARX(HARX):
         if self._x is not None:
             self.name += '-X'
 
-    def _model_description(self):
+    def _model_description(self, include_lags=True):
         """Generates the model description for use by __str__ and related
         functions"""
-        if self.lags is not None:
-            lagstr = [str(lag[1]) for lag in self._lags.T]
-            lagstr = ', '.join(lagstr)
-        else:
-            lagstr = 'none'
+        if include_lags:
+            if self.lags is not None:
+                lagstr = [str(lag[1]) for lag in self._lags.T]
+                lagstr = ', '.join(lagstr)
+            else:
+                lagstr = 'none'
         xstr = str(self._x.shape[1]) if self._x is not None else '0'
         conststr = 'yes' if self.constant else 'no'
         od = OrderedDict()
