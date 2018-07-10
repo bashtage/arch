@@ -125,7 +125,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – The data to test for a unit root</li>
-<li><strong>lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The number of lags to use in the ADF regression.  If omitted or None,
+<li><strong>lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of lags to use in the ADF regression.  If omitted or None,
 <cite>method</cite> is used to automatically select the lag length with no more
 than <cite>max_lags</cite> are included.</li>
 <li><strong>trend</strong> (<em>{'nc'</em><em>, </em><em>'c'</em><em>, </em><em>'ct'</em><em>, </em><em>'ctt'}</em><em>, </em><em>optional</em>) – The trend component to include in the ADF test
@@ -133,7 +133,7 @@ than <cite>max_lags</cite> are included.</li>
 ‘c’ - Include a constant (Default)
 ‘ct’ - Include a constant and linear time trend
 ‘ctt’ - Include a constant and linear and quadratic time trends</li>
-<li><strong>max_lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The maximum number of lags to use when selecting lag length</li>
+<li><strong>max_lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The maximum number of lags to use when selecting lag length</li>
 <li><strong>method</strong> (<em>{'AIC'</em><em>, </em><em>'BIC'</em><em>, </em><em>'t-stat'}</em><em>, </em><em>optional</em>) – The method to use when selecting the lag length
 ‘AIC’ - Select the minimum of the Akaike IC
 ‘BIC’ - Select the minimum of the Schwarz/Bayesian IC
@@ -321,13 +321,13 @@ valid_trends for a list of supported trends</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – The data to test for a unit root</li>
-<li><strong>lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The number of lags to use in the ADF regression.  If omitted or None,
+<li><strong>lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of lags to use in the ADF regression.  If omitted or None,
 <cite>method</cite> is used to automatically select the lag length with no more
 than <cite>max_lags</cite> are included.</li>
 <li><strong>trend</strong> (<em>{'c'</em><em>, </em><em>'ct'}</em><em>, </em><em>optional</em>) – The trend component to include in the ADF test
 ‘c’ - Include a constant (Default)
 ‘ct’ - Include a constant and linear time trend</li>
-<li><strong>max_lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The maximum number of lags to use when selecting lag length</li>
+<li><strong>max_lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The maximum number of lags to use when selecting lag length</li>
 <li><strong>method</strong> (<em>{'AIC'</em><em>, </em><em>'BIC'</em><em>, </em><em>'t-stat'}</em><em>, </em><em>optional</em>) – The method to use when selecting the lag length
 ‘AIC’ - Select the minimum of the Akaike IC
 ‘BIC’ - Select the minimum of the Schwarz/Bayesian IC
@@ -445,7 +445,7 @@ for an autoregressive unit root. Econometrica 64: 813-836</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – The data to test for a unit root</li>
-<li><strong>lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The number of lags to use in the Newey-West estimator of the long-run
+<li><strong>lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of lags to use in the Newey-West estimator of the long-run
 covariance.  If omitted or None, the lag length is set automatically to
 12 * (nobs/100) ** (1/4)</li>
 <li><strong>trend</strong> (<em>{'nc'</em><em>, </em><em>'c'</em><em>, </em><em>'ct'}</em><em>, </em><em>optional</em>) – <dl class="docutils">
@@ -593,17 +593,17 @@ University, Dept of Economics, Working Papers.  Available at
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – The data to test for a random walk</li>
-<li><strong>lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – The number of periods to used in the multi-period variance, which is
+<li><strong>lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The number of periods to used in the multi-period variance, which is
 the numerator of the test statistic.  Must be at least 2</li>
 <li><strong>trend</strong> (<em>{'nc'</em><em>, </em><em>'c'}</em><em>, </em><em>optional</em>) – ‘c’ allows for a non-zero drift in the random walk, while ‘nc’ requires
 that the increments to y are mean 0</li>
-<li><strong>overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Indicates whether to use all overlapping blocks.  Default is True.  If
+<li><strong>overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Indicates whether to use all overlapping blocks.  Default is True.  If
 False, the number of observations in y minus 1 must be an exact
 multiple of lags.  If this condition is not satisfied, some values at
 the end of y will be discarded.</li>
-<li><strong>robust</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Indicates whether to use heteroskedasticity robust inference. Default
+<li><strong>robust</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Indicates whether to use heteroskedasticity robust inference. Default
 is True.</li>
-<li><strong>debiased</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Indicates whether to use a debiased version of the test. Default is
+<li><strong>debiased</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Indicates whether to use a debiased version of the test. Default is
 True. Only applicable if overlap is True.</li>
 </ul>
 </td>
@@ -721,7 +721,7 @@ Press.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – The data to test for stationarity</li>
-<li><strong>lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The number of lags to use in the Newey-West estimator of the long-run
+<li><strong>lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of lags to use in the Newey-West estimator of the long-run
 covariance.  If omitted or None, the lag length is set automatically to
 12 * (nobs/100) ** (1/4)</li>
 <li><strong>trend</strong> (<em>{'c'</em><em>, </em><em>'ct'}</em><em>, </em><em>optional</em>) – <dl class="docutils">
