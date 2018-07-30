@@ -603,6 +603,7 @@ class TestVolatiltyProcesses(TestCase):
         garch = GARCH()
         parameters = np.array([0.1, 0.2, 0.8, 4.0])
         studt = StudentsT()
+        warnings.simplefilter('always', UserWarning)
         with warnings.catch_warnings(record=True) as w:
             garch.simulate(parameters, 1000, studt.simulate([4.0]))
             assert_equal(len(w), 1)
