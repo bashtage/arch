@@ -7,6 +7,7 @@ from numpy import (diff, ceil, power, sqrt, sum, cumsum, int32, int64, interp, p
                    array, inf, abs, log, sort, polyval, empty, argwhere, arange, squeeze)
 from numpy.linalg import pinv
 from scipy.stats import norm
+from pandas import DataFrame
 
 from statsmodels.regression.linear_model import OLS
 from statsmodels.tsa.tsatools import lagmat
@@ -167,6 +168,12 @@ def _df_select_lags(y, trend, max_lags, method):
     return ic_best, best_lag
 
 
+def _add_column_names(rhs, lags):
+    """Return a DataFrame with named columns"""
+    lag_names = ['Diff.L{0}'.format(i) for i in range(1, lags + 1)]
+    return DataFrame(rhs, columns=['Level.L1'] + lag_names)
+
+
 def _estimate_df_regression(y, trend, lags):
     """Helper function that estimates the core (A)DF regression
 
@@ -195,9 +202,10 @@ def _estimate_df_regression(y, trend, lags):
     nobs = rhs.shape[0]
     lhs = rhs[:, 0].copy()  # lag-0 values are lhs, Is copy() necessary?
     rhs[:, 0] = y[-nobs - 1:-1]  # replace lag 0 with level of y
+    rhs = _add_column_names(rhs, lags)
 
     if trend != 'nc':
-        rhs = add_trend(rhs[:, :lags + 1], trend)
+        rhs = add_trend(rhs.iloc[:, :lags + 1], trend)
 
     return OLS(lhs, rhs).fit()
 
@@ -807,6 +815,7 @@ class PhillipsPerron(UnitRootTest):
         lags = self._lags
 
         rhs = y[:-1, None]
+        rhs = _add_column_names(rhs, 0)
         lhs = y[1:, None]
         if trend != 'nc':
             rhs = add_trend(rhs, trend)
