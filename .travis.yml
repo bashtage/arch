@@ -26,11 +26,10 @@ matrix:
   - python: 2.7
     env:
     - PYTHON=2.7
-    - NUMBA=0.32
-    - NUMPY=1.12
+    - NUMBA=0.35
+    - NUMPY=1.13
     - SCIPY=0.19
-    - PANDAS=0.20
-    - STATSMODELS_MASTER=true
+    - PANDAS=0.21
   - python: 2.7
     env:
     - PYTHON=3.5
@@ -38,16 +37,20 @@ matrix:
   - python: 2.7
     env:
     - PYTHON=3.6
-    - NUMBA=0.35
-    - NUMPY=1.13
+    - NUMBA=0.38
+    - NUMPY=1.14
     - SCIPY=1.0
     - MATPLOTLIB=2.0
     - PANDAS=0.22
+    - STATSMODELS_MASTER=true
   - python: 2.7
     env:
     - PYTHON=3.6
     - COVERAGE=true
     - DOCBUILD=true
+  - python: 2.7
+    env:
+    - PYTHON=3.7
 
 before_install:
   - git fetch --tags

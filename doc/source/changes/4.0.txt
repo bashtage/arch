@@ -1,5 +1,6 @@
 Changes since 4.0
 =================
+- Added named parameters to Dickey-Fuller regressions.
 - Removed use of the module-level NumPy RandomState. All random number generators use separate
   RandomState instances.
 - Fixed a bug that prevented 1-step forecasts with exogenous regressors

@@ -12,7 +12,7 @@ Autoregressive Conditional Heteroskedasticity (ARCH) and other tools for
 financial econometrics, written in Python (with Cython and/or Numba used
 to improve performance)
 
-## What is in this repository?
+## Module Contents
 
 * [Univariate ARCH Models](#volatility)
 * [Unit Root Tests](#unit-root)
@@ -20,19 +20,20 @@ to improve performance)
 * [Multiple Comparison Tests](#multiple-comparison)
 
 ## Documentation
+
 Released documentation is hosted on
 [read the docs](http://arch.readthedocs.org/en/latest/).
 Current documentation from the master branch is hosted on
 [my github pages](http://bashtage.github.io/arch/doc/index.html).
 
 ## More about ARCH
-More information about ARCH and related models is available in the notes and 
+
+More information about ARCH and related models is available in the notes and
 research available at [Kevin Sheppard's site](http://www.kevinsheppard.com).
 
 ## Contributing
 
-Contributions are welcome.  There are opportunities at many levels to 
-contribute:
+Contributions are welcome.  There are opportunities at many levels to contribute:
 
 * Implement new volatility process, e.g FIGARCH
 * Improve docstrings where unclear or with typos
@@ -42,23 +43,23 @@ contribute:
 
 <a name="volatility"/>
 
-### Volatility Modeling 
+### Volatility Modeling
 
 * Mean models
-    * Constant mean
-    * Heterogeneous Autoregression (HAR)
-    * Autoregression (AR)
-    * Zero mean
-    * Models with and without exogenous regressors
+  * Constant mean
+  * Heterogeneous Autoregression (HAR)
+  * Autoregression (AR)
+  * Zero mean
+  * Models with and without exogenous regressors
 * Volatility models
-    * ARCH
-    * GARCH
-    * TARCH
-    * EGARCH
-    * EWMA/RiskMetrics
+  * ARCH
+  * GARCH
+  * TARCH
+  * EGARCH
+  * EWMA/RiskMetrics
 * Distributions
-    * Normal
-    * Student's T
+  * Normal
+  * Student's T
 
 See the [univariate volatility example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/univariate_volatility_modeling.ipynb) for a more complete overview.
 
@@ -92,20 +93,19 @@ See the [unit root testing example notebook](http://nbviewer.ipython.org/github/
 ### Bootstrap
 
 * Bootstraps
-    * IID Bootstrap
-    * Stationary Bootstrap
-    * Circular Block Bootstrap
-    * Moving Block Bootstrap
+  * IID Bootstrap
+  * Stationary Bootstrap
+  * Circular Block Bootstrap
+  * Moving Block Bootstrap
 * Methods
-    * Confidence interval construction
-    * Covariance estimation
-    * Apply method to estimate model across bootstraps
-    * Generic Bootstrap iterator
+  * Confidence interval construction
+  * Covariance estimation
+  * Apply method to estimate model across bootstraps
+  * Generic Bootstrap iterator
 
 See the [bootstrap example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/bootstrap_examples.ipynb) 
 for examples of bootstrapping the Sharpe ratio and a Probit model from 
 Statsmodels.
-
 
 ```python
 # Import data
@@ -129,7 +129,7 @@ def sharpe_ratio(x):
 # Bootstrap confidence intervals
 from arch.bootstrap import IIDBootstrap
 bs = IIDBootstrap(returns)
-ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')    
+ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 ```
 
 <a name="multiple-comparison"/>
@@ -141,7 +141,7 @@ ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 * Stepwise (StepM)
 * Model Confidence Set (MCS)
 
-See the [multiple comparison example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/multiple-comparison_examples.ipynb) 
+See the [multiple comparison example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/multiple-comparison_examples.ipynb)
 for examples of the multiple comparison procedures.
 
 ## Requirements
@@ -149,17 +149,17 @@ for examples of the multiple comparison procedures.
 These requirements reflect the testing environment.  It is possible
 that arch will work with older versions.
 
-* Python (2.7, 3.5 - 3.6)
-* NumPy (1.12+)
+* Python (2.7, 3.5 - 3.7)
+* NumPy (1.13+)
 * SciPy (0.19+)
-* Pandas (0.20+)
+* Pandas (0.21+)
 * statsmodels (0.8+)
-* matplotlib (1.5+)
+* matplotlib (2.0+)
 
 ### Optional Requirements
 
-* Numba (0.32+) will be used if available **and** when installed using
-the --no-binary option
+* Numba (0.35+) will be used if available **and** when installed using
+  the --no-binary option
 * IPython (5.0+) is required to run the notebooks
 
 ### Installing
@@ -176,15 +176,15 @@ installed.
 
 ### Linux/OSX
 
-```
+```bash
 pip install git+https://github.com/bashtage/arch.git
 ```
 
-**Anaconda**
+#### Anaconda
 
 _Anaconda builds are not currently available for OSX._
 
-```
+```bash
 conda install arch -c bashtage
 ```
 
@@ -198,20 +198,20 @@ is more difficult and is not necessary when Numba is installed since
 just-in-time compiled code (Numba) runs as fast as ahead-of-time
 compiled extensions.
 
-**With a compiler**
+#### With a compiler
 
 If you are comfortable compiling binaries on Windows:
 
-```
+```bash
 pip install git+https://github.com/bashtage/arch.git
 ```
 
-**No Compiler**
+#### No Compiler
 
 All binary code is backed by a pure Python implementation.  Compiling
 can be skipped using the flag `--no-binary`
- 
-```
+
+```bash
 pip install git+https://github.com/bashtage/arch.git --install-option "--no-binary"
 ```
 
