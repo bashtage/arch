@@ -34,6 +34,7 @@ matrix:
     env:
     - PYTHON=3.5
     - COVERAGE=true
+    - MATPLOTLIB=1.5
   - python: 2.7
     env:
     - PYTHON=3.6
@@ -48,9 +49,11 @@ matrix:
     - PYTHON=3.6
     - COVERAGE=true
     - DOCBUILD=true
+    - MATPLOTLIB=2
   - python: 2.7
     env:
     - PYTHON=3.7
+    - MATPLOTLIB=2
 
 before_install:
   - git fetch --tags
@@ -73,7 +76,7 @@ before_install:
   - PKGS="${PKGS} patsy"; if [[ ${PATSY} ]]; then PKGS="${PKGS}=${PATSY}"; fi;
   - PKGS="${PKGS} pandas"; if [[ ${PANDAS} ]]; then PKGS="${PKGS}=${PANDAS}"; fi;
   - PKGS="${PKGS} Cython"; if [[ ${CYTHON} ]]; then PKGS="${PKGS}=${CYTHON}"; fi;
-  - PKGS="${PKGS} matplotlib"; if [[ ${MATPLOTLIB} ]]; then PKGS="${PKGS}=${MATPLOTLIB}"; fi;
+  - if [[ ${MATPLOTLIB} ]]; then PKGS="${PKGS} matplotlib=${MATPLOTLIB}"; fi;
   - PKGS="${PKGS} statsmodels"; if [[ ${STATSMODELS} ]]; then PKGS="${PKGS}=${STATSMODELS}"; fi;
   - if [[ ${USE_NUMBA} = true ]]; then PKGS="${PKGS} numba"; if [[ ${NUMBA} ]]; then PKGS="${PKGS}=${NUMBA}";  fi; fi;
   - conda create --yes --quiet -n arch-test ${PKGS} ${OPTIONAL} statsmodels
