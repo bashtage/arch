@@ -9,4 +9,6 @@ statsmodels
 sphinx>=1.5
 seaborn
 numpydoc
+nbsphinx
 guzzle_sphinx_theme
+jupyter
