@@ -100,63 +100,6 @@ cmdclass['clean'] = CleanCommand
 def strip_rc(version):
     return re.sub(r"rc\d+$", "", version)
 
-
-# Polite checks for numpy, scipy and pandas.  These should not be upgraded,
-# and if found and below the required version, refuse to install
-missing_package = '{package} is installed, but the version installed' \
-                  ', {existing_ver}, is less than the required version ' \
-                  'of {required_version}. This package must be manually ' \
-                  'updated.  If this isn\'t possible, consider installing ' \
-                  'in an empty virtual environment.'
-
-PACKAGE_CHECKS = ['numpy', 'scipy', 'pandas']
-for key in PACKAGE_CHECKS:
-    version = None
-    satisfies_req = True
-    existing_version = 'Too Old to Detect'
-    if key == 'numpy':
-        try:
-            import numpy
-            try:
-                version = numpy.version.short_version
-            except AttributeError:
-                satisfies_req = False
-        except ImportError:
-            pass
-    
-    elif key == 'scipy':
-        try:
-            import scipy
-            try:
-                version = scipy.version.short_version
-            except ImportError:
-                satisfies_req = False
-        except ImportError:
-            pass
-    
-    elif key == 'pandas':
-        try:
-            import pandas
-            if not hasattr(pandas, '__version__'):
-                raise AttributeError
-        except AttributeError:
-            try:
-                from pandas.version import short_version as version
-            except ImportError:
-                satisfies_req = False
-    else:
-        raise NotImplementedError('Unknown package')
-    
-    if version:
-        existing_version = StrictVersion(strip_rc(version))
-        satisfies_req = existing_version >= ALL_REQUIREMENTS[key]
-    if not satisfies_req:
-        requirement = ALL_REQUIREMENTS[key]
-        message = missing_package.format(package=key,
-                                         existing_ver=existing_version,
-                                         required_version=requirement)
-        raise EnvironmentError(message)
-
 cwd = os.getcwd()
 
 # Convert markdown to rst for submission
@@ -171,61 +114,6 @@ except IOError as e:
     
     warnings.warn('Unable to convert README.md.  Most likely because pandoc '
                   'is not installed')
-
-# Convert examples notebook to rst for docs
-try:
-    import nbformat as nbformat
-    from nbconvert import RSTExporter
-    
-    notebooks = glob.glob(os.path.join(cwd, 'examples', '*.ipynb'))
-    for notebook in notebooks:
-        try:
-            with open(notebook, 'rt') as f:
-                example_nb = f.read()
-            
-            rst_path = os.path.join(cwd, 'doc', 'source')
-            path_parts = os.path.split(notebook)
-            nb_filename = path_parts[-1]
-            nb_filename = nb_filename.split('.')[0]
-            source_dir = nb_filename.split('_')[0]
-            rst_filename = os.path.join(cwd, 'doc', 'source',
-                                        source_dir, nb_filename + '.rst')
-            
-            example_nb = nbformat.reader.reads(example_nb)
-            rst_export = RSTExporter()
-            (body, resources) = rst_export.from_notebook_node(example_nb)
-            with open(rst_filename, 'wt') as rst:
-                rst.write(body)
-            
-            for key in resources['outputs'].keys():
-                if key.endswith('.png'):
-                    resource_filename = os.path.join(cwd, 'doc', 'source',
-                                                     source_dir, key)
-                    with open(resource_filename, 'wb') as resource:
-                        resource.write(resources['outputs'][key])
-        
-        except Exception:
-            import warnings
-            
-            warnings.warn('Unable to convert {original} to {target}.  This '
-                          'only affects documentation generation and not the '
-                          'operation of the '
-                          'module.'.format(original=notebook,
-                                           target=rst_filename))
-            print('The last error was:')
-            print(sys.exc_info()[0])
-            print(sys.exc_info()[1])
-
-except Exception:
-    import warnings
-    
-    warnings.warn('Unable to import required modules from the jupyter project.'
-                  ' This only affects documentation generation and not the '
-                  'operation of the module.')
-    print('The last error was:')
-    print(sys.exc_info()[0])
-    print(sys.exc_info()[1])
-
 
 def run_setup(binary=True):
     if not binary:
