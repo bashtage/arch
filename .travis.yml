@@ -46,11 +46,11 @@ matrix:
   - python: 2.7
     env:
     - PYTHON=3.6
-    - COVERAGE=true
     - DOCBUILD=true
   - python: 2.7
     env:
     - PYTHON=3.7
+    - COVERAGE=true
 
 before_install:
   - git fetch --tags
