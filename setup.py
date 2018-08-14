@@ -105,7 +105,7 @@ try:
         windows_line_ending = '\r\n'
         linux_line_ending = '\n'
 
-        description = pypandoc.convert('README.md', 'rst')
+        description = pypandoc.convert('README.md', 'rst+smart')
         description = description.replace(windows_line_ending, linux_line_ending)
         description = description.replace(osx_line_ending, linux_line_ending)
         with open('README.rst', 'w') as rst:

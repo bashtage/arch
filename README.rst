@@ -1,11 +1,5 @@
-`Documentation Status <http://arch.readthedocs.org/en/latest/>`__
-`Travis Build Status <https://travis-ci.org/bashtage/arch>`__ `Appveyor
-Build
-Status <https://ci.appveyor.com/project/bashtage/arch/branch/master>`__
-`Coverage Status <https://coveralls.io/r/bashtage/arch?branch=master>`__
-`codecov <https://codecov.io/gh/bashtage/arch>`__ `Code
-Health <https://landscape.io/github/bashtage/arch/master>`__
-`DOI <http://dx.doi.org/10.5281/zenodo.15681>`__
+|Documentation Status| |Travis Build Status| |Appveyor Build Status|
+|Coverage Status| |codecov| |Code Health| |DOI|
 
 ARCH
 ====
@@ -34,7 +28,7 @@ More about ARCH
 ---------------
 
 More information about ARCH and related models is available in the notes
-and research available at `Kevin Sheppard’s
+and research available at `Kevin Sheppard's
 site <http://www.kevinsheppard.com>`__.
 
 Contributing
@@ -72,7 +66,7 @@ Volatility Modeling
 -  Distributions
 
    -  Normal
-   -  Student’s T
+   -  Student's T
    -  Generalized Error Distribution
 
 See the `univariate volatility example
@@ -181,13 +175,13 @@ Optional Requirements
 ~~~~~~~~~~~~~~~~~~~~~
 
 -  Numba (0.35+) will be used if available **and** when installed using
-   the –no-binary option
+   the --no-binary option
 -  IPython (5.0+) is required to run the notebooks
 
 Installing
 ~~~~~~~~~~
 
--  Cython (0.24+, if not using –no-binary)
+-  Cython (0.24+, if not using --no-binary)
 -  py.test (For tests)
 -  sphinx (to build docs)
 -  guzzle_sphinx_theme (to build docs)
@@ -244,4 +238,19 @@ be skipped using the flag ``--no-binary``
    pip install git+https://github.com/bashtage/arch.git --install-option "--no-binary"
 
 *Note*: If Cython is not installed, the package will be installed as-if
-–no-binary was used.
+--no-binary was used.
+
+.. |Documentation Status| image:: https://readthedocs.org/projects/arch/badge/?version=latest
+   :target: http://arch.readthedocs.org/en/latest/
+.. |Travis Build Status| image:: https://travis-ci.org/bashtage/arch.svg?branch=master
+   :target: https://travis-ci.org/bashtage/arch
+.. |Appveyor Build Status| image:: https://ci.appveyor.com/api/projects/status/nmt02u7jwcgx7i2x?svg=true
+   :target: https://ci.appveyor.com/project/bashtage/arch/branch/master
+.. |Coverage Status| image:: https://coveralls.io/repos/bashtage/arch/badge.svg?branch=master
+   :target: https://coveralls.io/r/bashtage/arch?branch=master
+.. |codecov| image:: https://codecov.io/gh/bashtage/arch/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/bashtage/arch
+.. |Code Health| image:: https://landscape.io/github/bashtage/arch/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/bashtage/arch/master
+.. |DOI| image:: https://zenodo.org/badge/doi/10.5281/zenodo.15681.svg
+   :target: http://dx.doi.org/10.5281/zenodo.15681
