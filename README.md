@@ -60,6 +60,7 @@ Contributions are welcome.  There are opportunities at many levels to contribute
 * Distributions
   * Normal
   * Student's T
+  * Generalized Error Distribution
 
 See the [univariate volatility example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/univariate_volatility_modeling.ipynb) for a more complete overview.
 

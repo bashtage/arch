@@ -12,12 +12,13 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+import glob
 import os
-from distutils.version import LooseVersion
-import glob 
 import shutil
+from distutils.version import LooseVersion
 
 import arch
+
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -27,15 +28,14 @@ on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 ##########################################################
 # Copy Examples
 ##########################################################
-root  = os.path.split(os.path.abspath(__file__))[0]
-example_path = os.path.join(root, '..','..','examples')
+root = os.path.split(os.path.abspath(__file__))[0]
+example_path = os.path.join(root, '..', '..', 'examples')
 examples = glob.glob(os.path.join(example_path, '*.ipynb'))
 for example in examples:
     _, filename = os.path.split(example)
     mod = filename.split('_')[0]
     target = os.path.join(root, mod, filename)
     shutil.copyfile(example, target)
-
 
 # -- General configuration ------------------------------------------------
 
@@ -138,6 +138,7 @@ html_theme = 'default'
 # on_rtd is whether we are on readthedocs.org
 if not on_rtd:  # only import and set the theme if we're building docs locally
     import guzzle_sphinx_theme
+
     # Adds an HTML table visitor to apply Bootstrap table classes
     html_translator_class = 'guzzle_sphinx_theme.HTMLTranslator'
     html_theme_path = guzzle_sphinx_theme.html_theme_path()
@@ -229,7 +230,6 @@ html_domain_indices = True
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'arch'
-
 
 # -- Options for LaTeX output ---------------------------------------------
 

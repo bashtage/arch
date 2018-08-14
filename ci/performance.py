@@ -8,10 +8,9 @@ from arch.tests.univariate.test_recursions import TestRecursions
 
 if __name__ == '__main__':
     try:
-        import numba
+        import numba  # noqa: F401
     except ImportError:
         sys.exit(0)
-
 
     t = TestRecursions()
     t.setup_class()

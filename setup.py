@@ -1,18 +1,15 @@
 from __future__ import print_function
 
-import glob
 import os
-import re
-import subprocess
 import sys
 from distutils.errors import CCompilerError, DistutilsExecError, DistutilsPlatformError
-from distutils.version import StrictVersion
 
 import pkg_resources
-import versioneer
 from Cython.Build import cythonize
 from setuptools import Command, Extension, find_packages, setup
 from setuptools.dist import Distribution
+
+import versioneer
 
 CYTHON_COVERAGE = os.environ.get('ARCH_CYTHON_COVERAGE', '0') in ('true', '1', 'True')
 if CYTHON_COVERAGE:
@@ -21,15 +18,14 @@ if CYTHON_COVERAGE:
 
 try:
     from Cython.Distutils.build_ext import build_ext as _build_ext
-    
+
     CYTHON_INSTALLED = True
 except ImportError:
     CYTHON_INSTALLED = False
     if CYTHON_COVERAGE:
         raise ImportError('cython is required for cython coverage. Unset '
                           'ARCH_CYTHON_COVERAGE')
-    
-    
+
     class _build_ext(object):
         pass
 
@@ -38,9 +34,9 @@ FAILED_COMPILER_ERROR = """
 *                               WARNING                                      *
 ******************************************************************************
 
-Unable to build binary modules for arch.  While these are not required to run 
-any code in the package, it is strongly recommended to either compile the 
-extension modules or to use numba. 
+Unable to build binary modules for arch.  While these are not required to run
+any code in the package, it is strongly recommended to either compile the
+extension modules or to use numba.
 
 ******************************************************************************
 *                               WARNING                                      *
@@ -55,10 +51,10 @@ cmdclass = versioneer.get_cmdclass()
 class build_ext(_build_ext):
     def build_extensions(self):
         numpy_incl = pkg_resources.resource_filename('numpy', 'core/include')
-        
+
         for ext in self.extensions:
             if (hasattr(ext, 'include_dirs') and
-                        numpy_incl not in ext.include_dirs):
+                    numpy_incl not in ext.include_dirs):
                 ext.include_dirs.append(numpy_incl)
         _build_ext.build_extensions(self)
 
@@ -79,48 +75,58 @@ class BinaryDistribution(Distribution):
 
 class CleanCommand(Command):
     user_options = []
-    
+
     def run(self):
         raise NotImplementedError('Use git clean -xfd instead')
-    
+
     def initialize_options(self):
         pass
-    
+
     def finalize_options(self):
         pass
 
 
 cmdclass['clean'] = CleanCommand
 
-
-def strip_rc(version):
-    return re.sub(r"rc\d+$", "", version)
-
-cwd = os.getcwd()
-
-# Convert markdown to rst for submission
-long_description = ''
 try:
-    cmd = 'pandoc --from=markdown --to=rst --output=README.rst README.md'
-    proc = subprocess.Popen(cmd, shell=True)
-    proc.wait()
-    long_description = open(os.path.join(cwd, "README.rst")).read()
-except IOError as e:
+    markdown = os.stat('README.md').st_mtime
+    if os.path.exists('README.rst'):
+        rst = os.stat('README.rst').st_mtime
+    else:
+        rst = markdown - 1
+
+    if rst >= markdown:
+        with open('README.rst', 'r') as rst:
+            description = rst.read()
+    else:
+        import pypandoc
+
+        osx_line_ending = '\r'
+        windows_line_ending = '\r\n'
+        linux_line_ending = '\n'
+
+        description = pypandoc.convert('README.md', 'rst')
+        description = description.replace(windows_line_ending, linux_line_ending)
+        description = description.replace(osx_line_ending, linux_line_ending)
+        with open('README.rst', 'w') as rst:
+            rst.write(description)
+except (ImportError, OSError):
     import warnings
-    
-    warnings.warn('Unable to convert README.md.  Most likely because pandoc '
-                  'is not installed')
+
+    warnings.warn("Unable to convert README.md to README.rst", UserWarning)
+    description = open('README.md').read()
+
 
 def run_setup(binary=True):
     if not binary:
-        del REQUIREMENTS['Cython']
+        del SETUP_REQUIREMENTS['Cython']
         extensions = []
     else:
         directives = {'linetrace': CYTHON_COVERAGE}
         macros = []
         if CYTHON_COVERAGE:
             macros.append(('CYTHON_TRACE', '1'))
-        
+
         ext_modules = []
         ext_modules.append(Extension("arch.univariate.recursions",
                                      ["./arch/univariate/recursions.pyx"],
@@ -131,12 +137,12 @@ def run_setup(binary=True):
         extensions = cythonize(ext_modules,
                                force=CYTHON_COVERAGE,
                                compiler_directives=directives)
-    
+
     setup(name='arch',
           license='NCSA',
           version=versioneer.get_version(),
           description='ARCH for Python',
-          long_description=long_description,
+          long_description=description,
           author='Kevin Sheppard',
           author_email='kevin.sheppard@economics.ox.ac.uk',
           url='http://github.com/bashtage/arch',
@@ -177,10 +183,10 @@ try:
     build_binary = '--no-binary' not in sys.argv and CYTHON_INSTALLED
     if '--no-binary' in sys.argv:
         sys.argv.remove('--no-binary')
-    
+
     run_setup(binary=build_binary)
 except (CCompilerError, DistutilsExecError, DistutilsPlatformError, IOError, ValueError):
     run_setup(binary=False)
     import warnings
-    
+
     warnings.warn(FAILED_COMPILER_ERROR, UserWarning)

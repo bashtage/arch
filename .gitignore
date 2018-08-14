@@ -7,7 +7,6 @@ build/
 dist
 .benchmarks/
 .cache/
-README.rst
 doc/**/*.ipynb
 .pytest_cache
 __pycache__
