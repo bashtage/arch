@@ -11,7 +11,7 @@ which is similar to the size of a test.
 .. toctree::
     :maxdepth: 1
 
-    Examples <multiple-comparison_examples>
+    Examples <multiple-comparison_examples.ipynb>
     Module Reference <multiple-comparison-reference>
     Background and References <background>
 

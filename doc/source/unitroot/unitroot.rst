@@ -22,7 +22,7 @@ process with an alternative of a unit root.
     :maxdepth: 1
 
     Introduction <introduction>
-    Examples <unitroot_examples>
+    Examples <unitroot_examples.ipynb>
     Unit Root Tests <tests>
 
 

@@ -80,8 +80,13 @@ before_install:
   - source activate arch-test
   - pip install flake8 nbconvert nbformat pytest coverage coveralls pytest-cov codecov pytest-xdist
   - if [[ ${STATSMODELS_MASTER} = true ]]; then sh ./ci/statsmodels-master.sh; fi;
-  - if [[ ${DOCBUILD} = true ]]; then conda install sphinx ipython doctr numpydoc -c conda-forge; fi;
-  - if [[ ${DOCBUILD} = true ]]; then pip install guzzle_sphinx_theme; fi;
+  - |
+    if [[ ${DOCBUILD} = true ]]; then 
+      conda install sphinx ipython numpydoc jupyter seaborn -c conda-forge
+      pip install doctr nbsphinx guzzle_sphinx_theme -q
+      sudo apt-get install -y enchant
+      pip install sphinxcontrib-spelling
+    fi
   - export SRCDIR=${PWD}
   - conda list
   - export PYTHONHASHSEED=0
