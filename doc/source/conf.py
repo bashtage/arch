@@ -14,12 +14,28 @@
 
 import os
 from distutils.version import LooseVersion
+import glob 
+import shutil
+
 import arch
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 # sys.path.insert(0, os.path.abspath('.'))
+
+##########################################################
+# Copy Examples
+##########################################################
+root  = os.path.split(os.path.abspath(__file__))[0]
+example_path = os.path.join(root, '..','..','examples')
+examples = glob.glob(os.path.join(example_path, '*.ipynb'))
+for example in examples:
+    _, filename = os.path.split(example)
+    mod = filename.split('_')[0]
+    target = os.path.join(root, mod, filename)
+    shutil.copyfile(example, target)
+
 
 # -- General configuration ------------------------------------------------
 
@@ -41,7 +57,8 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.intersphinx',
     'IPython.sphinxext.ipython_console_highlighting',
-    'IPython.sphinxext.ipython_directive'
+    'IPython.sphinxext.ipython_directive',
+    'nbsphinx'
 ]
 
 # Add any paths that contain templates here, relative to this directory.

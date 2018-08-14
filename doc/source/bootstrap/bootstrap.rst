@@ -13,7 +13,7 @@ parameters and the (internally generated) sampling scheme.
 .. toctree::
     :maxdepth: 1
 
-    Examples <bootstrap_examples>
+    Examples <bootstrap_examples.ipynb>
     Confidence Interval Construction <confidence-intervals>
     Parameter Covariance Estimation <parameter-covariance-estimation>
     Low-level Interface <low-level-interface>
