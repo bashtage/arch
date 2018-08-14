@@ -7,11 +7,11 @@ Univariate Volatility Models
     :maxdepth: 1
 
     Introduction <introduction>
-    Examples <univariate_volatility_modeling>
+    Examples <univariate_volatility_modeling.ipynb>
     Forecasting <forecasting>
-    Forecasting Examples <univariate_volatility_forecasting>
+    Forecasting Examples <univariate_volatility_forecasting.ipynb>
     Mean Models <mean>
     Volatility Processes <volatility>
-    Using the Fixed Variance Process <univariate_using_fixed_variance>
+    Using the Fixed Variance Process <univariate_using_fixed_variance.ipynb>
     Distributions <distribution>
     Background and References <background>

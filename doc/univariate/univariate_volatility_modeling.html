@@ -1,0 +1,1105 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>ARCH Modeling &#8212; arch 4.4+8.g6181efe documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Forecasting" href="forecasting.html" />
+    <link rel="prev" title="Introduction to ARCH Models" href="introduction.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="forecasting.html" title="Forecasting"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="introduction.html" title="Introduction to ARCH Models"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4+8.g6181efe documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">arch 4.4</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="univariate.html">Univariate Volatility Models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forecasting.html">Forecasting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_forecasting.html">Forecasting Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mean.html">Mean Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="volatility.html">Volatility Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="univariate_using_fixed_variance.html">Using the Fixed Variance Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distribution.html">Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../bootstrap/bootstrap.html">Bootstrapping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../unitroot/unitroot.html">Unit Root Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="univariate.html">Univariate Volatility Models</a></li>
+              
+              <li>ARCH Modeling</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 9ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+</style>
+<div class="section" id="ARCH-Modeling">
+<h1>ARCH Modeling<a class="headerlink" href="#ARCH-Modeling" title="Permalink to this headline">¶</a></h1>
+<p><em>This setup code is required to run in an IPython notebook</em></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">seaborn</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Setup">
+<h2>Setup<a class="headerlink" href="#Setup" title="Permalink to this headline">¶</a></h2>
+<p>These examples will all make use of financial data from Yahoo! Finance
+imported using <code class="docutils literal notranslate"><span class="pre">pandas-datareader</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="kn">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="kn">as</span> <span class="nn">web</span>
+<span class="n">st</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1990</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">en</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">get_data_yahoo</span><span class="p">(</span><span class="s1">&#39;^GSPC&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">st</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">en</span><span class="p">)</span>
+<span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Adj Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">figure</span> <span class="o">=</span> <span class="n">returns</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/univariate_univariate_volatility_modeling_5_0.png" src="../_images/univariate_univariate_volatility_modeling_5_0.png" />
+</div>
+</div>
+<div class="section" id="Specifying-Common-Models">
+<h3>Specifying Common Models<a class="headerlink" href="#Specifying-Common-Models" title="Permalink to this headline">¶</a></h3>
+<p>The simplest way to specify a model is to use the model constructor
+<code class="docutils literal notranslate"><span class="pre">arch.arch_model</span></code> which can specify most common models. The simplest
+invocation of <code class="docutils literal notranslate"><span class="pre">arch</span></code> will return a model with a constant mean,
+GARCH(1,1) volatility process and normally distributed errors.</p>
+<div class="math notranslate nohighlight">
+\[r_t  =  \mu + \epsilon_t\]</div>
+<div class="math notranslate nohighlight">
+\[\sigma^2_t   =  \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2\]</div>
+<div class="math notranslate nohighlight">
+\[\epsilon_t  =  \sigma_t e_t,\,\,\, e_t  \sim  N(0,1)\]</div>
+<p>The model is estimated by calling <code class="docutils literal notranslate"><span class="pre">fit</span></code>. The optional inputs <code class="docutils literal notranslate"><span class="pre">iter</span></code>
+controls the frequency of output form the optimizer, and <code class="docutils literal notranslate"><span class="pre">disp</span></code>
+controls whether convergence information is returned. The results class
+returned offers direct access to the estimated parameters and related
+quantities, as well as a <code class="docutils literal notranslate"><span class="pre">summary</span></code> of the estimation results.</p>
+</div>
+</div>
+<div class="section" id="GARCH-(with-a-Constant-Mean)">
+<h2>GARCH (with a Constant Mean)<a class="headerlink" href="#GARCH-(with-a-Constant-Mean)" title="Permalink to this headline">¶</a></h2>
+<p>The default set of options produces a model with a constant mean,
+GARCH(1,1) conditional variance and normal errors.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">arch</span> <span class="kn">import</span> <span class="n">arch_model</span>
+<span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Iteration:      5,   Func. Count:     39,   Neg. LLF: 8791.774500116655
+Iteration:     10,   Func. Count:     74,   Neg. LLF: 8788.102549023128
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: 8788.10239792
+            Iterations: 11
+            Function evaluations: 80
+            Gradient evaluations: 11
+                     Constant Mean - GARCH Model Results
+==============================================================================
+Dep. Variable:              Adj Close   R-squared:                      -0.000
+Mean Model:             Constant Mean   Adj. R-squared:                 -0.000
+Vol Model:                      GARCH   Log-Likelihood:               -8788.10
+Distribution:                  Normal   AIC:                           17584.2
+Method:            Maximum Likelihood   BIC:                           17611.4
+                                        No. Observations:                 6552
+Date:                Thu, Aug 04 2016   Df Residuals:                     6548
+Time:                        17:17:33   Df Model:                            4
+                                 Mean Model
+============================================================================
+                 coef    std err          t      P&gt;|t|      95.0% Conf. Int.
+----------------------------------------------------------------------------
+mu             0.0558  9.923e-03      5.626  1.844e-08 [3.638e-02,7.527e-02]
+                              Volatility Model
+============================================================================
+                 coef    std err          t      P&gt;|t|      95.0% Conf. Int.
+----------------------------------------------------------------------------
+omega          0.0125  3.312e-03      3.762  1.686e-04 [5.968e-03,1.895e-02]
+alpha[1]       0.0820  1.097e-02      7.475  7.694e-14   [6.053e-02,  0.104]
+beta[1]        0.9077  1.194e-02     76.008      0.000     [  0.884,  0.931]
+============================================================================
+
+Covariance estimator: robust
+</pre></div></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">plot()</span></code> can be used to quickly visualize the standardized residuals
+and conditional volatility.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">annualize</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/univariate_univariate_volatility_modeling_12_0.png" src="../_images/univariate_univariate_volatility_modeling_12_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="GJR-GARCH">
+<h2>GJR-GARCH<a class="headerlink" href="#GJR-GARCH" title="Permalink to this headline">¶</a></h2>
+<p>Additional inputs can be used to construct other models. This example
+sets <code class="docutils literal notranslate"><span class="pre">o</span></code> to 1, which includes one lag of an asymmetric shock which
+transforms a GARCH model into a GJR-GARCH model with variance dynamics
+given by</p>
+<div class="math notranslate nohighlight">
+\[\sigma^2_t   =  \omega + \alpha \epsilon_{t-1}^2 + \gamma \epsilon_{t-1}^2 I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}^2\]</div>
+<p>where <span class="math notranslate nohighlight">\(I\)</span> is an indicator function that takes the value 1 when its
+argument is true.</p>
+<p>The log likelihood improves substantially with the introduction of an
+asymmetric term, and the parameter estimate is highly significant.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+                   Constant Mean - GJR-GARCH Model Results
+==============================================================================
+Dep. Variable:              Adj Close   R-squared:                      -0.000
+Mean Model:             Constant Mean   Adj. R-squared:                 -0.000
+Vol Model:                  GJR-GARCH   Log-Likelihood:               -8672.60
+Distribution:                  Normal   AIC:                           17355.2
+Method:            Maximum Likelihood   BIC:                           17389.1
+                                        No. Observations:                 6552
+Date:                Thu, Aug 04 2016   Df Residuals:                     6547
+Time:                        17:17:34   Df Model:                            5
+                                 Mean Model
+============================================================================
+                 coef    std err          t      P&gt;|t|      95.0% Conf. Int.
+----------------------------------------------------------------------------
+mu             0.0254  9.751e-03      2.606  9.155e-03 [6.302e-03,4.453e-02]
+                               Volatility Model
+=============================================================================
+                 coef    std err          t      P&gt;|t|       95.0% Conf. Int.
+-----------------------------------------------------------------------------
+omega          0.0161  3.668e-03      4.392  1.123e-05  [8.920e-03,2.330e-02]
+alpha[1]       0.0000  5.520e-03      0.000      1.000 [-1.082e-02,1.082e-02]
+gamma[1]       0.1457  2.044e-02      7.127  1.025e-12      [  0.106,  0.186]
+beta[1]        0.9119  1.247e-02     73.107      0.000      [  0.887,  0.936]
+=============================================================================
+
+Covariance estimator: robust
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="TARCH/ZARCH">
+<h2>TARCH/ZARCH<a class="headerlink" href="#TARCH/ZARCH" title="Permalink to this headline">¶</a></h2>
+<p>TARCH (also known as ZARCH) model the <em>volatility</em> using absolute
+values. This model is specified using <code class="docutils literal notranslate"><span class="pre">power=1.0</span></code> since the default
+power, 2, corresponds to variance processes that evolve in squares.</p>
+<p>The volatility process in a TARCH model is given by</p>
+<div class="math notranslate nohighlight">
+\[\sigma_t  =  \omega + \alpha \left|\epsilon_{t-1}\right| + \gamma \left|\epsilon_{t-1}\right| I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}\]</div>
+<p>More general models with other powers (<span class="math notranslate nohighlight">\(\kappa\)</span>) have volatility
+dynamics given by</p>
+<div class="math notranslate nohighlight">
+\[\sigma_t^\kappa   = \omega + \alpha \left|\epsilon_{t-1}\right|^\kappa + \gamma \left|\epsilon_{t-1}\right|^\kappa I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}^\kappa\]</div>
+<p>where the conditional variance is
+<span class="math notranslate nohighlight">\(\left(\sigma_t^\kappa\right)^{2/\kappa}\)</span>.</p>
+<p>The TARCH model also improves the fit, although the change in the log
+likelihood is less dramatic.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Iteration:      5,   Func. Count:     46,   Neg. LLF: 8681.97568934476
+Iteration:     10,   Func. Count:     86,   Neg. LLF: 8656.294806089767
+Iteration:     15,   Func. Count:    125,   Neg. LLF: 8655.188052112766
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: 8655.18802807
+            Iterations: 17
+            Function evaluations: 140
+            Gradient evaluations: 17
+                  Constant Mean - TARCH/ZARCH Model Results
+==============================================================================
+Dep. Variable:              Adj Close   R-squared:                      -0.000
+Mean Model:             Constant Mean   Adj. R-squared:                 -0.000
+Vol Model:                TARCH/ZARCH   Log-Likelihood:               -8655.19
+Distribution:                  Normal   AIC:                           17320.4
+Method:            Maximum Likelihood   BIC:                           17354.3
+                                        No. Observations:                 6552
+Date:                Thu, Aug 04 2016   Df Residuals:                     6547
+Time:                        17:17:34   Df Model:                            5
+                                 Mean Model
+============================================================================
+                 coef    std err          t      P&gt;|t|      95.0% Conf. Int.
+----------------------------------------------------------------------------
+mu             0.0197  4.341e-03      4.538  5.667e-06 [1.119e-02,2.821e-02]
+                               Volatility Model
+=============================================================================
+                 coef    std err          t      P&gt;|t|       95.0% Conf. Int.
+-----------------------------------------------------------------------------
+omega          0.0211  3.589e-03      5.891  3.832e-09  [1.411e-02,2.818e-02]
+alpha[1]   5.9723e-03  5.938e-03      1.006      0.314 [-5.665e-03,1.761e-02]
+gamma[1]       0.1349  1.421e-02      9.495  2.195e-21      [  0.107,  0.163]
+beta[1]        0.9228  8.562e-03    107.786      0.000      [  0.906,  0.940]
+=============================================================================
+
+Covariance estimator: robust
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Student’s-T-Errors">
+<h2>Student’s T Errors<a class="headerlink" href="#Student’s-T-Errors" title="Permalink to this headline">¶</a></h2>
+<p>Financial returns are often heavy tailed, and a Student’s T distribution
+is a simple method to capture this feature. The call to <code class="docutils literal notranslate"><span class="pre">arch</span></code> changes
+the distribution from a Normal to a Students’s T.</p>
+<p>The standardized residuals appear to be heavy tailed with an estimated
+degree of freedom near 10. The log-likelihood also shows a large
+increase.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">&#39;StudentsT&#39;</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Iteration:      5,   Func. Count:     50,   Neg. LLF: 8592.43156639778
+Iteration:     10,   Func. Count:     95,   Neg. LLF: 8564.682574204755
+Iteration:     15,   Func. Count:    139,   Neg. LLF: 8564.232620019455
+Iteration:     20,   Func. Count:    180,   Neg. LLF: 8564.231390133198
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: 8564.23138967
+            Iterations: 20
+            Function evaluations: 182
+            Gradient evaluations: 20
+                     Constant Mean - TARCH/ZARCH Model Results
+====================================================================================
+Dep. Variable:                    Adj Close   R-squared:                      -0.000
+Mean Model:                   Constant Mean   Adj. R-squared:                 -0.000
+Vol Model:                      TARCH/ZARCH   Log-Likelihood:               -8564.23
+Distribution:      Standardized Student&#39;s t   AIC:                           17140.5
+Method:                  Maximum Likelihood   BIC:                           17181.2
+                                              No. Observations:                 6552
+Date:                      Thu, Aug 04 2016   Df Residuals:                     6546
+Time:                              17:17:34   Df Model:                            6
+                                 Mean Model
+============================================================================
+                 coef    std err          t      P&gt;|t|      95.0% Conf. Int.
+----------------------------------------------------------------------------
+mu             0.0343  4.326e-03      7.921  2.352e-15 [2.579e-02,4.275e-02]
+                               Volatility Model
+=============================================================================
+                 coef    std err          t      P&gt;|t|       95.0% Conf. Int.
+-----------------------------------------------------------------------------
+omega          0.0171  3.062e-03      5.576  2.465e-08  [1.107e-02,2.308e-02]
+alpha[1]   2.7187e-03  5.182e-03      0.525      0.600 [-7.438e-03,1.288e-02]
+gamma[1]       0.1403  1.381e-02     10.155  3.150e-24      [  0.113,  0.167]
+beta[1]        0.9271  7.699e-03    120.410      0.000      [  0.912,  0.942]
+                              Distribution
+========================================================================
+                 coef    std err          t      P&gt;|t|  95.0% Conf. Int.
+------------------------------------------------------------------------
+nu             7.9801      0.789     10.120  4.522e-24 [  6.434,  9.526]
+========================================================================
+
+Covariance estimator: robust
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Fixing-Parameters">
+<h2>Fixing Parameters<a class="headerlink" href="#Fixing-Parameters" title="Permalink to this headline">¶</a></h2>
+<p>In some circumstances, fixed rather than estimated parameters might be
+of interest. A model-result-like class can be generated using the
+<code class="docutils literal notranslate"><span class="pre">fix()</span></code> method. The class returend is identical to the usual model
+result class except that information about inference (standard errors,
+t-stats, etc) is not available.</p>
+<p>In the example, I fix the parameters to a symmetric version of the
+previously estimated model.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fixed_res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fix</span><span class="p">([</span><span class="mf">0.0235</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.9382</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">fixed_res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+                      Constant Mean - TARCH/ZARCH Model Results
+=====================================================================================
+Dep. Variable:                     Adj Close   R-squared:                          --
+Mean Model:                    Constant Mean   Adj. R-squared:                     --
+Vol Model:                       TARCH/ZARCH   Log-Likelihood:               -8737.43
+Distribution:       Standardized Student&#39;s t   AIC:                           17486.9
+Method:            User-specified Parameters   BIC:                           17527.6
+                                               No. Observations:                 6552
+Date:                       Thu, Aug 04 2016
+Time:                               17:17:34
+      Mean Model
+=====================
+                 coef
+---------------------
+mu             0.0235
+   Volatility Model
+=====================
+                 coef
+---------------------
+omega          0.0100
+alpha[1]       0.0600
+gamma[1]       0.0000
+beta[1]        0.9382
+     Distribution
+=====================
+                 coef
+---------------------
+nu             8.0000
+=====================
+
+Results generated with user-specified parameters.
+Since the model was not estimated, there are no std. errors.
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">,</span><span class="n">fixed_res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Estimated&#39;</span><span class="p">,</span> <span class="s1">&#39;Fixed&#39;</span><span class="p">]</span>
+<span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>Out[9]:
+</pre></div>
+</div>
+<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
+<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x1d0b4cfd978&gt;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/univariate_univariate_volatility_modeling_24_1.png" src="../_images/univariate_univariate_volatility_modeling_24_1.png" />
+</div>
+</div>
+<div class="section" id="Building-a-Model-From-Components">
+<h3>Building a Model From Components<a class="headerlink" href="#Building-a-Model-From-Components" title="Permalink to this headline">¶</a></h3>
+<p>Models can also be systematically assembled from the three model
+components:</p>
+<ul class="simple">
+<li>A mean model (<code class="docutils literal notranslate"><span class="pre">arch.mean</span></code>)<ul>
+<li>Zero mean (<code class="docutils literal notranslate"><span class="pre">ZeroMean</span></code>) - useful if using residuals from a model
+estimated separately</li>
+<li>Constant mean (<code class="docutils literal notranslate"><span class="pre">ConstantMean</span></code>) - common for most liquid
+financial assets</li>
+<li>Autoregressive (<code class="docutils literal notranslate"><span class="pre">ARX</span></code>) with optional exogenous regressors</li>
+<li>Heterogeneous (<code class="docutils literal notranslate"><span class="pre">HARX</span></code>) autoregression with optional exogenous
+regressors</li>
+<li>Exogenous regressors only (<code class="docutils literal notranslate"><span class="pre">LS</span></code>)</li>
+</ul>
+</li>
+<li>A volatility process (<code class="docutils literal notranslate"><span class="pre">arch.volatility</span></code>)<ul>
+<li>ARCH (<code class="docutils literal notranslate"><span class="pre">ARCH</span></code>)</li>
+<li>GARCH (<code class="docutils literal notranslate"><span class="pre">GARCH</span></code>)</li>
+<li>GJR-GARCH (<code class="docutils literal notranslate"><span class="pre">GARCH</span></code> using <code class="docutils literal notranslate"><span class="pre">o</span></code> argument)</li>
+<li>TARCH/ZARCH (<code class="docutils literal notranslate"><span class="pre">GARCH</span></code> using <code class="docutils literal notranslate"><span class="pre">power</span></code> argument set to <code class="docutils literal notranslate"><span class="pre">1</span></code>)</li>
+<li>Power GARCH and Asymmetric Power GARCH (<code class="docutils literal notranslate"><span class="pre">GARCH</span></code> using <code class="docutils literal notranslate"><span class="pre">power</span></code>)</li>
+<li>Exponentially Weighted Moving Average Variance with estimated
+coefficient (<code class="docutils literal notranslate"><span class="pre">EWMAVariance</span></code>)</li>
+<li>Heterogeneous ARCH (<code class="docutils literal notranslate"><span class="pre">HARCH</span></code>)</li>
+<li>Parameterless Models<ul>
+<li>Exponentially Weighted Moving Average Variance, known as
+RiskMetrics (<code class="docutils literal notranslate"><span class="pre">EWMAVariance</span></code>)</li>
+<li>Weighted averages of EWMAs, known as the RiskMetrics 2006
+methodology (<code class="docutils literal notranslate"><span class="pre">RiskMetrics2006</span></code>)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>A distribution (<code class="docutils literal notranslate"><span class="pre">arch.distribution</span></code>)<ul>
+<li>Normal (<code class="docutils literal notranslate"><span class="pre">Normal</span></code>)</li>
+<li>Standardized Students’s T (<code class="docutils literal notranslate"><span class="pre">StudentsT</span></code>)</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="Mean-Models">
+<h2>Mean Models<a class="headerlink" href="#Mean-Models" title="Permalink to this headline">¶</a></h2>
+<p>The first choice is the mean model. For many liquid financial assets, a
+constant mean (or even zero) is adequate. For other series, such as
+inflation, a more complicated model may be required. These examples make
+use of Core CPI downloaded from the <a class="reference external" href="http://research.stlouisfed.org/fred2/">Federal Reserve Economic
+Data</a> site.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">core_cpi</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;CPILFESL&quot;</span><span class="p">,</span> <span class="s2">&quot;fred&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1957</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">ann_inflation</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">core_cpi</span><span class="o">.</span><span class="n">CPILFESL</span><span class="o">.</span><span class="n">pct_change</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">ann_inflation</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/univariate_univariate_volatility_modeling_29_0.png" src="../_images/univariate_univariate_volatility_modeling_29_0.png" />
+</div>
+</div>
+<p>All mean models are initialized with constant variance and normal
+errors. For <code class="docutils literal notranslate"><span class="pre">ARX</span></code> models, the <code class="docutils literal notranslate"><span class="pre">lags</span></code> argument specifies the lags to
+include in the model.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="kn">import</span> <span class="n">ARX</span>
+<span class="n">ar</span> <span class="o">=</span> <span class="n">ARX</span><span class="p">(</span><span class="n">ann_inflation</span><span class="p">,</span> <span class="n">lags</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">ar</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+                     AR - Constant Variance Model Results
+==============================================================================
+Dep. Variable:               CPILFESL   R-squared:                       0.991
+Mean Model:                        AR   Adj. R-squared:                  0.991
+Vol Model:          Constant Variance   Log-Likelihood:               -13.7025
+Distribution:                  Normal   AIC:                           37.4050
+Method:            Maximum Likelihood   BIC:                           59.8738
+                                        No. Observations:                  661
+Date:                Thu, Aug 04 2016   Df Residuals:                      656
+Time:                        17:17:36   Df Model:                            5
+                                   Mean Model
+===============================================================================
+                   coef    std err          t      P&gt;|t|       95.0% Conf. Int.
+-------------------------------------------------------------------------------
+Const            0.0424  2.196e-02      1.932  5.333e-02 [-6.084e-04,8.548e-02]
+CPILFESL[1]      1.1927  3.513e-02     33.954 1.080e-252      [  1.124,  1.262]
+CPILFESL[3]     -0.1803  4.122e-02     -4.374  1.221e-05   [ -0.261,-9.951e-02]
+CPILFESL[12]    -0.0235  1.384e-02     -1.696  8.985e-02 [-5.061e-02,3.651e-03]
+                              Volatility Model
+============================================================================
+                 coef    std err          t      P&gt;|t|      95.0% Conf. Int.
+----------------------------------------------------------------------------
+sigma2         0.0610  6.993e-03      8.728  2.603e-18 [4.732e-02,7.473e-02]
+============================================================================
+
+Covariance estimator: White&#39;s Heteroskedasticity Consistent Estimator
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Volatility-Processes">
+<h2>Volatility Processes<a class="headerlink" href="#Volatility-Processes" title="Permalink to this headline">¶</a></h2>
+<p>Volatility processes can be added a a mean model using the
+<code class="docutils literal notranslate"><span class="pre">volatility</span></code> property. This example adds an ARCH(5) process to model
+volatility. The arguments <code class="docutils literal notranslate"><span class="pre">iter</span></code> and <code class="docutils literal notranslate"><span class="pre">disp</span></code> are used in <code class="docutils literal notranslate"><span class="pre">fit()</span></code> to
+suppress estimation output.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="kn">import</span> <span class="n">ARCH</span><span class="p">,</span> <span class="n">GARCH</span>
+<span class="n">ar</span><span class="o">.</span><span class="n">volatility</span> <span class="o">=</span> <span class="n">ARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+                           AR - ARCH Model Results
+==============================================================================
+Dep. Variable:               CPILFESL   R-squared:                       0.991
+Mean Model:                        AR   Adj. R-squared:                  0.991
+Vol Model:                       ARCH   Log-Likelihood:                83.8949
+Distribution:                  Normal   AIC:                          -147.790
+Method:            Maximum Likelihood   BIC:                          -102.852
+                                        No. Observations:                  661
+Date:                Thu, Aug 04 2016   Df Residuals:                      651
+Time:                        17:17:36   Df Model:                           10
+                                   Mean Model
+===============================================================================
+                   coef    std err          t      P&gt;|t|       95.0% Conf. Int.
+-------------------------------------------------------------------------------
+Const            0.0270  2.204e-02      1.227      0.220 [-1.616e-02,7.025e-02]
+CPILFESL[1]      1.0852  3.839e-02     28.265 9.274e-176      [  1.010,  1.160]
+CPILFESL[3]     -0.0753  4.153e-02     -1.814  6.969e-02    [ -0.157,6.065e-03]
+CPILFESL[12]    -0.0211  1.191e-02     -1.772  7.642e-02 [-4.444e-02,2.240e-03]
+                              Volatility Model
+============================================================================
+                 coef    std err          t      P&gt;|t|      95.0% Conf. Int.
+----------------------------------------------------------------------------
+omega      9.8438e-03  2.206e-03      4.463  8.077e-06 [5.521e-03,1.417e-02]
+alpha[1]       0.1306  4.119e-02      3.171  1.521e-03   [4.987e-02,  0.211]
+alpha[2]       0.2277  6.464e-02      3.522  4.284e-04     [  0.101,  0.354]
+alpha[3]       0.1698  7.115e-02      2.386  1.704e-02   [3.031e-02,  0.309]
+alpha[4]       0.2635  8.307e-02      3.172  1.516e-03     [  0.101,  0.426]
+alpha[5]       0.1699  7.449e-02      2.281  2.253e-02   [2.393e-02,  0.316]
+============================================================================
+
+Covariance estimator: robust
+</pre></div></div>
+</div>
+<p>Plotting the standardized residuals and the conditional volatility shows
+some large (in magnitude) errors, even when standardized.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/univariate_univariate_volatility_modeling_36_0.png" src="../_images/univariate_univariate_volatility_modeling_36_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Distributions">
+<h2>Distributions<a class="headerlink" href="#Distributions" title="Permalink to this headline">¶</a></h2>
+<p>Finally the distribution can be changed from the default normal to a
+standardized Student’s T using the <code class="docutils literal notranslate"><span class="pre">distribution</span></code> property of a mean
+model.</p>
+<p>The Student’s t distribution improves the model, and the degree of
+freedom is estimated to be near 8.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="kn">import</span> <span class="n">StudentsT</span>
+<span class="n">ar</span><span class="o">.</span><span class="n">distribution</span> <span class="o">=</span> <span class="n">StudentsT</span><span class="p">()</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+                              AR - ARCH Model Results
+====================================================================================
+Dep. Variable:                     CPILFESL   R-squared:                       0.991
+Mean Model:                              AR   Adj. R-squared:                  0.991
+Vol Model:                             ARCH   Log-Likelihood:                89.5657
+Distribution:      Standardized Student&#39;s t   AIC:                          -157.131
+Method:                  Maximum Likelihood   BIC:                          -107.700
+                                              No. Observations:                  661
+Date:                      Thu, Aug 04 2016   Df Residuals:                      650
+Time:                              17:17:36   Df Model:                           11
+                                   Mean Model
+===============================================================================
+                   coef    std err          t      P&gt;|t|       95.0% Conf. Int.
+-------------------------------------------------------------------------------
+Const            0.0283  2.251e-02      1.259      0.208 [-1.579e-02,7.246e-02]
+CPILFESL[1]      1.0845  3.920e-02     27.666 1.779e-168      [  1.008,  1.161]
+CPILFESL[3]     -0.0691  4.292e-02     -1.611      0.107    [ -0.153,1.498e-02]
+CPILFESL[12]    -0.0266  1.517e-02     -1.751  7.988e-02 [-5.631e-02,3.164e-03]
+                              Volatility Model
+============================================================================
+                 coef    std err          t      P&gt;|t|      95.0% Conf. Int.
+----------------------------------------------------------------------------
+omega          0.0116  3.154e-03      3.667  2.450e-04 [5.385e-03,1.775e-02]
+alpha[1]       0.1694  5.287e-02      3.203  1.360e-03   [6.572e-02,  0.273]
+alpha[2]       0.2183  6.640e-02      3.287  1.012e-03   [8.813e-02,  0.348]
+alpha[3]       0.1365  6.913e-02      1.975  4.828e-02   [1.034e-03,  0.272]
+alpha[4]       0.2172  7.724e-02      2.813  4.916e-03   [6.585e-02,  0.369]
+alpha[5]       0.1618  8.628e-02      1.875  6.075e-02  [-7.302e-03,  0.331]
+                              Distribution
+========================================================================
+                 coef    std err          t      P&gt;|t|  95.0% Conf. Int.
+------------------------------------------------------------------------
+nu             9.0750      3.810      2.382  1.722e-02 [  1.608, 16.542]
+========================================================================
+
+Covariance estimator: robust
+</pre></div></div>
+</div>
+<div class="section" id="WTI-Crude">
+<h3>WTI Crude<a class="headerlink" href="#WTI-Crude" title="Permalink to this headline">¶</a></h3>
+<p>The next example uses West Texas Intermediate Crude data from FRED.
+Theee models are fit using alternative distributional assumptions. The
+results are printed, where we can see that the normal has a much lower
+log-likelihood than either the Standard Student’s T or the Standardized
+Skew Student’s T – however, these two are fairly close. The closeness of
+the T and the Skew T indicate that returns are not heavily skewed.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="n">crude</span><span class="o">=</span><span class="n">web</span><span class="o">.</span><span class="n">get_data_fred</span><span class="p">(</span><span class="s1">&#39;DCOILWTICO&#39;</span><span class="p">,</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">crude_ret</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">crude</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">res_normal</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">res_t</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">res_skewt</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">&#39;skewt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">lls</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">(((</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">),</span>
+                 <span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">res_t</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">),</span>
+                 <span class="p">(</span><span class="s1">&#39;skewt&#39;</span><span class="p">,</span> <span class="n">res_skewt</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">))))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">lls</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">(((</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">params</span><span class="p">),</span>
+                 <span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">res_t</span><span class="o">.</span><span class="n">params</span><span class="p">),</span>
+                 <span class="p">(</span><span class="s1">&#39;skewt&#39;</span><span class="p">,</span> <span class="n">res_skewt</span><span class="o">.</span><span class="n">params</span><span class="p">))))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+normal   -8227.359031
+t        -8128.534732
+skewt    -8126.303934
+dtype: float64
+            normal         t     skewt
+alpha[1]  0.054488  0.046069  0.045908
+beta[1]   0.940953  0.949954  0.950364
+lambda         NaN       NaN -0.048593
+mu        0.065643  0.076392  0.057599
+nu             NaN  6.841493  6.889730
+omega     0.034733  0.026497  0.025239
+</pre></div></div>
+</div>
+<p>The standardized residuals can be computed by dividing the residuals by
+the conditional volatility. These are plotted along with the
+(unstandardized, but scaled) residuals. The non-standardized residuals
+are more peaked in the center indicating that the distribution is
+somewhat more heavy tailed than that of the standardized residuals.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">std_resid</span> <span class="o">=</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">conditional_volatility</span>
+<span class="n">unit_var_resid</span> <span class="o">=</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">std_resid</span><span class="p">,</span> <span class="n">unit_var_resid</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Std Resids&#39;</span><span class="p">,</span> <span class="s1">&#39;Unit Variance Resids&#39;</span><span class="p">]</span>
+<span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;kde&#39;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>Out[16]:
+</pre></div>
+</div>
+<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
+<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x1d0b364cc18&gt;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/univariate_univariate_volatility_modeling_44_1.png" src="../_images/univariate_univariate_volatility_modeling_44_1.png" />
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="introduction.html" title="previous chapter (use the left arrow)">Introduction to ARCH Models</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="forecasting.html" title="next chapter (use the right arrow)">Forecasting</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="forecasting.html" title="Forecasting"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="introduction.html" title="Introduction to ARCH Models"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4+8.g6181efe documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

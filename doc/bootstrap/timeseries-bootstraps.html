@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Time-series Bootstraps &#8212; arch 4.4+1.g837f887 documentation</title>
+    <title>Time-series Bootstraps &#8212; arch 4.4+8.g6181efe documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="iid-bootstraps.html" title="Independent, Identical Distributed Data (i.i.d.)"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4+1.g837f887 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4+8.g6181efe documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" accesskey="U">Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
@@ -68,6 +68,7 @@
       <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../univariate/univariate.html">Univariate Volatility Models</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="bootstrap.html">Bootstrapping</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="bootstrap_examples.html">Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="confidence-intervals.html">Confidence Interval Construction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parameter-covariance-estimation.html">Parameter Covariance Estimation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="low-level-interface.html">Low-level Interface</a></li>
@@ -227,7 +228,7 @@ corresponds to a bootstrap iteration</p>
 </table>
 <p class="rubric">Notes</p>
 <p>When there are no extra keyword arguments, the function is called</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where args and kwargs are the bootstrap version of the data provided
@@ -336,7 +337,7 @@ Similarly, ‘upper’ sets all lower bounds to -inf.</p>
 </div>
 <p class="rubric">Notes</p>
 <p>When there are no extra keyword arguments, the function is called</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where args and kwargs are the bootstrap version of the data provided
@@ -344,7 +345,7 @@ when setting up the bootstrap.  When extra keyword arguments are used,
 these are appended to kwargs before calling func.</p>
 <p>The standard error function, if provided, must return a vector of
 parameter standard errors and is called</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">std_err_func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">std_err_func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">params</span></code> is the vector of estimated parameters using the same
@@ -395,7 +396,7 @@ estimate (False).  Default is True.</li>
 </table>
 <p class="rubric">Notes</p>
 <p>func must have the signature</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where params are a 1-dimensional array, and <cite>*args</cite> and <cite>**kwargs</cite> are
@@ -519,7 +520,7 @@ estimate (False).  Default is True.</li>
 </table>
 <p class="rubric">Notes</p>
 <p>func must have the signature</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where params are a 1-dimensional array, and <cite>*args</cite> and <cite>**kwargs</cite> are
@@ -656,7 +657,7 @@ corresponds to a bootstrap iteration</p>
 </table>
 <p class="rubric">Notes</p>
 <p>When there are no extra keyword arguments, the function is called</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where args and kwargs are the bootstrap version of the data provided
@@ -765,7 +766,7 @@ Similarly, ‘upper’ sets all lower bounds to -inf.</p>
 </div>
 <p class="rubric">Notes</p>
 <p>When there are no extra keyword arguments, the function is called</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where args and kwargs are the bootstrap version of the data provided
@@ -773,7 +774,7 @@ when setting up the bootstrap.  When extra keyword arguments are used,
 these are appended to kwargs before calling func.</p>
 <p>The standard error function, if provided, must return a vector of
 parameter standard errors and is called</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">std_err_func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">std_err_func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">params</span></code> is the vector of estimated parameters using the same
@@ -824,7 +825,7 @@ estimate (False).  Default is True.</li>
 </table>
 <p class="rubric">Notes</p>
 <p>func must have the signature</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where params are a 1-dimensional array, and <cite>*args</cite> and <cite>**kwargs</cite> are
@@ -948,7 +949,7 @@ estimate (False).  Default is True.</li>
 </table>
 <p class="rubric">Notes</p>
 <p>func must have the signature</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where params are a 1-dimensional array, and <cite>*args</cite> and <cite>**kwargs</cite> are
@@ -1085,7 +1086,7 @@ corresponds to a bootstrap iteration</p>
 </table>
 <p class="rubric">Notes</p>
 <p>When there are no extra keyword arguments, the function is called</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where args and kwargs are the bootstrap version of the data provided
@@ -1194,7 +1195,7 @@ Similarly, ‘upper’ sets all lower bounds to -inf.</p>
 </div>
 <p class="rubric">Notes</p>
 <p>When there are no extra keyword arguments, the function is called</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where args and kwargs are the bootstrap version of the data provided
@@ -1202,7 +1203,7 @@ when setting up the bootstrap.  When extra keyword arguments are used,
 these are appended to kwargs before calling func.</p>
 <p>The standard error function, if provided, must return a vector of
 parameter standard errors and is called</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">std_err_func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">std_err_func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">params</span></code> is the vector of estimated parameters using the same
@@ -1253,7 +1254,7 @@ estimate (False).  Default is True.</li>
 </table>
 <p class="rubric">Notes</p>
 <p>func must have the signature</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where params are a 1-dimensional array, and <cite>*args</cite> and <cite>**kwargs</cite> are
@@ -1377,7 +1378,7 @@ estimate (False).  Default is True.</li>
 </table>
 <p class="rubric">Notes</p>
 <p>func must have the signature</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where params are a 1-dimensional array, and <cite>*args</cite> and <cite>**kwargs</cite> are
@@ -1450,7 +1451,7 @@ name of the required bootstrap</p>
         <li class="right" >
           <a href="iid-bootstraps.html" title="Independent, Identical Distributed Data (i.i.d.)"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4+1.g837f887 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4+8.g6181efe documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" >Bootstrapping</a> &#187;</li> 
       </ul>
     </div>

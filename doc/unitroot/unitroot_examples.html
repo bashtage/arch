@@ -1,0 +1,1006 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Unit Root Testing &#8212; arch 4.4+8.g6181efe documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The Unit Root Tests" href="tests.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tests.html" title="The Unit Root Tests"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="introduction.html" title="Introduction"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4+8.g6181efe documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="unitroot.html" accesskey="U">Unit Root Testing</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">arch 4.4</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../univariate/univariate.html">Univariate Volatility Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bootstrap/bootstrap.html">Bootstrapping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="unitroot.html">Unit Root Tests</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html">Unit Root Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="unitroot.html">Unit Root Testing</a></li>
+              
+              <li>Unit Root Testing</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 9ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+</style>
+<div class="section" id="Unit-Root-Testing">
+<h1>Unit Root Testing<a class="headerlink" href="#Unit-Root-Testing" title="Permalink to this headline">¶</a></h1>
+<p><em>This setup code is required to run in an IPython notebook</em></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">seaborn</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Setup">
+<h2>Setup<a class="headerlink" href="#Setup" title="Permalink to this headline">¶</a></h2>
+<p>Most examples will make use of the Default premium, which is the
+difference between the yields of BAA and AAA rated corporate bonds. The
+data is downloaded from FRED using pandas.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="kn">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="kn">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="kn">as</span> <span class="nn">web</span>
+<span class="n">aaa</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;AAA&quot;</span><span class="p">,</span> <span class="s2">&quot;fred&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1919</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">baa</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;BAA&quot;</span><span class="p">,</span> <span class="s2">&quot;fred&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1919</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">baa</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">aaa</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]</span>
+<span class="n">default</span> <span class="o">=</span> <span class="n">baa</span> <span class="o">-</span> <span class="n">aaa</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">default</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/unitroot_unitroot_examples_5_0.png" src="../_images/unitroot_unitroot_examples_5_0.png" />
+</div>
+</div>
+<p>The Default premium is clearly highly persistent. A simple check of the
+autocorrelations confirms this.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">acf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">stattools</span><span class="o">.</span><span class="n">acf</span><span class="p">(</span><span class="n">default</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ACF&#39;</span><span class="p">])</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">acf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Autocorrelations&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/unitroot_unitroot_examples_7_0.png" src="../_images/unitroot_unitroot_examples_7_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Augmented-Dickey-Fuller-Testing">
+<h2>Augmented Dickey-Fuller Testing<a class="headerlink" href="#Augmented-Dickey-Fuller-Testing" title="Permalink to this headline">¶</a></h2>
+<p>The Augmented Dickey-Fuller test is the most common unit root test used.
+It is a regression of the first difference of the variable on its lagged
+level as well as additional lags of the first difference. The null is
+that the series contains a unit root, and the (one-sided) alternative is
+that the series is stationary.</p>
+<p>By default, the number of lags is selected by minimizing the AIC across
+a range of lag lengths (which can be set using <code class="docutils literal notranslate"><span class="pre">max_lag</span></code> when
+initializing the model). Additionally, the basic test includes a
+constant in the ADF regression.</p>
+<p>These results indicate that the Default premium is stationary.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="kn">import</span> <span class="n">ADF</span>
+<span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+   Augmented Dickey-Fuller Results
+=====================================
+Test Statistic                 -3.241
+P-value                         0.018
+Lags                               21
+-------------------------------------
+
+Trend: Constant
+Critical Values: -3.44 (1%), -2.86 (5%), -2.57 (10%)
+Null Hypothesis: The process contains a unit root.
+Alternative Hypothesis: The process is weakly stationary.
+</pre></div></div>
+</div>
+<p>The number of lags can be directly set using <code class="docutils literal notranslate"><span class="pre">lags</span></code>. Changing the
+number of lags makes no difference to the conclusion.</p>
+<p><strong>Note</strong>: The ADF assumes residuals are white noise, and that the number
+of lags is sufficient to pick up any dependence in the data.</p>
+<div class="section" id="Setting-the-number-of-lags">
+<h3>Setting the number of lags<a class="headerlink" href="#Setting-the-number-of-lags" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">adf</span><span class="o">.</span><span class="n">lags</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="k">print</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+   Augmented Dickey-Fuller Results
+=====================================
+Test Statistic                 -3.427
+P-value                         0.010
+Lags                                5
+-------------------------------------
+
+Trend: Constant
+Critical Values: -3.44 (1%), -2.86 (5%), -2.57 (10%)
+Null Hypothesis: The process contains a unit root.
+Alternative Hypothesis: The process is weakly stationary.
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Deterministic-terms">
+<h3>Deterministic terms<a class="headerlink" href="#Deterministic-terms" title="Permalink to this headline">¶</a></h3>
+<p>The deterministic terms can be altered using <code class="docutils literal notranslate"><span class="pre">trend</span></code>. The options are:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">'nc'</span></code> : No deterministic terms</li>
+<li><code class="docutils literal notranslate"><span class="pre">'c'</span></code> : Constant only</li>
+<li><code class="docutils literal notranslate"><span class="pre">'ct'</span></code> : Constant and time trend</li>
+<li><code class="docutils literal notranslate"><span class="pre">'ctt'</span></code> : Constant, time trend and time-trend squared</li>
+</ul>
+<p>Changing the type of constant also makes no difference for this data.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">adf</span><span class="o">.</span><span class="n">trend</span> <span class="o">=</span> <span class="s1">&#39;ct&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+   Augmented Dickey-Fuller Results
+=====================================
+Test Statistic                 -3.661
+P-value                         0.025
+Lags                                5
+-------------------------------------
+
+Trend: Constant and Linear Time Trend
+Critical Values: -3.97 (1%), -3.41 (5%), -3.13 (10%)
+Null Hypothesis: The process contains a unit root.
+Alternative Hypothesis: The process is weakly stationary.
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Regression-output">
+<h3>Regression output<a class="headerlink" href="#Regression-output" title="Permalink to this headline">¶</a></h3>
+<p>The ADF uses a standard regression when computing results. These can be
+accesses using <code class="docutils literal notranslate"><span class="pre">regression</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">reg_res</span> <span class="o">=</span> <span class="n">adf</span><span class="o">.</span><span class="n">regression</span>
+<span class="k">print</span><span class="p">(</span><span class="n">reg_res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.095
+Model:                            OLS   Adj. R-squared:                  0.090
+Method:                 Least Squares   F-statistic:                     17.00
+Date:                Thu, 04 Aug 2016   Prob (F-statistic):           1.84e-21
+Time:                        17:19:18   Log-Likelihood:                 575.20
+No. Observations:                1135   AIC:                            -1134.
+Df Residuals:                    1127   BIC:                            -1094.
+Df Model:                           7
+Covariance Type:            nonrobust
+==============================================================================
+                 coef    std err          t      P&gt;|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1            -0.0246      0.007     -3.661      0.000      -0.038      -0.011
+x2             0.2190      0.030      7.344      0.000       0.160       0.277
+x3            -0.0549      0.030     -1.802      0.072      -0.115       0.005
+x4            -0.1398      0.030     -4.649      0.000      -0.199      -0.081
+x5            -0.0519      0.030     -1.716      0.086      -0.111       0.007
+x6             0.0426      0.030      1.431      0.153      -0.016       0.101
+const          0.0389      0.014      2.796      0.005       0.012       0.066
+x7         -1.817e-05   1.41e-05     -1.285      0.199   -4.59e-05    9.58e-06
+==============================================================================
+Omnibus:                      623.301   Durbin-Watson:                   2.001
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):           128496.439
+Skew:                          -1.393   Prob(JB):                         0.00
+Kurtosis:                      55.051   Cond. No.                     5.30e+03
+==============================================================================
+
+Warnings:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 5.3e+03. This might indicate that there are
+strong multicollinearity or other numerical problems.
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="n">resids</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">reg_res</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">default</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">6</span><span class="p">:],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;resids&#39;</span><span class="p">])</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/unitroot_unitroot_examples_20_0.png" src="../_images/unitroot_unitroot_examples_20_0.png" />
+</div>
+</div>
+<p>Since the number lags was directly set, it is good to check whether the
+residuals appear to be white noise.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">acf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">stattools</span><span class="o">.</span><span class="n">acf</span><span class="p">(</span><span class="n">reg_res</span><span class="o">.</span><span class="n">resid</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ACF&#39;</span><span class="p">])</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">acf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Residual Autocorrelations&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/unitroot_unitroot_examples_22_0.png" src="../_images/unitroot_unitroot_examples_22_0.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="Dickey-Fuller-GLS-Testing">
+<h2>Dickey-Fuller GLS Testing<a class="headerlink" href="#Dickey-Fuller-GLS-Testing" title="Permalink to this headline">¶</a></h2>
+<p>The Dickey-Fuller GLS test is an improved version of the ADF which uses
+a GLS-detrending regression before running an ADF regression with no
+additional deterministic terms. This test is only available with a
+constant or constant and time trend (<code class="docutils literal notranslate"><span class="pre">trend='c'</span></code> or <code class="docutils literal notranslate"><span class="pre">trend='ct'</span></code>).</p>
+<p>The results of this test agree with the ADF results.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="kn">import</span> <span class="n">DFGLS</span>
+<span class="n">dfgls</span> <span class="o">=</span> <span class="n">DFGLS</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">dfgls</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+      Dickey-Fuller GLS Results
+=====================================
+Test Statistic                 -2.252
+P-value                         0.024
+Lags                               21
+-------------------------------------
+
+Trend: Constant
+Critical Values: -2.59 (1%), -1.96 (5%), -1.64 (10%)
+Null Hypothesis: The process contains a unit root.
+Alternative Hypothesis: The process is weakly stationary.
+</pre></div></div>
+</div>
+<p>The trend can be altered using <code class="docutils literal notranslate"><span class="pre">trend</span></code>. The conclusion is the same.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">dfgls</span><span class="o">.</span><span class="n">trend</span> <span class="o">=</span> <span class="s1">&#39;ct&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="n">dfgls</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+      Dickey-Fuller GLS Results
+=====================================
+Test Statistic                 -3.406
+P-value                         0.010
+Lags                               21
+-------------------------------------
+
+Trend: Constant and Linear Time Trend
+Critical Values: -3.43 (1%), -2.86 (5%), -2.58 (10%)
+Null Hypothesis: The process contains a unit root.
+Alternative Hypothesis: The process is weakly stationary.
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Phillips-Perron-Testing">
+<h2>Phillips-Perron Testing<a class="headerlink" href="#Phillips-Perron-Testing" title="Permalink to this headline">¶</a></h2>
+<p>The Phillips-Perron test is similar to the ADF except that the
+regression run does not include lagged values of the first differences.
+Instead, the PP test fixed the t-statistic using a long run variance
+estimation, implemented using a Newey-West covariance estimator.</p>
+<p>By default, the number of lags is automatically set, although this can
+be overridden using <code class="docutils literal notranslate"><span class="pre">lags</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="kn">import</span> <span class="n">PhillipsPerron</span>
+<span class="n">pp</span> <span class="o">=</span> <span class="n">PhillipsPerron</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+     Phillips-Perron Test (Z-tau)
+=====================================
+Test Statistic                 -3.761
+P-value                         0.003
+Lags                               23
+-------------------------------------
+
+Trend: Constant
+Critical Values: -3.44 (1%), -2.86 (5%), -2.57 (10%)
+Null Hypothesis: The process contains a unit root.
+Alternative Hypothesis: The process is weakly stationary.
+</pre></div></div>
+</div>
+<p>It is important that the number of lags is sufficient to pick up any
+dependence in the data.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pp</span><span class="o">.</span><span class="n">lags</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="k">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+     Phillips-Perron Test (Z-tau)
+=====================================
+Test Statistic                 -3.876
+P-value                         0.002
+Lags                               12
+-------------------------------------
+
+Trend: Constant
+Critical Values: -3.44 (1%), -2.86 (5%), -2.57 (10%)
+Null Hypothesis: The process contains a unit root.
+Alternative Hypothesis: The process is weakly stationary.
+</pre></div></div>
+</div>
+<p>The trend can be changed as well.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pp</span><span class="o">.</span><span class="n">trend</span> <span class="o">=</span> <span class="s1">&#39;ct&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+     Phillips-Perron Test (Z-tau)
+=====================================
+Test Statistic                 -4.142
+P-value                         0.005
+Lags                               12
+-------------------------------------
+
+Trend: Constant and Linear Time Trend
+Critical Values: -3.97 (1%), -3.41 (5%), -3.13 (10%)
+Null Hypothesis: The process contains a unit root.
+Alternative Hypothesis: The process is weakly stationary.
+</pre></div></div>
+</div>
+<p>Finally, the PP testing framework includes two types of tests. One which
+uses an ADF-type regression of the first difference on the level, the
+other which regresses the level on the level. The default is the <code class="docutils literal notranslate"><span class="pre">tau</span></code>
+test, which is similar to an ADF regression, although this can be
+changed using <code class="docutils literal notranslate"><span class="pre">test_type='rho'</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pp</span><span class="o">.</span><span class="n">test_type</span> <span class="o">=</span> <span class="s1">&#39;rho&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+     Phillips-Perron Test (Z-rho)
+=====================================
+Test Statistic                -33.974
+P-value                         0.000
+Lags                               12
+-------------------------------------
+
+Trend: Constant and Linear Time Trend
+Critical Values: -29.15 (1%), -21.60 (5%), -18.16 (10%)
+Null Hypothesis: The process contains a unit root.
+Alternative Hypothesis: The process is weakly stationary.
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="KPSS-Testing">
+<h2>KPSS Testing<a class="headerlink" href="#KPSS-Testing" title="Permalink to this headline">¶</a></h2>
+<p>The KPSS test differs from the three previous in that the null is a
+stationary process and the alternative is a unit root.</p>
+<p>Note that here the null is rejected which indicates that the series
+might be a unit root.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="kn">import</span> <span class="n">KPSS</span>
+<span class="n">kpss</span> <span class="o">=</span> <span class="n">KPSS</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">kpss</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+    KPSS Stationarity Test Results
+=====================================
+Test Statistic                  0.941
+P-value                         0.004
+Lags                               23
+-------------------------------------
+
+Trend: Constant
+Critical Values: 0.74 (1%), 0.46 (5%), 0.35 (10%)
+Null Hypothesis: The process is weakly stationary.
+Alternative Hypothesis: The process contains a unit root.
+</pre></div></div>
+</div>
+<p>Changing the trend does not alter the conclusion.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">kpss</span><span class="o">.</span><span class="n">trend</span> <span class="o">=</span> <span class="s1">&#39;ct&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="n">kpss</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+    KPSS Stationarity Test Results
+=====================================
+Test Statistic                  0.361
+P-value                         0.001
+Lags                               23
+-------------------------------------
+
+Trend: Constant and Linear Time Trend
+Critical Values: 0.22 (1%), 0.15 (5%), 0.12 (10%)
+Null Hypothesis: The process is weakly stationary.
+Alternative Hypothesis: The process contains a unit root.
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Variance-Ratio-Testing">
+<h2>Variance Ratio Testing<a class="headerlink" href="#Variance-Ratio-Testing" title="Permalink to this headline">¶</a></h2>
+<p>Variance ratio tests are not usually used as unit root tests, and are
+instead used for testing whether a financial return series is a pure
+random walk versus having some predictability. This example uses the
+excess return on the market from Ken French’s data.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">pandas.io.data</span> <span class="kn">as</span> <span class="nn">web</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">ff</span><span class="o">=</span><span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;F-F_Research_Data_Factors&#39;</span><span class="p">,</span> <span class="s1">&#39;famafrench&#39;</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">ff</span><span class="o">=</span><span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;F-F_Research_Data_Factors_TXT&#39;</span><span class="p">,</span> <span class="s1">&#39;famafrench&#39;</span><span class="p">)</span>
+<span class="n">ff</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">excess_market</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Excess Market</span>
+<span class="k">print</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+       1 b&#39;Mkt-RF&#39;     2 b&#39;SMB&#39;     3 b&#39;HML&#39;      4 b&#39;RF&#39;
+count  1080.000000  1080.000000  1080.000000  1080.000000
+mean      0.647361     0.211491     0.384333     0.279259
+std       5.381110     3.216523     3.522064     0.254710
+min     -29.130000   -16.700000   -13.280000    -0.060000
+25%      -2.022500    -1.560000    -1.290000     0.030000
+50%       1.000000     0.065000     0.215000     0.250000
+75%       3.650000     1.772500     1.732500     0.430000
+max      38.850000    36.700000    35.460000     1.350000
+</pre></div></div>
+</div>
+<p>The variance ratio compares the variance of a 1-period return to that of
+a multi-period return. The comparison length has to be set when
+initializing the test.</p>
+<p>This example compares 1-month to 12-month returns, and the null that the
+series is a pure random walk is rejected. Negative values indicate some
+positive autocorrelation in the returns (momentum).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="kn">import</span> <span class="n">VarianceRatio</span>
+<span class="n">vr</span> <span class="o">=</span> <span class="n">VarianceRatio</span><span class="p">(</span><span class="n">excess_market</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">vr</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+     Variance-Ratio Test Results
+=====================================
+Test Statistic                 -9.987
+P-value                         0.000
+Lags                               12
+-------------------------------------
+
+Computed with overlapping blocks (de-biased)
+</pre></div></div>
+</div>
+<p>By default the VR test uses all overlapping blocks to estimate the
+variance of the long period’s return. This can be changed by setting
+<code class="docutils literal notranslate"><span class="pre">overlap=False</span></code>. This lowers the power but doesn’t change the
+conclusion.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;always&#39;</span><span class="p">)</span>  <span class="c1"># Restore warnings</span>
+
+<span class="n">vr</span><span class="o">.</span><span class="n">overlap</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="k">print</span><span class="p">(</span><span class="n">vr</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+     Variance-Ratio Test Results
+=====================================
+Test Statistic                 -6.096
+P-value                         0.000
+Lags                               12
+-------------------------------------
+
+Computed with non-overlapping blocks
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="stderr output_area docutils container">
+<div class="highlight"><pre>
+c:\git\arch\arch\unitroot\unitroot.py:1041: InvalidLengthWarning:
+The length of y is not an exact multiple of 12, and so the final
+11 observations have been dropped.
+
+  InvalidLengthWarning)
+</pre></div></div>
+</div>
+<p><strong>Note</strong>: The warning is intentional. It appears here since when it is
+not possible to use all data since the data length isn’t an integer
+multiple of the long period when using non-overlapping blocks. There is
+little reason to use <code class="docutils literal notranslate"><span class="pre">overlap=False</span></code>.</p>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="introduction.html" title="previous chapter (use the left arrow)">Introduction</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="tests.html" title="next chapter (use the right arrow)">The Unit Root Tests</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tests.html" title="The Unit Root Tests"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="introduction.html" title="Introduction"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4+8.g6181efe documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="unitroot.html" >Unit Root Testing</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>
