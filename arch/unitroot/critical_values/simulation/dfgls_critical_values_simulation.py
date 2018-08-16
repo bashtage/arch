@@ -8,7 +8,6 @@ from __future__ import absolute_import, division, print_function
 import datetime
 
 import numpy as np
-from numpy import ones, vstack, arange, diff, cumsum, sqrt, sum
 from numpy.linalg import pinv
 from numpy.random import RandomState
 from statsmodels.compat import range
@@ -57,10 +56,10 @@ def dfgsl_simulation(n, trend, b, rng=None):
     nobs = n
     if trend == 'c':
         c = -7.0
-        z = ones((nobs, 1))
+        z = np.ones((nobs, 1))
     else:
         c = -13.5
-        z = vstack((ones(nobs), arange(1, nobs + 1))).T
+        z = np.vstack((np.ones(nobs), np.arange(1, nobs + 1))).T
 
     ct = c / nobs
 
@@ -68,25 +67,25 @@ def dfgsl_simulation(n, trend, b, rng=None):
     delta_z[1:, :] = delta_z[1:, :] - (1 + ct) * delta_z[:-1, :]
     delta_z_inv = pinv(delta_z)
     y = standard_normal((n + 50, b))
-    y = cumsum(y, axis=0)
+    y = np.cumsum(y, axis=0)
     y = y[50:, :]
     delta_y = y.copy()
     delta_y[1:, :] = delta_y[1:, :] - (1 + ct) * delta_y[:-1, :]
     detrend_coef = delta_z_inv.dot(delta_y)
     y_detrended = y - z.dot(detrend_coef)
 
-    delta_y_detrended = diff(y_detrended, axis=0)
+    delta_y_detrended = np.diff(y_detrended, axis=0)
     rhs = y_detrended[:-1, :]
     lhs = delta_y_detrended
 
-    xpy = sum(rhs * lhs, 0)
-    xpx = sum(rhs ** 2.0, 0)
+    xpy = np.sum(rhs * lhs, 0)
+    xpx = np.sum(rhs ** 2.0, 0)
     gamma = xpy / xpx
     e = lhs - rhs * gamma
-    sigma2 = sum(e ** 2.0, axis=0) / (n - 1)  # DOF correction?
+    sigma2 = np.sum(e ** 2.0, axis=0) / (n - 1)  # DOF correction?
     gamma_var = sigma2 / xpx
 
-    stat = gamma / sqrt(gamma_var)
+    stat = gamma / np.sqrt(gamma_var)
     return stat
 
 

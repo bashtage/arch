@@ -1,33 +1,31 @@
 from __future__ import absolute_import, division
-from arch.compat.python import add_metaclass, range, lmap, long
 
 import warnings
 
 from numpy import (diff, ceil, power, sqrt, sum, cumsum, int32, int64, interp, pi,
                    array, inf, abs, log, sort, polyval, empty, argwhere, arange, squeeze)
-from numpy.linalg import pinv
-from scipy.stats import norm
+from numpy.linalg import pinv, qr, inv, solve
 from pandas import DataFrame
-
-from statsmodels.regression.linear_model import OLS
-from statsmodels.tsa.tsatools import lagmat
-from statsmodels.tsa.stattools import _autolag
+from scipy.stats import norm
 from statsmodels.iolib.summary import Summary
 from statsmodels.iolib.table import SimpleTable
+from statsmodels.regression.linear_model import OLS
+from statsmodels.tsa.stattools import _autolag
+from statsmodels.tsa.tsatools import lagmat
 
-from arch.utility import cov_nw
-from arch.utility.exceptions import InvalidLengthWarning, invalid_length_doc
+from arch.compat.python import add_metaclass, range, lmap, long
+from arch.unitroot.critical_values.dfgls import (dfgls_large_p, dfgls_small_p,
+                                                 dfgls_tau_max, dfgls_tau_min,
+                                                 dfgls_tau_star, dfgls_cv_approx)
 from arch.unitroot.critical_values.dickey_fuller import (adf_z_cv_approx, adf_z_large_p, adf_z_max,
                                                          adf_z_min, adf_z_small_p, adf_z_star,
                                                          tau_2010, tau_large_p, tau_max,
                                                          tau_min, tau_small_p, tau_star)
 from arch.unitroot.critical_values.kpss import kpss_critical_values
-from arch.unitroot.critical_values.dfgls import (dfgls_large_p, dfgls_small_p,
-                                                 dfgls_tau_max, dfgls_tau_min,
-                                                 dfgls_tau_star, dfgls_cv_approx)
+from arch.utility import cov_nw
 from arch.utility.array import ensure1d, DocStringInheritor
+from arch.utility.exceptions import InvalidLengthWarning, invalid_length_doc
 from arch.utility.timeseries import add_trend
-
 
 __all__ = ['ADF', 'DFGLS', 'PhillipsPerron', 'KPSS', 'VarianceRatio',
            'kpss_crit', 'mackinnoncrit', 'mackinnonp']
@@ -78,27 +76,23 @@ def _autolag_ols(endog, exog, startlag, maxlag, method, modargs=(), regresults=F
     if regresults:
         return _autolag(OLS, endog, exog, startlag, maxlag, method, regresults=regresults)
 
-    resid = squeeze(endog.copy())
-    x = exog[:, startlag:].copy()
+    q, r = qr(exog)
+    qpy = q.T.dot(endog)
+    ypy = endog.T.dot(endog)
+    xpx = exog.T.dot(exog)
+
     sigma2 = empty(maxlag + 1)
     tstat = empty(maxlag + 1)
-    if len(exog) > 0 and startlag > 0:
-        _x = exog[:, :startlag]
-        resid -= _x.dot(pinv(_x).dot(resid))
-        x -= _x.dot(pinv(_x).dot(x))
-    sigma2[0] = (resid ** 2).mean()
+    nobs = float(endog.shape[0])
     tstat[0] = inf
+    for i in range(startlag, startlag + maxlag + 1):
+        b = solve(r[:i, :i], qpy[:i])
+        sigma2[i - startlag] = (ypy - b.T.dot(xpx[:i, :i]).dot(b)) / nobs
+        if method == 't-stat' and i > startlag:
+            xpxi = inv(xpx[:i, :i])
+            stderr = sqrt(sigma2[i - startlag] * xpxi[-1, -1])
+            tstat[i - startlag] = b[-1] / stderr
 
-    for i in range(maxlag):
-        _x = x[:, i:i + 1]
-        xpx = _x.T.dot(_x)
-        beta = squeeze(_x.T.dot(resid) / xpx)
-        resid -= squeeze(beta * _x)
-        x[:, i + 1:] -= _x.dot(_x.T.dot(x[:, i + 1:]) / xpx)
-        sigma2[i + 1] = (resid ** 2).mean()
-        tstat[i + 1] = beta / sqrt(sigma2[i + 1] / xpx)
-
-    nobs = float(resid.shape[0])
     llf = -nobs / 2.0 * (log(2 * pi) + log(sigma2) + 1)
 
     if method == 'aic':

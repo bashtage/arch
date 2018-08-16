@@ -9,47 +9,25 @@ try:
     # always writeable
     from StringIO import StringIO
 
-    BytesIO = StringIO
-    import cPickle
-    pickle = cPickle
-    import urllib2
-    import urlparse
 except ImportError:
     import builtins
-    from io import StringIO, BytesIO
+    from io import StringIO
 
     cStringIO = StringIO
-    import pickle as cPickle
-    pickle = cPickle
-    import urllib.request
-    import urllib.parse
-    from urllib.request import HTTPError, urlretrieve
+
 
 PY3 = sys.version_info[0] == 3
 
 if PY3:
     range = range
     long = int
-    string_types = str,
 
     def lmap(*args, **kwargs):
         return list(map(*args, **kwargs))
 else:
-    string_types = basestring,
     range = xrange
     long = long
     lmap = builtins.map
-
-
-def with_metaclass(meta, *bases):
-    """Create a base class with a metaclass."""
-    # This requires a bit of explanation: the basic idea is to make a dummy
-    # metaclass for one level of class instantiation that replaces itself with
-    # the actual metaclass.
-    class metaclass(meta):
-        def __new__(cls, name, this_bases, d):
-            return meta(name, bases, d)
-    return type.__new__(metaclass, 'temporary_class', (), {})
 
 
 def add_metaclass(metaclass):
@@ -77,13 +55,6 @@ def iteritems(obj, **kwargs):
     func = getattr(obj, "iteritems", None)
     if not func:
         func = obj.items
-    return func(**kwargs)
-
-
-def iterkeys(obj, **kwargs):
-    func = getattr(obj, "iterkeys", None)
-    if not func:
-        func = obj.keys
     return func(**kwargs)
 
 
