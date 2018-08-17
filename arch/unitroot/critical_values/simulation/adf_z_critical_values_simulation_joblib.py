@@ -11,8 +11,7 @@ from __future__ import absolute_import, division, print_function
 
 from statsmodels.tools.parallel import parallel_func
 import datetime
-from numpy import array, savez, percentile, nan
-from numpy import ones, vstack, arange, cumsum, sum, dot, zeros
+from numpy import array, savez, percentile, nan, ones, vstack, arange, cumsum, sum, dot, zeros
 from numpy.random import RandomState
 from numpy.linalg import pinv
 

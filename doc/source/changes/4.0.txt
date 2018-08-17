@@ -1,5 +1,6 @@
 Changes since 4.0
 =================
+- Improved performance of automatic lag selection in ADF and related tests.
 - Added named parameters to Dickey-Fuller regressions.
 - Removed use of the module-level NumPy RandomState. All random number generators use separate
   RandomState instances.

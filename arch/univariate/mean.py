@@ -8,7 +8,6 @@ import copy
 from collections import OrderedDict
 
 import numpy as np
-from numpy import zeros, empty, ones, isscalar, log
 from pandas import DataFrame
 from scipy.optimize import OptimizeResult
 from statsmodels.tools.decorators import cache_readonly
@@ -191,8 +190,8 @@ class HARX(ARCHModel):
         nobs = resids.shape[0]
         sigma2 = resids.dot(resids) / nobs
 
-        loglikelihood = -0.5 * nobs * log(2 * np.pi)
-        loglikelihood -= 0.5 * nobs * log(sigma2)
+        loglikelihood = -0.5 * nobs * np.log(2 * np.pi)
+        loglikelihood -= 0.5 * nobs * np.log(sigma2)
         loglikelihood -= 0.5 * nobs
 
         return loglikelihood
@@ -346,10 +345,10 @@ class HARX(ARCHModel):
         vol = np.sqrt(sim_data[1])
 
         max_lag = np.max(self._lags)
-        y = zeros(nobs + burn)
+        y = np.zeros(nobs + burn)
         if initial_value is None:
             initial_value = 0.0
-        elif not isscalar(initial_value):
+        elif not np.isscalar(initial_value):
             initial_value = ensure1d(initial_value, 'initial_value')
             if initial_value.shape[0] != max_lag:
                 raise ValueError('initial_value has the wrong shape')
@@ -442,7 +441,7 @@ class HARX(ARCHModel):
 
             ind = np.lexsort(np.flipud(lags))
             lags = lags[:, ind]
-            test_mat = zeros((lags.shape[1], np.max(lags)))
+            test_mat = np.zeros((lags.shape[1], np.max(lags)))
             for i in range(lags.shape[1]):
                 test_mat[i, lags[0, i]:lags[1, i]] = 1.0
             rank = np.linalg.matrix_rank(test_mat)
@@ -476,24 +475,24 @@ class HARX(ARCHModel):
 
         nobs_orig = self._y.shape[0]
         if self.constant:
-            reg_constant = ones((nobs_orig, 1), dtype=np.float64)
+            reg_constant = np.ones((nobs_orig, 1), dtype=np.float64)
         else:
-            reg_constant = ones((nobs_orig, 0), dtype=np.float64)
+            reg_constant = np.ones((nobs_orig, 0), dtype=np.float64)
 
         if self.lags is not None and nobs_orig > 0:
             maxlag = np.max(self.lags)
             lag_array = lagmat(self._y, maxlag)
-            reg_lags = empty((nobs_orig, self._lags.shape[1]),
-                             dtype=np.float64)
+            reg_lags = np.empty((nobs_orig, self._lags.shape[1]),
+                                dtype=np.float64)
             for i, lags in enumerate(self._lags.T):
                 reg_lags[:, i] = np.mean(lag_array[:, lags[0]:lags[1]], 1)
         else:
-            reg_lags = empty((nobs_orig, 0), dtype=np.float64)
+            reg_lags = np.empty((nobs_orig, 0), dtype=np.float64)
 
         if self._x is not None:
             reg_x = self._x
         else:
-            reg_x = empty((nobs_orig, 0), dtype=np.float64)
+            reg_x = np.empty((nobs_orig, 0), dtype=np.float64)
 
         self.regressors = np.hstack((reg_constant, reg_lags, reg_x))
 
@@ -597,7 +596,7 @@ class HARX(ARCHModel):
             param_cov /= nobs
             cov_type = COV_TYPES['classic_ols']
         elif cov_type in ('robust',):
-            scores = zeros((nobs, self.num_params + 1))
+            scores = np.zeros((nobs, self.num_params + 1))
             scores[:, :self.num_params] = x * e[:, None]
             scores[:, -1] = e ** 2.0 - sigma2
             score_cov = scores.T.dot(scores) / nobs

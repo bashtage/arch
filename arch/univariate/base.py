@@ -9,8 +9,6 @@ import datetime as dt
 import warnings
 
 import numpy as np
-from numpy.linalg import matrix_rank
-from numpy import ones, zeros, sqrt, diag, empty, ceil
 import scipy.stats as stats
 import pandas as pd
 from statsmodels.tools.decorators import cache_readonly, resettable_cache
@@ -97,7 +95,7 @@ def format_float_fixed(x, max_digits=10, decimal=4):
     if x == 0:
         return ('{:0.' + str(decimal) + 'f}').format(0.0)
     scale = np.log10(np.abs(x))
-    scale = np.sign(scale) * ceil(np.abs(scale))
+    scale = np.sign(scale) * np.ceil(np.abs(scale))
     if scale > (max_digits - 2 - decimal) or scale < -(decimal - 2):
         formatted = (
             '{0:' + str(max_digits) + '.' + str(decimal) + 'e}').format(x)
@@ -123,7 +121,7 @@ def implicit_constant(x):
         the array has a set of columns that adds to a constant value
     """
     nobs = x.shape[0]
-    rank = matrix_rank(np.hstack((ones((nobs, 1)), x)))
+    rank = np.linalg.matrix_rank(np.hstack((np.ones((nobs, 1)), x)))
     return rank == x.shape[1]
 
 
@@ -149,7 +147,7 @@ class ARCHModel(object):
         if y is not None:
             self._y_series = ensure1d(y, 'y', series=True)
         else:
-            self._y_series = ensure1d(empty((0,)), 'y', series=True)
+            self._y_series = ensure1d(np.empty((0,)), 'y', series=True)
 
         self._y = np.asarray(self._y_series)
         self._y_original = y
@@ -187,7 +185,7 @@ class ARCHModel(object):
         -----
         Parameters satisfy a.dot(parameters) - b >= 0
         """
-        return empty((0, self.num_params)), empty(0)
+        return np.empty((0, self.num_params)), np.empty(0)
 
     def bounds(self):
         """
@@ -444,7 +442,7 @@ class ARCHModel(object):
         sv_volatility = v.starting_values(resids)
         self._var_bounds = var_bounds = v.variance_bounds(resids)
         v.compute_variance(sv_volatility, resids, sigma2, backcast, var_bounds)
-        std_resids = resids / sqrt(sigma2)
+        std_resids = resids / np.sqrt(sigma2)
 
         # 2. Construct constraint matrices from all models and distribution
         constraints = (self.constraints(),
@@ -454,8 +452,8 @@ class ARCHModel(object):
         num_constraints = [c[0].shape[0] for c in constraints]
         num_constraints = np.array(num_constraints)
         num_params = offsets.sum()
-        a = zeros((num_constraints.sum(), num_params))
-        b = zeros(num_constraints.sum())
+        a = np.zeros((num_constraints.sum(), num_params))
+        b = np.zeros(num_constraints.sum())
 
         for i, c in enumerate(constraints):
             r_en = num_constraints[:i + 1].sum()
@@ -1506,7 +1504,7 @@ WARNING: The optimizer did not indicate successful convergence. The message was
         """
         Parameter standard error
         """
-        return pd.Series(sqrt(diag(self.param_cov)),
+        return pd.Series(np.sqrt(np.diag(self.param_cov)),
                          index=self._names, name='std_err')
 
     @cache_readonly
