@@ -10,7 +10,6 @@ from scipy.stats import norm
 from statsmodels.iolib.summary import Summary
 from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import OLS
-from statsmodels.tsa.stattools import _autolag
 from statsmodels.tsa.tsatools import lagmat
 
 from arch.compat.python import add_metaclass, range, lmap, long
@@ -38,7 +37,132 @@ TREND_DESCRIPTION = {'nc': 'No Trend',
                      'ctt': 'Constant, Linear and Quadratic Time Trends'}
 
 
-def _autolag_ols(endog, exog, startlag, maxlag, method, modargs=(), regresults=False):
+def _select_best_ic(method, nobs, sigma2, tstat):
+    """
+    Comutes the best information criteria
+
+    Parameters
+    ----------
+    method : {'aic', 'bic', 't-stat'}
+        Method to use when finding the lag length
+    nobs : int
+        Number of observations in time series
+    sigma2 : ndarray
+        maxlag + 1 array containins MLE estimates of the residual variance
+    tstat : ndarray
+        maxlag + 1 array containing t-statistic values. Only used if method
+        is 't-stat'
+
+    Returns
+    -------
+    icbest : float
+        Minimum value of the information criteria
+    lag: int
+        The lag length that maximizes the information criterion.
+    """
+    llf = -nobs / 2.0 * (log(2 * pi) + log(sigma2) + 1)
+    maxlag = len(sigma2) - 1
+    if method == 'aic':
+        crit = -2 * llf + 2 * arange(float(maxlag + 1))
+        icbest, lag = min(zip(crit, arange(maxlag + 1)))
+    elif method == 'bic':
+        crit = -2 * llf + log(nobs) * arange(float(maxlag + 1))
+        icbest, lag = min(zip(crit, arange(maxlag + 1)))
+    elif method == 't-stat':
+        stop = 1.6448536269514722
+        large_tstat = abs(tstat) >= stop
+        lag = int(squeeze(max(argwhere(large_tstat))))
+        icbest = float(tstat[lag])
+    else:
+        raise ValueError('Unknown method')
+
+    return icbest, lag
+
+
+def _autolag_ols_low_memory(y, maxlag, trend, method):
+    """
+    Compules the lag length that minimizes an info criterion .
+
+    Parameters
+    ----------
+    y : ndarray
+        Variable being tested for a unit root
+    maxlag : int
+        The highest lag order for lag length selection.
+    trend : {'nc', 'c', 'ct','ctt'}
+        Trend in the model
+    method : {'aic', 'bic', 't-stat'}
+        Method to use when finding the lag length
+
+    Returns
+    -------
+    icbest : float
+        Minimum value of the information criteria
+    lag: int
+        The lag length that maximizes the information criterion.
+
+    Notes
+    -----
+    Minimizes creation of large arrays. Uses approx 6 * nobs temporary values
+    """
+    method = method.lower()
+    import numpy as np
+    deltay = np.diff(y)
+    deltay = deltay / np.sqrt(deltay.dot(deltay))
+    lhs = deltay[maxlag:][:, None]
+    level = y[maxlag:-1]
+    level = level / np.sqrt(level.dot(level))
+    trendx = []
+    nobs = lhs.shape[0]
+    if trend == 'nc':
+        trendx = np.empty((nobs, 0))
+    else:
+        if 'tt' in trend:
+            tt = np.arange(1, nobs + 1, dtype=np.float64)[:, None] ** 2
+            tt *= (np.sqrt(5) / float(nobs) ** (5 / 2))
+            trendx.append(tt)
+        if 't' in trend:
+            t = np.arange(1, nobs + 1, dtype=np.float64)[:, None]
+            t *= (np.sqrt(3) / float(nobs) ** (3 / 2))
+            trendx.append(t)
+        if trend.startswith('c'):
+            trendx.append(np.ones((nobs, 1)) / np.sqrt(nobs))
+        trendx = np.hstack(trendx)
+    rhs = np.hstack([level[:, None], trendx])
+    m = rhs.shape[1]
+    xpx = np.empty((m + maxlag, m + maxlag)) * np.nan
+    xpy = np.empty((m + maxlag, 1)) * np.nan
+    xpy[:m] = rhs.T.dot(lhs)
+    xpx[:m, :m] = rhs.T.dot(rhs)
+    for i in range(maxlag):
+        x1 = deltay[maxlag - i - 1:-(1 + i)]
+        block = rhs.T.dot(x1)
+        xpx[m + i, :m] = block
+        xpx[:m, m + i] = block
+        xpy[m + i] = x1.dot(lhs)
+        for j in range(i, maxlag):
+            x2 = deltay[maxlag - j - 1:-(1 + j)]
+            x1px2 = x1.dot(x2)
+            xpx[m + i, m + j] = x1px2
+            xpx[m + j, m + i] = x1px2
+    ypy = lhs.T.dot(lhs)
+    sigma2 = np.empty(maxlag + 1)
+
+    tstat = empty(maxlag + 1)
+    tstat[0] = inf
+    for i in range(m, m + maxlag + 1):
+        xpx_sub = xpx[:i, :i]
+        b = np.linalg.solve(xpx_sub, xpy[:i])
+        sigma2[i - m] = (ypy - b.T.dot(xpx_sub).dot(b)) / nobs
+        if method == 't-stat':
+            xpxi = inv(xpx_sub)
+            stderr = sqrt(sigma2[i - m] * xpxi[-1, -1])
+            tstat[i - m] = b[-1] / stderr
+
+    return _select_best_ic(method, nobs, sigma2, tstat)
+
+
+def _autolag_ols(endog, exog, startlag, maxlag, method):
     """
     Returns the results for the lag length that maximizes the info criterion.
 
@@ -57,24 +181,22 @@ def _autolag_ols(endog, exog, startlag, maxlag, method, modargs=(), regresults=F
         aic - Akaike Information Criterion
         bic - Bayes Information Criterion
         t-stat - Based on last lag
-    regresults : bool, optional
-        Flag indicating to return optional return results
 
     Returns
     -------
-    bestlag : int
+    icbest : float
+        Minimum value of the information criteria
+    lag: int
         The lag length that maximizes the information criterion.
 
     Notes
     -----
-    Does estimation like mod(endog, exog[:,:i], *modargs).fit(*fitargs)
-    where i goes from lagstart to lagstart+maxlag+1.  Therefore, lags are
+    Does estimation like mod(endog, exog[:,:i]).fit()
+    where i goes from lagstart to lagstart + maxlag + 1.  Therefore, lags are
     assumed to be in contiguous columns from low to high lag length with
     the highest lag in the last column.
     """
     method = method.lower()
-    if regresults:
-        return _autolag(OLS, endog, exog, startlag, maxlag, method, regresults=regresults)
 
     q, r = qr(exog)
     qpy = q.T.dot(endog)
@@ -93,26 +215,10 @@ def _autolag_ols(endog, exog, startlag, maxlag, method, modargs=(), regresults=F
             stderr = sqrt(sigma2[i - startlag] * xpxi[-1, -1])
             tstat[i - startlag] = b[-1] / stderr
 
-    llf = -nobs / 2.0 * (log(2 * pi) + log(sigma2) + 1)
-
-    if method == 'aic':
-        crit = -2 * llf + 2 * arange(float(maxlag + 1))
-        icbest, lag = min(zip(crit, arange(maxlag + 1)))
-    elif method == 'bic':
-        crit = -2 * llf + log(nobs) * arange(float(maxlag + 1))
-        icbest, lag = min(zip(crit, arange(maxlag + 1)))
-    elif method == 't-stat':
-        stop = 1.6448536269514722
-        large_tstat = abs(tstat) >= stop
-        lag = int(squeeze(max(argwhere(large_tstat))))
-        icbest = float(tstat[lag])
-    else:
-        raise ValueError('Unknown method')
-
-    return icbest, lag
+    return _select_best_ic(method, nobs, sigma2, tstat)
 
 
-def _df_select_lags(y, trend, max_lags, method):
+def _df_select_lags(y, trend, max_lags, method, low_memory=False):
     """
     Helper method to determine the best lag length in DF-like regressions
 
@@ -128,6 +234,9 @@ def _df_select_lags(y, trend, max_lags, method):
         fitting the models
     method : {'AIC','BIC','t-stat'}
         The method to use when estimating the model
+    low_memory : bool
+        Flag indicating whether to use the low-memory algorithm for
+        lag-length selection.
 
     Returns
     -------
@@ -141,11 +250,13 @@ def _df_select_lags(y, trend, max_lags, method):
     If max_lags is None, the default value of 12 * (nobs/100)**(1/4) is used.
     """
     nobs = y.shape[0]
-    delta_y = diff(y)
-
     if max_lags is None:
         max_lags = int(ceil(12. * power(nobs / 100., 1 / 4.)))
+    if low_memory:
+        out = _autolag_ols_low_memory(y, max_lags, trend, method)
+        return out
 
+    delta_y = diff(y)
     rhs = lagmat(delta_y[:, None], max_lags, trim='both', original='in')
     nobs = rhs.shape[0]
     rhs[:, 0] = y[-nobs - 1:-1]  # replace 0 with level of y
@@ -158,7 +269,6 @@ def _df_select_lags(y, trend, max_lags, method):
 
     start_lag = full_rhs.shape[1] - rhs.shape[1] + 1
     ic_best, best_lag = _autolag_ols(lhs, full_rhs, start_lag, max_lags, method)
-
     return ic_best, best_lag
 
 
@@ -405,6 +515,13 @@ class ADF(UnitRootTest):
         'AIC' - Select the minimum of the Akaike IC
         'BIC' - Select the minimum of the Schwarz/Bayesian IC
         't-stat' - Select the minimum of the Schwarz/Bayesian IC
+    low_memory: bool
+        Flag indicating whether to use a low memory implementation of the
+        lag selection algorithm. The low memory algorithm is slower than
+        the standard algorithm but will use 2-4% of the memory required for
+        the standard algorithm. This options allows automatic lag selection
+        to be used in very long time series. If None, use automatic selection
+        of algorithm.
 
     Attributes
     ----------
@@ -474,7 +591,7 @@ class ADF(UnitRootTest):
     """
 
     def __init__(self, y, lags=None, trend='c',
-                 max_lags=None, method='AIC'):
+                 max_lags=None, method='AIC', low_memory=None):
         valid_trends = ('nc', 'c', 'ct', 'ctt')
         super(ADF, self).__init__(y, lags, trend, valid_trends)
         self._max_lags = max_lags
@@ -482,10 +599,14 @@ class ADF(UnitRootTest):
         self._test_name = 'Augmented Dickey-Fuller'
         self._regression = None
         self._summary_text = None
+        self._low_memory = low_memory
+        if low_memory is None:
+            self._low_memory = True if self.y.shape[0] > 1e5 else False
 
     def _select_lag(self):
         ic_best, best_lag = _df_select_lags(self._y, self._trend,
-                                            self._max_lags, self._method)
+                                            self._max_lags, self._method,
+                                            low_memory=self._low_memory)
         self._ic_best = ic_best
         self._lags = best_lag
 
@@ -603,12 +724,15 @@ class DFGLS(UnitRootTest):
     """
 
     def __init__(self, y, lags=None, trend='c',
-                 max_lags=None, method='AIC'):
+                 max_lags=None, method='AIC', low_memory=False):
         valid_trends = ('c', 'ct')
         super(DFGLS, self).__init__(y, lags, trend, valid_trends)
         self._max_lags = max_lags
         self._method = method
         self._regression = None
+        self._low_memory = low_memory
+        if low_memory is None:
+            self._low_memory = True if self.y.shape[0] >= 1e5 else False
         self._test_name = 'Dickey-Fuller GLS'
         if trend == 'c':
             self._c = -7.0
@@ -635,7 +759,8 @@ class DFGLS(UnitRootTest):
         # 2. determine lag length, if needed
         if self._lags is None:
             max_lags, method = self._max_lags, self._method
-            icbest, bestlag = _df_select_lags(y_detrended, 'nc', max_lags, method)
+            icbest, bestlag = _df_select_lags(y_detrended, 'nc', max_lags, method,
+                                              low_memory=self._low_memory)
             self._lags = bestlag
 
         # 3. Run Regression
@@ -1012,16 +1137,11 @@ class VarianceRatio(UnitRootTest):
     --------
     >>> from arch.unitroot import VarianceRatio
     >>> import datetime as dt
-    >>> from matplotlib.finance import fetch_historical_yahoo as yahoo
-    >>> csv = yahoo('^GSPC', dt.date(1950,1,1), dt.date(2010,1,1))
-    >>> import pandas as pd
-    >>> data = pd.DataFrame.from_csv(csv)
-    >>> data = data[::-1]  # Reverse
+    >>> import pandas_datareader as pdr
+    >>> data = pdr.get_data_fred('DJIA')
     >>> data = data.resample('M').last()  # End of month
-    >>> returns = data['Adj Close'].pct_change().dropna()
+    >>> returns = data['DJIA'].pct_change().dropna()
     >>> vr = VarianceRatio(returns, lags=12)
-    >>> print('{0:0.4f}'.format(vr.stat))
-    -11.4517
     >>> print('{0:0.4f}'.format(vr.pvalue))
     0.0000
 
@@ -1165,7 +1285,7 @@ def mackinnonp(stat, regression="c", num_unit_roots=1, dist_type='ADF-t'):
     num_unit_roots : int
         The number of series believed to be I(1).  For (Augmented) Dickey-
         Fuller N = 1.
-    dist_type: {'ADF-t', 'ADF-z', 'DFGLS'}
+    dist_type : {'ADF-t', 'ADF-z', 'DFGLS'}
         The test type to use when computing p-values.  Options include
         'ADF-t' - ADF t-stat based bootstrap
         'ADF-z' - ADF z bootstrap
@@ -1242,7 +1362,7 @@ def mackinnoncrit(num_unit_roots=1, regression="c", nobs=inf,
         non-cointegration is being tested.  For N > 12, the critical values
         are linearly interpolated (not yet implemented).  For the ADF test,
         N = 1.
-    reg : {'c', 'tc', 'ctt', 'nc'}
+    regression : {'c', 'tc', 'ctt', 'nc'}
         Following MacKinnon (1996), these stand for the type of regression run.
         'c' for constant and no trend, 'tc' for constant with a linear trend,
         'ctt' for constant with a linear and quadratic trend, and 'nc' for
@@ -1252,6 +1372,8 @@ def mackinnoncrit(num_unit_roots=1, regression="c", nobs=inf,
     nobs : {int, np.inf}
         This is the sample size.  If the sample size is numpy.inf, then the
         asymptotic critical values are returned.
+    dist_type: {'adf-t', 'adf-z', 'dfgls'}
+        Type of test statistic
 
     Returns
     -------
