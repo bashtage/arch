@@ -41,6 +41,8 @@ class TestUnitRoot(TestCase):
         assert_equal(adf.lags, 2)
         assert_almost_equal(adf.pvalue, .027067, DECIMAL_4)
         adf.regression.summary()
+        adf2 = ADF(self.inflation, low_memory=True)
+        assert_equal(adf2.lags, 2)
 
     def test_adf_no_lags(self):
         adf = ADF(self.inflation, lags=0).stat
@@ -68,6 +70,8 @@ class TestUnitRoot(TestCase):
     def test_adf_auto_bic(self):
         adf = ADF(self.inflation, method='BIC')
         assert_equal(adf.lags, 2)
+        adf2 = ADF(self.inflation, method='BIC', low_memory=True)
+        assert_equal(adf2.lags, 2)
 
     def test_adf_critical_value(self):
         adf = ADF(self.inflation, trend='c', lags=3)
@@ -80,6 +84,8 @@ class TestUnitRoot(TestCase):
     def test_adf_auto_t_stat(self):
         adf = ADF(self.inflation, method='t-stat')
         assert_equal(adf.lags, 11)
+        adf2 = ADF(self.inflation, method='t-stat', low_memory=True)
+        assert_equal(adf2.lags, 11)
         old_stat = adf.stat
         adf.lags += 1
         assert adf.stat != old_stat
@@ -179,6 +185,9 @@ class TestUnitRoot(TestCase):
         ratio = num / denom
 
         assert_almost_equal(ratio, vr.vr)
+        assert 'Variance-Ratio Test' in str(vr)
+        vr.debiased = True
+        assert vr.debiased is True
 
     def test_variance_ratio_no_overlap(self):
         vr = VarianceRatio(self.inflation, overlap=False)
@@ -342,3 +351,44 @@ class TestAutolagOLS(TestCase):
             direct[i] = res.tvalues[-1]
         crit = stats.norm.ppf(0.95)
         assert np.max(np.argwhere(np.abs(direct[2:]) > crit)) == sel_lag
+
+
+@pytest.mark.parametrize('trend', ['nc', 'c', 'ct', 'ctt'])
+def test_trends_low_memory(trend):
+    rnd = np.random.RandomState(12345)
+    y = np.cumsum(rnd.randn(250))
+    adf = ADF(y, trend=trend, max_lags=16)
+    adf2 = ADF(y, trend=trend, low_memory=True, max_lags=16)
+    assert adf.lags == adf2.lags
+    assert adf.max_lags == 16
+
+
+@pytest.mark.parametrize('trend', ['nc', 'c', 'ct', 'ctt'])
+def test_representations(trend):
+    rnd = np.random.RandomState(12345)
+    y = np.cumsum(rnd.randn(250))
+    adf = ADF(y, trend=trend, max_lags=16)
+    check = 'Constant'
+    if trend == 'nc':
+        check = 'No Trend'
+    assert check in adf.__repr__()
+    assert check in adf.__repr__()
+    assert check in adf._repr_html_()
+    assert 'class="simpletable"' in adf._repr_html_()
+
+
+def test_unknown_method():
+    rnd = np.random.RandomState(12345)
+    y = np.cumsum(rnd.randn(250))
+    with pytest.raises(ValueError):
+        ADF(y, method='unknown').stat
+
+
+def test_auto_lowmemoty():
+    rnd = np.random.RandomState(12345)
+    y = np.cumsum(rnd.randn(250))
+    adf = ADF(y, trend='ct')
+    assert adf._low_memory is False
+    y = np.cumsum(rnd.randn(1000000))
+    adf = ADF(y, trend='ct')
+    assert adf._low_memory is True
