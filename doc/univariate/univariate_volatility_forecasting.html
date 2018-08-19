@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Volatility Forecasting &#8212; arch 4.4.1+7.gaefea99 documentation</title>
+    <title>Volatility Forecasting &#8212; arch 4.4.1+9.g0c6b035 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="forecasting.html" title="Forecasting"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+7.gaefea99 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+9.g0c6b035 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -297,7 +297,17 @@ div.nboutput div.output_area.stderr {
 
 <span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">import</span> <span class="nn">seaborn</span>
-<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s1">&#39;darkgrid&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
 <span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
 </pre></div>
 </div>
@@ -308,7 +318,7 @@ div.nboutput div.output_area.stderr {
 pandas-datareader package to manage data download.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [2]:
+<span></span>In [3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -323,8 +333,9 @@ pandas-datareader package to manage data download.</p>
 
 <span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">sp500</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">get_data_yahoo</span><span class="p">(</span><span class="s1">&#39;^GSPC&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
-<span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">sp500</span><span class="p">[</span><span class="s1">&#39;Adj Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">get_data_famafrench</span><span class="p">(</span><span class="s1">&#39;F-F_Research_Data_Factors_daily&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+<span class="n">mkt_returns</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span> <span class="o">+</span>  <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span>
+<span class="n">returns</span> <span class="o">=</span> <span class="n">mkt_returns</span>
 </pre></div>
 </div>
 </div>
@@ -343,7 +354,7 @@ the sample so that they are out-of-sample.</p>
 <p>Forecasts start with specifying the model and estimating parameters.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [3]:
+<span></span>In [4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -357,18 +368,18 @@ the sample so that they are out-of-sample.</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     39,   Neg. LLF: 6031.2332529686
-Iteration:     10,   Func. Count:     71,   Neg. LLF: 6028.8808621264125
+Iteration:      5,   Func. Count:     39,   Neg. LLF: 6130.463290920333
+Iteration:     10,   Func. Count:     71,   Neg. LLF: 6128.4731771407005
 Optimization terminated successfully.    (Exit mode 0)
-            Current function value: 6028.88083147
+            Current function value: 6128.4731681952535
             Iterations: 11
-            Function evaluations: 78
+            Function evaluations: 77
             Gradient evaluations: 11
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [4]:
+<span></span>In [5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -398,7 +409,7 @@ corresponds to 10-steps ahead.</p>
 <p>The default forecast only produces 1-step ahear forecasts.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [5]:
+<span></span>In [6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -415,26 +426,26 @@ corresponds to 10-steps ahead.</p>
 <div class="highlight"><pre>
                  h.1
 Date
-2016-12-16       NaN
-2016-12-19       NaN
-2016-12-20  0.052183
+2016-12-28       NaN
+2016-12-29       NaN
+2016-12-30  0.061286
                  h.1
 Date
-2016-12-16       NaN
-2016-12-19       NaN
-2016-12-20  0.383782
+2016-12-28       NaN
+2016-12-29       NaN
+2016-12-30  0.400956
                  h.1
 Date
-2016-12-16       NaN
-2016-12-19       NaN
-2016-12-20  0.383782
+2016-12-28       NaN
+2016-12-29       NaN
+2016-12-30  0.400956
 </pre></div></div>
 </div>
 <p>Longer horizon forecasts can be computed by passing the parameter
 <code class="docutils literal notranslate"><span class="pre">horizon</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [6]:
+<span></span>In [7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -450,9 +461,9 @@ Date
 <div class="highlight"><pre>
                  h.1       h.2       h.3       h.4       h.5
 Date
-2016-12-16       NaN       NaN       NaN       NaN       NaN
-2016-12-19       NaN       NaN       NaN       NaN       NaN
-2016-12-20  0.383782  0.398705  0.413379  0.427808  0.441996
+2016-12-28       NaN       NaN       NaN       NaN       NaN
+2016-12-29       NaN       NaN       NaN       NaN       NaN
+2016-12-30  0.400956  0.416563  0.431896  0.446961  0.461762
 </pre></div></div>
 </div>
 <p>Values that are not computed are <code class="docutils literal notranslate"><span class="pre">nan</span></code>-filled.</p>
@@ -470,7 +481,7 @@ after this final date.</p>
 date in <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> is not in the sample.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [7]:
+<span></span>In [8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -485,20 +496,20 @@ date in <code class="docutils literal notranslate"><span class="pre">last_obs</s
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     38,   Neg. LLF: 4157.973788419826
-Iteration:     10,   Func. Count:     72,   Neg. LLF: 4155.670884337866
+Iteration:      5,   Func. Count:     38,   Neg. LLF: 4204.91956121224
+Iteration:     10,   Func. Count:     72,   Neg. LLF: 4202.815024845146
 Optimization terminated successfully.    (Exit mode 0)
-            Current function value: 4155.66693192
-            Iterations: 13
-            Function evaluations: 90
-            Gradient evaluations: 13
+            Current function value: 4202.812110685669
+            Iterations: 12
+            Function evaluations: 84
+            Gradient evaluations: 12
                  h.1       h.2       h.3       h.4       h.5
 Date
-2010-12-31  0.361732  0.371332  0.380859  0.390314  0.399697
-2011-01-03  0.437698  0.446723  0.455681  0.464570  0.473393
-2011-01-04  0.413819  0.423025  0.432162  0.441229  0.450228
-2011-01-05  0.406429  0.415691  0.424883  0.434005  0.443059
-2011-01-06  0.388142  0.397542  0.406871  0.416130  0.425318
+2010-12-31  0.365727  0.376462  0.387106  0.397660  0.408124
+2011-01-03  0.451526  0.461532  0.471453  0.481290  0.491043
+2011-01-04  0.432131  0.442302  0.452387  0.462386  0.472300
+2011-01-05  0.430051  0.440239  0.450341  0.460358  0.470289
+2011-01-06  0.407841  0.418219  0.428508  0.438710  0.448825
 </pre></div></div>
 </div>
 </div>
@@ -509,7 +520,7 @@ one-step from the final observation. These can be implemented using
 <code class="docutils literal notranslate"><span class="pre">first_obs</span></code> and <code class="docutils literal notranslate"><span class="pre">last_obs</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [8]:
+<span></span>In [9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -536,26 +547,26 @@ one-step from the final observation. These can be implemented using
 <div class="highlight"><pre>
 ....................
                  h.1       h.2       h.3
-2009-12-31  0.592770  0.599537  0.606258
-2010-01-04  0.741695  0.747594  0.753455
-2010-01-05  0.697177  0.703327  0.709438
-2010-01-06  0.650562  0.656987  0.663370
-2010-01-07  0.618261  0.624963  0.631622
-2010-01-08  0.582740  0.589653  0.596520
-2010-01-11  0.546604  0.553743  0.560836
-2010-01-12  0.584582  0.591458  0.598288
-2010-01-13  0.594898  0.601701  0.608459
-2010-01-14  0.559686  0.566699  0.573665
-2010-01-15  0.619233  0.625857  0.632437
-2010-01-19  0.689729  0.695906  0.702042
-2010-01-20  0.734718  0.740607  0.746457
-2010-01-21  0.968062  0.972529  0.976966
-2010-01-22  1.291619  1.294309  1.296981
-2010-01-25  1.207096  1.210234  1.213352
-2010-01-26  1.132550  1.136086  1.139598
-2010-01-27  1.064376  1.068281  1.072160
-2010-01-28  1.102316  1.106104  1.109867
-2010-01-29  1.103033  1.106945  1.110831
+2009-12-31  0.598199  0.605960  0.613661
+2010-01-04  0.771974  0.778431  0.784837
+2010-01-05  0.724185  0.731008  0.737781
+2010-01-06  0.674237  0.681423  0.688555
+2010-01-07  0.637534  0.644995  0.652399
+2010-01-08  0.601684  0.609451  0.617161
+2010-01-11  0.562393  0.570450  0.578447
+2010-01-12  0.613401  0.621098  0.628738
+2010-01-13  0.623059  0.630676  0.638236
+2010-01-14  0.584403  0.592291  0.600119
+2010-01-15  0.654097  0.661483  0.668813
+2010-01-19  0.725471  0.732355  0.739187
+2010-01-20  0.758532  0.765176  0.771770
+2010-01-21  0.958742  0.964005  0.969229
+2010-01-22  1.272999  1.276121  1.279220
+2010-01-25  1.182257  1.186084  1.189883
+2010-01-26  1.110357  1.114637  1.118885
+2010-01-27  1.044077  1.048777  1.053442
+2010-01-28  1.085489  1.089873  1.094223
+2010-01-29  1.088349  1.092875  1.097367
 </pre></div></div>
 </div>
 </div>
@@ -566,7 +577,7 @@ doesn’t change. This can be easily implemented by dropping the
 <code class="docutils literal notranslate"><span class="pre">first_obs</span></code> input.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [9]:
+<span></span>In [10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -595,26 +606,26 @@ doesn’t change. This can be easily implemented by dropping the
 <div class="highlight"><pre>
 ....................
                  h.1       h.2       h.3
-2009-12-31  0.592770  0.599537  0.606258
-2010-01-04  0.740400  0.746181  0.751923
-2010-01-05  0.696335  0.702391  0.708405
-2010-01-06  0.650194  0.656541  0.662845
-2010-01-07  0.617491  0.624048  0.630560
-2010-01-08  0.582186  0.588973  0.595713
-2010-01-11  0.546313  0.553336  0.560311
-2010-01-12  0.584236  0.591003  0.597725
-2010-01-13  0.594504  0.601203  0.607858
-2010-01-14  0.559554  0.566476  0.573352
-2010-01-15  0.618935  0.625469  0.631960
-2010-01-19  0.689213  0.695305  0.701357
-2010-01-20  0.734042  0.739855  0.745629
-2010-01-21  0.965800  0.970214  0.974599
-2010-01-22  1.285115  1.287657  1.290182
-2010-01-25  1.202055  1.205083  1.208091
-2010-01-26  1.128661  1.132120  1.135556
-2010-01-27  1.061641  1.065497  1.069326
-2010-01-28  1.097353  1.100992  1.104607
-2010-01-29  1.096228  1.099871  1.103490
+2009-12-31  0.598199  0.605960  0.613661
+2010-01-04  0.772200  0.778629  0.785009
+2010-01-05  0.723347  0.730126  0.736853
+2010-01-06  0.673796  0.680934  0.688017
+2010-01-07  0.637555  0.644959  0.652306
+2010-01-08  0.600834  0.608511  0.616129
+2010-01-11  0.561436  0.569411  0.577324
+2010-01-12  0.612214  0.619798  0.627322
+2010-01-13  0.622095  0.629604  0.637055
+2010-01-14  0.583425  0.591215  0.598945
+2010-01-15  0.652960  0.660231  0.667447
+2010-01-19  0.724212  0.730968  0.737673
+2010-01-20  0.757280  0.763797  0.770264
+2010-01-21  0.956394  0.961508  0.966583
+2010-01-22  1.268445  1.271402  1.274337
+2010-01-25  1.177405  1.180991  1.184549
+2010-01-26  1.106326  1.110404  1.114450
+2010-01-27  1.040930  1.045462  1.049959
+2010-01-28  1.082130  1.086370  1.090577
+2010-01-29  1.082251  1.086487  1.090690
 </pre></div></div>
 </div>
 </div>
@@ -631,7 +642,7 @@ for horizons larger than 1 using <code class="docutils literal notranslate"><spa
 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [10]:
+<span></span>In [11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -648,15 +659,15 @@ for horizons larger than 1 using <code class="docutils literal notranslate"><spa
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     44,   Neg. LLF: 5932.033656743306
-Iteration:     10,   Func. Count:     81,   Neg. LLF: 5928.216764723273
+Iteration:      5,   Func. Count:     44,   Neg. LLF: 6037.930348422024
+Iteration:     10,   Func. Count:     82,   Neg. LLF: 6034.462051044527
 Optimization terminated successfully.    (Exit mode 0)
-            Current function value: 5928.21663785
-            Iterations: 13
-            Function evaluations: 102
-            Gradient evaluations: 13
-h.1    0.311969
-Name: 2016-12-20 00:00:00, dtype: float64
+            Current function value: 6034.461795464493
+            Iterations: 12
+            Function evaluations: 96
+            Gradient evaluations: 12
+h.1    0.449483
+Name: 2016-12-30 00:00:00, dtype: float64
 </pre></div></div>
 </div>
 </div>
@@ -667,7 +678,7 @@ attribute of an <code class="docutils literal notranslate"><span class="pre">ARC
 <code class="docutils literal notranslate"><span class="pre">simulation</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [11]:
+<span></span>In [12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -679,11 +690,11 @@ attribute of an <code class="docutils literal notranslate"><span class="pre">ARC
 </div>
 <div class="nboutput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[11]:
+<span></span>Out[12]:
 </pre></div>
 </div>
 <div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x188fd9ef748&gt;
+<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x21d345eb160&gt;
 </pre></div>
 </div>
 </div>
@@ -691,12 +702,12 @@ attribute of an <code class="docutils literal notranslate"><span class="pre">ARC
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_forecasting_24_1.png" src="../_images/univariate_univariate_volatility_forecasting_24_1.png" />
+<img alt="../_images/univariate_univariate_volatility_forecasting_25_1.png" src="../_images/univariate_univariate_volatility_forecasting_25_1.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [12]:
+<span></span>In [13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -716,12 +727,12 @@ attribute of an <code class="docutils literal notranslate"><span class="pre">ARC
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_forecasting_25_0.png" src="../_images/univariate_univariate_volatility_forecasting_25_0.png" />
+<img alt="../_images/univariate_univariate_volatility_forecasting_26_0.png" src="../_images/univariate_univariate_volatility_forecasting_26_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [13]:
+<span></span>In [14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -732,11 +743,11 @@ attribute of an <code class="docutils literal notranslate"><span class="pre">ARC
 </div>
 <div class="nboutput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[13]:
+<span></span>Out[14]:
 </pre></div>
 </div>
 <div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x18880340f28&gt;
+<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x21d33626d68&gt;
 </pre></div>
 </div>
 </div>
@@ -744,7 +755,7 @@ attribute of an <code class="docutils literal notranslate"><span class="pre">ARC
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_forecasting_26_1.png" src="../_images/univariate_univariate_volatility_forecasting_26_1.png" />
+<img alt="../_images/univariate_univariate_volatility_forecasting_27_1.png" src="../_images/univariate_univariate_volatility_forecasting_27_1.png" />
 </div>
 </div>
 </div>
@@ -758,7 +769,7 @@ of the residuals. Forecasts produced using this method also return an
 simulated paths.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [14]:
+<span></span>In [15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -778,7 +789,7 @@ simulated paths.</p>
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_forecasting_28_0.png" src="../_images/univariate_univariate_volatility_forecasting_28_0.png" />
+<img alt="../_images/univariate_univariate_volatility_forecasting_29_0.png" src="../_images/univariate_univariate_volatility_forecasting_29_0.png" />
 </div>
 </div>
 </div>
@@ -818,7 +829,7 @@ simulated paths.</p>
         <li class="right" >
           <a href="forecasting.html" title="Forecasting"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+7.gaefea99 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+9.g0c6b035 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

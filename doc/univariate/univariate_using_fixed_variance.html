@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Using the Fixed Variance process &#8212; arch 4.4.1+7.gaefea99 documentation</title>
+    <title>Using the Fixed Variance process &#8212; arch 4.4.1+9.g0c6b035 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="volatility.html" title="Volatility Processes"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+7.gaefea99 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+9.g0c6b035 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -302,7 +302,17 @@ space.</p>
 
 <span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">import</span> <span class="nn">seaborn</span>
-<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s1">&#39;darkgrid&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
 <span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
 </pre></div>
 </div>
@@ -312,7 +322,7 @@ space.</p>
 <p>Imports used in this example.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [2]:
+<span></span>In [3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -328,13 +338,13 @@ space.</p>
 <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> process. The data is read using <code class="docutils literal notranslate"><span class="pre">pandas-datareader</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [3]:
+<span></span>In [4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">dr</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">YahooDailyReader</span><span class="p">(</span><span class="s1">&#39;^VIX&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">))</span>
+<span></span><span class="n">dr</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">FredReader</span><span class="p">(</span><span class="s1">&#39;VIXCLS&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">))</span>
 <span class="n">vix_data</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">vix</span> <span class="o">=</span> <span class="n">vix_data</span><span class="o">.</span><span class="n">Close</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">vix</span> <span class="o">=</span> <span class="n">vix_data</span><span class="o">.</span><span class="n">VIXCLS</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">vix</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;VIX Index&#39;</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">vix</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;VIX Index&#39;</span><span class="p">)</span>
 </pre></div>
@@ -344,7 +354,7 @@ space.</p>
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_using_fixed_variance_6_0.png" src="../_images/univariate_univariate_using_fixed_variance_6_0.png" />
+<img alt="../_images/univariate_univariate_using_fixed_variance_7_0.png" src="../_images/univariate_univariate_using_fixed_variance_7_0.png" />
 </div>
 </div>
 </div>
@@ -354,7 +364,7 @@ space.</p>
 constant variance.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [4]:
+<span></span>In [5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -373,27 +383,27 @@ constant variance.</p>
 <div class="highlight"><pre>
                     HAR - Constant Variance Model Results
 ==============================================================================
-Dep. Variable:              VIX Index   R-squared:                       0.964
-Mean Model:                       HAR   Adj. R-squared:                  0.964
-Vol Model:          Constant Variance   Log-Likelihood:               -8207.73
-Distribution:                  Normal   AIC:                           16425.5
-Method:            Maximum Likelihood   BIC:                           16457.2
-                                        No. Observations:                 4255
-Date:                Tue, Jan 17 2017   Df Residuals:                     4250
-Time:                        16:40:41   Df Model:                            5
+Dep. Variable:              VIX Index   R-squared:                       0.965
+Mean Model:                       HAR   Adj. R-squared:                  0.965
+Vol Model:          Constant Variance   Log-Likelihood:               -8600.27
+Distribution:                  Normal   AIC:                           17210.5
+Method:            Maximum Likelihood   BIC:                           17242.6
+                                        No. Observations:                 4506
+Date:                Sun, Aug 19 2018   Df Residuals:                     4501
+Time:                        21:31:40   Df Model:                            5
                                     Mean Model
 ==================================================================================
                       coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 ----------------------------------------------------------------------------------
-Const               0.2421      0.122      1.992  4.642e-02    [3.841e-03,  0.480]
-VIX Index[0:1]      0.8426  4.177e-02     20.172  1.712e-90      [  0.761,  0.924]
-VIX Index[0:5]      0.1152  4.851e-02      2.375  1.753e-02    [2.015e-02,  0.210]
-VIX Index[0:22]     0.0301  2.501e-02      1.206      0.228 [-1.887e-02,7.916e-02]
+Const               0.2202      0.112      1.959  5.013e-02   [-1.208e-04,  0.440]
+VIX Index[0:1]      0.8418  4.112e-02     20.473  3.722e-93      [  0.761,  0.922]
+VIX Index[0:5]      0.1150  4.780e-02      2.407  1.610e-02    [2.135e-02,  0.209]
+VIX Index[0:22]     0.0319  2.484e-02      1.283      0.199 [-1.681e-02,8.058e-02]
                             Volatility Model
 ========================================================================
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
-sigma2         2.7733      0.186     14.900  3.286e-50 [  2.409,  3.138]
+sigma2         2.6628      0.176     15.110  1.396e-51 [  2.317,  3.008]
 ========================================================================
 
 Covariance estimator: White&#39;s Heteroskedasticity Consistent Estimator
@@ -407,7 +417,7 @@ estimated using a <code class="docutils literal notranslate"><span class="pre">Z
 used for the variance.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [5]:
+<span></span>In [6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -427,20 +437,20 @@ used for the variance.</p>
 ==============================================================================
 Dep. Variable:                  resid   R-squared:                       0.000
 Mean Model:                 Zero Mean   Adj. R-squared:                  0.000
-Vol Model:                  GJR-GARCH   Log-Likelihood:               -6852.69
-Distribution:                  Normal   AIC:                           13713.4
-Method:            Maximum Likelihood   BIC:                           13738.8
-                                        No. Observations:                 4255
-Date:                Tue, Jan 17 2017   Df Residuals:                     4251
-Time:                        16:40:41   Df Model:                            4
+Vol Model:                  GJR-GARCH   Log-Likelihood:               -7167.57
+Distribution:                  Normal   AIC:                           14343.1
+Method:            Maximum Likelihood   BIC:                           14368.8
+                                        No. Observations:                 4506
+Date:                Sun, Aug 19 2018   Df Residuals:                     4502
+Time:                        21:31:40   Df Model:                            4
                              Volatility Model
 ==========================================================================
                  coef    std err          t      P&gt;|t|    95.0% Conf. Int.
 --------------------------------------------------------------------------
-omega          0.0698  1.662e-02      4.201  2.659e-05 [3.724e-02,  0.102]
-alpha[1]       0.2662  3.837e-02      6.938  3.969e-12   [  0.191,  0.341]
-gamma[1]      -0.2662  3.347e-02     -7.953  1.818e-15   [ -0.332, -0.201]
-beta[1]        0.8287  2.461e-02     33.680 1.143e-248   [  0.780,  0.877]
+omega          0.0738  1.683e-02      4.382  1.174e-05 [4.077e-02,  0.107]
+alpha[1]       0.2680  3.863e-02      6.937  4.004e-12   [  0.192,  0.344]
+gamma[1]      -0.2680  3.575e-02     -7.496  6.599e-14   [ -0.338, -0.198]
+beta[1]        0.8234  2.399e-02     34.318 4.171e-258   [  0.776,  0.870]
 ==========================================================================
 
 Covariance estimator: robust
@@ -450,7 +460,7 @@ Covariance estimator: robust
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_using_fixed_variance_10_1.png" src="../_images/univariate_univariate_using_fixed_variance_10_1.png" />
+<img alt="../_images/univariate_univariate_using_fixed_variance_11_1.png" src="../_images/univariate_univariate_using_fixed_variance_11_1.png" />
 </div>
 </div>
 </div>
@@ -467,7 +477,7 @@ close to 1. The mean parameters have changed which reflects the GLS-like
 weighting that this re-estimaion imposes.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [6]:
+<span></span>In [7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -486,41 +496,41 @@ weighting that this re-estimaion imposes.</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      1,   Func. Count:      7,   Neg. LLF: 6852.686462250487
-Iteration:      2,   Func. Count:     21,   Neg. LLF: 6852.597081675016
-Iteration:      3,   Func. Count:     32,   Neg. LLF: 6850.090522673863
-Iteration:      4,   Func. Count:     43,   Neg. LLF: 6848.07635458317
-Iteration:      5,   Func. Count:     53,   Neg. LLF: 6848.071807637809
-Iteration:      6,   Func. Count:     63,   Neg. LLF: 6848.071548129179
-Iteration:      7,   Func. Count:     70,   Neg. LLF: 6848.071544245005
+Iteration:      1,   Func. Count:      7,   Neg. LLF: 7167.566002903421
+Iteration:      2,   Func. Count:     21,   Neg. LLF: 7167.542807019811
+Iteration:      3,   Func. Count:     32,   Neg. LLF: 7164.798624994208
+Iteration:      4,   Func. Count:     43,   Neg. LLF: 7162.605127839493
+Iteration:      5,   Func. Count:     53,   Neg. LLF: 7162.600913713346
+Iteration:      6,   Func. Count:     63,   Neg. LLF: 7162.600864060711
+Iteration:      7,   Func. Count:     70,   Neg. LLF: 7162.600859709373
 Optimization terminated successfully.    (Exit mode 0)
-            Current function value: 6848.07154425
+            Current function value: 7162.600859709374
             Iterations: 7
             Function evaluations: 70
             Gradient evaluations: 7
                       HAR - Fixed Variance Model Results
 ==============================================================================
-Dep. Variable:              VIX Index   R-squared:                       0.964
-Mean Model:                       HAR   Adj. R-squared:                  0.964
-Vol Model:             Fixed Variance   Log-Likelihood:               -6848.07
-Distribution:                  Normal   AIC:                           13706.1
-Method:            Maximum Likelihood   BIC:                           13737.9
-                                        No. Observations:                 4255
-Date:                Tue, Jan 17 2017   Df Residuals:                     4250
-Time:                        16:40:41   Df Model:                            5
+Dep. Variable:              VIX Index   R-squared:                       0.965
+Mean Model:                       HAR   Adj. R-squared:                  0.965
+Vol Model:             Fixed Variance   Log-Likelihood:               -7162.60
+Distribution:                  Normal   AIC:                           14335.2
+Method:            Maximum Likelihood   BIC:                           14367.3
+                                        No. Observations:                 4506
+Date:                Sun, Aug 19 2018   Df Residuals:                     4501
+Time:                        21:31:41   Df Model:                            5
                                     Mean Model
 =================================================================================
                       coef    std err          t      P&gt;|t|      95.0% Conf. Int.
 ---------------------------------------------------------------------------------
-Const               0.2391  5.508e-02      4.341  1.416e-05     [  0.131,  0.347]
-VIX Index[0:1]      0.8968  1.830e-02     49.016      0.000     [  0.861,  0.933]
-VIX Index[0:5]      0.0592  2.260e-02      2.621  8.756e-03   [1.495e-02,  0.104]
-VIX Index[0:22]     0.0322  1.211e-02      2.656  7.914e-03 [8.424e-03,5.589e-02]
+Const               0.2256  5.095e-02      4.427  9.560e-06     [  0.126,  0.325]
+VIX Index[0:1]      0.8969  1.780e-02     50.383      0.000     [  0.862,  0.932]
+VIX Index[0:5]      0.0570  2.204e-02      2.587  9.681e-03   [1.382e-02,  0.100]
+VIX Index[0:22]     0.0347  1.201e-02      2.891  3.835e-03 [1.119e-02,5.826e-02]
                             Volatility Model
 ========================================================================
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
-scale          0.9979  4.052e-02     24.624 7.058e-134 [  0.918,  1.077]
+scale          0.9978  4.106e-02     24.299 2.020e-130 [  0.917,  1.078]
 ========================================================================
 
 Covariance estimator: robust
@@ -533,7 +543,7 @@ Covariance estimator: robust
 so-called zig-zag estimation strategy.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [7]:
+<span></span>In [8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -561,22 +571,22 @@ so-called zig-zag estimation strategy.</p>
 4
                     HAR - Fixed Variance (Unit Scale) Model Results
 =======================================================================================
-Dep. Variable:                       VIX Index   R-squared:                       0.964
-Mean Model:                                HAR   Adj. R-squared:                  0.964
-Vol Model:         Fixed Variance (Unit Scale)   Log-Likelihood:               -6851.05
-Distribution:                           Normal   AIC:                           13710.1
-Method:                     Maximum Likelihood   BIC:                           13735.5
-                                                 No. Observations:                 4255
-Date:                         Tue, Jan 17 2017   Df Residuals:                     4251
-Time:                                 16:40:41   Df Model:                            4
+Dep. Variable:                       VIX Index   R-squared:                       0.965
+Mean Model:                                HAR   Adj. R-squared:                  0.965
+Vol Model:         Fixed Variance (Unit Scale)   Log-Likelihood:               -7165.87
+Distribution:                           Normal   AIC:                           14339.7
+Method:                     Maximum Likelihood   BIC:                           14365.4
+                                                 No. Observations:                 4506
+Date:                         Sun, Aug 19 2018   Df Residuals:                     4502
+Time:                                 21:31:44   Df Model:                            4
                                     Mean Model
 =================================================================================
                       coef    std err          t      P&gt;|t|      95.0% Conf. Int.
 ---------------------------------------------------------------------------------
-Const               0.2374  5.514e-02      4.306  1.666e-05     [  0.129,  0.346]
-VIX Index[0:1]      0.8969  1.831e-02     48.978      0.000     [  0.861,  0.933]
-VIX Index[0:5]      0.0591  2.262e-02      2.611  9.035e-03   [1.472e-02,  0.103]
-VIX Index[0:22]     0.0323  1.213e-02      2.662  7.765e-03 [8.517e-03,5.606e-02]
+Const               0.2237  5.102e-02      4.385  1.159e-05     [  0.124,  0.324]
+VIX Index[0:1]      0.8971  1.781e-02     50.362      0.000     [  0.862,  0.932]
+VIX Index[0:5]      0.0567  2.206e-02      2.571  1.015e-02 [1.348e-02,9.995e-02]
+VIX Index[0:22]     0.0349  1.203e-02      2.901  3.720e-03 [1.132e-02,5.849e-02]
 =================================================================================
 
 Covariance estimator: robust
@@ -590,7 +600,7 @@ comparisson to the previous <code class="docutils literal notranslate"><span cla
 parameters.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [8]:
+<span></span>In [9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -607,30 +617,30 @@ parameters.</p>
 <div class="highlight"><pre>
                         HAR - GJR-GARCH Model Results
 ==============================================================================
-Dep. Variable:              VIX Index   R-squared:                       0.964
-Mean Model:                       HAR   Adj. R-squared:                  0.964
-Vol Model:                  GJR-GARCH   Log-Likelihood:               -6845.94
-Distribution:                  Normal   AIC:                           13707.9
-Method:            Maximum Likelihood   BIC:                           13758.7
-                                        No. Observations:                 4255
-Date:                Tue, Jan 17 2017   Df Residuals:                     4247
-Time:                        16:40:41   Df Model:                            8
+Dep. Variable:              VIX Index   R-squared:                       0.965
+Mean Model:                       HAR   Adj. R-squared:                  0.965
+Vol Model:                  GJR-GARCH   Log-Likelihood:               -7159.40
+Distribution:                  Normal   AIC:                           14334.8
+Method:            Maximum Likelihood   BIC:                           14386.1
+                                        No. Observations:                 4506
+Date:                Sun, Aug 19 2018   Df Residuals:                     4498
+Time:                        21:31:46   Df Model:                            8
                                     Mean Model
 =================================================================================
                       coef    std err          t      P&gt;|t|      95.0% Conf. Int.
 ---------------------------------------------------------------------------------
-Const               0.3232  8.670e-02      3.727  1.935e-04     [  0.153,  0.493]
-VIX Index[0:1]      0.8708  1.995e-02     43.657      0.000     [  0.832,  0.910]
-VIX Index[0:5]      0.0801  2.392e-02      3.349  8.105e-04   [3.323e-02,  0.127]
-VIX Index[0:22]     0.0307  1.515e-02      2.025  4.291e-02 [9.786e-04,6.037e-02]
+Const               0.3235  9.679e-02      3.342  8.310e-04     [  0.134,  0.513]
+VIX Index[0:1]      0.8709  1.993e-02     43.696      0.000     [  0.832,  0.910]
+VIX Index[0:5]      0.0753  2.353e-02      3.201  1.370e-03   [2.920e-02,  0.121]
+VIX Index[0:22]     0.0348  1.733e-02      2.010  4.448e-02 [8.586e-04,6.879e-02]
                              Volatility Model
 ==========================================================================
                  coef    std err          t      P&gt;|t|    95.0% Conf. Int.
 --------------------------------------------------------------------------
-omega          0.0725  1.851e-02      3.919  8.879e-05 [3.627e-02,  0.109]
-alpha[1]       0.2647  4.327e-02      6.118  9.497e-10   [  0.180,  0.350]
-gamma[1]      -0.2647  4.374e-02     -6.052  1.432e-09   [ -0.350, -0.179]
-beta[1]        0.8217  3.497e-02     23.499 4.136e-122   [  0.753,  0.890]
+omega          0.0779  1.888e-02      4.128  3.662e-05 [4.093e-02,  0.115]
+alpha[1]       0.2672  4.465e-02      5.985  2.165e-09   [  0.180,  0.355]
+gamma[1]      -0.2672  4.949e-02     -5.400  6.665e-08   [ -0.364, -0.170]
+beta[1]        0.8149  3.654e-02     22.300 3.733e-110   [  0.743,  0.886]
 ==========================================================================
 
 Covariance estimator: robust
@@ -673,7 +683,7 @@ Covariance estimator: robust
         <li class="right" >
           <a href="volatility.html" title="Volatility Processes"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+7.gaefea99 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+9.g0c6b035 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
