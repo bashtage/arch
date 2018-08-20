@@ -285,7 +285,7 @@ class TestMCS(object):
     def test_r_method(self):
         def r_step(losses, indices):
             # A basic but direct implementation of the r method
-            t, k = losses.shape
+            k = losses.shape[1]
             b = len(indices)
             mean_diffs = losses.mean(0)
             loss_diffs = np.zeros((k, k))
@@ -341,7 +341,7 @@ class TestMCS(object):
     def test_max_method(self):
         def max_step(losses, indices):
             # A basic but direct implementation of the max method
-            t, k = losses.shape
+            k = losses.shape[1]
             b = len(indices)
             loss_errors = losses - losses.mean(0)
             stats = np.zeros((b, k))
@@ -371,8 +371,8 @@ class TestMCS(object):
             removed = list(indices[np.isfinite(indices)])
             include = list(set(list(range(10))).difference(removed))
             include.sort()
-            pval, drop_index, std_devs = max_step(losses[:, np.array(include)],
-                                                  mcs._bootsrap_indices)
+            pval, drop_index, _ = max_step(losses[:, np.array(include)],
+                                           mcs._bootsrap_indices)
             pvals[i] = pval if i == 0 else np.max([pvals[i - 1], pval])
             indices[i] = include[drop_index]
         direct = pd.DataFrame(pvals,

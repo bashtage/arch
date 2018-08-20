@@ -757,7 +757,8 @@ class ConstantMean(HARX):
     def _model_description(self, include_lags=False):
         return super(ConstantMean, self)._model_description(include_lags)
 
-    def simulate(self, params, nobs, burn=500, initial_value_vol=None):
+    def simulate(self, params, nobs, burn=500, initial_value=None,
+                 x=None, initial_value_vol=None):
         """
         Simulated data from a constant mean model
 
@@ -772,7 +773,11 @@ class ConstantMean(HARX):
         burn : int, optional
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
-        initial_value_vol : array or float, optional
+        initial_value : None
+            This value is not used.
+        x : None
+            This value is not used.
+        initial_value_vol : {ndarray, float}, optional
             An array or scalar to use when initializing the volatility process.
 
         Returns
@@ -795,6 +800,10 @@ class ConstantMean(HARX):
         >>> params = np.concatenate((cm_params, garch_params))
         >>> sim_data = cm.simulate(params, 1000)
         """
+        if initial_value is not None or x is not None:
+            raise ValueError('Both initial value and x must be none when '
+                             'simulating a constant mean process.')
+
         mp, vp, dp = self._parse_parameters(params)
 
         sim_values = self.volatility.simulate(vp,
@@ -869,7 +878,8 @@ class ZeroMean(HARX):
     def _model_description(self, include_lags=False):
         return super(ZeroMean, self)._model_description(include_lags)
 
-    def simulate(self, params, nobs, burn=500, initial_value_vol=None):
+    def simulate(self, params, nobs, burn=500, initial_value=None, x=None,
+                 initial_value_vol=None):
         """
         Simulated data from a zero mean model
 
@@ -883,7 +893,11 @@ class ZeroMean(HARX):
         burn : int, optional
             Number of values to simulate to initialize the model and remove
             dependence on initial values.
-        initial_value_vol : array or float, optional
+        initial_value : None
+            This value is not used.
+        x : None
+            This value is not used.
+        initial_value_vol : {ndarray, float}, optional
             An array or scalar to use when initializing the volatility process.
 
         Returns
@@ -907,8 +921,11 @@ class ZeroMean(HARX):
         >>> zm.volatility = GARCH(p=1, o=1, q=1)
         >>> sim_data = zm.simulate([0.05, 0.1, 0.1, 0.8], 300)
         """
+        if initial_value is not None or x is not None:
+            raise ValueError('Both initial value and x must be none when '
+                             'simulating a constant mean process.')
 
-        mp, vp, dp = self._parse_parameters(params)
+        _, vp, dp = self._parse_parameters(params)
 
         sim_values = self.volatility.simulate(vp,
                                               nobs + burn,

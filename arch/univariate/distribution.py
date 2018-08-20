@@ -506,7 +506,7 @@ class SkewStudent(Distribution):
         b: float
             Constant used in the distribution
         """
-        eta, lam = parameters
+        lam = parameters[1]
         a = self.__const_a(parameters)
         return (1 + 3 * lam ** 2 - a ** 2) ** .5
 

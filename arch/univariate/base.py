@@ -292,7 +292,7 @@ class ARCHModel(object):
     def _parse_parameters(self, x):
         """Return the parameters of each model in a tuple"""
 
-        km, kv = self.num_params, self.volatility.num_params
+        km, kv = int(self.num_params), int(self.volatility.num_params)
         return x[:km], x[km:km + kv], x[km + kv:]
 
     def fix(self, params, first_obs=None, last_obs=None):

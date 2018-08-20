@@ -1,13 +1,34 @@
-|Documentation Status| |Travis Build Status| |Appveyor Build Status|
-|Coverage Status| |codecov| |Total alerts| |Codacy Badge| |codebeat
-badge| |DOI|
-
 ARCH
 ====
 
 Autoregressive Conditional Heteroskedasticity (ARCH) and other tools for
 financial econometrics, written in Python (with Cython and/or Numba used
 to improve performance)
+
+Continuous Integration
+                      
+
+|Travis Build Status| |Appveyor Build Status|
+
+Documentation
+             
+
+|Documentation Status|
+
+Coverage
+        
+
+|Coverage Status| |codecov|
+
+Code Inspections
+                
+
+|Language grade: Python| |Total alerts| |Codacy Badge| |codebeat badge|
+
+Citation
+        
+
+|DOI|
 
 Module Contents
 ---------------
@@ -16,6 +37,8 @@ Module Contents
 -  `Unit Root Tests <#unit-root>`__
 -  `Bootstrapping <#bootstrap>`__
 -  `Multiple Comparison Tests <#multiple-comparison>`__
+
+.. _documentation-1:
 
 Documentation
 -------------
@@ -241,16 +264,18 @@ be skipped using the flag ``--no-binary``
 *Note*: If Cython is not installed, the package will be installed as-if
 --no-binary was used.
 
-.. |Documentation Status| image:: https://readthedocs.org/projects/arch/badge/?version=latest
-   :target: http://arch.readthedocs.org/en/latest/
 .. |Travis Build Status| image:: https://travis-ci.org/bashtage/arch.svg?branch=master
    :target: https://travis-ci.org/bashtage/arch
 .. |Appveyor Build Status| image:: https://ci.appveyor.com/api/projects/status/nmt02u7jwcgx7i2x?svg=true
    :target: https://ci.appveyor.com/project/bashtage/arch/branch/master
+.. |Documentation Status| image:: https://readthedocs.org/projects/arch/badge/?version=latest
+   :target: http://arch.readthedocs.org/en/latest/
 .. |Coverage Status| image:: https://coveralls.io/repos/bashtage/arch/badge.svg?branch=master
    :target: https://coveralls.io/r/bashtage/arch?branch=master
 .. |codecov| image:: https://codecov.io/gh/bashtage/arch/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/bashtage/arch
+.. |Language grade: Python| image:: https://img.shields.io/lgtm/grade/python/g/bashtage/arch.svg?logo=lgtm&logoWidth=18
+   :target: https://lgtm.com/projects/g/bashtage/arch/context:python
 .. |Total alerts| image:: https://img.shields.io/lgtm/alerts/g/bashtage/arch.svg?logo=lgtm&logoWidth=18
    :target: https://lgtm.com/projects/g/bashtage/arch/alerts/
 .. |Codacy Badge| image:: https://api.codacy.com/project/badge/Grade/cea43b588e0f4f2a9d8ba37cf63f8210
