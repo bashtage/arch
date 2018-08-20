@@ -8,7 +8,8 @@ to improve performance)
 Continuous Integration
                       
 
-|Travis Build Status| |Appveyor Build Status|
+|Travis Build Status| |Appveyor Build Status| |Code Quality: Python|
+|Total Alerts|
 
 Documentation
              
@@ -268,6 +269,10 @@ be skipped using the flag ``--no-binary``
    :target: https://travis-ci.org/bashtage/arch
 .. |Appveyor Build Status| image:: https://ci.appveyor.com/api/projects/status/nmt02u7jwcgx7i2x?svg=true
    :target: https://ci.appveyor.com/project/bashtage/arch/branch/master
+.. |Code Quality: Python| image:: https://img.shields.io/lgtm/grade/python/g/bashtage/arch.svg?logo=lgtm&logoWidth=18
+   :target: https://lgtm.com/projects/g/bashtage/arch/context:python
+.. |Total Alerts| image:: https://img.shields.io/lgtm/alerts/g/bashtage/arch.svg?logo=lgtm&logoWidth=18
+   :target: https://lgtm.com/projects/g/bashtage/arch/alerts
 .. |Documentation Status| image:: https://readthedocs.org/projects/arch/badge/?version=latest
    :target: http://arch.readthedocs.org/en/latest/
 .. |Coverage Status| image:: https://coveralls.io/repos/bashtage/arch/badge.svg?branch=master

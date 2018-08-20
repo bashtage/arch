@@ -291,7 +291,7 @@ class ARCHModel(object):
 
     def _parse_parameters(self, x):
         """Return the parameters of each model in a tuple"""
-
+        x = np.asarray(x)
         km, kv = int(self.num_params), int(self.volatility.num_params)
         return x[:km], x[km:km + kv], x[km + kv:]
 

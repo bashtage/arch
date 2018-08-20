@@ -1,22 +1,24 @@
+import warnings
+
 import numpy as np
 import pytest
-import warnings
 from numpy.random import RandomState
 from numpy.testing import assert_almost_equal, assert_equal, assert_allclose, \
     assert_array_equal
-from unittest import TestCase
+from scipy.special import gamma, gammaln
 
+from arch.compat.python import PY3, range
 try:
     from arch.univariate import _recursions as rec
 except ImportError:
     from arch.univariate import recursions_python as rec
 from arch.univariate.volatility import GARCH, ARCH, HARCH, ConstantVariance, \
-    EWMAVariance, RiskMetrics2006, EGARCH, FixedVariance
+    EWMAVariance, RiskMetrics2006, EGARCH, FixedVariance, MIDASHyperbolic
 from arch.univariate.distribution import Normal, StudentsT, SkewStudent
-from arch.compat.python import range
+from arch.utility.exceptions import InitialValueWarning
 
 
-class TestVolatiltyProcesses(TestCase):
+class TestVolatiltyProcesses(object):
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(1234)
@@ -599,27 +601,30 @@ class TestVolatiltyProcesses(TestCase):
         with pytest.raises(ValueError):
             RiskMetrics2006(rho=0.5)
 
-    def test_warnings(self):
+    @pytest.mark.skipif(not PY3, reason='Repeated warnings are incorrectly processed by pytest')
+    def test_warnings_nonstationary(self):
         garch = GARCH()
         parameters = np.array([0.1, 0.2, 0.8, 4.0])
         studt = StudentsT()
         warnings.simplefilter('always', UserWarning)
-        with warnings.catch_warnings(record=True) as w:
+        with pytest.warns(InitialValueWarning):
             garch.simulate(parameters, 1000, studt.simulate([4.0]))
-            assert_equal(len(w), 1)
 
+    @pytest.mark.skipif(not PY3, reason='Repeated warnings are incorrectly processed by pytest')
+    def test_warnings_nonstationary_garch(self):
         garch = GARCH()
         parameters = np.array([0.1, 0.2, 0.8, 4.0, 0.5])
         skewstud = SkewStudent()
-        with warnings.catch_warnings(record=True) as w:
+        with pytest.warns(InitialValueWarning):
             garch.simulate(parameters, 1000, skewstud.simulate([4.0, 0.5]))
-            assert_equal(len(w), 1)
 
+    @pytest.mark.skipif(not PY3, reason='Repeated warnings are incorrectly processed by pytest')
+    def test_warnings_nonstationary_harch(self):
+        studt = StudentsT()
         harch = HARCH(lags=[1, 5, 22])
         parameters = np.array([0.1, 0.2, 0.4, 0.5])
-        with warnings.catch_warnings(record=True) as w:
+        with pytest.warns(InitialValueWarning):
             harch.simulate(parameters, 1000, studt.simulate([4.0]))
-            assert_equal(len(w), 1)
 
     def test_model_names(self):
         garch = GARCH(2, 0, 0)
@@ -667,10 +672,6 @@ class TestVolatiltyProcesses(TestCase):
                             np.sign(self.resids),
                             cond_var_direct,
                             1, 0, 1, self.T, backcast, var_bounds)
-        # sigma3 = np.zeros_like(self.sigma2)
-        # sigma3[0] = backcast
-        # for t in range(1,self.T):
-        # sigma3[t] = 0.94 * sigma3[t-1] + 0.06 * self.resids[t-1]**2.0
 
         assert_allclose(self.sigma2 / cond_var_direct,
                         np.ones_like(self.sigma2))
@@ -718,7 +719,7 @@ class TestVolatiltyProcesses(TestCase):
         assert len(bounds) == 1
         assert bounds == [(0, 1)]
 
-        var_bounds = ewma.variance_bounds(self.resids)
+        ewma.variance_bounds(self.resids)
 
         backcast = ewma.backcast(self.resids)
         w = 0.94 ** np.arange(75)
@@ -731,7 +732,7 @@ class TestVolatiltyProcesses(TestCase):
         ewma.compute_variance(parameters, self.resids, self.sigma2, backcast, var_bounds)
         cond_var_direct = np.zeros_like(self.sigma2)
         cond_var_direct[0] = backcast
-        parameters = np.array([0, 1-parameters[0], parameters[0]])
+        parameters = np.array([0, 1 - parameters[0], parameters[0]])
         rec.garch_recursion(parameters,
                             self.resids ** 2.0,
                             np.sign(self.resids),
@@ -755,6 +756,28 @@ class TestVolatiltyProcesses(TestCase):
         assert isinstance(ewma.__str__(), str)
         txt = ewma.__repr__()
         assert str(hex(id(ewma))) in txt
+
+        state = self.rng.get_state()
+        rng = Normal()
+        rng.random_state.set_state(state)
+        lam = parameters[-1]
+        sim_data = ewma.simulate([lam], self.T, rng.simulate([]))
+        self.rng.set_state(state)
+        e = self.rng.standard_normal(self.T + 500)
+        initial_value = 1.0
+
+        sigma2 = np.zeros(self.T + 500)
+        data = np.zeros(self.T + 500)
+        sigma2[0] = initial_value
+        data[0] = np.sqrt(initial_value)
+        for t in range(1, self.T + 500):
+            sigma2[t] = lam * sigma2[t - 1] + (1-lam) * data[t - 1] ** 2.0
+            data[t] = e[t] * np.sqrt(sigma2[t])
+
+        data = data[500:]
+        sigma2 = sigma2[500:]
+        assert_almost_equal(data - sim_data[0] + 1.0, np.ones_like(data))
+        assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
 
     def test_riskmetrics(self):
         rm06 = RiskMetrics2006()
@@ -882,6 +905,9 @@ class TestVolatiltyProcesses(TestCase):
             EGARCH(p=0, o=0, q=1)
         with pytest.raises(ValueError):
             EGARCH(p=1, o=1, q=-1)
+        parameters = np.array([.1, .1, -.1, 1.05])
+        with pytest.warns(InitialValueWarning):
+            egarch.simulate(parameters, self.T, rng.simulate([]))
 
     def test_egarch_100(self):
         egarch = EGARCH(p=1, o=0, q=0)
@@ -992,3 +1018,169 @@ class TestVolatiltyProcesses(TestCase):
         assert fv.stop == 731
         with pytest.raises(ValueError):
             fv.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
+
+    def test_midas_symmetric(self):
+        midas = MIDASHyperbolic()
+
+        sv = midas.starting_values(self.resids)
+        assert_equal(sv.shape[0], midas.num_params)
+
+        bounds = midas.bounds(self.resids)
+        assert_equal(bounds[0], (0.0, 10.0 * np.mean(self.resids ** 2.0)))
+        assert_equal(bounds[1], (0.0, 1.0))
+        assert_equal(bounds[2], (0.0, 1.0))
+        backcast = midas.backcast(self.resids)
+        w = 0.94 ** np.arange(75)
+        assert_almost_equal(backcast, np.sum((self.resids[:75] ** 2) * (w / w.sum())))
+        var_bounds = midas.variance_bounds(self.resids)
+        parameters = np.array([.1, .9, .4])
+        midas.compute_variance(parameters, self.resids, self.sigma2, backcast, var_bounds)
+        cond_var_direct = np.zeros_like(self.sigma2)
+        weights = midas._weights(parameters)
+        theta = parameters[-1]
+        j = np.arange(1, 22 + 1)
+        direct_weights = gamma(j + theta) / (gamma(j+1)*gamma(theta))
+        direct_weights = direct_weights / direct_weights.sum()
+        assert_allclose(weights, direct_weights)
+        resids = self.resids
+        direct_params = parameters.copy()
+        direct_params[-1] = 0.0  # gamma, strip theta
+        rec.midas_recursion_python(direct_params, weights, resids, cond_var_direct, self.T,
+                                   backcast, var_bounds)
+        assert_allclose(self.sigma2, cond_var_direct)
+
+        a, b = midas.constraints()
+        a_target = np.zeros((5, 3))
+        a_target[0, 0] = 1
+        a_target[1, 1] = 1
+        a_target[2, 1] = -1
+        a_target[3, 2] = 1
+        a_target[4, 2] = -1
+        b_target = np.array([0.0, 0.0, -1.0, 0.0, -1.0])
+        assert_array_equal(a, a_target)
+        assert_array_equal(b, b_target)
+        state = self.rng.get_state()
+        rng = Normal()
+        rng.random_state.set_state(state)
+        sim_data = midas.simulate(parameters, self.T, rng.simulate([]))
+        self.rng.set_state(state)
+        e = self.rng.standard_normal(self.T + 500)
+        initial_value = 1.0
+        sigma2 = np.zeros(self.T + 500)
+        data = np.zeros(self.T + 500)
+        sigma2[:22] = initial_value
+        omega, alpha = parameters[:2]
+        for t in range(22, self.T + 500):
+            sigma2[t] = omega
+            for i in range(22):
+                shock = initial_value if t - i - 1 < 22 else data[t - i - 1] ** 2.0
+                sigma2[t] += alpha * weights[i] * shock
+            data[t] = e[t] * np.sqrt(sigma2[t])
+        data = data[500:]
+        sigma2 = sigma2[500:]
+        assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
+        assert_almost_equal(data / sim_data[0], np.ones_like(data))
+
+        names = midas.parameter_names()
+        names_target = ['omega', 'alpha', 'theta']
+        assert_equal(names, names_target)
+
+        assert isinstance(midas.__str__(), str)
+        txt = midas.__repr__()
+        assert str(hex(id(midas))) in txt
+
+        assert_equal(midas.name, 'MIDAS Hyperbolic')
+        assert_equal(midas.num_params, 3)
+        assert_equal(midas.m, 22)
+
+        with pytest.warns(InitialValueWarning):
+            parameters = np.array([.1, 1.1, .4])
+            midas.simulate(parameters, self.T, rng.simulate([]))
+
+    def test_midas_asymmetric(self):
+        midas = MIDASHyperbolic(33, asym=True)
+
+        sv = midas.starting_values(self.resids)
+        assert_equal(sv.shape[0], midas.num_params)
+
+        bounds = midas.bounds(self.resids)
+        assert_equal(bounds[0], (0.0, 10.0 * np.mean(self.resids ** 2.0)))
+        assert_equal(bounds[1], (0.0, 1.0))
+        assert_equal(bounds[2], (-1.0, 2.0))
+        assert_equal(bounds[3], (0.0, 1.0))
+        backcast = midas.backcast(self.resids)
+        w = 0.94 ** np.arange(75)
+        assert_almost_equal(backcast, np.sum((self.resids[:75] ** 2) * (w / w.sum())))
+        var_bounds = midas.variance_bounds(self.resids)
+        parameters = np.array([.1, .3, 1.2, .4])
+        midas.compute_variance(parameters, self.resids, self.sigma2, backcast, var_bounds)
+        cond_var_direct = np.zeros_like(self.sigma2)
+        weights = midas._weights(parameters)
+        wlen = len(weights)
+        theta = parameters[-1]
+        j = np.arange(1, wlen+1)
+        direct_weights = gammaln(j + theta) - gammaln(j + 1) - gammaln(theta)
+        direct_weights = np.exp(direct_weights)
+        direct_weights = direct_weights/direct_weights.sum()
+        assert_allclose(direct_weights, weights)
+        resids = self.resids
+        direct_params = parameters[:3].copy()
+        rec.midas_recursion_python(direct_params, weights, resids, cond_var_direct, self.T,
+                                   backcast, var_bounds)
+        assert_allclose(self.sigma2, cond_var_direct)
+
+        a, b = midas.constraints()
+        a_target = np.zeros((5, 4))
+        a_target[0, 0] = 1
+        a_target[1, 1] = 1
+        a_target[1, 2] = 1
+        a_target[2, 1] = -1
+        a_target[2, 2] = -0.5
+        a_target[3, 3] = 1
+        a_target[4, 3] = -1
+        b_target = np.array([0.0, 0.0, -1.0, 0.0, -1.0])
+        assert_array_equal(a, a_target)
+        assert_array_equal(b, b_target)
+        state = self.rng.get_state()
+        rng = Normal()
+        rng.random_state.set_state(state)
+        burn = wlen
+        sim_data = midas.simulate(parameters, self.T, rng.simulate([]), burn=burn)
+        self.rng.set_state(state)
+        e = self.rng.standard_normal(self.T + burn)
+        initial_value = 1.0
+        sigma2 = np.zeros(self.T + burn)
+        data = np.zeros(self.T + burn)
+        sigma2[:wlen] = initial_value
+        omega, alpha, gamma = parameters[:3]
+        for t in range(wlen, self.T + burn):
+            sigma2[t] = omega
+            for i in range(wlen):
+                if t - i - 1 < wlen:
+                    shock = initial_value
+                    coeff = (alpha + 0.5 * gamma) * weights[i]
+                else:
+                    shock = data[t - i - 1] ** 2.0
+                    coeff = (alpha + gamma * (data[t - i - 1] < 0)) * weights[i]
+                sigma2[t] += coeff * shock
+            data[t] = e[t] * np.sqrt(sigma2[t])
+        data = data[burn:]
+        sigma2 = sigma2[burn:]
+        assert_almost_equal(data / sim_data[0], np.ones_like(data))
+        assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
+
+        names = midas.parameter_names()
+        names_target = ['omega', 'alpha', 'gamma', 'theta']
+        assert_equal(names, names_target)
+
+        assert isinstance(midas.__str__(), str)
+        txt = midas.__repr__()
+        assert str(hex(id(midas))) in txt
+
+        assert_equal(midas.name, 'MIDAS Hyperbolic')
+        assert_equal(midas.num_params, 4)
+        assert_equal(midas.m, 33)
+
+        with pytest.warns(InitialValueWarning):
+            parameters = np.array([.1, .3, 1.6, .4])
+            midas.simulate(parameters, self.T, rng.simulate([]))

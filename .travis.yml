@@ -22,7 +22,6 @@ matrix:
     env:
     - PYTHON=2.7
     - USE_NUMBA=false
-    - COVERAGE=true
     - MATPLOTLIB=2
   - python: 2.7
     env:
@@ -31,6 +30,7 @@ matrix:
     - NUMPY=1.13
     - SCIPY=0.19
     - PANDAS=0.21
+    - COVERAGE=true
   - python: 2.7
     env:
     - PYTHON=3.5
@@ -48,7 +48,7 @@ matrix:
   - python: 2.7
     env:
     - PYTHON=3.6
-    - DOCBUILD=false # TODO: Temporarily disable here
+    - DOCBUILD=true
     - MATPLOTLIB=3
   - python: 2.7
     env:

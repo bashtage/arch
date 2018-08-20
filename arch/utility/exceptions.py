@@ -31,3 +31,13 @@ starting_value_warning = """
 Starting values do not satisfy the parameter constraints in the model.  The
 provided starting values will be ignored.
 """
+
+
+class InitialValueWarning(Warning):
+    pass
+
+
+initial_value_warning = """
+Parameters are not consistent with a stationary model. Using the intercept
+to initialize the model.
+"""

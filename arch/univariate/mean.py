@@ -675,7 +675,7 @@ class HARX(ARCHModel):
             longrun_var_fcasts[:, i] = lrf
 
         if method.lower() in ('simulation', 'bootstrap'):
-            # TODO: This is not tested, and probably wrong
+            # TODO: This is not tested, but probably right
             variance_paths = _forecast_pad(earliest, vfcast.forecast_paths)
             long_run_variance_paths = variance_paths.copy()
             shocks = _forecast_pad(earliest, vfcast.shocks)
@@ -765,7 +765,7 @@ class ConstantMean(HARX):
 
         Parameters
         ----------
-        params : array
+        params : ndarray
             Parameters to use when simulating the model.  Parameter order is
             [mean volatility distribution]. There is one parameter in the mean
             model, mu.
