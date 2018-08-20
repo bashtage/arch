@@ -1,16 +1,31 @@
-[![Documentation Status](https://readthedocs.org/projects/arch/badge/?version=latest)](http://arch.readthedocs.org/en/latest/)
-[![Travis Build Status](https://travis-ci.org/bashtage/arch.svg?branch=master)](https://travis-ci.org/bashtage/arch)
-[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/nmt02u7jwcgx7i2x?svg=true)](https://ci.appveyor.com/project/bashtage/arch/branch/master)
-[![Coverage Status](https://coveralls.io/repos/bashtage/arch/badge.svg?branch=master)](https://coveralls.io/r/bashtage/arch?branch=master)
-[![codecov](https://codecov.io/gh/bashtage/arch/branch/master/graph/badge.svg)](https://codecov.io/gh/bashtage/arch)
-[![Code Health](https://landscape.io/github/bashtage/arch/master/landscape.svg?style=flat)](https://landscape.io/github/bashtage/arch/master)
-[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.15681.svg)](http://dx.doi.org/10.5281/zenodo.15681)
-
 # ARCH
 
 Autoregressive Conditional Heteroskedasticity (ARCH) and other tools for
 financial econometrics, written in Python (with Cython and/or Numba used
 to improve performance)
+
+###### Continuous Integration
+
+[![Travis Build Status](https://travis-ci.org/bashtage/arch.svg?branch=master)](https://travis-ci.org/bashtage/arch)
+[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/nmt02u7jwcgx7i2x?svg=true)](https://ci.appveyor.com/project/bashtage/arch/branch/master)
+
+###### Documentation
+
+[![Documentation Status](https://readthedocs.org/projects/arch/badge/?version=latest)](http://arch.readthedocs.org/en/latest/)
+
+###### Coverage
+
+[![Coverage Status](https://coveralls.io/repos/bashtage/arch/badge.svg?branch=master)](https://coveralls.io/r/bashtage/arch?branch=master)
+[![codecov](https://codecov.io/gh/bashtage/arch/branch/master/graph/badge.svg)](https://codecov.io/gh/bashtage/arch)
+
+###### Code Inspections
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/bashtage/arch.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bashtage/arch/context:python)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/bashtage/arch.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bashtage/arch/alerts/)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/cea43b588e0f4f2a9d8ba37cf63f8210)](https://www.codacy.com/app/bashtage/arch?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bashtage/arch&amp;utm_campaign=Badge_Grade)
+[![codebeat badge](https://codebeat.co/badges/18a78c15-d74b-4820-b56d-72f7e4087532)](https://codebeat.co/projects/github-com-bashtage-arch-master)
+
+###### Citation
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.15681.svg)](http://dx.doi.org/10.5281/zenodo.15681)
 
 ## Module Contents
 

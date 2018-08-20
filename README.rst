@@ -1,5 +1,6 @@
 |Documentation Status| |Travis Build Status| |Appveyor Build Status|
-|Coverage Status| |codecov| |Code Health| |DOI|
+|Coverage Status| |codecov| |Total alerts| |Codacy Badge| |codebeat
+badge| |DOI|
 
 ARCH
 ====
@@ -250,7 +251,11 @@ be skipped using the flag ``--no-binary``
    :target: https://coveralls.io/r/bashtage/arch?branch=master
 .. |codecov| image:: https://codecov.io/gh/bashtage/arch/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/bashtage/arch
-.. |Code Health| image:: https://landscape.io/github/bashtage/arch/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/bashtage/arch/master
+.. |Total alerts| image:: https://img.shields.io/lgtm/alerts/g/bashtage/arch.svg?logo=lgtm&logoWidth=18
+   :target: https://lgtm.com/projects/g/bashtage/arch/alerts/
+.. |Codacy Badge| image:: https://api.codacy.com/project/badge/Grade/cea43b588e0f4f2a9d8ba37cf63f8210
+   :target: https://www.codacy.com/app/bashtage/arch?utm_source=github.com&utm_medium=referral&utm_content=bashtage/arch&utm_campaign=Badge_Grade
+.. |codebeat badge| image:: https://codebeat.co/badges/18a78c15-d74b-4820-b56d-72f7e4087532
+   :target: https://codebeat.co/projects/github-com-bashtage-arch-master
 .. |DOI| image:: https://zenodo.org/badge/doi/10.5281/zenodo.15681.svg
    :target: http://dx.doi.org/10.5281/zenodo.15681
