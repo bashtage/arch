@@ -86,8 +86,7 @@ if __name__ == '__main__':
                                   np.arange(99.9, 100.0, 0.01)))
 
     critical_values = 100 - percentiles
-    critical_values_string = map(lambda x: '{0:0.1f}'.format(x),
-                                 critical_values)
+    critical_values_string = map('{0:0.1f}'.format, critical_values)
 
     hdf_filename = 'kpss_critical_values.h5'
     try:

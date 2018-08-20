@@ -276,14 +276,14 @@ class TestAutolagOLS(TestCase):
 
     def test_aic(self):
         exog, endog = lagmat(self.inflation, 12, original='sep', trim='both')
-        icbest, sel_lag = _autolag(OLS, endog, exog, 1, 11, 'aic')
+        _, sel_lag = _autolag(OLS, endog, exog, 1, 11, 'aic')
         icbest2, sel_lag2 = _autolag_ols(endog, exog, 0, 12, 'aic')
         assert np.isscalar(icbest2)
         assert np.isscalar(sel_lag2)
         assert sel_lag == sel_lag2
 
         exog, endog = lagmat(self.y, 12, original='sep', trim='both')
-        icbest, sel_lag = _autolag(OLS, endog, exog, 1, 11, 'aic')
+        _, sel_lag = _autolag(OLS, endog, exog, 1, 11, 'aic')
         icbest2, sel_lag2 = _autolag_ols(endog, exog, 0, 12, 'aic')
         assert np.isscalar(icbest2)
         assert np.isscalar(sel_lag2)
@@ -291,14 +291,14 @@ class TestAutolagOLS(TestCase):
 
     def test_bic(self):
         exog, endog = lagmat(self.inflation, 12, original='sep', trim='both')
-        icbest, sel_lag = _autolag(OLS, endog, exog, 1, 11, 'bic')
+        _, sel_lag = _autolag(OLS, endog, exog, 1, 11, 'bic')
         icbest2, sel_lag2 = _autolag_ols(endog, exog, 0, 12, 'bic')
         assert np.isscalar(icbest2)
         assert np.isscalar(sel_lag2)
         assert sel_lag == sel_lag2
 
         exog, endog = lagmat(self.y, 12, original='sep', trim='both')
-        icbest, sel_lag = _autolag(OLS, endog, exog, 1, 11, 'bic')
+        _, sel_lag = _autolag(OLS, endog, exog, 1, 11, 'bic')
         icbest2, sel_lag2 = _autolag_ols(endog, exog, 0, 12, 'bic')
         assert np.isscalar(icbest2)
         assert np.isscalar(sel_lag2)
@@ -306,14 +306,14 @@ class TestAutolagOLS(TestCase):
 
     def test_tstat(self):
         exog, endog = lagmat(self.inflation, 12, original='sep', trim='both')
-        icbest, sel_lag = _autolag(OLS, endog, exog, 1, 11, 't-stat')
+        _, sel_lag = _autolag(OLS, endog, exog, 1, 11, 't-stat')
         icbest2, sel_lag2 = _autolag_ols(endog, exog, 0, 12, 't-stat')
         assert np.isscalar(icbest2)
         assert np.isscalar(sel_lag2)
         assert sel_lag == sel_lag2
 
         exog, endog = lagmat(self.y, 12, original='sep', trim='both')
-        icbest, sel_lag = _autolag(OLS, endog, exog, 1, 11, 't-stat')
+        _, sel_lag = _autolag(OLS, endog, exog, 1, 11, 't-stat')
         icbest2, sel_lag2 = _autolag_ols(endog, exog, 0, 12, 't-stat')
         assert np.isscalar(icbest2)
         assert np.isscalar(sel_lag2)
@@ -322,7 +322,7 @@ class TestAutolagOLS(TestCase):
     def test_aic_exogenous(self):
         exog, endog = lagmat(self.z, 12, original='sep', trim='both')
         exog = np.concatenate([self.x[12:], exog], axis=1)
-        icbest, sel_lag = _autolag_ols(endog, exog, 2, 12, 'aic')
+        _, sel_lag = _autolag_ols(endog, exog, 2, 12, 'aic')
         direct = np.zeros(exog.shape[1])
         direct.fill(np.inf)
         for i in range(3, exog.shape[1]):
@@ -333,7 +333,7 @@ class TestAutolagOLS(TestCase):
     def test_bic_exogenous(self):
         exog, endog = lagmat(self.z, 12, original='sep', trim='both')
         exog = np.concatenate([self.x[12:], exog], axis=1)
-        icbest, sel_lag = _autolag_ols(endog, exog, 2, 12, 'bic')
+        _, sel_lag = _autolag_ols(endog, exog, 2, 12, 'bic')
         direct = np.zeros(exog.shape[1])
         direct.fill(np.inf)
         for i in range(3, exog.shape[1]):
@@ -344,7 +344,7 @@ class TestAutolagOLS(TestCase):
     def test_tstat_exogenous(self):
         exog, endog = lagmat(self.z, 12, original='sep', trim='both')
         exog = np.concatenate([self.x[12:], exog], axis=1)
-        icbest, sel_lag = _autolag_ols(endog, exog, 2, 12, 't-stat')
+        _, sel_lag = _autolag_ols(endog, exog, 2, 12, 't-stat')
         direct = np.zeros(exog.shape[1])
         for i in range(3, exog.shape[1]):
             res = OLS(endog, exog[:, :i]).fit()

@@ -40,7 +40,7 @@ def wrapper(n, trend, b, seed=0):
     res = zeros(b)
     finished = 0
     block_size = int(2 ** 20.0 * MAX_MEMORY_SIZE / (8.0 * n))
-    for j in range(0, b, block_size):
+    for _ in range(0, b, block_size):
         if block_size < remaining:
             count = block_size
         else:

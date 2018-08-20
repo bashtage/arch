@@ -43,6 +43,8 @@ class TestMeanModel(TestCase):
         zm = ZeroMean()
         zm.volatility = GARCH()
         sim_data = zm.simulate(np.array([0.1, 0.1, 0.8]), 1000)
+        with pytest.raises(ValueError):
+            zm.simulate(np.array([0.1, 0.1, 0.8]), 1000, initial_value=3.0)
         date_index = pd.date_range('2000-12-31', periods=1000, freq='W')
         cls.y = sim_data.data.values
         cls.y_df = pd.DataFrame(cls.y[:, None],
@@ -64,6 +66,8 @@ class TestMeanModel(TestCase):
         parameters = np.array([5.0, 1.0])
         cm.simulate(parameters, self.T)
         assert_equal(cm.num_params, 1)
+        with pytest.raises(ValueError):
+            cm.simulate(parameters, self.T, x=np.array(10))
         bounds = cm.bounds()
         assert_equal(bounds, [(-np.inf, np.inf)])
         assert_equal(cm.constant, True)

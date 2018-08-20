@@ -200,7 +200,7 @@ class TestBootstrap(TestCase):
 
         results = np.zeros((num_bootstrap, 2))
         count = 0
-        for data, kw in bs.bootstrap(num_bootstrap):
+        for data, _ in bs.bootstrap(num_bootstrap):
             results[count] = data[0].mean(axis=0)
             count += 1
         errors = results - self.x.mean(axis=0)
@@ -218,7 +218,7 @@ class TestBootstrap(TestCase):
         bs.reset()
         results = np.zeros((num_bootstrap, 2))
         count = 0
-        for data, kw in bs.bootstrap(num_bootstrap):
+        for data, _ in bs.bootstrap(num_bootstrap):
             results[count] = data[0].mean(axis=0)
             count += 1
         errors = results - self.x.mean(axis=0)
@@ -613,7 +613,7 @@ class TestBootstrap(TestCase):
         x_int.index = 10 + np.arange(x.shape[0])
         bs = IIDBootstrap(x, x_int)
         bs.seed(23456)
-        for pdata, kwdata in bs.bootstrap(10):
+        for pdata, _ in bs.bootstrap(10):
             assert_equal(pdata[0], pdata[1].values)
 
     def test_apply(self):
