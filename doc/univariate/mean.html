@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Mean Models &#8212; arch 4.4.1+10.g71af26b documentation</title>
+    <title>Mean Models &#8212; arch 4.4.1+12.gc47f79e documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+10.g71af26b documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+12.gc47f79e documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -324,7 +324,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ZeroMean.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulated data from a zero mean model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -336,7 +336,9 @@ evaluating, but still in the same column.</p>
 <li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of series to simulate</li>
 <li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
 dependence on initial values.</li>
-<li><strong>initial_value_vol</strong> (<em>array</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+<li><strong>initial_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – This value is not used.</li>
+<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – This value is not used.</li>
+<li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
 </td>
 </tr>
@@ -543,7 +545,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantMean.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulated data from a constant mean model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -556,7 +558,9 @@ model, mu.</li>
 <li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of series to simulate</li>
 <li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
 dependence on initial values.</li>
-<li><strong>initial_value_vol</strong> (<em>array</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+<li><strong>initial_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – This value is not used.</li>
+<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – This value is not used.</li>
+<li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
 </td>
 </tr>
@@ -1386,7 +1390,7 @@ to override but recommended where applicable.</p>
         <li class="right" >
           <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+10.g71af26b documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+12.gc47f79e documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
