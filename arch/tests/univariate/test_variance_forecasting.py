@@ -2,20 +2,23 @@ from unittest import TestCase
 
 import numpy as np
 import pytest
+
 try:
     from arch.univariate.recursions import garch_recursion
 except ImportError:
     from arch.univariate.recursions_python import garch_recursion
 from numpy.random import RandomState
 from numpy.testing import assert_allclose
+import pandas as pd
 
+from arch.univariate import arch_model
 from arch.univariate.distribution import Normal, StudentsT
+from arch.univariate.mean import ConstantMean
 from arch.univariate.volatility import GARCH, ConstantVariance, HARCH, EWMAVariance, \
     RiskMetrics2006, BootstrapRng, EGARCH, FixedVariance
 
 
 def _compare_truncated_forecasts(full, trunc, start):
-
     assert np.all(np.isnan(trunc.forecasts[:start]))
     assert_allclose(trunc.forecasts[start:], full.forecasts[start:])
 
@@ -30,6 +33,7 @@ class PreservedState(object):
     Context manager that will save NumPy's random generator's state when entering and restore
     the original state when exiting.
     """
+
     def __init__(self, random_state):
         self._random_state = random_state
         self._state = None
@@ -307,7 +311,7 @@ class TestVarianceForecasts(TestCase):
         shocks.fill(np.nan)
         for i in range(333, 1000):
             locs = self.rng.random_sample((2000, 5))
-            int_locs = np.floor((i+1) * locs).astype(np.int64)
+            int_locs = np.floor((i + 1) * locs).astype(np.int64)
             std_shocks = std_resids[int_locs]
             paths[i, :, 0] = params[0] + params[1] * self.resid[i] ** 2.0
             shocks[i, :, 0] = np.sqrt(paths[i, :, 0]) * std_shocks[:, 0]
@@ -599,7 +603,7 @@ class TestVarianceForecasts(TestCase):
         arch[:22] += 0.2 / 22
         for i in range(100, t):
             locs = self.rng.random_sample((1000, 10))
-            locs *= (i+1)
+            locs *= (i + 1)
             int_locs = np.floor(locs).astype(np.int64)
             std_shocks = std_resid[int_locs]
             temp = np.empty((1000, 32))
@@ -835,7 +839,7 @@ class TestVarianceForecasts(TestCase):
         sqrt2pi = np.sqrt(2 / np.pi)
         for i in range(731, t):
             locs = self.rng.random_sample((1111, 3))
-            int_locs = np.floor((i+1) * locs).astype(np.int64)
+            int_locs = np.floor((i + 1) * locs).astype(np.int64)
             std_shocks = std_resids[int_locs]
             paths[i, :, 0] = np.log(one_step[i])
 
@@ -934,7 +938,7 @@ class TestVarianceForecasts(TestCase):
         sqrt2pi = np.sqrt(2 / np.pi)
         for i in range(731, t):
             locs = self.rng.random_sample((1111, 3))
-            int_locs = np.floor((i+1) * locs).astype(np.int64)
+            int_locs = np.floor((i + 1) * locs).astype(np.int64)
             std_shocks = std_resids[int_locs]
             paths[i, :, 0] = np.log(one_step[i])
 
@@ -1252,11 +1256,11 @@ class TestVarianceForecasts(TestCase):
 
         forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0)
 
-        expected = np.zeros((t+1))
+        expected = np.zeros((t + 1))
         expected[0] = backcast
         lam = 0.94
-        for i in range(1, t+1):
-            expected[i] = lam * expected[i-1] + (1-lam) * resids[i-1] ** 2
+        for i in range(1, t + 1):
+            expected[i] = lam * expected[i - 1] + (1 - lam) * resids[i - 1] ** 2
         for i in range(10):
             assert_allclose(forecast.forecasts[:, i], expected[1:])
 
@@ -1289,7 +1293,7 @@ class TestVarianceForecasts(TestCase):
             shocks[i, :, 0] = np.sqrt(paths[i, :, 0]) * std_shocks[:, 0]
             for j in range(1, 10):
                 paths[i, :, j] = vol.lam * paths[i, :, j - 1] + \
-                    (1 - vol.lam) * shocks[i, :, j - 1] ** 2
+                                 (1 - vol.lam) * shocks[i, :, j - 1] ** 2
                 shocks[i, :, j] = np.sqrt(paths[i, :, j]) * std_shocks[:, j]
 
         assert_allclose(forecasts.forecasts, paths.mean(1))
@@ -1469,3 +1473,25 @@ class TestBootstrapRng(TestCase):
         y = self.rng.rand(1000)
         with pytest.raises(ValueError):
             BootstrapRng(y, 0)
+
+
+def test_external_rng():
+
+    arch_mod = arch_model(None, mean='Constant', vol='GARCH', p=1, q=1)
+    data = arch_mod.simulate(np.array([0.1, 0.1, 0.1, 0.88]), 1000)
+    data.index = pd.date_range('2000-01-01', periods=data.index.shape[0])
+
+    rand_state = np.random.RandomState(1)
+    state = rand_state.get_state()
+    volatility = GARCH(1, 0, 1)
+    distribution = Normal(rand_state)
+    mod = ConstantMean(data.data, volatility=volatility, distribution=distribution)
+    res = mod.fit(disp='off')
+
+    rand_state.set_state(state)
+    fcast_1 = res.forecast(res.params, horizon=5, method='simulation', start=900, simulations=250)
+    rand_state.set_state(state)
+    rng = rand_state.standard_normal
+    fcast_2 = res.forecast(res.params, horizon=5, method='simulation', start=900,
+                           simulations=250, rng=rng)
+    assert_allclose(fcast_1.residual_variance, fcast_2.residual_variance)

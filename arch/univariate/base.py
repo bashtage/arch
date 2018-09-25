@@ -652,7 +652,7 @@ class ARCHModel(object):
             return inv_hess / nobs
 
     def forecast(self, params, horizon=1, start=None, align='origin', method='analytic',
-                 simulations=1000):
+                 simulations=1000, rng=None):
         """
         Construct forecasts from estimated model
 
@@ -685,12 +685,16 @@ class ARCHModel(object):
         simulations : int
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap.
+        rng : callable, optional
+            Custom random number generator to use in simulation-based forecasts.
+            Must produce random samples using the syntax `rng(size)` where size
+            is a tuple containing the dimension of the random values.
 
         Returns
         -------
         forecasts : DataFrame
-            t by h data frame containing the forecasts.  The alignment of the forecasts is
-            controlled by `align`.
+            t by h data frame containing the forecasts.  The alignment of the
+            forecasts is controlled by `align`.
 
         Examples
         --------
@@ -1048,7 +1052,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         return fig
 
     def forecast(self, params=None, horizon=1, start=None, align='origin', method='analytic',
-                 simulations=1000):
+                 simulations=1000, rng=None):
         """
         Construct forecasts from estimated model
 
@@ -1072,21 +1076,26 @@ class ARCHModelFixedResult(_SummaryRepr):
             from time t-1, the 2 step from time t-2, ..., and the h-step from
             time t-h.  'target' simplified computing forecast errors since the
             realization and h-step forecast are aligned.
-        method : {'analytic', 'simulation', 'bootstrap'}
+        method : {'analytic', 'simulation', 'bootstrap'}, optional
             Method to use when producing the forecast. The default is analytic.
             The method only affects the variance forecast generation.  Not all
             volatility models support all methods. In particular, volatility
             models that do not evolve in squares such as EGARCH or TARCH do not
             support the 'analytic' method for horizons > 1.
-        simulations : int
+        simulations : int, optional
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap.
+        rng : callable, optional
+            Custom random number generator to use in simulation-based forecasts.
+            Must produce random samples using the syntax `rng(size)` where size
+            is either a scalar or a tuple containing the dimension of the
+            random values.
 
         Returns
         -------
         forecasts : DataFrame
-            t by h data frame containing the forecasts.  The alignment of the forecasts is
-            controlled by `align`.
+            t by h data frame containing the forecasts.  The alignment of the
+            forecasts is controlled by `align`.
 
         Notes
         -----
@@ -1115,7 +1124,7 @@ class ARCHModelFixedResult(_SummaryRepr):
             if (params.size != np.array(self._params).size or
                     params.ndim != self._params.ndim):
                 raise ValueError('params have incorrect dimensions')
-        return self.model.forecast(params, horizon, start, align, method, simulations)
+        return self.model.forecast(params, horizon, start, align, method, simulations, rng)
 
     def hedgehog_plot(self, params=None, horizon=10, step=10, start=None,
                       type='volatility', method='analytic', simulations=1000):
