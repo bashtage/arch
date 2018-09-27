@@ -15,14 +15,14 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Forecasting &#8212; arch 4.4.1+14.g475ef9a documentation</title>
+    <title>Forecasting &#8212; arch 4.4.1+16.g95ea86f documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Volatility Forecasting" href="univariate_volatility_forecasting.html" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="univariate_volatility_modeling.html" title="ARCH Modeling"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+14.g475ef9a documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -71,6 +71,7 @@
 <li class="toctree-l2"><a class="reference internal" href="univariate_volatility_modeling.html">Examples</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Forecasting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="univariate_volatility_forecasting.html">Forecasting Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_scenarios.html">Forecasting Scenarios</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mean.html">Mean Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="volatility.html">Volatility Processes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="univariate_using_fixed_variance.html">Using the Fixed Variance Process</a></li>
@@ -335,25 +336,57 @@ that are not forecast are <code class="docutils literal notranslate"><span class
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelForecast.mean">
 <code class="descname">mean</code><a class="headerlink" href="#arch.univariate.base.ARCHModelForecast.mean" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>DataFrame</em> – Forecast values for the conditional mean of the process</p>
+<dd><p>Forecast values for the conditional mean of the process</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelForecast.variance">
 <code class="descname">variance</code><a class="headerlink" href="#arch.univariate.base.ARCHModelForecast.variance" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>DataFrame</em> – Forecast values for the conditional variance of the process</p>
+<dd><p>Forecast values for the conditional variance of the process</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelForecast.residual_variance">
 <code class="descname">residual_variance</code><a class="headerlink" href="#arch.univariate.base.ARCHModelForecast.residual_variance" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>DataFrame</em> – Forecast values for the conditional variance of the residuals</p>
+<dd><p>Forecast values for the conditional variance of the residuals</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelForecast.simulations">
 <code class="descname">simulations</code><a class="headerlink" href="#arch.univariate.base.ARCHModelForecast.simulations" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>ARCHModelForecastSimulation</em> – Object containing detailed simulation results if using a simulation-based method</p>
+<dd><p>Object containing detailed simulation results if using a simulation-based method</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference internal" href="#arch.univariate.base.ARCHModelForecastSimulation" title="arch.univariate.base.ARCHModelForecastSimulation">ARCHModelForecastSimulation</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -379,25 +412,57 @@ that are not forecast are <code class="docutils literal notranslate"><span class
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelForecastSimulation.values">
 <code class="descname">values</code><a class="headerlink" href="#arch.univariate.base.ARCHModelForecastSimulation.values" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>DataFrame</em> – Simulated values of the process</p>
+<dd><p>Simulated values of the process</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelForecastSimulation.residuals">
 <code class="descname">residuals</code><a class="headerlink" href="#arch.univariate.base.ARCHModelForecastSimulation.residuals" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>DataFrame</em> – Simulated residuals used to produce the values</p>
+<dd><p>Simulated residuals used to produce the values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelForecastSimulation.variances">
 <code class="descname">variances</code><a class="headerlink" href="#arch.univariate.base.ARCHModelForecastSimulation.variances" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>DataFrame</em> – Simulated variances of the values</p>
+<dd><p>Simulated variances of the values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelForecastSimulation.residual_variances">
 <code class="descname">residual_variances</code><a class="headerlink" href="#arch.univariate.base.ARCHModelForecastSimulation.residual_variances" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>DataFrame</em> – Simulated variance of the residuals</p>
+<dd><p>Simulated variance of the residuals</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -438,7 +503,7 @@ that are not forecast are <code class="docutils literal notranslate"><span class
         <li class="right" >
           <a href="univariate_volatility_modeling.html" title="ARCH Modeling"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+14.g475ef9a documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

@@ -1,0 +1,1234 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Volatilty Scenarios &#8212; arch 4.4.1+16.g95ea86f documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Mean Models" href="mean.html" />
+    <link rel="prev" title="Volatility Forecasting" href="univariate_volatility_forecasting.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="mean.html" title="Mean Models"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">arch 4.4</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="univariate.html">Univariate Volatility Models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_modeling.html">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forecasting.html">Forecasting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_forecasting.html">Forecasting Examples</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Forecasting Scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mean.html">Mean Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="volatility.html">Volatility Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="univariate_using_fixed_variance.html">Using the Fixed Variance Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distribution.html">Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../bootstrap/bootstrap.html">Bootstrapping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../unitroot/unitroot.html">Unit Root Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="univariate.html">Univariate Volatility Models</a></li>
+              
+              <li>Volatilty Scenarios</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 9ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+</style>
+<div class="section" id="Volatilty-Scenarios">
+<h1>Volatilty Scenarios<a class="headerlink" href="#Volatilty-Scenarios" title="Permalink to this headline">¶</a></h1>
+<p>Custom random-number generators can be used to implement scenarios where
+shock follow a particular pattern. For example, suppose you wanted to
+find out what would happen if there were 5 days of shocks that were
+larger than average. In most circumstances, the shocks in a GARCH model
+have unit variance. This could be changed so that the first 5 shocks
+have variance 4, or twice the standard deviation.</p>
+<p>Another scenario would be to over sample a specific period for the
+shocks. When using the standard bootstrap method (filtered historical
+simulation) the shocks are drawn using iid sampling from the history.
+While this approach is standard and well-grounded, it might be desirable
+to sample from a specific period. This can be implemented using a custom
+random number generator. This strategy is precisely how the filtered
+historical simulation is implemented internally, only where the draws
+are uniformly sampled from the entire history.</p>
+<p>First, some preliminaries</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="kn">import</span> <span class="n">ConstantMean</span><span class="p">,</span> <span class="n">GARCH</span><span class="p">,</span> <span class="n">Normal</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span>
+<span class="kn">import</span> <span class="nn">pandas_datareader</span> <span class="kn">as</span> <span class="nn">pdr</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s1">&#39;darkgrid&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">14</span>
+</pre></div>
+</div>
+</div>
+<p>This example makes use of returns from the NASDAQ index. The scenario
+bootstrap will make use of returns in the run-up to and during the
+Financial Crisis of 2008.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nasdaq</span> <span class="o">=</span> <span class="n">pdr</span><span class="o">.</span><span class="n">fred</span><span class="o">.</span><span class="n">FredReader</span><span class="p">(</span><span class="s1">&#39;NASDAQCOM&#39;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1-1-2000&#39;</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="s1">&#39;1-1-2018&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">nasdaq</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>Out[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>NASDAQCOM</th>
+    </tr>
+    <tr>
+      <th>DATE</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2000-01-03</th>
+      <td>4131.15</td>
+    </tr>
+    <tr>
+      <th>2000-01-04</th>
+      <td>3901.69</td>
+    </tr>
+    <tr>
+      <th>2000-01-05</th>
+      <td>3877.54</td>
+    </tr>
+    <tr>
+      <th>2000-01-06</th>
+      <td>3727.13</td>
+    </tr>
+    <tr>
+      <th>2000-01-07</th>
+      <td>3882.62</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Next, the returns are computed and the model is constructed. The model
+is constructed from the building blocks. It is a standard model and
+could have been (almost) equivalently constructed using</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mod</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">rets</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The one advantage of constructing the model using the components is that
+the NumPy <code class="docutils literal notranslate"><span class="pre">RandomState</span></code> that is used to simulate from the model can be
+externally set. This allows the generator seed to be easily set and for
+the state to reset, if needed.</p>
+<p><strong>NOTE</strong>: It is always a good idea to scale return by 100 before
+estimating ARCH-type models. This helps the optimizer converse since the
+scale of the volatility intercept is much closer to the scale of the
+other parameters in the model.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">rets</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">nasdaq</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="c1"># Build components to set the state for the distribution</span>
+<span class="n">random_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">dist</span> <span class="o">=</span> <span class="n">Normal</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+<span class="n">volatility</span> <span class="o">=</span> <span class="n">GARCH</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">mod</span> <span class="o">=</span> <span class="n">ConstantMean</span><span class="p">(</span><span class="n">rets</span><span class="p">,</span> <span class="n">volatility</span><span class="o">=</span><span class="n">volatility</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="n">dist</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Fitting the model is standard.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">res</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>Out[5]:
+</pre></div>
+</div>
+<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
+<span></span>                   Constant Mean - GJR-GARCH Model Results
+==============================================================================
+Dep. Variable:              NASDAQCOM   R-squared:                      -0.000
+Mean Model:             Constant Mean   Adj. R-squared:                 -0.000
+Vol Model:                  GJR-GARCH   Log-Likelihood:               -7472.03
+Distribution:                  Normal   AIC:                           14954.1
+Method:            Maximum Likelihood   BIC:                           14986.3
+                                        No. Observations:                 4695
+Date:                Thu, Sep 27 2018   Df Residuals:                     4690
+Time:                        13:11:41   Df Model:                            5
+                                 Mean Model
+============================================================================
+                 coef    std err          t      P&gt;|t|      95.0% Conf. Int.
+----------------------------------------------------------------------------
+mu             0.0297  1.491e-02      1.992  4.643e-02 [4.704e-04,5.893e-02]
+                               Volatility Model
+=============================================================================
+                 coef    std err          t      P&gt;|t|       95.0% Conf. Int.
+-----------------------------------------------------------------------------
+omega          0.0169  4.601e-03      3.670  2.424e-04  [7.868e-03,2.590e-02]
+alpha[1]       0.0000  7.140e-03      0.000      1.000 [-1.399e-02,1.399e-02]
+gamma[1]       0.1265  1.744e-02      7.251  4.137e-13    [9.228e-02,  0.161]
+beta[1]        0.9256  1.244e-02     74.415      0.000      [  0.901,  0.950]
+=============================================================================
+
+Covariance estimator: robust
+ARCHModelResult, id: 0x1979e4c2b70
+</pre></div>
+</div>
+</div>
+<p>GJR-GARCH models support analytical forecasts, which is the default. The
+forecasts are produced for all of 2017 using the estimated model
+parameters.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1-1-2017&#39;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>Out[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>h.01</th>
+      <th>h.02</th>
+      <th>h.03</th>
+      <th>h.04</th>
+      <th>h.05</th>
+      <th>h.06</th>
+      <th>h.07</th>
+      <th>h.08</th>
+      <th>h.09</th>
+      <th>h.10</th>
+    </tr>
+    <tr>
+      <th>DATE</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2017-01-02</th>
+      <td>0.580045</td>
+      <td>0.590476</td>
+      <td>0.600792</td>
+      <td>0.610993</td>
+      <td>0.621080</td>
+      <td>0.631055</td>
+      <td>0.640919</td>
+      <td>0.650674</td>
+      <td>0.660320</td>
+      <td>0.669858</td>
+    </tr>
+    <tr>
+      <th>2017-01-03</th>
+      <td>0.553798</td>
+      <td>0.564522</td>
+      <td>0.575126</td>
+      <td>0.585613</td>
+      <td>0.595982</td>
+      <td>0.606237</td>
+      <td>0.616377</td>
+      <td>0.626404</td>
+      <td>0.636320</td>
+      <td>0.646126</td>
+    </tr>
+    <tr>
+      <th>2017-01-04</th>
+      <td>0.529503</td>
+      <td>0.540497</td>
+      <td>0.551369</td>
+      <td>0.562120</td>
+      <td>0.572751</td>
+      <td>0.583264</td>
+      <td>0.593659</td>
+      <td>0.603940</td>
+      <td>0.614105</td>
+      <td>0.624158</td>
+    </tr>
+    <tr>
+      <th>2017-01-05</th>
+      <td>0.507015</td>
+      <td>0.518259</td>
+      <td>0.529378</td>
+      <td>0.540374</td>
+      <td>0.551247</td>
+      <td>0.561999</td>
+      <td>0.572631</td>
+      <td>0.583145</td>
+      <td>0.593542</td>
+      <td>0.603824</td>
+    </tr>
+    <tr>
+      <th>2017-01-06</th>
+      <td>0.486199</td>
+      <td>0.497675</td>
+      <td>0.509023</td>
+      <td>0.520245</td>
+      <td>0.531342</td>
+      <td>0.542315</td>
+      <td>0.553167</td>
+      <td>0.563897</td>
+      <td>0.574509</td>
+      <td>0.585002</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>All GARCH specification are complete models in the sense that they
+specify a distribution. This allows simulations to be produced using the
+assumptions in the model. The <code class="docutils literal notranslate"><span class="pre">forecast</span></code> function can be made to
+produce simulations using the assumed distribution by setting
+<code class="docutils literal notranslate"><span class="pre">method='simulation'</span></code>.</p>
+<p>These forecasts are similar to the analytical forecasts above. As the
+number of simulation increases towards <span class="math notranslate nohighlight">\(\infty\)</span>, the
+simulation-based forecasts will converge to the analytical values above.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">sim_forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1-1-2017&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;simulation&#39;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">sim_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>Out[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>h.01</th>
+      <th>h.02</th>
+      <th>h.03</th>
+      <th>h.04</th>
+      <th>h.05</th>
+      <th>h.06</th>
+      <th>h.07</th>
+      <th>h.08</th>
+      <th>h.09</th>
+      <th>h.10</th>
+    </tr>
+    <tr>
+      <th>DATE</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2017-01-02</th>
+      <td>0.580045</td>
+      <td>0.590403</td>
+      <td>0.598096</td>
+      <td>0.609930</td>
+      <td>0.616253</td>
+      <td>0.626874</td>
+      <td>0.633377</td>
+      <td>0.640617</td>
+      <td>0.647898</td>
+      <td>0.656073</td>
+    </tr>
+    <tr>
+      <th>2017-01-03</th>
+      <td>0.553798</td>
+      <td>0.567418</td>
+      <td>0.581017</td>
+      <td>0.591527</td>
+      <td>0.598513</td>
+      <td>0.603279</td>
+      <td>0.618454</td>
+      <td>0.627658</td>
+      <td>0.633192</td>
+      <td>0.641493</td>
+    </tr>
+    <tr>
+      <th>2017-01-04</th>
+      <td>0.529503</td>
+      <td>0.541442</td>
+      <td>0.552064</td>
+      <td>0.563919</td>
+      <td>0.569974</td>
+      <td>0.580534</td>
+      <td>0.590986</td>
+      <td>0.600379</td>
+      <td>0.612958</td>
+      <td>0.622361</td>
+    </tr>
+    <tr>
+      <th>2017-01-05</th>
+      <td>0.507015</td>
+      <td>0.516400</td>
+      <td>0.526907</td>
+      <td>0.538021</td>
+      <td>0.545443</td>
+      <td>0.554512</td>
+      <td>0.561961</td>
+      <td>0.576138</td>
+      <td>0.587727</td>
+      <td>0.593812</td>
+    </tr>
+    <tr>
+      <th>2017-01-06</th>
+      <td>0.486199</td>
+      <td>0.495461</td>
+      <td>0.505577</td>
+      <td>0.518608</td>
+      <td>0.534521</td>
+      <td>0.545152</td>
+      <td>0.552813</td>
+      <td>0.565625</td>
+      <td>0.574218</td>
+      <td>0.588634</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="section" id="Custom-Random-Generators">
+<h2>Custom Random Generators<a class="headerlink" href="#Custom-Random-Generators" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">forecast</span></code> supports replacing the generator based on the assumed
+distribution of residuals in the model with any other generator. A shock
+generator should usually produce unit variance shocks. However, in this
+example the first 5 shocks generated have variance 2, and the remainder
+are standard normal. This scenario consists of a period of consistently
+surprising volatility where the volatility has shifted for some reason.</p>
+<p>The forecast variances are much larger and grow faster than those from
+either method previously illustrated. This reflects the increase in
+volatility in the first 5 days.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="n">random_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">scenario_rng</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">shocks</span> <span class="o">=</span> <span class="n">random_state</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">shocks</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">5</span><span class="p">]</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">shocks</span>
+
+<span class="n">scenario_forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1-1-2017&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;simulation&#39;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">scenario_rng</span><span class="p">)</span>
+<span class="n">scenario_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>Out[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>h.01</th>
+      <th>h.02</th>
+      <th>h.03</th>
+      <th>h.04</th>
+      <th>h.05</th>
+      <th>h.06</th>
+      <th>h.07</th>
+      <th>h.08</th>
+      <th>h.09</th>
+      <th>h.10</th>
+    </tr>
+    <tr>
+      <th>DATE</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2017-01-02</th>
+      <td>0.580045</td>
+      <td>0.627008</td>
+      <td>0.670593</td>
+      <td>0.726040</td>
+      <td>0.770887</td>
+      <td>0.827587</td>
+      <td>0.830443</td>
+      <td>0.835040</td>
+      <td>0.839207</td>
+      <td>0.846161</td>
+    </tr>
+    <tr>
+      <th>2017-01-03</th>
+      <td>0.553798</td>
+      <td>0.605332</td>
+      <td>0.660221</td>
+      <td>0.709851</td>
+      <td>0.755653</td>
+      <td>0.794870</td>
+      <td>0.809932</td>
+      <td>0.816872</td>
+      <td>0.818132</td>
+      <td>0.823916</td>
+    </tr>
+    <tr>
+      <th>2017-01-04</th>
+      <td>0.529503</td>
+      <td>0.575869</td>
+      <td>0.622036</td>
+      <td>0.672072</td>
+      <td>0.712424</td>
+      <td>0.767144</td>
+      <td>0.776076</td>
+      <td>0.782297</td>
+      <td>0.794378</td>
+      <td>0.800691</td>
+    </tr>
+    <tr>
+      <th>2017-01-05</th>
+      <td>0.507015</td>
+      <td>0.546602</td>
+      <td>0.590346</td>
+      <td>0.637349</td>
+      <td>0.677891</td>
+      <td>0.727246</td>
+      <td>0.731660</td>
+      <td>0.744623</td>
+      <td>0.754475</td>
+      <td>0.757505</td>
+    </tr>
+    <tr>
+      <th>2017-01-06</th>
+      <td>0.486199</td>
+      <td>0.523992</td>
+      <td>0.564631</td>
+      <td>0.615177</td>
+      <td>0.677983</td>
+      <td>0.728223</td>
+      <td>0.732785</td>
+      <td>0.743466</td>
+      <td>0.750469</td>
+      <td>0.764813</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="Bootstrap-Scenarios">
+<h2>Bootstrap Scenarios<a class="headerlink" href="#Bootstrap-Scenarios" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">forecast</span></code> supports Filtered Historical Simulation (FHS) using
+<code class="docutils literal notranslate"><span class="pre">method='bootstrap'</span></code>. This is effectively a simulation method where
+the simulated shocks are generated using iid sampling from the history
+of the demeaned and standardized return data. Custom bootstraps are
+another application of <code class="docutils literal notranslate"><span class="pre">rng</span></code>. Here an object is used to hold the
+shocks. This object exposes a method (<code class="docutils literal notranslate"><span class="pre">rng</span></code>) the acts like a random
+number generator, except that it only returns values that were provided
+in the <code class="docutils literal notranslate"><span class="pre">shocks</span></code> parameter.</p>
+<p>The internal implementation of the FHS uses a method almost identical to
+this where <code class="docutils literal notranslate"><span class="pre">shocks</span></code> contain the entire history.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">class</span> <span class="nc">ScenarioBootstrapRNG</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shocks</span><span class="p">,</span> <span class="n">random_state</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shocks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">shocks</span><span class="p">)</span>  <span class="c1"># 1d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rs</span> <span class="o">=</span> <span class="n">random_state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">shocks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">rng</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rs</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shocks</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+<span class="n">random_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">std_shocks</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span>
+<span class="n">shocks</span> <span class="o">=</span> <span class="n">std_shocks</span><span class="p">[</span><span class="s1">&#39;2008-08-01&#39;</span><span class="p">:</span><span class="s1">&#39;2008-11-10&#39;</span><span class="p">]</span>
+<span class="n">scenario_bootstrap</span> <span class="o">=</span> <span class="n">ScenarioBootstrapRNG</span><span class="p">(</span><span class="n">shocks</span><span class="p">,</span> <span class="n">random_state</span><span class="p">)</span>
+<span class="n">bs_forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1-1-2017&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;simulation&#39;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">scenario_bootstrap</span><span class="o">.</span><span class="n">rng</span><span class="p">)</span>
+<span class="n">bs_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>Out[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>h.01</th>
+      <th>h.02</th>
+      <th>h.03</th>
+      <th>h.04</th>
+      <th>h.05</th>
+      <th>h.06</th>
+      <th>h.07</th>
+      <th>h.08</th>
+      <th>h.09</th>
+      <th>h.10</th>
+    </tr>
+    <tr>
+      <th>DATE</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2017-01-02</th>
+      <td>0.580045</td>
+      <td>0.627731</td>
+      <td>0.671806</td>
+      <td>0.710768</td>
+      <td>0.768906</td>
+      <td>0.808972</td>
+      <td>0.872246</td>
+      <td>0.916471</td>
+      <td>0.973876</td>
+      <td>1.038470</td>
+    </tr>
+    <tr>
+      <th>2017-01-03</th>
+      <td>0.553798</td>
+      <td>0.601034</td>
+      <td>0.643942</td>
+      <td>0.686704</td>
+      <td>0.733541</td>
+      <td>0.783090</td>
+      <td>0.822505</td>
+      <td>0.876280</td>
+      <td>0.930863</td>
+      <td>0.984509</td>
+    </tr>
+    <tr>
+      <th>2017-01-04</th>
+      <td>0.529503</td>
+      <td>0.573559</td>
+      <td>0.615961</td>
+      <td>0.660616</td>
+      <td>0.704348</td>
+      <td>0.755170</td>
+      <td>0.819018</td>
+      <td>0.870309</td>
+      <td>0.931131</td>
+      <td>0.988081</td>
+    </tr>
+    <tr>
+      <th>2017-01-05</th>
+      <td>0.507015</td>
+      <td>0.551867</td>
+      <td>0.598752</td>
+      <td>0.643247</td>
+      <td>0.681701</td>
+      <td>0.727702</td>
+      <td>0.780660</td>
+      <td>0.833911</td>
+      <td>0.883571</td>
+      <td>0.947947</td>
+    </tr>
+    <tr>
+      <th>2017-01-06</th>
+      <td>0.486199</td>
+      <td>0.520973</td>
+      <td>0.557449</td>
+      <td>0.602373</td>
+      <td>0.648293</td>
+      <td>0.701349</td>
+      <td>0.762154</td>
+      <td>0.814151</td>
+      <td>0.863550</td>
+      <td>0.909780</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="Visualizing-the-differences">
+<h2>Visualizing the differences<a class="headerlink" href="#Visualizing-the-differences" title="Permalink to this headline">¶</a></h2>
+<p>The final forecast values are used to illustrate how these are
+different. The analytical and standard simulation are virtually
+identical. The simulated scenario grows rapidly for the first 5 periods
+and then more slowly. The bootstrap scenario grows quickly and
+consistently due to the magnitude of the shocks in the financial crisis.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+          <span class="n">sim_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+          <span class="n">scenario_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+          <span class="n">bs_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Analytic&#39;</span><span class="p">,</span><span class="s1">&#39;Simulation&#39;</span><span class="p">,</span><span class="s1">&#39;Scenario Sim&#39;</span><span class="p">,</span><span class="s1">&#39;Bootstrp Scenario&#39;</span><span class="p">]</span>
+<span class="c1"># Plot annualized vol</span>
+<span class="n">subplot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">legend</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">legend</span> <span class="o">=</span> <span class="n">subplot</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/univariate_univariate_volatility_scenarios_19_0.png" src="../_images/univariate_univariate_volatility_scenarios_19_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">subplot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Comparing-the-paths">
+<h2>Comparing the paths<a class="headerlink" href="#Comparing-the-paths" title="Permalink to this headline">¶</a></h2>
+<p>The paths are available on the attribute <code class="docutils literal notranslate"><span class="pre">simulations</span></code>. Plotting the
+paths shows important differences between the two scenarios beyond the
+average differences plotted above. Both start at the same point.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="n">seaborn</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s1">&#39;dark&#39;</span><span class="p">)</span>
+<span class="c1"># The paths for the final observation</span>
+<span class="n">sim_paths</span> <span class="o">=</span> <span class="n">sim_forecasts</span><span class="o">.</span><span class="n">simulations</span><span class="o">.</span><span class="n">residual_variances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+<span class="n">bs_paths</span> <span class="o">=</span> <span class="n">bs_forecasts</span><span class="o">.</span><span class="n">simulations</span><span class="o">.</span><span class="n">residual_variances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+
+<span class="c1"># Plot the paths and the mean, set the axis to have the same limit</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">sim_paths</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">sim_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+             <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Model-based Simulation&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">bs_paths</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">bs_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+             <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+<span class="n">title</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Bootstrap Scenario&#39;</span><span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/univariate_univariate_volatility_scenarios_22_0.png" src="../_images/univariate_univariate_volatility_scenarios_22_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Comparing-across-the-year">
+<h2>Comparing across the year<a class="headerlink" href="#Comparing-across-the-year" title="Permalink to this headline">¶</a></h2>
+<p>A hedgehog plot is useful for showing the differences between the two
+forecasting methods across the year, instead of a single day.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">analytic</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">bs</span> <span class="o">=</span> <span class="n">bs_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">vol</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">[</span><span class="s1">&#39;2017-1-1&#39;</span><span class="p">:</span><span class="s1">&#39;2018-1-1&#39;</span><span class="p">]</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="n">vol</span><span class="o">.</span><span class="n">index</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">)</span> <span class="o">*</span> <span class="n">vol</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">vol</span><span class="p">),</span> <span class="mi">22</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">analytic</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">loc</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">new_idx</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[</span><span class="n">loc</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span><span class="n">loc</span> <span class="o">+</span> <span class="mi">11</span><span class="p">]</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">new_idx</span>
+    <span class="n">b</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">new_idx</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">a</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">b</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Annualized Vol.&#39;</span><span class="p">,</span> <span class="s1">&#39;Analytic Forecast&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;Bootstrap Scenario Forecast&#39;</span><span class="p">]</span>
+<span class="n">legend</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/univariate_univariate_volatility_scenarios_25_0.png" src="../_images/univariate_univariate_volatility_scenarios_25_0.png" />
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="univariate_volatility_forecasting.html" title="previous chapter (use the left arrow)">Volatility Forecasting</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="mean.html" title="next chapter (use the right arrow)">Mean Models</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="mean.html" title="Mean Models"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

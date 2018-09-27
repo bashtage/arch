@@ -15,14 +15,14 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Time-series Bootstraps &#8212; arch 4.4.1+14.g475ef9a documentation</title>
+    <title>Time-series Bootstraps &#8212; arch 4.4.1+16.g95ea86f documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="References" href="background.html" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="iid-bootstraps.html" title="Independent, Identical Distributed Data (i.i.d.)"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+14.g475ef9a documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" accesskey="U">Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
@@ -151,32 +151,72 @@ for this reason.</p>
 <dl class="attribute">
 <dt id="arch.bootstrap.StationaryBootstrap.index">
 <code class="descname">index</code><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.index" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>array</em> – The current index of the bootstrap</p>
+<dd><p>The current index of the bootstrap</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">array</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.StationaryBootstrap.data">
 <code class="descname">data</code><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.data" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tuple</em> – Two-element tuple with the pos_data in the first position and kw_data
+<dd><p>Two-element tuple with the pos_data in the first position and kw_data
 in the second (pos_data, kw_data)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.StationaryBootstrap.pos_data">
 <code class="descname">pos_data</code><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.pos_data" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tuple</em> – Tuple containing the positional arguments (in the order entered)</p>
+<dd><p>Tuple containing the positional arguments (in the order entered)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.StationaryBootstrap.kw_data">
 <code class="descname">kw_data</code><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.kw_data" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – Dictionary containing the keyword arguments</p>
+<dd><p>Dictionary containing the keyword arguments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)">dict</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.StationaryBootstrap.random_state">
 <code class="descname">random_state</code><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.random_state" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>RandomState</em> – RandomState instance used by bootstrap</p>
+<dd><p>RandomState instance used by bootstrap</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">RandomState</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <p class="rubric">Notes</p>
@@ -580,32 +620,72 @@ name of the required bootstrap</p>
 <dl class="attribute">
 <dt id="arch.bootstrap.CircularBlockBootstrap.index">
 <code class="descname">index</code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.index" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>array</em> – The current index of the bootstrap</p>
+<dd><p>The current index of the bootstrap</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">array</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.CircularBlockBootstrap.data">
 <code class="descname">data</code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.data" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tuple</em> – Two-element tuple with the pos_data in the first position and kw_data
+<dd><p>Two-element tuple with the pos_data in the first position and kw_data
 in the second (pos_data, kw_data)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.CircularBlockBootstrap.pos_data">
 <code class="descname">pos_data</code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.pos_data" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tuple</em> – Tuple containing the positional arguments (in the order entered)</p>
+<dd><p>Tuple containing the positional arguments (in the order entered)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.CircularBlockBootstrap.kw_data">
 <code class="descname">kw_data</code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.kw_data" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – Dictionary containing the keyword arguments</p>
+<dd><p>Dictionary containing the keyword arguments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)">dict</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.CircularBlockBootstrap.random_state">
 <code class="descname">random_state</code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.random_state" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>RandomState</em> – RandomState instance used by bootstrap</p>
+<dd><p>RandomState instance used by bootstrap</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">RandomState</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <p class="rubric">Notes</p>
@@ -1009,32 +1089,72 @@ name of the required bootstrap</p>
 <dl class="attribute">
 <dt id="arch.bootstrap.MovingBlockBootstrap.index">
 <code class="descname">index</code><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.index" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>array</em> – The current index of the bootstrap</p>
+<dd><p>The current index of the bootstrap</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">array</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.MovingBlockBootstrap.data">
 <code class="descname">data</code><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.data" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tuple</em> – Two-element tuple with the pos_data in the first position and kw_data
+<dd><p>Two-element tuple with the pos_data in the first position and kw_data
 in the second (pos_data, kw_data)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.MovingBlockBootstrap.pos_data">
 <code class="descname">pos_data</code><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.pos_data" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tuple</em> – Tuple containing the positional arguments (in the order entered)</p>
+<dd><p>Tuple containing the positional arguments (in the order entered)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.MovingBlockBootstrap.kw_data">
 <code class="descname">kw_data</code><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.kw_data" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – Dictionary containing the keyword arguments</p>
+<dd><p>Dictionary containing the keyword arguments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)">dict</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.MovingBlockBootstrap.random_state">
 <code class="descname">random_state</code><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.random_state" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>RandomState</em> – RandomState instance used by bootstrap</p>
+<dd><p>RandomState instance used by bootstrap</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">RandomState</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <p class="rubric">Notes</p>
@@ -1451,7 +1571,7 @@ name of the required bootstrap</p>
         <li class="right" >
           <a href="iid-bootstraps.html" title="Independent, Identical Distributed Data (i.i.d.)"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+14.g475ef9a documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" >Bootstrapping</a> &#187;</li> 
       </ul>
     </div>

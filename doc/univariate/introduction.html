@@ -15,14 +15,14 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Introduction to ARCH Models &#8212; arch 4.4.1+14.g475ef9a documentation</title>
+    <title>Introduction to ARCH Models &#8212; arch 4.4.1+16.g95ea86f documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="ARCH Modeling" href="univariate_volatility_modeling.html" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="univariate.html" title="Univariate Volatility Models"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+14.g475ef9a documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -71,6 +71,7 @@
 <li class="toctree-l2"><a class="reference internal" href="univariate_volatility_modeling.html">Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="forecasting.html">Forecasting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="univariate_volatility_forecasting.html">Forecasting Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="univariate_volatility_scenarios.html">Forecasting Scenarios</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mean.html">Mean Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="volatility.html">Volatility Processes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="univariate_using_fixed_variance.html">Using the Fixed Variance Process</a></li>
@@ -341,94 +342,214 @@ slice notation <cite>fit_start:fit_stop</cite></li>
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.loglikelihood">
 <code class="descname">loglikelihood</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.loglikelihood" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> – Value of the log-likelihood</p>
+<dd><p>Value of the log-likelihood</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.aic">
 <code class="descname">aic</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.aic" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> – Akaike information criteria</p>
+<dd><p>Akaike information criteria</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.bic">
 <code class="descname">bic</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.bic" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> – Schwarz/Bayes information criteria</p>
+<dd><p>Schwarz/Bayes information criteria</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.conditional_volatility">
 <code class="descname">conditional_volatility</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.conditional_volatility" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>{ndarray, Series}</em> – nobs element array containing the conditional volatility (square root
+<dd><p>nobs element array containing the conditional volatility (square root
 of conditional variance).  The values are aligned with the input data
 so that the value in the t-th position is the variance of t-th error,
 which is computed using time-(t-1) information.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">{ndarray, Series}</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.params">
 <code class="descname">params</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.params" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Series</em> – Estimated parameters</p>
+<dd><p>Estimated parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">Series</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.param_cov">
 <code class="descname">param_cov</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.param_cov" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>DataFrame</em> – Estimated variance-covariance of the parameters</p>
+<dd><p>Estimated variance-covariance of the parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.rsquared">
 <code class="descname">rsquared</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.rsquared" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> – R-squared</p>
+<dd><p>R-squared</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.rsquared_adj">
 <code class="descname">rsquared_adj</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.rsquared_adj" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> – Degree of freedom adjusted R-squared</p>
+<dd><p>Degree of freedom adjusted R-squared</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.nobs">
 <code class="descname">nobs</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.nobs" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Number of observations used in the estimation</p>
+<dd><p>Number of observations used in the estimation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.num_params">
 <code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.num_params" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Number of parameters in the model</p>
+<dd><p>Number of parameters in the model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.tvalues">
 <code class="descname">tvalues</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.tvalues" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Series</em> – Array of t-statistics for the null the coefficient is 0</p>
+<dd><p>Array of t-statistics for the null the coefficient is 0</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">Series</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.std_err">
 <code class="descname">std_err</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.std_err" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Series</em> – Array of parameter standard errors</p>
+<dd><p>Array of parameter standard errors</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">Series</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.pvalues">
 <code class="descname">pvalues</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.pvalues" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Series</em> – Array of p-values for the t-statistics</p>
+<dd><p>Array of p-values for the t-statistics</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">Series</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.resid">
 <code class="descname">resid</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.resid" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>{ndarray, Series}</em> – nobs element array containing model residuals</p>
+<dd><p>nobs element array containing model residuals</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">{ndarray, Series}</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.model">
 <code class="descname">model</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.model" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>ARCHModel</em> – Model instance used to produce the fit</p>
+<dd><p>Model instance used to produce the fit</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference internal" href="mean.html#arch.univariate.base.ARCHModel" title="arch.univariate.base.ARCHModel">ARCHModel</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -451,7 +572,7 @@ ith parameter</td>
 
 <dl class="method">
 <dt id="arch.univariate.base.ARCHModelResult.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>params=None</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="descname">forecast</code><span class="sig-paren">(</span><em>params=None</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -472,18 +593,22 @@ set to ‘target’, the t-th row contains the 1-step ahead forecast
 from time t-1, the 2 step from time t-2, …, and the h-step from
 time t-h.  ‘target’ simplified computing forecast errors since the
 realization and h-step forecast are aligned.</li>
-<li><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em>) – Method to use when producing the forecast. The default is analytic.
+<li><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em><em>, </em><em>optional</em>) – Method to use when producing the forecast. The default is analytic.
 The method only affects the variance forecast generation.  Not all
 volatility models support all methods. In particular, volatility
 models that do not evolve in squares such as EGARCH or TARCH do not
 support the ‘analytic’ method for horizons &gt; 1.</li>
-<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
+<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of simulations to run when computing the forecast using
 either simulation or bootstrap.</li>
+<li><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
+Must produce random samples using the syntax <cite>rng(size)</cite> where size
+is either a scalar or a tuple containing the dimension of the
+random values.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>forecasts</strong> – t by h data frame containing the forecasts.  The alignment of the forecasts is
-controlled by <cite>align</cite>.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>forecasts</strong> – t by h data frame containing the forecasts.  The alignment of the
+forecasts is controlled by <cite>align</cite>.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataFrame</p>
@@ -673,63 +798,135 @@ contain nan-values in locations not used in estimation</li>
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.loglikelihood">
 <code class="descname">loglikelihood</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.loglikelihood" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> – Value of the log-likelihood</p>
+<dd><p>Value of the log-likelihood</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.aic">
 <code class="descname">aic</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.aic" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> – Akaike information criteria</p>
+<dd><p>Akaike information criteria</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.bic">
 <code class="descname">bic</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.bic" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> – Schwarz/Bayes information criteria</p>
+<dd><p>Schwarz/Bayes information criteria</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.conditional_volatility">
 <code class="descname">conditional_volatility</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.conditional_volatility" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>{ndarray, Series}</em> – nobs element array containing the conditional volatility (square root
+<dd><p>nobs element array containing the conditional volatility (square root
 of conditional variance).  The values are aligned with the input data
 so that the value in the t-th position is the variance of t-th error,
 which is computed using time-(t-1) information.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">{ndarray, Series}</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.params">
 <code class="descname">params</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.params" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Series</em> – Estimated parameters</p>
+<dd><p>Estimated parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">Series</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.nobs">
 <code class="descname">nobs</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.nobs" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Number of observations used in the estimation</p>
+<dd><p>Number of observations used in the estimation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.num_params">
 <code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.num_params" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Number of parameters in the model</p>
+<dd><p>Number of parameters in the model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.resid">
 <code class="descname">resid</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.resid" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>{ndarray, Series}</em> – nobs element array containing model residuals</p>
+<dd><p>nobs element array containing model residuals</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">{ndarray, Series}</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.model">
 <code class="descname">model</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.model" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>ARCHModel</em> – Model instance used to produce the fit</p>
+<dd><p>Model instance used to produce the fit</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference internal" href="mean.html#arch.univariate.base.ARCHModel" title="arch.univariate.base.ARCHModel">ARCHModel</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt>
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>params=None</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em><span class="sig-paren">)</span></dt>
+<code class="descname">forecast</code><span class="sig-paren">(</span><em>params=None</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -750,18 +947,22 @@ set to ‘target’, the t-th row contains the 1-step ahead forecast
 from time t-1, the 2 step from time t-2, …, and the h-step from
 time t-h.  ‘target’ simplified computing forecast errors since the
 realization and h-step forecast are aligned.</li>
-<li><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em>) – Method to use when producing the forecast. The default is analytic.
+<li><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em><em>, </em><em>optional</em>) – Method to use when producing the forecast. The default is analytic.
 The method only affects the variance forecast generation.  Not all
 volatility models support all methods. In particular, volatility
 models that do not evolve in squares such as EGARCH or TARCH do not
 support the ‘analytic’ method for horizons &gt; 1.</li>
-<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
+<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of simulations to run when computing the forecast using
 either simulation or bootstrap.</li>
+<li><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
+Must produce random samples using the syntax <cite>rng(size)</cite> where size
+is either a scalar or a tuple containing the dimension of the
+random values.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>forecasts</strong> – t by h data frame containing the forecasts.  The alignment of the forecasts is
-controlled by <cite>align</cite>.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>forecasts</strong> – t by h data frame containing the forecasts.  The alignment of the
+forecasts is controlled by <cite>align</cite>.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataFrame</p>
@@ -940,7 +1141,7 @@ latex</td>
         <li class="right" >
           <a href="univariate.html" title="Univariate Volatility Models"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+14.g475ef9a documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

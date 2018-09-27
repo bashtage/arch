@@ -20,6 +20,9 @@ doc/_images/univariate_univariate_volatility_modeling_30_0.png
 doc/_images/univariate_univariate_volatility_modeling_37_0.png
 doc/_images/univariate_univariate_volatility_modeling_45_1.png
 doc/_images/univariate_univariate_volatility_modeling_6_0.png
+doc/_images/univariate_univariate_volatility_scenarios_19_0.png
+doc/_images/univariate_univariate_volatility_scenarios_22_0.png
+doc/_images/univariate_univariate_volatility_scenarios_25_0.png
 doc/_sources/bootstrap/background.rst.txt
 doc/_sources/bootstrap/bootstrap.rst.txt
 doc/_sources/bootstrap/bootstrap_examples.ipynb.txt
@@ -48,6 +51,7 @@ doc/_sources/univariate/univariate.rst.txt
 doc/_sources/univariate/univariate_using_fixed_variance.ipynb.txt
 doc/_sources/univariate/univariate_volatility_forecasting.ipynb.txt
 doc/_sources/univariate/univariate_volatility_modeling.ipynb.txt
+doc/_sources/univariate/univariate_volatility_scenarios.ipynb.txt
 doc/_sources/univariate/volatility.rst.txt
 doc/_static/ajax-loader.gif
 doc/_static/basic.css
@@ -190,4 +194,5 @@ doc/univariate/univariate.html
 doc/univariate/univariate_using_fixed_variance.html
 doc/univariate/univariate_volatility_forecasting.html
 doc/univariate/univariate_volatility_modeling.html
+doc/univariate/univariate_volatility_scenarios.html
 doc/univariate/volatility.html

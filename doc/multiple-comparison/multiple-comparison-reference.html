@@ -15,14 +15,14 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Module Reference &#8212; arch 4.4.1+14.g475ef9a documentation</title>
+    <title>Module Reference &#8212; arch 4.4.1+16.g95ea86f documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="References" href="background.html" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="multiple-comparison_examples.html" title="Multiple Comparisons"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+14.g475ef9a documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="multiple-comparisons.html" accesskey="U">Multiple Comparison Procedures</a> &#187;</li> 
       </ul>
     </div>
@@ -187,8 +187,16 @@ that are rejected given a test size</p>
 <dl class="attribute">
 <dt id="arch.bootstrap.SPA.pvalues">
 <code class="descname">pvalues</code><a class="headerlink" href="#arch.bootstrap.SPA.pvalues" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Series</em> – A set of three p-values corresponding to the lower, consistent and
+<dd><p>A set of three p-values corresponding to the lower, consistent and
 upper p-values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">Series</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <p class="rubric">References</p>
@@ -292,8 +300,16 @@ the procedure requires k extra bootstraps.</li>
 <dl class="attribute">
 <dt id="arch.bootstrap.StepM.superior_models">
 <code class="descname">superior_models</code><a class="headerlink" href="#arch.bootstrap.StepM.superior_models" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> – List of superior models.  Contains column indices if models is an
+<dd><p>List of superior models.  Contains column indices if models is an
 array or contains column names if models is a DataFrame.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <p class="rubric">References</p>
@@ -360,20 +376,44 @@ Default is ‘R’.</li>
 <dl class="attribute">
 <dt id="arch.bootstrap.MCS.pvalues">
 <code class="descname">pvalues</code><a class="headerlink" href="#arch.bootstrap.MCS.pvalues" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>DataFrame</em> – DataFrame where the index is the model index (column or name)
+<dd><p>DataFrame where the index is the model index (column or name)
 containing the smallest size where the model is in the MCS.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.MCS.included">
 <code class="descname">included</code><a class="headerlink" href="#arch.bootstrap.MCS.included" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> – List of column indices or names of the included models</p>
+<dd><p>List of column indices or names of the included models</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.MCS.excluded">
 <code class="descname">excluded</code><a class="headerlink" href="#arch.bootstrap.MCS.excluded" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> – List of column indices or names of the excluded models</p>
+<dd><p>List of column indices or names of the excluded models</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -428,7 +468,7 @@ Econometrica, 79(2), 453-497.</p>
         <li class="right" >
           <a href="multiple-comparison_examples.html" title="Multiple Comparisons"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+14.g475ef9a documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="multiple-comparisons.html" >Multiple Comparison Procedures</a> &#187;</li> 
       </ul>
     </div>
