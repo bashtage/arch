@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Unit Root Testing &#8212; arch 4.4.1+16.g95ea86f documentation</title>
+    <title>Unit Root Testing &#8212; arch 4.4.1+17.gac7e2bf documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="introduction.html" title="Introduction"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+17.gac7e2bf documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="unitroot.html" accesskey="U">Unit Root Testing</a> &#187;</li> 
       </ul>
     </div>
@@ -291,8 +291,19 @@ div.nboutput div.output_area.stderr {
 
 <span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">import</span> <span class="nn">seaborn</span>
-<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
 <span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;serif&#39;</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">14</span>
 </pre></div>
 </div>
 </div>
@@ -303,7 +314,7 @@ difference between the yields of BAA and AAA rated corporate bonds. The
 data is downloaded from FRED using pandas.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [2]:
+<span></span>In [3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -323,14 +334,14 @@ data is downloaded from FRED using pandas.</p>
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/unitroot_unitroot_examples_5_0.png" src="../_images/unitroot_unitroot_examples_5_0.png" />
+<img alt="../_images/unitroot_unitroot_examples_6_0.png" src="../_images/unitroot_unitroot_examples_6_0.png" />
 </div>
 </div>
 <p>The Default premium is clearly highly persistent. A simple check of the
 autocorrelations confirms this.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [3]:
+<span></span>In [4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -343,7 +354,7 @@ autocorrelations confirms this.</p>
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/unitroot_unitroot_examples_7_0.png" src="../_images/unitroot_unitroot_examples_7_0.png" />
+<img alt="../_images/unitroot_unitroot_examples_8_0.png" src="../_images/unitroot_unitroot_examples_8_0.png" />
 </div>
 </div>
 </div>
@@ -361,7 +372,7 @@ constant in the ADF regression.</p>
 <p>These results indicate that the Default premium is stationary.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [4]:
+<span></span>In [5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -397,7 +408,7 @@ of lags is sufficient to pick up any dependence in the data.</p>
 <h3>Setting the number of lags<a class="headerlink" href="#Setting-the-number-of-lags" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [5]:
+<span></span>In [6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -437,7 +448,7 @@ Alternative Hypothesis: The process is weakly stationary.
 <p>Changing the type of constant also makes no difference for this data.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [6]:
+<span></span>In [7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -471,7 +482,7 @@ Alternative Hypothesis: The process is weakly stationary.
 accesses using <code class="docutils literal notranslate"><span class="pre">regression</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [7]:
+<span></span>In [8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -490,8 +501,8 @@ accesses using <code class="docutils literal notranslate"><span class="pre">regr
 Dep. Variable:                      y   R-squared:                       0.095
 Model:                            OLS   Adj. R-squared:                  0.090
 Method:                 Least Squares   F-statistic:                     17.00
-Date:                Thu, 04 Aug 2016   Prob (F-statistic):           1.84e-21
-Time:                        17:19:18   Log-Likelihood:                 575.20
+Date:                Thu, 27 Sep 2018   Prob (F-statistic):           1.84e-21
+Time:                        15:31:57   Log-Likelihood:                 575.20
 No. Observations:                1135   AIC:                            -1134.
 Df Residuals:                    1127   BIC:                            -1094.
 Df Model:                           7
@@ -499,14 +510,14 @@ Covariance Type:            nonrobust
 ==============================================================================
                  coef    std err          t      P&gt;|t|      [0.025      0.975]
 ------------------------------------------------------------------------------
-x1            -0.0246      0.007     -3.661      0.000      -0.038      -0.011
-x2             0.2190      0.030      7.344      0.000       0.160       0.277
-x3            -0.0549      0.030     -1.802      0.072      -0.115       0.005
-x4            -0.1398      0.030     -4.649      0.000      -0.199      -0.081
-x5            -0.0519      0.030     -1.716      0.086      -0.111       0.007
-x6             0.0426      0.030      1.431      0.153      -0.016       0.101
+Level.L1      -0.0246      0.007     -3.661      0.000      -0.038      -0.011
+Diff.L1        0.2190      0.030      7.344      0.000       0.160       0.277
+Diff.L2       -0.0549      0.030     -1.802      0.072      -0.115       0.005
+Diff.L3       -0.1398      0.030     -4.649      0.000      -0.199      -0.081
+Diff.L4       -0.0519      0.030     -1.716      0.086      -0.111       0.007
+Diff.L5        0.0426      0.030      1.431      0.153      -0.016       0.101
 const          0.0389      0.014      2.796      0.005       0.012       0.066
-x7         -1.817e-05   1.41e-05     -1.285      0.199   -4.59e-05    9.58e-06
+trend      -1.817e-05   1.41e-05     -1.285      0.199   -4.59e-05    9.58e-06
 ==============================================================================
 Omnibus:                      623.301   Durbin-Watson:                   2.001
 Prob(Omnibus):                  0.000   Jarque-Bera (JB):           128496.439
@@ -522,13 +533,15 @@ strong multicollinearity or other numerical problems.
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [8]:
+<span></span>In [9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="n">resids</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">reg_res</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">default</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">6</span><span class="p">:],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;resids&#39;</span><span class="p">])</span>
+<span class="n">resids</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">reg_res</span><span class="o">.</span><span class="n">resid</span><span class="p">)</span>
+<span class="n">resids</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">default</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span>
+<span class="n">resids</span><span class="o">.</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;resids&#39;</span><span class="p">]</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -537,14 +550,14 @@ strong multicollinearity or other numerical problems.
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/unitroot_unitroot_examples_20_0.png" src="../_images/unitroot_unitroot_examples_20_0.png" />
+<img alt="../_images/unitroot_unitroot_examples_21_0.png" src="../_images/unitroot_unitroot_examples_21_0.png" />
 </div>
 </div>
 <p>Since the number lags was directly set, it is good to check whether the
 residuals appear to be white noise.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [9]:
+<span></span>In [10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -557,7 +570,7 @@ residuals appear to be white noise.</p>
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/unitroot_unitroot_examples_22_0.png" src="../_images/unitroot_unitroot_examples_22_0.png" />
+<img alt="../_images/unitroot_unitroot_examples_23_0.png" src="../_images/unitroot_unitroot_examples_23_0.png" />
 </div>
 </div>
 </div>
@@ -571,7 +584,7 @@ constant or constant and time trend (<code class="docutils literal notranslate">
 <p>The results of this test agree with the ADF results.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [10]:
+<span></span>In [11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -602,7 +615,7 @@ Alternative Hypothesis: The process is weakly stationary.
 <p>The trend can be altered using <code class="docutils literal notranslate"><span class="pre">trend</span></code>. The conclusion is the same.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [11]:
+<span></span>In [12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -640,7 +653,7 @@ estimation, implemented using a Newey-West covariance estimator.</p>
 be overridden using <code class="docutils literal notranslate"><span class="pre">lags</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [12]:
+<span></span>In [13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -672,7 +685,7 @@ Alternative Hypothesis: The process is weakly stationary.
 dependence in the data.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [13]:
+<span></span>In [14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -702,7 +715,7 @@ Alternative Hypothesis: The process is weakly stationary.
 <p>The trend can be changed as well.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [14]:
+<span></span>In [15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -736,7 +749,7 @@ test, which is similar to an ADF regression, although this can be
 changed using <code class="docutils literal notranslate"><span class="pre">test_type='rho'</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [15]:
+<span></span>In [16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -772,7 +785,7 @@ stationary process and the alternative is a unit root.</p>
 might be a unit root.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [16]:
+<span></span>In [17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -790,7 +803,7 @@ might be a unit root.</p>
     KPSS Stationarity Test Results
 =====================================
 Test Statistic                  0.941
-P-value                         0.004
+P-value                         0.003
 Lags                               23
 -------------------------------------
 
@@ -803,7 +816,7 @@ Alternative Hypothesis: The process contains a unit root.
 <p>Changing the trend does not alter the conclusion.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [17]:
+<span></span>In [18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -820,7 +833,7 @@ Alternative Hypothesis: The process contains a unit root.
     KPSS Stationarity Test Results
 =====================================
 Test Statistic                  0.361
-P-value                         0.001
+P-value                         0.000
 Lags                               23
 -------------------------------------
 
@@ -839,13 +852,13 @@ random walk versus having some predictability. This example uses the
 excess return on the market from Ken French’s data.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [18]:
+<span></span>In [19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">pandas.io.data</span> <span class="kn">as</span> <span class="nn">web</span>
+<span class="kn">import</span> <span class="nn">pandas_datareader</span> <span class="kn">as</span> <span class="nn">web</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="n">ff</span><span class="o">=</span><span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;F-F_Research_Data_Factors&#39;</span><span class="p">,</span> <span class="s1">&#39;famafrench&#39;</span><span class="p">)</span>
 <span class="k">except</span><span class="p">:</span>
@@ -861,15 +874,15 @@ excess return on the market from Ken French’s data.</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-       1 b&#39;Mkt-RF&#39;     2 b&#39;SMB&#39;     3 b&#39;HML&#39;      4 b&#39;RF&#39;
-count  1080.000000  1080.000000  1080.000000  1080.000000
-mean      0.647361     0.211491     0.384333     0.279259
-std       5.381110     3.216523     3.522064     0.254710
-min     -29.130000   -16.700000   -13.280000    -0.060000
-25%      -2.022500    -1.560000    -1.290000     0.030000
-50%       1.000000     0.065000     0.215000     0.250000
-75%       3.650000     1.772500     1.732500     0.430000
-max      38.850000    36.700000    35.460000     1.350000
+           Mkt-RF         SMB         HML          RF
+count  103.000000  103.000000  103.000000  103.000000
+mean     1.139806    0.107379   -0.131068    0.020680
+std      3.542553    2.273547    2.162328    0.037397
+min     -7.890000   -4.370000   -4.500000    0.000000
+25%     -0.985000   -1.720000   -1.530000    0.000000
+50%      1.180000    0.320000   -0.290000    0.010000
+75%      3.155000    1.230000    1.015000    0.020000
+max     11.350000    5.490000    8.270000    0.160000
 </pre></div></div>
 </div>
 <p>The variance ratio compares the variance of a 1-period return to that of
@@ -880,7 +893,7 @@ series is a pure random walk is rejected. Negative values indicate some
 positive autocorrelation in the returns (momentum).</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [19]:
+<span></span>In [20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -897,7 +910,7 @@ positive autocorrelation in the returns (momentum).</p>
 <div class="highlight"><pre>
      Variance-Ratio Test Results
 =====================================
-Test Statistic                 -9.987
+Test Statistic                 -4.555
 P-value                         0.000
 Lags                               12
 -------------------------------------
@@ -911,7 +924,7 @@ variance of the long period’s return. This can be changed by setting
 conclusion.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [20]:
+<span></span>In [21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -929,8 +942,8 @@ conclusion.</p>
 <div class="highlight"><pre>
      Variance-Ratio Test Results
 =====================================
-Test Statistic                 -6.096
-P-value                         0.000
+Test Statistic                 -1.944
+P-value                         0.052
 Lags                               12
 -------------------------------------
 
@@ -942,9 +955,9 @@ Computed with non-overlapping blocks
 </div>
 <div class="stderr output_area docutils container">
 <div class="highlight"><pre>
-c:\git\arch\arch\unitroot\unitroot.py:1041: InvalidLengthWarning:
+c:\git\arch\arch\unitroot\unitroot.py:1228: InvalidLengthWarning:
 The length of y is not an exact multiple of 12, and so the final
-11 observations have been dropped.
+6 observations have been dropped.
 
   InvalidLengthWarning)
 </pre></div></div>
@@ -989,7 +1002,7 @@ little reason to use <code class="docutils literal notranslate"><span class="pre
         <li class="right" >
           <a href="introduction.html" title="Introduction"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+17.gac7e2bf documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="unitroot.html" >Unit Root Testing</a> &#187;</li> 
       </ul>
     </div>

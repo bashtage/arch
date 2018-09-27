@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Volatility Forecasting &#8212; arch 4.4.1+16.g95ea86f documentation</title>
+    <title>Volatility Forecasting &#8212; arch 4.4.1+17.gac7e2bf documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="forecasting.html" title="Forecasting"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+17.gac7e2bf documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -310,6 +310,8 @@ div.nboutput div.output_area.stderr {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
 <span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;serif&#39;</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">14</span>
 </pre></div>
 </div>
 </div>
@@ -369,10 +371,10 @@ the sample so that they are out-of-sample.</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     39,   Neg. LLF: 6130.463290920333
-Iteration:     10,   Func. Count:     71,   Neg. LLF: 6128.4731771407005
+Iteration:      5,   Func. Count:     39,   Neg. LLF: 6130.463290480577
+Iteration:     10,   Func. Count:     71,   Neg. LLF: 6128.47317714312
 Optimization terminated successfully.    (Exit mode 0)
-            Current function value: 6128.4731681952535
+            Current function value: 6128.473168195432
             Iterations: 11
             Function evaluations: 77
             Gradient evaluations: 11
@@ -429,7 +431,7 @@ corresponds to 10-steps ahead.</p>
 Date
 2016-12-28       NaN
 2016-12-29       NaN
-2016-12-30  0.061286
+2016-12-30  0.061285
                  h.1
 Date
 2016-12-28       NaN
@@ -660,10 +662,10 @@ for horizons larger than 1 using <code class="docutils literal notranslate"><spa
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     44,   Neg. LLF: 6037.930348422024
-Iteration:     10,   Func. Count:     82,   Neg. LLF: 6034.462051044527
+Iteration:      5,   Func. Count:     44,   Neg. LLF: 6037.930348216891
+Iteration:     10,   Func. Count:     82,   Neg. LLF: 6034.462050551085
 Optimization terminated successfully.    (Exit mode 0)
-            Current function value: 6034.461795464493
+            Current function value: 6034.461795250723
             Iterations: 12
             Function evaluations: 96
             Gradient evaluations: 12
@@ -685,17 +687,7 @@ attribute of an <code class="docutils literal notranslate"><span class="pre">ARC
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">[</span><span class="s1">&#39;2016&#39;</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Conditional Variance&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[12]:
-</pre></div>
-</div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x21d345eb160&gt;
+<span class="n">subplot</span> <span class="o">=</span> <span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">[</span><span class="s1">&#39;2016&#39;</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Conditional Variance&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -703,7 +695,7 @@ attribute of an <code class="docutils literal notranslate"><span class="pre">ARC
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_forecasting_25_1.png" src="../_images/univariate_univariate_volatility_forecasting_25_1.png" />
+<img alt="../_images/univariate_univariate_volatility_forecasting_25_0.png" src="../_images/univariate_univariate_volatility_forecasting_25_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -717,7 +709,6 @@ attribute of an <code class="docutils literal notranslate"><span class="pre">ARC
 
 <span class="n">lines</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sims</span><span class="o">.</span><span class="n">residual_variances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,::</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#9cb2d6&#39;</span><span class="p">)</span>
 <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;Simulated path&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="s1">&#39;on&#39;</span><span class="p">)</span>
 <span class="n">line</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#002868&#39;</span><span class="p">)</span>
 <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;Expected variance&#39;</span><span class="p">)</span>
 <span class="n">legend</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
@@ -748,7 +739,7 @@ attribute of an <code class="docutils literal notranslate"><span class="pre">ARC
 </pre></div>
 </div>
 <div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x21d33626d68&gt;
+<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x1ba000f9cf8&gt;
 </pre></div>
 </div>
 </div>
@@ -779,7 +770,6 @@ simulated paths.</p>
 
 <span class="n">lines</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sims</span><span class="o">.</span><span class="n">residual_variances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,::</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#9cb2d6&#39;</span><span class="p">)</span>
 <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;Simulated path&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="s1">&#39;on&#39;</span><span class="p">)</span>
 <span class="n">line</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#002868&#39;</span><span class="p">)</span>
 <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;Expected variance&#39;</span><span class="p">)</span>
 <span class="n">legend</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
@@ -830,7 +820,7 @@ simulated paths.</p>
         <li class="right" >
           <a href="forecasting.html" title="Forecasting"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+17.gac7e2bf documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

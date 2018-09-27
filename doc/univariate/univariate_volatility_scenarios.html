@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Volatilty Scenarios &#8212; arch 4.4.1+16.g95ea86f documentation</title>
+    <title>Volatilty Scenarios &#8212; arch 4.4.1+17.gac7e2bf documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+17.gac7e2bf documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -326,6 +326,7 @@ are uniformly sampled from the entire history.</p>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
 <span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;serif&#39;</span>
 <span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">14</span>
 </pre></div>
 </div>
@@ -340,65 +341,23 @@ Financial Crisis of 2008.</p>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">nasdaq</span> <span class="o">=</span> <span class="n">pdr</span><span class="o">.</span><span class="n">fred</span><span class="o">.</span><span class="n">FredReader</span><span class="p">(</span><span class="s1">&#39;NASDAQCOM&#39;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1-1-2000&#39;</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="s1">&#39;1-1-2018&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">nasdaq</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">nasdaq</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[3]:
-</pre></div>
+<div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>NASDAQCOM</th>
-    </tr>
-    <tr>
-      <th>DATE</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2000-01-03</th>
-      <td>4131.15</td>
-    </tr>
-    <tr>
-      <th>2000-01-04</th>
-      <td>3901.69</td>
-    </tr>
-    <tr>
-      <th>2000-01-05</th>
-      <td>3877.54</td>
-    </tr>
-    <tr>
-      <th>2000-01-06</th>
-      <td>3727.13</td>
-    </tr>
-    <tr>
-      <th>2000-01-07</th>
-      <td>3882.62</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
+<div class="highlight"><pre>
+            NASDAQCOM
+DATE
+2000-01-03    4131.15
+2000-01-04    3901.69
+2000-01-05    3877.54
+2000-01-06    3727.13
+2000-01-07    3882.62
+</pre></div></div>
 </div>
 <p>Next, the returns are computed and the model is constructed. The model
 is constructed from the building blocks. It is a standard model and
@@ -458,7 +417,7 @@ Distribution:                  Normal   AIC:                           14954.1
 Method:            Maximum Likelihood   BIC:                           14986.3
                                         No. Observations:                 4695
 Date:                Thu, Sep 27 2018   Df Residuals:                     4690
-Time:                        13:11:41   Df Model:                            5
+Time:                        15:26:52   Df Model:                            5
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
@@ -475,7 +434,7 @@ beta[1]        0.9256  1.244e-02     74.415      0.000      [  0.901,  0.950]
 =============================================================================
 
 Covariance estimator: robust
-ARCHModelResult, id: 0x1979e4c2b70
+ARCHModelResult, id: 0x1b05cb127f0
 </pre></div>
 </div>
 </div>
@@ -489,128 +448,31 @@ parameters.</p>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1-1-2017&#39;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[6]:
-</pre></div>
+<div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="highlight"><pre>
+                h.01      h.02      h.03      h.04      h.05      h.06  \
+DATE
+2017-01-02  0.580045  0.590476  0.600792  0.610993  0.621080  0.631055
+2017-01-03  0.553798  0.564522  0.575126  0.585613  0.595982  0.606237
+2017-01-04  0.529503  0.540497  0.551369  0.562120  0.572751  0.583264
+2017-01-05  0.507015  0.518259  0.529378  0.540374  0.551247  0.561999
+2017-01-06  0.486199  0.497675  0.509023  0.520245  0.531342  0.542315
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>h.01</th>
-      <th>h.02</th>
-      <th>h.03</th>
-      <th>h.04</th>
-      <th>h.05</th>
-      <th>h.06</th>
-      <th>h.07</th>
-      <th>h.08</th>
-      <th>h.09</th>
-      <th>h.10</th>
-    </tr>
-    <tr>
-      <th>DATE</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2017-01-02</th>
-      <td>0.580045</td>
-      <td>0.590476</td>
-      <td>0.600792</td>
-      <td>0.610993</td>
-      <td>0.621080</td>
-      <td>0.631055</td>
-      <td>0.640919</td>
-      <td>0.650674</td>
-      <td>0.660320</td>
-      <td>0.669858</td>
-    </tr>
-    <tr>
-      <th>2017-01-03</th>
-      <td>0.553798</td>
-      <td>0.564522</td>
-      <td>0.575126</td>
-      <td>0.585613</td>
-      <td>0.595982</td>
-      <td>0.606237</td>
-      <td>0.616377</td>
-      <td>0.626404</td>
-      <td>0.636320</td>
-      <td>0.646126</td>
-    </tr>
-    <tr>
-      <th>2017-01-04</th>
-      <td>0.529503</td>
-      <td>0.540497</td>
-      <td>0.551369</td>
-      <td>0.562120</td>
-      <td>0.572751</td>
-      <td>0.583264</td>
-      <td>0.593659</td>
-      <td>0.603940</td>
-      <td>0.614105</td>
-      <td>0.624158</td>
-    </tr>
-    <tr>
-      <th>2017-01-05</th>
-      <td>0.507015</td>
-      <td>0.518259</td>
-      <td>0.529378</td>
-      <td>0.540374</td>
-      <td>0.551247</td>
-      <td>0.561999</td>
-      <td>0.572631</td>
-      <td>0.583145</td>
-      <td>0.593542</td>
-      <td>0.603824</td>
-    </tr>
-    <tr>
-      <th>2017-01-06</th>
-      <td>0.486199</td>
-      <td>0.497675</td>
-      <td>0.509023</td>
-      <td>0.520245</td>
-      <td>0.531342</td>
-      <td>0.542315</td>
-      <td>0.553167</td>
-      <td>0.563897</td>
-      <td>0.574509</td>
-      <td>0.585002</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
+                h.07      h.08      h.09      h.10
+DATE
+2017-01-02  0.640919  0.650674  0.660320  0.669858
+2017-01-03  0.616377  0.626404  0.636320  0.646126
+2017-01-04  0.593659  0.603940  0.614105  0.624158
+2017-01-05  0.572631  0.583145  0.593542  0.603824
+2017-01-06  0.553167  0.563897  0.574509  0.585002
+</pre></div></div>
 </div>
 <p>All GARCH specification are complete models in the sense that they
 specify a distribution. This allows simulations to be produced using the
@@ -627,128 +489,31 @@ simulation-based forecasts will converge to the analytical values above.</p>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">sim_forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1-1-2017&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;simulation&#39;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">sim_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">sim_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[7]:
-</pre></div>
+<div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="highlight"><pre>
+                h.01      h.02      h.03      h.04      h.05      h.06  \
+DATE
+2017-01-02  0.580045  0.590403  0.598096  0.609930  0.616253  0.626874
+2017-01-03  0.553798  0.567418  0.581017  0.591527  0.598513  0.603279
+2017-01-04  0.529503  0.541442  0.552064  0.563919  0.569974  0.580534
+2017-01-05  0.507015  0.516400  0.526907  0.538021  0.545443  0.554512
+2017-01-06  0.486199  0.495461  0.505577  0.518608  0.534521  0.545152
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>h.01</th>
-      <th>h.02</th>
-      <th>h.03</th>
-      <th>h.04</th>
-      <th>h.05</th>
-      <th>h.06</th>
-      <th>h.07</th>
-      <th>h.08</th>
-      <th>h.09</th>
-      <th>h.10</th>
-    </tr>
-    <tr>
-      <th>DATE</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2017-01-02</th>
-      <td>0.580045</td>
-      <td>0.590403</td>
-      <td>0.598096</td>
-      <td>0.609930</td>
-      <td>0.616253</td>
-      <td>0.626874</td>
-      <td>0.633377</td>
-      <td>0.640617</td>
-      <td>0.647898</td>
-      <td>0.656073</td>
-    </tr>
-    <tr>
-      <th>2017-01-03</th>
-      <td>0.553798</td>
-      <td>0.567418</td>
-      <td>0.581017</td>
-      <td>0.591527</td>
-      <td>0.598513</td>
-      <td>0.603279</td>
-      <td>0.618454</td>
-      <td>0.627658</td>
-      <td>0.633192</td>
-      <td>0.641493</td>
-    </tr>
-    <tr>
-      <th>2017-01-04</th>
-      <td>0.529503</td>
-      <td>0.541442</td>
-      <td>0.552064</td>
-      <td>0.563919</td>
-      <td>0.569974</td>
-      <td>0.580534</td>
-      <td>0.590986</td>
-      <td>0.600379</td>
-      <td>0.612958</td>
-      <td>0.622361</td>
-    </tr>
-    <tr>
-      <th>2017-01-05</th>
-      <td>0.507015</td>
-      <td>0.516400</td>
-      <td>0.526907</td>
-      <td>0.538021</td>
-      <td>0.545443</td>
-      <td>0.554512</td>
-      <td>0.561961</td>
-      <td>0.576138</td>
-      <td>0.587727</td>
-      <td>0.593812</td>
-    </tr>
-    <tr>
-      <th>2017-01-06</th>
-      <td>0.486199</td>
-      <td>0.495461</td>
-      <td>0.505577</td>
-      <td>0.518608</td>
-      <td>0.534521</td>
-      <td>0.545152</td>
-      <td>0.552813</td>
-      <td>0.565625</td>
-      <td>0.574218</td>
-      <td>0.588634</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
+                h.07      h.08      h.09      h.10
+DATE
+2017-01-02  0.633377  0.640617  0.647898  0.656073
+2017-01-03  0.618454  0.627658  0.633192  0.641493
+2017-01-04  0.590986  0.600379  0.612958  0.622361
+2017-01-05  0.561961  0.576138  0.587727  0.593812
+2017-01-06  0.552813  0.565625  0.574218  0.588634
+</pre></div></div>
 </div>
 <div class="section" id="Custom-Random-Generators">
 <h2>Custom Random Generators<a class="headerlink" href="#Custom-Random-Generators" title="Permalink to this headline">¶</a></h2>
@@ -776,128 +541,31 @@ volatility in the first 5 days.</p>
     <span class="k">return</span> <span class="n">shocks</span>
 
 <span class="n">scenario_forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1-1-2017&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;simulation&#39;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">scenario_rng</span><span class="p">)</span>
-<span class="n">scenario_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">scenario_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[8]:
-</pre></div>
+<div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="highlight"><pre>
+                h.01      h.02      h.03      h.04      h.05      h.06  \
+DATE
+2017-01-02  0.580045  0.627008  0.670593  0.726040  0.770887  0.827587
+2017-01-03  0.553798  0.605332  0.660221  0.709851  0.755653  0.794870
+2017-01-04  0.529503  0.575869  0.622036  0.672072  0.712424  0.767144
+2017-01-05  0.507015  0.546602  0.590346  0.637349  0.677891  0.727246
+2017-01-06  0.486199  0.523992  0.564631  0.615177  0.677983  0.728223
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>h.01</th>
-      <th>h.02</th>
-      <th>h.03</th>
-      <th>h.04</th>
-      <th>h.05</th>
-      <th>h.06</th>
-      <th>h.07</th>
-      <th>h.08</th>
-      <th>h.09</th>
-      <th>h.10</th>
-    </tr>
-    <tr>
-      <th>DATE</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2017-01-02</th>
-      <td>0.580045</td>
-      <td>0.627008</td>
-      <td>0.670593</td>
-      <td>0.726040</td>
-      <td>0.770887</td>
-      <td>0.827587</td>
-      <td>0.830443</td>
-      <td>0.835040</td>
-      <td>0.839207</td>
-      <td>0.846161</td>
-    </tr>
-    <tr>
-      <th>2017-01-03</th>
-      <td>0.553798</td>
-      <td>0.605332</td>
-      <td>0.660221</td>
-      <td>0.709851</td>
-      <td>0.755653</td>
-      <td>0.794870</td>
-      <td>0.809932</td>
-      <td>0.816872</td>
-      <td>0.818132</td>
-      <td>0.823916</td>
-    </tr>
-    <tr>
-      <th>2017-01-04</th>
-      <td>0.529503</td>
-      <td>0.575869</td>
-      <td>0.622036</td>
-      <td>0.672072</td>
-      <td>0.712424</td>
-      <td>0.767144</td>
-      <td>0.776076</td>
-      <td>0.782297</td>
-      <td>0.794378</td>
-      <td>0.800691</td>
-    </tr>
-    <tr>
-      <th>2017-01-05</th>
-      <td>0.507015</td>
-      <td>0.546602</td>
-      <td>0.590346</td>
-      <td>0.637349</td>
-      <td>0.677891</td>
-      <td>0.727246</td>
-      <td>0.731660</td>
-      <td>0.744623</td>
-      <td>0.754475</td>
-      <td>0.757505</td>
-    </tr>
-    <tr>
-      <th>2017-01-06</th>
-      <td>0.486199</td>
-      <td>0.523992</td>
-      <td>0.564631</td>
-      <td>0.615177</td>
-      <td>0.677983</td>
-      <td>0.728223</td>
-      <td>0.732785</td>
-      <td>0.743466</td>
-      <td>0.750469</td>
-      <td>0.764813</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
+                h.07      h.08      h.09      h.10
+DATE
+2017-01-02  0.830443  0.835040  0.839207  0.846161
+2017-01-03  0.809932  0.816872  0.818132  0.823916
+2017-01-04  0.776076  0.782297  0.794378  0.800691
+2017-01-05  0.731660  0.744623  0.754475  0.757505
+2017-01-06  0.732785  0.743466  0.750469  0.764813
+</pre></div></div>
 </div>
 </div>
 <div class="section" id="Bootstrap-Scenarios">
@@ -933,128 +601,31 @@ this where <code class="docutils literal notranslate"><span class="pre">shocks</
 <span class="n">shocks</span> <span class="o">=</span> <span class="n">std_shocks</span><span class="p">[</span><span class="s1">&#39;2008-08-01&#39;</span><span class="p">:</span><span class="s1">&#39;2008-11-10&#39;</span><span class="p">]</span>
 <span class="n">scenario_bootstrap</span> <span class="o">=</span> <span class="n">ScenarioBootstrapRNG</span><span class="p">(</span><span class="n">shocks</span><span class="p">,</span> <span class="n">random_state</span><span class="p">)</span>
 <span class="n">bs_forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1-1-2017&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;simulation&#39;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">scenario_bootstrap</span><span class="o">.</span><span class="n">rng</span><span class="p">)</span>
-<span class="n">bs_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">bs_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[9]:
-</pre></div>
+<div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="highlight"><pre>
+                h.01      h.02      h.03      h.04      h.05      h.06  \
+DATE
+2017-01-02  0.580045  0.627731  0.671806  0.710768  0.768906  0.808972
+2017-01-03  0.553798  0.601034  0.643942  0.686704  0.733541  0.783090
+2017-01-04  0.529503  0.573559  0.615961  0.660616  0.704348  0.755170
+2017-01-05  0.507015  0.551867  0.598752  0.643247  0.681701  0.727702
+2017-01-06  0.486199  0.520973  0.557449  0.602373  0.648293  0.701349
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>h.01</th>
-      <th>h.02</th>
-      <th>h.03</th>
-      <th>h.04</th>
-      <th>h.05</th>
-      <th>h.06</th>
-      <th>h.07</th>
-      <th>h.08</th>
-      <th>h.09</th>
-      <th>h.10</th>
-    </tr>
-    <tr>
-      <th>DATE</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2017-01-02</th>
-      <td>0.580045</td>
-      <td>0.627731</td>
-      <td>0.671806</td>
-      <td>0.710768</td>
-      <td>0.768906</td>
-      <td>0.808972</td>
-      <td>0.872246</td>
-      <td>0.916471</td>
-      <td>0.973876</td>
-      <td>1.038470</td>
-    </tr>
-    <tr>
-      <th>2017-01-03</th>
-      <td>0.553798</td>
-      <td>0.601034</td>
-      <td>0.643942</td>
-      <td>0.686704</td>
-      <td>0.733541</td>
-      <td>0.783090</td>
-      <td>0.822505</td>
-      <td>0.876280</td>
-      <td>0.930863</td>
-      <td>0.984509</td>
-    </tr>
-    <tr>
-      <th>2017-01-04</th>
-      <td>0.529503</td>
-      <td>0.573559</td>
-      <td>0.615961</td>
-      <td>0.660616</td>
-      <td>0.704348</td>
-      <td>0.755170</td>
-      <td>0.819018</td>
-      <td>0.870309</td>
-      <td>0.931131</td>
-      <td>0.988081</td>
-    </tr>
-    <tr>
-      <th>2017-01-05</th>
-      <td>0.507015</td>
-      <td>0.551867</td>
-      <td>0.598752</td>
-      <td>0.643247</td>
-      <td>0.681701</td>
-      <td>0.727702</td>
-      <td>0.780660</td>
-      <td>0.833911</td>
-      <td>0.883571</td>
-      <td>0.947947</td>
-    </tr>
-    <tr>
-      <th>2017-01-06</th>
-      <td>0.486199</td>
-      <td>0.520973</td>
-      <td>0.557449</td>
-      <td>0.602373</td>
-      <td>0.648293</td>
-      <td>0.701349</td>
-      <td>0.762154</td>
-      <td>0.814151</td>
-      <td>0.863550</td>
-      <td>0.909780</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
+                h.07      h.08      h.09      h.10
+DATE
+2017-01-02  0.872246  0.916471  0.973876  1.038470
+2017-01-03  0.822505  0.876280  0.930863  0.984509
+2017-01-04  0.819018  0.870309  0.931131  0.988081
+2017-01-05  0.780660  0.833911  0.883571  0.947947
+2017-01-06  0.762154  0.814151  0.863550  0.909780
+</pre></div></div>
 </div>
 </div>
 <div class="section" id="Visualizing-the-differences">
@@ -1217,7 +788,7 @@ forecasting methods across the year, instead of a single day.</p>
         <li class="right" >
           <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+17.gac7e2bf documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

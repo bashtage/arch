@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Bootstrap Examples &#8212; arch 4.4.1+16.g95ea86f documentation</title>
+    <title>Bootstrap Examples &#8212; arch 4.4.1+17.gac7e2bf documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="bootstrap.html" title="Bootstrapping"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+17.gac7e2bf documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" accesskey="U">Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
@@ -346,6 +346,19 @@ market return.</p>
 </div>
 <div class="output_area docutils container">
 <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -359,59 +372,59 @@ market return.</p>
   <tbody>
     <tr>
       <th>count</th>
-      <td>78.000000</td>
-      <td>78.000000</td>
-      <td>78.000000</td>
-      <td>78.000000</td>
+      <td>103.000000</td>
+      <td>103.000000</td>
+      <td>103.000000</td>
+      <td>103.000000</td>
     </tr>
     <tr>
       <th>mean</th>
-      <td>1.055000</td>
-      <td>0.030513</td>
-      <td>-0.132179</td>
-      <td>0.003846</td>
+      <td>1.139806</td>
+      <td>0.107379</td>
+      <td>-0.131068</td>
+      <td>0.020680</td>
     </tr>
     <tr>
       <th>std</th>
-      <td>3.893705</td>
-      <td>2.188646</td>
-      <td>1.900980</td>
-      <td>0.005636</td>
+      <td>3.542553</td>
+      <td>2.273547</td>
+      <td>2.162328</td>
+      <td>0.037397</td>
     </tr>
     <tr>
       <th>min</th>
       <td>-7.890000</td>
-      <td>-4.250000</td>
-      <td>-4.490000</td>
+      <td>-4.370000</td>
+      <td>-4.500000</td>
       <td>0.000000</td>
     </tr>
     <tr>
       <th>25%</th>
-      <td>-1.465000</td>
-      <td>-1.625000</td>
-      <td>-1.555000</td>
+      <td>-0.985000</td>
+      <td>-1.720000</td>
+      <td>-1.530000</td>
       <td>0.000000</td>
     </tr>
     <tr>
       <th>50%</th>
-      <td>1.235000</td>
-      <td>0.240000</td>
-      <td>-0.200000</td>
-      <td>0.000000</td>
+      <td>1.180000</td>
+      <td>0.320000</td>
+      <td>-0.290000</td>
+      <td>0.010000</td>
     </tr>
     <tr>
       <th>75%</th>
-      <td>3.467500</td>
-      <td>1.292500</td>
-      <td>1.150000</td>
-      <td>0.010000</td>
+      <td>3.155000</td>
+      <td>1.230000</td>
+      <td>1.015000</td>
+      <td>0.020000</td>
     </tr>
     <tr>
       <th>max</th>
       <td>11.350000</td>
-      <td>4.920000</td>
-      <td>4.600000</td>
-      <td>0.020000</td>
+      <td>5.490000</td>
+      <td>8.270000</td>
+      <td>0.160000</td>
     </tr>
   </tbody>
 </table>
@@ -455,9 +468,9 @@ estimates.</p>
 </pre></div>
 </div>
 <div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>mu       12.660000
-sigma    13.488190
-SR        0.938599
+<span></span>mu       13.677670
+sigma    12.271762
+SR        1.114564
 dtype: float64
 </pre></div>
 </div>
@@ -512,15 +525,15 @@ data to be bootstrapped.</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-              mu     sigma        SR
-mu     12.322736 -1.911279  1.086533
-sigma  -1.911279  2.093820 -0.307836
-SR      1.086533 -0.307836  0.108301
+             mu     sigma        SR
+mu     7.784073 -1.115602  0.749282
+sigma -1.115602  1.700518 -0.256969
+SR     0.749282 -0.256969  0.088170
 
 
-mu       3.510376
-sigma    1.447004
-SR       0.329091
+mu       2.789995
+sigma    1.304039
+SR       0.296935
 Name: Std Errors, dtype: float64
 </pre></div></div>
 </div>
@@ -542,8 +555,8 @@ Name: Std Errors, dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
               mu      sigma        SR
-Lower   5.416808  10.915636  0.151793
-Upper  19.405462  16.704793  1.466774
+Lower   8.299806   9.814779  0.407323
+Upper  19.090893  15.084889  1.587584
 </pre></div></div>
 </div>
 <p>Alternative confidence intervals can be computed using a variety of
@@ -568,8 +581,8 @@ methods.</p>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
               mu      sigma        SR
-Lower   5.914538  10.271588  0.410424
-Upper  19.903192  16.060744  1.725405
+Lower   8.264447   9.458635  0.641545
+Upper  19.055534  14.728745  1.821806
 </pre></div></div>
 </div>
 </div>
@@ -595,21 +608,8 @@ downloaded from the internet and imported using pandas.</p>
     <span class="kn">import</span> <span class="nn">urllib.request</span> <span class="kn">as</span> <span class="nn">urllib2</span>
     <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
 
-<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://www.ats.ucla.edu/stat/stata/dae/binary.dta&#39;</span>
-<span class="n">file_name</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-<span class="n">u</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span>
-<span class="n">block_sz</span> <span class="o">=</span> <span class="mi">8192</span>
-<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-    <span class="nb">buffer</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">block_sz</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">buffer</span><span class="p">:</span>
-        <span class="k">break</span>
-
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">buffer</span><span class="p">)</span>
-
-<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="n">binary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_stata</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://stats.idre.ucla.edu/stat/stata/dae/binary.dta&#39;</span>
+<span class="n">binary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_stata</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 <span class="n">binary</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="k">print</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
 </pre></div>
@@ -733,9 +733,9 @@ to construct confidence intervals.</p>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
           Const           gre       gpa
-Const  0.431072 -8.828888e-05 -0.109249
-gre   -0.000088  4.254537e-07 -0.000049
-gpa   -0.109249 -4.859056e-05  0.040435
+Const  0.401232 -6.505728e-05 -0.104472
+gre   -0.000065  4.143598e-07 -0.000054
+gpa   -0.104472 -5.358712e-05  0.039889
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -756,14 +756,14 @@ gpa   -0.109249 -4.859056e-05  0.040435
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Const    0.656560
-gre      0.000652
-gpa      0.201083
+Const    0.633429
+gre      0.000644
+gpa      0.199722
 dtype: float64
 T-stats
-Const   -4.574653
-gre      2.518193
-gpa      2.260629
+Const   -4.741712
+gre      2.551680
+gpa      2.276042
 dtype: float64
 </pre></div></div>
 </div>
@@ -785,8 +785,8 @@ dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
           Const       gre       gpa
-Lower -4.202384  0.000318  0.073343
-Upper -1.710969  0.002948  0.826731
+Lower -4.275146  0.000381  0.061935
+Upper -1.745115  0.002835  0.851292
 </pre></div></div>
 </div>
 </div>
@@ -828,9 +828,9 @@ keyword argument containing starting values.</p>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
           Const           gre       gpa
-Const  0.431072 -8.828888e-05 -0.109249
-gre   -0.000088  4.254537e-07 -0.000049
-gpa   -0.109249 -4.859056e-05  0.040435
+Const  0.401232 -6.505728e-05 -0.104472
+gre   -0.000065  4.143598e-07 -0.000054
+gpa   -0.104472 -5.358712e-05  0.039889
 </pre></div></div>
 </div>
 </div>
@@ -870,7 +870,7 @@ gpa   -0.109249 -4.859056e-05  0.040435
         <li class="right" >
           <a href="bootstrap.html" title="Bootstrapping"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+17.gac7e2bf documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" >Bootstrapping</a> &#187;</li> 
       </ul>
     </div>

@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>ARCH Modeling &#8212; arch 4.4.1+16.g95ea86f documentation</title>
+    <title>ARCH Modeling &#8212; arch 4.4.1+17.gac7e2bf documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="introduction.html" title="Introduction to ARCH Models"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+17.gac7e2bf documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -310,6 +310,8 @@ div.nboutput div.output_area.stderr {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
 <span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;serif&#39;</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">14</span>
 </pre></div>
 </div>
 </div>
@@ -382,10 +384,10 @@ GARCH(1,1) conditional variance and normal errors.</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     41,   Neg. LLF: 9820.639709370564
-Iteration:     10,   Func. Count:     74,   Neg. LLF: 9817.274895770548
+Iteration:      5,   Func. Count:     41,   Neg. LLF: 9820.63969763662
+Iteration:     10,   Func. Count:     74,   Neg. LLF: 9817.274895653107
 Optimization terminated successfully.    (Exit mode 0)
-            Current function value: 9817.274187120373
+            Current function value: 9817.274187120329
             Iterations: 13
             Function evaluations: 92
             Gradient evaluations: 13
@@ -397,8 +399,8 @@ Vol Model:                      GARCH   Log-Likelihood:               -9817.27
 Distribution:                  Normal   AIC:                           19642.5
 Method:            Maximum Likelihood   BIC:                           19670.3
                                         No. Observations:                 7561
-Date:                Sun, Aug 19 2018   Df Residuals:                     7557
-Time:                        21:33:01   Df Model:                            4
+Date:                Thu, Sep 27 2018   Df Residuals:                     7557
+Time:                        15:25:43   Df Model:                            4
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
@@ -473,8 +475,8 @@ Vol Model:                  GJR-GARCH   Log-Likelihood:               -9713.51
 Distribution:                  Normal   AIC:                           19437.0
 Method:            Maximum Likelihood   BIC:                           19471.7
                                         No. Observations:                 7561
-Date:                Sun, Aug 19 2018   Df Residuals:                     7556
-Time:                        21:33:03   Df Model:                            5
+Date:                Thu, Sep 27 2018   Df Residuals:                     7556
+Time:                        15:25:43   Df Model:                            5
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
@@ -543,8 +545,8 @@ Vol Model:                TARCH/ZARCH   Log-Likelihood:               -9683.25
 Distribution:                  Normal   AIC:                           19376.5
 Method:            Maximum Likelihood   BIC:                           19411.1
                                         No. Observations:                 7561
-Date:                Sun, Aug 19 2018   Df Residuals:                     7556
-Time:                        21:33:03   Df Model:                            5
+Date:                Thu, Sep 27 2018   Df Residuals:                     7556
+Time:                        15:25:43   Df Model:                            5
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
@@ -605,8 +607,8 @@ Vol Model:                      TARCH/ZARCH   Log-Likelihood:               -950
 Distribution:      Standardized Student&#39;s t   AIC:                           19022.8
 Method:                  Maximum Likelihood   BIC:                           19064.3
                                               No. Observations:                 7561
-Date:                      Sun, Aug 19 2018   Df Residuals:                     7555
-Time:                              21:33:04   Df Model:                            6
+Date:                      Thu, Sep 27 2018   Df Residuals:                     7555
+Time:                              15:25:43   Df Model:                            6
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
@@ -664,8 +666,8 @@ Vol Model:                       TARCH/ZARCH   Log-Likelihood:               -96
 Distribution:       Standardized Student&#39;s t   AIC:                           19393.5
 Method:            User-specified Parameters   BIC:                           19435.1
                                                No. Observations:                 7561
-Date:                       Sun, Aug 19 2018
-Time:                               21:33:05
+Date:                       Thu, Sep 27 2018
+Time:                               15:25:43
       Mean Model
 =====================
                  coef
@@ -699,17 +701,7 @@ Since the model was not estimated, there are no std. errors.
 <span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">,</span><span class="n">fixed_res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Estimated&#39;</span><span class="p">,</span> <span class="s1">&#39;Fixed&#39;</span><span class="p">]</span>
-<span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[10]:
-</pre></div>
-</div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x246b1d27048&gt;
+<span class="n">subplot</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -717,7 +709,7 @@ Since the model was not estimated, there are no std. errors.
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_modeling_25_1.png" src="../_images/univariate_univariate_volatility_modeling_25_1.png" />
+<img alt="../_images/univariate_univariate_volatility_modeling_25_0.png" src="../_images/univariate_univariate_volatility_modeling_25_0.png" />
 </div>
 </div>
 <div class="section" id="Building-a-Model-From-Components">
@@ -816,8 +808,8 @@ Vol Model:          Constant Variance   Log-Likelihood:               -13.7178
 Distribution:                  Normal   AIC:                           37.4356
 Method:            Maximum Likelihood   BIC:                           59.9043
                                         No. Observations:                  661
-Date:                Sun, Aug 19 2018   Df Residuals:                      656
-Time:                        21:33:07   Df Model:                            5
+Date:                Thu, Sep 27 2018   Df Residuals:                      656
+Time:                        15:25:44   Df Model:                            5
                                    Mean Model
 ===============================================================================
                    coef    std err          t      P&gt;|t|       95.0% Conf. Int.
@@ -869,14 +861,14 @@ Vol Model:                       ARCH   Log-Likelihood:                83.8447
 Distribution:                  Normal   AIC:                          -147.689
 Method:            Maximum Likelihood   BIC:                          -102.752
                                         No. Observations:                  661
-Date:                Sun, Aug 19 2018   Df Residuals:                      651
-Time:                        21:33:08   Df Model:                           10
+Date:                Thu, Sep 27 2018   Df Residuals:                      651
+Time:                        15:25:44   Df Model:                           10
                                    Mean Model
 ===============================================================================
                    coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 -------------------------------------------------------------------------------
 Const            0.0268  2.207e-02      1.212      0.225 [-1.651e-02,7.002e-02]
-CPILFESL[1]      1.0854  3.840e-02     28.266 9.155e-176      [  1.010,  1.161]
+CPILFESL[1]      1.0854  3.840e-02     28.266 9.157e-176      [  1.010,  1.161]
 CPILFESL[3]     -0.0755  4.148e-02     -1.821  6.854e-02    [ -0.157,5.747e-03]
 CPILFESL[12]    -0.0210  1.195e-02     -1.761  7.829e-02 [-4.446e-02,2.381e-03]
                               Volatility Model
@@ -947,15 +939,15 @@ Vol Model:                             ARCH   Log-Likelihood:                89.
 Distribution:      Standardized Student&#39;s t   AIC:                          -156.940
 Method:                  Maximum Likelihood   BIC:                          -107.509
                                               No. Observations:                  661
-Date:                      Sun, Aug 19 2018   Df Residuals:                      650
-Time:                              21:33:09   Df Model:                           11
+Date:                      Thu, Sep 27 2018   Df Residuals:                      650
+Time:                              15:25:44   Df Model:                           11
                                    Mean Model
 ===============================================================================
                    coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 -------------------------------------------------------------------------------
 Const            0.0281  2.252e-02      1.249      0.212 [-1.600e-02,7.227e-02]
-CPILFESL[1]      1.0851  3.920e-02     27.683 1.132e-168      [  1.008,  1.162]
-CPILFESL[3]     -0.0697  4.277e-02     -1.629      0.103    [ -0.154,1.415e-02]
+CPILFESL[1]      1.0851  3.920e-02     27.683 1.134e-168      [  1.008,  1.162]
+CPILFESL[3]     -0.0697  4.277e-02     -1.629      0.103    [ -0.154,1.416e-02]
 CPILFESL[12]    -0.0266  1.525e-02     -1.742  8.157e-02 [-5.643e-02,3.328e-03]
                               Volatility Model
 ============================================================================
@@ -964,14 +956,14 @@ CPILFESL[12]    -0.0266  1.525e-02     -1.742  8.157e-02 [-5.643e-02,3.328e-03]
 omega          0.0117  3.142e-03      3.710  2.071e-04 [5.499e-03,1.782e-02]
 alpha[1]       0.1669  5.233e-02      3.189  1.426e-03   [6.433e-02,  0.269]
 alpha[2]       0.2185  6.648e-02      3.287  1.012e-03   [8.823e-02,  0.349]
-alpha[3]       0.1370  6.928e-02      1.977  4.804e-02   [1.178e-03,  0.273]
+alpha[3]       0.1370  6.928e-02      1.977  4.805e-02   [1.178e-03,  0.273]
 alpha[4]       0.2186  7.738e-02      2.825  4.734e-03   [6.691e-02,  0.370]
-alpha[5]       0.1596  8.579e-02      1.861  6.275e-02  [-8.495e-03,  0.328]
+alpha[5]       0.1596  8.579e-02      1.861  6.275e-02  [-8.496e-03,  0.328]
                               Distribution
 ========================================================================
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
-nu             9.1015      3.834      2.374  1.760e-02 [  1.587, 16.616]
+nu             9.1012      3.834      2.374  1.759e-02 [  1.588, 16.615]
 ========================================================================
 
 Covariance estimator: robust
@@ -1022,7 +1014,7 @@ alpha[1]  0.054488  0.046069  0.045908
 beta[1]   0.940953  0.949954  0.950364
 lambda         NaN       NaN -0.048593
 mu        0.065643  0.076392  0.057599
-nu             NaN  6.841493  6.889696
+nu             NaN  6.841504  6.889653
 omega     0.034733  0.026497  0.025239
 </pre></div></div>
 </div>
@@ -1041,17 +1033,7 @@ somewhat more heavy tailed than that of the standardized residuals.</p>
 <span class="n">unit_var_resid</span> <span class="o">=</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">std_resid</span><span class="p">,</span> <span class="n">unit_var_resid</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Std Resids&#39;</span><span class="p">,</span> <span class="s1">&#39;Unit Variance Resids&#39;</span><span class="p">]</span>
-<span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;kde&#39;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[17]:
-</pre></div>
-</div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x246b2c5c198&gt;
+<span class="n">subplot</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;kde&#39;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -1059,7 +1041,7 @@ somewhat more heavy tailed than that of the standardized residuals.</p>
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_modeling_45_1.png" src="../_images/univariate_univariate_volatility_modeling_45_1.png" />
+<img alt="../_images/univariate_univariate_volatility_modeling_45_0.png" src="../_images/univariate_univariate_volatility_modeling_45_0.png" />
 </div>
 </div>
 </div>
@@ -1099,7 +1081,7 @@ somewhat more heavy tailed than that of the standardized residuals.</p>
         <li class="right" >
           <a href="introduction.html" title="Introduction to ARCH Models"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+16.g95ea86f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+17.gac7e2bf documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
