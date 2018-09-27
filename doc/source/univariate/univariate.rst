@@ -10,6 +10,7 @@ Univariate Volatility Models
     Examples <univariate_volatility_modeling.ipynb>
     Forecasting <forecasting>
     Forecasting Examples <univariate_volatility_forecasting.ipynb>
+    Forecasting Scenarios <univariate_volatility_scenarios.ipynb>
     Mean Models <mean>
     Volatility Processes <volatility>
     Using the Fixed Variance Process <univariate_using_fixed_variance.ipynb>

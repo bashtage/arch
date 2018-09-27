@@ -1,5 +1,7 @@
 Changes since 4.0
 =================
+- Added a parameter to forecast that allows a user-provided callable random
+  generator to be used in place of the model random generator. (:issue:`225`)
 - Added a low memory automatic lag selection method that can be used with very
   large time-series.
 - Improved performance of automatic lag selection in ADF and related tests.
@@ -15,7 +17,10 @@ Changes since 4.0
   so-called zig-zag estimation where a mean model is estimated with a fixed
   variance, and then a variance model is estimated on the residuals using
   a ``ZeroMean`` variance process.
-- Fixed a bug that prevented ``fix`` from being used with a new model (:issue:`156`)
+- Fixed a bug that prevented ``fix`` from being used with a new model
+  (:issue:`156`)
 - Added ``first_obs`` and ``last_obs`` parameters to ``fix`` to mimic ``fit``
-- Added ability to jointly estimate smoothing parameter in EWMA variance when fitting the model
-- Added ability to pass optimization options to ARCH model estimation (:issue:`195`)
+- Added ability to jointly estimate smoothing parameter in EWMA variance when
+  fitting the model
+- Added ability to pass optimization options to ARCH model estimation
+  (:issue:`195`)
