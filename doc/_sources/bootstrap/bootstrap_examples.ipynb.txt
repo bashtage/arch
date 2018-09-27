@@ -72,113 +72,24 @@
    "metadata": {},
    "outputs": [
     {
-     "data": {
-      "text/html": [
-       "<div>\n",
-       "<style scoped>\n",
-       "    .dataframe tbody tr th:only-of-type {\n",
-       "        vertical-align: middle;\n",
-       "    }\n",
-       "\n",
-       "    .dataframe tbody tr th {\n",
-       "        vertical-align: top;\n",
-       "    }\n",
-       "\n",
-       "    .dataframe thead th {\n",
-       "        text-align: right;\n",
-       "    }\n",
-       "</style>\n",
-       "<table border=\"1\" class=\"dataframe\">\n",
-       "  <thead>\n",
-       "    <tr style=\"text-align: right;\">\n",
-       "      <th></th>\n",
-       "      <th>Mkt-RF</th>\n",
-       "      <th>SMB</th>\n",
-       "      <th>HML</th>\n",
-       "      <th>RF</th>\n",
-       "    </tr>\n",
-       "  </thead>\n",
-       "  <tbody>\n",
-       "    <tr>\n",
-       "      <th>count</th>\n",
-       "      <td>103.000000</td>\n",
-       "      <td>103.000000</td>\n",
-       "      <td>103.000000</td>\n",
-       "      <td>103.000000</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>mean</th>\n",
-       "      <td>1.139806</td>\n",
-       "      <td>0.107379</td>\n",
-       "      <td>-0.131068</td>\n",
-       "      <td>0.020680</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>std</th>\n",
-       "      <td>3.542553</td>\n",
-       "      <td>2.273547</td>\n",
-       "      <td>2.162328</td>\n",
-       "      <td>0.037397</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>min</th>\n",
-       "      <td>-7.890000</td>\n",
-       "      <td>-4.370000</td>\n",
-       "      <td>-4.500000</td>\n",
-       "      <td>0.000000</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>25%</th>\n",
-       "      <td>-0.985000</td>\n",
-       "      <td>-1.720000</td>\n",
-       "      <td>-1.530000</td>\n",
-       "      <td>0.000000</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>50%</th>\n",
-       "      <td>1.180000</td>\n",
-       "      <td>0.320000</td>\n",
-       "      <td>-0.290000</td>\n",
-       "      <td>0.010000</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>75%</th>\n",
-       "      <td>3.155000</td>\n",
-       "      <td>1.230000</td>\n",
-       "      <td>1.015000</td>\n",
-       "      <td>0.020000</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>max</th>\n",
-       "      <td>11.350000</td>\n",
-       "      <td>5.490000</td>\n",
-       "      <td>8.270000</td>\n",
-       "      <td>0.160000</td>\n",
-       "    </tr>\n",
-       "  </tbody>\n",
-       "</table>\n",
-       "</div>"
-      ],
-      "text/plain": [
-       "           Mkt-RF         SMB         HML          RF\n",
-       "count  103.000000  103.000000  103.000000  103.000000\n",
-       "mean     1.139806    0.107379   -0.131068    0.020680\n",
-       "std      3.542553    2.273547    2.162328    0.037397\n",
-       "min     -7.890000   -4.370000   -4.500000    0.000000\n",
-       "25%     -0.985000   -1.720000   -1.530000    0.000000\n",
-       "50%      1.180000    0.320000   -0.290000    0.010000\n",
-       "75%      3.155000    1.230000    1.015000    0.020000\n",
-       "max     11.350000    5.490000    8.270000    0.160000"
-      ]
-     },
-     "execution_count": 3,
-     "metadata": {},
-     "output_type": "execute_result"
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "           Mkt-RF         SMB         HML          RF\n",
+      "count  103.000000  103.000000  103.000000  103.000000\n",
+      "mean     1.139806    0.107379   -0.131068    0.020680\n",
+      "std      3.542553    2.273547    2.162328    0.037397\n",
+      "min     -7.890000   -4.370000   -4.500000    0.000000\n",
+      "25%     -0.985000   -1.720000   -1.530000    0.000000\n",
+      "50%      1.180000    0.320000   -0.290000    0.010000\n",
+      "75%      3.155000    1.230000    1.015000    0.020000\n",
+      "max     11.350000    5.490000    8.270000    0.160000\n"
+     ]
     }
    ],
    "source": [
     "excess_market = ff.iloc[:,0]\n",
-    "ff.describe()"
+    "print(ff.describe())"
    ]
   },
   {
@@ -255,7 +166,7 @@
    "outputs": [
     {
      "data": {
-      "image/png": "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\n",
+      "image/png": "iVBORw0KGgoAAAANSUhEUgAAAXoAAAEICAYAAABRSj9aAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADl0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uIDIuMi4zLCBodHRwOi8vbWF0cGxvdGxpYi5vcmcvIxREBQAAEU1JREFUeJzt3X+M5HV9x/HnS0oN4axg0O0Vrj2bYFv1VHCLNNhmL6YVoRFN1WAscP7ImRZSTe6Pon+o1ZjcH2CtttqeQsTGciVV6xWxrRI3xlZQMOiB54+rXvWAgAICq9b28N0/5ks7nrs3czszO3ufeT6Sycx85zMz789+d1/73c9+vp9JVSFJatdjpl2AJGmyDHpJapxBL0mNM+glqXEGvSQ1zqCXpMYZ9JLUOINeApI8N8m/J3kwyf1J/i3JbybZluSRJEtJHkrypSS/P+16paNh0GvmJfkF4Hrg3cATgFOBPwN+3DX5XFVtAE4C3gPsTnLSNGqVVsOgl+ApAFV1bVU9UlU/qqp/raov9zeqqp8AfwucCJw+hTqlVTHoJfg68EiSa5K8IMnJyzVKchzwSuB/gP9cywKlURj0mnlV9RDwXKCA9wHfTbInyVzX5Owk3wf+C7gC+MOqunc61UpHz6CXgKraV1Xbquo04OnALwHv7B6+qapOAk4G9gC/PaUypVUx6KXDVNVXgQ/QC/z+7UvAHwMXJTljCqVJq2LQa+Yl+fUkO5Kc1t3fBLwcuOnwtlV1H/B+4E1rW6W0ega9BA8DzwFuTvIDegF/O7BjhfbvBM5L8ow1qk8aSfzgEUlqm0f0ktQ4g16SGjcw6JNsSvLpJPuS3JHkdd32tyS5M8lt3eW8vue8Icn+JF9L8vxJdkCSdGQDx+iTbAQ2VtUXkzwOuBV4EfAyYKmqrjis/VOBa4Gz6M1F/hTwlKp6ZAL1S5IG+LlBDarqbuDu7vbDSfbRW/RpJRcAu6vqx8C3kuynF/qfW+kJp5xySm3evPlo6l4zP/jBDzjxxBOnXcaam8V+2+fZ0FKfb7311u9V1RMHtRsY9P2SbAbOAG4GzgEuS3IxcAuwo6oeoPdLoH/+8UGW+cWQZDuwHWBubo4rrrji8CbrwtLSEhs2bJh2GWtuFvttn2dDS33eunXrUGsuDR30STYAHwZeX1UPJXkv8DZ664O8DbgSeBWQZZ7+M+NDVbUL2AUwPz9fCwsLw5ayphYXF1mvtU3SLPbbPs+GWezzULNukhxPL+Q/VFUfAaiqe7olXX9CbyGos7rmB4FNfU8/DbhrfCVLko7GMLNuAlwF7Kuqd/Rt39jX7MX0ziSE3qJPFyZ5bJIn01u3+/PjK1mSdDSGGbo5B7gI2Jvktm7bG4GXJ3kWvWGZA8BrAarqjiTXAV8BDgGXOuNGkqZnmFk3n2X5cfcbjvCctwNvH6EuSdKYeGasJDXOoJekxhn0ktQ4g16SGndUZ8aqfZsv/zgAO7YcYlt3u9+BneevdUmSRuQRvSQ1zqCXpMYZ9JLUOINekhpn0EtS4wx6SWqcQS9JjTPoJalxBr0kNc6gl6TGGfSS1DiDXpIaZ9BLUuMMeklqnMsUa2w2L7OscT+XOJamwyN6SWqcQS9JjTPoJalxBr0kNc6gl6TGGfSS1DinV2rNOP1Smg6P6CWpcQa9JDXOoJekxjlGr6MyaJxd0vpj0M8gw1qaLQ7dSFLjDHpJatzAoE+yKcmnk+xLckeS13Xbn5Dkk0m+0V2f3G1Pkncl2Z/ky0nOnHQnJEkrG+aI/hCwo6p+AzgbuDTJU4HLgRur6nTgxu4+wAuA07vLduC9Y69akjS0gUFfVXdX1Re72w8D+4BTgQuAa7pm1wAv6m5fAHywem4CTkqyceyVS5KGclRj9Ek2A2cANwNzVXU39H4ZAE/qmp0KfKfvaQe7bZKkKRh6emWSDcCHgddX1UNJVmy6zLZa5vW20xvaYW5ujsXFxWFLWVNLS0vrtrbV2rHl0MA2cycM126cpv11bnFfD2KfZ8NQQZ/keHoh/6Gq+ki3+Z4kG6vq7m5o5t5u+0FgU9/TTwPuOvw1q2oXsAtgfn6+FhYWVteDCVtcXGS91rZa24aYR79jyyGu3Lu2p1kceMXCmr7f4Vrc14PY59kwzKybAFcB+6rqHX0P7QEu6W5fAnysb/vF3eybs4EHHx3ikSStvWEO2c4BLgL2Jrmt2/ZGYCdwXZJXA98GXto9dgNwHrAf+CHwyrFWLEk6KgODvqo+y/Lj7gDPW6Z9AZeOWJckaUw8M1aSGmfQS1LjDHpJapxBL0mNM+glqXEGvSQ1zqCXpMYZ9JLUOD8ztkF+Jqykfh7RS1LjDHpJapxBL0mNM+glqXEGvSQ1zqCXpMYZ9JLUOINekhpn0EtS4wx6SWqcQS9JjTPoJalxLmqmdeNIi7Ed2Hn+GlYitcUjeklqnEf0OiYMWnrZI35pZR7RS1LjDHpJapxBL0mNM+glqXEGvSQ1zqCXpMYZ9JLUOINekhpn0EtS4wx6SWqcQS9JjRsY9EmuTnJvktv7tr0lyZ1Jbusu5/U99oYk+5N8LcnzJ1W4JGk4wxzRfwA4d5ntf15Vz+ouNwAkeSpwIfC07jnvSXLcuIqVJB29gUFfVZ8B7h/y9S4AdlfVj6vqW8B+4KwR6pMkjWiUZYovS3IxcAuwo6oeAE4Fbuprc7Db9jOSbAe2A8zNzbG4uDhCKZOztLS0bmtbyY4th0Z+jbkTxvM6a2Uc++hY3Nejss+zYbVB/17gbUB111cCrwKyTNta7gWqahewC2B+fr4WFhZWWcpkLS4usl5rW8m2AWu3D2PHlkNcuffY+biCA69YGPk1jsV9PSr7PBtWNeumqu6pqkeq6ifA+/j/4ZmDwKa+pqcBd41WoiRpFKsK+iQb++6+GHh0Rs4e4MIkj03yZOB04POjlShJGsXAv82TXAssAKckOQi8GVhI8ix6wzIHgNcCVNUdSa4DvgIcAi6tqkcmU7okaRgDg76qXr7M5quO0P7twNtHKUqSND6eGStJjTPoJalxBr0kNc6gl6TGGfSS1DiDXpIaZ9BLUuMMeklqnEEvSY0z6CWpcQa9JDXOoJekxhn0ktQ4g16SGmfQS1LjDHpJapxBL0mNM+glqXEGvSQ1buBnxmr92Xz5x6ddgqRjiEf0ktQ4g16SGmfQS1LjDHpJapxBL0mNM+glqXFOr1QTjjTl9MDO89ewEmn98Yhekhpn0EtS4wx6SWqcQS9JjTPoJalxBr0kNc6gl6TGDQz6JFcnuTfJ7X3bnpDkk0m+0V2f3G1Pkncl2Z/ky0nOnGTxkqTBhjmi/wBw7mHbLgdurKrTgRu7+wAvAE7vLtuB946nTEnSag0M+qr6DHD/YZsvAK7pbl8DvKhv+wer5ybgpCQbx1WsJOnopaoGN0o2A9dX1dO7+9+vqpP6Hn+gqk5Ocj2ws6o+222/EfjTqrplmdfcTu+on7m5uWfv3r17DN0Zv6WlJTZs2DDtMn7K3jsfnPh7zJ0A9/xo4m+zJrac+vih2q3HfT1p9vnYtnXr1luran5Qu3GvdZNlti37m6SqdgG7AObn52thYWHMpYzH4uIi06jtyB8XOPklinZsOcSVe9tYCunAKxaGajetfT1N9nk2rHbWzT2PDsl01/d22w8Cm/ranQbctfryJEmjWm3Q7wEu6W5fAnysb/vF3eybs4EHq+ruEWuUJI1g4N/mSa4FFoBTkhwE3gzsBK5L8mrg28BLu+Y3AOcB+4EfAq+cQM2SpKMwMOir6uUrPPS8ZdoWcOmoRUnjdOT/d7hevdrnmbGS1DiDXpIaZ9BLUuMMeklqnEEvSY0z6CWpcW2c4y6N4NHplzu2HGLbMlMxnX6pY51H9JLUOINekhpn0EtS4wx6SWqcQS9JjTPoJalxBr0kNc6gl6TGGfSS1DiDXpIaZ9BLUuMMeklqnEEvSY0z6CWpcQa9JDXOoJekxhn0ktQ4g16SGmfQS1LjDHpJapwfDj4lm5f5EGpJmgSP6CWpcQa9JDXOoJekxjlGLw1wpP+nHNh5/hpWIq2OR/SS1DiDXpIaN9LQTZIDwMPAI8ChqppP8gTg74HNwAHgZVX1wGhlSpJWaxxH9Fur6llVNd/dvxy4sapOB27s7kuSpmQSQzcXANd0t68BXjSB95AkDSlVtfonJ98CHgAK+Juq2pXk+1V1Ul+bB6rq5GWeux3YDjA3N/fs3bt3r7qOSVpaWmLDhg1jf929dz449tccp7kT4J4fTbuKtbWaPm859fGTKWaNTOr7ez1rqc9bt269tW80ZUWjTq88p6ruSvIk4JNJvjrsE6tqF7ALYH5+vhYWFkYsZTIWFxeZRG3b1vkSCDu2HOLKvbM1+3Y1fT7wioXJFLNGJvX9vZ7NYp9HGrqpqru663uBjwJnAfck2QjQXd87apGSpNVb9SFbkhOBx1TVw93t3wPeCuwBLgF2dtcfG0eh0no0aHE6T6jSejDK3+ZzwEeTPPo6f1dV/5zkC8B1SV4NfBt46ehlSpJWa9VBX1XfBJ65zPb7gOeNUpQkaXw8M1aSGmfQS1LjDHpJapxBL0mNm60zYqQ15lr2Wg88opekxhn0ktQ4g16SGucYvTQlLp+gtWLQT8igH2JJWisO3UhS4wx6SWqcQS9JjTPoJalxBr0kNc6gl6TGGfSS1DiDXpIa5wlTI/CkKEnHAo/oJalxBr0kNc6gl6TGGfSS1DiDXpIaZ9BLUuMMeklqnPPopXVqlPM0/HQq9TPoj2Dz5R9nx5ZDbPPEKEnHMIduJKlxBr0kNc6hG6lBg8b3HcOfLR7RS1LjDHpJatzMD9241LBm0aPf98vNKnNYpz0zH/SSjo7j/8eeiQV9knOBvwCOA95fVTsn9V5H4hG7dHT8mWnPRII+yXHAXwG/CxwEvpBkT1V9ZRLvJ2n9mOQvCv9aWJ1JHdGfBeyvqm8CJNkNXACMPeg9+pA0jGn9X2I9DHWlqsb/oslLgHOr6jXd/YuA51TVZX1ttgPbu7u/Bnxt7IWMxynA96ZdxBTMYr/t82xoqc+/UlVPHNRoUkf0WWbbT/1GqapdwK4Jvf/YJLmlquanXcdam8V+2+fZMIt9ntQ8+oPApr77pwF3Tei9JElHMKmg/wJwepInJ/l54EJgz4TeS5J0BBMZuqmqQ0kuA/6F3vTKq6vqjkm81xpY98NLEzKL/bbPs2Hm+jyRf8ZKktYP17qRpMYZ9JLUOIO+k+TcJF9Lsj/J5cs8vi3Jd5Pc1l1eM406xynJ1UnuTXL7Co8nybu6r8mXk5y51jWO2xB9XkjyYN9+ftNa1zhuSTYl+XSSfUnuSPK6Zdo0ta+H7HNz+3pFVTXzF3r/MP4P4FeBnwe+BDz1sDbbgL+cdq1j7vfvAGcCt6/w+HnAJ+idF3E2cPO0a16DPi8A10+7zjH3eSNwZnf7ccDXl/n+bmpfD9nn5vb1SheP6Hv+b8mGqvpv4NElG5pWVZ8B7j9CkwuAD1bPTcBJSTauTXWTMUSfm1NVd1fVF7vbDwP7gFMPa9bUvh6yzzPDoO85FfhO3/2DLP9N8Qfdn7X/kGTTMo+3ZtivS2t+K8mXknwiydOmXcw4JdkMnAHcfNhDze7rI/QZGt7X/Qz6noFLNgD/BGyuqmcAnwKumXhV0zfM16U1X6S3fsgzgXcD/zjlesYmyQbgw8Drq+qhwx9e5inH/L4e0Odm9/XhDPqegUs2VNV9VfXj7u77gGevUW3TNHNLWVTVQ1W11N2+ATg+ySlTLmtkSY6nF3gfqqqPLNOkuX09qM+t7uvlGPQ9A5dsOGy88oX0xvxatwe4uJuRcTbwYFXdPe2iJinJLyZJd/ssej8j9023qtF0/bkK2FdV71ihWVP7epg+t7ivV+JHCbLykg1J3grcUlV7gD9J8kLgEL1/5m2bWsFjkuRaejMPTklyEHgzcDxAVf01cAO92Rj7gR8Cr5xOpeMzRJ9fAvxRkkPAj4ALq5uicQw7B7gI2Jvktm7bG4Ffhmb39TB9bnFfL8slECSpcQ7dSFLjDHpJapxBL0mNM+glqXEGvSQ1zqCXpMYZ9JLUuP8FbjgjbA7JqkAAAAAASUVORK5CYII=\n",
       "text/plain": [
        "<Figure size 432x288 with 1 Axes>"
       ]
@@ -284,14 +195,14 @@
      "output_type": "stream",
      "text": [
       "             mu     sigma        SR\n",
-      "mu     7.784073 -1.115602  0.749282\n",
-      "sigma -1.115602  1.700518 -0.256969\n",
-      "SR     0.749282 -0.256969  0.088170\n",
+      "mu     6.799678 -1.070593  0.673616\n",
+      "sigma -1.070593  1.785856 -0.264456\n",
+      "SR     0.673616 -0.264456  0.083816\n",
       "\n",
       "\n",
-      "mu       2.789995\n",
-      "sigma    1.304039\n",
-      "SR       0.296935\n",
+      "mu       2.607619\n",
+      "sigma    1.336359\n",
+      "SR       0.289510\n",
       "Name: Std Errors, dtype: float64\n"
      ]
     }
@@ -316,8 +227,8 @@
      "output_type": "stream",
      "text": [
       "              mu      sigma        SR\n",
-      "Lower   8.299806   9.814779  0.407323\n",
-      "Upper  19.090893  15.084889  1.587584\n"
+      "Lower   8.300243  10.087436  0.472338\n",
+      "Upper  18.961893  14.968219  1.600511\n"
      ]
     }
    ],
@@ -344,8 +255,8 @@
      "output_type": "stream",
      "text": [
       "              mu      sigma        SR\n",
-      "Lower   8.264447   9.458635  0.641545\n",
-      "Upper  19.055534  14.728745  1.821806\n"
+      "Lower   8.393447   9.575305  0.628618\n",
+      "Upper  19.055097  14.456088  1.756791\n"
      ]
     }
    ],
@@ -521,9 +432,9 @@
      "output_type": "stream",
      "text": [
       "          Const           gre       gpa\n",
-      "Const  0.401232 -6.505728e-05 -0.104472\n",
-      "gre   -0.000065  4.143598e-07 -0.000054\n",
-      "gpa   -0.104472 -5.358712e-05  0.039889\n"
+      "Const  0.450423 -8.740087e-05 -0.114939\n",
+      "gre   -0.000087  4.328506e-07 -0.000050\n",
+      "gpa   -0.114939 -5.012678e-05  0.042329\n"
      ]
     }
    ],
@@ -544,14 +455,14 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Const    0.633429\n",
-      "gre      0.000644\n",
-      "gpa      0.199722\n",
+      "Const    0.671135\n",
+      "gre      0.000658\n",
+      "gpa      0.205740\n",
       "dtype: float64\n",
       "T-stats\n",
-      "Const   -4.741712\n",
-      "gre      2.551680\n",
-      "gpa      2.276042\n",
+      "Const   -4.475306\n",
+      "gre      2.496583\n",
+      "gpa      2.209460\n",
       "dtype: float64\n"
      ]
     }
@@ -573,8 +484,8 @@
      "output_type": "stream",
      "text": [
       "          Const       gre       gpa\n",
-      "Lower -4.275146  0.000381  0.061935\n",
-      "Upper -1.745115  0.002835  0.851292\n"
+      "Lower -4.205996  0.000348  0.044685\n",
+      "Upper -1.641689  0.003006  0.829251\n"
      ]
     }
    ],
@@ -618,9 +529,9 @@
      "output_type": "stream",
      "text": [
       "          Const           gre       gpa\n",
-      "Const  0.401232 -6.505728e-05 -0.104472\n",
-      "gre   -0.000065  4.143598e-07 -0.000054\n",
-      "gpa   -0.104472 -5.358712e-05  0.039889\n"
+      "Const  0.450423 -8.740087e-05 -0.114939\n",
+      "gre   -0.000087  4.328506e-07 -0.000050\n",
+      "gpa   -0.114939 -5.012678e-05  0.042329\n"
      ]
     }
    ],
