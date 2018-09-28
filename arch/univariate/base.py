@@ -688,7 +688,7 @@ class ARCHModel(object):
         rng : callable, optional
             Custom random number generator to use in simulation-based forecasts.
             Must produce random samples using the syntax `rng(size)` where size
-            is a tuple containing the dimension of the random values.
+            the 2-element tuple (simulations, horizon).
 
         Returns
         -------
@@ -1088,8 +1088,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         rng : callable, optional
             Custom random number generator to use in simulation-based forecasts.
             Must produce random samples using the syntax `rng(size)` where size
-            is either a scalar or a tuple containing the dimension of the
-            random values.
+            the 2-element tuple (simulations, horizon).
 
         Returns
         -------

@@ -628,7 +628,7 @@ class HARX(ARCHModel):
                                self._is_pandas, opt, fit_start, fit_stop,
                                copy.deepcopy(self))
 
-    def forecast(self, parameters, horizon=1, start=None, align='origin',
+    def forecast(self, params, horizon=1, start=None, align='origin',
                  method='analytic', simulations=1000, rng=None):
         # Check start
         earliest, default_start = self._fit_indices
@@ -640,8 +640,8 @@ class HARX(ARCHModel):
                              'variables used to fit the first observation.  In this model, '
                              'this value is {0}.'.format(max(0, earliest - 1)))
         # Parse params
-        parameters = np.asarray(parameters)
-        mp, vp, dp = self._parse_parameters(parameters)
+        params = np.asarray(params)
+        mp, vp, dp = self._parse_parameters(params)
 
         #####################################
         # Compute residual variance forecasts

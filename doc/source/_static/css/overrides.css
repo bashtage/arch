@@ -1,0 +1,73 @@
+body {
+  font-size: 14px;
+}
+
+.sidebar-toc {
+  font-size: 13px;
+}
+
+blockquote {
+   font-size: 14px;
+}
+
+code, pre, tt {
+  font-size: 14px;
+  font-family: Consolas, monospace;
+}
+
+code, tt {
+    color: #428bca;
+}
+
+div.seealso {
+    background-color: #f9f9f9;
+    border: none;
+}
+
+.m { color: #05003b} /* Literal.Number */
+.mf { color: #05003b } /* Literal.Number.Float */
+.mh { color: #05003b } /* Literal.Number.Hex */
+.mi { color: #05003b } /* Literal.Number.Integer */
+.mo { color: #05003b } /* Literal.Number.Oct */
+.il { color: #05003b } /* Literal.Number.Integer.Long */
+
+.descname { font-size: 17px; color: #378ae2; }
+
+
+.output_area table {
+  margin-left: 0;
+  margin-right: auto;
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  table-layout: fixed;
+}
+.output_area thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+.output_area tr,
+.output_area th,
+.output_area td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+.output_area th {
+  font-weight: bold;
+}
+.output_area tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.output_area tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+.simpletable caption { font-weight: bold }
+
+.label { color: #333 }
