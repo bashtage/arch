@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -15,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Mean Models &#8212; arch 4.4.1+18.g68f67ba documentation</title>
+    <title>Mean Models &#8212; arch 4.4.1+19.gf78b62e documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -28,7 +29,10 @@
     <link rel="next" title="Volatility Processes" href="volatility.html" />
     <link rel="prev" title="Volatilty Scenarios" href="univariate_volatility_scenarios.html" />
   
+  
    
+
+  <link rel="stylesheet" href="../_static/css/overrides.css" type="text/css" />
 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -46,7 +50,7 @@
         <li class="right" >
           <a href="univariate_volatility_scenarios.html" title="Volatilty Scenarios"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+18.g68f67ba documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+19.gf78b62e documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -228,7 +232,7 @@ model, volatility model and distribution.</li>
 
 <dl class="method">
 <dt id="arch.univariate.ZeroMean.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>parameters</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -258,7 +262,7 @@ support the ‘analytic’ method for horizons &gt; 1.</li>
 either simulation or bootstrap.</li>
 <li><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
 Must produce random samples using the syntax <cite>rng(size)</cite> where size
-is a tuple containing the dimension of the random values.</li>
+the 2-element tuple (simulations, horizon).</li>
 </ul>
 </td>
 </tr>
@@ -452,7 +456,7 @@ difficulty finding the optimum.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantMean.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>parameters</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -482,7 +486,7 @@ support the ‘analytic’ method for horizons &gt; 1.</li>
 either simulation or bootstrap.</li>
 <li><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
 Must produce random samples using the syntax <cite>rng(size)</cite> where size
-is a tuple containing the dimension of the random values.</li>
+the 2-element tuple (simulations, horizon).</li>
 </ul>
 </td>
 </tr>
@@ -714,7 +718,7 @@ model, volatility model and distribution.</li>
 
 <dl class="method">
 <dt id="arch.univariate.ARX.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>parameters</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -744,7 +748,7 @@ support the ‘analytic’ method for horizons &gt; 1.</li>
 either simulation or bootstrap.</li>
 <li><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
 Must produce random samples using the syntax <cite>rng(size)</cite> where size
-is a tuple containing the dimension of the random values.</li>
+the 2-element tuple (simulations, horizon).</li>
 </ul>
 </td>
 </tr>
@@ -999,7 +1003,7 @@ model, volatility model and distribution.</li>
 
 <dl class="method">
 <dt id="arch.univariate.HARX.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>parameters</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1029,7 +1033,7 @@ support the ‘analytic’ method for horizons &gt; 1.</li>
 either simulation or bootstrap.</li>
 <li><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
 Must produce random samples using the syntax <cite>rng(size)</cite> where size
-is a tuple containing the dimension of the random values.</li>
+the 2-element tuple (simulations, horizon).</li>
 </ul>
 </td>
 </tr>
@@ -1403,7 +1407,7 @@ to override but recommended where applicable.</p>
         <li class="right" >
           <a href="univariate_volatility_scenarios.html" title="Volatilty Scenarios"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+18.g68f67ba documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.4.1+19.gf78b62e documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
