@@ -1,8 +1,9 @@
 from __future__ import print_function
-from statsmodels.compat import cStringIO
 
 import numpy as np
 import pandas as pd
+
+from arch.compat.python import cStringIO
 
 
 sio = cStringIO()
