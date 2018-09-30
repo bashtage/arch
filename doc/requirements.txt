@@ -12,3 +12,4 @@ numpydoc
 nbsphinx
 guzzle_sphinx_theme
 jupyter
+cached_property
