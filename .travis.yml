@@ -23,6 +23,7 @@ matrix:
     - PYTHON=2.7
     - USE_NUMBA=false
     - COVERAGE=true
+    - MATPLOTLIB=2
   - python: 2.7
     env:
     - PYTHON=2.7
@@ -34,7 +35,7 @@ matrix:
     env:
     - PYTHON=3.5
     - COVERAGE=true
-    - MATPLOTLIB=1.5
+    - MATPLOTLIB=2
   - python: 2.7
     env:
     - PYTHON=3.6
@@ -47,12 +48,12 @@ matrix:
   - python: 2.7
     env:
     - PYTHON=3.6
-    - DOCBUILD=true
-    - MATPLOTLIB=2
+    - DOCBUILD=false # TODO: Temporarily disable here
+    - MATPLOTLIB=3
   - python: 2.7
     env:
     - PYTHON=3.7
-    - MATPLOTLIB=2
+    - MATPLOTLIB=3
     - COVERAGE=true
 
 before_install:
@@ -87,9 +88,8 @@ before_install:
     if [[ ${DOCBUILD} = true ]]; then 
       conda install sphinx ipython numpydoc jupyter seaborn -c conda-forge
       pip install doctr nbsphinx guzzle_sphinx_theme -q
-      # Disable spell check to to issue installing
-      # sudo apt-get install -y enchant
-      # pip install sphinxcontrib-spelling
+      sudo apt-get install -y enchant
+      pip install sphinxcontrib-spelling
     fi
   - export SRCDIR=${PWD}
   - conda list

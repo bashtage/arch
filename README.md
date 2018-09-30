@@ -8,8 +8,6 @@ to improve performance)
 
 [![Travis Build Status](https://travis-ci.org/bashtage/arch.svg?branch=master)](https://travis-ci.org/bashtage/arch)
 [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/nmt02u7jwcgx7i2x?svg=true)](https://ci.appveyor.com/project/bashtage/arch/branch/master)
-[![Code Quality: Python](https://img.shields.io/lgtm/grade/python/g/bashtage/arch.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bashtage/arch/context:python)
-[![Total Alerts](https://img.shields.io/lgtm/alerts/g/bashtage/arch.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bashtage/arch/alerts)
 
 ###### Documentation
 
@@ -21,8 +19,8 @@ to improve performance)
 [![codecov](https://codecov.io/gh/bashtage/arch/branch/master/graph/badge.svg)](https://codecov.io/gh/bashtage/arch)
 
 ###### Code Inspections
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/bashtage/arch.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bashtage/arch/context:python)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/bashtage/arch.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bashtage/arch/alerts/)
+[![Code Quality: Python](https://img.shields.io/lgtm/grade/python/g/bashtage/arch.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bashtage/arch/context:python)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/bashtage/arch.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bashtage/arch/alerts)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/cea43b588e0f4f2a9d8ba37cf63f8210)](https://www.codacy.com/app/bashtage/arch?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bashtage/arch&amp;utm_campaign=Badge_Grade)
 [![codebeat badge](https://codebeat.co/badges/18a78c15-d74b-4820-b56d-72f7e4087532)](https://codebeat.co/projects/github-com-bashtage-arch-master)
 
@@ -178,7 +176,7 @@ that arch will work with older versions.
 
 * Numba (0.35+) will be used if available **and** when installed using
   the --no-binary option
-* IPython (5.0+) is required to run the notebooks
+* Jupyter is required to run the notebooks
 
 ### Installing
 
@@ -186,7 +184,7 @@ that arch will work with older versions.
 * py.test (For tests)
 * sphinx (to build docs)
 * guzzle_sphinx_theme (to build docs)
-* ipython (to build docs)
+* jupyter and notebook (to build docs)
 * numpydoc (to build docs)
 
 **Note**: Setup does not verify requirements.  Please ensure these are
