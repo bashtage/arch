@@ -10,8 +10,9 @@ import datetime
 import numpy as np
 from numpy.linalg import pinv
 from numpy.random import RandomState
-from statsmodels.compat import range
 from statsmodels.tools.parallel import parallel_func
+
+from arch.compat.python import range
 
 # Controls memory use, in MiB
 MAX_MEMORY_SIZE = 100

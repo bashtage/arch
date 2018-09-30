@@ -11,7 +11,8 @@ import warnings
 import numpy as np
 import scipy.stats as stats
 import pandas as pd
-from statsmodels.tools.decorators import cache_readonly, resettable_cache
+from pandas.util._decorators import cache_readonly
+
 from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
 from statsmodels.iolib.table import SimpleTable
 from statsmodels.tools.numdiff import approx_fprime, approx_hess
@@ -812,7 +813,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         self._is_pandas = is_pandas
         self.model = model
         self._datetime = dt.datetime.now()
-        self._cache = resettable_cache()
+        self._cache = {}
         self._dep_var = dep_var
         self._dep_name = dep_var.name
         self._names = names
