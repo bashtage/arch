@@ -23,7 +23,7 @@ Coverage
 Code Inspections
                 
 
-|Language grade: Python| |Total alerts| |Codacy Badge| |codebeat badge|
+|Code Quality: Python| |Total Alerts| |Codacy Badge| |codebeat badge|
 
 Citation
         
@@ -200,7 +200,7 @@ Optional Requirements
 
 -  Numba (0.35+) will be used if available **and** when installed using
    the --no-binary option
--  IPython (5.0+) is required to run the notebooks
+-  Jupyter is required to run the notebooks
 
 Installing
 ~~~~~~~~~~
@@ -209,7 +209,7 @@ Installing
 -  py.test (For tests)
 -  sphinx (to build docs)
 -  guzzle_sphinx_theme (to build docs)
--  ipython (to build docs)
+-  jupyter and notebook (to build docs)
 -  numpydoc (to build docs)
 
 **Note**: Setup does not verify requirements. Please ensure these are
@@ -274,10 +274,10 @@ be skipped using the flag ``--no-binary``
    :target: https://coveralls.io/r/bashtage/arch?branch=master
 .. |codecov| image:: https://codecov.io/gh/bashtage/arch/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/bashtage/arch
-.. |Language grade: Python| image:: https://img.shields.io/lgtm/grade/python/g/bashtage/arch.svg?logo=lgtm&logoWidth=18
+.. |Code Quality: Python| image:: https://img.shields.io/lgtm/grade/python/g/bashtage/arch.svg?logo=lgtm&logoWidth=18
    :target: https://lgtm.com/projects/g/bashtage/arch/context:python
-.. |Total alerts| image:: https://img.shields.io/lgtm/alerts/g/bashtage/arch.svg?logo=lgtm&logoWidth=18
-   :target: https://lgtm.com/projects/g/bashtage/arch/alerts/
+.. |Total Alerts| image:: https://img.shields.io/lgtm/alerts/g/bashtage/arch.svg?logo=lgtm&logoWidth=18
+   :target: https://lgtm.com/projects/g/bashtage/arch/alerts
 .. |Codacy Badge| image:: https://api.codacy.com/project/badge/Grade/cea43b588e0f4f2a9d8ba37cf63f8210
    :target: https://www.codacy.com/app/bashtage/arch?utm_source=github.com&utm_medium=referral&utm_content=bashtage/arch&utm_campaign=Badge_Grade
 .. |codebeat badge| image:: https://codebeat.co/badges/18a78c15-d74b-4820-b56d-72f7e4087532

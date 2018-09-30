@@ -1,7 +1,7 @@
 numpy>=1.12
 scipy>=0.19
 pandas>=0.20
-matplotlib>=1.5
+matplotlib>=2
 cython>=0.24
 numba>=0.32
 pytest
