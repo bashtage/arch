@@ -7,3 +7,4 @@ numba>=0.32
 pytest
 statsmodels>=0.8
 guzzle_sphinx_theme
+cached_property
