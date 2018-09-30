@@ -8,11 +8,10 @@ from copy import deepcopy
 import datetime as dt
 import warnings
 
+from cached_property import cached_property
 import numpy as np
 import scipy.stats as stats
 import pandas as pd
-from pandas.util._decorators import cache_readonly
-
 from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
 from statsmodels.iolib.table import SimpleTable
 from statsmodels.tools.numdiff import approx_fprime, approx_hess
@@ -581,7 +580,7 @@ class ARCHModel(object):
         elif params.shape[0] > 1:
             return params[:-1]
 
-    @cache_readonly
+    @cached_property
     def num_params(self):
         """
         Returns the number of parameters
@@ -813,7 +812,6 @@ class ARCHModelFixedResult(_SummaryRepr):
         self._is_pandas = is_pandas
         self.model = model
         self._datetime = dt.datetime.now()
-        self._cache = {}
         self._dep_var = dep_var
         self._dep_name = dep_var.name
         self._names = names
@@ -927,24 +925,24 @@ class ARCHModelFixedResult(_SummaryRepr):
         smry.add_extra_txt(extra_text)
         return smry
 
-    @cache_readonly
+    @cached_property
     def loglikelihood(self):
         """Model loglikelihood"""
         return self._loglikelihood
 
-    @cache_readonly
+    @cached_property
     def aic(self):
         """Akaike Information Criteria
 
         -2 * loglikelihood + 2 * num_params"""
         return -2 * self.loglikelihood + 2 * self.num_params
 
-    @cache_readonly
+    @cached_property
     def num_params(self):
         """Number of parameters in model"""
         return len(self.params)
 
-    @cache_readonly
+    @cached_property
     def bic(self):
         """
         Schwarz/Bayesian Information Criteria
@@ -953,12 +951,12 @@ class ARCHModelFixedResult(_SummaryRepr):
         """
         return -2 * self.loglikelihood + np.log(self.nobs) * self.num_params
 
-    @cache_readonly
+    @cached_property
     def params(self):
         """Model Parameters"""
         return pd.Series(self._params, index=self._names, name='params')
 
-    @cache_readonly
+    @cached_property
     def conditional_volatility(self):
         """
         Estimated conditional volatility
@@ -970,14 +968,14 @@ class ARCHModelFixedResult(_SummaryRepr):
         else:
             return self._volatility
 
-    @cache_readonly
+    @cached_property
     def nobs(self):
         """
         Number of data points used ot estimate model
         """
         return self._nobs
 
-    @cache_readonly
+    @cached_property
     def resid(self):
         """
         Model residuals
@@ -1462,7 +1460,7 @@ WARNING: The optimizer did not indicate successful convergence. The message was
         smry.add_extra_txt(extra_text)
         return smry
 
-    @cache_readonly
+    @cached_property
     def param_cov(self):
         """Parameter covariance"""
         if self._param_cov is not None:
@@ -1476,22 +1474,22 @@ WARNING: The optimizer did not indicate successful convergence. The message was
                                                          robust=False)
         return pd.DataFrame(param_cov, columns=self._names, index=self._names)
 
-    @cache_readonly
+    @cached_property
     def rsquared(self):
         """
         R-squared
         """
         return self._r2
 
-    @cache_readonly
+    @cached_property
     def fit_start(self):
         return self._fit_indices[0]
 
-    @cache_readonly
+    @cached_property
     def fit_stop(self):
         return self._fit_indices[1]
 
-    @cache_readonly
+    @cached_property
     def rsquared_adj(self):
         """
         Degree of freedom adjusted R-squared
@@ -1500,7 +1498,7 @@ WARNING: The optimizer did not indicate successful convergence. The message was
             (1 - self.rsquared) * (self.nobs - 1) / (
                 self.nobs - self.model.num_params))
 
-    @cache_readonly
+    @cached_property
     def pvalues(self):
         """
         Array of p-values for the t-statistics
@@ -1508,7 +1506,7 @@ WARNING: The optimizer did not indicate successful convergence. The message was
         return pd.Series(stats.norm.sf(np.abs(self.tvalues)) * 2,
                          index=self._names, name='pvalues')
 
-    @cache_readonly
+    @cached_property
     def std_err(self):
         """
         Parameter standard error
@@ -1516,7 +1514,7 @@ WARNING: The optimizer did not indicate successful convergence. The message was
         return pd.Series(np.sqrt(np.diag(self.param_cov)),
                          index=self._names, name='std_err')
 
-    @cache_readonly
+    @cached_property
     def tvalues(self):
         """
         t-statistics for the null the coefficient is 0
@@ -1525,7 +1523,7 @@ WARNING: The optimizer did not indicate successful convergence. The message was
         tvalues.name = 'tvalues'
         return tvalues
 
-    @cache_readonly
+    @cached_property
     def convergence_flag(self):
         """
         scipy.optimize.minimize result flag

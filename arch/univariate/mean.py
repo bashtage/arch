@@ -7,6 +7,7 @@ from __future__ import absolute_import, division
 import copy
 from collections import OrderedDict
 
+from cached_property import cached_property
 import numpy as np
 from pandas import DataFrame
 from pandas.util._decorators import cache_readonly
@@ -253,7 +254,7 @@ class HARX(ARCHModel):
 
         return y - regressors.dot(params)
 
-    @cache_readonly
+    @cached_property
     def num_params(self):
         """
         Returns the number of parameters
@@ -751,7 +752,7 @@ class ConstantMean(HARX):
     def parameter_names(self):
         return ['mu']
 
-    @cache_readonly
+    @cached_property
     def num_params(self):
         return 1
 
@@ -872,7 +873,7 @@ class ZeroMean(HARX):
     def parameter_names(self):
         return []
 
-    @cache_readonly
+    @cached_property
     def num_params(self):
         return 0
 
