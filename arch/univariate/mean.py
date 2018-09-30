@@ -10,7 +10,6 @@ from collections import OrderedDict
 from cached_property import cached_property
 import numpy as np
 from pandas import DataFrame
-from pandas.util._decorators import cache_readonly
 from scipy.optimize import OptimizeResult
 from statsmodels.tsa.tsatools import lagmat
 
