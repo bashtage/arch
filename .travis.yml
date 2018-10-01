@@ -86,7 +86,7 @@ before_install:
   - if [[ ${STATSMODELS_MASTER} = true ]]; then sh ./ci/statsmodels-master.sh; fi;
   - |
     if [[ ${DOCBUILD} = true ]]; then 
-      conda install sphinx ipython numpydoc jupyter seaborn -c conda-forge
+      conda install sphinx ipython numpydoc jupyter seaborn
       pip install doctr nbsphinx guzzle_sphinx_theme -q
       sudo apt-get install -y enchant
       pip install sphinxcontrib-spelling
