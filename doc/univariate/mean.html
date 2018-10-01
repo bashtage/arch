@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Mean Models &#8212; arch 4.5.0+14.g411c014 documentation</title>
+    <title>Mean Models &#8212; arch 4.5.0+16.g0325caa documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="univariate_volatility_scenarios.html" title="Volatilty Scenarios"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.5.0+14.g411c014 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.5.0+16.g0325caa documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -239,7 +239,7 @@ model, volatility model and distribution.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
@@ -339,7 +339,7 @@ evaluating, but still in the same column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>array</em>) – Parameters to use when simulating the model.  Parameter order is
+<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em>) – Parameters to use when simulating the model.  Parameter order is
 [volatility distribution]. There are no mean parameters.</li>
 <li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of series to simulate</li>
 <li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
@@ -463,7 +463,7 @@ difficulty finding the optimum.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
@@ -725,7 +725,7 @@ model, volatility model and distribution.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
@@ -836,7 +836,7 @@ variable.</li>
 dependence on initial values.</li>
 <li><strong>initial_value</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
 use when initializing the model.  If omitted, 0.0 is used.</li>
-<li><strong>x</strong> (<em>array</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
+<li><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
 simulation.</li>
 <li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
@@ -892,7 +892,7 @@ model estimation and simulation</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</li>
 <li><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs by k element array containing exogenous regressors</li>
-<li><strong>lags</strong> (<em>{scalar</em><em>, </em><em>array}</em><em>, </em><em>optional</em>) – Description of lag structure of the HAR.  Scalar included all lags
+<li><strong>lags</strong> (<em>{scalar</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Description of lag structure of the HAR.  Scalar included all lags
 between 1 and the value.  A 1-d array includes the HAR lags 1:lags[0],
 1:lags[1], … A 2-d array includes the HAR lags of the form
 lags[0,j]:lags[1,j] for all columns of lags.</li>
@@ -1010,7 +1010,7 @@ model, volatility model and distribution.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
 shape to the parameters computed by fitting the model.</li>
 <li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
@@ -1121,7 +1121,7 @@ variable.</li>
 dependence on initial values.</li>
 <li><strong>initial_value</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
 use when initializing the model.  If omitted, 0.0 is used.</li>
-<li><strong>x</strong> (<em>array</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
+<li><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
 simulation.</li>
 <li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
@@ -1314,7 +1314,7 @@ variable.</li>
 dependence on initial values.</li>
 <li><strong>initial_value</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
 use when initializing the model.  If omitted, 0.0 is used.</li>
-<li><strong>x</strong> (<em>array</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
+<li><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
 simulation.</li>
 <li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
 </ul>
@@ -1407,7 +1407,7 @@ to override but recommended where applicable.</p>
         <li class="right" >
           <a href="univariate_volatility_scenarios.html" title="Volatilty Scenarios"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.5.0+14.g411c014 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.5.0+16.g0325caa documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
