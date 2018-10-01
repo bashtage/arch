@@ -97,7 +97,7 @@ class HARX(ARCHModel):
         nobs element vector containing the dependent variable
     x : {ndarray, DataFrame}, optional
         nobs by k element array containing exogenous regressors
-    lags : {scalar, array}, optional
+    lags : {scalar, ndarray}, optional
         Description of lag structure of the HAR.  Scalar included all lags
         between 1 and the value.  A 1-d array includes the HAR lags 1:lags[0],
         1:lags[1], ... A 2-d array includes the HAR lags of the form
@@ -199,13 +199,11 @@ class HARX(ARCHModel):
     def _model_description(self, include_lags=True):
         """Generates the model description for use by __str__ and related
         functions"""
-        if include_lags:
-            if self.lags is not None:
-                lagstr = ['[' + str(lag[0]) + ':' + str(lag[1]) + ']'
-                          for lag in self._lags.T]
-                lagstr = ', '.join(lagstr)
-            else:
-                lagstr = 'none'
+        lagstr = 'none'
+        if include_lags and self.lags is not None:
+            lagstr = ['[' + str(lag[0]) + ':' + str(lag[1]) + ']'
+                      for lag in self._lags.T]
+            lagstr = ', '.join(lagstr)
         xstr = str(self._x.shape[1]) if self._x is not None else '0'
         conststr = 'yes' if self.constant else 'no'
         od = OrderedDict()
@@ -282,7 +280,7 @@ class HARX(ARCHModel):
         initial_value : {ndarray, float}, optional
             Either a scalar value or `max(lags)` array set of initial values to
             use when initializing the model.  If omitted, 0.0 is used.
-        x : array, optional
+        x : {ndarray, DataFrame}, optional
             nobs + burn by k array of exogenous variables to include in the
             simulation.
         initial_value_vol : {ndarray, float}, optional
@@ -886,7 +884,7 @@ class ZeroMean(HARX):
 
         Parameters
         ----------
-        params : array
+        params : {ndarray, DataFrame}
             Parameters to use when simulating the model.  Parameter order is
             [volatility distribution]. There are no mean parameters.
         nobs : int
@@ -1020,17 +1018,17 @@ class ARX(HARX):
     def _model_description(self, include_lags=True):
         """Generates the model description for use by __str__ and related
         functions"""
-        if include_lags:
-            if self.lags is not None:
-                lagstr = [str(lag[1]) for lag in self._lags.T]
-                lagstr = ', '.join(lagstr)
-            else:
-                lagstr = 'none'
+        lagstr = 'none'
+        if include_lags and self.lags is not None:
+            lagstr = [str(lag[1]) for lag in self._lags.T]
+            lagstr = ', '.join(lagstr)
+
         xstr = str(self._x.shape[1]) if self._x is not None else '0'
         conststr = 'yes' if self.constant else 'no'
         od = OrderedDict()
         od['constant'] = conststr
-        od['lags'] = lagstr
+        if include_lags:
+            od['lags'] = lagstr
         od['no. of exog'] = xstr
         od['volatility'] = self.volatility.__str__()
         od['distribution'] = self.distribution.__str__()

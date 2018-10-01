@@ -510,7 +510,8 @@ class SkewStudent(Distribution):
         a = self.__const_a(parameters)
         return (1 + 3 * lam ** 2 - a ** 2) ** .5
 
-    def __const_c(self, parameters):
+    @staticmethod
+    def __const_c(parameters):
         """Compute c constant.
 
         Parameters
@@ -523,8 +524,8 @@ class SkewStudent(Distribution):
         c : float
             Log of the constant used in loglikelihood
         """
-        eta, lam = parameters
-        #        return gamma((eta+1)/2) / ((pi*(eta-2))**.5 * gamma(eta/2))
+        eta = parameters[0]
+        # return gamma((eta+1)/2) / ((pi*(eta-2))**.5 * gamma(eta/2))
         return gammaln((eta + 1) / 2) - gammaln(eta / 2) - log(pi * (eta - 2)) / 2
 
     def ppf(self, arg, parameters):

@@ -25,7 +25,7 @@ except ImportError:  # pragma: no cover
                                                    egarch_recursion, midas_recursion)
 
 __all__ = ['GARCH', 'ARCH', 'HARCH', 'ConstantVariance', 'EWMAVariance', 'RiskMetrics2006',
-           'EGARCH', 'FixedVariance', 'BootstrapRng', 'MIDASHyperbolic']
+           'EGARCH', 'FixedVariance', 'BootstrapRng', 'MIDASHyperbolic', 'VolatilityProcess']
 
 
 class BootstrapRng(object):

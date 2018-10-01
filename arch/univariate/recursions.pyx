@@ -1,6 +1,8 @@
+#!python
+#cython: language_level=3, boundscheck=False, wraparound=False, cdivision=True
+
 import numpy as np
 cimport numpy as np
-cimport cython
 
 __all__ = ['harch_recursion','arch_recursion','garch_recursion',
            'egarch_recursion']
@@ -16,9 +18,6 @@ cdef extern from 'float.h':
 
 cdef double LNSIGMA_MAX = log(DBL_MAX)
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.cdivision(True)
 def harch_recursion(double[::1] parameters,
                     double[::1] resids,
                     double[::1] sigma2,
@@ -69,9 +68,6 @@ def harch_recursion(double[::1] parameters,
 
     return np.asarray(sigma2)
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.cdivision(True)
 def arch_recursion(double[::1] parameters,
                    double[::1] resids,
                    double[::1] sigma2,
@@ -121,9 +117,6 @@ def arch_recursion(double[::1] parameters,
 
     return np.asarray(sigma2)
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.cdivision(True)
 def garch_recursion(double[::1] parameters,
                     double[::1] fresids,
                     double[::1] sresids,
@@ -199,9 +192,6 @@ def garch_recursion(double[::1] parameters,
 
     return np.asarray(sigma2)
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.cdivision(True)
 def egarch_recursion(double[::1] parameters,
                      double[::1] resids,
                      double[::1] sigma2,
@@ -282,9 +272,6 @@ def egarch_recursion(double[::1] parameters,
 
 
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.cdivision(True)
 def midas_recursion(double[::1] parameters,
                     double[::1] weights,
                     double[::1] resids,

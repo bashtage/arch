@@ -22,7 +22,7 @@ from arch.utility.array import ensure1d, DocStringInheritor
 from arch.utility.exceptions import ConvergenceWarning, StartingValueWarning, \
     convergence_warning, starting_value_warning
 
-__all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel']
+__all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel', 'ARCHModelForecast']
 
 # Callback variables
 _callback_iter, _callback_llf = 0, 0.0,
@@ -583,7 +583,7 @@ class ARCHModel(object):
     @cached_property
     def num_params(self):
         """
-        Returns the number of parameters
+        Number of parameters in the model
         """
         raise NotImplementedError('Subclasses must implement')
 
@@ -658,7 +658,7 @@ class ARCHModel(object):
 
         Parameters
         ----------
-        params : ndarray, optional
+        params : {ndarray, Series}, optional
             Alternative parameters to use.  If not provided, the parameters
             estimated when fitting the model are used.  Must be identical in
             shape to the parameters computed by fitting the model.
@@ -784,21 +784,8 @@ class ARCHModelFixedResult(_SummaryRepr):
     ----------
     loglikelihood : float
         Value of the log-likelihood
-    aic : float
-        Akaike information criteria
-    bic : float
-        Schwarz/Bayes information criteria
-    conditional_volatility : {ndarray, Series}
-        nobs element array containing the conditional volatility (square root
-        of conditional variance).  The values are aligned with the input data
-        so that the value in the t-th position is the variance of t-th error,
-        which is computed using time-(t-1) information.
     params : Series
         Estimated parameters
-    nobs : int
-        Number of observations used in the estimation
-    num_params : int
-        Number of parameters in the model
     resid : {ndarray, Series}
         nobs element array containing model residuals
     model : ARCHModel
@@ -919,9 +906,9 @@ class ARCHModelFixedResult(_SummaryRepr):
                                 headers=header, title=title)
             smry.tables.append(table)
 
-        extra_text = ('Results generated with user-specified parameters.',
+        extra_text = ['Results generated with user-specified parameters.',
                       'Since the model was not estimated, there are no std. '
-                      'errors.')
+                      'errors.']
         smry.add_extra_txt(extra_text)
         return smry
 
@@ -960,6 +947,14 @@ class ARCHModelFixedResult(_SummaryRepr):
     def conditional_volatility(self):
         """
         Estimated conditional volatility
+
+        Returns
+        -------
+        conditional_volatility : {ndarray, Series}
+            nobs element array containing the conditional volatility (square
+            root of conditional variance).  The values are aligned with the
+            input data so that the value in the t-th position is the variance
+            of t-th error, which is computed using time-(t-1) information.
         """
         if self._is_pandas:
             return pd.Series(self._volatility,
@@ -971,7 +966,7 @@ class ARCHModelFixedResult(_SummaryRepr):
     @cached_property
     def nobs(self):
         """
-        Number of data points used ot estimate model
+        Number of data points used to estimate model
         """
         return self._nobs
 
@@ -1274,33 +1269,10 @@ class ARCHModelResult(ARCHModelFixedResult):
     ----------
     loglikelihood : float
         Value of the log-likelihood
-    aic : float
-        Akaike information criteria
-    bic : float
-        Schwarz/Bayes information criteria
-    conditional_volatility : {ndarray, Series}
-        nobs element array containing the conditional volatility (square root
-        of conditional variance).  The values are aligned with the input data
-        so that the value in the t-th position is the variance of t-th error,
-        which is computed using time-(t-1) information.
     params : Series
         Estimated parameters
     param_cov : DataFrame
         Estimated variance-covariance of the parameters
-    rsquared : float
-        R-squared
-    rsquared_adj : float
-        Degree of freedom adjusted R-squared
-    nobs : int
-        Number of observations used in the estimation
-    num_params : int
-        Number of parameters in the model
-    tvalues : Series
-        Array of t-statistics for the null the coefficient is 0
-    std_err : Series
-        Array of parameter standard errors
-    pvalues : Series
-        Array of p-values for the t-statistics
     resid : {ndarray, Series}
         nobs element array containing model residuals
     model : ARCHModel
@@ -1509,7 +1481,7 @@ WARNING: The optimizer did not indicate successful convergence. The message was
     @cached_property
     def std_err(self):
         """
-        Parameter standard error
+        Array of parameter standard errors
         """
         return pd.Series(np.sqrt(np.diag(self.param_cov)),
                          index=self._names, name='std_err')
@@ -1517,7 +1489,7 @@ WARNING: The optimizer did not indicate successful convergence. The message was
     @cached_property
     def tvalues(self):
         """
-        t-statistics for the null the coefficient is 0
+        Array of t-statistics testing the null that the coefficient are 0
         """
         tvalues = self.params / self.std_err
         tvalues.name = 'tvalues'
@@ -1621,8 +1593,6 @@ class ARCHModelForecast(object):
         Forecast values for the conditional variance of the process
     residual_variance : DataFrame
         Forecast values for the conditional variance of the residuals
-    simulations : ARCHModelForecastSimulation
-        Object containing detailed simulation results if using a simulation-based method
     """
 
     def __init__(self, index, mean, variance, residual_variance,
@@ -1656,4 +1626,7 @@ class ARCHModelForecast(object):
 
     @property
     def simulations(self):
+        """
+        Detailed simulation results if using a simulation-based method
+        """
         return self._sim
