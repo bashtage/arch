@@ -15,7 +15,7 @@ from arch.univariate import arch_model
 from arch.univariate.distribution import Normal, StudentsT
 from arch.univariate.mean import ConstantMean
 from arch.univariate.volatility import GARCH, ConstantVariance, HARCH, EWMAVariance, \
-    RiskMetrics2006, BootstrapRng, EGARCH, FixedVariance
+    RiskMetrics2006, BootstrapRng, EGARCH, FixedVariance, MIDASHyperbolic
 
 
 def _compare_truncated_forecasts(full, trunc, start):
@@ -532,6 +532,12 @@ class TestVarianceForecasts(TestCase):
             assert_allclose(paths, forecast.forecast_paths[j])
             assert_allclose(shocks, forecast.shocks[j])
 
+        with pytest.raises(ValueError):
+            vol.forecast(params, self.resid, backcast, var_bounds, horizon=2, start=20,
+                         rng=rng, method='bootstrap', random_state=self.rng)
+        with pytest.raises(ValueError):
+            vol.forecast(params, self.resid, backcast, var_bounds, method='unknown')
+
     def test_harch_forecast_simulation(self):
         t = self.t
         vol = HARCH(lags=[1, 5, 22])
@@ -694,6 +700,9 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecast.forecasts, paths.mean(1))
         assert_allclose(forecast.forecast_paths, paths)
         assert_allclose(forecast.shocks, shocks)
+
+        with pytest.raises(ValueError):
+            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=5)
 
     def test_egarch_101_forecast(self):
         t = self.t
@@ -1267,6 +1276,13 @@ class TestVarianceForecasts(TestCase):
         alt_forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=500)
         _compare_truncated_forecasts(forecast, alt_forecast, 500)
 
+        vol_estim = EWMAVariance(lam=None)
+        param_estim = np.array([0.94])
+        forecast_estim = vol_estim.forecast(param_estim, resids, backcast, var_bounds,
+                                            horizon=10, start=0)
+        for i in range(10):
+            assert_allclose(forecast.forecasts[:, i], forecast_estim.forecasts[:, i])
+
     def test_ewma_simulation(self):
         t = self.t
         vol = EWMAVariance()
@@ -1279,6 +1295,13 @@ class TestVarianceForecasts(TestCase):
         with preserved_state(self.rng):
             forecasts = vol.forecast(params, resids, backcast, var_bounds, horizon=10,
                                      start=0, method='simulation', rng=rng)
+
+        vol_estim = EWMAVariance(lam=None)
+        param_estim = np.array([0.94])
+        with preserved_state(self.rng):
+            forecasts_estim = vol_estim.forecast(param_estim, resids, backcast, var_bounds,
+                                                 horizon=10, start=0, method='simulation',
+                                                 rng=rng)
 
         one_step = np.empty(t + 1)
         one_step[0] = backcast
@@ -1299,6 +1322,10 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecasts.forecasts, paths.mean(1))
         assert_allclose(forecasts.forecast_paths, paths)
         assert_allclose(forecasts.shocks, shocks)
+
+        assert_allclose(forecasts_estim.forecasts, paths.mean(1))
+        assert_allclose(forecasts_estim.forecast_paths, paths)
+        assert_allclose(forecasts_estim.shocks, shocks)
 
         forecasts = vol.forecast(params, resids, backcast, var_bounds, horizon=10,
                                  start=252, method='simulation', rng=rng)
@@ -1407,6 +1434,88 @@ class TestVarianceForecasts(TestCase):
             vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=100,
                          method='bootstrap')
 
+    def test_midas_analytical(self):
+        vol = MIDASHyperbolic()
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        params = np.array([.1, .9, .4])
+        forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0)
+        weights = vol._weights(params)
+        arch_params = np.r_[params[0], params[1] * weights]
+        expected = _simple_direct_gjrgarch_forecaster(resids, arch_params, 22, 0, 0,
+                                                      backcast, var_bounds, 10)
+        assert_allclose(forecast.forecasts, expected)
+
+    def test_midas_asym_analytical(self):
+        vol = MIDASHyperbolic(asym=True)
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        params = np.array([.1, .3, 1.0, .4])
+        forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0)
+        weights = vol._weights(params)
+        arch_params = np.r_[params[0], params[1] * weights, params[2] * weights]
+        expected = _simple_direct_gjrgarch_forecaster(resids, arch_params, 22, 22, 0,
+                                                      backcast, var_bounds, 10)
+        assert_allclose(forecast.forecasts, expected)
+
+    def test_midas_simulation(self):
+        dist = Normal(self.rng)
+        rng = dist.simulate([])
+        vol = MIDASHyperbolic()
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        params = np.array([.1, .9, .4])
+        with preserved_state(self.rng):
+            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0,
+                                    method='simulation', rng=rng)
+
+        weights = vol._weights(params)
+        arch = GARCH(p=22, o=0, q=0)
+        arch_params = np.r_[params[0], params[1] * weights]
+        with preserved_state(self.rng):
+            arch_forecast = arch.forecast(arch_params, resids, backcast, var_bounds, horizon=10,
+                                          start=0, method='simulation', rng=rng)
+
+        assert_allclose(forecast.forecasts, arch_forecast.forecasts)
+        assert_allclose(forecast.forecast_paths, arch_forecast.forecast_paths)
+        assert_allclose(forecast.shocks, arch_forecast.shocks)
+
+    def test_midas_asym_simulation(self):
+        dist = Normal(self.rng)
+        rng = dist.simulate([])
+        vol = MIDASHyperbolic(asym=True)
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        params = np.array([.1, .3, 1.0, .4])
+        with preserved_state(self.rng):
+            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0,
+                                    method='simulation', rng=rng)
+
+        weights = vol._weights(params)
+        arch = GARCH(p=22, o=22, q=0)
+        arch_params = np.r_[params[0], params[1] * weights, params[2] * weights]
+        with preserved_state(self.rng):
+            arch_forecast = arch.forecast(arch_params, resids, backcast, var_bounds, horizon=10,
+                                          start=0, method='simulation', rng=rng)
+
+        assert_allclose(forecast.forecasts, arch_forecast.forecasts)
+        assert_allclose(forecast.forecast_paths, arch_forecast.forecast_paths)
+        assert_allclose(forecast.shocks, arch_forecast.shocks)
+
+    def test_midas_bootstrap_smoke(self):
+        # Note strictly needed if simulation passes since just a special case
+        vol = MIDASHyperbolic()
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        params = np.array([.1, .9, .4])
+        vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=100,
+                     method='bootstrap')
+
     def test_fixed_variance(self):
         parameters = np.array([1.0])
         resids = self.resid
@@ -1473,6 +1582,22 @@ class TestBootstrapRng(TestCase):
         y = self.rng.rand(1000)
         with pytest.raises(ValueError):
             BootstrapRng(y, 0)
+
+    def test_bootstrap_rng(self):
+        resid = np.arange(1000.0)
+        rs = np.random.RandomState(1)
+        state = rs.get_state()
+        bs_rng = BootstrapRng(resid, start=100, random_state=rs)
+        rng = bs_rng.rng()
+        sim = rng(10000)
+        assert np.max(sim) <= 100.5
+        assert sim.shape == (10000,)
+        rs.set_state(state)
+        bs_rs = bs_rng.random_state
+        assert bs_rs is rs
+
+        with pytest.raises(TypeError):
+            BootstrapRng(resid, start=100, random_state=1234)
 
 
 def test_external_rng():

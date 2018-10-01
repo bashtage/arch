@@ -19,13 +19,13 @@ cdef double LNSIGMA_MAX = log(DBL_MAX)
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-def harch_recursion(double[:] parameters,
-               double[:] resids,
-               double[:] sigma2,
-               int[:] lags,
-               int nobs,
-               double backcast,
-               double[:, :] var_bounds):
+def harch_recursion(double[::1] parameters,
+                    double[::1] resids,
+                    double[::1] sigma2,
+                    int[::1] lags,
+                    int nobs,
+                    double backcast,
+                    double[:, ::1] var_bounds):
     """
     Parameters
     ----------
@@ -67,18 +67,18 @@ def harch_recursion(double[:] parameters,
             else:
                 sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
 
-    return sigma2
+    return np.asarray(sigma2)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-def arch_recursion(double[:] parameters,
-               double[:] resids,
-               double[:] sigma2,
-               int p,
-               int nobs,
-               double backcast,
-               double[:, :] var_bounds):
+def arch_recursion(double[::1] parameters,
+                   double[::1] resids,
+                   double[::1] sigma2,
+                   int p,
+                   int nobs,
+                   double backcast,
+                   double[:, ::1] var_bounds):
     """
     Parameters
     ----------
@@ -119,21 +119,21 @@ def arch_recursion(double[:] parameters,
             else:
                 sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
 
-    return sigma2
+    return np.asarray(sigma2)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-def garch_recursion(double[:] parameters,
-                    double[:] fresids,
-                    double[:] sresids,
-                    double[:] sigma2,
+def garch_recursion(double[::1] parameters,
+                    double[::1] fresids,
+                    double[::1] sresids,
+                    double[::1] sigma2,
                     int p,
                     int o,
                     int q,
                     int nobs,
                     double backcast,
-                    double[:, :] var_bounds):
+                    double[:, ::1] var_bounds):
     """
     Compute variance recursion for GARCH and related models
 
@@ -197,22 +197,23 @@ def garch_recursion(double[:] parameters,
             else:
                 sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
 
-    return sigma2
+    return np.asarray(sigma2)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-def egarch_recursion(double[:] parameters,
-                     double[:] resids, double[:] sigma2,
+def egarch_recursion(double[::1] parameters,
+                     double[::1] resids,
+                     double[::1] sigma2,
                      int p,
                      int o,
                      int q,
                      int nobs,
                      double backcast,
-                     double[:, :] var_bounds,
-                     double[:] lnsigma2,
-                     double[:] std_resids,
-                     double[:] abs_std_resids):
+                     double[:, ::1] var_bounds,
+                     double[::1] lnsigma2,
+                     double[::1] std_resids,
+                     double[::1] abs_std_resids):
     """
     Compute variance recursion for EGARCH models
 
@@ -277,4 +278,72 @@ def egarch_recursion(double[:] parameters,
         std_resids[t] = resids[t] / sqrt(sigma2[t])
         abs_std_resids[t] = fabs(std_resids[t])
 
-    return sigma2
+    return np.asarray(sigma2)
+
+
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+def midas_recursion(double[::1] parameters,
+                    double[::1] weights,
+                    double[::1] resids,
+                    double[::1] sigma2,
+                    int nobs,
+                    double backcast,
+                    double[:, ::1] var_bounds):
+    """
+    Parameters
+    ----------
+    parameters : 1-d array, float64
+        Model parameters
+    weights : 1-d array, float64
+        Weights for MIDAS recursions
+    resids : 1-d array, float64
+        Residuals to use in the recursion
+    sigma2 : 1-d array, float64
+        Conditional variances with same shape as resids
+    nobs : int
+        Length of resids
+    backcast : float64
+        Value to use when initializing the recursion
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        variances for each time period
+    """
+    cdef Py_ssize_t m, t, i, num_lags
+    cdef int j
+    cdef double param, omega, alpha, gamma
+    cdef double [::1] aw, gw, resids2
+
+    m = weights.shape[0]
+    omega = parameters[0]
+    alpha = parameters[1]
+    gamma = parameters[2]
+
+    aw = np.zeros(m, dtype=np.float64)
+    gw = np.zeros(m, dtype=np.float64)
+    for i in range(m):
+        aw[i] = alpha * weights[i]
+        gw[i] = gamma * weights[i]
+
+    resids2 = np.zeros(nobs, dtype=np.float64)
+
+    for t in range(nobs):
+        resids2[t] = resids[t] * resids[t]
+        sigma2[t] = omega
+        for i in range(m):
+            if (t - i - 1) >= 0:
+                sigma2[t] += (aw[i] + gw[i] * (resids[t - i - 1] < 0)) * resids2[t - i - 1]
+            else:
+                sigma2[t] +=  (aw[i] + 0.5 * gw[i]) * backcast
+
+        if sigma2[t] < var_bounds[t, 0]:
+            sigma2[t] = var_bounds[t, 0]
+        elif sigma2[t] > var_bounds[t, 1]:
+            if sigma2[t] > DBL_MAX:
+                sigma2[t] = var_bounds[t, 1] + 1000
+            else:
+                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
+
+    return np.asarray(sigma2)

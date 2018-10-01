@@ -30,6 +30,12 @@ HARCH
 .. autoclass:: HARCH
     :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
 
+MIDAS Hyperbolic
+----------------
+
+.. autoclass:: MIDASHyperbolic
+    :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
+
 ARCH
 ----
 
