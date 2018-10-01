@@ -1467,7 +1467,7 @@ class TestBootstrapRng(TestCase):
         bs_rng = BootstrapRng(y, 100)
         rng = bs_rng.rng()
         with pytest.raises(IndexError):
-            for i in range(100, 1001):
+            for _ in range(100, 1001):
                 rng(1)
 
         y = self.rng.rand(1000)

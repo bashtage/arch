@@ -6,8 +6,6 @@ Most values are from MacKinnon (1994) or (2010).  A small number of these
 did not appear in the original paper and have been computed using an identical
 simulation.
 """
-from arch.compat.python import iteritems
-
 from numpy import asarray, inf
 
 small_scaling = asarray([1, 1, 1e-2])
@@ -247,7 +245,7 @@ adf_z_large_p = {'nc': [0.4927, 6.906, 13.2331, 12.099, 0],
                  'ctt': [3.4216, 0.4170, 1.6939, 0.4203, 0.4153]}
 
 adf_z_large_p_scale = asarray([1.0, 1.0, 1e-2, 1e-3, 1e-5])
-for k, v in iteritems(adf_z_large_p):
+for k in adf_z_large_p.keys():
     adf_z_large_p[k] = asarray(adf_z_large_p[k]) * adf_z_large_p_scale
 
 adf_z_cv_approx = {

@@ -147,13 +147,13 @@ class TestBootstrap(TestCase):
         bs = IIDBootstrap(np.arange(100))
         bs.seed(23456)
         state = bs.get_state()
-        for data, kwdata in bs.bootstrap(10):
+        for data, _ in bs.bootstrap(10):
             final = data[0]
         bs.seed(23456)
-        for data, kwdata in bs.bootstrap(10):
+        for data, _ in bs.bootstrap(10):
             final_seed = data[0]
         bs.set_state(state)
-        for data, kwdata in bs.bootstrap(10):
+        for data, _ in bs.bootstrap(10):
             final_state = data[0]
         assert_equal(final, final_seed)
         assert_equal(final, final_state)
@@ -161,11 +161,11 @@ class TestBootstrap(TestCase):
     def test_reset(self):
         bs = IIDBootstrap(np.arange(100))
         state = bs.get_state()
-        for data, kwdata in bs.bootstrap(10):
+        for data, _ in bs.bootstrap(10):
             final = data[0]
         bs.reset()
         state_reset = bs.get_state()
-        for data, kwdata in bs.bootstrap(10):
+        for data, _ in bs.bootstrap(10):
             final_reset = data[0]
         assert_equal(final, final_reset)
         assert_equal(state, state_reset)
@@ -248,7 +248,7 @@ class TestBootstrap(TestCase):
         bs.reset()
         results = np.zeros((num_bootstrap, 2))
         count = 0
-        for pos, kw in bs.bootstrap(num_bootstrap):
+        for pos, _ in bs.bootstrap(num_bootstrap):
             results[count] = func(*pos)
             count += 1
         mu = func(self.x)
@@ -283,7 +283,7 @@ class TestBootstrap(TestCase):
         bs.reset()
         results = np.zeros((num_bootstrap, 2))
         count = 0
-        for pos, kw in bs.bootstrap(num_bootstrap):
+        for pos, _ in bs.bootstrap(num_bootstrap):
             results[count] = func(*pos)
             count += 1
 
@@ -371,7 +371,7 @@ class TestBootstrap(TestCase):
         results = np.zeros((num_bootstrap, 2))
         stud_results = np.zeros((num_bootstrap, 2))
         count = 0
-        for pos, kwdata in bs.bootstrap(reps=num_bootstrap):
+        for pos, _ in bs.bootstrap(reps=num_bootstrap):
             results[count] = func(*pos)
             std_err = std_err_func(results[count], *pos)
             stud_results[count] = (results[count] - base) / std_err
@@ -398,7 +398,7 @@ class TestBootstrap(TestCase):
         results = np.zeros((num_bootstrap, 2))
         stud_results = np.zeros((num_bootstrap, 2))
         count = 0
-        for pos, kwdata in bs.bootstrap(reps=num_bootstrap):
+        for pos, _ in bs.bootstrap(reps=num_bootstrap):
             results[count] = func(*pos)
             inner_bs = IIDBootstrap(*pos)
             seed = bs.random_state.randint(2 ** 31 - 1)
@@ -495,7 +495,7 @@ class TestBootstrap(TestCase):
         results = np.zeros((reps, 2))
         count = 0
         mu = self.x.mean(0)
-        for pos, kw in bs.bootstrap(100):
+        for pos, _ in bs.bootstrap(100):
             results[count] = param_func(*pos, params=mu,
                                         state=bs.random_state)
             count += 1
@@ -508,7 +508,7 @@ class TestBootstrap(TestCase):
         bs.reset()
         results = np.zeros((reps, 2))
         count = 0
-        for pos, kw in bs.bootstrap(100):
+        for pos, _ in bs.bootstrap(100):
             results[count] = semi_func(*pos, params=mu)
             count += 1
         assert_allclose(bs._results, results)
@@ -626,7 +626,7 @@ class TestBootstrap(TestCase):
         results = bs.apply(func, 1000)
         bs.reset(23456)
         direct_results = []
-        for pos, kw in bs.bootstrap(1000):
+        for pos, _ in bs.bootstrap(1000):
             direct_results.append(func(*pos))
         direct_results = np.array(direct_results)
         assert_equal(results, direct_results)
@@ -641,7 +641,7 @@ class TestBootstrap(TestCase):
         results = bs.apply(func, 1000)
         bs.reset(23456)
         direct_results = []
-        for pos, kw in bs.bootstrap(1000):
+        for pos, _ in bs.bootstrap(1000):
             direct_results.append(func(*pos))
         direct_results = np.array(direct_results)
         direct_results = direct_results[:, None]

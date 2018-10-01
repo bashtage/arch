@@ -125,7 +125,7 @@ class VolatilityProcess(object):
     separately from the conditional variance, even though parameters are estimated jointly.
     """
 
-    __metaclass__ = DocStringInheritor
+    __metaclass__ = DocStringInheritor  # noqa
 
     def __init__(self):
         self.num_params = 0
@@ -1451,13 +1451,13 @@ class RiskMetrics2006(VolatilityProcess):
     Parameters
     ----------
     tau0 : int, optional
-        Length of long cycle
+        Length of long cycle. Default is 1560.
     tau1 : int, optional
-        Length of short cycle
+        Length of short cycle. Default is 4.
     kmax : int, optional
-        Number of components
+        Number of components. Default is 14.
     rho : float, optional
-        Relative scale of adjacent cycles
+        Relative scale of adjacent cycles. Default is sqrt(2)
 
     Attributes
     ----------
@@ -1479,7 +1479,7 @@ class RiskMetrics2006(VolatilityProcess):
     This model has no parameters since the smoothing parameter is fixed.
     """
 
-    def __init__(self, tau0=1560, tau1=4, kmax=14, rho=sqrt(2)):
+    def __init__(self, tau0=1560, tau1=4, kmax=14, rho=1.4142135623730951):
         super(RiskMetrics2006, self).__init__()
         self.tau0 = tau0
         self.tau1 = tau1
