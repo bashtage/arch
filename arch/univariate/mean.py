@@ -237,11 +237,7 @@ class HARX(ARCHModel):
         descr = self._model_description()
         html = '<strong>' + self.name + '</strong>('
         for key, val in iteritems(descr):
-            if val:
-                if key:
-                    html += '<strong>' + key + ': </strong>' + val + ',\n'
-                else:
-                    html += '<strong>' + val + '</strong>,\n'
+            html += '<strong>' + key + ': </strong>' + val + ',\n'
         html += '<strong>ID: </strong> ' + hex(id(self)) + ')'
         return html
 
@@ -544,11 +540,6 @@ class HARX(ARCHModel):
         See :class:`ARCHModelResult` for details on computed results
         """
         nobs = self._fit_y.shape[0]
-        if nobs == 0:
-            from warnings import warn
-
-            warn('Cannot estimate model with no data', RuntimeWarning)
-            return None
 
         if nobs < self.num_params:
             raise ValueError(

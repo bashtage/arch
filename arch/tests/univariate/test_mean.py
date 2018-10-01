@@ -90,6 +90,9 @@ class TestMeanModel(TestCase):
         # TODO
         # assert_frame_equal(direct, forecasts)
         assert isinstance(forecasts, ARCHModelForecast)
+        assert isinstance(cm.__repr__(), str)
+        assert isinstance(cm.__str__(), str)
+        assert '<strong>' in cm._repr_html_()
 
     def test_zero_mean(self):
         zm = ZeroMean(self.y)
@@ -122,9 +125,13 @@ class TestMeanModel(TestCase):
         garch = GARCH()
         zm.volatility = garch
         zm.fit(update_freq=0, disp=DISPLAY)
+        assert isinstance(zm.__repr__(), str)
+        assert isinstance(zm.__str__(), str)
+        assert '<strong>' in zm._repr_html_()
 
     def test_harx(self):
         harx = HARX(self.y, self.x, lags=[1, 5, 22])
+        assert harx.x is self.x
         params = np.array([1.0, 0.4, 0.3, 0.2, 1.0, 1.0])
         data = harx.simulate(params, self.T, x=self.rng.randn(self.T + 500, 1))
         iv = self.rng.randn(22, 1)
@@ -169,6 +176,20 @@ class TestMeanModel(TestCase):
         harx._repr_html_()
         res = harx.fit(cov_type='mle', disp=DISPLAY)
         res
+
+    def test_harx_error(self):
+        with pytest.raises(ValueError):
+            HARX(self.y, self.x, lags=[1, -5, 22])
+        with pytest.raises(ValueError):
+            HARX(self.y, self.x, lags=[0, 1, 5, 22])
+        with pytest.raises(ValueError):
+            HARX(self.y, self.x, lags=[[-1], [3]])
+        with pytest.raises(ValueError):
+            HARX(self.y, self.x, lags=[[0], [0]])
+        with pytest.raises(ValueError):
+            HARX(self.y, self.x, lags=[[1, 1, 2], [2, 3, 2]])
+        with pytest.raises(ValueError):
+            HARX(self.y, self.x, lags=[[[1], [3]]])
 
     def test_har(self):
         har = HARX(self.y, lags=[1, 5, 22])
@@ -364,6 +385,13 @@ class TestMeanModel(TestCase):
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
         res = ar.fit(disp=DISPLAY, update_freq=5, cov_type='mle')
         res.param_cov
+
+    def test_ar_no_lags(self):
+        ar = ARX(self.y, lags=0)
+        assert ar.lags is None
+        res = ar.fit()
+        assert_almost_equal(res.params[0], self.y.mean())
+        assert 'lags: none' in ar.__str__()
 
     @pytest.mark.skipif(not HAS_MATPLOTLIB, reason='matplotlib not installed')
     def test_ar_plot(self):
@@ -897,3 +925,11 @@ class TestMeanModel(TestCase):
         assert len(w) == 1
         assert std.loglikelihood != short.loglikelihood
         assert short.convergence_flag != 0
+
+    def test_little_or_no_date(self):
+        mod = HARX(self.y[:24], lags=[1, 5, 22])
+        with pytest.raises(ValueError):
+            mod.fit()
+        mod = HARX(None, lags=[1, 5, 22])
+        with pytest.raises(RuntimeError):
+            mod.fit()
