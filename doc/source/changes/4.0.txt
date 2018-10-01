@@ -1,5 +1,7 @@
 Changes since 4.0
 =================
+- Added support for MIDAS volatility processes using Hyperbolic
+  weighting (:issue:`233`)
 - Added a parameter to forecast that allows a user-provided callable random
   generator to be used in place of the model random generator. (:issue:`225`)
 - Added a low memory automatic lag selection method that can be used with very

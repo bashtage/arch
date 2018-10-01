@@ -2,8 +2,9 @@ from __future__ import absolute_import, division
 
 import warnings
 
-from numpy import (diff, ceil, power, sqrt, sum, cumsum, int32, int64, interp, pi,
-                   array, inf, abs, log, sort, polyval, empty, argwhere, arange, squeeze)
+from numpy import (diff, ceil, power, sqrt, sum, cumsum, int32, int64, interp, pi, hstack, ones,
+                   float64, array, inf, abs, log, sort, polyval, empty, argwhere, arange, squeeze,
+                   nan)
 from numpy.linalg import pinv, qr, inv, solve
 from pandas import DataFrame
 from scipy.stats import norm
@@ -106,32 +107,31 @@ def _autolag_ols_low_memory(y, maxlag, trend, method):
     Minimizes creation of large arrays. Uses approx 6 * nobs temporary values
     """
     method = method.lower()
-    import numpy as np
-    deltay = np.diff(y)
-    deltay = deltay / np.sqrt(deltay.dot(deltay))
+    deltay = diff(y)
+    deltay = deltay / sqrt(deltay.dot(deltay))
     lhs = deltay[maxlag:][:, None]
     level = y[maxlag:-1]
-    level = level / np.sqrt(level.dot(level))
+    level = level / sqrt(level.dot(level))
     trendx = []
     nobs = lhs.shape[0]
     if trend == 'nc':
-        trendx = np.empty((nobs, 0))
+        trendx = empty((nobs, 0))
     else:
         if 'tt' in trend:
-            tt = np.arange(1, nobs + 1, dtype=np.float64)[:, None] ** 2
-            tt *= (np.sqrt(5) / float(nobs) ** (5 / 2))
+            tt = arange(1, nobs + 1, dtype=float64)[:, None] ** 2
+            tt *= (sqrt(5) / float(nobs) ** (5 / 2))
             trendx.append(tt)
         if 't' in trend:
-            t = np.arange(1, nobs + 1, dtype=np.float64)[:, None]
-            t *= (np.sqrt(3) / float(nobs) ** (3 / 2))
+            t = arange(1, nobs + 1, dtype=float64)[:, None]
+            t *= (sqrt(3) / float(nobs) ** (3 / 2))
             trendx.append(t)
         if trend.startswith('c'):
-            trendx.append(np.ones((nobs, 1)) / np.sqrt(nobs))
-        trendx = np.hstack(trendx)
-    rhs = np.hstack([level[:, None], trendx])
+            trendx.append(ones((nobs, 1)) / sqrt(nobs))
+        trendx = hstack(trendx)
+    rhs = hstack([level[:, None], trendx])
     m = rhs.shape[1]
-    xpx = np.empty((m + maxlag, m + maxlag)) * np.nan
-    xpy = np.empty((m + maxlag, 1)) * np.nan
+    xpx = empty((m + maxlag, m + maxlag)) * nan
+    xpy = empty((m + maxlag, 1)) * nan
     xpy[:m] = rhs.T.dot(lhs)
     xpx[:m, :m] = rhs.T.dot(rhs)
     for i in range(maxlag):
@@ -146,13 +146,13 @@ def _autolag_ols_low_memory(y, maxlag, trend, method):
             xpx[m + i, m + j] = x1px2
             xpx[m + j, m + i] = x1px2
     ypy = lhs.T.dot(lhs)
-    sigma2 = np.empty(maxlag + 1)
+    sigma2 = empty(maxlag + 1)
 
     tstat = empty(maxlag + 1)
     tstat[0] = inf
     for i in range(m, m + maxlag + 1):
         xpx_sub = xpx[:i, :i]
-        b = np.linalg.solve(xpx_sub, xpy[:i])
+        b = solve(xpx_sub, xpy[:i])
         sigma2[i - m] = (ypy - b.T.dot(xpx_sub).dot(b)) / nobs
         if method == 't-stat':
             xpxi = inv(xpx_sub)
