@@ -20,41 +20,41 @@ matrix:
   include:
   - python: 2.7
     env:
-    - PYTHON=2.7
-    - USE_NUMBA=false
-    - MATPLOTLIB=2
+      - PYTHON=2.7
+      - NUMBA=0.35
+      - NUMPY=1.13
+      - SCIPY=0.19
+      - PANDAS=0.21
+      - COVERAGE=true
   - python: 2.7
     env:
-    - PYTHON=2.7
-    - NUMBA=0.35
-    - NUMPY=1.13
-    - SCIPY=0.19
-    - PANDAS=0.21
-    - COVERAGE=true
+      - PYTHON=3.7
+      - MATPLOTLIB=3
+      - COVERAGE=true
   - python: 2.7
     env:
-    - PYTHON=3.5
-    - COVERAGE=true
-    - MATPLOTLIB=2
+      - PYTHON=3.5
+      - COVERAGE=true
+      - MATPLOTLIB=2
   - python: 2.7
     env:
-    - PYTHON=3.6
-    - NUMBA=0.38
-    - NUMPY=1.14
-    - SCIPY=1.0
-    - MATPLOTLIB=2.0
-    - PANDAS=0.22
-    - STATSMODELS_MASTER=true
+      - PYTHON=3.6
+      - NUMBA=0.38
+      - NUMPY=1.14
+      - SCIPY=1.0
+      - MATPLOTLIB=2.0
+      - PANDAS=0.22
+      - STATSMODELS_MASTER=true
   - python: 2.7
     env:
-    - PYTHON=3.6
-    - DOCBUILD=true
-    - MATPLOTLIB=3
+      - PYTHON=2.7
+      - USE_NUMBA=false
+      - MATPLOTLIB=2
   - python: 2.7
     env:
-    - PYTHON=3.7
-    - MATPLOTLIB=3
-    - COVERAGE=true
+      - PYTHON=3.6
+      - DOCBUILD=true
+      - MATPLOTLIB=3
 
 before_install:
   - git fetch --tags

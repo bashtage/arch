@@ -385,6 +385,11 @@ class TestMeanModel(TestCase):
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
         res = ar.fit(disp=DISPLAY, update_freq=5, cov_type='mle')
         res.param_cov
+        sims = res.forecast(horizon=5, method='simulation')
+        assert isinstance(sims.simulations.residual_variances, np.ndarray)
+        assert isinstance(sims.simulations.residuals, np.ndarray)
+        assert isinstance(sims.simulations.values, np.ndarray)
+        assert isinstance(sims.simulations.variances, np.ndarray)
 
     def test_ar_no_lags(self):
         ar = ARX(self.y, lags=0)
@@ -409,6 +414,7 @@ class TestMeanModel(TestCase):
         res.hedgehog_plot(start=500, type='mean')
         res.hedgehog_plot(type='volatility')
         res.hedgehog_plot(start=500, method='simulation', simulations=100)
+        res.hedgehog_plot(type='volatility', method='bootstrap')
 
     def test_arch_arx(self):
         self.rng.seed(12345)
