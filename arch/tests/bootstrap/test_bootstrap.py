@@ -437,13 +437,10 @@ class TestBootstrap(TestCase):
         bs = IIDBootstrap(self.y)
         bs.seed(23456)
 
-        try:
-            ci = bs.conf_int(np.mean, reps=num_bootstrap, method='bca')
-            assert(ci.shape == (2, 1))
-        except IndexError:
-            pytest.fail('conf_int(method=\'bca\') scalar input regression. '
-                        'Ensure output is at least 1D with '
-                        'numpy.atleast_1d().')
+        ci = bs.conf_int(np.mean, reps=num_bootstrap, method='bca')
+        msg = 'conf_int(method=\'bca\') scalar input regression. Ensure ' \
+              'output is at least 1D with numpy.atleast_1d().'
+        assert ci.shape == (2, 1), msg
 
     def test_conf_int_parametric(self):
         def param_func(x, params=None, state=None):
