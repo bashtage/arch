@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Distributions &#8212; arch 4.5.0+22.g5dac4a5 documentation</title>
+    <title>Distributions &#8212; arch 4.5.0+24.g03dc09a documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="univariate_using_fixed_variance.html" title="Using the Fixed Variance process"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.5.0+22.g5dac4a5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.5.0+24.g03dc09a documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -138,7 +138,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Residuals to use when computing the bounds</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Residuals to use when computing the bounds</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List containing a single tuple with (lower, upper) bounds</td>
 </tr>
@@ -156,8 +156,8 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>A</strong> (<em>array</em>) – Constraint loadings</li>
-<li><strong>b</strong> (<em>array</em>) – Constraint values</li>
+<li><strong>A</strong> (<em>ndarray</em>) – Constraint loadings</li>
+<li><strong>b</strong> (<em>ndarray</em>) – Constraint values</li>
 </ul>
 </td>
 </tr>
@@ -177,9 +177,10 @@ distributed, conditional on the variance</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>empty array</em>) – The normal likelihood has no shape parameters</li>
-<li><strong>resids</strong> (<em>array</em>) – The residuals to use in the log-likelihood calculation</li>
-<li><strong>sigma2</strong> (<em>array</em>) – Conditional variances of resids</li>
+<li><strong>parameters</strong> (<em>ndarray</em>) – The normal likelihood has no shape parameters. Empty since the
+standard normal has no shape parameters.</li>
+<li><strong>resids</strong> (<em>ndarray</em>) – The residuals to use in the log-likelihood calculation</li>
+<li><strong>sigma2</strong> (<em>ndarray</em>) – Conditional variances of resids</li>
 <li><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
 likelihoods (True) or the sum (False)</li>
 </ul>
@@ -208,7 +209,7 @@ likelihoods (True) or the sum (False)</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<em>array</em>) – Distribution parameters</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<em>ndarray</em>) – Distribution parameters</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>simulator</strong> – Callable that take a single output size argument and returns i.i.d.
 draws from the distribution</td>
@@ -226,12 +227,12 @@ draws from the distribution</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<em>array</em>) – Estimated standardized residuals to use in computing starting
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<em>ndarray</em>) – Estimated standardized residuals to use in computing starting
 values for the shape parameter</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – The estimated shape parameters for the distribution</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
 </tr>
 </tbody>
 </table>
@@ -255,7 +256,7 @@ values for the shape parameter</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Residuals to use when computing the bounds</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Residuals to use when computing the bounds</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List containing a single tuple with (lower, upper) bounds</td>
 </tr>
@@ -273,8 +274,8 @@ values for the shape parameter</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>A</strong> (<em>array</em>) – Constraint loadings</li>
-<li><strong>b</strong> (<em>array</em>) – Constraint values</li>
+<li><strong>A</strong> (<em>ndarray</em>) – Constraint loadings</li>
+<li><strong>b</strong> (<em>ndarray</em>) – Constraint values</li>
 </ul>
 </td>
 </tr>
@@ -295,9 +296,9 @@ conditional on the variance.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>array</em>) – Shape parameter of the t distribution</li>
-<li><strong>resids</strong> (<em>array</em>) – The residuals to use in the log-likelihood calculation</li>
-<li><strong>sigma2</strong> (<em>array</em>) – Conditional variances of resids</li>
+<li><strong>parameters</strong> (<em>ndarray</em>) – Shape parameter of the t distribution</li>
+<li><strong>resids</strong> (<em>ndarray</em>) – The residuals to use in the log-likelihood calculation</li>
+<li><strong>sigma2</strong> (<em>ndarray</em>) – Conditional variances of resids</li>
 <li><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
 likelihoods (True) or the sum (False)</li>
 </ul>
@@ -329,7 +330,7 @@ likelihoods (True) or the sum (False)</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<em>array</em>) – Distribution parameters</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<em>ndarray</em>) – Distribution parameters</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>simulator</strong> – Callable that take a single output size argument and returns i.i.d.
 draws from the distribution</td>
@@ -347,12 +348,12 @@ draws from the distribution</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<em>array</em>) – Estimated standardized residuals to use in computing starting
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<em>ndarray</em>) – Estimated standardized residuals to use in computing starting
 values for the shape parameter</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array containing starting valuer for shape parameter</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
 </tr>
 </tbody>
 </table>
@@ -392,7 +393,7 @@ distribution is identical to a standardized Student’s t.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Residuals to use when computing the bounds</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Residuals to use when computing the bounds</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List containing a single tuple with (lower, upper) bounds</td>
 </tr>
@@ -410,8 +411,8 @@ distribution is identical to a standardized Student’s t.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>A</strong> (<em>array</em>) – Constraint loadings</li>
-<li><strong>b</strong> (<em>array</em>) – Constraint values</li>
+<li><strong>A</strong> (<em>ndarray</em>) – Constraint loadings</li>
+<li><strong>b</strong> (<em>ndarray</em>) – Constraint values</li>
 </ul>
 </td>
 </tr>
@@ -432,9 +433,9 @@ conditional on the variance.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>array</em>) – Shape parameter of the skew-t distribution</li>
-<li><strong>resids</strong> (<em>array</em>) – The residuals to use in the log-likelihood calculation</li>
-<li><strong>sigma2</strong> (<em>array</em>) – Conditional variances of resids</li>
+<li><strong>parameters</strong> (<em>ndarray</em>) – Shape parameter of the skew-t distribution</li>
+<li><strong>resids</strong> (<em>ndarray</em>) – The residuals to use in the log-likelihood calculation</li>
+<li><strong>sigma2</strong> (<em>ndarray</em>) – Conditional variances of resids</li>
 <li><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
 likelihoods (True) or the sum (False)</li>
 </ul>
@@ -474,7 +475,7 @@ The constants <span class="math notranslate nohighlight">\(a\)</span>, <span cla
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<em>array</em>) – Distribution parameters</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<em>ndarray</em>) – Distribution parameters</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>simulator</strong> – Callable that take a single output size argument and returns i.i.d.
 draws from the distribution</td>
@@ -492,12 +493,12 @@ draws from the distribution</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<em>array</em>) – Estimated standardized residuals to use in computing starting
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<em>ndarray</em>) – Estimated standardized residuals to use in computing starting
 values for the shape parameter</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array containing starting valuer for shape parameter</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
 </tr>
 </tbody>
 </table>
@@ -522,7 +523,7 @@ produce a moment-based estimator for the starting values.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>array</em>) – Residuals to use when computing the bounds</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Residuals to use when computing the bounds</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List containing a single tuple with (lower, upper) bounds</td>
 </tr>
@@ -540,8 +541,8 @@ produce a moment-based estimator for the starting values.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>A</strong> (<em>array</em>) – Constraint loadings</li>
-<li><strong>b</strong> (<em>array</em>) – Constraint values</li>
+<li><strong>A</strong> (<em>ndarray</em>) – Constraint loadings</li>
+<li><strong>b</strong> (<em>ndarray</em>) – Constraint values</li>
 </ul>
 </td>
 </tr>
@@ -561,9 +562,9 @@ Generalized Error Distribution, conditional on the variance.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>array</em>) – Shape parameter of the GED distribution</li>
-<li><strong>resids</strong> (<em>array</em>) – The residuals to use in the log-likelihood calculation</li>
-<li><strong>sigma2</strong> (<em>array</em>) – Conditional variances of resids</li>
+<li><strong>parameters</strong> (<em>ndarray</em>) – Shape parameter of the GED distribution</li>
+<li><strong>resids</strong> (<em>ndarray</em>) – The residuals to use in the log-likelihood calculation</li>
+<li><strong>sigma2</strong> (<em>ndarray</em>) – Conditional variances of resids</li>
 <li><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
 likelihoods (True) or the sum (False)</li>
 </ul>
@@ -597,7 +598,7 @@ likelihoods (True) or the sum (False)</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<em>array</em>) – Distribution parameters</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<em>ndarray</em>) – Distribution parameters</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>simulator</strong> – Callable that take a single output size argument and returns i.i.d.
 draws from the distribution</td>
@@ -615,12 +616,12 @@ draws from the distribution</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<em>array</em>) – Estimated standardized residuals to use in computing starting
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>std_resid</strong> (<em>ndarray</em>) – Estimated standardized residuals to use in computing starting
 values for the shape parameter</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array containing starting valuer for shape parameter</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
 </tr>
 </tbody>
 </table>
@@ -677,7 +678,7 @@ methods.</p>
         <li class="right" >
           <a href="univariate_using_fixed_variance.html" title="Using the Fixed Variance process"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.5.0+22.g5dac4a5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.5.0+24.g03dc09a documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

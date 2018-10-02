@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Module Reference &#8212; arch 4.5.0+22.g5dac4a5 documentation</title>
+    <title>Module Reference &#8212; arch 4.5.0+24.g03dc09a documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="multiple-comparison_examples.html" title="Multiple Comparisons"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.5.0+22.g5dac4a5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.5.0+24.g03dc09a documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="multiple-comparisons.html" accesskey="U">Multiple Comparison Procedures</a> &#187;</li> 
       </ul>
     </div>
@@ -143,8 +143,8 @@ which is also known as the Reality Check or Bootstrap Data Snooper.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>benchmark</strong> (<em>array-like</em>) – T element array of benchmark model <em>losses</em></li>
-<li><strong>models</strong> (<em>array-like</em>) – T  by k element array of alternative model <em>losses</em></li>
+<li><strong>benchmark</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – T element array of benchmark model <em>losses</em></li>
+<li><strong>models</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em>) – T  by k element array of alternative model <em>losses</em></li>
 <li><strong>block_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
 is used.  In general, this should be provided and chosen to be
 appropriate for the data.</li>
@@ -186,21 +186,6 @@ pvalue</p>
 <code class="descname">better_models</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.SPA.better_models" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produce a list of column indices or names (if models is a DataFrame)
 that are rejected given a test size</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="arch.bootstrap.SPA.pvalues">
-<code class="descname">pvalues</code><a class="headerlink" href="#arch.bootstrap.SPA.pvalues" title="Permalink to this definition">¶</a></dt>
-<dd><p>A set of three p-values corresponding to the lower, consistent and
-upper p-values.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">Series</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <p class="rubric">References</p>
@@ -248,10 +233,21 @@ upper methodologies</td>
 </dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="descname">pvalues</code></dt>
-<dd><p>Returns Series containing three p-values corresponding to the
-lower, consistent and upper methodologies.</p>
+<dt id="arch.bootstrap.SPA.pvalues">
+<code class="descname">pvalues</code><a class="headerlink" href="#arch.bootstrap.SPA.pvalues" title="Permalink to this definition">¶</a></dt>
+<dd><p>P-values corresponding to the lower, consistent and
+upper p-values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>pvals</strong> – Three p-values corresponding to the lower bound, the consistent
+estimator, and the upper bound.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Series</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -274,8 +270,8 @@ to allow multiple calls.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>benchmark</strong> (<em>array-like</em>) – T element array of benchmark model <em>losses</em></li>
-<li><strong>models</strong> (<em>array-like</em>) – T  by k element array of alternative model <em>losses</em></li>
+<li><strong>benchmark</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – T element array of benchmark model <em>losses</em></li>
+<li><strong>models</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em>) – T by k element array of alternative model <em>losses</em></li>
 <li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value in (0,1) to use as the test size when implementing the
 comparison. Default value is 0.05.</li>
 <li><strong>block_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
@@ -301,21 +297,6 @@ the procedure requires k extra bootstraps.</li>
 <dd><p>Compute the set of superior models.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="arch.bootstrap.StepM.superior_models">
-<code class="descname">superior_models</code><a class="headerlink" href="#arch.bootstrap.StepM.superior_models" title="Permalink to this definition">¶</a></dt>
-<dd><p>List of superior models.  Contains column indices if models is an
-array or contains column names if models is a DataFrame.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <p class="rubric">References</p>
 <p>Romano, J. P., &amp; Wolf, M. (2005). “Stepwise multiple testing as formalized
 data snooping.” Econometrica, 73(4), 1237-1282.</p>
@@ -334,9 +315,20 @@ procedure.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="descname">superior_models</code></dt>
-<dd><p>Returns a list of the indices or column names of the superior models.</p>
+<dt id="arch.bootstrap.StepM.superior_models">
+<code class="descname">superior_models</code><a class="headerlink" href="#arch.bootstrap.StepM.superior_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of the indices or column names of the superior models</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>superior_models</strong> – List of superior models.  Contains column indices if models is an
+array or contains column names if models is a DataFrame.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -359,13 +351,13 @@ Familywise Error Rate rather than the usual test size.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>losses</strong> (<em>array-like</em>) – T by k array containing losses from a set of models</li>
+<li><strong>losses</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em>) – T by k array containing losses from a set of models</li>
 <li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value in (0,1) to use as the test size when implementing the
 mcs. Default value is 0.05.</li>
 <li><strong>block_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
 is used.  In general, this should be provided and chosen to be
 appropriate for the data.</li>
-<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – MCS test and elimination implementation method: either ‘max’ or ‘R’.
+<li><strong>method</strong> (<em>{'max'</em><em>, </em><em>'R'}</em><em>, </em><em>optional</em>) – MCS test and elimination implementation method, either ‘max’ or ‘R’.
 Default is ‘R’.</li>
 <li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</li>
 <li><strong>bootstrap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
@@ -377,49 +369,6 @@ Default is ‘R’.</li>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="arch.bootstrap.MCS.pvalues">
-<code class="descname">pvalues</code><a class="headerlink" href="#arch.bootstrap.MCS.pvalues" title="Permalink to this definition">¶</a></dt>
-<dd><p>DataFrame where the index is the model index (column or name)
-containing the smallest size where the model is in the MCS.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="arch.bootstrap.MCS.included">
-<code class="descname">included</code><a class="headerlink" href="#arch.bootstrap.MCS.included" title="Permalink to this definition">¶</a></dt>
-<dd><p>List of column indices or names of the included models</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="arch.bootstrap.MCS.excluded">
-<code class="descname">excluded</code><a class="headerlink" href="#arch.bootstrap.MCS.excluded" title="Permalink to this definition">¶</a></dt>
-<dd><p>List of column indices or names of the excluded models</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="method">
 <dt id="arch.bootstrap.MCS.compute">
 <code class="descname">compute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MCS.compute" title="Permalink to this definition">¶</a></dt>
@@ -472,7 +421,7 @@ Econometrica, 79(2), 453-497.</p>
         <li class="right" >
           <a href="multiple-comparison_examples.html" title="Multiple Comparisons"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.5.0+22.g5dac4a5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.5.0+24.g03dc09a documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="multiple-comparisons.html" >Multiple Comparison Procedures</a> &#187;</li> 
       </ul>
     </div>
