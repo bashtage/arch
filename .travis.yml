@@ -5,10 +5,6 @@ language: python
 
 env:
   global:
-    - CYTHON=
-    - PATSY=
-    - OPTIONAL=
-    - NUMBA=
     - COVERAGE=false
     - USE_NUMBA=true
     - STATSMODELS_MASTER=false
@@ -28,14 +24,14 @@ matrix:
       - COVERAGE=true
   - python: 2.7
     env:
-      - PYTHON=3.7
-      - MATPLOTLIB=3
-      - COVERAGE=true
-  - python: 2.7
-    env:
       - PYTHON=3.5
       - COVERAGE=true
       - MATPLOTLIB=2
+  - python: 2.7
+    env:
+      - PYTHON=3.7
+      - MATPLOTLIB=3
+      - COVERAGE=true
   - python: 2.7
     env:
       - PYTHON=3.6
@@ -72,50 +68,51 @@ before_install:
   - mkdir -p $HOME/.config/matplotlib
   # Build package list to avoid empty package=versions
   - PKGS="python=${PYTHON}"
-  - PKGS="${PKGS} numpy"; if [[ ${NUMPY} ]]; then PKGS="${PKGS}=${NUMPY}"; fi;
-  - PKGS="${PKGS} scipy"; if [[ ${SCIPY} ]]; then PKGS="${PKGS}=${SCIPY}"; fi;
-  - PKGS="${PKGS} patsy"; if [[ ${PATSY} ]]; then PKGS="${PKGS}=${PATSY}"; fi;
-  - PKGS="${PKGS} pandas"; if [[ ${PANDAS} ]]; then PKGS="${PKGS}=${PANDAS}"; fi;
-  - PKGS="${PKGS} Cython"; if [[ ${CYTHON} ]]; then PKGS="${PKGS}=${CYTHON}"; fi;
-  - if [[ ${MATPLOTLIB} ]]; then PKGS="${PKGS} matplotlib=${MATPLOTLIB}"; fi;
-  - PKGS="${PKGS} statsmodels"; if [[ ${STATSMODELS} ]]; then PKGS="${PKGS}=${STATSMODELS}"; fi;
-  - if [[ ${USE_NUMBA} = true ]]; then PKGS="${PKGS} numba"; if [[ ${NUMBA} ]]; then PKGS="${PKGS}=${NUMBA}";  fi; fi;
-  - conda create --yes --quiet -n arch-test ${PKGS} ${OPTIONAL} statsmodels
+  - PKGS="${PKGS} numpy"; if [[ -n ${NUMPY} ]]; then PKGS="${PKGS}=${NUMPY}"; fi;
+  - PKGS="${PKGS} scipy"; if [[ -n ${SCIPY} ]]; then PKGS="${PKGS}=${SCIPY}"; fi;
+  - PKGS="${PKGS} patsy"; if [[ -n ${PATSY} ]]; then PKGS="${PKGS}=${PATSY}"; fi;
+  - PKGS="${PKGS} pandas"; if [[ -n ${PANDAS} ]]; then PKGS="${PKGS}=${PANDAS}"; fi;
+  - PKGS="${PKGS} Cython"; if [[ -n ${CYTHON} ]]; then PKGS="${PKGS}=${CYTHON}"; fi;
+  - if [[  -n ${MATPLOTLIB} ]]; then PKGS="${PKGS} matplotlib=${MATPLOTLIB}"; fi;
+  - PKGS="${PKGS} statsmodels"; if [[ -n ${STATSMODELS} ]]; then PKGS="${PKGS}=${STATSMODELS}"; fi;
+  - if [[ ${USE_NUMBA} = true ]]; then PKGS="${PKGS} numba"; if [[ -n ${NUMBA} ]]; then PKGS="${PKGS}=${NUMBA}";  fi; fi;
+  - echo conda create --yes --quiet -n arch-test ${PKGS}
+  - conda create --yes --quiet -n arch-test ${PKGS}
   - source activate arch-test
   - pip install flake8 nbconvert nbformat pytest coverage coveralls pytest-cov codecov pytest-xdist
-  - if [[ ${STATSMODELS_MASTER} = true ]]; then sh ./ci/statsmodels-master.sh; fi;
+  - if [[ "$STATSMODELS_MASTER" == true ]]; then sh ./ci/statsmodels-master.sh; fi;
   - |
-    if [[ ${DOCBUILD} = true ]]; then 
+    if [[ "$DOCBUILD" == true ]]; then
       conda install sphinx ipython numpydoc jupyter seaborn
       pip install doctr nbsphinx guzzle_sphinx_theme -q
       sudo apt-get install -y enchant
       pip install sphinxcontrib-spelling
     fi
-  - export SRCDIR=${PWD}
+  - export SRCDIR="$PWD"
   - conda list
   - export PYTHONHASHSEED=0
   - export MKL_NUM_THREADS=1
-  - export ARCH_CYTHON_COVERAGE=${COVERAGE}
+  - export ARCH_CYTHON_COVERAGE="$COVERAGE"
+  - if [[ "$COVERAGE" == true ]]; then export COVERAGE_OPTS="--cov-config .coveragerc --cov=arch"; fi
 
 install:
   - python setup.py develop
 
 script:
   - set -e
-  - pytest --cov-config .coveragerc --cov=arch arch --durations=10
+  - pytest -r a ${COVERAGE_OPTS} arch --durations=10
   - python ci/performance.py
   - |
-    if [[ ${DOCBUILD} = true ]]; then
+    if [[ "$DOCBUILD" = true ]]; then
       python setup.py install
       cd doc
       make html
       cd ..
-      if [[ ${TRAVIS_BRANCH} = "master" || ! -z ${TRAVIS_TAG} ]]; then
+      if [[ "$TRAVIS_BRANCH" = "master" || ! -z "$TRAVIS_TAG" ]]; then
         doctr deploy doc --build-tags
       fi
     fi
   - flake8 arch
 
 after_success:
-  - if [[ ${COVERAGE} = true ]]; then coveralls --rcfile=${SRCDIR}/.coveragerc; fi
-  - if [[ ${COVERAGE} = true ]]; then codecov; fi
+  - if [[ "$COVERAGE" = true ]]; then codecov; coveralls --rcfile="$SRCDIR"/.coveragerc; fi
