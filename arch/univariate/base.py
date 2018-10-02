@@ -692,7 +692,7 @@ class ARCHModel(object):
 
         Returns
         -------
-        forecasts : DataFrame
+        forecasts : ARCHModelForecast
             t by h data frame containing the forecasts.  The alignment of the
             forecasts is controlled by `align`.
 
@@ -735,7 +735,7 @@ class _SummaryRepr(object):
     """Base class for returning summary as repr and str"""
 
     def summary(self):
-        return Summary()
+        raise NotImplementedError("Subclasses must implement")
 
     def __repr__(self):
         out = self.__str__() + '\n'
@@ -1086,7 +1086,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         Returns
         -------
-        forecasts : DataFrame
+        forecasts : ARCHModelForecast
             t by h data frame containing the forecasts.  The alignment of the
             forecasts is controlled by `align`.
 
