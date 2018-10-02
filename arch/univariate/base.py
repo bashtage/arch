@@ -301,7 +301,7 @@ class ARCHModel(object):
 
         Parameters
         ----------
-        params: ndarray-like
+        params : {ndarray, Series}
             User specified parameters to use when generating the result. Must
             have the correct number of parameters for a given choice of mean
             model, volatility model and distribution.
@@ -645,7 +645,7 @@ class ARCHModel(object):
         inv_hess = np.linalg.inv(hess)
         if robust:
             kwargs['individual'] = True
-            scores = approx_fprime(params, self._loglikelihood, kwargs=kwargs)
+            scores = approx_fprime(params, self._loglikelihood, kwargs=kwargs)  # type: np.ndarray
             score_cov = np.cov(scores.T)
             return inv_hess.dot(score_cov).dot(inv_hess) / nobs
         else:
@@ -760,9 +760,9 @@ class ARCHModelFixedResult(_SummaryRepr):
         contain nan-values in locations not used in estimation
     volatility : ndarray
         Conditional volatility from model
-    dep_var: Series
+    dep_var : Series
         Dependent variable
-    names: list (str)
+    names : list (str)
         Model parameter names
     loglikelihood : float
         Loglikelihood at specified parameters
@@ -1240,9 +1240,9 @@ class ARCHModelResult(ARCHModelFixedResult):
         Conditional volatility from model
     cov_type : str
         String describing the covariance estimator used
-    dep_var: Series
+    dep_var : Series
         Dependent variable
-    names: list (str)
+    names : list (str)
         Model parameter names
     loglikelihood : float
         Loglikelihood at estimated parameters

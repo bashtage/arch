@@ -54,18 +54,18 @@ def _simple_direct_gjrgarch_forecaster(resids, params, p, o, q, backcast, var_bo
 
     Parameters
     ----------
-    resids : array
-    params : array
+    resids : ndarray
+    params : ndarray
     p : int
     o : int
     q : int
     backcast : float
-    var_bounds : array
+    var_bounds : ndarray
     horizon : int
 
     Returns
     -------
-    forecasts : array
+    forecasts : ndarray
 
     """
     m = max([p, o, q])
@@ -112,7 +112,7 @@ class TestVarianceForecasts(TestCase):
     def setup_class(cls):
         cls.rng = RandomState(12345)
         cls.t = 1000
-        cls.resid = cls.rng.randn(cls.t) * np.sqrt(10)
+        cls.resid = cls.rng.standard_normal(cls.t) * np.sqrt(10)
 
     def test_constant_variance_forecast(self):
         vol = ConstantVariance()
@@ -702,7 +702,7 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecast.shocks, shocks)
 
         with pytest.raises(ValueError):
-            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=5)
+            vol.forecast(params, resids, backcast, var_bounds, horizon=5)
 
     def test_egarch_101_forecast(self):
         t = self.t
@@ -1193,7 +1193,6 @@ class TestVarianceForecasts(TestCase):
         assert np.all(np.isnan(forecast.shocks[:100]))
 
     def test_gjrgarch222_simulation(self):
-        t = self.t
         vol = GARCH(p=2, o=2, q=2)
         params = np.array([10.0, 0.05, 0.03, 0.1, 0.05, 0.3, 0.2])
         dist = Normal(self.rng)
@@ -1556,7 +1555,7 @@ class TestBootstrapRng(TestCase):
         cls.rng = RandomState(12345)
 
     def test_bs_rng(self):
-        y = self.rng.rand(1000)
+        y = self.rng.random_sample(1000)
         bs_rng = BootstrapRng(y, 100, random_state=self.rng)
         rng = bs_rng.rng()
         size = (1231, 13)
@@ -1572,14 +1571,14 @@ class TestBootstrapRng(TestCase):
             assert_allclose(expected[i], output[i])
 
     def test_bs_rng_errors(self):
-        y = self.rng.rand(1000)
+        y = self.rng.random_sample(1000)
         bs_rng = BootstrapRng(y, 100)
         rng = bs_rng.rng()
         with pytest.raises(IndexError):
             for _ in range(100, 1001):
                 rng(1)
 
-        y = self.rng.rand(1000)
+        y = self.rng.random_sample(1000)
         with pytest.raises(ValueError):
             BootstrapRng(y, 0)
 

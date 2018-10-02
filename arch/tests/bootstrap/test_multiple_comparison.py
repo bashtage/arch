@@ -329,7 +329,7 @@ class TestMCS(object):
             include = list(set(list(range(10))).difference(removed))
             include.sort()
             pval, drop_index = r_step(losses[:, np.array(include)],
-                                      mcs._bootsrap_indices)
+                                      mcs._bootstrap_indices)
             pvals[i] = pval if i == 0 else np.max([pvals[i - 1], pval])
             indices[i] = include[drop_index]
         direct = pd.DataFrame(pvals,
@@ -372,7 +372,7 @@ class TestMCS(object):
             include = list(set(list(range(10))).difference(removed))
             include.sort()
             pval, drop_index, _ = max_step(losses[:, np.array(include)],
-                                           mcs._bootsrap_indices)
+                                           mcs._bootstrap_indices)
             pvals[i] = pval if i == 0 else np.max([pvals[i - 1], pval])
             indices[i] = include[drop_index]
         direct = pd.DataFrame(pvals,

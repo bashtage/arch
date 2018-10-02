@@ -58,7 +58,7 @@ def _select_best_ic(method, nobs, sigma2, tstat):
     -------
     icbest : float
         Minimum value of the information criteria
-    lag: int
+    lag : int
         The lag length that maximizes the information criterion.
     """
     llf = -nobs / 2.0 * (log(2 * pi) + log(sigma2) + 1)
@@ -99,7 +99,7 @@ def _autolag_ols_low_memory(y, maxlag, trend, method):
     -------
     icbest : float
         Minimum value of the information criteria
-    lag: int
+    lag : int
         The lag length that maximizes the information criterion.
 
     Notes
@@ -186,7 +186,7 @@ def _autolag_ols(endog, exog, startlag, maxlag, method):
     -------
     icbest : float
         Minimum value of the information criteria
-    lag: int
+    lag : int
         The lag length that maximizes the information criterion.
 
     Notes
@@ -515,7 +515,7 @@ class ADF(UnitRootTest):
         'AIC' - Select the minimum of the Akaike IC
         'BIC' - Select the minimum of the Schwarz/Bayesian IC
         't-stat' - Select the minimum of the Schwarz/Bayesian IC
-    low_memory: bool
+    low_memory : bool
         Flag indicating whether to use a low memory implementation of the
         lag selection algorithm. The low memory algorithm is slower than
         the standard algorithm but will use 2-4% of the memory required for
@@ -1346,7 +1346,7 @@ def mackinnonp(stat, regression="c", num_unit_roots=1, dist_type='ADF-t'):
     return norm.cdf(polyval(poly_coef[::-1], stat))
 
 
-def mackinnoncrit(num_unit_roots=1, regression="c", nobs=inf,
+def mackinnoncrit(num_unit_roots=1, regression='c', nobs=inf,
                   dist_type='ADF-t'):
     """
     Returns the critical values for cointegrating and the ADF test.
@@ -1362,17 +1362,17 @@ def mackinnoncrit(num_unit_roots=1, regression="c", nobs=inf,
         non-cointegration is being tested.  For N > 12, the critical values
         are linearly interpolated (not yet implemented).  For the ADF test,
         N = 1.
-    regression : {'c', 'tc', 'ctt', 'nc'}
+    regression : {'c', 'tc', 'ctt', 'nc'}, optional
         Following MacKinnon (1996), these stand for the type of regression run.
         'c' for constant and no trend, 'tc' for constant with a linear trend,
         'ctt' for constant with a linear and quadratic trend, and 'nc' for
         no constant.  The values for the no constant case are taken from the
         1996 paper, as they were not updated for 2010 due to the unrealistic
         assumptions that would underlie such a case.
-    nobs : {int, np.inf}
+    nobs : {int, np.inf}, optional
         This is the sample size.  If the sample size is numpy.inf, then the
         asymptotic critical values are returned.
-    dist_type: {'adf-t', 'adf-z', 'dfgls'}
+    dist_type : {'adf-t', 'adf-z', 'dfgls'}, optional
         Type of test statistic
 
     Returns
