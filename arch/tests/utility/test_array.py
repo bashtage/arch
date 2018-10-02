@@ -169,15 +169,10 @@ class TestUtils(TestCase):
         y = Series(np.arange(3000.0), index=dr)
         date_index = y.index
         date = y.index[1000]
-
-        try:
-            date_pydt = date.to_pydatetime()
-        except AttributeError:
-            # Old pandas
-            date_pydt = date.to_datetime()
-
+        date_pydt = date.to_pydatetime()
         date_npdt = date.to_datetime64()
         date_str = date_pydt.strftime('%Y-%m-%d')
+
         index = date_to_index(date, date_index)
         index_pydt = date_to_index(date_pydt, date_index)
         index_npdt = date_to_index(date_npdt, date_index)

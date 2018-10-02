@@ -357,6 +357,8 @@ class UnitRootTest(object):
         """Resets the unit root test so that it will be recomputed
         """
         self._stat = None
+        print(self._stat is None)
+        assert self._stat is None
 
     def _compute_if_needed(self):
         """Checks whether the statistic needs to be computed, and computed if
@@ -642,6 +644,9 @@ class ADF(UnitRootTest):
 
     @max_lags.setter
     def max_lags(self, value):
+        if self._max_lags != value:
+            self._reset()
+            self._lags = None
         self._max_lags = value
 
 
@@ -724,7 +729,7 @@ class DFGLS(UnitRootTest):
     """
 
     def __init__(self, y, lags=None, trend='c',
-                 max_lags=None, method='AIC', low_memory=False):
+                 max_lags=None, method='AIC', low_memory=None):
         valid_trends = ('c', 'ct')
         super(DFGLS, self).__init__(y, lags, trend, valid_trends)
         self._max_lags = max_lags
@@ -809,6 +814,9 @@ class DFGLS(UnitRootTest):
 
     @max_lags.setter
     def max_lags(self, value):
+        if self._max_lags != value:
+            self._reset()
+            self._lags = None
         self._max_lags = value
 
 
