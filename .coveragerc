@@ -21,6 +21,8 @@ exclude_lines =
     pass
     # Ignore failure messages
     pytest.xfail
+    # Ignore ImportError protection
+    except ImportError
 include = */arch/*
 omit =
     */_version.py

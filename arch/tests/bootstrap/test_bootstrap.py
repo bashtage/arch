@@ -25,6 +25,11 @@ from arch.bootstrap.base import _loo_jackknife
 
 
 class TestBootstrap(TestCase):
+
+    @staticmethod
+    def func(y, axis=0):
+        return y.mean(axis=axis)
+
     @classmethod
     def setup_class(cls):
         warnings.simplefilter("always", RuntimeWarning)
@@ -37,11 +42,6 @@ class TestBootstrap(TestCase):
         cls.y_series = pd.Series(cls.y)
         cls.z_df = pd.DataFrame(cls.z)
         cls.x_df = pd.DataFrame(cls.x)
-
-        def func(y):
-            return y.mean(axis=0)
-
-        cls.func = func
 
     def test_numpy(self):
         x, y, z = self.x, self.y, self.z
@@ -179,23 +179,17 @@ class TestBootstrap(TestCase):
             IIDBootstrap(index=x)
         bs = IIDBootstrap(y)
 
-        def func(y):
-            return y.mean(axis=0)
-
         with pytest.raises(ValueError):
-            bs.conf_int(func, method='unknown')
+            bs.conf_int(self.func, method='unknown')
         with pytest.raises(ValueError):
-            bs.conf_int(func, tail='dragon')
+            bs.conf_int(self.func, tail='dragon')
         with pytest.raises(ValueError):
-            bs.conf_int(func, size=95)
+            bs.conf_int(self.func, size=95)
 
     def test_cov(self):
-        def func(y):
-            return y.mean(axis=0)
-
         bs = IIDBootstrap(self.x)
         num_bootstrap = 10
-        cov = bs.cov(func=func, reps=num_bootstrap, recenter=False)
+        cov = bs.cov(func=self.func, reps=num_bootstrap, recenter=False)
         bs.reset()
 
         results = np.zeros((num_bootstrap, 2))
@@ -208,15 +202,15 @@ class TestBootstrap(TestCase):
         assert_allclose(cov, direct_cov)
 
         bs.reset()
-        cov = bs.cov(func=func, recenter=True, reps=num_bootstrap)
+        cov = bs.cov(func=self.func, recenter=True, reps=num_bootstrap)
         errors = results - results.mean(axis=0)
         direct_cov = errors.T.dot(errors) / num_bootstrap
         assert_allclose(cov, direct_cov)
 
         bs = IIDBootstrap(self.x_df)
-        cov = bs.cov(func=func, reps=num_bootstrap, recenter=False)
+        cov = bs.cov(func=self.func, reps=num_bootstrap, recenter=False)
         bs.reset()
-        var = bs.var(func=func, reps=num_bootstrap, recenter=False)
+        var = bs.var(func=self.func, reps=num_bootstrap, recenter=False)
         bs.reset()
         results = np.zeros((num_bootstrap, 2))
         count = 0
@@ -229,7 +223,7 @@ class TestBootstrap(TestCase):
         assert_allclose(var, np.diag(direct_cov))
 
         bs.reset()
-        cov = bs.cov(func=func, recenter=True, reps=num_bootstrap)
+        cov = bs.cov(func=self.func, recenter=True, reps=num_bootstrap)
         errors = results - results.mean(axis=0)
         direct_cov = errors.T.dot(errors) / num_bootstrap
         assert_allclose(cov, direct_cov)
@@ -238,23 +232,20 @@ class TestBootstrap(TestCase):
         num_bootstrap = 200
         bs = IIDBootstrap(self.x)
 
-        def func(y):
-            return y.mean(axis=0)
-
-        ci = bs.conf_int(func, reps=num_bootstrap, size=0.90, method='basic')
+        ci = bs.conf_int(self.func, reps=num_bootstrap, size=0.90, method='basic')
         bs.reset()
-        ci_u = bs.conf_int(func, tail='upper', reps=num_bootstrap, size=0.95,
+        ci_u = bs.conf_int(self.func, tail='upper', reps=num_bootstrap, size=0.95,
                            method='basic')
         bs.reset()
-        ci_l = bs.conf_int(func, tail='lower', reps=num_bootstrap, size=0.95,
+        ci_l = bs.conf_int(self.func, tail='lower', reps=num_bootstrap, size=0.95,
                            method='basic')
         bs.reset()
         results = np.zeros((num_bootstrap, 2))
         count = 0
         for pos, _ in bs.bootstrap(num_bootstrap):
-            results[count] = func(*pos)
+            results[count] = self.func(*pos)
             count += 1
-        mu = func(self.x)
+        mu = self.func(self.x)
         upper = mu + (mu - np.percentile(results, 5, axis=0))
         lower = mu + (mu - np.percentile(results, 95, axis=0))
 
@@ -272,22 +263,19 @@ class TestBootstrap(TestCase):
         num_bootstrap = 200
         bs = IIDBootstrap(self.x)
 
-        def func(y):
-            return y.mean(axis=0)
-
-        ci = bs.conf_int(func, reps=num_bootstrap, size=0.90,
+        ci = bs.conf_int(self.func, reps=num_bootstrap, size=0.90,
                          method='percentile')
         bs.reset()
-        ci_u = bs.conf_int(func, tail='upper', reps=num_bootstrap, size=0.95,
+        ci_u = bs.conf_int(self.func, tail='upper', reps=num_bootstrap, size=0.95,
                            method='percentile')
         bs.reset()
-        ci_l = bs.conf_int(func, tail='lower', reps=num_bootstrap, size=0.95,
+        ci_l = bs.conf_int(self.func, tail='lower', reps=num_bootstrap, size=0.95,
                            method='percentile')
         bs.reset()
         results = np.zeros((num_bootstrap, 2))
         count = 0
         for pos, _ in bs.bootstrap(num_bootstrap):
-            results[count] = func(*pos)
+            results[count] = self.func(*pos)
             count += 1
 
         upper = np.percentile(results, 95, axis=0)
@@ -307,20 +295,17 @@ class TestBootstrap(TestCase):
         num_bootstrap = 200
         bs = IIDBootstrap(self.x)
 
-        def func(y):
-            return y.mean(axis=0)
-
-        ci = bs.conf_int(func, reps=num_bootstrap, size=0.90,
+        ci = bs.conf_int(self.func, reps=num_bootstrap, size=0.90,
                          method='norm')
         bs.reset()
-        ci_u = bs.conf_int(func, tail='upper', reps=num_bootstrap, size=0.95,
+        ci_u = bs.conf_int(self.func, tail='upper', reps=num_bootstrap, size=0.95,
                            method='var')
         bs.reset()
-        ci_l = bs.conf_int(func, tail='lower', reps=num_bootstrap, size=0.95,
+        ci_l = bs.conf_int(self.func, tail='lower', reps=num_bootstrap, size=0.95,
                            method='cov')
         bs.reset()
-        cov = bs.cov(func, reps=num_bootstrap)
-        mu = func(self.x)
+        cov = bs.cov(self.func, reps=num_bootstrap)
+        mu = self.func(self.x)
         std_err = np.sqrt(np.diag(cov))
         upper = mu + stats.norm.ppf(0.95) * std_err
         lower = mu + stats.norm.ppf(0.05) * std_err
@@ -338,20 +323,16 @@ class TestBootstrap(TestCase):
         num_bootstrap = 100
         bs = IIDBootstrap(self.x)
 
-        def func(y):
-            return y.mean(axis=0)
-
-        ci = bs.conf_int(func, reps=num_bootstrap)
+        ci = bs.conf_int(self.func, reps=num_bootstrap)
         old_results = bs._results.copy()
-        ci_reuse = bs.conf_int(func, reps=num_bootstrap, reuse=True)
+        ci_reuse = bs.conf_int(self.func, reps=num_bootstrap, reuse=True)
         results = bs._results
         assert_equal(results, old_results)
         assert_equal(ci, ci_reuse)
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always", RuntimeWarning)
             warnings.simplefilter("always")
-            bs.conf_int(func, tail='lower', reps=num_bootstrap // 2,
-                        reuse=True)
+            bs.conf_int(self.func, tail='lower', reps=num_bootstrap // 2, reuse=True)
             assert_equal(len(w), 1)
 
     def test_studentized(self):
@@ -359,23 +340,20 @@ class TestBootstrap(TestCase):
         bs = IIDBootstrap(self.x)
         bs.seed(23456)
 
-        def func(y):
-            return y.mean(axis=0)
-
         def std_err_func(mu, y):
             errors = y - mu
             var = (errors ** 2.0).mean(axis=0)
             return np.sqrt(var / y.shape[0])
 
-        ci = bs.conf_int(func, reps=num_bootstrap, method='studentized',
+        ci = bs.conf_int(self.func, reps=num_bootstrap, method='studentized',
                          std_err_func=std_err_func)
         bs.reset()
-        base = func(self.x)
+        base = self.func(self.x)
         results = np.zeros((num_bootstrap, 2))
         stud_results = np.zeros((num_bootstrap, 2))
         count = 0
         for pos, _ in bs.bootstrap(reps=num_bootstrap):
-            results[count] = func(*pos)
+            results[count] = self.func(*pos)
             std_err = std_err_func(results[count], *pos)
             stud_results[count] = (results[count] - base) / std_err
             count += 1
@@ -393,20 +371,20 @@ class TestBootstrap(TestCase):
         assert_allclose(ci, ci_direct)
 
         bs.reset()
-        ci = bs.conf_int(func, reps=num_bootstrap, method='studentized',
+        ci = bs.conf_int(self.func, reps=num_bootstrap, method='studentized',
                          studentize_reps=50)
 
         bs.reset()
-        base = func(self.x)
+        base = self.func(self.x)
         results = np.zeros((num_bootstrap, 2))
         stud_results = np.zeros((num_bootstrap, 2))
         count = 0
         for pos, _ in bs.bootstrap(reps=num_bootstrap):
-            results[count] = func(*pos)
+            results[count] = self.func(*pos)
             inner_bs = IIDBootstrap(*pos)
             seed = bs.random_state.randint(2 ** 31 - 1)
             inner_bs.seed(seed)
-            cov = inner_bs.cov(func, reps=50)
+            cov = inner_bs.cov(self.func, reps=50)
             std_err = np.sqrt(np.diag(cov))
             stud_results[count] = (results[count] - base) / std_err
             count += 1
@@ -426,7 +404,7 @@ class TestBootstrap(TestCase):
 
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
-            bs.conf_int(func, reps=num_bootstrap, method='studentized',
+            bs.conf_int(self.func, reps=num_bootstrap, method='studentized',
                         std_err_func=std_err_func, reuse=True)
             assert_equal(len(w), 1)
 
@@ -435,12 +413,9 @@ class TestBootstrap(TestCase):
         bs = IIDBootstrap(self.x)
         bs.seed(23456)
 
-        def func(y):
-            return y.mean(axis=0)
-
-        ci = bs.conf_int(func, reps=num_bootstrap, method='bc')
+        ci = bs.conf_int(self.func, reps=num_bootstrap, method='bc')
         bs.reset()
-        ci_db = bs.conf_int(func, reps=num_bootstrap, method='debiased')
+        ci_db = bs.conf_int(self.func, reps=num_bootstrap, method='debiased')
         assert_equal(ci, ci_db)
         base, results = bs._base, bs._results
         p = np.zeros(2)
@@ -522,22 +497,16 @@ class TestBootstrap(TestCase):
         bs.seed(23456)
         num_bootstrap = 100
 
-        def func(y, axis=0):
-            return y.mean(axis=axis)
-
-        bs.cov(func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
+        bs.cov(self.func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
 
         bs = IIDBootstrap(axis=self.x)
         bs.seed(23456)
         with pytest.raises(ValueError):
-            bs.cov(func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
+            bs.cov(self.func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
 
     def test_jackknife(self):
-        def func(x):
-            return x.mean(axis=0)
-
         x = self.x
-        results = _loo_jackknife(func, len(x), (x,), {})
+        results = _loo_jackknife(self.func, len(x), (x,), {})
 
         direct_results = np.zeros_like(x)
         for i in range(len(x)):
@@ -549,15 +518,15 @@ class TestBootstrap(TestCase):
                 temp = list(x[:i])
                 temp.extend(list(x[i + 1:]))
                 y = np.array(temp)
-            direct_results[i] = func(y)
+            direct_results[i] = self.func(y)
         assert_allclose(direct_results, results)
 
         x = self.x_df
-        results_df = _loo_jackknife(func, len(x), (x,), {})
+        results_df = _loo_jackknife(self.func, len(x), (x,), {})
         assert_equal(results, results_df)
 
         y = self.y
-        results = _loo_jackknife(func, len(y), (y,), {})
+        results = _loo_jackknife(self.func, len(y), (y,), {})
 
         direct_results = np.zeros_like(y)
         for i in range(len(y)):
@@ -569,11 +538,11 @@ class TestBootstrap(TestCase):
                 temp = list(y[:i])
                 temp.extend(list(y[i + 1:]))
                 z = np.array(temp)
-            direct_results[i] = func(z)
+            direct_results[i] = self.func(z)
         assert_allclose(direct_results, results)
 
         y = self.y_series
-        results_series = _loo_jackknife(func, len(y), (y,), {})
+        results_series = _loo_jackknife(self.func, len(y), (y,), {})
         assert_allclose(results, results_series)
 
     def test_bca(self):
@@ -581,10 +550,7 @@ class TestBootstrap(TestCase):
         bs = IIDBootstrap(self.x)
         bs.seed(23456)
 
-        def func(y):
-            return y.mean(axis=0)
-
-        ci_direct = bs.conf_int(func, reps=num_bootstrap, method='bca')
+        ci_direct = bs.conf_int(self.func, reps=num_bootstrap, method='bca')
         bs.reset()
         base, results = bs._base, bs._results
         p = np.zeros(2)
@@ -594,9 +560,9 @@ class TestBootstrap(TestCase):
         b = b[:, None]
         q = stats.norm.ppf(np.array([0.025, 0.975]))
 
-        base = func(self.x)
+        base = self.func(self.x)
         nobs = self.x.shape[0]
-        jk = _loo_jackknife(func, nobs, [self.x], {})
+        jk = _loo_jackknife(self.func, nobs, [self.x], {})
         u = (nobs - 1) * (jk - base)
         u2 = np.sum(u * u, 0)
         u3 = np.sum(u * u * u, 0)
@@ -623,14 +589,11 @@ class TestBootstrap(TestCase):
         bs = IIDBootstrap(self.x)
         bs.seed(23456)
 
-        def func(y):
-            return y.mean(0)
-
-        results = bs.apply(func, 1000)
+        results = bs.apply(self.func, 1000)
         bs.reset(23456)
         direct_results = []
         for pos, _ in bs.bootstrap(1000):
-            direct_results.append(func(*pos))
+            direct_results.append(self.func(*pos))
         direct_results = np.array(direct_results)
         assert_equal(results, direct_results)
 
@@ -638,14 +601,11 @@ class TestBootstrap(TestCase):
         bs = IIDBootstrap(self.y_series)
         bs.seed(23456)
 
-        def func(y):
-            return y.mean(0)
-
-        results = bs.apply(func, 1000)
+        results = bs.apply(self.func, 1000)
         bs.reset(23456)
         direct_results = []
         for pos, _ in bs.bootstrap(1000):
-            direct_results.append(func(*pos))
+            direct_results.append(self.func(*pos))
         direct_results = np.array(direct_results)
         direct_results = direct_results[:, None]
         assert_equal(results, direct_results)

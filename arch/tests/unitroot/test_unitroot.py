@@ -18,7 +18,7 @@ from statsmodels.tsa.stattools import _autolag, lagmat
 from arch.compat.python import iteritems
 from arch.unitroot import ADF, DFGLS, PhillipsPerron, KPSS, VarianceRatio
 from arch.unitroot.critical_values.dickey_fuller import tau_2010
-from arch.unitroot.unitroot import _autolag_ols
+from arch.unitroot.unitroot import _autolag_ols, mackinnonp, mackinnoncrit
 
 DECIMAL_5 = 5
 DECIMAL_4 = 4
@@ -154,7 +154,10 @@ class TestUnitRoot(TestCase):
     def test_dfgls_auto(self):
         dfgls = DFGLS(self.inflation, trend='ct', method='BIC', max_lags=3)
         assert_equal(dfgls.lags, 2)
+        assert_equal(dfgls.max_lags, 3)
         assert_almost_equal(dfgls.stat, -2.9035369, DECIMAL_4)
+        dfgls.max_lags = 1
+        assert_equal(dfgls.lags, 1)
 
     def test_dfgls_bad_trend(self):
         dfgls = DFGLS(self.inflation, trend='ct', method='BIC', max_lags=3)
@@ -162,6 +165,12 @@ class TestUnitRoot(TestCase):
             dfgls.trend = 'nc'
 
         assert dfgls != 0.0
+
+    def test_dfgls_auto_low_memory(self):
+        y = np.cumsum(self.rng.standard_normal(200000))
+        dfgls = DFGLS(y, trend='c', method='BIC', low_memory=None)
+        assert isinstance(dfgls.stat, float)
+        assert dfgls._low_memory
 
     def test_negative_lag(self):
         adf = ADF(self.inflation)
@@ -361,6 +370,9 @@ def test_trends_low_memory(trend):
     adf2 = ADF(y, trend=trend, low_memory=True, max_lags=16)
     assert adf.lags == adf2.lags
     assert adf.max_lags == 16
+    adf.max_lags = 1
+    assert_equal(adf.lags, 1)
+    assert_equal(adf.max_lags, 1)
 
 
 @pytest.mark.parametrize('trend', ['nc', 'c', 'ct', 'ctt'])
@@ -384,7 +396,7 @@ def test_unknown_method():
         ADF(y, method='unknown').stat
 
 
-def test_auto_lowmemoty():
+def test_auto_low_memory():
     rnd = np.random.RandomState(12345)
     y = np.cumsum(rnd.randn(250))
     adf = ADF(y, trend='ct')
@@ -392,3 +404,31 @@ def test_auto_lowmemoty():
     y = np.cumsum(rnd.randn(1000000))
     adf = ADF(y, trend='ct')
     assert adf._low_memory is True
+
+
+def test_mackinnonp_errors():
+    with pytest.raises(ValueError):
+        mackinnonp(-1.0, regression="c", num_unit_roots=2, dist_type='ADF-z')
+    with pytest.raises(ValueError):
+        mackinnonp(-1.0, dist_type='unknown')
+
+
+def test_mackinnonp_small():
+    val_large = mackinnonp(-7.0, regression="c", num_unit_roots=1, dist_type='adf-z')
+    val = mackinnonp(-10.0, regression="c", num_unit_roots=1, dist_type='adf-z')
+    assert val < val_large
+
+
+def test_mackinnonp_large():
+    val = mackinnonp(100.0, regression="c", num_unit_roots=1)
+    assert val == 1.0
+
+
+def test_mackinnoncrit_errors():
+    with pytest.raises(ValueError):
+        mackinnoncrit(regression='ttc')
+    with pytest.raises(ValueError):
+        mackinnoncrit(dist_type='unknown')
+    cv_50 = mackinnoncrit(nobs=50)
+    cv_inf = mackinnoncrit()
+    assert np.all(cv_50 <= cv_inf)
