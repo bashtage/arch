@@ -28,6 +28,14 @@ __all__ = ['GARCH', 'ARCH', 'HARCH', 'ConstantVariance', 'EWMAVariance', 'RiskMe
            'EGARCH', 'FixedVariance', 'BootstrapRng', 'MIDASHyperbolic', 'VolatilityProcess']
 
 
+def _common_names(p, o, q):
+    names = ['omega']
+    names.extend(['alpha[' + str(i + 1) + ']' for i in range(p)])
+    names.extend(['gamma[' + str(i + 1) + ']' for i in range(o)])
+    names.extend(['beta[' + str(i + 1) + ']' for i in range(q)])
+    return names
+
+
 class BootstrapRng(object):
     """
     Simple fake RNG used to transform bootstrap-based forecasting into a standard
@@ -910,11 +918,7 @@ class GARCH(VolatilityProcess):
         return svs[int(loc)]
 
     def parameter_names(self):
-        names = ['omega']
-        names.extend(['alpha[' + str(i + 1) + ']' for i in range(self.p)])
-        names.extend(['gamma[' + str(i + 1) + ']' for i in range(self.o)])
-        names.extend(['beta[' + str(i + 1) + ']' for i in range(self.q)])
-        return names
+        return _common_names(self.p, self.o, self.q)
 
     def _check_forecasting_method(self, method, horizon):
         if horizon == 1:
@@ -2132,11 +2136,7 @@ class EGARCH(VolatilityProcess):
         return svs[int(loc)]
 
     def parameter_names(self):
-        names = ['omega']
-        names.extend(['alpha[' + str(i + 1) + ']' for i in range(self.p)])
-        names.extend(['gamma[' + str(i + 1) + ']' for i in range(self.o)])
-        names.extend(['beta[' + str(i + 1) + ']' for i in range(self.q)])
-        return names
+        return _common_names(self.p, self.o, self.q)
 
     def _check_forecasting_method(self, method, horizon):
         if method == 'analytic' and horizon > 1:

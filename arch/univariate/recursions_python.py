@@ -16,6 +16,20 @@ __all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion',
 LNSIGMA_MAX = np.log(np.finfo(np.double).max) - .1
 
 
+def bounds_check_python(sigma2, var_bounds):
+    if sigma2 < var_bounds[0]:
+        sigma2 = var_bounds[0]
+    elif sigma2 > var_bounds[1]:
+        if not np.isinf(sigma2):
+            sigma2 = var_bounds[1] + np.log(sigma2 / var_bounds[1])
+        else:
+            sigma2 = var_bounds[1] + 1000
+    return sigma2
+
+
+bounds_check = jit(bounds_check_python, nopython=True)
+
+
 def harch_recursion_python(parameters, resids, sigma2, lags, nobs, backcast,
                            var_bounds):
     """
@@ -47,13 +61,8 @@ def harch_recursion_python(parameters, resids, sigma2, lags, nobs, backcast,
                     sigma2[t] += param * resids[t - j - 1] * resids[t - j - 1]
                 else:
                     sigma2[t] += param * backcast
-        if sigma2[t] < var_bounds[t, 0]:
-            sigma2[t] = var_bounds[t, 0]
-        elif sigma2[t] > var_bounds[t, 1]:
-            if not np.isinf(sigma2[t]):
-                sigma2[t] = var_bounds[t, 1] + np.log(sigma2[t] / var_bounds[t, 1])
-            else:
-                sigma2[t] = var_bounds[t, 1] + 1000
+
+        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
 
     return sigma2
 
@@ -90,13 +99,7 @@ def arch_recursion_python(parameters, resids, sigma2, p, nobs, backcast,
                 sigma2[t] += parameters[i + 1] * backcast
             else:
                 sigma2[t] += parameters[i + 1] * resids[t - i - 1] ** 2
-        if sigma2[t] < var_bounds[t, 0]:
-            sigma2[t] = var_bounds[t, 0]
-        elif sigma2[t] > var_bounds[t, 1]:
-            if not np.isinf(sigma2[t]):
-                sigma2[t] = var_bounds[t, 1] + np.log(sigma2[t] / var_bounds[t, 1])
-            else:
-                sigma2[t] = var_bounds[t, 1] + 1000
+        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
 
     return sigma2
 
@@ -158,13 +161,7 @@ def garch_recursion_python(parameters, fresids, sresids, sigma2, p, o, q, nobs,
             else:
                 sigma2[t] += parameters[loc] * sigma2[t - 1 - j]
             loc += 1
-        if sigma2[t] < var_bounds[t, 0]:
-            sigma2[t] = var_bounds[t, 0]
-        elif sigma2[t] > var_bounds[t, 1]:
-            if not np.isinf(sigma2[t]):
-                sigma2[t] = var_bounds[t, 1] + np.log(sigma2[t] / var_bounds[t, 1])
-            else:
-                sigma2[t] = var_bounds[t, 1] + 1000
+        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
 
     return sigma2
 
