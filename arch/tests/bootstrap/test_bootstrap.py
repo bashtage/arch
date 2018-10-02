@@ -216,6 +216,8 @@ class TestBootstrap(TestCase):
         bs = IIDBootstrap(self.x_df)
         cov = bs.cov(func=func, reps=num_bootstrap, recenter=False)
         bs.reset()
+        var = bs.var(func=func, reps=num_bootstrap, recenter=False)
+        bs.reset()
         results = np.zeros((num_bootstrap, 2))
         count = 0
         for data, _ in bs.bootstrap(num_bootstrap):
@@ -224,6 +226,7 @@ class TestBootstrap(TestCase):
         errors = results - self.x.mean(axis=0)
         direct_cov = errors.T.dot(errors) / num_bootstrap
         assert_allclose(cov, direct_cov)
+        assert_allclose(var, np.diag(direct_cov))
 
         bs.reset()
         cov = bs.cov(func=func, recenter=True, reps=num_bootstrap)
@@ -693,6 +696,16 @@ class TestBootstrap(TestCase):
                    '<strong>no. keyword inputs</strong>: 2,' + \
                    ' <strong>ID</strong>: ' + hex(id(bs)) + ')'
         assert_equal(bs._repr_html(), expected)
+
+    def test_uneven_sampling(self):
+        bs = MovingBlockBootstrap(block_size=31, y=self.y_series, x=self.x_df)
+        for _, kw in bs.bootstrap(10):
+            assert kw['y'].shape == self.y_series.shape
+            assert kw['x'].shape == self.x_df.shape
+        bs = CircularBlockBootstrap(block_size=31, y=self.y_series, x=self.x_df)
+        for _, kw in bs.bootstrap(10):
+            assert kw['y'].shape == self.y_series.shape
+            assert kw['x'].shape == self.x_df.shape
 
     @pytest.mark.skipif(not HAS_EXTENSION, reason='Extension not built.')
     def test_samplers(self):

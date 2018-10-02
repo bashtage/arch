@@ -51,7 +51,7 @@ def _ar_forecast(y, horizon, start_index, constant, arp, exogp=None, x=None):
 
     Returns
     -------
-    forecasts : array
+    forecasts : ndarray
     """
     t = y.shape[0]
     p = arp.shape[0]
@@ -413,7 +413,7 @@ class HARX(ARCHModel):
             raise ValueError("Input to lags must be non-negative")
 
         if lags.ndim == 0:
-            lags = np.arange(1, lags + 1)
+            lags = np.arange(1, int(lags) + 1)
 
         if lags.ndim == 1:
             if np.any(lags <= 0):
@@ -992,7 +992,7 @@ class ARX(HARX):
                 elif lags == 0:
                     lags = None
                 else:
-                    lags = np.arange(1, lags + 1)
+                    lags = np.arange(1, int(lags) + 1)
             if lags is not None:
                 if lags.ndim == 1:
                     lags = np.vstack((lags, lags))

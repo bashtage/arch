@@ -19,6 +19,8 @@ exclude_lines =
     except NotImplementedError
     # Ignore pass
     pass
+    # Ignore failure messages
+    pytest.xfail
 include = */arch/*
 omit =
     */_version.py

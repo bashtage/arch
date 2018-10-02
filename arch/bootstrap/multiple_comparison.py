@@ -68,7 +68,7 @@ class MCS(MultipleComparison):
 
     Parameters
     ----------
-    losses : array-like
+    losses : {ndarray, DataFrame}
         T by k array containing losses from a set of models
     size : float, optional
         Value in (0,1) to use as the test size when implementing the
@@ -77,8 +77,8 @@ class MCS(MultipleComparison):
         Length of window to use in the bootstrap.  If not provided, sqrt(T)
         is used.  In general, this should be provided and chosen to be
         appropriate for the data.
-    method : str, optional
-        MCS test and elimination implementation method: either 'max' or 'R'.
+    method : {'max', 'R'}, optional
+        MCS test and elimination implementation method, either 'max' or 'R'.
         Default is 'R'.
     reps : int, optional
         Number of bootstrap replications to uses.  Default is 1000.
@@ -87,17 +87,6 @@ class MCS(MultipleComparison):
         'stationary' or 'sb': Stationary bootstrap (Default)
         'circular' or 'cbb': Circular block bootstrap
         'moving block' or 'mbb': Moving block bootstrap
-
-
-    Attributes
-    ----------
-    pvalues : DataFrame
-        DataFrame where the index is the model index (column or name)
-        containing the smallest size where the model is in the MCS.
-    included : list
-        List of column indices or names of the included models
-    excluded : list
-        List of column indices or names of the excluded models
 
     Methods
     -------
@@ -138,7 +127,7 @@ class MCS(MultipleComparison):
         else:
             raise ValueError('Unknown bootstrap:' + bootstrap)
         self.bootstrap = bootstrap
-        self._bootsrap_indices = []  # For testing
+        self._bootstrap_indices = []  # For testing
         self._model = 'MCS'
         self._info = OrderedDict([('size', '{0:0.2f}'.format(self.size)),
                                   ('bootstrap', str(bootstrap)),
@@ -192,7 +181,7 @@ class MCS(MultipleComparison):
         bs = self.bootstrap
         for j, data in enumerate(bs.bootstrap(self.reps)):
             bs_index = data[0][0]  # Only element in pos data
-            self._bootsrap_indices.append(bs_index)  # For testing
+            self._bootstrap_indices.append(bs_index)  # For testing
             mean_losses_star = losses[bs_index].mean(0)[:, None]
             bootstrapped_mean_losses[j] = mean_losses_star - mean_losses_star.T
         # Recenter
@@ -241,7 +230,7 @@ class MCS(MultipleComparison):
         bs_avg_loss_errors = np.zeros((self.reps, self.k))
         for i, data in enumerate(self.bootstrap.bootstrap(self.reps)):
             bs_index = data[0][0]
-            self._bootsrap_indices.append(bs_index)  # For testing
+            self._bootstrap_indices.append(bs_index)  # For testing
             bs_errors = loss_errors[bs_index]
             avg_bs_errors = bs_errors.mean(0)
             avg_bs_errors -= avg_bs_errors.mean()
@@ -277,7 +266,12 @@ class MCS(MultipleComparison):
     @property
     def included(self):
         """
-        Returns a list of model indices that are included in the MCS
+        List of model indices that are included in the MCS
+
+        Returns
+        -------
+        included : list
+            List of column indices or names of the included models
         """
         self._has_been_computed()
         included = (self._pvalues.Pvalue > self.size)
@@ -288,7 +282,12 @@ class MCS(MultipleComparison):
     @property
     def excluded(self):
         """
-        Returns a list of model indices that are excluded from the MCS
+        List of model indices that are excluded from the MCS
+
+        Returns
+        -------
+        excluded : list
+            List of column indices or names of the excluded models
         """
         self._has_been_computed()
         excluded = (self._pvalues.Pvalue <= self.size)
@@ -299,8 +298,13 @@ class MCS(MultipleComparison):
     @property
     def pvalues(self):
         """
-        Returns a DataFrame containing model index and the smallest size
-        where it is in the MCS
+        Model p-values for inclusion in the MCS
+
+        Returns
+        -------
+        pvalues : DataFrame
+            DataFrame where the index is the model index (column or name)
+            containing the smallest size where the model is in the MCS.
         """
         self._has_been_computed()
         return self._pvalues
@@ -312,10 +316,10 @@ class StepM(MultipleComparison):
 
     Parameters
     ----------
-    benchmark : array-like
+    benchmark : {ndarray, Series}
         T element array of benchmark model *losses*
-    models : array-like
-        T  by k element array of alternative model *losses*
+    models : {ndarray, DataFrame}
+        T by k element array of alternative model *losses*
     size : float, optional
         Value in (0,1) to use as the test size when implementing the
         comparison. Default value is 0.05.
@@ -341,12 +345,6 @@ class StepM(MultipleComparison):
     -------
     compute
         Compute the set of superior models.
-
-    Attributes
-    ----------
-    superior_models : list
-        List of superior models.  Contains column indices if models is an
-        array or contains column names if models is a DataFrame.
 
     References
     ----------
@@ -422,7 +420,13 @@ class StepM(MultipleComparison):
     @property
     def superior_models(self):
         """
-        Returns a list of the indices or column names of the superior models.
+        List of the indices or column names of the superior models
+
+        Returns
+        -------
+        superior_models : list
+            List of superior models.  Contains column indices if models is an
+            array or contains column names if models is a DataFrame.
         """
         if self._superior_models is None:
             msg = 'compute must be called before accessing superior_models'
@@ -438,9 +442,9 @@ class SPA(MultipleComparison):
 
     Parameters
     ----------
-    benchmark : array-like
+    benchmark : {ndarray, Series}
         T element array of benchmark model *losses*
-    models : array-like
+    models : {ndarray, DataFrame}
         T  by k element array of alternative model *losses*
     block_size : int, optional
         Length of window to use in the bootstrap.  If not provided, sqrt(T)
@@ -472,12 +476,6 @@ class SPA(MultipleComparison):
     better_models
         Produce a list of column indices or names (if models is a DataFrame)
         that are rejected given a test size
-
-    Attributes
-    ----------
-    pvalues : Series
-        A set of three p-values corresponding to the lower, consistent and
-        upper p-values.
 
     References
     ----------
@@ -552,7 +550,7 @@ class SPA(MultipleComparison):
 
         Parameters
         ----------
-        selector : array
+        selector : ndarray
             Boolean array indicating which columns to use when computing the
             p-values.  This is primarily for use by StepM.
         """
@@ -593,8 +591,8 @@ class SPA(MultipleComparison):
         lower_mean[lower_mean < 0] = 0.0
         means = [lower_mean, consistent_mean, upper_mean]
         simulated_vals = np.zeros((self.k, self.reps, 3))
-        for i, bsdata in enumerate(self.bootstrap.bootstrap(self.reps)):
-            pos_arg, kw_arg = bsdata
+        for i, bs_data in enumerate(self.bootstrap.bootstrap(self.reps)):
+            pos_arg, kw_arg = bs_data
             loss_diff_star = pos_arg[0]
             for j, mean in enumerate(means):
                 simulated_vals[:, i, j] = loss_diff_star.mean(0) - mean
@@ -606,7 +604,7 @@ class SPA(MultipleComparison):
 
         Returns
         -------
-        var : array
+        var : ndarray
             Array containing the variances of each loss differential
         """
         ld = self._loss_diff
@@ -634,7 +632,7 @@ class SPA(MultipleComparison):
 
         Returns
         -------
-        valid : array
+        valid : ndarray
             Boolean array indicating columns relevant for consistent p-value
             calculation
         """
@@ -646,8 +644,14 @@ class SPA(MultipleComparison):
     @property
     def pvalues(self):
         """
-        Returns Series containing three p-values corresponding to the
-        lower, consistent and upper methodologies.
+        P-values corresponding to the lower, consistent and
+        upper p-values.
+
+        Returns
+        -------
+        pvals : Series
+            Three p-values corresponding to the lower bound, the consistent
+            estimator, and the upper bound.
         """
         self._check_compute()
         return pd.Series(list(self._pvalues.values()),

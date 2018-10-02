@@ -50,15 +50,14 @@ class Distribution(object):
 
         Returns
         -------
-        rvs : array
+        rvs : ndarray
             Simulated pseudo random variables
 
         Notes
         -----
         Must call `simulate` before using `_simulator`
         """
-        raise NotImplementedError(
-            'Subclasses must implement')  # pragma: no cover
+        raise NotImplementedError('Subclasses must implement')
 
     def simulate(self, parameters):
         """
@@ -66,7 +65,7 @@ class Distribution(object):
 
         Parameters
         ----------
-        parameters : array
+        parameters : ndarray
             Distribution parameters
 
         Returns
@@ -82,23 +81,22 @@ class Distribution(object):
         """
         Returns
         -------
-        A : array
+        A : ndarray
             Constraint loadings
-        b : array
+        b : ndarray
             Constraint values
 
         Notes
         -----
         Parameters satisfy the constraints A.dot(parameters)-b >= 0
         """
-        raise NotImplementedError(
-            'Subclasses must implement')  # pragma: no cover
+        raise NotImplementedError('Subclasses must implement')
 
     def bounds(self, resids):
         """
         Parameters
         ----------
-        resids : array
+        resids : ndarray
              Residuals to use when computing the bounds
 
         Returns
@@ -113,11 +111,11 @@ class Distribution(object):
         """
         Parameters
         ----------
-        parameters : array
+        parameters : ndarray
             Distribution shape parameters
-        resids : array
+        resids : ndarray
             nobs array of model residuals
-        sigma2 : array
+        sigma2 : ndarray
             nobs array of conditional variances
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
@@ -128,20 +126,19 @@ class Distribution(object):
         Returns the loglikelihood where resids are the "data",
         and parameters and sigma2 are inputs.
         """
-        raise NotImplementedError(
-            'Subclasses must implement')  # pragma: no cover
+        raise NotImplementedError('Subclasses must implement')
 
     def starting_values(self, std_resid):
         """
         Parameters
         ----------
-        std_resid : array
+        std_resid : ndarray
             Estimated standardized residuals to use in computing starting
             values for the shape parameter
 
         Returns
         -------
-        sv : array
+        sv : ndarray
             The estimated shape parameters for the distribution
 
         Notes
@@ -160,8 +157,7 @@ class Distribution(object):
         names : list (str)
             Parameter names
         """
-        raise NotImplementedError(
-            'Subclasses must implement')  # pragma: no cover
+        raise NotImplementedError('Subclasses must implement')
 
     def __str__(self):
         return self._description()
@@ -194,11 +190,12 @@ class Normal(Distribution):
 
         Parameters
         ----------
-        parameters : empty array
-            The normal likelihood has no shape parameters
-        resids  : array
+        parameters : ndarray
+            The normal likelihood has no shape parameters. Empty since the
+            standard normal has no shape parameters.
+        resids  : ndarray
             The residuals to use in the log-likelihood calculation
-        sigma2 : array
+        sigma2 : ndarray
             Conditional variances of resids
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
@@ -261,11 +258,11 @@ class StudentsT(Distribution):
 
         Parameters
         ----------
-        parameters : array
+        parameters : ndarray
             Shape parameter of the t distribution
-        resids  : array
+        resids  : ndarray
             The residuals to use in the log-likelihood calculation
-        sigma2 : array
+        sigma2 : ndarray
             Conditional variances of resids
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
@@ -304,13 +301,13 @@ class StudentsT(Distribution):
         """
         Parameters
         ----------
-        std_resid : array
+        std_resid : ndarray
             Estimated standardized residuals to use in computing starting
             values for the shape parameter
 
         Returns
         -------
-        sv : array
+        sv : ndarray
             Array containing starting valuer for shape parameter
 
         Notes
@@ -378,11 +375,11 @@ class SkewStudent(Distribution):
 
         Parameters
         ----------
-        parameters : array
+        parameters : ndarray
             Shape parameter of the skew-t distribution
-        resids  : array
+        resids  : ndarray
             The residuals to use in the log-likelihood calculation
-        sigma2 : array
+        sigma2 : ndarray
             Conditional variances of resids
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
@@ -440,13 +437,13 @@ class SkewStudent(Distribution):
         """
         Parameters
         ----------
-        std_resid : array
+        std_resid : ndarray
             Estimated standardized residuals to use in computing starting
             values for the shape parameter
 
         Returns
         -------
-        sv : array
+        sv : ndarray
             Array containing starting valuer for shape parameter
 
         Notes
@@ -480,12 +477,12 @@ class SkewStudent(Distribution):
 
         Parameters
         ----------
-        parameters : array
+        parameters : ndarray
             Shape parameters of the skew-t distribution
 
         Returns
         -------
-        a: float
+        a : float
             Constant used in the distribution
 
         """
@@ -498,12 +495,12 @@ class SkewStudent(Distribution):
 
         Parameters
         ----------
-        parameters : array
+        parameters : ndarray
             Shape parameters of the skew-t distribution
 
         Returns
         -------
-        b: float
+        b : float
             Constant used in the distribution
         """
         lam = parameters[1]
@@ -516,7 +513,7 @@ class SkewStudent(Distribution):
 
         Parameters
         ----------
-        parameters : array
+        parameters : ndarray
             Shape parameters of the skew-t distribution
 
         Returns
@@ -533,9 +530,9 @@ class SkewStudent(Distribution):
 
         Parameters
         ----------
-        arg : array
+        arg : ndarray
             Grid of point to evaluate ICDF at. Must belong to (0, 1)
-        parameters : array
+        parameters : ndarray
             Shape parameters of the skew-t distribution
 
         Returns
@@ -586,11 +583,11 @@ class GeneralizedError(Distribution):
 
         Parameters
         ----------
-        parameters : array
+        parameters : ndarray
             Shape parameter of the GED distribution
-        resids  : array
+        resids  : ndarray
             The residuals to use in the log-likelihood calculation
-        sigma2 : array
+        sigma2 : ndarray
             Conditional variances of resids
         individual : bool, optional
             Flag indicating whether to return the vector of individual log
@@ -634,13 +631,13 @@ class GeneralizedError(Distribution):
         """
         Parameters
         ----------
-        std_resid : array
+        std_resid : ndarray
             Estimated standardized residuals to use in computing starting
             values for the shape parameter
 
         Returns
         -------
-        sv : array
+        sv : ndarray
             Array containing starting valuer for shape parameter
 
         Notes

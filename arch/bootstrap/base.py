@@ -31,12 +31,12 @@ def _loo_jackknife(func, nobs, args, kwargs):
         Number of observation in the data
     args : list
         List of positional inputs (arrays, Series or DataFrames)
-    kwargs: dict
+    kwargs : dict
         List of keyword inputs (arrays, Series or DataFrames)
 
     Returns
     -------
-    results : array
+    results : ndarray
         Array containing the jackknife results where row i corresponds to
         leaving observation i out of the sample
     """
@@ -99,7 +99,7 @@ class IIDBootstrap(object):
 
     Attributes
     ----------
-    index : array
+    index : ndarray
         The current index of the bootstrap
     data : tuple
         Two-element tuple with the pos_data in the first position and kw_data
@@ -262,6 +262,11 @@ class IIDBootstrap(object):
         ----------
         reps : int
             Number of bootstrap replications
+
+        Returns
+        -------
+        gen : generator
+            Generator to iterate over in bootstrap calculations
 
         Example
         -------
@@ -547,7 +552,7 @@ class IIDBootstrap(object):
 
         Returns
         -------
-        results : array
+        results : ndarray
             reps by nparam array of computed function values where each row
             corresponds to a bootstrap iteration
 
@@ -652,12 +657,12 @@ class IIDBootstrap(object):
             Whether to center the bootstrap variance estimator on the average
             of the bootstrap samples (True) or to center on the original sample
             estimate (False).  Default is True.
-        extra_kwargs: dict, optional
+        extra_kwargs : dict, optional
             Dictionary of extra keyword arguments to pass to func
 
         Returns
         -------
-        cov: array
+        cov: ndarray
             Bootstrap covariance estimator
 
         Notes
@@ -731,7 +736,7 @@ class IIDBootstrap(object):
 
         Returns
         -------
-        var : array
+        var : ndarray
             Bootstrap variance estimator
 
         Notes
@@ -833,7 +838,7 @@ class CircularBlockBootstrap(IIDBootstrap):
 
     Attributes
     ----------
-    index : array
+    index : ndarray
         The current index of the bootstrap
     data : tuple
         Two-element tuple with the pos_data in the first position and kw_data
@@ -925,7 +930,7 @@ class StationaryBootstrap(CircularBlockBootstrap):
 
     Attributes
     ----------
-    index : array
+    index : ndarray
         The current index of the bootstrap
     data : tuple
         Two-element tuple with the pos_data in the first position and kw_data
@@ -993,7 +998,7 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
 
     Attributes
     ----------
-    index : array
+    index : ndarray
         The current index of the bootstrap
     data : tuple
         Two-element tuple with the pos_data in the first position and kw_data

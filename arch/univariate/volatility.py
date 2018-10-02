@@ -179,7 +179,7 @@ class VolatilityProcess(object):
         NotImplementedError
             * If method is not known or not supported
         """
-        raise NotImplementedError('Must be overridden')  # pragma: no cover
+        raise NotImplementedError('Must be overridden')
 
     def _one_step_forecast(self, parameters, resids, backcast, var_bounds, horizon):
         """
@@ -245,7 +245,7 @@ class VolatilityProcess(object):
             or bootstrap, the simulated paths.
         """
 
-        raise NotImplementedError('Must be overridden')  # pragma: no cover
+        raise NotImplementedError('Must be overridden')
 
     def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
                              simulations, rng):
@@ -282,7 +282,7 @@ class VolatilityProcess(object):
             Class containing the variance forecasts, and, if using simulation
             or bootstrap, the simulated paths.
         """
-        raise NotImplementedError('Must be overridden')  # pragma: no cover
+        raise NotImplementedError('Must be overridden')
 
     def _bootstrap_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
                             simulations, random_state):
@@ -332,17 +332,17 @@ class VolatilityProcess(object):
         Parameters
         ----------
         resids : ndarray
-            Approximate residuals to use to compute the lower and upper bounds on the conditional
-            variance
+            Approximate residuals to use to compute the lower and upper bounds
+            on the conditional variance
         power : float, optional
-            Power used in the model. 2.0, the default corresponds to standard ARCH models that
-            evolve in squares.
+            Power used in the model. 2.0, the default corresponds to standard
+            ARCH models that evolve in squares.
 
         Returns
         -------
         var_bounds : ndarray
-            Array containing columns of lower and upper bounds with the same number of elements as
-            resids
+            Array containing columns of lower and upper bounds with the same
+            number of elements as resids
         """
         nobs = resids.shape[0]
 
@@ -373,14 +373,15 @@ class VolatilityProcess(object):
         Parameters
         ----------
         resids : ndarray
-            Array of (approximate) residuals to use when computing starting values
+            Array of (approximate) residuals to use when computing starting
+            values
 
         Returns
         -------
         sv : ndarray
             Array of starting values
         """
-        raise NotImplementedError('Must be overridden')  # pragma: no cover
+        raise NotImplementedError('Must be overridden')
 
     def backcast(self, resids):
         """
@@ -412,7 +413,7 @@ class VolatilityProcess(object):
             Vector of (approximate) residuals
 
         """
-        raise NotImplementedError('Must be overridden')  # pragma: no cover
+        raise NotImplementedError('Must be overridden')
 
     def compute_variance(self, parameters, resids, sigma2, backcast,
                          var_bounds):
@@ -433,7 +434,7 @@ class VolatilityProcess(object):
         var_bounds : ndarray
             Array containing columns of lower and upper bounds
         """
-        raise NotImplementedError('Must be overridden')  # pragma: no cover
+        raise NotImplementedError('Must be overridden')
 
     def constraints(self):
         """
@@ -441,18 +442,18 @@ class VolatilityProcess(object):
 
         Returns
         -------
-        A : array
-            Parameters loadings in constraint. Shape is number of constraints by number of
-            parameters
-        b : array
+        A : ndarray
+            Parameters loadings in constraint. Shape is number of constraints
+            by number of parameters
+        b : ndarray
             Constraint values, one for each constraint
 
         Notes
         -----
-        Values returned are used in constructing linear inequality constraints of the form
-        A.dot(parameters) - b >= 0
+        Values returned are used in constructing linear inequality
+        constraints of the form A.dot(parameters) - b >= 0
         """
-        raise NotImplementedError('Must be overridden')  # pragma: no cover
+        raise NotImplementedError('Must be overridden')
 
     def forecast(self, parameters, resids, backcast, var_bounds, start=None, horizon=1,
                  method='analytic', simulations=1000, rng=None, random_state=None):
@@ -533,24 +534,28 @@ class VolatilityProcess(object):
 
         Parameters
         ----------
-        parameters : array-like
+        parameters : {ndarray, Series}
             Parameters required to simulate the volatility model
         nobs : int
             Number of data points to simulate
         rng : callable
-            Callable function that takes a single integer input and returns a vector of random
-            numbers
+            Callable function that takes a single integer input and returns
+            a vector of random numbers
         burn : int, optional
-            Number of additional observations to generate when initializing the simulation
-        initial_value : array, optional
-            Array of initial values to use when initializing the
+            Number of additional observations to generate when initializing
+            the simulation
+        initial_value : {float, ndarray}, optional
+            Scalar or array of initial values to use when initializing the
+            simulation
 
         Returns
         -------
-        simulated_data : array
-            The simulated data
+        resids : ndarray
+            The simulated residuals
+        variance : ndarray
+            The simulated variance
         """
-        raise NotImplementedError('Must be overridden')  # pragma: no cover
+        raise NotImplementedError('Must be overridden')
 
     def _gaussian_loglikelihood(self, parameters, resids, backcast,
                                 var_bounds):
@@ -571,7 +576,7 @@ class VolatilityProcess(object):
          names : list (str)
             Variables names
         """
-        raise NotImplementedError('Must be overridden')  # pragma: no cover
+        raise NotImplementedError('Must be overridden')
 
 
 class ConstantVariance(VolatilityProcess):
@@ -1886,6 +1891,7 @@ class RiskMetrics2006(VolatilityProcess):
         return
 
     def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+        backcast = np.asarray(backcast)
         t = resids.shape[0]
         _resids = np.empty(t + 1)
         _resids[:t] = resids
@@ -1899,10 +1905,10 @@ class RiskMetrics2006(VolatilityProcess):
 
     def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
                              simulations, rng):
-
         kmax = self.kmax
         w = self._ewma_combination_weights()
         mus = self._ewma_smoothing_parameters()
+        backcast = np.asarray(backcast)
 
         t = resids.shape[0]
         paths = np.full((t, simulations, horizon), np.nan)
@@ -1946,7 +1952,7 @@ class EGARCH(VolatilityProcess):
         Order of the symmetric innovation
     o : int
         Order of the asymmetric innovation
-    q: int
+    q : int
         Order of the lagged (transformed) conditional variance
 
     Attributes
