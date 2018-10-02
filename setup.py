@@ -5,7 +5,6 @@ import sys
 from distutils.errors import CCompilerError, DistutilsExecError, DistutilsPlatformError
 
 import pkg_resources
-from Cython.Build import cythonize
 from setuptools import Command, Extension, find_packages, setup
 from setuptools.dist import Distribution
 
@@ -17,6 +16,7 @@ if CYTHON_COVERAGE:
           os.environ['ARCH_CYTHON_COVERAGE'])
 
 try:
+    from Cython.Build import cythonize
     from Cython.Distutils.build_ext import build_ext as _build_ext
 
     CYTHON_INSTALLED = True
@@ -59,7 +59,7 @@ class build_ext(_build_ext):
         _build_ext.build_extensions(self)
 
 
-SETUP_REQUIREMENTS = {'numpy': '1.12', 'Cython': '0.24'}
+SETUP_REQUIREMENTS = {'numpy': '1.12'}
 INSTALL_REQUIREMENTS = SETUP_REQUIREMENTS.copy()
 INSTALL_REQUIREMENTS.update({'scipy': '0.19',
                              'pandas': '0.20',
@@ -120,7 +120,6 @@ except (ImportError, OSError):
 
 def run_setup(binary=True):
     if not binary:
-        del SETUP_REQUIREMENTS['Cython']
         extensions = []
     else:
         directives = {'linetrace': CYTHON_COVERAGE}

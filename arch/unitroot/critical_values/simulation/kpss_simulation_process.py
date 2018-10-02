@@ -3,10 +3,10 @@ from __future__ import print_function
 import numpy as np
 import pandas as pd
 
-from arch.compat.python import cStringIO
+from io import StringIO
 
 
-sio = cStringIO()
+sio = StringIO()
 sio.write("from numpy import asarray\n\n")
 sio.write("kpss_critical_values = {}\n")
 

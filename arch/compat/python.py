@@ -2,29 +2,18 @@
 # flake8: noqa
 import sys
 
-try:
-    import __builtin__ as builtins
-    # not writeable when instantiated with string, doesn't handle unicode well
-    from cStringIO import StringIO as cStringIO
-    # always writeable
-    from StringIO import StringIO
-
-except ImportError:
-    import builtins
-    from io import StringIO
-
-    cStringIO = StringIO
-
-
 PY3 = sys.version_info[0] == 3
 
 if PY3:
+    from io import StringIO
     range = range
     long = int
 
     def lmap(*args, **kwargs):
         return list(map(*args, **kwargs))
 else:
+    from cStringIO import StringIO
+    import __builtin__ as builtins
     range = xrange
     long = long
     lmap = builtins.map
@@ -63,3 +52,6 @@ def itervalues(obj, **kwargs):
     if not func:
         func = obj.values
     return func(**kwargs)
+
+
+__all__ = ['iteritems', 'itervalues', 'add_metaclass', 'lmap', 'long', 'range', 'PY3', 'StringIO']

@@ -907,8 +907,7 @@ class ARCHModelFixedResult(_SummaryRepr):
             smry.tables.append(table)
 
         extra_text = ['Results generated with user-specified parameters.',
-                      'Since the model was not estimated, there are no std. '
-                      'errors.']
+                      'Std. errors not available when the model is not estimated, ']
         smry.add_extra_txt(extra_text)
         return smry
 
