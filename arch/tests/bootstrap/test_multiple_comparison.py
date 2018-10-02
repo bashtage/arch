@@ -388,6 +388,11 @@ class TestMCS(object):
         assert_equal(type(mcs.excluded), list)
         assert isinstance(mcs.pvalues, pd.DataFrame)
 
+    def test_mcs_error(self):
+        mcs = MCS(self.losses_df, 0.05, reps=100, block_size=10, method='r')
+        with pytest.raises(RuntimeError):
+            mcs.included
+
     def test_errors(self):
         with pytest.raises(ValueError):
             MCS(self.losses[:, 1], 0.05)

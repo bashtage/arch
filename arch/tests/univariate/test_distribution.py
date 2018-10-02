@@ -139,3 +139,8 @@ class TestDistributions(TestCase):
         assert rvs.shape[0] == 1000
         assert str(hex(id(dist))) in dist.__repr__()
         assert dist.parameter_names() == ['nu']
+
+
+def test_bad_input():
+    with pytest.raises(TypeError):
+        Normal(random_state='random_state')
