@@ -190,15 +190,28 @@ that arch will work with older versions.
 **Note**: Setup does not verify requirements.  Please ensure these are
 installed.
 
-### Linux/OSX
+### pip
+
+Releases are available PyPI.
+
+```bash
+pip install arch
+```
+
+This command should work whether you have a compiler installed or not.
+If you want to install with the `--no-binary` options, call
+
+```bash
+pip install arch --install-option="--no-binary"
+```
+
+You can alternatively install the latest version from GitHub
 
 ```bash
 pip install git+https://github.com/bashtage/arch.git
 ```
 
 #### Anaconda
-
-_Anaconda builds are not currently available for OSX._
 
 ```bash
 conda install arch -c bashtage

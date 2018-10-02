@@ -1,5 +1,6 @@
 from __future__ import absolute_import, division
 
+import sys
 import warnings
 from unittest import TestCase
 
@@ -10,7 +11,7 @@ from numpy.random import RandomState
 from numpy.testing import assert_almost_equal, assert_equal
 from pandas.util.testing import assert_frame_equal, assert_series_equal
 
-from arch.compat.python import range, iteritems
+from arch.compat.python import range, iteritems, StringIO
 
 try:
     import arch.univariate.recursions as rec
@@ -783,8 +784,6 @@ class TestMeanModel(TestCase):
         assert_equal(res.num_params, fixed_res.num_params)
 
     def test_output_options(self):
-        import sys
-        from arch.compat.python import StringIO
         am = arch_model(self.y_series)
         orig_stdout = sys.stdout
         try:

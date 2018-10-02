@@ -1,0 +1,6 @@
+extraction:
+  python:
+    index:
+      exclude:
+        - versioneer.py
+        - statsmodels/_version.py
