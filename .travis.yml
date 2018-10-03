@@ -79,7 +79,7 @@ before_install:
   - echo conda create --yes --quiet -n arch-test ${PKGS}
   - conda create --yes --quiet -n arch-test ${PKGS}
   - source activate arch-test
-  - pip install flake8 nbconvert nbformat pytest coverage coveralls pytest-cov codecov pytest-xdist
+  - pip install flake8 nbconvert nbformat pytest coverage coveralls pytest-cov codecov pytest-xdist cached_property
   - if [[ "$STATSMODELS_MASTER" == true ]]; then sh ./ci/statsmodels-master.sh; fi;
   - |
     if [[ "$DOCBUILD" == true ]]; then

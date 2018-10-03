@@ -22,7 +22,7 @@ build_script:
   - cmd: conda config --set always_yes yes
   - cmd: conda update conda --quiet
   - cmd: conda install numpy cython pytest pandas scipy patsy statsmodels matplotlib numba nbconvert nbformat pip pyyaml setuptools pyqt pyparsing --quiet
-  - cmd: pip install pytest-xdist
+  - cmd: pip install pytest-xdist cached_property
   - cmd: python setup.py develop
 
 test_script:

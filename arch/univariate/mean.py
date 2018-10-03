@@ -7,7 +7,6 @@ from __future__ import absolute_import, division
 import copy
 from collections import OrderedDict
 
-from cached_property import cached_property
 import numpy as np
 from pandas import DataFrame
 from scipy.optimize import OptimizeResult
@@ -18,6 +17,7 @@ from arch.univariate.base import ARCHModel, implicit_constant, ARCHModelResult, 
 from arch.univariate.distribution import Normal, StudentsT, SkewStudent, GeneralizedError
 from arch.univariate.volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH
 from arch.utility.array import ensure1d, parse_dataframe, cutoff_to_index
+from arch.vendor.cached_property import cached_property
 
 __all__ = ['HARX', 'ConstantMean', 'ZeroMean', 'ARX', 'arch_model', 'LS']
 
