@@ -8,7 +8,6 @@ from copy import deepcopy
 import datetime as dt
 import warnings
 
-from cached_property import cached_property
 import numpy as np
 import scipy.stats as stats
 import pandas as pd
@@ -21,6 +20,7 @@ from arch.univariate.volatility import VolatilityProcess, ConstantVariance
 from arch.utility.array import ensure1d, DocStringInheritor
 from arch.utility.exceptions import ConvergenceWarning, StartingValueWarning, \
     convergence_warning, starting_value_warning
+from arch.vendor.cached_property import cached_property
 
 __all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel', 'ARCHModelForecast']
 
