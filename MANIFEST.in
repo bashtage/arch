@@ -1,5 +1,6 @@
 include README.rst
 include README.md
+include LICENSE.md
 include arch/bootstrap/_samplers.pyx
 include arch/univariate/recursions.pyx
 include versioneer.py

@@ -61,7 +61,7 @@ Contributing
 Contributions are welcome. There are opportunities at many levels to
 contribute:
 
--  Implement new volatility process, e.g FIGARCH
+-  Implement new volatility process, e.g., FIGARCH
 -  Improve docstrings where unclear or with typos
 -  Provide examples, preferably in the form of IPython notebooks
 
@@ -193,39 +193,35 @@ arch will work with older versions.
 -  SciPy (0.19+)
 -  Pandas (0.21+)
 -  statsmodels (0.8+)
--  matplotlib (2.0+)
+-  matplotlib (2.0+), optional
+-  cached-property (1.5.1+), optional
 
 Optional Requirements
 ~~~~~~~~~~~~~~~~~~~~~
 
 -  Numba (0.35+) will be used if available **and** when installed using
    the --no-binary option
--  Jupyter is required to run the notebooks
+-  jupyter and notebook are required to run the notebooks
 
 Installing
-~~~~~~~~~~
+----------
 
--  Cython (0.24+, if not using --no-binary)
--  py.test (For tests)
--  sphinx (to build docs)
--  guzzle_sphinx_theme (to build docs)
--  jupyter and notebook (to build docs)
--  numpydoc (to build docs)
-
-**Note**: Setup does not verify requirements. Please ensure these are
-installed.
+Standard installation with a compiler requires Cython. If you do not
+have a compiler installed, the ``arch`` should still install. You will
+see a warning but this can be ignored. If you don't have a compiler,
+``numba`` is strongly recommended.
 
 pip
 ~~~
 
-Releases are available PyPI.
+Releases are available PyPI and can be installed with ``pip``.
 
 .. code:: bash
 
    pip install arch
 
 This command should work whether you have a compiler installed or not.
-If you want to install with the ``--no-binary`` options, call
+If you want to install with the ``--no-binary`` options, use
 
 .. code:: bash
 
@@ -237,8 +233,13 @@ You can alternatively install the latest version from GitHub
 
    pip install git+https://github.com/bashtage/arch.git
 
+``--install-option="--no-binary"`` can be used to disable compilation of
+the extensions.
+
 Anaconda
-^^^^^^^^
+~~~~~~~~
+
+``conda`` users can install from my channel,
 
 .. code:: bash
 
@@ -255,27 +256,24 @@ difficult and is not necessary when Numba is installed since
 just-in-time compiled code (Numba) runs as fast as ahead-of-time
 compiled extensions.
 
-With a compiler
-^^^^^^^^^^^^^^^
+Developing
+~~~~~~~~~~
 
-If you are comfortable compiling binaries on Windows:
+The development requirements are:
 
-.. code:: bash
+-  Cython (0.24+, if not using --no-binary)
+-  py.test (For tests)
+-  sphinx (to build docs)
+-  guzzle_sphinx_theme (to build docs)
+-  jupyter, notebook and nbsphinx (to build docs)
 
-   pip install git+https://github.com/bashtage/arch.git
+Installation Notes:
+~~~~~~~~~~~~~~~~~~~
 
-No Compiler
-^^^^^^^^^^^
-
-All binary code is backed by a pure Python implementation. Compiling can
-be skipped using the flag ``--no-binary``
-
-.. code:: bash
-
-   pip install git+https://github.com/bashtage/arch.git --install-option "--no-binary"
-
-*Note*: If Cython is not installed, the package will be installed as-if
---no-binary was used.
+1. If Cython is not installed, the package will be installed as-if
+   ``--no-binary`` was used.
+2. Setup does not verify these requirements. Please ensure these are
+   installed.
 
 .. |Travis Build Status| image:: https://travis-ci.org/bashtage/arch.svg?branch=master
    :target: https://travis-ci.org/bashtage/arch
@@ -283,7 +281,7 @@ be skipped using the flag ``--no-binary``
    :target: https://ci.appveyor.com/project/bashtage/arch/branch/master
 .. |Documentation Status| image:: https://readthedocs.org/projects/arch/badge/?version=latest
    :target: http://arch.readthedocs.org/en/latest/
-.. |Coverage Status| image:: https://coveralls.io/repos/bashtage/arch/badge.svg?branch=master
+.. |Coverage Status| image:: https://coveralls.io/repos/github/bashtage/arch/badge.svg?branch=master
    :target: https://coveralls.io/r/bashtage/arch?branch=master
 .. |codecov| image:: https://codecov.io/gh/bashtage/arch/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/bashtage/arch
