@@ -293,5 +293,5 @@ Installation Notes:
    :target: https://www.codacy.com/app/bashtage/arch?utm_source=github.com&utm_medium=referral&utm_content=bashtage/arch&utm_campaign=Badge_Grade
 .. |codebeat badge| image:: https://codebeat.co/badges/18a78c15-d74b-4820-b56d-72f7e4087532
    :target: https://codebeat.co/projects/github-com-bashtage-arch-master
-.. |DOI| image:: https://zenodo.org/badge/doi/10.5281/zenodo.15681.svg
-   :target: http://dx.doi.org/10.5281/zenodo.15681
+.. |DOI| image:: https://zenodo.org/badge/23468876.svg
+   :target: https://zenodo.org/badge/latestdoi/23468876

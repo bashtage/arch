@@ -25,7 +25,7 @@ to improve performance)
 [![codebeat badge](https://codebeat.co/badges/18a78c15-d74b-4820-b56d-72f7e4087532)](https://codebeat.co/projects/github-com-bashtage-arch-master)
 
 ###### Citation
-[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.15681.svg)](http://dx.doi.org/10.5281/zenodo.15681)
+[![DOI](https://zenodo.org/badge/23468876.svg)](https://zenodo.org/badge/latestdoi/23468876)
 
 ## Module Contents
 
