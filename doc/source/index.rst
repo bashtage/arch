@@ -17,6 +17,7 @@ Contents
     :maxdepth: 1
 
     Univariate Volatility Models <univariate/univariate>
+    Multivariate Volatility Models <multivariate/multivariate>
     Bootstrapping <bootstrap/bootstrap>
     Multiple Comparison Problems <multiple-comparison/multiple-comparisons>
     Unit Root Tests <unitroot/unitroot>
