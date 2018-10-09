@@ -171,18 +171,19 @@ class MultivariateARCHModel(object):
         """
         pass
 
-    def _static_gaussian_loglikelihood(self, x):
+    @staticmethod
+    def _static_gaussian_loglikelihood(resids):
         """
         Gaussian log-likelihood with 0 mean
 
         Parameters
         ----------
-        x : ndarray
+        resids : ndarray
             (nobs, nvar) array of data
         """
-        nobs, nvar = x.shape
+        nobs, nvar = resids.shape
 
-        sigma = x.T.dot(x) / nobs
+        sigma = resids.T.dot(resids) / nobs
         _, logdet = np.linalg.slogdet(sigma)
         return -nvar / 2 * nobs * (np.log(2 * np.pi) + logdet + nobs)
 
@@ -303,7 +304,6 @@ class MultivariateARCHModel(object):
 
         # 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,
         # use closed form
-        nvar = self._y.shape[1]
         v, d = self.volatility, self.distribution
         offsets = np.array((self.num_params, v.num_params, d.num_params))
         total_params = sum(offsets)
@@ -419,7 +419,7 @@ class MultivariateARCHModel(object):
         try:
             r2 = self._r2(mp)
         except NotImplementedError:
-            r2 = np.nan
+            r2 = np.full(self.nvar, np.nan)
 
         names = self._all_parameter_names()
         # Reshape resids and vol
@@ -432,9 +432,11 @@ class MultivariateARCHModel(object):
 
         fit_start, fit_stop = self._fit_indices
         model_copy = deepcopy(self)
-        return MultivariateARCHModelResult(params)  # , None, r2, resids_final, vol_final,
-        # cov_type, self._y_series, names, loglikelihood,
-        # self._is_pandas, opt, fit_start, fit_stop, model_copy)
+
+        return MultivariateARCHModelResult(params, None, r2, resids_final, cov_final, cov_type,
+                                           self._y.frame, names, loglikelihood,
+                                           self._y.pandas_input, opt, fit_start, fit_stop,
+                                           model_copy)
 
     @abstractmethod
     def parameter_names(self):
@@ -557,8 +559,8 @@ class MultivariateARCHModelResult(object):
     resid : ndarray
         Residuals from model.  Residuals have same shape as original data and
         contain nan-values in locations not used in estimation
-    volatility : ndarray
-        Conditional volatility from model
+    covariance : ndarray
+        Conditional covariance from model
     cov_type : str
         String describing the covariance estimator used
     dep_var : Series
@@ -567,7 +569,7 @@ class MultivariateARCHModelResult(object):
         Model parameter names
     loglikelihood : float
         Loglikelihood at estimated parameters
-    is_pandas : bool
+    input_pandas : bool
         Whether the original input was pandas
     fit_start : int
         Integer index of the first observation used to fit the model

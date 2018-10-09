@@ -19,217 +19,6 @@ COV_TYPES = {'white': 'White\'s Heteroskedasticity Consistent Estimator',
              'mle': 'ML Estimator'}
 
 
-class ConstantMean(MultivariateARCHModel):
-    def __init__(self, y=None, volatility=None, distribution=None, hold_back=None, nvar=None):
-        super(ConstantMean, self).__init__(y, volatility, distribution, hold_back, nvar)
-        self.constant = True
-
-    def parameter_names(self):
-        return self._generate_variable_names()
-
-    @staticmethod
-    def _static_gaussian_loglikelihood(resids):
-        nobs = resids.shape[0]
-        sigma = resids.dot(resids) / nobs
-        _, logdet = np.linalg.slogdet(sigma)
-        loglikelihood = -0.5 * nobs * np.log(2 * np.pi)
-        loglikelihood -= 0.5 * nobs * logdet
-        loglikelihood -= 0.5 * nobs
-
-        return loglikelihood
-
-    def _model_description(self, include_lags=True):
-        """Generates the model description for use by __str__ and related
-        functions"""
-        conststr = 'yes' if self.constant else 'no'
-        od = OrderedDict()
-        od['constant'] = conststr
-        od['volatility'] = self.volatility.__str__()
-        od['distribution'] = self.distribution.__str__()
-        return od
-
-    def __str__(self):
-        descr = self._model_description()
-        descr_str = self.name + '('
-        for key, val in iteritems(descr):
-            if val:
-                if key:
-                    descr_str += key + ': ' + val + ', '
-        descr_str = descr_str[:-2]  # Strip final ', '
-        descr_str += ')'
-
-        return descr_str
-
-    def __repr__(self):
-        txt = self.__str__()
-        txt.replace('\n', '')
-        return txt + ', id: ' + hex(id(self))
-
-    def _repr_html_(self):
-        """HTML representation for IPython Notebook"""
-        descr = self._model_description()
-        html = '<strong>' + self.name + '</strong>('
-        for key, val in iteritems(descr):
-            html += '<strong>' + key + ': </strong>' + val + ',\n'
-        html += '<strong>ID: </strong> ' + hex(id(self)) + ')'
-        return html
-
-    def resids(self, params, y=None, regressors=None):
-        y = self._fit_y if y is None else y
-
-        return y - params[:self.num_params]
-
-    @cached_property
-    def num_params(self):
-        """
-        Returns the number of parameters
-        """
-        return self.nvar
-
-    def simulate(self, params, nobs, burn=500, initial_value=None, x=None,
-                 initial_value_vol=None):
-        """
-        Simulates data from a linear regression, AR or HAR models
-
-        Parameters
-        ----------
-        params : ndarray
-            Parameters to use when simulating the model.  Parameter order is
-            [mean volatility distribution] where the parameters of the mean
-            model are ordered [constant lag[0] lag[1] ... lag[p] ex[0] ...
-            ex[k-1]] where lag[j] indicates the coefficient on the jth lag in
-            the model and ex[j] is the coefficient on the jth exogenous
-            variable.
-        nobs : int
-            Length of series to simulate
-        burn : int, optional
-            Number of values to simulate to initialize the model and remove
-            dependence on initial values.
-        initial_value : {ndarray, float}, optional
-            Either a scalar value or `max(lags)` array set of initial values to
-            use when initializing the model.  If omitted, 0.0 is used.
-        x : {ndarray, DataFrame}, optional
-            nobs + burn by k array of exogenous variables to include in the
-            simulation.
-        initial_value_vol : {ndarray, float}, optional
-            An array or scalar to use when initializing the volatility process.
-
-        Returns
-        -------
-        simulated_data : MultivariateSimulation
-            Class with attributes:
-
-            * `data` containing the simulated values
-            * `covariance` containing the conditional covariance
-            * `errors` containing the errors used in the simulation
-
-        Examples
-        --------
-        >>> import numpy as np
-        >>> from arch.multivariate import ConstantMean, ConstantCovariance
-        >>> from arch.multivariate.utility import vech
-        >>> cm = ConstantMean()
-        >>> cm.volatility = ConstantCovariance()
-        >>> means = np.array([1, 0.2, 0.3, 0.4])
-        >>> cov = np.eye(4) + np.diag(ones(4))
-        >>> cov_params = ConstantCovariance.transform_params(cov)
-        >>> params = np.concatenate((means, cov_params))
-        >>> sim_data = cm.simulate(params, 1000)
-        """
-
-        nvar = self.nvar
-        mc = int(self.constant) * nvar
-        vc = self.volatility.num_params
-        dc = self.distribution.num_params
-        num_params = mc + vc + dc
-        params = ensure1d(params, 'params', series=False)
-        if params.shape[0] != num_params:
-            raise ValueError('params has the wrong number of elements. '
-                             'Expected ' + str(num_params) +
-                             ', got ' + str(params.shape[0]))
-
-        dist_params = [] if dc == 0 else params[-dc:]
-        vol_params = params[mc:mc + vc]
-        simulator = self.distribution.simulate(dist_params)
-        sim_data = self.volatility.simulate(vol_params, nobs + burn, simulator, burn,
-                                            initial_value_vol)
-        errors = sim_data.resids
-        cov = sim_data.covariance
-
-        y = errors + ensure1d(params[:mc], 'mean')
-
-        ms = MultivariateSimulation(data=y[burn:], covariance=cov[burn:], errors=errors[burn:])
-        return ms
-
-    def _generate_variable_names(self):
-        """Generates variable names or use in summaries"""
-        return ['mu.{0}'.format(i) for i in range(self.nvar)]
-
-    def _check_specification(self):
-        """Checks the specification for obvious errors """
-        pass
-
-    def _fit_no_arch_normal_errors(self, cov_type='robust'):
-        """
-        Estimates model parameters
-
-        Parameters
-        ----------
-        cov_type : str, optional
-            Covariance estimator to use when estimating parameter variances and
-            covariances.  One of 'hetero' or 'heteroskedastic' for Whites's
-            covariance estimator, or 'mle' for the classic
-            OLS estimator appropriate for homoskedastic data.  'hetero' is the
-            the default.
-
-        Returns
-        -------
-        result : MultivariateARCHModelResult
-            Results class containing parameter estimates, estimated parameter
-            covariance and related estimates
-
-        Notes
-        -----
-        See :class:`MultivariateARCHModelResult` for details on computed results
-        """
-        nobs, nvar = self._fit_y.shape
-
-        if nobs < self.num_params:
-            raise ValueError('Insufficient data, {nreg} regressors, {nobs} '
-                             'data points available'.format(nreg=self.num_params, nobs=nobs))
-        y = self._fit_y
-
-        mu = y.mean(0)
-        e = y - mu
-        sigma = e.T.dot(e) / nobs
-
-        params = np.hstack((mu, vech(np.linalg.cholesky(sigma))))
-
-        return MultivariateARCHModelResult(params)
-
-    def constraints(self):
-        return np.empty((0, self.nvar)), np.empty(0)
-
-    def bounds(self):
-        mu = abs(self._y.array.mean(0))
-        return [(-10 * m, 10 * m) for m in mu]
-
-    def _r2(self, params):
-        return 0.0
-
-    def _adjust_sample(self, first_obs, last_obs):
-
-        _first_obs_index = self._y.index_loc(first_obs, 0)
-        _first_obs_index += self._hold_back
-        _last_obs_index = self._y.index_loc(last_obs, self._y.shape[0])
-        if _last_obs_index <= _first_obs_index:
-            raise ValueError('first_obs and last_obs produce in an '
-                             'empty array.')
-        self._fit_indices = [_first_obs_index, _last_obs_index]
-        self._fit_y = self._y.array[_first_obs_index:_last_obs_index]
-        self.volatility.start, self.volatility.stop = self._fit_indices
-
-
 class MultivariateSimulation(object):
     __slots__ = ('data', 'covariance', 'errors')
 
@@ -581,3 +370,201 @@ class VARX(MultivariateARCHModel):
     def simulate(self, params, nobs, burn=500, initial_value=None, x=None,
                  initial_value_vol=None):
         raise NotImplementedError
+
+class ConstantMean(VARX):
+    def __init__(self, y=None, volatility=None, distribution=None, hold_back=None, nvar=None):
+        super(ConstantMean, self).__init__(y=y, constant=True, volatility=volatility, distribution=distribution,
+                                           hold_back=hold_back, nvar=nvar)
+
+
+
+    def _model_description(self, include_lags=True):
+        """Generates the model description for use by __str__ and related
+        functions"""
+        conststr = 'yes' if self.constant else 'no'
+        od = OrderedDict()
+        od['constant'] = conststr
+        od['volatility'] = self.volatility.__str__()
+        od['distribution'] = self.distribution.__str__()
+        return od
+
+    def __str__(self):
+        descr = self._model_description()
+        descr_str = self.name + '('
+        for key, val in iteritems(descr):
+            if val:
+                if key:
+                    descr_str += key + ': ' + val + ', '
+        descr_str = descr_str[:-2]  # Strip final ', '
+        descr_str += ')'
+
+        return descr_str
+
+    def __repr__(self):
+        txt = self.__str__()
+        txt.replace('\n', '')
+        return txt + ', id: ' + hex(id(self))
+
+    def _repr_html_(self):
+        """HTML representation for IPython Notebook"""
+        descr = self._model_description()
+        html = '<strong>' + self.name + '</strong>('
+        for key, val in iteritems(descr):
+            html += '<strong>' + key + ': </strong>' + val + ',\n'
+        html += '<strong>ID: </strong> ' + hex(id(self)) + ')'
+        return html
+
+    def resids(self, params, y=None, regressors=None):
+        y = self._fit_y if y is None else y
+
+        return y - params[:self.num_params]
+
+    @cached_property
+    def num_params(self):
+        """
+        Returns the number of parameters
+        """
+        return self.nvar
+
+    def simulate(self, params, nobs, burn=500, initial_value=None, x=None,
+                 initial_value_vol=None):
+        """
+        Simulates data from a linear regression, AR or HAR models
+
+        Parameters
+        ----------
+        params : ndarray
+            Parameters to use when simulating the model.  Parameter order is
+            [mean volatility distribution] where the parameters of the mean
+            model are ordered [constant lag[0] lag[1] ... lag[p] ex[0] ...
+            ex[k-1]] where lag[j] indicates the coefficient on the jth lag in
+            the model and ex[j] is the coefficient on the jth exogenous
+            variable.
+        nobs : int
+            Length of series to simulate
+        burn : int, optional
+            Number of values to simulate to initialize the model and remove
+            dependence on initial values.
+        initial_value : {ndarray, float}, optional
+            Either a scalar value or `max(lags)` array set of initial values to
+            use when initializing the model.  If omitted, 0.0 is used.
+        x : {ndarray, DataFrame}, optional
+            nobs + burn by k array of exogenous variables to include in the
+            simulation.
+        initial_value_vol : {ndarray, float}, optional
+            An array or scalar to use when initializing the volatility process.
+
+        Returns
+        -------
+        simulated_data : MultivariateSimulation
+            Class with attributes:
+
+            * `data` containing the simulated values
+            * `covariance` containing the conditional covariance
+            * `errors` containing the errors used in the simulation
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> from arch.multivariate import ConstantMean, ConstantCovariance
+        >>> from arch.multivariate.utility import vech
+        >>> cm = ConstantMean()
+        >>> cm.volatility = ConstantCovariance()
+        >>> means = np.array([1, 0.2, 0.3, 0.4])
+        >>> cov = np.eye(4) + np.diag(ones(4))
+        >>> cov_params = ConstantCovariance.transform_params(cov)
+        >>> params = np.concatenate((means, cov_params))
+        >>> sim_data = cm.simulate(params, 1000)
+        """
+
+        nvar = self.nvar
+        mc = int(self.constant) * nvar
+        vc = self.volatility.num_params
+        dc = self.distribution.num_params
+        num_params = mc + vc + dc
+        params = ensure1d(params, 'params', series=False)
+        if params.shape[0] != num_params:
+            raise ValueError('params has the wrong number of elements. '
+                             'Expected ' + str(num_params) +
+                             ', got ' + str(params.shape[0]))
+
+        dist_params = [] if dc == 0 else params[-dc:]
+        vol_params = params[mc:mc + vc]
+        simulator = self.distribution.simulate(dist_params)
+        sim_data = self.volatility.simulate(vol_params, nobs + burn, simulator, burn,
+                                            initial_value_vol)
+        errors = sim_data.resids
+        cov = sim_data.covariance
+
+        y = errors + ensure1d(params[:mc], 'mean')
+
+        ms = MultivariateSimulation(data=y[burn:], covariance=cov[burn:], errors=errors[burn:])
+        return ms
+
+    def _generate_variable_names(self):
+        """Generates variable names or use in summaries"""
+        return ['mu.{0}'.format(i) for i in range(self.nvar)]
+
+    def _check_specification(self):
+        """Checks the specification for obvious errors """
+        pass
+
+    def _fit_no_arch_normal_errors(self, cov_type='robust'):
+        """
+        Estimates model parameters
+
+        Parameters
+        ----------
+        cov_type : str, optional
+            Covariance estimator to use when estimating parameter variances and
+            covariances.  One of 'hetero' or 'heteroskedastic' for Whites's
+            covariance estimator, or 'mle' for the classic
+            OLS estimator appropriate for homoskedastic data.  'hetero' is the
+            the default.
+
+        Returns
+        -------
+        result : MultivariateARCHModelResult
+            Results class containing parameter estimates, estimated parameter
+            covariance and related estimates
+
+        Notes
+        -----
+        See :class:`MultivariateARCHModelResult` for details on computed results
+        """
+        nobs, nvar = self._fit_y.shape
+
+        if nobs < self.num_params:
+            raise ValueError('Insufficient data, {nreg} regressors, {nobs} '
+                             'data points available'.format(nreg=self.num_params, nobs=nobs))
+        y = self._fit_y
+
+        mu = y.mean(0)
+        e = y - mu
+        sigma = e.T.dot(e) / nobs
+
+        params = np.hstack((mu, vech(np.linalg.cholesky(sigma))))
+
+        return MultivariateARCHModelResult(params)
+
+    def constraints(self):
+        return np.empty((0, self.nvar)), np.empty(0)
+
+    def bounds(self):
+        mu = abs(self._y.array.mean(0))
+        return [(-10 * m, 10 * m) for m in mu]
+
+    def _r2(self, params):
+        return 0.0
+
+    def _adjust_sample(self, first_obs, last_obs):
+
+        _first_obs_index = self._y.index_loc(first_obs, 0)
+        _first_obs_index += self._hold_back
+        _last_obs_index = self._y.index_loc(last_obs, self._y.shape[0])
+        if _last_obs_index <= _first_obs_index:
+            raise ValueError('first_obs and last_obs produce in an '
+                             'empty array.')
+        self._fit_indices = [_first_obs_index, _last_obs_index]
+        self._fit_y = self._y.array[_first_obs_index:_last_obs_index]
+        self.volatility.start, self.volatility.stop = self._fit_indices
