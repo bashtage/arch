@@ -5,7 +5,7 @@ def vech(c, loc=False):
     k = c.shape[0]
     sel = np.tril(np.ones((k, k), dtype=np.bool))
     if loc:
-        return np.where(sel.flat)
+        return np.where(sel.flat)[0]
     return c[sel]
 
 

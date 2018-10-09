@@ -1,8 +1,11 @@
+import datetime as dt
 import warnings
 from abc import abstractmethod
 from copy import deepcopy
 
 import numpy as np
+from statsmodels.tools.numdiff import approx_fprime, approx_hess
+
 from arch.compat.python import add_metaclass
 from arch.multivariate.data import TimeSeries
 from arch.multivariate.distribution import MultivariateNormal, MultivariateDistribution
@@ -13,7 +16,6 @@ from arch.utility.array import AbstractDocStringInheritor, ensure1d
 from arch.utility.exceptions import convergence_warning, ConvergenceWarning, \
     starting_value_warning, StartingValueWarning
 from arch.vendor.cached_property import cached_property
-from statsmodels.tools.numdiff import approx_fprime, approx_hess
 
 # Callback variables
 _callback_iter, _callback_llf = 0, 0.0,
@@ -60,7 +62,7 @@ class MultivariateARCHModel(object):
                  hold_back=None, nvar=None):
 
         if y is None and nvar is None:
-                raise ValueError('nvar must be provided when y is None.')
+            raise ValueError('nvar must be provided when y is None.')
         self._y = TimeSeries(y, nvar=nvar, name='y')
         self._nvar = nvar if nvar is not None else self._y.shape[1]
         # Set on model fit
@@ -168,6 +170,21 @@ class MultivariateARCHModel(object):
         Must be overridden with closed form estimator
         """
         pass
+
+    def _static_gaussian_loglikelihood(self, x):
+        """
+        Gaussian log-likelihood with 0 mean
+
+        Parameters
+        ----------
+        x : ndarray
+            (nobs, nvar) array of data
+        """
+        nobs, nvar = x.shape
+
+        sigma = x.T.dot(x) / nobs
+        _, logdet = np.linalg.slogdet(sigma)
+        return -nvar / 2 * nobs * (np.log(2 * np.pi) + logdet + nobs)
 
     def _loglikelihood(self, parameters, sigma, backcast, individual=False):
         """
@@ -524,9 +541,90 @@ class MultivariateARCHModel(object):
 
 
 class MultivariateARCHModelResult(object):
-    def __init__(self, params):
+    """
+    Results from estimation of a multivariate ARCH Model model
+
+    Parameters
+    ----------
+    params : ndarray
+        Estimated parameters
+    param_cov : {ndarray, None}
+        Estimated variance-covariance matrix of params.  If none, calls method
+        to compute variance from model when parameter covariance is first used
+        from result
+    r2 : float
+        Model R-squared
+    resid : ndarray
+        Residuals from model.  Residuals have same shape as original data and
+        contain nan-values in locations not used in estimation
+    volatility : ndarray
+        Conditional volatility from model
+    cov_type : str
+        String describing the covariance estimator used
+    dep_var : Series
+        Dependent variable
+    names : list (str)
+        Model parameter names
+    loglikelihood : float
+        Loglikelihood at estimated parameters
+    is_pandas : bool
+        Whether the original input was pandas
+    fit_start : int
+        Integer index of the first observation used to fit the model
+    fit_stop : int
+        Integer index of the last observation used to fit the model using
+        slice notation `fit_start:fit_stop`
+    model : ARCHModel
+        The model object used to estimate the parameters
+
+    Methods
+    -------
+    summary
+        Produce a summary of the results
+    plot
+        Produce a plot of the volatility and standardized residuals
+    conf_int
+        Confidence intervals
+
+    Attributes
+    ----------
+    loglikelihood : float
+        Value of the log-likelihood
+    params : Series
+        Estimated parameters
+    param_cov : DataFrame
+        Estimated variance-covariance of the parameters
+    resid : {ndarray, Series}
+        nobs element array containing model residuals
+    model : ARCHModel
+        Model instance used to produce the fit
+    """
+
+    def __init__(self, params, param_cov, r2, resid, covariance, cov_type,
+                 dep_var, names, loglikelihood, input_pandas, optim_output,
+                 fit_start, fit_stop, model):
         self._params = params
+        self._resid = resid
+        self._input_pandas = input_pandas
+        self.model = model
+        self._datetime = dt.datetime.now()
+        self._dep_var = dep_var
+        self._dep_name = dep_var.columns
+        self._names = names
+        self._loglikelihood = loglikelihood
+        self._nobs = self.model._fit_y.shape[0]
+        self._index = dep_var.index
+        self._covariance = covariance
+        self._fit_indices = (fit_start, fit_stop)
+        self._param_cov = param_cov
+        self._r2 = r2
+        self.cov_type = cov_type
+        self._optim_output = optim_output
 
     @property
     def params(self):
         return self._params
+
+    @property
+    def r2(self):
+        return self._r2
