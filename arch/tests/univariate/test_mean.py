@@ -931,10 +931,22 @@ class TestMeanModel(TestCase):
         assert std.loglikelihood != short.loglikelihood
         assert short.convergence_flag != 0
 
-    def test_little_or_no_date(self):
+    def test_little_or_no_data(self):
         mod = HARX(self.y[:24], lags=[1, 5, 22])
         with pytest.raises(ValueError):
             mod.fit()
         mod = HARX(None, lags=[1, 5, 22])
         with pytest.raises(RuntimeError):
             mod.fit()
+
+    def test_empty_mean(self):
+        mod = HARX(self.y, None, None, False, volatility=ConstantVariance(),
+                   distribution=Normal())
+        res = mod.fit()
+
+        mod = ZeroMean(self.y, volatility=ConstantVariance(), distribution=Normal())
+        res_z = mod.fit()
+
+        assert res.num_params == res_z.num_params
+        assert_series_equal(res.params, res_z.params)
+        assert res.loglikelihood == res_z.loglikelihood

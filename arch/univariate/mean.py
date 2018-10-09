@@ -552,27 +552,16 @@ class HARX(ARCHModel):
         # Fake convergence results, see GH #87
         opt = OptimizeResult({'status': 0, 'message': ''})
 
-        if x.shape[1] == 0:
-            loglikelihood = self._static_gaussian_loglikelihood(y)
-            names = self._all_parameter_names()
-            sigma2 = y.dot(y) / nobs
-            params = np.array([sigma2])
-            param_cov = np.array([[np.mean(y ** 2 - sigma2) / nobs]])
-            vol = np.zeros_like(y) * np.sqrt(sigma2)
-            # Throw away names in the case of starting values
-            num_params = params.shape[0]
-            if len(names) != num_params:
-                names = ['p' + str(i) for i in range(num_params)]
+        if x.shape[1] > 0:
+            regression_params = np.linalg.pinv(x).dot(y)
+            xpxi = np.linalg.inv(x.T.dot(x) / nobs)
+            fitted = x.dot(regression_params)
+        else:
+            regression_params = np.empty(0)
+            xpxi = np.empty((0, 0))
+            fitted = 0.0
 
-            fit_start, fit_stop = self._fit_indices
-            return ARCHModelResult(params, param_cov, 0.0, y, vol, cov_type,
-                                   self._y_series, names, loglikelihood,
-                                   self._is_pandas, opt, fit_start, fit_stop,
-                                   copy.deepcopy(self))
-
-        regression_params = np.linalg.pinv(x).dot(y)
-        xpxi = np.linalg.inv(x.T.dot(x) / nobs)
-        e = y - x.dot(regression_params)
+        e = y - fitted
         sigma2 = e.T.dot(e) / nobs
 
         params = np.hstack((regression_params, sigma2))
