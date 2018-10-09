@@ -50,6 +50,12 @@ ids = [ID.format(*map(str, p)) for p in params]
 #    nvar, nobs, nexog, common, lags, constant, pandas = request.param
 #    return generate_data(nvar, nobs, nexog, common, lags, constant, pandas)
 
+varx = VARX(np.random.standard_normal((500,2)), lags=2, constant=True, nvar=2, volatility=ConstantCovariance(),
+            distribution=MultivariateNormal())
+params = np.array([.1, .1, .1, .1, 0, .2, .2, .2, .2, 0, 2, 1, 2])
+data = varx.simulate(params, 500)
+
+
 for id, param in zip(ids,params):
     nvar, nobs, nexog, common, lags, constant, pandas = param
     print(id)
@@ -63,3 +69,5 @@ for id, param in zip(ids,params):
     x = var_data.x
     mod = VARX(y, x, lags=lags, constant=constant, volatility=vol, distribution=dist)
     mod.fit(cov_type='mle')
+
+

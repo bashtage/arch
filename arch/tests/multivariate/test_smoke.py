@@ -88,3 +88,10 @@ def test_varx(var_data):
     y = var_data.y
     x = var_data.x
     VARX(y, x, lags=lags, constant=constant, volatility=vol, distribution=dist)
+
+
+def test_var_sim():
+    varx = VARX(np.random.standard_normal((500,2)), lags=2, constant=True, nvar=2, volatility=ConstantCovariance(),
+                distribution=MultivariateNormal())
+    params = np.array([.1, .1, .1, .1, 0, .2, .2, .2, .2, 0, 2, 1, 2])
+    varx.simulate(params, 500)
