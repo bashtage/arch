@@ -4,6 +4,7 @@ Core classes for ARCH models
 from __future__ import absolute_import, division
 from arch.compat.python import add_metaclass, range
 
+from abc import abstractmethod
 from copy import deepcopy
 import datetime as dt
 import warnings
@@ -17,7 +18,7 @@ from statsmodels.tools.numdiff import approx_fprime, approx_hess
 
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import VolatilityProcess, ConstantVariance
-from arch.utility.array import ensure1d, DocStringInheritor
+from arch.utility.array import ensure1d, AbstractDocStringInheritor
 from arch.utility.exceptions import ConvergenceWarning, StartingValueWarning, \
     convergence_warning, starting_value_warning
 from arch.vendor.cached_property import cached_property
@@ -125,7 +126,7 @@ def implicit_constant(x):
     return rank == x.shape[1]
 
 
-@add_metaclass(DocStringInheritor)
+@add_metaclass(AbstractDocStringInheritor)
 class ARCHModel(object):
     """
     Abstract base class for mean models in ARCH processes.  Specifies the
@@ -239,11 +240,12 @@ class ARCHModel(object):
         """
         raise NotImplementedError("Subclasses optionally may provide.")
 
+    @abstractmethod
     def _fit_no_arch_normal_errors(self, cov_type='robust'):
         """
         Must be overridden with closed form estimator
         """
-        raise NotImplementedError("Subclasses must implement")
+        pass
 
     def _loglikelihood(self, parameters, sigma2, backcast, var_bounds,
                        individual=False):
@@ -354,6 +356,7 @@ class ARCHModel(object):
         return ARCHModelFixedResult(params, resids, vol, self._y_series, names,
                                     loglikelihood, self._is_pandas, model_copy)
 
+    @abstractmethod
     def _adjust_sample(self, first_obs, last_obs):
         """
         Performs sample adjustment for estimation
@@ -369,7 +372,7 @@ class ARCHModel(object):
         -----
         Adjusted sample must follow Python semantics of first_obs:last_obs
         """
-        raise NotImplementedError("Subclasses must implement")
+        pass
 
     def fit(self, update_freq=1, disp='final', starting_values=None,
             cov_type='robust', show_warning=True, first_obs=None,
@@ -553,6 +556,7 @@ class ARCHModel(object):
                                cov_type, self._y_series, names, loglikelihood,
                                self._is_pandas, opt, fit_start, fit_stop, model_copy)
 
+    @abstractmethod
     def parameter_names(self):
         """List of parameters names
 
@@ -561,7 +565,7 @@ class ARCHModel(object):
         names : list (str)
             List of variable names for the mean model
         """
-        raise NotImplementedError('Subclasses must implement')
+        pass
 
     def starting_values(self):
         """
@@ -580,17 +584,20 @@ class ARCHModel(object):
         elif params.shape[0] > 1:
             return params[:-1]
 
+    @abstractmethod
     @cached_property
     def num_params(self):
         """
         Number of parameters in the model
         """
-        raise NotImplementedError('Subclasses must implement')
+        pass
 
+    @abstractmethod
     def simulate(self, params, nobs, burn=500, initial_value=None, x=None,
                  initial_value_vol=None):
-        raise NotImplementedError('Subclasses must implement')
+        pass
 
+    @abstractmethod
     def resids(self, params, y=None, regressors=None):
         """
         Compute model residuals
@@ -609,7 +616,7 @@ class ARCHModel(object):
         resids : ndarray
             Model residuals
         """
-        raise NotImplementedError('Subclasses must implement')
+        pass
 
     def compute_param_cov(self, params, backcast=None, robust=True):
         """
@@ -651,6 +658,7 @@ class ARCHModel(object):
         else:
             return inv_hess / nobs
 
+    @abstractmethod
     def forecast(self, params, horizon=1, start=None, align='origin', method='analytic',
                  simulations=1000, rng=None):
         """
@@ -728,7 +736,7 @@ class ARCHModel(object):
         [102, 2], so that it is aligned with the observation to use when
         evaluating, but still in the same column.
         """
-        raise NotImplementedError('Subclasses must implement')
+        pass
 
 
 class _SummaryRepr(object):

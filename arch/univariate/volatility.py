@@ -5,6 +5,7 @@ same inputs.
 """
 from __future__ import absolute_import, division
 
+from abc import abstractmethod
 import itertools
 from warnings import warn
 
@@ -15,7 +16,7 @@ from scipy.special import gammaln
 from arch.compat.python import add_metaclass, range
 from arch.univariate.distribution import Normal
 from arch.utility.exceptions import initial_value_warning, InitialValueWarning
-from arch.utility.array import ensure1d, DocStringInheritor
+from arch.utility.array import ensure1d, AbstractDocStringInheritor
 
 try:
     from arch.univariate.recursions import (garch_recursion, harch_recursion,
@@ -129,14 +130,12 @@ class VarianceForecast(object):
         return self._shocks
 
 
-@add_metaclass(DocStringInheritor)
+@add_metaclass(AbstractDocStringInheritor)
 class VolatilityProcess(object):
     """
     Abstract base class for ARCH models.  Allows the conditional mean model to be specified
     separately from the conditional variance, even though parameters are estimated jointly.
     """
-
-    __metaclass__ = DocStringInheritor  # noqa
 
     def __init__(self):
         self.num_params = 0
@@ -171,6 +170,7 @@ class VolatilityProcess(object):
     def stop(self, value):
         self._stop = value
 
+    @abstractmethod
     def _check_forecasting_method(self, method, horizon):
         """
         Verify the requested forecasting method as valid for the specification
@@ -187,7 +187,7 @@ class VolatilityProcess(object):
         NotImplementedError
             * If method is not known or not supported
         """
-        raise NotImplementedError('Must be overridden')
+        pass
 
     def _one_step_forecast(self, parameters, resids, backcast, var_bounds, horizon):
         """
@@ -225,6 +225,7 @@ class VolatilityProcess(object):
 
         return sigma2, forecasts
 
+    @abstractmethod
     def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
         """
         Analytic multi-step volatility forecasts from the model
@@ -252,9 +253,9 @@ class VolatilityProcess(object):
             Class containing the variance forecasts, and, if using simulation
             or bootstrap, the simulated paths.
         """
+        pass
 
-        raise NotImplementedError('Must be overridden')
-
+    @abstractmethod
     def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
                              simulations, rng):
         """
@@ -290,7 +291,7 @@ class VolatilityProcess(object):
             Class containing the variance forecasts, and, if using simulation
             or bootstrap, the simulated paths.
         """
-        raise NotImplementedError('Must be overridden')
+        pass
 
     def _bootstrap_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
                             simulations, random_state):
@@ -374,6 +375,7 @@ class VolatilityProcess(object):
 
         return np.ascontiguousarray(var_bounds)
 
+    @abstractmethod
     def starting_values(self, resids):
         """
         Returns starting values for the ARCH model
@@ -389,7 +391,7 @@ class VolatilityProcess(object):
         sv : ndarray
             Array of starting values
         """
-        raise NotImplementedError('Must be overridden')
+        pass
 
     def backcast(self, resids):
         """
@@ -411,6 +413,7 @@ class VolatilityProcess(object):
 
         return np.sum((resids[:tau] ** 2.0) * w)
 
+    @abstractmethod
     def bounds(self, resids):
         """
         Returns bounds for parameters
@@ -421,8 +424,9 @@ class VolatilityProcess(object):
             Vector of (approximate) residuals
 
         """
-        raise NotImplementedError('Must be overridden')
+        pass
 
+    @abstractmethod
     def compute_variance(self, parameters, resids, sigma2, backcast,
                          var_bounds):
         """
@@ -442,8 +446,9 @@ class VolatilityProcess(object):
         var_bounds : ndarray
             Array containing columns of lower and upper bounds
         """
-        raise NotImplementedError('Must be overridden')
+        pass
 
+    @abstractmethod
     def constraints(self):
         """
         Construct parameter constraints arrays for parameter estimation
@@ -461,7 +466,7 @@ class VolatilityProcess(object):
         Values returned are used in constructing linear inequality
         constraints of the form A.dot(parameters) - b >= 0
         """
-        raise NotImplementedError('Must be overridden')
+        pass
 
     def forecast(self, parameters, resids, backcast, var_bounds, start=None, horizon=1,
                  method='analytic', simulations=1000, rng=None, random_state=None):
@@ -536,6 +541,7 @@ class VolatilityProcess(object):
             return self._bootstrap_forecast(parameters, resids, backcast, var_bounds, start,
                                             horizon, simulations, random_state)
 
+    @abstractmethod
     def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
         """
         Simulate data from the model
@@ -563,7 +569,7 @@ class VolatilityProcess(object):
         variance : ndarray
             The simulated variance
         """
-        raise NotImplementedError('Must be overridden')
+        pass
 
     def _gaussian_loglikelihood(self, parameters, resids, backcast,
                                 var_bounds):
@@ -575,6 +581,7 @@ class VolatilityProcess(object):
         self.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
         return self._normal.loglikelihood([], resids, sigma2)
 
+    @abstractmethod
     def parameter_names(self):
         """
         Names of model parameters
@@ -584,7 +591,7 @@ class VolatilityProcess(object):
          names : list (str)
             Variables names
         """
-        raise NotImplementedError('Must be overridden')
+        pass
 
 
 class ConstantVariance(VolatilityProcess):
