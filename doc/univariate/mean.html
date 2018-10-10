@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Mean Models &#8212; arch 4.6.0+5.gb97869e documentation</title>
+    <title>Mean Models &#8212; arch 4.6.0+7.gf425f1d documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="univariate_volatility_scenarios.html" title="Volatilty Scenarios"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.6.0+5.gb97869e documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.6.0+7.gf425f1d documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.6</a>
+    ../index.html" class="text-logo">arch 4.6.0 (+7)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -129,7 +129,7 @@
 <h2>No Mean<a class="headerlink" href="#no-mean" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.ZeroMean">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">ZeroMean</code><span class="sig-paren">(</span><em>y=None</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">ZeroMean</code><span class="sig-paren">(</span><em>y=None</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ZeroMean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ZeroMean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model with zero conditional mean estimation and simulation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -307,7 +307,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ZeroMean.resids">
-<code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.resids" title="Permalink to this definition">¶</a></dt>
+<code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ZeroMean.resids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ZeroMean.resids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute model residuals</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -332,7 +332,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ZeroMean.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ZeroMean.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ZeroMean.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulated data from a zero mean model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -382,7 +382,7 @@ containing the errors used in the simulation</p>
 <h2>Constant Mean<a class="headerlink" href="#constant-mean" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.ConstantMean">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">ConstantMean</code><span class="sig-paren">(</span><em>y=None</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">ConstantMean</code><span class="sig-paren">(</span><em>y=None</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ConstantMean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantMean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constant mean model estimation and simulation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -531,7 +531,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantMean.resids">
-<code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.resids" title="Permalink to this definition">¶</a></dt>
+<code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ConstantMean.resids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantMean.resids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute model residuals</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -556,7 +556,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantMean.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ConstantMean.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantMean.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulated data from a constant mean model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -606,7 +606,7 @@ containing the errors used in the simulation</p>
 <h2>Autoregressions<a class="headerlink" href="#autoregressions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.ARX">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">ARX</code><span class="sig-paren">(</span><em>y=None</em>, <em>x=None</em>, <em>lags=None</em>, <em>constant=True</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">ARX</code><span class="sig-paren">(</span><em>y=None</em>, <em>x=None</em>, <em>lags=None</em>, <em>constant=True</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ARX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ARX" title="Permalink to this definition">¶</a></dt>
 <dd><p>Autoregressive model with optional exogenous regressors estimation and
 simulation</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -882,7 +882,7 @@ to have nobs plus burn data points</p>
 <h2>Heterogeneous Autoregressions<a class="headerlink" href="#heterogeneous-autoregressions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.HARX">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">HARX</code><span class="sig-paren">(</span><em>y=None</em>, <em>x=None</em>, <em>lags=None</em>, <em>constant=True</em>, <em>use_rotated=False</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">HARX</code><span class="sig-paren">(</span><em>y=None</em>, <em>x=None</em>, <em>lags=None</em>, <em>constant=True</em>, <em>use_rotated=False</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX" title="Permalink to this definition">¶</a></dt>
 <dd><p>Heterogeneous Autoregression (HAR), with optional exogenous regressors,
 model estimation and simulation</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1003,7 +1003,7 @@ model, volatility model and distribution.</li>
 
 <dl class="method">
 <dt id="arch.univariate.HARX.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX.forecast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1078,7 +1078,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.HARX.resids">
-<code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.resids" title="Permalink to this definition">¶</a></dt>
+<code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX.resids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX.resids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute model residuals</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1103,7 +1103,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.HARX.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulates data from a linear regression, AR or HAR models</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1167,7 +1167,7 @@ to have nobs plus burn data points</p>
 <h2>Least Squares<a class="headerlink" href="#least-squares" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.LS">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">LS</code><span class="sig-paren">(</span><em>y=None</em>, <em>x=None</em>, <em>constant=True</em>, <em>hold_back=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">LS</code><span class="sig-paren">(</span><em>y=None</em>, <em>x=None</em>, <em>constant=True</em>, <em>hold_back=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#LS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.LS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Least squares model estimation and simulation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1363,7 +1363,7 @@ methods. There are two optional private methods that should be provided if
 applicable.</p>
 <dl class="class">
 <dt id="arch.univariate.base.ARCHModel">
-<em class="property">class </em><code class="descclassname">arch.univariate.base.</code><code class="descname">ARCHModel</code><span class="sig-paren">(</span><em>y=None</em>, <em>volatility=None</em>, <em>distribution=None</em>, <em>hold_back=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">arch.univariate.base.</code><code class="descname">ARCHModel</code><span class="sig-paren">(</span><em>y=None</em>, <em>volatility=None</em>, <em>distribution=None</em>, <em>hold_back=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract base class for mean models in ARCH processes.  Specifies the
 conditional mean process.</p>
 <p>All public methods that raise NotImplementedError should be overridden by
@@ -1407,7 +1407,7 @@ to override but recommended where applicable.</p>
         <li class="right" >
           <a href="univariate_volatility_scenarios.html" title="Volatilty Scenarios"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.6.0+5.gb97869e documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.6.0+7.gf425f1d documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -1418,7 +1418,7 @@ to override but recommended where applicable.</p>
 </script>
 <script type="text/javascript" src="../_static/js/bootstrap.js"></script>
   <div class="footer">
-    &copy; Copyright 2017, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    &copy; Copyright 2018, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   </body>
 </html>

@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Independent, Identical Distributed Data (i.i.d.) &#8212; arch 4.6.0+5.gb97869e documentation</title>
+    <title>Independent, Identical Distributed Data (i.i.d.) &#8212; arch 4.6.0+7.gf425f1d documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="semiparametric-parametric-bootstrap.html" title="Semiparametric Bootstraps"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.6.0+5.gb97869e documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.6.0+7.gf425f1d documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" accesskey="U">Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.6</a>
+    ../index.html" class="text-logo">arch 4.6.0 (+7)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -127,7 +127,7 @@
 either i.i.d. or at least not serially dependant.</p>
 <dl class="class">
 <dt id="arch.bootstrap.IIDBootstrap">
-<em class="property">class </em><code class="descclassname">arch.bootstrap.</code><code class="descname">IIDBootstrap</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.IIDBootstrap" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">arch.bootstrap.</code><code class="descname">IIDBootstrap</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#IIDBootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.IIDBootstrap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bootstrap using uniform resampling</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -236,7 +236,7 @@ on kw_data.</p>
 </div>
 <dl class="method">
 <dt id="arch.bootstrap.IIDBootstrap.apply">
-<code class="descname">apply</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.apply" title="Permalink to this definition">¶</a></dt>
+<code class="descname">apply</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>extra_kwargs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#IIDBootstrap.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.apply" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies a function to bootstrap replicated data</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -281,7 +281,7 @@ these are appended to kwargs before calling func</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.IIDBootstrap.bootstrap">
-<code class="descname">bootstrap</code><span class="sig-paren">(</span><em>reps</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.bootstrap" title="Permalink to this definition">¶</a></dt>
+<code class="descname">bootstrap</code><span class="sig-paren">(</span><em>reps</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#IIDBootstrap.bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.bootstrap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterator for use when bootstrapping</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -319,7 +319,7 @@ dictionary</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.IIDBootstrap.conf_int">
-<code class="descname">conf_int</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>method='basic'</em>, <em>size=0.95</em>, <em>tail='two'</em>, <em>extra_kwargs=None</em>, <em>reuse=False</em>, <em>sampling='nonparametric'</em>, <em>std_err_func=None</em>, <em>studentize_reps=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.conf_int" title="Permalink to this definition">¶</a></dt>
+<code class="descname">conf_int</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>method='basic'</em>, <em>size=0.95</em>, <em>tail='two'</em>, <em>extra_kwargs=None</em>, <em>reuse=False</em>, <em>sampling='nonparametric'</em>, <em>std_err_func=None</em>, <em>studentize_reps=1000</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#IIDBootstrap.conf_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.conf_int" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -406,7 +406,7 @@ to ‘bc’ method</li>
 
 <dl class="method">
 <dt id="arch.bootstrap.IIDBootstrap.cov">
-<code class="descname">cov</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>recenter=True</em>, <em>extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.cov" title="Permalink to this definition">¶</a></dt>
+<code class="descname">cov</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>recenter=True</em>, <em>extra_kwargs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#IIDBootstrap.cov"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.cov" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute parameter covariance using bootstrap</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -470,7 +470,7 @@ name of the required bootstrap</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.IIDBootstrap.get_state">
-<code class="descname">get_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.get_state" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#IIDBootstrap.get_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.get_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the state of the bootstrap’s random number generator</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -486,7 +486,7 @@ name of the required bootstrap</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.IIDBootstrap.reset">
-<code class="descname">reset</code><span class="sig-paren">(</span><em>use_seed=True</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.reset" title="Permalink to this definition">¶</a></dt>
+<code class="descname">reset</code><span class="sig-paren">(</span><em>use_seed=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#IIDBootstrap.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resets the bootstrap to either its initial state or the last seed.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -502,7 +502,7 @@ to the initial state.  Default is True</td>
 
 <dl class="method">
 <dt id="arch.bootstrap.IIDBootstrap.seed">
-<code class="descname">seed</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.seed" title="Permalink to this definition">¶</a></dt>
+<code class="descname">seed</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#IIDBootstrap.seed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.seed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Seeds the bootstrap’s random number generator</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -516,7 +516,7 @@ to the initial state.  Default is True</td>
 
 <dl class="method">
 <dt id="arch.bootstrap.IIDBootstrap.set_state">
-<code class="descname">set_state</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.set_state" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_state</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#IIDBootstrap.set_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.set_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the state of the bootstrap’s random number generator</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -530,7 +530,7 @@ to the initial state.  Default is True</td>
 
 <dl class="method">
 <dt id="arch.bootstrap.IIDBootstrap.var">
-<code class="descname">var</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>recenter=True</em>, <em>extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.var" title="Permalink to this definition">¶</a></dt>
+<code class="descname">var</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>recenter=True</em>, <em>extra_kwargs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#IIDBootstrap.var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.IIDBootstrap.var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute parameter variance using bootstrap</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -629,7 +629,7 @@ name of the required bootstrap</p>
         <li class="right" >
           <a href="semiparametric-parametric-bootstrap.html" title="Semiparametric Bootstraps"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.6.0+5.gb97869e documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.6.0+7.gf425f1d documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" >Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
@@ -640,7 +640,7 @@ name of the required bootstrap</p>
 </script>
 <script type="text/javascript" src="../_static/js/bootstrap.js"></script>
   <div class="footer">
-    &copy; Copyright 2017, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    &copy; Copyright 2018, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   </body>
 </html>

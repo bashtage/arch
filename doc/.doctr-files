@@ -23,6 +23,15 @@ doc/_images/univariate_univariate_volatility_modeling_6_0.png
 doc/_images/univariate_univariate_volatility_scenarios_19_0.png
 doc/_images/univariate_univariate_volatility_scenarios_22_0.png
 doc/_images/univariate_univariate_volatility_scenarios_25_0.png
+doc/_modules/arch/bootstrap/base.html
+doc/_modules/arch/bootstrap/multiple_comparison.html
+doc/_modules/arch/unitroot/unitroot.html
+doc/_modules/arch/univariate/base.html
+doc/_modules/arch/univariate/distribution.html
+doc/_modules/arch/univariate/mean.html
+doc/_modules/arch/univariate/volatility.html
+doc/_modules/arch/vendor/cached_property.html
+doc/_modules/index.html
 doc/_sources/bootstrap/background.rst.txt
 doc/_sources/bootstrap/bootstrap.rst.txt
 doc/_sources/bootstrap/bootstrap_examples.ipynb.txt
