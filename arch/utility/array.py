@@ -10,9 +10,10 @@ import datetime as dt
 
 import numpy as np
 from pandas import DataFrame, NaT, Series, Timestamp, to_datetime
+from abc import ABCMeta
 
 __all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor',
-           'date_to_index', 'cutoff_to_index', 'ensure2d']
+           'date_to_index', 'cutoff_to_index', 'ensure2d', 'AbstractDocStringInheritor']
 
 deprecation_doc = """
 {func} has been moved.  Please use {new_location}.{func}.
@@ -111,6 +112,9 @@ class DocStringInheritor(type):
                         attribute.__doc__ = doc
                         break
         return type.__new__(mcs, name, bases, clsdict)
+
+
+AbstractDocStringInheritor = type("AbstractDocStringInheritor", (ABCMeta, DocStringInheritor), {})
 
 
 def date_to_index(date, date_index):

@@ -22,7 +22,7 @@ from arch.utility.exceptions import ConvergenceWarning, StartingValueWarning, \
     convergence_warning, starting_value_warning
 from arch.vendor.cached_property import cached_property
 
-__all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel', 'ARCHModelForecast']
+__all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel', 'ARCHModelForecast', 'constraint']
 
 # Callback variables
 _callback_iter, _callback_llf = 0, 0.0,
