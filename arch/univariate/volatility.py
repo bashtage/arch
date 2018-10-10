@@ -577,7 +577,7 @@ class VolatilityProcess(object):
 
     def parameter_names(self):
         """
-        Names for model parameters
+        Names of model parameters
 
         Returns
         -------
