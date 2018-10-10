@@ -1,6 +1,7 @@
 import datetime as dt
 import warnings
 from abc import abstractmethod
+from arch.compat.python import iteritems
 from copy import deepcopy
 
 import numpy as np
@@ -60,7 +61,7 @@ class MultivariateARCHModel(object):
 
     def __init__(self, y=None, volatility=None, distribution=None,
                  hold_back=None, nvar=None):
-
+        self.name = self.__class__.__name__
         if y is None and nvar is None:
             raise ValueError('nvar must be provided when y is None.')
         self._y = TimeSeries(y, nvar=nvar, name='y')
@@ -88,6 +89,32 @@ class MultivariateARCHModel(object):
 
         self.volatility.nvar = self._nvar
         self.distribution.nvar = self._nvar
+
+    def __str__(self):
+        descr = self._model_description()
+        descr_str = self.name + '('
+        for key, val in iteritems(descr):
+            if val:
+                if key:
+                    descr_str += key + ': ' + val + ', '
+        descr_str = descr_str[:-2]  # Strip final ', '
+        descr_str += ')'
+
+        return descr_str
+
+    def __repr__(self):
+        txt = self.__str__()
+        txt.replace('\n', '')
+        return txt + ', id: ' + hex(id(self))
+
+    def _repr_html_(self):
+        """HTML representation for IPython Notebook"""
+        descr = self._model_description()
+        html = '<strong>' + self.name + '</strong>('
+        for key, val in iteritems(descr):
+            html += '<strong>' + key + ': </strong>' + val + ',\n'
+        html += '<strong>ID: </strong> ' + hex(id(self)) + ')'
+        return html
 
     @abstractmethod
     def constraints(self):
@@ -541,6 +568,12 @@ class MultivariateARCHModel(object):
         else:
             return inv_hess / nobs
 
+    @abstractmethod
+    def _model_description(self, include_lags=True):
+        """Model description for use by __str__ and related functions"""
+        pass
+
+
 
 class MultivariateARCHModelResult(object):
     """
@@ -605,6 +638,7 @@ class MultivariateARCHModelResult(object):
     def __init__(self, params, param_cov, r2, resid, covariance, cov_type,
                  dep_var, names, loglikelihood, input_pandas, optim_output,
                  fit_start, fit_stop, model):
+
         self._params = params
         self._resid = resid
         self._input_pandas = input_pandas

@@ -244,7 +244,7 @@ class ConstantCovariance(MultivariateVolatilityProcess):
 
     def __init__(self):
         super(ConstantCovariance, self).__init__()
-        self.name = 'Constant Variance'
+        self.name = 'Constant Covariance'
         self.closed_form = True
 
     @property

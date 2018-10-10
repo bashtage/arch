@@ -188,7 +188,6 @@ class MultivariateNormal(MultivariateDistribution):
     """
     def __init__(self, random_state=None):
         super(MultivariateNormal, self).__init__('Multivariate Normal', random_state=random_state)
-        self.name = 'Normal'
 
     def constraints(self):
         return empty(0), empty(0)

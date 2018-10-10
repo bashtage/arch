@@ -3,14 +3,20 @@ from itertools import product
 
 import numpy as np
 import pandas as pd
-import pytest
 
 from arch.multivariate.distribution import MultivariateNormal
-from arch.multivariate.mean import ConstantMean, VARX
-from arch.multivariate.volatility import ConstantCovariance, EWMACovariance
+from arch.multivariate.mean import VARX, ConstantMean, ZeroMean
+from arch.multivariate.volatility import ConstantCovariance
+
+varx = VARX(None, lags=2, constant=True, nvar=2,
+            volatility=ConstantCovariance(), distribution=MultivariateNormal())
+params = np.array([.1, .1, .1, .1, 0, .2, .2, .2, .2, 0, 2, 1, 2])
+data = varx.simulate(params, 500)
 
 dataset = namedtuple('dataset', ['y', 'x', 'lags', 'constant'])
 
+zm = ZeroMean(None, nvar=3)
+cm = ZeroMean(None, nvar=2)
 
 def generate_data(nvar, nobs, nexog, common, lags, constant, pandas):
     rs = np.random.RandomState(1)
@@ -50,12 +56,6 @@ ids = [ID.format(*map(str, p)) for p in params]
 #    nvar, nobs, nexog, common, lags, constant, pandas = request.param
 #    return generate_data(nvar, nobs, nexog, common, lags, constant, pandas)
 
-varx = VARX(np.random.standard_normal((500,2)), lags=2, constant=True, nvar=2, volatility=ConstantCovariance(),
-            distribution=MultivariateNormal())
-params = np.array([.1, .1, .1, .1, 0, .2, .2, .2, .2, 0, 2, 1, 2])
-data = varx.simulate(params, 500)
-
-
 for id, param in zip(ids,params):
     nvar, nobs, nexog, common, lags, constant, pandas = param
     print(id)
@@ -68,6 +68,9 @@ for id, param in zip(ids,params):
     y = var_data.y
     x = var_data.x
     mod = VARX(y, x, lags=lags, constant=constant, volatility=vol, distribution=dist)
-    mod.fit(cov_type='mle')
+    res = mod.fit(cov_type='mle')
+    mod.simulate(res.params,500)
+    print(mod)
+    print(mod._repr_html_())
 
 

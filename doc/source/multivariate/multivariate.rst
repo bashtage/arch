@@ -9,9 +9,19 @@ All multivariate ARCH models start by specifying a mean model.
 .. module:: arch.multivariate.mean
 .. py:currentmodule:: arch.multivariate
 
+VAR with Optional Exogenous Regressors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: VARX
+    :members: resids, simulate, fit
+
 Constant Mean
 ~~~~~~~~~~~~~
 .. autoclass:: ConstantMean
+    :members: resids, simulate, fit
+
+Zero Mean
+~~~~~~~~~
+.. autoclass:: ZeroMean
     :members: resids, simulate, fit
 
 Volatility Processes

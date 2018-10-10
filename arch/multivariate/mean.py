@@ -1,5 +1,6 @@
 import copy
 from collections import MutableMapping, Sequence
+from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
@@ -27,8 +28,59 @@ class MultivariateSimulation(object):
 
 
 class VARX(MultivariateARCHModel):
-    def __init__(self, y=None, x=None, lags=None, constant=True, volatility=None,
-                 distribution=None, hold_back=None, nvar=None):
+    r"""
+    Vector Autoregression (VAR), with optional exogenous regressors,
+    model estimation and simulation
+
+    Parameters
+    ----------
+    y : {ndarray, Series}
+        nobs element vector containing the dependent variable
+    x : {ndarray, DataFrame}, optional
+        nobs by k element array containing exogenous regressors
+    lags : {scalar, list, ndarray}, optional
+        Description of lag structure of the VAR.  Scalar includes all lags
+        between 1 and the value.  A 1-d array includes only the lags listed.
+    constant : bool, optional
+        Flag whether the model should include a constant
+    hold_back : int, optional
+        Number of observations at the start of the sample to exclude when
+        estimating model parameters.  Used when comparing models with different
+        lag lengths to estimate on the common sample.
+    volatility : VolatilityProcess, optional
+        Volatility process to use in the model
+    distribution : Distribution, optional
+        Error distribution to use in the model
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from arch.multivariate import VARX
+    >>> y = np.random.randn((100, 2))
+    >>> var = VARX(y, lags=2)
+    >>> res = var.fit()
+
+    >>> from pandas import Series, date_range
+    >>> index = date_range('2000-01-01', freq='M', periods=y.shape[0])
+    >>> y = DataFrame(y, columns=['y1', 'y2'], index=index)
+    >>> var = VARX(y, lags=[1, 4], hold_back=10)
+
+    Notes
+    -----
+    The VAR-X model is described by
+
+    .. math::
+
+        Y_{t} = \Phi_{0} + \Phi_{1}Y_{t-1} + \ldots + \Phi_{p}Y_{t-p}
+                + \Gamma X_{t} + \epsilon_{t}
+
+    where :math:`\Phi_0` is the constant or intercept, :math:`\Phi_0` are
+    parameter arrays on the lagged values, and :math:`\Gamma` contains the
+    coefficient on the exogenous regressors, if any.
+    """
+
+    def __init__(self, y=None, x=None, lags=None, constant=True, hold_back=0, volatility=None,
+                 distribution=None, nvar=None):
         super(VARX, self).__init__(y, volatility, distribution, hold_back, nvar)
         self._x = x
         self._lags = lags
@@ -39,10 +91,20 @@ class VARX(MultivariateARCHModel):
         self._reg_names = []
         self._reformat_lags()
         self._hold_back = max(self._hold_back, self._max_lag)
+        self._has_exogenous = False
+        self._check_x()
         if y is not None:
-            self._check_x()
             self._construct_regressors()
 
+    @property
+    def constant(self):
+        """Lags included in the model"""
+        return self._constant
+
+    @property
+    def lags(self):
+        """Lags included in the model"""
+        return self._lags
 
     def _reformat_lags(self):
         """Reformat lags to the common list format"""
@@ -103,7 +165,7 @@ class VARX(MultivariateARCHModel):
                 self._x[i] = self._check_single_x(single)
         elif x is not None:
             raise TypeError('x must be one of None, a ndarray, DataFrame, dict or list.')
-
+        self._has_exogenous = any(map(lambda v: v is not None, self._x))
         return
 
     @staticmethod
@@ -199,9 +261,12 @@ class VARX(MultivariateARCHModel):
         """
         Number of parameters in the model
         """
-        if self._common_regressor:
-            return self.nvar * self._rhs.shape[1]
-        return sum(map(lambda a: a.shape[1], self._rhs))
+        count = (self._constant + len(self._lags) * self.nvar) * self.nvar
+        if self._common_regressor and self._x[0] is not None:
+            count += self.nvar * self._x[0].shape[1]
+        else:
+            count += sum([x.shape[1] for x in self._x if x is not None])
+        return count
 
     def constraints(self):
         return np.empty((0, self.num_params)), np.empty(0)
@@ -274,7 +339,7 @@ class VARX(MultivariateARCHModel):
         return cov
 
     def _normal_mle_robust_cov(self):
-        pass
+        raise NotImplementedError
 
     def _fit_no_arch_normal_errors(self, cov_type='robust'):
         """
@@ -367,25 +432,27 @@ class VARX(MultivariateARCHModel):
             self._fit_regressors = [rhs[first_obs_index:last_obs_index] for rhs in self._rhs]
         self.volatility.start, self.volatility.stop = self._fit_indices
 
-    def _convert_standard_var(self, params):
+    def _convert_standard_var(self, params, x=None):
         const = np.zeros((self.nvar,1))
         var_params = np.zeros((self._max_lag, self.nvar, self.nvar))
         nvar = self.nvar
-        if self._common_regressor:
-            nreg = self._rhs.shape[1]
-            params = params.copy()
-            params = np.reshape(params, (nvar, nreg))
-            offset = 0
+        offset = 0
+        x_params = []
+        var_count = len(self._lags) * nvar
+        for i in range(self.nvar):
             if self._constant:
-                const[:] = params[:, :1]
-                offset = 1
-            for i, lag in enumerate(self._lags):
-                var_params[i] = params[:, offset:offset + nvar]
-                offset += nvar
-            x_params = params[:, offset:]
-        else:
-            # TODO
-            raise NotImplementedError
+                const[i] = params[offset]
+                offset += 1
+            var_params[:, i].flat = params[offset:offset + var_count]
+            offset += var_count
+            if x is not None:
+                if isinstance(x, (pd.DataFrame, np.ndarray)):
+                    _x = x
+                else:
+                    _x = x[i]
+                x_count = 0 if _x is None else _x.shape[1]
+                x_params.append(params[offset:offset + x_count])
+                offset += x_count
         return const, var_params, x_params
 
     def simulate(self, params, nobs, burn=500, initial_value=None, x=None,
@@ -397,7 +464,7 @@ class VARX(MultivariateARCHModel):
                 raise ValueError('x must have nobs + burn observations')
         nvar = self.nvar
         mp, vp, dp = self._parse_parameters(params)
-        const, var_params, x_params = self._convert_standard_var(mp)
+        const, var_params, x_params = self._convert_standard_var(mp, x)
         rng = self.distribution.simulate(dp)
         sim = self.volatility.simulate(vp, nobs+burn, rng, burn, initial_cov)
         resids = sim.resids
@@ -419,11 +486,115 @@ class VARX(MultivariateARCHModel):
         resids = resids[burn:]
         return MultivariateSimulation(data, cov, resids)
 
+    def _model_description(self, include_lags=True):
+        """Generates the model description for use by __str__ and related
+        functions"""
+        lagstr = 'none'
+        if include_lags and self.lags:
+            lagstr = ', '.join(['{0}'.format(lag) for lag in self._lags])
+        od = OrderedDict()
+        od['constant'] = 'yes' if self.constant else 'no'
+        if include_lags:
+            od['lags'] = lagstr
+        od['exogenous'] = 'yes' if self._has_exogenous else 'no'
+        if self._has_exogenous:
+            details = 'common' if self._common_regressor else 'heterogeneous'
+            od['exogenous structure'] = details
+            exog_count = list(map(lambda a: 0 if a is None else a.shape[1], self._x))
+            min_count = min(exog_count)
+            max_count = max(exog_count)
+            if self._common_regressor:
+                xstr = str(min_count)
+            else:
+                xstr = '{0}-{1}'.format(min_count, max_count)
+            od['no. of exog'] = xstr
+        od['volatility'] = self.volatility.__str__()
+        od['distribution'] = self.distribution.__str__()
+        return od
+
 
 class ConstantMean(VARX):
     """
-    TODO: Description
+    Constant mean model
+
+    Parameters
+    ----------
+    y : {ndarray, Series}
+        nobs element vector containing the dependent variable
+    hold_back : int, optional
+        Number of observations at the start of the sample to exclude when
+        estimating model parameters.  Used when comparing models with different
+        lag lengths to estimate on the common sample.
+    volatility : VolatilityProcess, optional
+        Volatility process to use in the model
+    distribution : Distribution, optional
+        Error distribution to use in the model
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from arch.multivariate import ConstantMean
+    >>> y = np.random.randn((100, 2))
+    >>> cm = ConstantMean(y)
+
+    Notes
+    -----
+    The constant mean model is described by
+
+    .. math::
+
+        Y_{t} = \mu + \epsilon_{t}
+
+    The constant mean model is a special case of the VAR-X where all
+    coefficients except the intercept are restricted to have 0 coefficients.
+
     """
     def __init__(self, y=None, volatility=None, distribution=None, hold_back=None, nvar=None):
-        super(ConstantMean, self).__init__(y=y, constant=True, volatility=volatility, distribution=distribution,
-                                           hold_back=hold_back, nvar=nvar)
+        super(ConstantMean, self).__init__(y=y, constant=True, volatility=volatility,
+                                           distribution=distribution, hold_back=hold_back,
+                                           nvar=nvar)
+
+
+class ZeroMean(VARX):
+    """
+    Zero mean model
+
+    Parameters
+    ----------
+    y : {ndarray, Series}
+        nobs element vector containing the dependent variable
+    hold_back : int, optional
+        Number of observations at the start of the sample to exclude when
+        estimating model parameters.  Used when comparing models with different
+        lag lengths to estimate on the common sample.
+    volatility : VolatilityProcess, optional
+        Volatility process to use in the model
+    distribution : Distribution, optional
+        Error distribution to use in the model
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from arch.multivariate import ZeroMean
+    >>> y = np.random.randn((100, 2))
+    >>> zm = ZeroMean(y)
+
+    Notes
+    -----
+    The constant mean model is described by
+
+    .. math::
+
+        Y_{t} = \epsilon_{t}
+
+    The zero mean model is a special case of the VAR-X where all
+    coefficients are restricted to have 0 coefficients.
+
+    This model is typically used when the input `y` are residuals produced by
+    filtering the original data through a time series model.
+    """
+
+    def __init__(self, y=None, volatility=None, distribution=None, hold_back=None, nvar=None):
+        super(ZeroMean, self).__init__(y=y, constant=False, volatility=volatility,
+                                       distribution=distribution, hold_back=hold_back,
+                                       nvar=nvar)
