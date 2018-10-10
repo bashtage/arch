@@ -22,8 +22,6 @@ class MultivariateDistribution(object):
     Template for subclassing only
     """
 
-    __metaclass__ = AbstractDocStringInheritor  # noqa
-
     def __init__(self, name, random_state=None):
         self.name = name
         self.num_params = 0

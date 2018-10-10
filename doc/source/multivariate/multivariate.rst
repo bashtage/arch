@@ -56,3 +56,9 @@ Multivariate Normal
 
 .. autoclass:: MultivariateNormal
     :members: starting_values, bounds, constraints, simulate, loglikelihood
+
+Utilities
+=========
+
+.. autoclass:: VARZeroSetter
+

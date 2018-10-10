@@ -57,8 +57,6 @@ class MultivariateARCHModel(object):
     applicable.
     """
 
-    __metaclass__ = AbstractDocStringInheritor  # noqa
-
     def __init__(self, y=None, volatility=None, distribution=None,
                  hold_back=None, nvar=None):
         self.name = self.__class__.__name__
@@ -572,7 +570,6 @@ class MultivariateARCHModel(object):
     def _model_description(self, include_lags=True):
         """Model description for use by __str__ and related functions"""
         pass
-
 
 
 class MultivariateARCHModelResult(object):

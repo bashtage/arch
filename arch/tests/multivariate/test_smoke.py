@@ -63,7 +63,7 @@ def test_constant():
     sim = cm.simulate(params, 1000)
 
     cm = ConstantMean(sim.data, vol, dist)
-    cm.fit()
+    cm.fit(cov_type='mle')
 
 
 def test_ewma():
@@ -73,10 +73,10 @@ def test_ewma():
     mu = np.array([.1, .2, .3])
     params = mu
     cov = np.ones(3) + np.diag(np.ones(3))
-    sim = cm.simulate(params, 1000, initial_value_vol=cov)
+    sim = cm.simulate(params, 1000, initial_cov=cov)
 
     cm = ConstantMean(sim.data, vol, dist)
-    cm.fit()
+    cm.fit(cov_type='mle')
 
 
 def test_varx(var_data):
@@ -91,7 +91,7 @@ def test_varx(var_data):
 
 
 def test_var_sim():
-    varx = VARX(np.random.standard_normal((500,2)), lags=2, constant=True, nvar=2, volatility=ConstantCovariance(),
-                distribution=MultivariateNormal())
+    varx = VARX(np.random.standard_normal((500, 2)), lags=2, constant=True, nvar=2,
+                volatility=ConstantCovariance(), distribution=MultivariateNormal())
     params = np.array([.1, .1, .1, .1, 0, .2, .2, .2, .2, 0, 2, 1, 2])
     varx.simulate(params, 500)

@@ -341,10 +341,7 @@ class VARX(MultivariateARCHModel):
     def _normal_mle_robust_cov(self):
         raise NotImplementedError
 
-    def _fit_no_arch_normal_errors(self, cov_type='robust'):
-        """
-        Must be overridden with closed form estimator
-        """
+    def _fit_no_arch_normal_errors(self, cov_type='mle'):
         """
         Estimates model parameters
 
@@ -359,13 +356,13 @@ class VARX(MultivariateARCHModel):
 
         Returns
         -------
-        result : ARCHModelResult
+        result : MultivariateARCHModelResult
             Results class containing parameter estimates, estimated parameter
             covariance and related estimates
 
         Notes
         -----
-        See :class:`ARCHModelResult` for details on computed results
+        See :class:`MultivariateARCHModelResult` for details on computed results
         """
         nobs = self._fit_y.shape[0]
         if self._common_regressor:
@@ -433,7 +430,7 @@ class VARX(MultivariateARCHModel):
         self.volatility.start, self.volatility.stop = self._fit_indices
 
     def _convert_standard_var(self, params, x=None):
-        const = np.zeros((self.nvar,1))
+        const = np.zeros((self.nvar, 1))
         var_params = np.zeros((self._max_lag, self.nvar, self.nvar))
         nvar = self.nvar
         offset = 0
@@ -468,7 +465,7 @@ class VARX(MultivariateARCHModel):
         rng = self.distribution.simulate(dp)
         sim = self.volatility.simulate(vp, nobs+burn, rng, burn, initial_cov)
         resids = sim.resids
-        initial_value = np.zeros((1,self.nvar)) if initial_value is None else initial_value
+        initial_value = np.zeros((1, self.nvar)) if initial_value is None else initial_value
         data = np.zeros((nobs + burn, nvar))
         for i in range(nobs + burn):
             data[i:i + 1] = const.T
@@ -554,6 +551,11 @@ class ConstantMean(VARX):
                                            distribution=distribution, hold_back=hold_back,
                                            nvar=nvar)
 
+    def simulate(self, params, nobs, burn=500, initial_value=None, initial_cov=None):
+        return super(ConstantMean, self).simulate(params, nobs, 500, x=None,
+                                                  initial_value=initial_value,
+                                                  initial_cov=initial_cov)
+
 
 class ZeroMean(VARX):
     """
@@ -598,3 +600,167 @@ class ZeroMean(VARX):
         super(ZeroMean, self).__init__(y=y, constant=False, volatility=volatility,
                                        distribution=distribution, hold_back=hold_back,
                                        nvar=nvar)
+
+    def simulate(self, params, nobs, burn=500, initial_value=None, initial_cov=None):
+        return super(ZeroMean, self).simulate(params, nobs, 500, x=None,
+                                              initial_value=initial_value,
+                                              initial_cov=initial_cov)
+
+
+class VARZeroSetter(object):
+    """
+    Utility to set equation-variable-lag combination in a VAR
+
+    Parameters
+    ----------
+    nvar : int
+        Number of variables in the VAR
+    lags : List[int]
+        List of lags included in the model
+    variable_names : List[str], optional.
+        List of variable names in the model.If not provided the default
+        values y0, y1, ... are used.
+
+    Examples
+    --------
+    >>> vz = VARZeroSetter(3, [1, 3], ['gdp', 'inflation', 'int_rate'])
+    >>> vz.diagonalize()
+    >>> vz.include(1, 'gdp', 'inflation')
+    >>> vz.include(1, 'gdp', 'int_rate')
+    >>> print(vz)
+    VARZeroSetter
+       Lag: 1
+    Variable   gdp inflation int_rate
+    Eq.
+    gdp         +         +        +
+    inflation  ---        +       ---
+    int_rate   ---       ---       +
+       Lag: 3
+    Variable   gdp inflation int_rate
+    Eq.
+    gdp         +        ---      ---
+    inflation  ---        +       ---
+    int_rate   ---       ---       +
+    """
+
+    def __init__(self, nvar, lags, variable_names=None):
+        self._max_lag = max(lags) if lags else 0
+        self._lags = lags
+        self._np_lags = np.array(lags) - 1
+        self._nvar = nvar
+        self._ind = np.ones((self._max_lag, nvar, nvar), dtype=bool)
+        self._int_index = pd.Index(np.arange(nvar))
+        if variable_names is not None:
+            self._index = pd.Index(variable_names)
+        else:
+            self._index = pd.Index(['y{0}'.format(i) for i in range(nvar)])
+
+    def _loc(self, value):
+        try:
+            return self._index.get_loc(value)
+        except KeyError:
+            return self._int_index.get_loc(value)
+
+    def exclude(self, lag, equation, variable):
+        """
+        Exclude a lag-equation-variable combination
+
+        Parameters
+        ----------
+        lag : int
+            Lag for the exclusion
+        equation : {str, int}
+            Equation to apply the exclusion to.  If a string, uses variable
+            names to identify the equation index.  If an integer, uses 0-based
+            indexing.
+        variable : {str, int}
+            Variable to exclude from equation at lag. If a string, uses variable
+            names to identify the variable index.  If an integer, uses 0-based
+            indexing.
+        """
+        if not np.isin(lag - 1, self._np_lags):
+            raise KeyError('Lag {0} is not included in the model.'.format(lag))
+        self._ind[lag - 1, self._loc(equation), self._loc(variable)] = False
+
+    def include(self, lag, equation, variable):
+        """
+        Include a lag-equation-variable combination
+
+        Parameters
+        ----------
+        lag : int
+            Lag for the inclusion
+        equation : {str, int}
+            Equation to apply the inclusion to.  If a string, uses variable
+            names to identify the equation index.  If an integer, uses 0-based
+            indexing.
+        variable : {str, int}
+            Variable to include in equation at lag. If a string, uses variable
+            names to identify the variable index.  If an integer, uses 0-based
+            indexing.
+        """
+        self._ind[lag - 1, self._loc(equation), self._loc(variable)] = True
+
+    def diagonalize(self):
+        """
+        Set the selection to only include own-lags
+        """
+        for i in range(self._max_lag):
+            self._ind[i] = np.eye(self._nvar)
+
+    def exclude_all(self):
+        """
+        Exclude all variables from all equations at all lags.
+        """
+        self._ind[:, :, :] = False
+
+    def include_all(self):
+        """
+        Include all variables from all equations at all lags.
+        """
+        self._ind[:, :, :] = True
+
+    @property
+    def flat(self):
+        """
+        Return the indices as a flattened 2-d array
+
+        Returns
+        -------
+        ind : ndarray
+            Array with shape (nvar, nvar * nlags) where the columns are
+            blocked in groups of size nvar so that block i corresponds
+            to lags[i].
+        """
+        ind = self._ind[self._np_lags]
+        return np.hstack([i for i in ind])
+
+    @property
+    def stacked(self):
+        """
+        Return the indices as a stacked 3-d array
+
+        Returns
+        -------
+        ind : ndarray
+            Array with shape (nlags, nvar, nvar) where panel i contains
+            the selected elements for lags[i].
+        """
+        return self._ind[self._np_lags]
+
+    def __str__(self):
+        idx = self._index.copy()
+        idx.name = 'Eq.'
+        col = idx.copy()
+        col.name = 'Variable'
+        out = self.__class__.__name__ + '\n'
+        for lag in self._lags:
+            out += '   Lag: {lag}\n'.format(lag=lag)
+            df = pd.DataFrame(self._ind[lag - 1], index=idx, columns=col, dtype='object')
+            out += str(df.applymap(lambda v: ' + ' if v else '---'))
+            out += '\n'
+
+        return out
+
+    def __repr__(self):
+        return self.__str__() + 'id: ' + hex(id(self))

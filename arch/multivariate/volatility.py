@@ -17,8 +17,6 @@ class MultivariateVolatilityProcess(object):
     separately from the conditional variance, even though parameters are estimated jointly.
     """
 
-    __metaclass__ = AbstractDocStringInheritor  # noqa
-
     def __init__(self):
         self.name = ''
         self.closed_form = False
