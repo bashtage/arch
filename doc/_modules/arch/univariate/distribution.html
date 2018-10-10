@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>arch.univariate.distribution &#8212; arch 4.6.0+7.gf425f1d documentation</title>
+    <title>arch.univariate.distribution &#8212; arch 4.6.0+9.gb0b1df0 documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+7.gf425f1d documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+9.gb0b1df0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -53,7 +53,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../../index.html" class="text-logo">arch 4.6.0 (+7)</a>
+    ../../../index.html" class="text-logo">arch 4.6.0 (+9)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -110,6 +110,8 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span>
 
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractmethod</span>
+
 <span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="p">(</span><span class="n">empty</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">sign</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="nb">sum</span><span class="p">,</span> <span class="n">asarray</span><span class="p">,</span>
                    <span class="n">ones_like</span><span class="p">,</span> <span class="nb">abs</span><span class="p">)</span>
@@ -117,13 +119,13 @@
 <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">gammaln</span><span class="p">,</span> <span class="n">gamma</span>
 
 <span class="kn">from</span> <span class="nn">arch.compat.python</span> <span class="k">import</span> <span class="n">add_metaclass</span>
-<span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="k">import</span> <span class="n">DocStringInheritor</span>
+<span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="k">import</span> <span class="n">AbstractDocStringInheritor</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Distribution&#39;</span><span class="p">,</span> <span class="s1">&#39;Normal&#39;</span><span class="p">,</span> <span class="s1">&#39;StudentsT&#39;</span><span class="p">,</span> <span class="s1">&#39;SkewStudent&#39;</span><span class="p">,</span>
            <span class="s1">&#39;GeneralizedError&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Distribution"><a class="viewcode-back" href="../../../univariate/distribution.html#arch.univariate.Distribution">[docs]</a><span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">DocStringInheritor</span><span class="p">)</span>
+<div class="viewcode-block" id="Distribution"><a class="viewcode-back" href="../../../univariate/distribution.html#arch.univariate.Distribution">[docs]</a><span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">AbstractDocStringInheritor</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Distribution</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Template for subclassing only</span>
@@ -144,6 +146,7 @@
         <span class="sd">&quot;&quot;&quot;The NumPy RandomState attached to the distribution&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulate i.i.d. draws from the distribution</span>
@@ -162,8 +165,9 @@
 <span class="sd">        -----</span>
 <span class="sd">        Must call `simulate` before using `_simulator`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Subclasses must implement&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulates i.i.d. draws from the distribution</span>
@@ -179,9 +183,9 @@
 <span class="sd">            Callable that take a single output size argument and returns i.i.d.</span>
 <span class="sd">            draws from the distribution</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s1">&#39;Subclasses must implement&#39;</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">pass</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns</span>
@@ -195,8 +199,9 @@
 <span class="sd">        -----</span>
 <span class="sd">        Parameters satisfy the constraints A.dot(parameters)-b &gt;= 0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Subclasses must implement&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
@@ -209,9 +214,9 @@
 <span class="sd">        bounds : list</span>
 <span class="sd">            List containing a single tuple with (lower, upper) bounds</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s1">&#39;Subclasses must implement&#39;</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">pass</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">individual</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
@@ -231,8 +236,9 @@
 <span class="sd">        Returns the loglikelihood where resids are the &quot;data&quot;,</span>
 <span class="sd">        and parameters and sigma2 are inputs.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Subclasses must implement&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
@@ -250,9 +256,9 @@
 <span class="sd">        -----</span>
 <span class="sd">        Size of sv depends on the distribution</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s1">&#39;Subclasses must implement&#39;</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">pass</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Names of distribution shape parameters</span>
@@ -262,7 +268,7 @@
 <span class="sd">        names : list (str)</span>
 <span class="sd">            Parameter names</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Subclasses must implement&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span><span class="p">()</span>
@@ -785,7 +791,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+7.gf425f1d documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+9.gb0b1df0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>arch.univariate.volatility &#8212; arch 4.6.0+7.gf425f1d documentation</title>
+    <title>arch.univariate.volatility &#8212; arch 4.6.0+9.gb0b1df0 documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+7.gf425f1d documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+9.gb0b1df0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -53,7 +53,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../../index.html" class="text-logo">arch 4.6.0 (+7)</a>
+    ../../../index.html" class="text-logo">arch 4.6.0 (+9)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -110,6 +110,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span>
 
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractmethod</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
 
@@ -120,7 +121,7 @@
 <span class="kn">from</span> <span class="nn">arch.compat.python</span> <span class="k">import</span> <span class="n">add_metaclass</span><span class="p">,</span> <span class="nb">range</span>
 <span class="kn">from</span> <span class="nn">arch.univariate.distribution</span> <span class="k">import</span> <span class="n">Normal</span>
 <span class="kn">from</span> <span class="nn">arch.utility.exceptions</span> <span class="k">import</span> <span class="n">initial_value_warning</span><span class="p">,</span> <span class="n">InitialValueWarning</span>
-<span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="k">import</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">DocStringInheritor</span>
+<span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="k">import</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">AbstractDocStringInheritor</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">arch.univariate.recursions</span> <span class="k">import</span> <span class="p">(</span><span class="n">garch_recursion</span><span class="p">,</span> <span class="n">harch_recursion</span><span class="p">,</span>
@@ -234,14 +235,12 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shocks</span>
 
 
-<div class="viewcode-block" id="VolatilityProcess"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.VolatilityProcess">[docs]</a><span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">DocStringInheritor</span><span class="p">)</span>
+<div class="viewcode-block" id="VolatilityProcess"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.VolatilityProcess">[docs]</a><span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">AbstractDocStringInheritor</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">VolatilityProcess</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract base class for ARCH models.  Allows the conditional mean model to be specified</span>
 <span class="sd">    separately from the conditional variance, even though parameters are estimated jointly.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">DocStringInheritor</span>  <span class="c1"># noqa</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span> <span class="o">=</span> <span class="mi">0</span>
@@ -276,6 +275,7 @@
     <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span> <span class="o">=</span> <span class="n">value</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_check_forecasting_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">horizon</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Verify the requested forecasting method as valid for the specification</span>
@@ -292,7 +292,7 @@
 <span class="sd">        NotImplementedError</span>
 <span class="sd">            * If method is not known or not supported</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Must be overridden&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">_one_step_forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">,</span> <span class="n">horizon</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -330,6 +330,7 @@
 
         <span class="k">return</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">forecasts</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_analytic_forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">horizon</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Analytic multi-step volatility forecasts from the model</span>
@@ -357,9 +358,9 @@
 <span class="sd">            Class containing the variance forecasts, and, if using simulation</span>
 <span class="sd">            or bootstrap, the simulated paths.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
 
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Must be overridden&#39;</span><span class="p">)</span>
-
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_simulation_forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">horizon</span><span class="p">,</span>
                              <span class="n">simulations</span><span class="p">,</span> <span class="n">rng</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -395,7 +396,7 @@
 <span class="sd">            Class containing the variance forecasts, and, if using simulation</span>
 <span class="sd">            or bootstrap, the simulated paths.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Must be overridden&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">_bootstrap_forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">horizon</span><span class="p">,</span>
                             <span class="n">simulations</span><span class="p">,</span> <span class="n">random_state</span><span class="p">):</span>
@@ -479,6 +480,7 @@
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">var_bounds</span><span class="p">)</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns starting values for the ARCH model</span>
@@ -494,7 +496,7 @@
 <span class="sd">        sv : ndarray</span>
 <span class="sd">            Array of starting values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Must be overridden&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">backcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -516,6 +518,7 @@
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">resids</span><span class="p">[:</span><span class="n">tau</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns bounds for parameters</span>
@@ -526,8 +529,9 @@
 <span class="sd">            Vector of (approximate) residuals</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Must be overridden&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">compute_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span>
                          <span class="n">var_bounds</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -547,8 +551,9 @@
 <span class="sd">        var_bounds : ndarray</span>
 <span class="sd">            Array containing columns of lower and upper bounds</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Must be overridden&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct parameter constraints arrays for parameter estimation</span>
@@ -566,7 +571,7 @@
 <span class="sd">        Values returned are used in constructing linear inequality</span>
 <span class="sd">        constraints of the form A.dot(parameters) - b &gt;= 0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Must be overridden&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                  <span class="n">method</span><span class="o">=</span><span class="s1">&#39;analytic&#39;</span><span class="p">,</span> <span class="n">simulations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -641,6 +646,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap_forecast</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span>
                                             <span class="n">horizon</span><span class="p">,</span> <span class="n">simulations</span><span class="p">,</span> <span class="n">random_state</span><span class="p">)</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">rng</span><span class="p">,</span> <span class="n">burn</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">initial_value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulate data from the model</span>
@@ -668,7 +674,7 @@
 <span class="sd">        variance : ndarray</span>
 <span class="sd">            The simulated variance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Must be overridden&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">_gaussian_loglikelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span>
                                 <span class="n">var_bounds</span><span class="p">):</span>
@@ -680,6 +686,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">compute_variance</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normal</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">([],</span> <span class="n">resids</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">)</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Names of model parameters</span>
@@ -689,7 +696,7 @@
 <span class="sd">         names : list (str)</span>
 <span class="sd">            Variables names</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Must be overridden&#39;</span><span class="p">)</span></div>
+        <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="ConstantVariance"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.ConstantVariance">[docs]</a><span class="k">class</span> <span class="nc">ConstantVariance</span><span class="p">(</span><span class="n">VolatilityProcess</span><span class="p">):</span>
@@ -2412,7 +2419,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+7.gf425f1d documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+9.gb0b1df0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

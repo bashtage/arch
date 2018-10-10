@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>arch.univariate.base &#8212; arch 4.6.0+7.gf425f1d documentation</title>
+    <title>arch.univariate.base &#8212; arch 4.6.0+9.gb0b1df0 documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+7.gf425f1d documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+9.gb0b1df0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -53,7 +53,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../../index.html" class="text-logo">arch 4.6.0 (+7)</a>
+    ../../../index.html" class="text-logo">arch 4.6.0 (+9)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -109,6 +109,7 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span>
 <span class="kn">from</span> <span class="nn">arch.compat.python</span> <span class="k">import</span> <span class="n">add_metaclass</span><span class="p">,</span> <span class="nb">range</span>
 
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -122,7 +123,7 @@
 
 <span class="kn">from</span> <span class="nn">arch.univariate.distribution</span> <span class="k">import</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">Normal</span>
 <span class="kn">from</span> <span class="nn">arch.univariate.volatility</span> <span class="k">import</span> <span class="n">VolatilityProcess</span><span class="p">,</span> <span class="n">ConstantVariance</span>
-<span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="k">import</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">DocStringInheritor</span>
+<span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="k">import</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">AbstractDocStringInheritor</span>
 <span class="kn">from</span> <span class="nn">arch.utility.exceptions</span> <span class="k">import</span> <span class="n">ConvergenceWarning</span><span class="p">,</span> <span class="n">StartingValueWarning</span><span class="p">,</span> \
     <span class="n">convergence_warning</span><span class="p">,</span> <span class="n">starting_value_warning</span>
 <span class="kn">from</span> <span class="nn">arch.vendor.cached_property</span> <span class="k">import</span> <span class="n">cached_property</span>
@@ -230,7 +231,7 @@
     <span class="k">return</span> <span class="n">rank</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="ARCHModel"><a class="viewcode-back" href="../../../univariate/mean.html#arch.univariate.base.ARCHModel">[docs]</a><span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">DocStringInheritor</span><span class="p">)</span>
+<div class="viewcode-block" id="ARCHModel"><a class="viewcode-back" href="../../../univariate/mean.html#arch.univariate.base.ARCHModel">[docs]</a><span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">AbstractDocStringInheritor</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">ARCHModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract base class for mean models in ARCH processes.  Specifies the</span>
@@ -344,11 +345,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses optionally may provide.&quot;</span><span class="p">)</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_fit_no_arch_normal_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;robust&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Must be overridden with closed form estimator</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses must implement&quot;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">_loglikelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">,</span>
                        <span class="n">individual</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -459,6 +461,7 @@
         <span class="k">return</span> <span class="n">ARCHModelFixedResult</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span>
                                     <span class="n">loglikelihood</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pandas</span><span class="p">,</span> <span class="n">model_copy</span><span class="p">)</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_adjust_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Performs sample adjustment for estimation</span>
@@ -474,7 +477,7 @@
 <span class="sd">        -----</span>
 <span class="sd">        Adjusted sample must follow Python semantics of first_obs:last_obs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses must implement&quot;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s1">&#39;final&#39;</span><span class="p">,</span> <span class="n">starting_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;robust&#39;</span><span class="p">,</span> <span class="n">show_warning</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">first_obs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -658,6 +661,7 @@
                                <span class="n">cov_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">loglikelihood</span><span class="p">,</span>
                                <span class="bp">self</span><span class="o">.</span><span class="n">_is_pandas</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="n">fit_start</span><span class="p">,</span> <span class="n">fit_stop</span><span class="p">,</span> <span class="n">model_copy</span><span class="p">)</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;List of parameters names</span>
 
@@ -666,7 +670,7 @@
 <span class="sd">        names : list (str)</span>
 <span class="sd">            List of variable names for the mean model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Subclasses must implement&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -685,17 +689,20 @@
         <span class="k">elif</span> <span class="n">params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">params</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Number of parameters in the model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Subclasses must implement&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">burn</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">initial_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">initial_value_vol</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Subclasses must implement&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">resids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">regressors</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute model residuals</span>
@@ -714,7 +721,7 @@
 <span class="sd">        resids : ndarray</span>
 <span class="sd">            Model residuals</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Subclasses must implement&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">compute_param_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">backcast</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -756,6 +763,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">inv_hess</span> <span class="o">/</span> <span class="n">nobs</span>
 
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s1">&#39;origin&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;analytic&#39;</span><span class="p">,</span>
                  <span class="n">simulations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -833,7 +841,7 @@
 <span class="sd">        [102, 2], so that it is aligned with the observation to use when</span>
 <span class="sd">        evaluating, but still in the same column.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Subclasses must implement&#39;</span><span class="p">)</span></div>
+        <span class="k">pass</span></div>
 
 
 <span class="k">class</span> <span class="nc">_SummaryRepr</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -1750,7 +1758,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+7.gf425f1d documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+9.gb0b1df0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
