@@ -5,6 +5,8 @@ Distributions to use in ARCH models.  All distributions must inherit from
 """
 from __future__ import absolute_import, division
 
+from abc import abstractmethod
+
 import scipy.stats as stats
 from numpy import (empty, array, sqrt, log, exp, sign, pi, sum, asarray,
                    ones_like, abs)
@@ -12,13 +14,13 @@ from numpy.random import RandomState
 from scipy.special import gammaln, gamma
 
 from arch.compat.python import add_metaclass
-from arch.utility.array import DocStringInheritor
+from arch.utility.array import AbstractDocStringInheritor
 
 __all__ = ['Distribution', 'Normal', 'StudentsT', 'SkewStudent',
            'GeneralizedError']
 
 
-@add_metaclass(DocStringInheritor)
+@add_metaclass(AbstractDocStringInheritor)
 class Distribution(object):
     """
     Template for subclassing only
@@ -39,6 +41,7 @@ class Distribution(object):
         """The NumPy RandomState attached to the distribution"""
         return self._random_state
 
+    @abstractmethod
     def _simulator(self, size):
         """
         Simulate i.i.d. draws from the distribution
@@ -57,8 +60,9 @@ class Distribution(object):
         -----
         Must call `simulate` before using `_simulator`
         """
-        raise NotImplementedError('Subclasses must implement')
+        pass
 
+    @abstractmethod
     def simulate(self, parameters):
         """
         Simulates i.i.d. draws from the distribution
@@ -74,9 +78,9 @@ class Distribution(object):
             Callable that take a single output size argument and returns i.i.d.
             draws from the distribution
         """
-        raise NotImplementedError(
-            'Subclasses must implement')  # pragma: no cover
+        pass
 
+    @abstractmethod
     def constraints(self):
         """
         Returns
@@ -90,8 +94,9 @@ class Distribution(object):
         -----
         Parameters satisfy the constraints A.dot(parameters)-b >= 0
         """
-        raise NotImplementedError('Subclasses must implement')
+        pass
 
+    @abstractmethod
     def bounds(self, resids):
         """
         Parameters
@@ -104,9 +109,9 @@ class Distribution(object):
         bounds : list
             List containing a single tuple with (lower, upper) bounds
         """
-        raise NotImplementedError(
-            'Subclasses must implement')  # pragma: no cover
+        pass
 
+    @abstractmethod
     def loglikelihood(self, parameters, resids, sigma2, individual=False):
         """
         Parameters
@@ -126,8 +131,9 @@ class Distribution(object):
         Returns the loglikelihood where resids are the "data",
         and parameters and sigma2 are inputs.
         """
-        raise NotImplementedError('Subclasses must implement')
+        pass
 
+    @abstractmethod
     def starting_values(self, std_resid):
         """
         Parameters
@@ -145,9 +151,9 @@ class Distribution(object):
         -----
         Size of sv depends on the distribution
         """
-        raise NotImplementedError(
-            'Subclasses must implement')  # pragma: no cover
+        pass
 
+    @abstractmethod
     def parameter_names(self):
         """
         Names of distribution shape parameters
@@ -157,7 +163,7 @@ class Distribution(object):
         names : list (str)
             Parameter names
         """
-        raise NotImplementedError('Subclasses must implement')
+        pass
 
     def __str__(self):
         return self._description()

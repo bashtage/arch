@@ -109,7 +109,11 @@ class DocStringInheritor(type):
                                 if hasattr(mro_cls, attr)):
                     doc = getattr(getattr(mro_cls, attr), '__doc__')
                     if doc:
-                        attribute.__doc__ = doc
+                        if isinstance(attribute, property):
+                            clsdict[attr] = property(attribute.fget, attribute.fset,
+                                                     attribute.fdel, doc)
+                        else:
+                            attribute.__doc__ = doc
                         break
         return type.__new__(mcs, name, bases, clsdict)
 
