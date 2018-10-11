@@ -29,7 +29,7 @@ there are potentially alternative models being considered.
 **Note**: Also callable using :py:class:`~arch.bootstrap.RealityCheck`
 
 .. autoclass:: SPA
-    :members: compute, pvalues, critical_values
+   :members: compute, pvalues, critical_values
 
 Stepwise Multiple Testing (StepM)
 =================================
@@ -42,7 +42,7 @@ a wrapper around :py:class:`~arch.bootstrap.SPA` with some small modifications
 to allow multiple calls.
 
 .. autoclass:: StepM
-    :members: compute, superior_models
+   :members: compute, superior_models
 
 Model Confidence Set (MCS)
 ==========================
@@ -55,4 +55,4 @@ in the model confidence set.  Like the other MCPs, it controls the
 Familywise Error Rate rather than the usual test size.
 
 .. autoclass:: MCS
-    :members: compute
+   :members: compute
