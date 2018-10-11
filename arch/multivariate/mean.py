@@ -19,6 +19,19 @@ COV_TYPES = {'white': 'White\'s Heteroskedasticity Consistent Estimator',
 
 
 class MultivariateSimulation(object):
+    """
+    Class to hold multivariate simulation results
+
+    Attributes
+    ----------
+    data : ndarray
+        (nobs, nvar) array of simulated data
+    errors : ndarray
+        (nobs, nvar) array of simualation shocks
+    covariance : ndarray
+        (nobs, nvar, nvar) array containing the conditional covariance
+
+    """
     __slots__ = ('data', 'covariance', 'errors')
 
     def __init__(self, data, covariance, errors):
@@ -29,8 +42,7 @@ class MultivariateSimulation(object):
 
 class VARX(MultivariateARCHModel):
     r"""
-    Vector Autoregression (VAR), with optional exogenous regressors,
-    model estimation and simulation
+    Vector Autoregression (VAR) model estimation with optional exogenous regressors
 
     Parameters
     ----------
@@ -95,6 +107,18 @@ class VARX(MultivariateARCHModel):
         self._check_x()
         if y is not None:
             self._construct_regressors()
+
+    @property
+    def restrictions(self):
+        """
+        In instance of `VARRestrcitions` applicable to the model specification.
+
+        Returns
+        -------
+        restr : VARRestrictions
+            Restrictions object tailored to this model specification.
+        """
+        return VARRestrictions(self.nvar, self.lags, list(self._y.frame.columns))
 
     @property
     def constant(self):
@@ -170,6 +194,18 @@ class VARX(MultivariateARCHModel):
 
     @staticmethod
     def _update_regressors(rhs, reg_names, x):
+        """
+        Update an array of regressors by appending exogenous variables
+
+        Parameters
+        ----------
+        rhs : ndarray
+            Existing array of regressors
+        reg_names : List[str]
+            Existing list of regressor names
+        x : {TimeSeries, None}
+            Values to append
+        """
         if x is None:
             return rhs, reg_names
         rhs = np.hstack((rhs, x.array))
@@ -237,6 +273,7 @@ class VARX(MultivariateARCHModel):
             nreg = _x.shape[1]
             reg_params = params[loc:loc + nreg]
             resids[:, i] = y[:, i] - _x.dot(reg_params)
+            loc += nreg
         return resids
 
     def parameter_names(self):
@@ -280,8 +317,9 @@ class VARX(MultivariateARCHModel):
         signature.
         """
         resids = self.resids(params)
-        center = self._y.array.mean(0) if self._constant else 0
-        tss = ((self._y.array - center) ** 2).sum(0)
+        y = self._fit_y
+        center = y.mean(0) if self._constant else 0
+        tss = ((y - center) ** 2).sum(0)
         rss = (resids ** 2).sum(0)
 
         return 1.0 - rss / tss
@@ -312,7 +350,7 @@ class VARX(MultivariateARCHModel):
                 params.append(_params)
             params = np.hstack(params)
         sigma = resids.T.dot(resids) / nobs
-        return params.flatten(), sigma, resids
+        return params.T.flatten(), sigma, resids
 
     def _normal_mle_cov(self, rhs, nobs, sigma):
         nvar = self.nvar
@@ -607,9 +645,9 @@ class ZeroMean(VARX):
                                               initial_cov=initial_cov)
 
 
-class VARZeroSetter(object):
+class VARRestrictions(object):
     """
-    Utility to set equation-variable-lag combination in a VAR
+    Equation-variable-lag restrictions in a VAR
 
     Parameters
     ----------
@@ -623,12 +661,12 @@ class VARZeroSetter(object):
 
     Examples
     --------
-    >>> vz = VARZeroSetter(3, [1, 3], ['gdp', 'inflation', 'int_rate'])
-    >>> vz.diagonalize()
-    >>> vz.include(1, 'gdp', 'inflation')
-    >>> vz.include(1, 'gdp', 'int_rate')
-    >>> print(vz)
-    VARZeroSetter
+    >>> vr = VARRestrictions(3, [1, 3], ['gdp', 'inflation', 'int_rate'])
+    >>> vr.diagonalize()
+    >>> vr.include(1, 'gdp', 'inflation')
+    >>> vr.include(1, 'gdp', 'int_rate')
+    >>> print(vr)
+    VARRestrictions
        Lag: 1
     Variable   gdp inflation int_rate
     Eq.
@@ -753,7 +791,7 @@ class VARZeroSetter(object):
         idx.name = 'Eq.'
         col = idx.copy()
         col.name = 'Variable'
-        out = self.__class__.__name__ + '\n'
+        out = 'VAR Restrictions\n'
         for lag in self._lags:
             out += '   Lag: {lag}\n'.format(lag=lag)
             df = pd.DataFrame(self._ind[lag - 1], index=idx, columns=col, dtype='object')

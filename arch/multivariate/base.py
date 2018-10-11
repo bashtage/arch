@@ -17,6 +17,7 @@ from arch.utility.array import AbstractDocStringInheritor, ensure1d
 from arch.utility.exceptions import convergence_warning, ConvergenceWarning, \
     starting_value_warning, StartingValueWarning
 from arch.vendor.cached_property import cached_property
+import pandas as pd
 
 # Callback variables
 _callback_iter, _callback_llf = 0, 0.0,
@@ -656,8 +657,8 @@ class MultivariateARCHModelResult(object):
 
     @property
     def params(self):
-        return self._params
+        return pd.Series(self._params, index=self._names, name='params')
 
     @property
-    def r2(self):
-        return self._r2
+    def rsquared(self):
+        return pd.Series(self._r2, index=self._dep_name, name='rsquared')

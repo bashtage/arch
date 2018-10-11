@@ -12,17 +12,17 @@ All multivariate ARCH models start by specifying a mean model.
 VAR with Optional Exogenous Regressors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: VARX
-    :members: resids, simulate, fit
+   :members: resids, simulate, fit
 
 Constant Mean
 ~~~~~~~~~~~~~
 .. autoclass:: ConstantMean
-    :members: resids, simulate, fit
+   :members: resids, simulate, fit
 
 Zero Mean
 ~~~~~~~~~
 .. autoclass:: ZeroMean
-    :members: resids, simulate, fit
+   :members: resids, simulate, fit
 
 Volatility Processes
 ====================
@@ -36,13 +36,13 @@ Constant Covariance
 ~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ConstantCovariance
-    :members: starting_values, backcast, compute_covariance, bounds, constraints, simulate
+   :members: starting_values, backcast, compute_covariance, bounds, constraints, simulate
 
 EWMA (RiskMetrics) Covariance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: EWMACovariance
-    :members: starting_values, backcast, compute_covariance, bounds, constraints, simulate
+   :members: starting_values, backcast, compute_covariance, bounds, constraints, simulate
 
 Distributions
 =============
@@ -55,10 +55,10 @@ Multivariate Normal
 ~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: MultivariateNormal
-    :members: starting_values, bounds, constraints, simulate, loglikelihood
+   :members: starting_values, bounds, constraints, simulate, loglikelihood
 
 Utilities
 =========
 
-.. autoclass:: VARZeroSetter
-
+.. autoclass:: VARRestrictions
+   :members:
