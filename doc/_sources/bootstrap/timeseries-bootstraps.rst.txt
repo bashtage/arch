@@ -17,16 +17,16 @@ The Stationary Bootstrap
 ========================
 
 .. autoclass:: StationaryBootstrap
-    :members: conf_int, var, cov, apply, bootstrap, reset, seed, set_state, get_state
+   :members: conf_int, var, cov, apply, bootstrap, reset, seed, set_state, get_state
 
 The Circular Block Bootstrap
 ============================
 
 .. autoclass:: CircularBlockBootstrap
-    :members: conf_int, var, cov, apply, bootstrap, reset, seed, set_state, get_state
+   :members: conf_int, var, cov, apply, bootstrap, reset, seed, set_state, get_state
 
 The Moving Block Bootstrap
 ==========================
 
 .. autoclass:: MovingBlockBootstrap
-    :members: conf_int, var, cov, apply, bootstrap, reset, seed, set_state, get_state
+   :members: conf_int, var, cov, apply, bootstrap, reset, seed, set_state, get_state
