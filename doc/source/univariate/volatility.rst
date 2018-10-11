@@ -10,37 +10,37 @@ Constant Variance
 -----------------
 
 .. autoclass:: ConstantVariance
-    :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
+   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
 
 GARCH
 -----
 
 .. autoclass:: GARCH
-    :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
+   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
 
 EGARCH
 ------
 
 .. autoclass:: EGARCH
-    :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
+   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
 
 HARCH
 -----
 
 .. autoclass:: HARCH
-    :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
+   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
 
 MIDAS Hyperbolic
 ----------------
 
 .. autoclass:: MIDASHyperbolic
-    :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
+   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
 
 ARCH
 ----
 
 .. autoclass:: ARCH
-    :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
+   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
 
 Parameterless Variance Processes
 --------------------------------
@@ -51,15 +51,15 @@ EWMA Variance
 -------------
 
 .. autoclass:: EWMAVariance
-    :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
-    :show-inheritance:
+   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
+   :show-inheritance:
 
 RiskMetrics (2006)
 ------------------
 
 .. autoclass:: RiskMetrics2006
-    :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
-    :show-inheritance:
+   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
+   :show-inheritance:
 
 FixedVariance
 -------------

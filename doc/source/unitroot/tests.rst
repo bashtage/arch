@@ -9,32 +9,32 @@ Augmented-Dickey Fuller Testing
 -------------------------------
 
 .. autoclass:: ADF
-    :members: stat, pvalue, critical_values, summary, regression, trend, lags, null_hypothesis, alternative_hypothesis, valid_trends
+   :members: stat, pvalue, critical_values, summary, regression, trend, lags, null_hypothesis, alternative_hypothesis, valid_trends
 
 
 Dickey-Fuller GLS Testing
 -------------------------
 
 .. autoclass:: DFGLS
-    :members: summary
+   :members: summary
 
 
 Phillips-Perron Testing
 -----------------------
 
 .. autoclass:: PhillipsPerron
-    :members: summary
+   :members: summary
 
 
 Variance Ratios
 ---------------
 
 .. autoclass:: VarianceRatio
-    :members: summary
+   :members: summary
 
 
 KPSS Testing
 ------------
 
 .. autoclass:: KPSS
-    :members: summary
+   :members: summary
