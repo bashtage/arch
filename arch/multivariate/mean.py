@@ -11,6 +11,7 @@ from statsmodels.tsa.tsatools import lagmat
 from arch.multivariate.base import MultivariateARCHModel, MultivariateARCHModelResult
 from arch.multivariate.data import TimeSeries
 from arch.multivariate.utility import vech
+from arch.compat.numpy import lstsq
 
 COV_TYPES = {'white': 'White\'s Heteroskedasticity Consistent Estimator',
              'classic_ols': 'Homoskedastic (Classic)',
@@ -294,6 +295,20 @@ class VARX(MultivariateARCHModel):
         return names
 
     @cached_property
+    def nreg(self):
+        """Number of regressors in the model for each series"""
+        if self._common_regressor:
+            nreg = np.ones(self.nvar) * self._rhs.shape[1]
+        else:
+            nreg = np.array(list(map(lambda a: a.shape[1], self._rhs)))
+        return pd.Series(nreg, name='nreg', index=self.var_names)
+
+    @property
+    def var_names(self):
+        """Names of variables in the model"""
+        return list(self._y.frame.columns)
+
+    @cached_property
     def num_params(self):
         """
         Number of parameters in the model
@@ -328,7 +343,7 @@ class VARX(MultivariateARCHModel):
     def _empty_lstsq(x, y):
         if not x.shape[1]:
             return np.empty(0), 0.0
-        params = np.linalg.lstsq(x, y, rcond=None)[0]
+        params = lstsq(x, y, rcond=None)[0]
         fitted = x.dot(params)
         return params, fitted
 
@@ -448,7 +463,7 @@ class VARX(MultivariateARCHModel):
 
         return MultivariateARCHModelResult(params, param_cov, r2, resids, cov, cov_type,
                                            self._y.frame, names, loglikelihood,
-                                           self._y.pandas_input,  opt, fit_start, fit_stop,
+                                           self._y.pandas_input, opt, fit_start, fit_stop,
                                            copy.deepcopy(self))
 
     def _adjust_sample(self, first_obs, last_obs):
@@ -501,7 +516,7 @@ class VARX(MultivariateARCHModel):
         mp, vp, dp = self._parse_parameters(params)
         const, var_params, x_params = self._convert_standard_var(mp, x)
         rng = self.distribution.simulate(dp)
-        sim = self.volatility.simulate(vp, nobs+burn, rng, burn, initial_cov)
+        sim = self.volatility.simulate(vp, nobs + burn, rng, burn, initial_cov)
         resids = sim.resids
         initial_value = np.zeros((1, self.nvar)) if initial_value is None else initial_value
         data = np.zeros((nobs + burn, nvar))
@@ -512,7 +527,7 @@ class VARX(MultivariateARCHModel):
                     lagged_data = initial_value
                 else:
                     lagged_data = data[i - lag:i - lag + 1]
-                data[i:i + 1] += (var_params[lag-1].dot(lagged_data.T)).T
+                data[i:i + 1] += (var_params[lag - 1].dot(lagged_data.T)).T
             if x is not None:
                 data[:, i:i + 1] += x_params.dot(x[i:i + 1, :].T)
             data[i:i + 1] += resids[i:i + 1]
@@ -584,6 +599,7 @@ class ConstantMean(VARX):
     coefficients except the intercept are restricted to have 0 coefficients.
 
     """
+
     def __init__(self, y=None, volatility=None, distribution=None, hold_back=None, nvar=None):
         super(ConstantMean, self).__init__(y=y, constant=True, volatility=volatility,
                                            distribution=distribution, hold_back=hold_back,

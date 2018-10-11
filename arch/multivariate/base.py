@@ -18,6 +18,7 @@ from arch.utility.exceptions import convergence_warning, ConvergenceWarning, \
     starting_value_warning, StartingValueWarning
 from arch.vendor.cached_property import cached_property
 import pandas as pd
+import scipy.stats as stats
 
 # Callback variables
 _callback_iter, _callback_llf = 0, 0.0,
@@ -646,7 +647,7 @@ class MultivariateARCHModelResult(object):
         self._dep_name = dep_var.columns
         self._names = names
         self._loglikelihood = loglikelihood
-        self._nobs = self.model._fit_y.shape[0]
+        self._nobs, self._nvar = self.model._fit_y.shape
         self._index = dep_var.index
         self._covariance = covariance
         self._fit_indices = (fit_start, fit_stop)
@@ -655,10 +656,120 @@ class MultivariateARCHModelResult(object):
         self.cov_type = cov_type
         self._optim_output = optim_output
 
-    @property
+    @cached_property
     def params(self):
         return pd.Series(self._params, index=self._names, name='params')
 
-    @property
+    @cached_property
     def rsquared(self):
         return pd.Series(self._r2, index=self._dep_name, name='rsquared')
+
+    @cached_property
+    def resid(self):
+        """
+        Model residuals
+        """
+        if self._input_pandas:
+            return pd.DataFrame(self._resid, columns=self._dep_name, index=self._index)
+        else:
+            return self._resid
+
+    @cached_property
+    def loglikelihood(self):
+        """Model loglikelihood"""
+        return self._loglikelihood
+
+    @cached_property
+    def aic(self):
+        """Akaike Information Criteria
+
+        -2 * loglikelihood + 2 * num_params"""
+        return -2 * self.loglikelihood + 2 * self.num_params
+
+    @cached_property
+    def num_params(self):
+        """Number of parameters in model"""
+        return len(self.params)
+
+    @cached_property
+    def bic(self):
+        """
+        Schwarz/Bayesian Information Criteria
+
+        -2 * loglikelihood + log(nobs) * num_params
+        """
+        return -2 * self.loglikelihood + np.log(self.nobs) * self.num_params
+
+    @cached_property
+    def nvar(self):
+        """
+        Number of data points used to estimate model
+        """
+        return self._nvar
+
+    @cached_property
+    def nobs(self):
+        """
+        Number of data points used to estimate model
+        """
+        return self._nobs
+
+    @cached_property
+    def fit_start(self):
+        return self._fit_indices[0]
+
+    @cached_property
+    def fit_stop(self):
+        return self._fit_indices[1]
+
+    @cached_property
+    def rsquared_adj(self):
+        """
+        Degree of freedom adjusted R-squared
+        """
+        return 1 - ((1 - self.rsquared) * (self.nobs - 1) / (self.nobs - self.model.nreg))
+
+    @cached_property
+    def pvalues(self):
+        """
+        Array of p-values for the t-statistics
+        """
+        return pd.Series(stats.norm.sf(np.abs(self.tvalues)) * 2,
+                         index=self._names, name='pvalues')
+
+    @cached_property
+    def std_err(self):
+        """
+        Array of parameter standard errors
+        """
+        return pd.Series(np.sqrt(np.diag(self.param_cov)),
+                         index=self._names, name='std_err')
+
+    @cached_property
+    def tvalues(self):
+        """
+        Array of t-statistics testing the null that the coefficient are 0
+        """
+        tvalues = self.params / self.std_err
+        tvalues.name = 'tvalues'
+        return tvalues
+
+    @cached_property
+    def convergence_flag(self):
+        """
+        scipy.optimize.minimize result flag
+        """
+        return self._optim_output.status
+
+    @cached_property
+    def param_cov(self):
+        """Parameter covariance"""
+        if self._param_cov is not None:
+            param_cov = self._param_cov
+        else:
+            params = np.asarray(self.params)
+            if self.cov_type == 'robust':
+                param_cov = self.model.compute_param_cov(params)
+            else:
+                param_cov = self.model.compute_param_cov(params, robust=False)
+        return pd.DataFrame(param_cov, columns=self._names, index=self._names)

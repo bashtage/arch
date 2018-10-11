@@ -82,11 +82,25 @@ def construct_rhs_direct(y, x, lags, constant):
     return nreg, common, rhs
 
 
+def fit_single(y, x, common, lags, idx):
+    y = np.asarray(y)
+    if not common:
+        x = x[idx]
+    if lags:
+        max_lag = lags if np.isscalar(lags) else max(lags)
+        y = y[max_lag:]
+        x = x[max_lag:]
+    if x.shape[1] > 0:
+        return sm.OLS(y[:, idx:idx + 1], x).fit()
+    return
+
+
 def test_regressors(var_data):
     mod = VARX(var_data.y, var_data.x, var_data.lags, var_data.constant,
                volatility=CONSTANT_COVARIANCE,
                distribution=MVN)
-    nreg, common, rhs = construct_rhs_direct(var_data.y, var_data.x, var_data.lags, var_data.constant)
+    nreg, common, rhs = construct_rhs_direct(var_data.y, var_data.x, var_data.lags,
+                                             var_data.constant)
     if isinstance(mod._rhs, (np.ndarray)):
         assert mod._rhs.shape[1] == nreg
     else:
@@ -94,6 +108,9 @@ def test_regressors(var_data):
     assert mod._common_regressor is common
     if common:
         assert_array_almost_equal(rhs, mod._rhs)
+    else:
+        for i in range(var_data.y.shape[1]):
+            assert_array_almost_equal(rhs[i], mod._rhs[i])
 
 
 def test_coefficients_direct(var_data):
@@ -102,21 +119,14 @@ def test_coefficients_direct(var_data):
                distribution=MVN)
     res = mod.fit(cov_type='mle')
     var_params = res.params
-    nreg, common, rhs = construct_rhs_direct(var_data.y, var_data.x, var_data.lags, var_data.constant)
+    nreg, common, rhs = construct_rhs_direct(var_data.y, var_data.x, var_data.lags,
+                                             var_data.constant)
     nvar = var_data.y.shape[1]
     offset = 0
+
     for i in range(nvar):
-        y = np.asarray(var_data.y)
-        if common:
-            x = rhs
-        else:
-            x = rhs[i]
-        if var_data.lags:
-            max_lag = var_data.lags if np.isscalar(var_data.lags) else max(var_data.lags)
-            y = y[max_lag:]
-            x = x[max_lag:]
-        if x.shape[1] > 0:
-            ols_res = sm.OLS(y[:, i:i + 1], x).fit()
+        ols_res = fit_single(var_data.y, rhs, common, var_data.lags, i)
+        if ols_res is not None:
             ols_params = ols_res.params
             m = ols_params.shape[0]
             assert_array_almost_equal(ols_params, var_params[offset:offset + m])
@@ -127,19 +137,54 @@ def test_r2(var_data):
     mod = VARX(var_data.y, var_data.x, var_data.lags, var_data.constant,
                volatility=CONSTANT_COVARIANCE,
                distribution=MVN)
-    nreg, common, rhs = construct_rhs_direct(var_data.y, var_data.x, var_data.lags, var_data.constant)
+    nreg, common, rhs = construct_rhs_direct(var_data.y, var_data.x, var_data.lags,
+                                             var_data.constant)
     res = mod.fit(cov_type='mle')
     nvar = var_data.y.shape[1]
     for i in range(nvar):
-        y = np.asarray(var_data.y)
-        if common:
-            x = rhs
-        else:
-            x = rhs[i]
-        if var_data.lags:
-            max_lag = var_data.lags if np.isscalar(var_data.lags) else max(var_data.lags)
-            y = y[max_lag:]
-            x = x[max_lag:]
-        if x.shape[1] > 0:
-            ols_res = sm.OLS(y[:, i:i + 1], x).fit()
+        ols_res = fit_single(var_data.y, rhs, common, var_data.lags, i)
+        if ols_res is not None:
             assert_almost_equal(res.rsquared[i], ols_res.rsquared)
+
+
+def getnonnull(a, idx):
+    try:
+        return a.dropna().iloc[:, idx]
+    except AttributeError:
+        a = a[:, idx]
+        return a[~np.isnan(a)]
+
+
+def test_residuals(var_data):
+    mod = VARX(var_data.y, var_data.x, var_data.lags, var_data.constant,
+               volatility=CONSTANT_COVARIANCE,
+               distribution=MVN)
+    nreg, common, rhs = construct_rhs_direct(var_data.y, var_data.x, var_data.lags,
+                                             var_data.constant)
+    res = mod.fit(cov_type='mle')
+    nvar = var_data.y.shape[1]
+    for i in range(nvar):
+        ols_res = fit_single(var_data.y, rhs, common, var_data.lags, i)
+        if ols_res is not None:
+            assert_almost_equal(getnonnull(res.resid, i), ols_res.resid)
+
+
+def test_attributes_smoke(var_data):
+    mod = VARX(var_data.y, var_data.x, var_data.lags, var_data.constant,
+               volatility=CONSTANT_COVARIANCE,
+               distribution=MVN)
+    res = mod.fit(cov_type='mle')
+    res.loglikelihood
+    res.aic
+    res.num_params
+    res.bic
+    res.nvar
+    res.nobs
+    res.fit_start
+    res.fit_stop
+    res.rsquared_adj
+    res.pvalues
+    res.std_err
+    res.tvalues
+    res.convergence_flag
+    res.param_cov

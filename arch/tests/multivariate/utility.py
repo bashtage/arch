@@ -1,13 +1,7 @@
 from collections import namedtuple
-from itertools import product
 
 import numpy as np
 import pandas as pd
-import pytest
-
-from arch.multivariate.distribution import MultivariateNormal
-from arch.multivariate.mean import ConstantMean, VARX
-from arch.multivariate.volatility import ConstantCovariance, EWMACovariance
 
 dataset = namedtuple('dataset', ['y', 'x', 'lags', 'constant'])
 
@@ -32,5 +26,3 @@ def generate_data(nvar, nobs, nexog, common, lags, constant, pandas):
         else:
             x = [x] * nvar
     return dataset(y=y, x=x, lags=lags, constant=constant)
-
-
