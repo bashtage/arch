@@ -28,4 +28,4 @@ def symmetric_matrix_root(m):
 
 def symmetric_matrix_invroot(m):
     val, vec = np.linalg.eigh(m)
-    return np.linalg.multi_dot((vec, 1. / np.diag(np.sqrt(val)), vec.T))
+    return np.linalg.multi_dot((vec, np.diag(1. / np.sqrt(val)), vec.T))

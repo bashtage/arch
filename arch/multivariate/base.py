@@ -89,6 +89,8 @@ class MultivariateARCHModel(object):
 
         self.volatility.nvar = self._nvar
         self.distribution.nvar = self._nvar
+        self._constant = False
+        self._nreg = np.zeros(self._y.shape[1])
 
     def __str__(self):
         descr = self._model_description()
@@ -153,9 +155,10 @@ class MultivariateARCHModel(object):
 
     @property
     def volatility(self):
-        """Set or gets the volatility process
+        """
+        Set or gets the volatility process
 
-        Volatility processes must be a subclass of VolatilityProcess
+        Volatility processes must be a subclass of MultivariateVolatilityProcess
         """
         return self._volatility
 
@@ -169,7 +172,7 @@ class MultivariateARCHModel(object):
     def distribution(self):
         """Set or gets the error distribution
 
-        Distributions must be a subclass of Distribution
+        Distributions must be a subclass of MultivariateDistribution
         """
         return self._distribution
 
@@ -182,6 +185,16 @@ class MultivariateARCHModel(object):
     @property
     def nvar(self):
         return self._y.shape[1]
+
+    @property
+    def nreg(self):
+        """Number of regressors in the model for each variable"""
+        return self._nreg
+
+    @property
+    def constant(self):
+        """Flag indicating whether the model contains a constant"""
+        return self._nreg
 
     @abstractmethod
     def _r2(self, params):
@@ -727,7 +740,9 @@ class MultivariateARCHModelResult(object):
         """
         Degree of freedom adjusted R-squared
         """
-        return 1 - ((1 - self.rsquared) * (self.nobs - 1) / (self.nobs - self.model.nreg))
+        df_resid = self.nobs - self.model.nreg
+        df_total = self.nobs - self.model.constant
+        return 1 - (1 - self.rsquared) * df_total / df_resid
 
     @cached_property
     def pvalues(self):
@@ -773,3 +788,8 @@ class MultivariateARCHModelResult(object):
             else:
                 param_cov = self.model.compute_param_cov(params, robust=False)
         return pd.DataFrame(param_cov, columns=self._names, index=self._names)
+
+    @property
+    def conditional_covariance(self):
+        """Estimated conditional covariance"""
+        return self._covariance

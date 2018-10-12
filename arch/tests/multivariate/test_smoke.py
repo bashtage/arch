@@ -8,6 +8,7 @@ import pytest
 from arch.multivariate.distribution import MultivariateNormal
 from arch.multivariate.mean import ConstantMean, VARX
 from arch.multivariate.volatility import ConstantCovariance, EWMACovariance
+from arch.multivariate.utility import vech
 
 dataset = namedtuple('dataset', ['y', 'x', 'lags', 'constant'])
 
@@ -53,12 +54,13 @@ def var_data(request):
 
 
 def test_constant():
+
     vol = ConstantCovariance()
-    dist = MultivariateNormal()
+    dist = MultivariateNormal(np.random.RandomState(1))
     cm = ConstantMean(None, vol, dist, nvar=3)
     mu = np.array([.1, .2, .3])
     cov = np.ones(3) + np.diag(np.ones(3))
-    tcov = vol.transform_parameters(cov)
+    tcov = vech(cov)
     params = np.r_[mu, tcov]
     sim = cm.simulate(params, 1000)
 
@@ -68,7 +70,7 @@ def test_constant():
 
 def test_ewma():
     vol = EWMACovariance()
-    dist = MultivariateNormal()
+    dist = MultivariateNormal(np.random.RandomState(1))
     cm = ConstantMean(None, vol, dist, nvar=3)
     mu = np.array([.1, .2, .3])
     params = mu
@@ -77,17 +79,6 @@ def test_ewma():
 
     cm = ConstantMean(sim.data, vol, dist)
     cm.fit(cov_type='mle')
-
-
-def test_varx(var_data):
-    vol = ConstantCovariance()
-    dist = MultivariateNormal()
-
-    lags = var_data.lags
-    constant = var_data.constant
-    y = var_data.y
-    x = var_data.x
-    VARX(y, x, lags=lags, constant=constant, volatility=vol, distribution=dist)
 
 
 def test_var_sim():

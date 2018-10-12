@@ -8,6 +8,17 @@ from arch.multivariate.distribution import MultivariateNormal
 from arch.multivariate.utility import inv_vech, vech, symmetric_matrix_root
 from arch.utility.array import AbstractDocStringInheritor
 from numpy import (sum)
+from arch.compat.numba import jit
+
+
+@jit
+def _ewma_covariance(lam, resids, sigma, backcast):
+    sigma[0] = backcast
+    nobs = resids.shape[0]
+    for i in range(1, nobs):
+        r = resids[(i - 1):i]
+        sigma[i] = (1 - lam) * np.dot(r.T, r) + lam * sigma[i - 1]
+    return sigma
 
 
 @add_metaclass(AbstractDocStringInheritor)
@@ -70,10 +81,16 @@ class MultivariateVolatilityProcess(object):
         self._stop = value
 
     @abstractmethod
-    def transform_parameters(self, *args):
+    def transform(self, parameters):
         """
-        Transform parameters from natural representation to a vector suitable
-        for estimation.
+        Transform parameters from the natural to the estimation parameter space
+        """
+        pass
+
+    @abstractmethod
+    def inv_transform(self, transformed):
+        """
+        Transform parameters from the estimation to the natural parameter space
         """
         pass
 
@@ -137,7 +154,7 @@ class MultivariateVolatilityProcess(object):
         pass
 
     @abstractmethod
-    def compute_covariance(self, parameters, resids, sigma, backcast):
+    def compute_covariance(self, parameters, resids, sigma, backcast, transformed=False):
         """
         Compute the covariance for the ARCH model
 
@@ -152,6 +169,9 @@ class MultivariateVolatilityProcess(object):
         backcast : {float, ndarray}
             Value to use when initializing ARCH recursion. Can be an ndarray
             when the model contains multiple components.
+        transformed : bool
+            Flag indicating whether the parameters are in the estimation
+            parameter space (True) or the natural parameter space.
         """
         pass
 
@@ -250,26 +270,45 @@ class ConstantCovariance(MultivariateVolatilityProcess):
         self._requires_nvar()
         return (self.nvar * (self.nvar + 1)) // 2
 
-    def compute_covariance(self, parameters, resids, sigma, backcast):
-        parameters = inv_vech(parameters, symmetric=False)
-        sigma[:] = parameters.dot(parameters.T)
-        return sigma
-
-    def transform_parameters(self, *args):
+    def transform(self, parameters):
         """
-        transform_parameters(cov)
+        Transform from the natural to the estimation parameter space
 
         Parameters
         ----------
-        cov : array-like
-            Covariance matrix
+        parameters : ndarray
+            The vech of the covariance matrix
 
         Returns
         -------
-        tcov : ndarray
-            vech of the Cholesky factor of the covariance
+        transformed : ndarray
+            The vech of the cholesky factor of the covariance matrix
         """
-        return vech(np.linalg.cholesky(args[0]))
+        cov = inv_vech(parameters, symmetric=True)
+        return vech(np.linalg.cholesky(cov))
+
+    def inv_transform(self, transformed):
+        """
+        Transform from the the estimation to the natrual parameter space
+
+        Parameters
+        ----------
+        transformed : ndarray
+            The vech of the cholesky factor of the covariance matrix
+
+        Returns
+        -------
+        parameters : ndarray
+            The vech of the covariance matrix
+        """
+        c = inv_vech(transformed, symmetric=False)
+        return vech(c.dot(c.T))
+
+    def compute_covariance(self, parameters, resids, sigma, backcast, transformed=False):
+        if transformed:
+            parameters = self.inv_transform(parameters)
+        sigma[:] = inv_vech(parameters, symmetric=True)
+        return sigma
 
     def starting_values(self, resids):
         cov = resids.T.dot(resids) / resids.shape[0]
@@ -277,8 +316,7 @@ class ConstantCovariance(MultivariateVolatilityProcess):
 
     def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
         errors = rng(nobs + burn)  # errors are nobs + burn by nvar
-        parameters = inv_vech(parameters, symmetric=False)
-        sigma = parameters.dot(parameters.T)
+        sigma = inv_vech(parameters, symmetric=True)
         sigma_12 = symmetric_matrix_root(sigma)
         sigma = np.tile(sigma, (nobs, 1, 1))
         data = errors.dot(sigma_12)
@@ -293,13 +331,14 @@ class ConstantCovariance(MultivariateVolatilityProcess):
 
     def bounds(self, resids):
         cov = resids.T.dot(resids) / resids.shape[0]
-        lower = vech(np.linalg.cholesky(cov / 100000.0))
-        upper = vech(np.linalg.cholesky(cov * 100000.0))
+        chol = np.linalg.cholesky(cov / 100000.0)
+        lower = vech(chol)
+        upper = vech(chol)
         return [(l, u) for l, u in zip(lower, upper)]
 
     def parameter_names(self):
         self._requires_nvar()
-        return ['c[{0},{1}]'.format(i, j) for i in range(self.nvar) for j in range(i + 1)]
+        return ['sigma[{0},{1}]'.format(i, j) for i in range(self.nvar) for j in range(i + 1)]
 
 
 class EWMACovariance(MultivariateVolatilityProcess):
@@ -323,13 +362,9 @@ class EWMACovariance(MultivariateVolatilityProcess):
         return []
 
     def compute_covariance(self, parameters, resids, sigma, backcast):
-        sigma[0] = backcast
-        nobs = resids.shape[0]
         lam = parameters[0] if self._estimate_lam else self.lam
-        for i in range(1, nobs):
-            r = resids[(i - 1):i]
-            sigma[i] = (1 - lam) * r.T.dot(r) + lam * sigma[i - 1]
-        return sigma
+
+        return _ewma_covariance(lam, resids, sigma, backcast)
 
     def constraints(self):
         if self._estimate_lam:
@@ -389,14 +424,25 @@ class EWMACovariance(MultivariateVolatilityProcess):
             return ['lambda']
         return []
 
-    def transform_parameters(self, *args):
+    def transform(self, parameters):
         """
-        transform_parameters(lam)
+        Transform parameters from the natural to the estimation parameter space
 
-        :param args:
-        :return:
+        Notes
+        -----
+        No-op in this covariance specification
         """
-        return args[0]
+        return parameters
+
+    def inv_transform(self, transformed):
+        """
+        Transform parameters from the estimation to the natural parameter space
+
+        Notes
+        -----
+        No-op in this covariance specification
+        """
+        return transformed
 
 
 class CovarianceSimulation(object):

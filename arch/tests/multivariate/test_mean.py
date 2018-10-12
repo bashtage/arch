@@ -1,11 +1,14 @@
+from itertools import product
+
 import numpy as np
 import pandas as pd
-from itertools import product
-from arch.multivariate import VARX, MultivariateNormal, ConstantCovariance
-from arch.tests.multivariate.utility import generate_data
 import pytest
+import scipy.stats as stats
 import statsmodels.api as sm
 from numpy.testing import assert_array_almost_equal, assert_almost_equal
+
+from arch.multivariate import VARX, MultivariateNormal, ConstantCovariance
+from arch.tests.multivariate.utility import generate_data
 
 NVAR = [1, 2, 10]
 NOBS = [100, 500]
@@ -145,6 +148,7 @@ def test_r2(var_data):
         ols_res = fit_single(var_data.y, rhs, common, var_data.lags, i)
         if ols_res is not None:
             assert_almost_equal(res.rsquared[i], ols_res.rsquared)
+            assert_almost_equal(res.rsquared_adj[i], ols_res.rsquared_adj)
 
 
 def getnonnull(a, idx):
@@ -169,22 +173,79 @@ def test_residuals(var_data):
             assert_almost_equal(getnonnull(res.resid, i), ols_res.resid)
 
 
+def test_basic_attributes(var_data):
+    mod = VARX(var_data.y, var_data.x, var_data.lags, var_data.constant,
+               volatility=CONSTANT_COVARIANCE,
+               distribution=MVN)
+    nreg, common, rhs = construct_rhs_direct(var_data.y, var_data.x, var_data.lags,
+                                             var_data.constant)
+
+    nvar = var_data.y.shape[1]
+    if var_data.lags is None:
+        maxlag = 0
+    else:
+        if isinstance(var_data.lags, int):
+            maxlag = var_data.lags
+        else:
+            maxlag = max(var_data.lags)
+    nobs = var_data.y.shape[0] - maxlag
+    num_params = nreg * max(1, common * nvar) + (nvar * (nvar + 1)) // 2
+
+    res = mod.fit(cov_type='mle')
+    llf = res.loglikelihood
+    cov = res.conditional_covariance
+    resid = np.asarray(res.resid)[maxlag:]
+    spllf = stats.multivariate_normal(cov=cov[-1]).logpdf(resid).sum()
+    assert_almost_equal(llf, spllf)
+
+    assert res.nvar == nvar
+    assert res.nobs == nobs
+    assert res.fit_start == maxlag
+    assert res.fit_stop == var_data.y.shape[0]
+    assert res.convergence_flag == 0
+    assert res.num_params == num_params
+
+    assert_almost_equal(res.aic, -2 * spllf + 2 * num_params)
+    assert_almost_equal(res.bic, -2 * spllf + np.log(nobs) * num_params)
+
+
 def test_attributes_smoke(var_data):
     mod = VARX(var_data.y, var_data.x, var_data.lags, var_data.constant,
                volatility=CONSTANT_COVARIANCE,
                distribution=MVN)
     res = mod.fit(cov_type='mle')
-    res.loglikelihood
-    res.aic
-    res.num_params
-    res.bic
-    res.nvar
-    res.nobs
-    res.fit_start
-    res.fit_stop
-    res.rsquared_adj
+
+    # Still smoke, need test
     res.pvalues
     res.std_err
     res.tvalues
-    res.convergence_flag
     res.param_cov
+
+
+def test_str(var_data):
+    mod = VARX(var_data.y, var_data.x, var_data.lags, var_data.constant,
+               volatility=CONSTANT_COVARIANCE,
+               distribution=MVN)
+    s = mod.__str__()
+    lags = var_data.lags
+    if lags in (None, 0):
+        lag_str = 'none'
+    else:
+        if isinstance(lags, int):
+            lags = list(range(1, lags + 1))
+        lag_str = ', '.join(map(str, lags))
+    assert 'lags: {0}'.format(lag_str) in s
+    assert 'volatility: Constant Covariance' in s
+    assert 'distribution: Multivariate Normal' in s
+    assert 'constant: {0}'.format('yes' if var_data.constant else 'no') in s
+    exog = var_data.x is not None
+    if exog and isinstance(var_data.x, list):
+        exog = any([_x is not None for _x in var_data.x])
+    elif exog and isinstance(var_data.x, dict):
+        exog = any([var_data.x[key] is not None for key in var_data.x])
+    assert 'exogenous: {0}'.format('yes' if exog else 'no') in s
+    if exog:
+        common = isinstance(var_data, (np.ndarray, pd.DataFrame))
+        assert 'exogenous structure: {0}'.format('common' if common else 'heterogeneous')
+    rep = mod.__repr__()
+    assert str(hex(id(mod))) in rep

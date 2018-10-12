@@ -10,6 +10,7 @@ from statsmodels.tsa.tsatools import lagmat
 
 from arch.multivariate.base import MultivariateARCHModel, MultivariateARCHModelResult
 from arch.multivariate.data import TimeSeries
+from arch.multivariate.distribution import MultivariateNormal
 from arch.multivariate.utility import vech
 from arch.compat.numpy import lstsq
 
@@ -417,7 +418,10 @@ class VARX(MultivariateARCHModel):
         -----
         See :class:`MultivariateARCHModelResult` for details on computed results
         """
-        nobs = self._fit_y.shape[0]
+        x = self._fit_regressors
+        y = self._fit_y
+        nvar = self.nvar
+        nobs = y.shape[0]
         if self._common_regressor:
             required_obs = self._rhs.shape[1]
         else:
@@ -425,10 +429,6 @@ class VARX(MultivariateARCHModel):
         if nobs < required_obs:
             raise ValueError('Insufficient data, {0} regressors in largest model, {1} '
                              'data points available'.format(required_obs, nobs))
-        x = self._fit_regressors
-        y = self._fit_y
-        nvar = self.nvar
-        nobs = y.shape[0]
 
         # Fake convergence results, see GH #87
         opt = OptimizeResult({'status': 0, 'message': ''})
@@ -446,13 +446,15 @@ class VARX(MultivariateARCHModel):
 
         r2 = self._r2(reg_params)
 
+        nobs_full = self._y.array.shape[0]
         first_obs, last_obs = self._fit_indices
         resids = np.full_like(self._y.array, np.nan)
         resids[first_obs:last_obs] = reg_resids
-        cov = np.full((nobs, nvar, nvar), np.nan)
+        cov = np.full((nobs_full, nvar, nvar), np.nan)
         cov[first_obs:last_obs] = sigma
         names = self._all_parameter_names()
-        loglikelihood = self._static_gaussian_loglikelihood(reg_resids)
+        mvn = MultivariateNormal()
+        loglikelihood = mvn.loglikelihood(None, reg_resids, cov[first_obs:last_obs])
 
         # Throw away names in the case of starting values
         num_params = params.shape[0]
@@ -518,6 +520,7 @@ class VARX(MultivariateARCHModel):
         rng = self.distribution.simulate(dp)
         sim = self.volatility.simulate(vp, nobs + burn, rng, burn, initial_cov)
         resids = sim.resids
+        # TODO: Initialize at long-run mean, if available
         initial_value = np.zeros((1, self.nvar)) if initial_value is None else initial_value
         data = np.zeros((nobs + burn, nvar))
         for i in range(nobs + burn):

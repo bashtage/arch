@@ -6,7 +6,7 @@ Distributions to use in ARCH models.  All distributions must inherit from
 from __future__ import absolute_import, division
 from abc import abstractmethod
 
-from numpy import (empty, log, pi, sum, r_)
+from numpy import empty, log, pi, r_
 from numpy.linalg import slogdet, inv, multi_dot
 from numpy.random import RandomState
 
@@ -193,7 +193,7 @@ class MultivariateNormal(MultivariateDistribution):
     def bounds(self, resids):
         return tuple([])
 
-    def loglikelihood(self, parameters, resids, sigma,  individual=False):
+    def loglikelihood(self, parameters, resids, sigma, individual=False):
         r"""Computes the log-likelihood of assuming residuals are normally
         distributed, conditional on the covariance
 
@@ -234,11 +234,11 @@ class MultivariateNormal(MultivariateDistribution):
         for i in range(len(sigma)):
             r = resids[i:(i+1), :]
             lls[i] = -0.5 * multi_dot((r, sigma_inv[i], r.T))
-        lls += -0.5 * nvar * log(2 * pi) + logdet
+        lls += -0.5 * nvar * log(2 * pi) - 0.5 * logdet
         if individual:
             return lls
         else:
-            return sum(lls)
+            return lls.sum()
 
     def starting_values(self, std_resid):
         return empty(0)
