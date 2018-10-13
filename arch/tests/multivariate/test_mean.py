@@ -7,7 +7,7 @@ import scipy.stats as stats
 import statsmodels.api as sm
 from numpy.testing import assert_array_almost_equal, assert_almost_equal
 
-from arch.multivariate import VARX, MultivariateNormal, ConstantCovariance
+from arch.multivariate import VARX, MultivariateNormal, ConstantCovariance, VARRestrictions
 from arch.tests.multivariate.utility import generate_data
 
 NVAR = [1, 2, 10]
@@ -249,3 +249,67 @@ def test_str(var_data):
         assert 'exogenous structure: {0}'.format('common' if common else 'heterogeneous')
     rep = mod.__repr__()
     assert str(hex(id(mod))) in rep
+
+
+def test_restrictions(var_data):
+    var_names = None
+    if isinstance(var_data.y, pd.DataFrame):
+        var_names = list(var_data.y.columns)
+    restr = VARRestrictions(var_data.y.shape[1], var_data.lags, variable_names=var_names)
+    mod = VARX(var_data.y, var_data.x, var_data.lags, var_data.constant,
+               restrictions=restr, volatility=CONSTANT_COVARIANCE, distribution=MVN)
+    assert restr.flat.sum() == restr.stacked.sum()
+    assert mod.lags == restr.lags
+    assert 'VAR Restrictions' in restr.__str__()
+    assert str(hex(id(restr))) in restr.__repr__()
+    restr.exclude_all()
+    assert (restr.constrained or not mod.lags) is True
+    assert restr.flat.sum() == 0
+    restr.include_all()
+    assert restr.constrained is False
+    assert restr.flat.sum() == np.prod(restr.flat.shape)
+    restr.diagonalize()
+    assert (restr.constrained or mod.nvar == 1 or not mod.lags) is True
+    assert restr.flat.sum() == len(mod.lags) * mod.nvar
+    if not mod.lags:
+        return
+    restr.include_all()
+    var_names = list(mod._y.frame.columns)
+    for lag in mod.lags:
+        for i in range(len(var_names)):
+            restr.exclude(lag, var_names[0], var_names[i])
+    assert restr.flat[0].sum() == 0
+    assert restr.flat.sum() == np.prod(restr.flat.shape) - restr.flat.shape[1]
+    for lag in mod.lags:
+        for i in range(len(var_names)):
+            restr.include(lag, var_names[0], var_names[i])
+    assert restr.flat.sum() == np.prod(restr.flat.shape)
+
+    restr.include_all()
+    var_names = list(mod._y.frame.columns)
+    for lag in mod.lags:
+        for i in range(len(var_names)):
+            restr.exclude(lag, 0, i)
+    assert restr.flat[0].sum() == 0
+    assert restr.flat.sum() == np.prod(restr.flat.shape) - restr.flat.shape[1]
+    for lag in mod.lags:
+        for i in range(len(var_names)):
+            restr.include(lag, 0, i)
+    assert restr.flat.sum() == np.prod(restr.flat.shape)
+    with pytest.raises(KeyError):
+        restr.include(1, 0, 101)
+    with pytest.raises(KeyError):
+        restr.include(1, 0, 'zz')
+
+
+def test_applied_restriction(var_data):
+    if var_data.y.shape[1] == 1 or var_data.lags is None:
+        return
+    var_names = None
+    if isinstance(var_data.y, pd.DataFrame):
+        var_names = list(var_data.y.columns)
+    restr = VARRestrictions(var_data.y.shape[1], var_data.lags, variable_names=var_names)
+    restr.diagonalize()
+    mod = VARX(var_data.y, var_data.x, var_data.lags, var_data.constant, restrictions=restr,
+               volatility=CONSTANT_COVARIANCE, distribution=MVN)
+    assert mod.restrictions is restr

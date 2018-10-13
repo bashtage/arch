@@ -8,16 +8,51 @@ from cached_property import cached_property
 from scipy.optimize import OptimizeResult
 from statsmodels.tsa.tsatools import lagmat
 
+from arch.compat.numpy import lstsq
 from arch.multivariate.base import MultivariateARCHModel, MultivariateARCHModelResult
 from arch.multivariate.data import TimeSeries
 from arch.multivariate.distribution import MultivariateNormal
 from arch.multivariate.utility import vech
-from arch.compat.numpy import lstsq
 
 COV_TYPES = {'white': 'White\'s Heteroskedasticity Consistent Estimator',
              'classic_ols': 'Homoskedastic (Classic)',
              'robust': 'Bollerslev-Wooldridge (Robust) Estimator',
              'mle': 'ML Estimator'}
+
+
+def validate_and_reformat_lags(lags):
+    """
+    Validate a lag input and reformat
+
+    Parameters
+    ----------
+    lags : {int, List[int], ndarray, None}, optional
+        Description of lag structure of the VAR.  Scalar includes all lags
+        between 1 and the value.  A 1-d array includes only the lags listed.
+
+    Returns
+    -------
+    lags : List[int]
+        List if included lags
+    max_lag : int
+        Maximum lag. 0 if no lags.
+    """
+    if lags is None:
+        max_lag = 0
+        lags = []
+        return lags, max_lag
+    if isinstance(lags, int) or np.isscalar(lags):
+        lags = int(lags)
+        if lags <= 0:
+            raise ValueError('lags must be a positive scalar integer')
+        lags = list(range(1, lags + 1))
+    else:
+        lags = sorted(list(map(int, lags)))
+        if min(lags) <= 0 or len(set(lags)) != len(lags):
+            raise ValueError('lags must contain non-negative integers without repetition')
+        lags = lags
+    max_lag = max(lags)
+    return lags, max_lag
 
 
 class MultivariateSimulation(object):
@@ -52,11 +87,13 @@ class VARX(MultivariateARCHModel):
         nobs element vector containing the dependent variable
     x : {ndarray, DataFrame}, optional
         nobs by k element array containing exogenous regressors
-    lags : {scalar, list, ndarray}, optional
+    lags : {int, List[int], ndarray, None}, optional
         Description of lag structure of the VAR.  Scalar includes all lags
         between 1 and the value.  A 1-d array includes only the lags listed.
     constant : bool, optional
         Flag whether the model should include a constant
+    restrictions : VARRestrictions
+        Restrictions to apply to the model
     hold_back : int, optional
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
@@ -93,12 +130,13 @@ class VARX(MultivariateARCHModel):
     coefficient on the exogenous regressors, if any.
     """
 
-    def __init__(self, y=None, x=None, lags=None, constant=True, hold_back=0, volatility=None,
-                 distribution=None, nvar=None):
+    def __init__(self, y=None, x=None, lags=None, constant=True, restrictions=None,
+                 hold_back=0, volatility=None, distribution=None, nvar=None):
         super(VARX, self).__init__(y, volatility, distribution, hold_back, nvar)
         self._x = x
         self._lags = lags
         self._constant = constant
+        self._restrictions = restrictions
         self._max_lag = 0
         self._common_regressor = False
         self._rhs = None
@@ -107,20 +145,44 @@ class VARX(MultivariateARCHModel):
         self._hold_back = max(self._hold_back, self._max_lag)
         self._has_exogenous = False
         self._check_x()
+        self._check_restrictions()
         if y is not None:
             self._construct_regressors()
+            self._apply_restrictions()
+
+    def _apply_restrictions(self):
+        """Apply VAR restrictions, if any"""
+        if self._restrictions is None or not self._restrictions.constrained:
+            return
+        rhs = self._rhs
+        reg_names = self._reg_names
+        if self._common_regressor:
+            self._common_regressor = False
+            rhs = [rhs] * self.nvar
+            reg_names = [reg_names] * self.nvar
+        restr = self._restrictions.flat
+        for i, (rest, rh, names) in enumerate(zip(restr, rhs, reg_names)):
+            sel = np.ones(rh.shape[1], dtype=np.bool)
+            deselect = self.constant + np.where(~rest)[0]
+            sel[deselect] = False
+            rh = rh[:, sel]
+            names = (np.asarray(names)[sel]).tolist()
+            rhs[i] = np.ascontiguousarray(rh)
+            reg_names[i] = names
+        self._rhs = rhs
+        self._reg_names = reg_names
 
     @property
     def restrictions(self):
         """
-        In instance of `VARRestrcitions` applicable to the model specification.
+        Zero restrictions on coefficients
 
         Returns
         -------
         restr : VARRestrictions
-            Restrictions object tailored to this model specification.
+            Restrictions applied to the current model
         """
-        return VARRestrictions(self.nvar, self.lags, list(self._y.frame.columns))
+        return self._restrictions
 
     @property
     def constant(self):
@@ -134,23 +196,7 @@ class VARX(MultivariateARCHModel):
 
     def _reformat_lags(self):
         """Reformat lags to the common list format"""
-        if self._lags is None:
-            self._max_lag = 0
-            self._lags = []
-            return
-        lags = self._lags
-        if isinstance(lags, int) or np.isscalar(lags):
-            lags = int(lags)
-            if lags <= 0:
-                raise ValueError('lags must be a positive scalar integer')
-            lags = self._lags = list(range(1, lags + 1))
-        else:
-            lags = sorted(list(map(int, lags)))
-            if min(lags) <= 0 or len(set(lags)) != len(lags):
-                raise ValueError('lags must contain non-negative integers without repetition')
-            self._lags = lags
-        self._max_lag = max(lags)
-        return
+        self._lags, self._max_lag = validate_and_reformat_lags(self._lags)
 
     def _check_single_x(self, x, key=None):
         """Check that a single x array confirms to requirements"""
@@ -186,13 +232,27 @@ class VARX(MultivariateARCHModel):
                 self._x[keys.index(key)] = self._check_single_x(x[key], key)
         elif isinstance(x, Sequence):
             if len(x) != self._y.shape[1]:
-                raise ValueError
+                raise ValueError('The length of x must match the number of variables when x '
+                                 'is a list.')
             for i, single in enumerate(x):
                 self._x[i] = self._check_single_x(single)
         elif x is not None:
             raise TypeError('x must be one of None, a ndarray, DataFrame, dict or list.')
         self._has_exogenous = any(map(lambda v: v is not None, self._x))
         return
+
+    def _check_restrictions(self):
+        if self._restrictions is None:
+            return
+        if not isinstance(self._restrictions, VARRestrictions):
+            raise TypeError('restrictions must be an instance of VARRestrictions.')
+        if self._restrictions.lags != self._lags:
+            raise ValueError('restrictions must have the same lag structure as the model')
+        if list(self._restrictions.variable_names) != list(self._y.frame.columns):
+            restr_names = ','.join(self._restrictions.variable_names)
+            y_names = ','.join(self._y.frame.columns)
+            raise ValueError('Variable names and order in the restriction:\n{0}\n must match the '
+                             'variable names in y, \n{1}'.format(restr_names, y_names))
 
     @staticmethod
     def _update_regressors(rhs, reg_names, x):
@@ -203,13 +263,20 @@ class VARX(MultivariateARCHModel):
         ----------
         rhs : ndarray
             Existing array of regressors
-        reg_names : List[str]
+        reg_names : ndarray
             Existing list of regressor names
         x : {TimeSeries, None}
             Values to append
+
+        Returns
+        -------
+        rhs : ndarray
+            Existing array of regressors
+        reg_names : List[str]
+            Existing list of regressor names
         """
         if x is None:
-            return rhs, reg_names
+            return rhs, list(reg_names)
         rhs = np.hstack((rhs, x.array))
         reg_names = list(reg_names) + list(x.frame.columns)
         return rhs, reg_names
@@ -245,7 +312,7 @@ class VARX(MultivariateARCHModel):
                 offset = 1
             for lag in self._lags:
                 retain[offset + (lag - 1) * nvar:offset + lag * nvar] = True
-            reg_names = reg_names[retain]
+            reg_names = list(reg_names[retain])
             rhs = rhs[:, retain]
         if self._common_regressor:
             rhs, reg_names = self._update_regressors(rhs, reg_names, self._x[0])
@@ -540,16 +607,22 @@ class VARX(MultivariateARCHModel):
         return MultivariateSimulation(data, cov, resids)
 
     def _model_description(self, include_lags=True):
-        """Generates the model description for use by __str__ and related
-        functions"""
+        """Generates the model description for use by __str__ and related functions"""
+
+        def yesno(b):
+            return 'yes' if b else 'no'
+
+        # TODO: Update for restrictions
         lagstr = 'none'
         if include_lags and self.lags:
             lagstr = ', '.join(['{0}'.format(lag) for lag in self._lags])
         od = OrderedDict()
-        od['constant'] = 'yes' if self.constant else 'no'
+        od['constant'] = yesno(self.constant)
         if include_lags:
             od['lags'] = lagstr
-        od['exogenous'] = 'yes' if self._has_exogenous else 'no'
+            restr = self.restrictions is not None and self.restrictions.constrained
+            od['restricted'] = yesno(restr)
+        od['exogenous'] = yesno(self._has_exogenous)
         if self._has_exogenous:
             details = 'common' if self._common_regressor else 'heterogeneous'
             od['exogenous structure'] = details
@@ -672,8 +745,9 @@ class VARRestrictions(object):
     ----------
     nvar : int
         Number of variables in the VAR
-    lags : List[int]
-        List of lags included in the model
+    lags : {int, List[int], ndarray, None}, optional
+        Description of lag structure of the VAR.  Scalar includes all lags
+        between 1 and the value.  A 1-d array includes only the lags listed.
     variable_names : List[str], optional.
         List of variable names in the model.If not provided the default
         values y0, y1, ... are used.
@@ -701,22 +775,31 @@ class VARRestrictions(object):
     """
 
     def __init__(self, nvar, lags, variable_names=None):
-        self._max_lag = max(lags) if lags else 0
         self._lags = lags
-        self._np_lags = np.array(lags) - 1
+        self._max_lag = 0
+        self._check_lags()
+        self._np_lags = np.array(self._lags) - 1 if self._lags else np.empty(0)
         self._nvar = nvar
         self._ind = np.ones((self._max_lag, nvar, nvar), dtype=bool)
         self._int_index = pd.Index(np.arange(nvar))
         if variable_names is not None:
             self._index = pd.Index(variable_names)
         else:
-            self._index = pd.Index(['y{0}'.format(i) for i in range(nvar)])
+            self._index = pd.Index(['y.{0}'.format(i) for i in range(nvar)])
+
+    def _check_lags(self):
+        """Reformat lags to the common list format"""
+        self._lags, self._max_lag = validate_and_reformat_lags(self._lags)
 
     def _loc(self, value):
         try:
             return self._index.get_loc(value)
         except KeyError:
-            return self._int_index.get_loc(value)
+            try:
+                return self._int_index.get_loc(value)
+            except KeyError:
+                raise KeyError('{0} is not a variable name or a valid numerical '
+                               'index'.format(value))
 
     def exclude(self, lag, equation, variable):
         """
@@ -789,6 +872,8 @@ class VARRestrictions(object):
             blocked in groups of size nvar so that block i corresponds
             to lags[i].
         """
+        if self._max_lag == 0:
+            return np.empty((self._nvar, 0), dtype=np.bool)
         ind = self._ind[self._np_lags]
         return np.hstack([i for i in ind])
 
@@ -803,6 +888,8 @@ class VARRestrictions(object):
             Array with shape (nlags, nvar, nvar) where panel i contains
             the selected elements for lags[i].
         """
+        if self._max_lag == 0:
+            return self._ind
         return self._ind[self._np_lags]
 
     def __str__(self):
@@ -821,3 +908,18 @@ class VARRestrictions(object):
 
     def __repr__(self):
         return self.__str__() + 'id: ' + hex(id(self))
+
+    @property
+    def lags(self):
+        """Model lags"""
+        return self._lags
+
+    @property
+    def variable_names(self):
+        """Variable names"""
+        return list(self._index)
+
+    @property
+    def constrained(self):
+        """Flag indicating if any constraints are set"""
+        return not bool(np.all(self.stacked))
