@@ -22,6 +22,8 @@ from arch.utility.array import ensure1d, AbstractDocStringInheritor
 from arch.utility.exceptions import ConvergenceWarning, StartingValueWarning, \
     convergence_warning, starting_value_warning
 from arch.vendor.cached_property import cached_property
+from scipy.optimize import OptimizeResult
+import copy
 
 __all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel', 'ARCHModelForecast', 'constraint']
 
@@ -99,10 +101,10 @@ def format_float_fixed(x, max_digits=10, decimal=4):
     scale = np.sign(scale) * np.ceil(np.abs(scale))
     if scale > (max_digits - 2 - decimal) or scale < -(decimal - 2):
         formatted = (
-            '{0:' + str(max_digits) + '.' + str(decimal) + 'e}').format(x)
+                '{0:' + str(max_digits) + '.' + str(decimal) + 'e}').format(x)
     else:
         formatted = (
-            '{0:' + str(max_digits) + '.' + str(decimal) + 'f}').format(x)
+                '{0:' + str(max_digits) + '.' + str(decimal) + 'f}').format(x)
     return formatted
 
 
@@ -247,6 +249,39 @@ class ARCHModel(object):
         """
         pass
 
+    def _fit_parameterless_model(self, cov_type, backcast):
+        """
+        When models have no parameters, fill return values
+
+        Returns
+        -------
+        results : ARCHModelResult
+            Model result from parameterless model
+        """
+        y = self._fit_y
+        # Fake convergence results, see GH #87
+        opt = OptimizeResult({'status': 0, 'message': ''})
+
+        params = np.empty(0)
+        param_cov = np.empty((0, 0))
+        cov_type = cov_type
+        first_obs, last_obs = self._fit_indices
+        resids = np.full_like(self._y, np.nan)
+        resids[first_obs:last_obs] = y
+        vol = np.full_like(resids, np.nan)
+        var_bounds = self.volatility.variance_bounds(resids)
+        vol[first_obs:last_obs] = self.volatility.compute_variance(params, y, vol, backcast,
+                                                                   var_bounds)
+        names = self._all_parameter_names()
+        loglikelihood = self._static_gaussian_loglikelihood(y)
+        r2 = self._r2(params)
+        fit_start, fit_stop = self._fit_indices
+
+        return ARCHModelResult(params, param_cov, r2, resids, vol, cov_type,
+                               self._y_series, names, loglikelihood,
+                               self._is_pandas, opt, fit_start, fit_stop,
+                               copy.deepcopy(self))
+
     def _loglikelihood(self, parameters, sigma2, backcast, var_bounds,
                        individual=False):
         """
@@ -376,7 +411,7 @@ class ARCHModel(object):
 
     def fit(self, update_freq=1, disp='final', starting_values=None,
             cov_type='robust', show_warning=True, first_obs=None,
-            last_obs=None, tol=None, options=None):
+            last_obs=None, tol=None, options=None, backcast=None):
         """
         Fits the model given a nobs by 1 vector of sigma2 values
 
@@ -407,6 +442,10 @@ class ARCHModel(object):
         options : dict, optional
             Options to pass to `scipy.optimize.minimize`.  Valid entries
             include 'ftol', 'eps', 'disp', and 'maxiter'.
+        backcast : float, optional
+            Value to use as backcast. Should be measure :math:`\sigma^2_0`
+            since model-specific non-linear transformations are applied to
+            value before computing the variance recusions.
 
         Returns
         -------
@@ -422,25 +461,33 @@ class ARCHModel(object):
         """
         if self._y_original is None:
             raise RuntimeError('Cannot estimate model without data.')
-
         # 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,
         # use closed form
         v, d = self.volatility, self.distribution
         offsets = np.array((self.num_params, v.num_params, d.num_params))
         total_params = sum(offsets)
-        has_closed_form = (v.closed_form and d.num_params == 0) or total_params == 0
+        # Closed form is applicable when model has no parameters
+        # Or when distribution is normal and constant variance
 
+        has_closed_form = v.closed_form and d.num_params == 0 and isinstance(v, ConstantVariance)
         self._adjust_sample(first_obs, last_obs)
+
+        resids = self.resids(self.starting_values())
+        if backcast is None:
+            backcast = v.backcast(resids)
+        else:
+            backcast = v.backcast_transform(backcast)
 
         if has_closed_form:
             try:
                 return self._fit_no_arch_normal_errors(cov_type=cov_type)
             except NotImplementedError:
                 pass
+        if total_params == 0:
+            return self._fit_parameterless_model(cov_type=cov_type, backcast=backcast)
 
-        resids = self.resids(self.starting_values())
         sigma2 = np.zeros_like(resids)
-        backcast = v.backcast(resids)
+
         self._backcast = backcast
         sv_volatility = v.starting_values(resids)
         self._var_bounds = var_bounds = v.variance_bounds(resids)
@@ -1473,9 +1520,7 @@ WARNING: The optimizer did not indicate successful convergence. The message was
         """
         Degree of freedom adjusted R-squared
         """
-        return 1 - (
-            (1 - self.rsquared) * (self.nobs - 1) / (
-                self.nobs - self.model.num_params))
+        return 1 - ((1 - self.rsquared) * (self.nobs - 1) / (self.nobs - self.model.num_params))
 
     @cached_property
     def pvalues(self):

@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import pytest
 from numpy.random import RandomState
-from numpy.testing import assert_almost_equal, assert_equal
+from numpy.testing import assert_almost_equal, assert_equal, assert_array_almost_equal
 from pandas.util.testing import assert_frame_equal, assert_series_equal
 
 from arch.compat.python import range, iteritems, StringIO
@@ -33,6 +33,14 @@ except ImportError:
     HAS_MATPLOTLIB = False
 
 DISPLAY = 'off'
+
+
+@pytest.fixture(scope='module')
+def simulated_data():
+    rs = np.random.RandomState(1)
+    zm = ZeroMean(volatility=GARCH(), distribution=Normal(rs))
+    sim_data = zm.simulate(np.array([0.1, 0.1, 0.8]), 1000)
+    return sim_data.data
 
 
 class TestMeanModel(TestCase):
@@ -950,3 +958,26 @@ class TestMeanModel(TestCase):
         assert res.num_params == res_z.num_params
         assert_series_equal(res.params, res_z.params)
         assert res.loglikelihood == res_z.loglikelihood
+
+
+@pytest.mark.parametrize('volatility', [GARCH, EGARCH, RiskMetrics2006, EWMAVariance, HARCH,
+                                        ConstantVariance])
+def test_backcast(volatility, simulated_data):
+    zm = ZeroMean(simulated_data, volatility=volatility())
+    res = zm.fit(disp=DISPLAY)
+    bc = zm.volatility.backcast(np.asarray(res.resid))
+    if volatility is EGARCH:
+        bc = np.exp(bc)
+    res2 = zm.fit(backcast=bc, disp=DISPLAY)
+    assert_array_almost_equal(res.params, res2.params)
+    if volatility is RiskMetrics2006:
+        zm.fit(backcast=bc[0], disp=DISPLAY)
+
+
+def test_backcast_error(simulated_data):
+    zm = ZeroMean(simulated_data, volatility=GARCH())
+    with pytest.raises(ValueError):
+        zm.fit(backcast=-1, disp=DISPLAY)
+    zm = ZeroMean(simulated_data, volatility=RiskMetrics2006())
+    with pytest.raises(ValueError):
+        zm.fit(backcast=np.ones(100), disp=DISPLAY)

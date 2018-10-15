@@ -613,7 +613,7 @@ class HARX(ARCHModel):
         default_start = max(0, default_start - 1)
         start_index = cutoff_to_index(start, self._y_series.index, default_start)
         if start_index < (earliest - 1):
-            raise ValueError('Due ot backcasting and/or data availability start cannot be less '
+            raise ValueError('Due to backcasting and/or data availability start cannot be less '
                              'than the index of the largest value in the right-hand-side '
                              'variables used to fit the first observation.  In this model, '
                              'this value is {0}.'.format(max(0, earliest - 1)))

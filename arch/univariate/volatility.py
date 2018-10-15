@@ -413,6 +413,24 @@ class VolatilityProcess(object):
 
         return np.sum((resids[:tau] ** 2.0) * w)
 
+    def backcast_transform(self, backcast):
+        """
+        Transformation to apply to user-provided backcast values
+
+        Parameters
+        ----------
+        backcast : {float, ndarray}
+            User-provided `backcast` that approximates sigma2[0].
+
+        Returns
+        -------
+        backcast : {float, ndarray}
+            Backcast transformed to the model-appropriate scale
+        """
+        if np.any(backcast < 0):
+            raise ValueError('User backcast value must be strictly positive.')
+        return backcast
+
     @abstractmethod
     def bounds(self, resids):
         """
@@ -625,6 +643,10 @@ class ConstantVariance(VolatilityProcess):
     def constraints(self):
         return np.ones((1, 1)), np.zeros(1)
 
+    def backcast_transform(self, backcast):
+        backcast = super(ConstantVariance, self).backcast_transform(backcast)
+        return backcast
+
     def backcast(self, resids):
         return resids.var()
 
@@ -830,6 +852,10 @@ class GARCH(VolatilityProcess):
         sigma2 **= inv_power
 
         return sigma2
+
+    def backcast_transform(self, backcast):
+        backcast = super(GARCH, self).backcast_transform(backcast)
+        return np.sqrt(backcast) ** self.power
 
     def backcast(self, resids):
         """
@@ -1310,6 +1336,7 @@ class MIDASHyperbolic(VolatilityProcess):
        Econometric Methods for Mixed-Frequency Data". Norges Bank. (2013).
     .. [*] Sheppard, Kevin. "Direct volatility modeling". Manuscript. (2018).
     """
+
     def __init__(self, m=22, asym=False):
         super(MIDASHyperbolic, self).__init__()
         self.m = m
@@ -1843,6 +1870,18 @@ class RiskMetrics2006(VolatilityProcess):
 
         return backcast
 
+    def backcast_transform(self, backcast):
+        backcast = super(RiskMetrics2006, self).backcast_transform(backcast)
+        mus = self._ewma_smoothing_parameters()
+        backcast = np.asarray(backcast)
+        if backcast.ndim == 0:
+            backcast = backcast * np.ones(mus.shape[0])
+        if backcast.shape[0] != mus.shape[0] and backcast.ndim != 0:
+            raise ValueError('User backcast mut be either a scalar or an vector containing the '
+                             'number of\ncomponent EWMAs in the model.')
+
+        return backcast
+
     def starting_values(self, resids):
         return np.empty((0,))
 
@@ -1945,8 +1984,8 @@ class RiskMetrics2006(VolatilityProcess):
             for j in range(1, horizon):
                 for k in range(kmax):
                     mu = mus[k]
-                    temp_paths[k, :, j] = mu * temp_paths[k, :, j - 1] + \
-                        (1 - mu) * shocks[i, :, j - 1] ** 2.0
+                    temp_paths[k, :, j] = (mu * temp_paths[k, :, j - 1] +
+                                           (1 - mu) * shocks[i, :, j - 1] ** 2.0)
                 paths[i, :, j] = w.dot(temp_paths[:, :, j])
                 shocks[i, :, j] = std_shocks[:, j] * np.sqrt(paths[i, :, j])
 
@@ -2061,6 +2100,10 @@ class EGARCH(VolatilityProcess):
                          lnsigma2, std_resids, abs_std_resids)
 
         return sigma2
+
+    def backcast_transform(self, backcast):
+        backcast = super(EGARCH, self).backcast_transform(backcast)
+        return np.log(backcast)
 
     def backcast(self, resids):
         """
