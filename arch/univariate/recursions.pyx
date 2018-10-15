@@ -2,6 +2,7 @@
 #cython: language_level=3, boundscheck=False, wraparound=False, cdivision=True
 
 import numpy as np
+
 cimport numpy as np
 
 __all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion', 'egarch_recursion',
