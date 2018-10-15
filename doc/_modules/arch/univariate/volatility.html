@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>arch.univariate.volatility &#8212; arch 4.6.0+11.g64bd165 documentation</title>
+    <title>arch.univariate.volatility &#8212; arch 4.6.0+13.g4c206de documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+11.g64bd165 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+13.g4c206de documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -53,7 +53,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../../index.html" class="text-logo">arch 4.6.0 (+11)</a>
+    ../../../index.html" class="text-logo">arch 4.6.0 (+13)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -518,6 +518,24 @@
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">resids</span><span class="p">[:</span><span class="n">tau</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">backcast_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backcast</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transformation to apply to user-provided backcast values</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        backcast : {float, ndarray}</span>
+<span class="sd">            User-provided `backcast` that approximates sigma2[0].</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        backcast : {float, ndarray}</span>
+<span class="sd">            Backcast transformed to the model-appropriate scale</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">backcast</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;User backcast value must be strictly positive.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">backcast</span>
+
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -730,6 +748,10 @@
 <div class="viewcode-block" id="ConstantVariance.constraints"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.ConstantVariance.constraints">[docs]</a>    <span class="k">def</span> <span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 
+    <span class="k">def</span> <span class="nf">backcast_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backcast</span><span class="p">):</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ConstantVariance</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">backcast_transform</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">backcast</span>
+
 <div class="viewcode-block" id="ConstantVariance.backcast"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.ConstantVariance.backcast">[docs]</a>    <span class="k">def</span> <span class="nf">backcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">resids</span><span class="o">.</span><span class="n">var</span><span class="p">()</span></div>
 
@@ -935,6 +957,10 @@
         <span class="n">sigma2</span> <span class="o">**=</span> <span class="n">inv_power</span>
 
         <span class="k">return</span> <span class="n">sigma2</span></div>
+
+    <span class="k">def</span> <span class="nf">backcast_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backcast</span><span class="p">):</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">GARCH</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">backcast_transform</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span>
 
 <div class="viewcode-block" id="GARCH.backcast"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.GARCH.backcast">[docs]</a>    <span class="k">def</span> <span class="nf">backcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1415,6 +1441,7 @@
 <span class="sd">       Econometric Methods for Mixed-Frequency Data&quot;. Norges Bank. (2013).</span>
 <span class="sd">    .. [*] Sheppard, Kevin. &quot;Direct volatility modeling&quot;. Manuscript. (2018).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">asym</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MIDASHyperbolic</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">m</span>
@@ -1948,6 +1975,18 @@
 
         <span class="k">return</span> <span class="n">backcast</span></div>
 
+    <span class="k">def</span> <span class="nf">backcast_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backcast</span><span class="p">):</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">RiskMetrics2006</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">backcast_transform</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span>
+        <span class="n">mus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ewma_smoothing_parameters</span><span class="p">()</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">backcast</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">backcast</span> <span class="o">=</span> <span class="n">backcast</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">mus</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">backcast</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">mus</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">backcast</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;User backcast mut be either a scalar or an vector containing the &#39;</span>
+                             <span class="s1">&#39;number of</span><span class="se">\n</span><span class="s1">component EWMAs in the model.&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">backcast</span>
+
 <div class="viewcode-block" id="RiskMetrics2006.starting_values"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.RiskMetrics2006.starting_values">[docs]</a>    <span class="k">def</span> <span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span></div>
 
@@ -2050,8 +2089,8 @@
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">horizon</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">kmax</span><span class="p">):</span>
                     <span class="n">mu</span> <span class="o">=</span> <span class="n">mus</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-                    <span class="n">temp_paths</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">temp_paths</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:,</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> \
-                        <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">*</span> <span class="n">shocks</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span>
+                    <span class="n">temp_paths</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">mu</span> <span class="o">*</span> <span class="n">temp_paths</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:,</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span>
+                                           <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">*</span> <span class="n">shocks</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span>
                 <span class="n">paths</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">temp_paths</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">j</span><span class="p">])</span>
                 <span class="n">shocks</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">std_shocks</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">paths</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="n">j</span><span class="p">])</span>
 
@@ -2166,6 +2205,10 @@
                          <span class="n">lnsigma2</span><span class="p">,</span> <span class="n">std_resids</span><span class="p">,</span> <span class="n">abs_std_resids</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">sigma2</span></div>
+
+    <span class="k">def</span> <span class="nf">backcast_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backcast</span><span class="p">):</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">EGARCH</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">backcast_transform</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span>
 
 <div class="viewcode-block" id="EGARCH.backcast"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.EGARCH.backcast">[docs]</a>    <span class="k">def</span> <span class="nf">backcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2419,7 +2462,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+11.g64bd165 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+13.g4c206de documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

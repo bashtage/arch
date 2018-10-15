@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Mean Models &#8212; arch 4.6.0+11.g64bd165 documentation</title>
+    <title>Mean Models &#8212; arch 4.6.0+13.g4c206de documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="univariate_volatility_scenarios.html" title="Volatilty Scenarios"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.6.0+11.g64bd165 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.6.0+13.g4c206de documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.6.0 (+11)</a>
+    ../index.html" class="text-logo">arch 4.6.0 (+13)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -161,7 +161,7 @@ lag lengths to estimate on the common sample.</li>
 \[y_t = \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.ZeroMean.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em>, <em>backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -184,6 +184,9 @@ corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
 <li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
+<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
+since model-specific non-linear transformations are applied to
+value before computing the variance recusions.</li>
 </ul>
 </td>
 </tr>
@@ -414,7 +417,7 @@ lag lengths to estimate on the common sample.</li>
 \[y_t = \mu + \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.ConstantMean.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em>, <em>backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -437,6 +440,9 @@ corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
 <li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
+<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
+since model-specific non-linear transformations are applied to
+value before computing the variance recusions.</li>
 </ul>
 </td>
 </tr>
@@ -647,7 +653,7 @@ lag lengths to estimate on the common sample.</li>
 + \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.ARX.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em>, <em>backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -670,6 +676,9 @@ corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
 <li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
+<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
+since model-specific non-linear transformations are applied to
+value before computing the variance recusions.</li>
 </ul>
 </td>
 </tr>
@@ -932,7 +941,7 @@ lag lengths to estimate on the common sample.</li>
 <span class="math notranslate nohighlight">\(y_t\)</span> between <span class="math notranslate nohighlight">\(t-L_{i,0}\)</span> and <span class="math notranslate nohighlight">\(t - L_{i,1}\)</span>.</p>
 <dl class="method">
 <dt id="arch.univariate.HARX.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em>, <em>backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -955,6 +964,9 @@ corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
 <li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
+<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
+since model-specific non-linear transformations are applied to
+value before computing the variance recusions.</li>
 </ul>
 </td>
 </tr>
@@ -1200,7 +1212,7 @@ lag lengths to estimate on the common sample.</li>
 \[y_t = \mu + \gamma' x_t + \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.LS.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em>, <em>backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1223,6 +1235,9 @@ corresponds to Bollerslev-Wooldridge covariance estimator.</li>
 <li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
 <li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
 include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
+<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
+since model-specific non-linear transformations are applied to
+value before computing the variance recusions.</li>
 </ul>
 </td>
 </tr>
@@ -1407,7 +1422,7 @@ to override but recommended where applicable.</p>
         <li class="right" >
           <a href="univariate_volatility_scenarios.html" title="Volatilty Scenarios"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.6.0+11.g64bd165 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.6.0+13.g4c206de documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

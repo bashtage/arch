@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>arch.univariate.base &#8212; arch 4.6.0+11.g64bd165 documentation</title>
+    <title>arch.univariate.base &#8212; arch 4.6.0+13.g4c206de documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+11.g64bd165 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+13.g4c206de documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -53,7 +53,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../../index.html" class="text-logo">arch 4.6.0 (+11)</a>
+    ../../../index.html" class="text-logo">arch 4.6.0 (+13)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -127,6 +127,8 @@
 <span class="kn">from</span> <span class="nn">arch.utility.exceptions</span> <span class="k">import</span> <span class="n">ConvergenceWarning</span><span class="p">,</span> <span class="n">StartingValueWarning</span><span class="p">,</span> \
     <span class="n">convergence_warning</span><span class="p">,</span> <span class="n">starting_value_warning</span>
 <span class="kn">from</span> <span class="nn">arch.vendor.cached_property</span> <span class="k">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">OptimizeResult</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;implicit_constant&#39;</span><span class="p">,</span> <span class="s1">&#39;ARCHModelResult&#39;</span><span class="p">,</span> <span class="s1">&#39;ARCHModel&#39;</span><span class="p">,</span> <span class="s1">&#39;ARCHModelForecast&#39;</span><span class="p">,</span> <span class="s1">&#39;constraint&#39;</span><span class="p">]</span>
 
@@ -204,10 +206,10 @@
     <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">scale</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">scale</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">max_digits</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">decimal</span><span class="p">)</span> <span class="ow">or</span> <span class="n">scale</span> <span class="o">&lt;</span> <span class="o">-</span><span class="p">(</span><span class="n">decimal</span> <span class="o">-</span> <span class="mi">2</span><span class="p">):</span>
         <span class="n">formatted</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s1">&#39;{0:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">max_digits</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">decimal</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;e}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="s1">&#39;{0:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">max_digits</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">decimal</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;e}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">formatted</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s1">&#39;{0:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">max_digits</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">decimal</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;f}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="s1">&#39;{0:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">max_digits</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">decimal</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;f}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">formatted</span>
 
 
@@ -352,6 +354,39 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
+    <span class="k">def</span> <span class="nf">_fit_parameterless_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cov_type</span><span class="p">,</span> <span class="n">backcast</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        When models have no parameters, fill return values</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : ARCHModelResult</span>
+<span class="sd">            Model result from parameterless model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span>
+        <span class="c1"># Fake convergence results, see GH #87</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">OptimizeResult</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">})</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">param_cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">cov_type</span> <span class="o">=</span> <span class="n">cov_type</span>
+        <span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span>
+        <span class="n">resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">resids</span><span class="p">[</span><span class="n">first_obs</span><span class="p">:</span><span class="n">last_obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="n">vol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">var_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">variance_bounds</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="n">vol</span><span class="p">[</span><span class="n">first_obs</span><span class="p">:</span><span class="n">last_obs</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">compute_variance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span>
+                                                                   <span class="n">var_bounds</span><span class="p">)</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_parameter_names</span><span class="p">()</span>
+        <span class="n">loglikelihood</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static_gaussian_loglikelihood</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r2</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">fit_start</span><span class="p">,</span> <span class="n">fit_stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span>
+
+        <span class="k">return</span> <span class="n">ARCHModelResult</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">param_cov</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">cov_type</span><span class="p">,</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">loglikelihood</span><span class="p">,</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">_is_pandas</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="n">fit_start</span><span class="p">,</span> <span class="n">fit_stop</span><span class="p">,</span>
+                               <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
     <span class="k">def</span> <span class="nf">_loglikelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">,</span>
                        <span class="n">individual</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -481,7 +516,7 @@
 
     <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s1">&#39;final&#39;</span><span class="p">,</span> <span class="n">starting_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;robust&#39;</span><span class="p">,</span> <span class="n">show_warning</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">first_obs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">last_obs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="n">last_obs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backcast</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fits the model given a nobs by 1 vector of sigma2 values</span>
 
@@ -512,6 +547,10 @@
 <span class="sd">        options : dict, optional</span>
 <span class="sd">            Options to pass to `scipy.optimize.minimize`.  Valid entries</span>
 <span class="sd">            include &#39;ftol&#39;, &#39;eps&#39;, &#39;disp&#39;, and &#39;maxiter&#39;.</span>
+<span class="sd">        backcast : float, optional</span>
+<span class="sd">            Value to use as backcast. Should be measure :math:`\sigma^2_0`</span>
+<span class="sd">            since model-specific non-linear transformations are applied to</span>
+<span class="sd">            value before computing the variance recusions.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -527,25 +566,33 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_original</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Cannot estimate model without data.&#39;</span><span class="p">)</span>
-
         <span class="c1"># 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,</span>
         <span class="c1"># use closed form</span>
         <span class="n">v</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span>
         <span class="n">offsets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_params</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">num_params</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">num_params</span><span class="p">))</span>
         <span class="n">total_params</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">offsets</span><span class="p">)</span>
-        <span class="n">has_closed_form</span> <span class="o">=</span> <span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">closed_form</span> <span class="ow">and</span> <span class="n">d</span><span class="o">.</span><span class="n">num_params</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">total_params</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="c1"># Closed form is applicable when model has no parameters</span>
+        <span class="c1"># Or when distribution is normal and constant variance</span>
 
+        <span class="n">has_closed_form</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">closed_form</span> <span class="ow">and</span> <span class="n">d</span><span class="o">.</span><span class="n">num_params</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ConstantVariance</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_sample</span><span class="p">(</span><span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span><span class="p">)</span>
+
+        <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">backcast</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">backcast</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">backcast</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">backcast</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">backcast_transform</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">has_closed_form</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_no_arch_normal_errors</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="n">cov_type</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
                 <span class="k">pass</span>
+        <span class="k">if</span> <span class="n">total_params</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_parameterless_model</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="n">cov_type</span><span class="p">,</span> <span class="n">backcast</span><span class="o">=</span><span class="n">backcast</span><span class="p">)</span>
 
-        <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">())</span>
         <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
-        <span class="n">backcast</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">backcast</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_backcast</span> <span class="o">=</span> <span class="n">backcast</span>
         <span class="n">sv_volatility</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">starting_values</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_var_bounds</span> <span class="o">=</span> <span class="n">var_bounds</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">variance_bounds</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
@@ -1578,9 +1625,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Degree of freedom adjusted R-squared</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span>
-            <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rsquared</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">num_params</span><span class="p">))</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rsquared</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">num_params</span><span class="p">))</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">pvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1758,7 +1803,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+11.g64bd165 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+13.g4c206de documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
