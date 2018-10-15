@@ -10,8 +10,8 @@ from arch.compat.python import range
 
 import numpy as np
 
-__all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion',
-           'egarch_recursion', 'midas_recursion']
+__all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion', 'egarch_recursion',
+           'midas_recursion']
 
 LNSIGMA_MAX = np.log(np.finfo(np.double).max) - .1
 

@@ -4,8 +4,7 @@
 import numpy as np
 cimport numpy as np
 
-__all__ = ['harch_recursion','arch_recursion','garch_recursion',
-           'egarch_recursion']
+__all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion', 'egarch_recursion', 'midas_recursion']
 
 cdef extern from 'math.h':
     double log(double x)
