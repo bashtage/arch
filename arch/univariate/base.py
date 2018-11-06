@@ -412,7 +412,7 @@ class ARCHModel(object):
     def fit(self, update_freq=1, disp='final', starting_values=None,
             cov_type='robust', show_warning=True, first_obs=None,
             last_obs=None, tol=None, options=None, backcast=None):
-        """
+        r"""
         Fits the model given a nobs by 1 vector of sigma2 values
 
         Parameters

@@ -30,8 +30,7 @@ COV_TYPES = {'white': 'White\'s Heteroskedasticity Consistent Estimator',
 def _forecast_pad(count, forecasts):
     shape = list(forecasts.shape)
     shape[0] = count
-    fill = np.empty(tuple(shape))
-    fill.fill(np.nan)
+    fill = np.full(tuple(shape), np.nan)
     return np.concatenate((fill, forecasts))
 
 
@@ -659,11 +658,10 @@ class HARX(ARCHModel):
             shocks = _forecast_pad(earliest, vfcast.shocks)
             for i in range(horizon):
                 _impulses = impulse[i::-1][:, None]
-                lrvp = variance_paths[:, :, :(i + 1)].dot(_impulses ** 2)
-                long_run_variance_paths[:, :, i] = np.squeeze(lrvp)
+                lrvp = variance_paths[start_index:, :, :(i + 1)].dot(_impulses ** 2)
+                long_run_variance_paths[start_index:, :, i] = np.squeeze(lrvp)
             t, m = self._y.shape[0], self._max_lags
-            mean_paths = np.empty((t, simulations, m + horizon))
-            mean_paths.fill(np.nan)
+            mean_paths = np.full((t, simulations, m + horizon), np.nan)
             dynp_rev = dynp[::-1]
             for i in range(start_index, t):
                 mean_paths[i, :, :m] = self._y[i - m + 1:i + 1]
