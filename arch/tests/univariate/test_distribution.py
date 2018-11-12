@@ -76,10 +76,10 @@ class TestDistributions(TestCase):
 
         resids = self.resids / self.sigma2 ** .5
         pow = (-(eta + 1) / 2)
-        pdf = const_b * const_c / self.sigma2 ** .5 * \
-            (1 + 1 / (eta - 2) *
-             ((const_b * resids + const_a) /
-              (1 + np.sign(resids + const_a / const_b) * lam)) ** 2) ** pow
+        pdf = (const_b * const_c / self.sigma2 ** .5 *
+               (1 + 1 / (eta - 2) *
+                ((const_b * resids + const_a) /
+                 (1 + np.sign(resids + const_a / const_b) * lam)) ** 2) ** pow)
 
         ll2 = np.log(pdf).sum()
         assert_almost_equal(ll1, ll2)
@@ -144,3 +144,28 @@ class TestDistributions(TestCase):
 def test_bad_input():
     with pytest.raises(TypeError):
         Normal(random_state='random_state')
+
+
+DISTRIBUTIONS = [(Normal, ()), (StudentsT, (8.0,)), (StudentsT, (3.0,)),
+                 (GeneralizedError, (1.5,)), (GeneralizedError, (2.1,)),
+                 (SkewStudent, (8.0, -0.5))]
+
+
+@pytest.mark.parametrize('distribution', DISTRIBUTIONS)
+def test_roundtrip_cdf_ppf(distribution):
+    pits = np.arange(1, 100.0) / 100.0
+    dist, param = distribution
+    dist = dist()
+    x = dist.ppf(pits, param)
+    p = dist.cdf(x, param)
+    assert_almost_equal(pits, p)
+
+
+def test_invalid_params():
+    pits = np.arange(1, 100.0) / 100.0
+    dist = Normal()
+    with pytest.raises(ValueError):
+        dist.ppf(pits, [1.0])
+    dist = StudentsT()
+    with pytest.raises(ValueError):
+        dist.ppf(pits, [1.0])
