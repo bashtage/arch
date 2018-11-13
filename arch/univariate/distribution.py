@@ -36,6 +36,19 @@ class Distribution(object):
         if not isinstance(self._random_state, RandomState):
             raise TypeError('random_state must by a NumPy RandomState instance')
 
+    def _check_constraints(self, params):
+        bounds = self.bounds(None)
+        if params is not None or len(bounds) > 0:
+            if len(params) != len(bounds):
+                raise ValueError('parameters must have {0} elements'.format(len(bounds)))
+        if params is None or len(bounds) == 0:
+            return
+        params = asarray(params)
+        for p, n, b in zip(params, self.name, bounds):
+            if not (b[0] <= p <= b[1]):
+                raise ValueError('{0} does not satisfy the bounds requirement '
+                                 'of ({1}, {2})'.format(n, *b))
+
     @property
     def random_state(self):
         """The NumPy RandomState attached to the distribution"""
@@ -165,6 +178,44 @@ class Distribution(object):
         """
         pass
 
+    @abstractmethod
+    def ppf(self, pits, parameters=None):
+        """
+        Inverse cumulative density function (ICDF)
+
+        Parameters
+        ----------
+        pits : ndarray
+            Probability-integral-transformed values in the interval (0, 1).
+        parameters : ndarray, optional
+            Distribution parameters.
+
+        Returns
+        -------
+        i : ndarray
+            Inverse CDF values
+        """
+        pass
+
+    @abstractmethod
+    def cdf(self, resids, parameters=None):
+        """
+        Cumulative distribution function
+
+        Parameters
+        ----------
+        resids : ndarray
+            Values at which to evaluate the cdf
+        parameters : ndarray, optional
+            Distribution parameters.
+
+        Returns
+        -------
+        f : ndarray
+            CDF values
+        """
+        pass
+
     def __str__(self):
         return self._description()
 
@@ -239,6 +290,14 @@ class Normal(Distribution):
 
     def parameter_names(self):
         return []
+
+    def cdf(self, resids, parameters=None):
+        self._check_constraints(parameters)
+        return stats.norm.cdf(resids)
+
+    def ppf(self, pits, parameters=None):
+        self._check_constraints(parameters)
+        return stats.norm.ppf(pits)
 
 
 class StudentsT(Distribution):
@@ -339,6 +398,18 @@ class StudentsT(Distribution):
 
     def parameter_names(self):
         return ['nu']
+
+    def cdf(self, resids, parameters=None):
+        self._check_constraints(parameters)
+        nu = parameters[0]
+        var = nu / (nu - 2)
+        return stats.t(nu, scale=1.0 / sqrt(var)).cdf(resids)
+
+    def ppf(self, pits, parameters=None):
+        self._check_constraints(parameters)
+        nu = parameters[0]
+        var = nu / (nu - 2)
+        return stats.t(nu, scale=1.0 / sqrt(var)).ppf(pits)
 
 
 class SkewStudent(Distribution):
@@ -531,36 +602,38 @@ class SkewStudent(Distribution):
         # return gamma((eta+1)/2) / ((pi*(eta-2))**.5 * gamma(eta/2))
         return gammaln((eta + 1) / 2) - gammaln(eta / 2) - log(pi * (eta - 2)) / 2
 
-    def ppf(self, arg, parameters):
-        """Inverse cumulative density function (ICDF).
-
-        Parameters
-        ----------
-        arg : ndarray
-            Grid of point to evaluate ICDF at. Must belong to (0, 1)
-        parameters : ndarray
-            Shape parameters of the skew-t distribution
-
-        Returns
-        -------
-        array
-            ICDF values. Same shape as the input.
-
-        """
+    def cdf(self, resids, parameters=None):
+        self._check_constraints(parameters)
         eta, lam = parameters
 
         a = self.__const_a(parameters)
         b = self.__const_b(parameters)
 
-        cond = arg < (1 - lam) / 2
+        var = eta / (eta - 2)
+        y1 = (b * resids + a) / (1 - lam) * sqrt(var)
+        y2 = (b * resids + a) / (1 + lam) * sqrt(var)
+        tcdf = stats.t(eta).cdf
+        p = (1 - lam) * tcdf(y1) * (resids < (-a / b))
+        p += (resids >= (-a / b)) * ((1 - lam) / 2 + (1 + lam) * (tcdf(y2) - 0.5))
 
-        icdf1 = stats.t.ppf(arg[cond] / (1 - lam), eta)
-        icdf2 = stats.t.ppf(.5 + (arg[~cond] - (1 - lam) / 2) / (1 + lam), eta)
-        icdf = -999.99 * ones_like(arg)
+        return p
+
+    def ppf(self, resids, parameters=None):
+        self._check_constraints(parameters)
+        eta, lam = parameters
+
+        a = self.__const_a(parameters)
+        b = self.__const_b(parameters)
+
+        cond = resids < (1 - lam) / 2
+
+        icdf1 = stats.t.ppf(resids[cond] / (1 - lam), eta)
+        icdf2 = stats.t.ppf(.5 + (resids[~cond] - (1 - lam) / 2) / (1 + lam), eta)
+        icdf = -999.99 * ones_like(resids)
         icdf[cond] = icdf1
         icdf[~cond] = icdf2
         icdf = (icdf *
-                (1 + sign(arg - (1 - lam) / 2) * lam) * (1 - 2 / eta) ** .5 -
+                (1 + sign(resids - (1 - lam) / 2) * lam) * (1 - 2 / eta) ** .5 -
                 a)
         icdf = icdf / b
 
@@ -670,3 +743,15 @@ class GeneralizedError(Distribution):
 
     def parameter_names(self):
         return ['nu']
+
+    def ppf(self, pits, parameters=None):
+        self._check_constraints(parameters)
+        nu = parameters[0]
+        var = stats.gennorm(nu).var()
+        return stats.gennorm(nu, scale=1.0 / sqrt(var)).ppf(pits)
+
+    def cdf(self, resids, parameters=None):
+        self._check_constraints(parameters)
+        nu = parameters[0]
+        var = stats.gennorm(nu).var()
+        return stats.gennorm(nu, scale=1.0 / sqrt(var)).cdf(resids)
