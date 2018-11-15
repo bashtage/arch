@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>arch.univariate.distribution &#8212; arch 4.6.0+18.g8da411f documentation</title>
+    <title>arch.univariate.distribution &#8212; arch 4.6.0+19.gf0902e6 documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+18.g8da411f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+19.gf0902e6 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -53,7 +53,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../../index.html" class="text-logo">arch 4.6.0 (+18)</a>
+    ../../../index.html" class="text-logo">arch 4.6.0 (+19)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -114,7 +114,7 @@
 
 <span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="p">(</span><span class="n">empty</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">sign</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="nb">sum</span><span class="p">,</span> <span class="n">asarray</span><span class="p">,</span>
-                   <span class="n">ones_like</span><span class="p">,</span> <span class="nb">abs</span><span class="p">)</span>
+                   <span class="n">ones_like</span><span class="p">,</span> <span class="nb">abs</span><span class="p">,</span> <span class="n">isscalar</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">RandomState</span>
 <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">gammaln</span><span class="p">,</span> <span class="n">gamma</span>
 
@@ -709,6 +709,10 @@
 
     <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="n">scalar</span> <span class="o">=</span> <span class="n">isscalar</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">scalar</span><span class="p">:</span>
+            <span class="n">resids</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">resids</span><span class="p">])</span>
+
         <span class="n">eta</span><span class="p">,</span> <span class="n">lam</span> <span class="o">=</span> <span class="n">parameters</span>
 
         <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_a</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
@@ -720,28 +724,34 @@
         <span class="n">tcdf</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span><span class="o">.</span><span class="n">cdf</span>
         <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">tcdf</span><span class="p">(</span><span class="n">y1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">resids</span> <span class="o">&lt;</span> <span class="p">(</span><span class="o">-</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">))</span>
         <span class="n">p</span> <span class="o">+=</span> <span class="p">(</span><span class="n">resids</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="o">-</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">))</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tcdf</span><span class="p">(</span><span class="n">y2</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">))</span>
-
+        <span class="k">if</span> <span class="n">scalar</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">p</span>
 
-    <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pits</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="n">scalar</span> <span class="o">=</span> <span class="n">isscalar</span><span class="p">(</span><span class="n">pits</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">scalar</span><span class="p">:</span>
+            <span class="n">pits</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">pits</span><span class="p">])</span>
         <span class="n">eta</span><span class="p">,</span> <span class="n">lam</span> <span class="o">=</span> <span class="n">parameters</span>
 
         <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_a</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_b</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
 
-        <span class="n">cond</span> <span class="o">=</span> <span class="n">resids</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">cond</span> <span class="o">=</span> <span class="n">pits</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 
-        <span class="n">icdf1</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">resids</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">),</span> <span class="n">eta</span><span class="p">)</span>
-        <span class="n">icdf2</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="o">.</span><span class="mi">5</span> <span class="o">+</span> <span class="p">(</span><span class="n">resids</span><span class="p">[</span><span class="o">~</span><span class="n">cond</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">lam</span><span class="p">),</span> <span class="n">eta</span><span class="p">)</span>
-        <span class="n">icdf</span> <span class="o">=</span> <span class="o">-</span><span class="mf">999.99</span> <span class="o">*</span> <span class="n">ones_like</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="n">icdf1</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">pits</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">),</span> <span class="n">eta</span><span class="p">)</span>
+        <span class="n">icdf2</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="o">.</span><span class="mi">5</span> <span class="o">+</span> <span class="p">(</span><span class="n">pits</span><span class="p">[</span><span class="o">~</span><span class="n">cond</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">lam</span><span class="p">),</span> <span class="n">eta</span><span class="p">)</span>
+        <span class="n">icdf</span> <span class="o">=</span> <span class="o">-</span><span class="mf">999.99</span> <span class="o">*</span> <span class="n">ones_like</span><span class="p">(</span><span class="n">pits</span><span class="p">)</span>
         <span class="n">icdf</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="n">icdf1</span>
         <span class="n">icdf</span><span class="p">[</span><span class="o">~</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="n">icdf2</span>
         <span class="n">icdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">icdf</span> <span class="o">*</span>
-                <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">sign</span><span class="p">(</span><span class="n">resids</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">eta</span><span class="p">)</span> <span class="o">**</span> <span class="o">.</span><span class="mi">5</span> <span class="o">-</span>
+                <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">sign</span><span class="p">(</span><span class="n">pits</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">eta</span><span class="p">)</span> <span class="o">**</span> <span class="o">.</span><span class="mi">5</span> <span class="o">-</span>
                 <span class="n">a</span><span class="p">)</span>
         <span class="n">icdf</span> <span class="o">=</span> <span class="n">icdf</span> <span class="o">/</span> <span class="n">b</span>
 
+        <span class="k">if</span> <span class="n">scalar</span><span class="p">:</span>
+            <span class="n">icdf</span> <span class="o">=</span> <span class="n">icdf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">icdf</span></div>
 
 
@@ -876,7 +886,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+18.g8da411f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+19.gf0902e6 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
