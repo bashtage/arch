@@ -160,6 +160,11 @@ def test_roundtrip_cdf_ppf(distribution):
     p = dist.cdf(x, param)
     assert_almost_equal(pits, p)
 
+    pits = 0.3
+    x = dist.ppf(pits, param)
+    p = dist.cdf(x, param)
+    assert_almost_equal(pits, p)
+
 
 def test_invalid_params():
     pits = np.arange(1, 100.0) / 100.0

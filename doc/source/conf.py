@@ -43,7 +43,7 @@ version = arch.__version__
 ver = LooseVersion(arch.__version__).version
 if '+' in ver:
     loc = ver.index('+')
-    version = '.'.join(map(str,ver[:loc]))
+    version = '.'.join(map(str, ver[:loc]))
     version += ' (+{0})'.format(ver[loc+1])
 # The full version, including alpha/beta/rc tags.
 release = arch.__version__

@@ -9,7 +9,7 @@ from abc import abstractmethod
 
 import scipy.stats as stats
 from numpy import (empty, array, sqrt, log, exp, sign, pi, sum, asarray,
-                   ones_like, abs)
+                   ones_like, abs, isscalar)
 from numpy.random import RandomState
 from scipy.special import gammaln, gamma
 
@@ -604,6 +604,10 @@ class SkewStudent(Distribution):
 
     def cdf(self, resids, parameters=None):
         self._check_constraints(parameters)
+        scalar = isscalar(resids)
+        if scalar:
+            resids = array([resids])
+
         eta, lam = parameters
 
         a = self.__const_a(parameters)
@@ -615,28 +619,34 @@ class SkewStudent(Distribution):
         tcdf = stats.t(eta).cdf
         p = (1 - lam) * tcdf(y1) * (resids < (-a / b))
         p += (resids >= (-a / b)) * ((1 - lam) / 2 + (1 + lam) * (tcdf(y2) - 0.5))
-
+        if scalar:
+            p = p[0]
         return p
 
-    def ppf(self, resids, parameters=None):
+    def ppf(self, pits, parameters=None):
         self._check_constraints(parameters)
+        scalar = isscalar(pits)
+        if scalar:
+            pits = array([pits])
         eta, lam = parameters
 
         a = self.__const_a(parameters)
         b = self.__const_b(parameters)
 
-        cond = resids < (1 - lam) / 2
+        cond = pits < (1 - lam) / 2
 
-        icdf1 = stats.t.ppf(resids[cond] / (1 - lam), eta)
-        icdf2 = stats.t.ppf(.5 + (resids[~cond] - (1 - lam) / 2) / (1 + lam), eta)
-        icdf = -999.99 * ones_like(resids)
+        icdf1 = stats.t.ppf(pits[cond] / (1 - lam), eta)
+        icdf2 = stats.t.ppf(.5 + (pits[~cond] - (1 - lam) / 2) / (1 + lam), eta)
+        icdf = -999.99 * ones_like(pits)
         icdf[cond] = icdf1
         icdf[~cond] = icdf2
         icdf = (icdf *
-                (1 + sign(resids - (1 - lam) / 2) * lam) * (1 - 2 / eta) ** .5 -
+                (1 + sign(pits - (1 - lam) / 2) * lam) * (1 - 2 / eta) ** .5 -
                 a)
         icdf = icdf / b
 
+        if scalar:
+            icdf = icdf[0]
         return icdf
 
 
