@@ -23,7 +23,6 @@ from arch.utility.exceptions import ConvergenceWarning, StartingValueWarning, \
     convergence_warning, starting_value_warning
 from arch.vendor.cached_property import cached_property
 from scipy.optimize import OptimizeResult
-import copy
 
 __all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel', 'ARCHModelForecast', 'constraint']
 
@@ -280,7 +279,7 @@ class ARCHModel(object):
         return ARCHModelResult(params, param_cov, r2, resids, vol, cov_type,
                                self._y_series, names, loglikelihood,
                                self._is_pandas, opt, fit_start, fit_stop,
-                               copy.deepcopy(self))
+                               deepcopy(self))
 
     def _loglikelihood(self, parameters, sigma2, backcast, var_bounds,
                        individual=False):
