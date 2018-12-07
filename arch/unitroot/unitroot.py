@@ -357,7 +357,6 @@ class UnitRootTest(object):
         """Resets the unit root test so that it will be recomputed
         """
         self._stat = None
-        print(self._stat is None)
         assert self._stat is None
 
     def _compute_if_needed(self):
