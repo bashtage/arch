@@ -5,8 +5,8 @@ same inputs.
 """
 from __future__ import absolute_import, division
 
-from abc import abstractmethod
 import itertools
+from abc import abstractmethod
 from warnings import warn
 
 import numpy as np
@@ -15,15 +15,17 @@ from scipy.special import gammaln
 
 from arch.compat.python import add_metaclass, range
 from arch.univariate.distribution import Normal
-from arch.utility.exceptions import initial_value_warning, InitialValueWarning
 from arch.utility.array import ensure1d, AbstractDocStringInheritor
+from arch.utility.exceptions import initial_value_warning, InitialValueWarning
 
 try:
     from arch.univariate.recursions import (garch_recursion, harch_recursion,
-                                            egarch_recursion, midas_recursion)
+                                            egarch_recursion, midas_recursion,
+                                            figarch_weights, figarch_recursion)
 except ImportError:  # pragma: no cover
     from arch.univariate.recursions_python import (garch_recursion, harch_recursion,
-                                                   egarch_recursion, midas_recursion)
+                                                   egarch_recursion, midas_recursion,
+                                                   figarch_recursion, figarch_weights)
 
 __all__ = ['GARCH', 'ARCH', 'HARCH', 'ConstantVariance', 'EWMAVariance', 'RiskMetrics2006',
            'EGARCH', 'FixedVariance', 'BootstrapRng', 'MIDASHyperbolic', 'VolatilityProcess']
@@ -420,7 +422,7 @@ class VolatilityProcess(object):
         Parameters
         ----------
         backcast : {float, ndarray}
-            User-provided `backcast` that approximates sigma2[0].
+            User-provided ``backcast`` that approximates sigma2[0].
 
         Returns
         -------
@@ -441,6 +443,10 @@ class VolatilityProcess(object):
         resids : ndarray
             Vector of (approximate) residuals
 
+        Returns
+        -------
+        bounds : list[tuple[float,float]]
+            List of bounds where each element is (lower, upper).
         """
         pass
 
@@ -703,7 +709,7 @@ class GARCH(VolatilityProcess):
         Order of the symmetric innovation
     o : int
         Order of the asymmetric innovation
-    q: int
+    q : int
         Order of the lagged (transformed) conditional variance
     power : float, optional
         Power to use with the innovations, abs(e) ** power.  Default is 2.0, which produces ARCH
@@ -858,9 +864,6 @@ class GARCH(VolatilityProcess):
         return np.sqrt(backcast) ** self.power
 
     def backcast(self, resids):
-        """
-        Construct values for backcasting to start the recursion
-        """
         power = self.power
         tau = min(75, resids.shape[0])
         w = (0.94 ** np.arange(tau))
@@ -1651,7 +1654,7 @@ class EWMAVariance(VolatilityProcess):
         \sigma_t^{2}=\lambda\sigma_{t-1}^2 + (1-\lambda)\epsilon^2_{t-1}
 
     When lam is provided, this model has no parameters since the smoothing
-    parameter is treated as fixed. Sel lam to `None` to jointly estimate this
+    parameter is treated as fixed. Sel lam to ``None`` to jointly estimate this
     parameter when fitting the model.
     """
 
@@ -2104,9 +2107,6 @@ class EGARCH(VolatilityProcess):
         return np.log(backcast)
 
     def backcast(self, resids):
-        """
-        Construct values for backcasting to start the recursion
-        """
         return np.log(super(EGARCH, self).backcast(resids))
 
     def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
@@ -2339,3 +2339,365 @@ class FixedVariance(VolatilityProcess):
         shocks = np.full((t, simulations, horizon), np.nan)
 
         return VarianceForecast(forecasts, forecast_paths, shocks)
+
+
+class FIGARCH(VolatilityProcess):
+    r"""
+    FIGARCH model
+
+    Parameters
+    ----------
+    p : {0, 1}
+        Order of the symmetric innovation
+    q : {0, 1}
+        Order of the lagged (transformed) conditional variance
+    power : float, optional
+        Power to use with the innovations, abs(e) ** power.  Default is 2.0,
+        which produces FIGARCH and related models. Using 1.0 produces
+        FIAVARCH and related models.  Other powers can be specified, although
+        these should be strictly positive, and usually larger than 0.25.
+    truncation : int, optional
+        Truncation point to use in ARCH(:math:`\infty`) representation.
+        Default is 1000.
+
+    Attributes
+    ----------
+    num_params : int
+        The number of parameters in the model
+
+    Examples
+    --------
+    >>> from arch.univariate import FIGARCH
+
+    Standard FIGARCH
+
+    >>> figarch = FIGARCH()
+
+    FIARCH
+
+    >>> fiarch = FIGARCH(p=0)
+
+    FIAVGARCH process
+
+    >>> fiavarch = FIGARCH(power=1.0)
+
+    Notes
+    -----
+    In this class of processes, the variance dynamics are
+
+    .. math::
+
+        h_t = \omega + [1-\beta L - \phi L  (1-L)^d] \epsilon_t^2 + \beta h_{t-1}
+
+    where ``L`` is the lag operator and ``d`` is the fractional differencing
+    parameter. The model is estimated using the ARCH(:math:`\infty`)
+    representation,
+
+    .. math::
+
+        h_t = (1-\beta)^{-1}  \omega + \sum_{i=1}^\infty \lambda_i \epsilon_{t-i}^2
+
+    The weights are constructed using
+
+    .. math::
+
+        \delta_1 = d \\
+        \lambda_1 = d - \beta + \phi
+
+    and the recursive equations
+
+    .. math::
+
+        \delta_j = \frac{j - 1 - d}{j}  \delta_{j-1} \\
+        \lambda_j = \beta \lambda_{j-1} + \delta_j - \phi \delta_{j-1}.
+
+    When `power` is not 2, the ARCH(:math:`\infty`) representation is still used
+    where :math:`\epsilon_t^2` is replaced by :math:`|\epsilon_t|^p` and
+    ``p`` is the power.
+    """
+
+    def __init__(self, p=1, q=1, power=2.0, truncation=1000):
+        super(FIGARCH, self).__init__()
+        self.p = int(p)
+        self.q = int(q)
+        self.power = power
+        self.num_params = 2 + p + q
+        self._truncation = int(truncation)
+        if p < 0 or q < 0 or p > 1 or q > 1:
+            raise ValueError('p and q must be either 0 or 1.')
+        if self._truncation <= 0:
+            raise ValueError('truncation must be a positive integer')
+        if power <= 0.0:
+            raise ValueError('power must be strictly positive, usually larger than 0.25')
+        self.name = self._name()
+
+    @property
+    def truncation(self):
+        """Truncation lag for the ARCH-infinity approximation"""
+        return self._truncation
+
+    def __str__(self):
+        descr = self.name
+
+        if self.power != 1.0 and self.power != 2.0:
+            descr = descr[:-1] + ', '
+        else:
+            descr += '('
+        for k, v in (('p', self.p), ('q', self.q)):
+            descr += k + ': ' + str(v) + ', '
+        descr = descr[:-2] + ')'
+
+        return descr
+
+    def variance_bounds(self, resids, power=2.0):
+        return super(FIGARCH, self).variance_bounds(resids, self.power)
+
+    def _name(self):
+        q, power = self.q, self.power
+        if power == 2.0:
+            if q == 0:
+                return 'FIARCH'
+            else:
+                return 'FIGARCH'
+        elif power == 1.0:
+            if q == 0:
+                return 'FIAVARCH'
+            else:
+                return 'FIAVGARCH'
+        else:
+            if q == 0:
+                return 'Power FIARCH (power: {0:0.1f})'.format(self.power)
+            else:
+                return 'Power FIGARCH (power: {0:0.1f})'.format(self.power)
+
+    def bounds(self, resids):
+        v = np.mean(abs(resids) ** self.power)
+
+        bounds = [(0.0, 10.0 * v)]
+        bounds.extend([(0.0, 0.5)] * self.p)  # phi
+        bounds.extend([(0.0, 1.0)])  # d
+        bounds.extend([(0.0, 1.0)] * self.q)  # beta
+
+        return bounds
+
+    def constraints(self):
+
+        # omega > 0 <- 1
+        # 0 <= d <= 1 <- 2
+        # 0 <= phi <= (1 - d) / 2 <- 2
+        # 0 <= beta <= d + phi <- 2
+        a = np.array([[1, 0, 0, 0],
+                      [0, 1, 0, 0],
+                      [0, -2, -1, 0],
+                      [0, 0, 1, 0],
+                      [0, 0, -1, 0],
+                      [0, 0, 0, 1],
+                      [0, 1, 1, -1]])
+        b = np.array([0, 0, -1, 0, -1, 0, 0])
+        if not self.q:
+            a = a[:-2, :-1]
+            b = b[:-2]
+        if not self.p:
+            # Drop column 1 and rows 1 and 2
+            a = np.delete(a, (1,), axis=1)
+            a = np.delete(a, (1, 2), axis=0)
+            b = np.delete(b, (1, 2))
+
+        return a, b
+
+    def compute_variance(self, parameters, resids, sigma2, backcast,
+                         var_bounds):
+        # fresids is abs(resids) ** power
+        power = self.power
+        fresids = np.abs(resids) ** power
+
+        p, q, truncation = self.p, self.q, self.truncation
+
+        nobs = resids.shape[0]
+        figarch_recursion(parameters, fresids, sigma2, p, q, nobs, truncation, backcast,
+                          var_bounds)
+        inv_power = 2.0 / power
+        sigma2 **= inv_power
+
+        return sigma2
+
+    def backcast_transform(self, backcast):
+        backcast = super(FIGARCH, self).backcast_transform(backcast)
+        return np.sqrt(backcast) ** self.power
+
+    def backcast(self, resids):
+        power = self.power
+        tau = min(75, resids.shape[0])
+        w = (0.94 ** np.arange(tau))
+        w = w / sum(w)
+        backcast = np.sum((abs(resids[:tau]) ** power) * w)
+
+        return backcast
+
+    def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
+        truncation = self.truncation
+        p, q, power = self.p, self.q, self.power
+        lam = figarch_weights(parameters[1:], p, q, truncation)
+        lam_rev = lam[::-1]
+        errors = rng(truncation + nobs + burn)
+
+        if initial_value is None:
+            persistence = np.sum(lam)
+            beta = parameters[-1] if q else 0.0
+
+            initial_value = parameters[0]
+            if beta < 1:
+                initial_value /= (1 - beta)
+            if persistence < 1:
+                initial_value /= (1 - persistence)
+            if persistence >= 1.0 or beta >= 1.0:
+                warn(initial_value_warning, InitialValueWarning)
+
+        sigma2 = np.empty(truncation + nobs + burn)
+        data = np.empty(truncation + nobs + burn)
+        fsigma = np.empty(truncation + nobs + burn)
+        fdata = np.empty(truncation + nobs + burn)
+
+        fsigma[:truncation] = initial_value
+        sigma2[:truncation] = initial_value ** (2.0 / power)
+        data[:truncation] = np.sqrt(sigma2[:truncation]) * errors[:truncation]
+        fdata[:truncation] = abs(data[:truncation]) ** power
+        omega = parameters[0]
+        beta = parameters[-1] if q else 0
+        omega_tilde = omega / (1 - beta)
+        for t in range(truncation, truncation + nobs + burn):
+            fsigma[t] = omega_tilde + lam_rev.dot(fdata[t - truncation:t])
+            sigma2[t] = fsigma[t] ** (2.0 / power)
+            data[t] = errors[t] * np.sqrt(sigma2[t])
+            fdata[t] = abs(data[t]) ** power
+
+        return data[truncation + burn:], sigma2[truncation + burn:]
+
+    def starting_values(self, resids):
+        truncation = self.truncation
+        ds = [.2, .5, .7]
+        phi_ratio = [.2, .5, .8] if self.p else [0]
+        beta_ratio = [.1, .5, .9] if self.q else [0]
+
+        power = self.power
+        target = np.mean(abs(resids) ** power)
+        scale = np.mean(resids ** 2) / (target ** (2.0 / power))
+        target *= (scale ** (power / 2))
+
+        svs = []
+        for d in ds:
+            for pr in phi_ratio:
+                phi = (1 - d) / 2 * pr
+                for br in beta_ratio:
+                    beta = (d + phi) * br
+                    temp = [phi, d, beta]
+                    lam = figarch_weights(np.array(temp), 1, 1, truncation)
+                    omega = (1 - beta) * target * (1 - np.sum(lam))
+                    svs.append((omega, phi, d, beta))
+        svs = set(svs)
+        svs = [list(sv) for sv in svs]
+        svs = np.array(svs)
+        if not self.q:
+            svs = svs[:, :-1]
+        if not self.p:
+            svs = np.c_[svs[:, [0]], svs[:, 2:]]
+
+        var_bounds = self.variance_bounds(resids)
+        backcast = self.backcast(resids)
+        llfs = np.zeros(len(svs))
+        for i, sv in enumerate(svs):
+            llfs[i] = self._gaussian_loglikelihood(sv, resids, backcast, var_bounds)
+        loc = np.argmax(llfs)
+
+        return svs[int(loc)]
+
+    def parameter_names(self):
+        names = ['omega']
+        if self.p:
+            names += ['phi']
+        names += ['d']
+        if self.q:
+            names += ['beta']
+        return names
+
+    def _check_forecasting_method(self, method, horizon):
+        if horizon == 1:
+            return
+
+        if method == 'analytic' and self.power != 2.0:
+            raise ValueError('Analytic forecasts not available for horizon > 1 when power != 2')
+        return
+
+    def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+        sigma2, forecasts = self._one_step_forecast(parameters, resids, backcast,
+                                                    var_bounds, horizon)
+        if horizon == 1:
+            forecasts[:start] = np.nan
+            return VarianceForecast(forecasts)
+
+        truncation = self.truncation
+        p, q = self.p, self.q
+        lam = figarch_weights(parameters[1:], p, q, truncation)
+        lam_rev = lam[::-1]
+        t = resids.shape[0]
+        omega = parameters[0]
+        beta = parameters[-1] if q else 0.0
+        omega_tilde = omega / (1 - beta)
+        temp_forecasts = np.empty(truncation + horizon)
+        resids2 = resids ** 2
+        for i in range(start, t):
+            available = i + 1 - max(0, i - truncation + 1)
+            temp_forecasts[truncation - available:truncation] = resids2[
+                                                                max(0, i - truncation + 1):i + 1]
+            if available < truncation:
+                temp_forecasts[:truncation - available] = backcast
+            for h in range(horizon):
+                lagged_forecasts = temp_forecasts[h:truncation + h]
+                temp_forecasts[truncation + h] = omega_tilde + lam_rev.dot(lagged_forecasts)
+            forecasts[i, :] = temp_forecasts[truncation:]
+
+        forecasts[:start] = np.nan
+        return VarianceForecast(forecasts)
+
+    def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
+                             simulations, rng):
+        sigma2, forecasts = self._one_step_forecast(parameters, resids, backcast,
+                                                    var_bounds, horizon)
+        t = resids.shape[0]
+        paths = np.full((t, simulations, horizon), np.nan)
+        shocks = np.full((t, simulations, horizon), np.nan)
+
+        power = self.power
+
+        truncation = self.truncation
+        p, q = self.p, self.q
+        lam = figarch_weights(parameters[1:], p, q, truncation)
+        lam_rev = lam[::-1]
+        t = resids.shape[0]
+        omega = parameters[0]
+        beta = parameters[-1] if q else 0.0
+        omega_tilde = omega / (1 - beta)
+        fpath = np.empty((simulations, truncation + horizon))
+        fresids = np.abs(resids) ** power
+
+        for i in range(start, t):
+            std_shocks = rng((simulations, horizon))
+            available = i + 1 - max(0, i - truncation + 1)
+            fpath[:, truncation - available:truncation] = fresids[max(0, i + 1 - truncation):i + 1]
+            if available < truncation:
+                fpath[:, :(truncation - available)] = backcast
+            for h in range(horizon):
+                # 1. Forecast transformed variance
+                lagged_forecasts = fpath[:, h:truncation + h]
+                temp = omega_tilde + lagged_forecasts.dot(lam_rev)
+                # 2. Transform variance
+                sigma2 = temp ** (2.0 / power)
+                # 3. Simulate new residual
+                shocks[i, :, h] = std_shocks[:, h] * np.sqrt(sigma2)
+                paths[i, :, h] = sigma2
+                forecasts[i, h] = sigma2.mean()
+                # 4. Transform new residual
+                fpath[:, truncation + h] = np.abs(shocks[i, :, h]) ** power
+
+        forecasts[:start] = np.nan
+        return VarianceForecast(forecasts, paths, shocks)

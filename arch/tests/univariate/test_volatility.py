@@ -8,12 +8,15 @@ from numpy.testing import assert_almost_equal, assert_equal, assert_allclose, \
 from scipy.special import gamma, gammaln
 
 from arch.compat.python import PY3, range
+from arch.univariate import recursions_python as recpy
+
 try:
     from arch.univariate import _recursions as rec
 except ImportError:
-    from arch.univariate import recursions_python as rec
+    rec = recpy
+
 from arch.univariate.volatility import GARCH, ARCH, HARCH, ConstantVariance, \
-    EWMAVariance, RiskMetrics2006, EGARCH, FixedVariance, MIDASHyperbolic
+    EWMAVariance, RiskMetrics2006, EGARCH, FixedVariance, MIDASHyperbolic, FIGARCH
 from arch.univariate.distribution import Normal, StudentsT, SkewStudent
 from arch.utility.exceptions import InitialValueWarning
 
@@ -771,7 +774,7 @@ class TestVolatiltyProcesses(object):
         sigma2[0] = initial_value
         data[0] = np.sqrt(initial_value)
         for t in range(1, self.T + 500):
-            sigma2[t] = lam * sigma2[t - 1] + (1-lam) * data[t - 1] ** 2.0
+            sigma2[t] = lam * sigma2[t - 1] + (1 - lam) * data[t - 1] ** 2.0
             data[t] = e[t] * np.sqrt(sigma2[t])
 
         data = data[500:]
@@ -1039,7 +1042,7 @@ class TestVolatiltyProcesses(object):
         weights = midas._weights(parameters)
         theta = parameters[-1]
         j = np.arange(1, 22 + 1)
-        direct_weights = gamma(j + theta) / (gamma(j+1)*gamma(theta))
+        direct_weights = gamma(j + theta) / (gamma(j + 1) * gamma(theta))
         direct_weights = direct_weights / direct_weights.sum()
         assert_allclose(weights, direct_weights)
         resids = self.resids
@@ -1118,10 +1121,10 @@ class TestVolatiltyProcesses(object):
         weights = midas._weights(parameters)
         wlen = len(weights)
         theta = parameters[-1]
-        j = np.arange(1, wlen+1)
+        j = np.arange(1, wlen + 1)
         direct_weights = gammaln(j + theta) - gammaln(j + 1) - gammaln(theta)
         direct_weights = np.exp(direct_weights)
-        direct_weights = direct_weights/direct_weights.sum()
+        direct_weights = direct_weights / direct_weights.sum()
         assert_allclose(direct_weights, weights)
         resids = self.resids
         direct_params = parameters[:3].copy()
@@ -1184,3 +1187,200 @@ class TestVolatiltyProcesses(object):
         with pytest.warns(InitialValueWarning):
             parameters = np.array([.1, .3, 1.6, .4])
             midas.simulate(parameters, self.T, rng.simulate([]))
+
+    def test_figarch(self):
+        trunc_lag = 750
+        figarch = FIGARCH(truncation=trunc_lag)
+
+        sv = figarch.starting_values(self.resids)
+        assert_equal(sv.shape[0], figarch.num_params)
+
+        bounds = figarch.bounds(self.resids)
+        assert_equal(bounds[0], (0.0, 10.0 * np.mean(self.resids ** 2.0)))
+        assert_equal(bounds[1], (0.0, 0.5))
+        assert_equal(bounds[2], (0.0, 1.0))
+        assert_equal(bounds[3], (0.0, 1.0))
+        assert len(bounds) == figarch.num_params
+
+        backcast = figarch.backcast(self.resids)
+        w = 0.94 ** np.arange(75)
+        assert_almost_equal(backcast, np.sum((self.resids[:75] ** 2) * (w / w.sum())))
+        var_bounds = figarch.variance_bounds(self.resids)
+        parameters = np.array([1, .2, .4, .2])
+        figarch.compute_variance(parameters, self.resids, self.sigma2, backcast, var_bounds)
+
+        cond_var_direct = np.zeros_like(self.sigma2)
+        fresids = self.resids ** 2
+        p = q = 1
+        nobs = self.resids.shape[0]
+        rec.figarch_recursion_python(parameters, fresids, cond_var_direct, p, q,
+                                     nobs, trunc_lag, backcast, var_bounds)
+        assert_allclose(self.sigma2, cond_var_direct)
+
+        a, b = figarch.constraints()
+        a_target = np.zeros((7, 4))
+        a_target[0, 0] = 1
+        a_target[1, 1] = 1
+        a_target[2, 1] = -2
+        a_target[2, 2] = -1
+        a_target[3, 2] = 1
+        a_target[4, 2] = -1
+        a_target[5, 3] = 1
+        a_target[6, 1] = 1
+        a_target[6, 2] = 1
+        a_target[6, 3] = -1
+        b_target = np.array([0.0, 0.0, -1.0, 0.0, -1.0, 0.0, 0.0])
+        assert_array_equal(a, a_target)
+        assert_array_equal(b, b_target)
+
+        state = self.rng.get_state()
+        rng = Normal()
+        rng.random_state.set_state(state)
+        sim_data = figarch.simulate(parameters, self.T, rng.simulate([]))
+        self.rng.set_state(state)
+        lam = rec.figarch_weights(parameters[1:], p, q, trunc_lag)
+        lam_rev = lam[::-1]
+        omega_tilde = parameters[0] / (1 - parameters[-1])
+        initial_value = omega_tilde / (1 - lam.sum())
+        e = self.rng.standard_normal(trunc_lag + self.T + 500)
+        sigma2 = np.zeros(trunc_lag + self.T + 500)
+        data = np.zeros(trunc_lag + self.T + 500)
+        sigma2[:trunc_lag] = initial_value
+        data[:trunc_lag] = np.sqrt(sigma2[:trunc_lag]) * e[:trunc_lag]
+
+        for t in range(trunc_lag, trunc_lag + self.T + 500):
+            sigma2[t] = omega_tilde + lam_rev.dot((data[t - trunc_lag:t] ** 2))
+            data[t] = e[t] * np.sqrt(sigma2[t])
+        data = data[trunc_lag + 500:]
+        sigma2 = sigma2[trunc_lag + 500:]
+        assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
+        assert_almost_equal(data / sim_data[0], np.ones_like(data))
+
+        names = figarch.parameter_names()
+        names_target = ['omega', 'phi', 'd', 'beta']
+        assert_equal(names, names_target)
+
+        assert isinstance(figarch.__str__(), str)
+        txt = figarch.__repr__()
+        assert str(hex(id(figarch))) in txt
+
+        assert_equal(figarch.name, 'FIGARCH')
+        assert_equal(figarch.num_params, 4)
+        assert_equal(figarch.truncation, trunc_lag)
+
+        params = np.array([.1, .2, .4, 1.1])
+        with pytest.warns(InitialValueWarning):
+            figarch.simulate(params, 1000, rng.simulate([]))
+
+    def test_figarch_no_phi(self):
+        trunc_lag = 333
+        figarch = FIGARCH(p=0, truncation=trunc_lag)
+
+        sv = figarch.starting_values(self.resids)
+        assert_equal(sv.shape[0], figarch.num_params)
+
+        bounds = figarch.bounds(self.resids)
+        assert_equal(bounds[0], (0.0, 10.0 * np.mean(self.resids ** 2.0)))
+        assert_equal(bounds[1], (0.0, 1.0))
+        assert_equal(bounds[2], (0.0, 1.0))
+        assert len(bounds) == figarch.num_params
+
+        a, b = figarch.constraints()
+        a_target = np.zeros((5, 3))
+        a_target[0, 0] = 1
+        a_target[1, 1] = 1
+        a_target[2, 1] = -1
+        a_target[3, 2] = 1
+        a_target[4, 1] = 1
+        a_target[4, 2] = -1
+        b_target = np.array([0.0, 0.0, -1.0, 0.0, 0.0])
+        assert_array_equal(a, a_target)
+        assert_array_equal(b, b_target)
+
+    def test_figarch_no_beta(self):
+        figarch = FIGARCH(q=0)
+
+        sv = figarch.starting_values(self.resids)
+        assert_equal(sv.shape[0], figarch.num_params)
+
+        bounds = figarch.bounds(self.resids)
+        assert_equal(bounds[0], (0.0, 10.0 * np.mean(self.resids ** 2.0)))
+        assert_equal(bounds[1], (0.0, 0.5))
+        assert_equal(bounds[2], (0.0, 1.0))
+        assert len(bounds) == figarch.num_params
+
+        a, b = figarch.constraints()
+        a_target = np.zeros((5, 3))
+        a_target[0, 0] = 1
+        a_target[1, 1] = 1
+        a_target[2, 1] = -2
+        a_target[2, 2] = -1
+        a_target[3, 2] = 1
+        a_target[4, 2] = -1
+        b_target = np.array([0.0, 0.0, -1.0, 0.0, -1.0])
+        assert_array_equal(a, a_target)
+        assert_array_equal(b, b_target)
+
+    def test_figarch_no_phi_beta(self):
+        figarch = FIGARCH(p=0, q=0, power=0.7)
+
+        sv = figarch.starting_values(self.resids)
+        assert_equal(sv.shape[0], figarch.num_params)
+
+        backcast = figarch.backcast(self.resids)
+        assert_allclose(np.sqrt(backcast) ** 0.7, figarch.backcast_transform(backcast))
+
+        bounds = figarch.bounds(self.resids)
+        assert_equal(bounds[0], (0.0, 10.0 * np.mean(np.abs(self.resids) ** 0.7)))
+        assert_equal(bounds[1], (0.0, 1.0))
+        assert len(bounds) == figarch.num_params
+
+        a, b = figarch.constraints()
+        a_target = np.zeros((3, 2))
+        a_target[0, 0] = 1
+        a_target[1, 1] = 1
+        a_target[2, 1] = -1
+        b_target = np.array([0.0, 0.0, -1.0])
+        assert_array_equal(a, a_target)
+        assert_array_equal(b, b_target)
+
+    def test_figarch_errors(self):
+        with pytest.raises(ValueError):
+            FIGARCH(truncation=-1)
+        with pytest.raises(ValueError):
+            FIGARCH(truncation='apple')
+        with pytest.raises(ValueError):
+            FIGARCH(p=2)
+        with pytest.raises(ValueError):
+            FIGARCH(q=-1)
+        with pytest.raises(ValueError):
+            FIGARCH(power=0)
+        with pytest.raises(ValueError):
+            FIGARCH(power=-0.25)
+
+    def test_figarch_edge_cases(self):
+        figarch = FIGARCH(power=0.5)
+        assert 'power' in str(figarch)
+        figarch = FIGARCH()
+        assert 'power' not in str(figarch)
+
+    @pytest.mark.parametrize('p', [0, 1])
+    @pytest.mark.parametrize('q', [0, 1])
+    @pytest.mark.parametrize('power', [0.5, 1.0, 2.0])
+    def test_figarch_str(self, p, q, power):
+        figarch = FIGARCH(p=p, q=q, power=power)
+        s = str(figarch).lower()
+        assert 'arch' in s
+        assert 'q: {0}'.format(q) in s
+        assert 'p: {0}'.format(p) in s
+        if power not in (1.0, 2.0):
+            assert 'power: {0:0.1f}'.format(power) in s
+
+
+def test_figarch_weights():
+    params = np.array([0.2, 0.4, 0.2])
+    lam_py = recpy.figarch_weights_python(params, 1, 1, 1000)
+    lam_nb = recpy.figarch_weights(params, 1, 1, 1000)
+    lam_cy = rec.figarch_weights_python(params, 1, 1, 1000)
+    assert_allclose(lam_py, lam_nb)
+    assert_allclose(lam_py, lam_cy)

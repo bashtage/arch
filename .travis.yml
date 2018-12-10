@@ -100,8 +100,8 @@ install:
 
 script:
   - set -e
-  - pytest -r a ${COVERAGE_OPTS} arch --durations=10
   - python ci/performance.py
+  - pytest -r a ${COVERAGE_OPTS} arch --durations=25
   - |
     if [[ "$DOCBUILD" = true ]]; then
       python setup.py install

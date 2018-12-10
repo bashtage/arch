@@ -4,7 +4,8 @@
 import numpy as np
 cimport numpy as np
 
-__all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion', 'egarch_recursion', 'midas_recursion']
+__all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion', 'egarch_recursion',
+           'midas_recursion', 'figarch_recursion', 'figarch_weights']
 
 cdef extern from 'math.h':
     double log(double x)
@@ -16,6 +17,16 @@ cdef extern from 'float.h':
     double DBL_MAX
 
 cdef double LNSIGMA_MAX = log(DBL_MAX)
+
+cdef inline bounds_check(double* sigma2, double* var_bounds):
+    if sigma2[0] < var_bounds[0]:
+        sigma2[0] = var_bounds[0]
+    elif sigma2[0] > var_bounds[1]:
+        if sigma2[0] > DBL_MAX:
+            sigma2[0] = var_bounds[1] + 1000
+        else:
+            sigma2[0] = var_bounds[1] + log(sigma2[0] / var_bounds[1])
+
 
 def harch_recursion(double[::1] parameters,
                     double[::1] resids,
@@ -57,13 +68,7 @@ def harch_recursion(double[::1] parameters,
                     sigma2[t] += param * resids[t - j - 1] * resids[t - j - 1]
                 else:
                     sigma2[t] += param * backcast
-        if sigma2[t] < var_bounds[t, 0]:
-            sigma2[t] = var_bounds[t, 0]
-        elif sigma2[t] > var_bounds[t, 1]:
-            if sigma2[t] > DBL_MAX:
-                sigma2[t] = var_bounds[t, 1] + 1000
-            else:
-                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
+        bounds_check(&sigma2[t], &var_bounds[t, 0])
 
     return np.asarray(sigma2)
 
@@ -106,13 +111,7 @@ def arch_recursion(double[::1] parameters,
             else:
                 sigma2[t] += parameters[i + 1] * resids[t - i - 1] * \
                              resids[t - i - 1]
-        if sigma2[t] < var_bounds[t, 0]:
-            sigma2[t] = var_bounds[t, 0]
-        elif sigma2[t] > var_bounds[t, 1]:
-            if sigma2[t] > DBL_MAX:
-                sigma2[t] = var_bounds[t, 1] + 1000
-            else:
-                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
+        bounds_check(&sigma2[t], &var_bounds[t, 0])
 
     return np.asarray(sigma2)
 
@@ -180,14 +179,7 @@ def garch_recursion(double[::1] parameters,
             else:
                 sigma2[t] += parameters[loc] * sigma2[t - 1 - j]
             loc += 1
-
-        if sigma2[t] < var_bounds[t, 0]:
-            sigma2[t] = var_bounds[t, 0]
-        elif sigma2[t] > var_bounds[t, 1]:
-            if sigma2[t] > DBL_MAX:
-                sigma2[t] = var_bounds[t, 1] + 1000
-            else:
-                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
+        bounds_check(&sigma2[t], &var_bounds[t, 0])
 
     return np.asarray(sigma2)
 
@@ -324,12 +316,63 @@ def midas_recursion(double[::1] parameters,
             else:
                 sigma2[t] +=  (aw[i] + 0.5 * gw[i]) * backcast
 
-        if sigma2[t] < var_bounds[t, 0]:
-            sigma2[t] = var_bounds[t, 0]
-        elif sigma2[t] > var_bounds[t, 1]:
-            if sigma2[t] > DBL_MAX:
-                sigma2[t] = var_bounds[t, 1] + 1000
-            else:
-                sigma2[t] = var_bounds[t, 1] + log(sigma2[t] / var_bounds[t, 1])
+        bounds_check(&sigma2[t], &var_bounds[t, 0])
+
+    return np.asarray(sigma2)
+
+cdef double[::1] _figarch_weights(double[::1] parameters,
+                                  int p,
+                                  int q,
+                                  int truncation):
+
+    cdef double phi, d, beta
+    cdef double [::1] lam, delta
+    cdef Py_ssize_t i
+    
+    phi = parameters[0] if p else 0.0
+    d = parameters[1] if p else parameters[0]
+    beta = parameters[p + q] if q else 0.0
+
+    # Recursive weight computation
+    lam = np.empty(truncation)
+    delta = np.empty(truncation)
+    lam[0] = phi - beta + d
+    delta[0] = d
+    for i in range(1, truncation):
+        delta[i] = (i - d) / (i + 1) * delta[i - 1]
+        lam[i] = beta * lam[i - 1] + (delta[i] - phi * delta[i - 1])
+
+    return lam
+
+
+def figarch_weights(double[::1] parameters, int p, int q, int truncation):
+    return np.asarray(_figarch_weights(parameters, p, q, truncation))
+
+
+def figarch_recursion(double[::1] parameters,
+                      double[::1] fresids,
+                      double[::1] sigma2,
+                      int p,
+                      int q,
+                      int nobs,
+                      int trunc_lag,
+                      double backcast,
+                      double[:, ::1] var_bounds):
+    cdef Py_ssize_t t, i
+    cdef double bc1, bc2, bc_weight, omega, beta, omega_tilde
+    cdef double [::1] lam
+
+    omega = parameters[0]
+    beta = parameters[1 + p + q] if q else 0.0
+    omega_tilde = omega / (1-beta)
+    lam = _figarch_weights(parameters[1:], p, q, trunc_lag)
+    for t in range(nobs):
+        bc_weight = 0.0
+        for i in range(t, trunc_lag):
+            bc_weight += lam[i]
+        sigma2[t] = omega_tilde + bc_weight * backcast
+        for i in range(min(t, trunc_lag)):
+            sigma2[t] += lam[i] * fresids[t - i - 1]
+        bounds_check(&sigma2[t], &var_bounds[t, 0])
 
     return np.asarray(sigma2)

@@ -16,6 +16,10 @@ platform:
     - x64
 
 build_script:
+  - cmd: SET MKL_NUM_THREADS=1
+  - cmd: SET NUMEXPR_NUM_THREADS=1
+  - cmd: SET OMP_NUM_THREADS=1
+  - cmd: SET OPENBLAS_NUM_THREADS=1
   - ps: Start-FileDownload "https://repo.continuum.io/miniconda/Miniconda$env:PY_MAJOR_VER-latest-Windows-$env:PYTHON_ARCH.exe" C:\Miniconda.exe; echo "Finished downloading miniconda"
   - cmd: C:\Miniconda.exe /S /D=C:\Py
   - cmd: SET PATH=C:\Py;C:\Py\Scripts;C:\Py\Library\bin;%PATH%
@@ -29,4 +33,4 @@ build_script:
   - cmd: python setup.py develop
 
 test_script:
-  - cmd: py.test -n 2 arch
+  - cmd: py.test -n 2 arch --durations=25

@@ -15,7 +15,7 @@ from statsmodels.tsa.tsatools import lagmat
 from arch.compat.python import range, iteritems
 from arch.univariate.base import ARCHModel, implicit_constant, ARCHModelResult, ARCHModelForecast
 from arch.univariate.distribution import Normal, StudentsT, SkewStudent, GeneralizedError
-from arch.univariate.volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH
+from arch.univariate.volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH, FIGARCH
 from arch.utility.array import ensure1d, parse_dataframe, cutoff_to_index
 from arch.vendor.cached_property import cached_property
 
@@ -1088,7 +1088,7 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
         integers specifying lag locations.
     vol : str, optional
         Name of the volatility model.  Currently supported options are:
-        'GARCH' (default),  "EGARCH', 'ARCH' and 'HARCH'
+        'GARCH' (default), 'ARCH', 'EGARCH', 'FIARCH' and 'HARCH'
     p : int, optional
         Lag order of the symmetric innovation
     o : int, optional
@@ -1144,7 +1144,7 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
     when `mean='zero'`, are silently ignored.
     """
     known_mean = ('zero', 'constant', 'harx', 'har', 'ar', 'arx', 'ls')
-    known_vol = ('arch', 'garch', 'harch', 'constant', 'egarch')
+    known_vol = ('arch', 'figarch', 'garch', 'harch', 'constant', 'egarch')
     known_dist = ('normal', 'gaussian', 'studentst', 't', 'skewstudent',
                   'skewt', 'ged', 'generalized error')
     mean = mean.lower()
@@ -1176,6 +1176,8 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
         v = ConstantVariance()
     elif vol == 'arch':
         v = ARCH(p=p)
+    elif vol == 'figarch':
+        v = FIGARCH(p=p, q=q)
     elif vol == 'garch':
         v = GARCH(p=p, o=o, q=q, power=power)
     elif vol == 'egarch':

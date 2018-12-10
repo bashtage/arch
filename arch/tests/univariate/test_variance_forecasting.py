@@ -15,7 +15,8 @@ from arch.univariate import arch_model
 from arch.univariate.distribution import Normal, StudentsT
 from arch.univariate.mean import ConstantMean
 from arch.univariate.volatility import GARCH, ConstantVariance, HARCH, EWMAVariance, \
-    RiskMetrics2006, BootstrapRng, EGARCH, FixedVariance, MIDASHyperbolic
+    RiskMetrics2006, BootstrapRng, EGARCH, FixedVariance, MIDASHyperbolic, FIGARCH
+from arch.univariate.recursions_python import figarch_weights
 
 
 def _compare_truncated_forecasts(full, trunc, start):
@@ -479,10 +480,10 @@ class TestVarianceForecasts(TestCase):
             for i in range(1, 10):
                 abs_err = np.abs(shocks[:, i - 1])
                 err_neg = shocks[:, i - 1] < 0
-                sqrt_path = params[0] + \
-                    params[1] * abs_err + \
-                    params[2] * abs_err * err_neg + \
-                    params[3] * sqrt_path
+                sqrt_path = (params[0] +
+                             params[1] * abs_err +
+                             params[2] * abs_err * err_neg +
+                             params[3] * sqrt_path)
                 paths[:, i] = sqrt_path ** 2
                 shocks[:, i] = sqrt_path * std_shocks[:, i]
             assert_allclose(paths.mean(0), forecast.forecasts[j])
@@ -522,10 +523,10 @@ class TestVarianceForecasts(TestCase):
             for i in range(1, 10):
                 abs_err = np.abs(shocks[:, i - 1])
                 err_neg = shocks[:, i - 1] < 0
-                sqrt_path = params[0] + \
-                    params[1] * abs_err + \
-                    params[2] * abs_err * err_neg + \
-                    params[3] * sqrt_path
+                sqrt_path = (params[0] +
+                             params[1] * abs_err +
+                             params[2] * abs_err * err_neg +
+                             params[3] * sqrt_path)
                 paths[:, i] = sqrt_path ** 2
                 shocks[:, i] = sqrt_path * std_shocks[:, i]
             assert_allclose(paths.mean(0), forecast.forecasts[j])
@@ -666,9 +667,9 @@ class TestVarianceForecasts(TestCase):
             paths[i, :, 0] = np.log(one_step[i])
             for j in range(1, 5):
                 paths[i, :, j] = params[0] + \
-                    params[1] * (np.abs(std_shocks[:, j - 1]) - sqrt2pi) + \
-                    params[2] * std_shocks[:, j - 1] + \
-                    params[3] * paths[i, :, j - 1]
+                                 params[1] * (np.abs(std_shocks[:, j - 1]) - sqrt2pi) + \
+                                 params[2] * std_shocks[:, j - 1] + \
+                                 params[3] * paths[i, :, j - 1]
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -692,9 +693,9 @@ class TestVarianceForecasts(TestCase):
             paths[i, :, 0] = np.log(one_step[i])
             for j in range(1, 5):
                 paths[i, :, j] = params[0] + \
-                    params[1] * (np.abs(std_shocks[:, j - 1]) - sqrt2pi) + \
-                    params[2] * std_shocks[:, j - 1] + \
-                    params[3] * paths[i, :, j - 1]
+                                 params[1] * (np.abs(std_shocks[:, j - 1]) - sqrt2pi) + \
+                                 params[2] * std_shocks[:, j - 1] + \
+                                 params[3] * paths[i, :, j - 1]
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -827,11 +828,11 @@ class TestVarianceForecasts(TestCase):
                 else:
                     lag_2_sym = np.abs(std_resids[i]) - sqrt2pi
 
-                paths[i, :, j] = params[0] + \
-                    params[1] * lag_1_sym + \
-                    params[2] * lag_2_sym + \
-                    params[3] * std_shocks[:, j - 1] + \
-                    params[4] * paths[i, :, j - 1]
+                paths[i, :, j] = (params[0] +
+                                  params[1] * lag_1_sym +
+                                  params[2] * lag_2_sym +
+                                  params[3] * std_shocks[:, j - 1] +
+                                  params[4] * paths[i, :, j - 1])
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -859,11 +860,11 @@ class TestVarianceForecasts(TestCase):
                 else:
                     lag_2_sym = np.abs(std_resids[i]) - sqrt2pi
 
-                paths[i, :, j] = params[0] + \
-                    params[1] * lag_1_sym + \
-                    params[2] * lag_2_sym + \
-                    params[3] * std_shocks[:, j - 1] + \
-                    params[4] * paths[i, :, j - 1]
+                paths[i, :, j] = (params[0] +
+                                  params[1] * lag_1_sym +
+                                  params[2] * lag_2_sym +
+                                  params[3] * std_shocks[:, j - 1] +
+                                  params[4] * paths[i, :, j - 1])
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -925,12 +926,12 @@ class TestVarianceForecasts(TestCase):
                     lag_2_sym = np.abs(std_resids[i]) - sqrt2pi
                     lag_2_path = np.log(sigma2[i])
 
-                paths[i, :, j] = params[0] + \
-                    params[1] * lag_1_sym + \
-                    params[2] * lag_2_sym + \
-                    params[3] * std_shocks[:, j - 1] + \
-                    params[4] * lag_1_path + \
-                    params[5] * lag_2_path
+                paths[i, :, j] = (params[0] +
+                                  params[1] * lag_1_sym +
+                                  params[2] * lag_2_sym +
+                                  params[3] * std_shocks[:, j - 1] +
+                                  params[4] * lag_1_path +
+                                  params[5] * lag_2_path)
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -961,12 +962,12 @@ class TestVarianceForecasts(TestCase):
                     lag_2_sym = np.abs(std_resids[i]) - sqrt2pi
                     lag_2_path = np.log(sigma2[i])
 
-                paths[i, :, j] = params[0] + \
-                    params[1] * lag_1_sym + \
-                    params[2] * lag_2_sym + \
-                    params[3] * std_shocks[:, j - 1] + \
-                    params[4] * lag_1_path + \
-                    params[5] * lag_2_path
+                paths[i, :, j] = (params[0] +
+                                  params[1] * lag_1_sym +
+                                  params[2] * lag_2_sym +
+                                  params[3] * std_shocks[:, j - 1] +
+                                  params[4] * lag_1_path +
+                                  params[5] * lag_2_path)
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -1172,8 +1173,8 @@ class TestVarianceForecasts(TestCase):
             shocks[i, :, 0] = np.sqrt(paths[i, :, 0]) * std_shocks[:, 0]
             for j in range(1, 10):
                 paths[i, :, j] = omega + \
-                    alpha * shocks[i, :, j - 1] ** 2.0 + \
-                    beta * paths[i, :, j - 1]
+                                 alpha * shocks[i, :, j - 1] ** 2.0 + \
+                                 beta * paths[i, :, j - 1]
                 shocks[i, :, j] = np.sqrt(paths[i, :, j]) * std_shocks[:, j]
 
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -1223,9 +1224,9 @@ class TestVarianceForecasts(TestCase):
             a1, a2 = _asymresids[tau - 1], _asymresids[tau - 2]
             s21, s22 = _sigma2[tau - 1], _sigma2[tau - 2]
 
-            fcast = params[0] + params[1] * r1 ** 2 + params[2] * r2 ** 2 + \
-                params[3] * a1 ** 2 + params[4] * a2 ** 2 + \
-                params[5] * s21 + params[6] * s22
+            fcast = (params[0] + params[1] * r1 ** 2 + params[2] * r2 ** 2 +
+                     params[3] * a1 ** 2 + params[4] * a2 ** 2 +
+                     params[5] * s21 + params[6] * s22)
             paths[:, j] = fcast
             shocks[:, j] = std_shocks[:, j] * np.sqrt(fcast)
 
@@ -1233,9 +1234,9 @@ class TestVarianceForecasts(TestCase):
             r1, r2 = shocks[:, 0], _resids[tau - 1]
             a1, a2 = shocks[:, 0] * (shocks[:, 0] < 0), _asymresids[tau - 1]
             s21, s22 = paths[:, 0], _sigma2[tau - 1]
-            fcast = params[0] + params[1] * r1 ** 2 + params[2] * r2 ** 2 + \
-                params[3] * a1 ** 2 + params[4] * a2 ** 2 + \
-                params[5] * s21 + params[6] * s22
+            fcast = (params[0] + params[1] * r1 ** 2 + params[2] * r2 ** 2 +
+                     params[3] * a1 ** 2 + params[4] * a2 ** 2 +
+                     params[5] * s21 + params[6] * s22)
             paths[:, j] = fcast
             shocks[:, j] = std_shocks[:, j] * np.sqrt(fcast)
 
@@ -1243,9 +1244,9 @@ class TestVarianceForecasts(TestCase):
             r1, r2 = shocks[:, 1], shocks[:, 0]
             a1, a2 = shocks[:, 1] * (shocks[:, 1] < 0), shocks[:, 0] * (shocks[:, 0] < 0)
             s21, s22 = paths[:, 1], paths[:, 0]
-            fcast = params[0] + params[1] * r1 ** 2 + params[2] * r2 ** 2 + \
-                params[3] * a1 ** 2 + params[4] * a2 ** 2 + \
-                params[5] * s21 + params[6] * s22
+            fcast = (params[0] + params[1] * r1 ** 2 + params[2] * r2 ** 2 +
+                     params[3] * a1 ** 2 + params[4] * a2 ** 2 +
+                     params[5] * s21 + params[6] * s22)
             paths[:, j] = fcast
             shocks[:, j] = std_shocks[:, j] * np.sqrt(fcast)
 
@@ -1482,6 +1483,49 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecast.forecast_paths, arch_forecast.forecast_paths)
         assert_allclose(forecast.shocks, arch_forecast.shocks)
 
+    def test_figarch_analytical(self):
+        vol = FIGARCH(truncation=50)
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        params = np.array([.1, .2, .4, .2])
+        forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0)
+        lam = figarch_weights(params[1:], 1, 1, vol.truncation)
+        arch_params = np.r_[params[0] / (1 - params[-1]), lam]
+        expected = _simple_direct_gjrgarch_forecaster(resids, arch_params, 50, 0, 0,
+                                                      backcast, var_bounds, 10)
+        assert_allclose(forecast.forecasts, expected)
+
+        forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=0)
+        assert forecast.forecasts.shape[1] == 1
+
+        vol = FIGARCH(truncation=50, power=1.0)
+        with pytest.raises(ValueError):
+            vol.forecast(params, resids, backcast, var_bounds, horizon=2, method='analytic')
+
+    def test_figarch_simulation(self):
+        dist = Normal(self.rng)
+        rng = dist.simulate([])
+        vol = FIGARCH(truncation=51)
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        params = np.array([.1, .2, .4, .2])
+        with preserved_state(self.rng):
+            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0,
+                                    method='simulation', rng=rng)
+
+        lam = figarch_weights(params[1:], 1, 1, vol.truncation)
+        arch = GARCH(p=vol.truncation, o=0, q=0)
+        arch_params = np.r_[params[0] / (1 - params[-1]), lam]
+        with preserved_state(self.rng):
+            arch_forecast = arch.forecast(arch_params, resids, backcast, var_bounds, horizon=10,
+                                          start=0, method='simulation', rng=rng)
+
+        assert_allclose(forecast.forecasts, arch_forecast.forecasts)
+        assert_allclose(forecast.forecast_paths, arch_forecast.forecast_paths)
+        assert_allclose(forecast.shocks, arch_forecast.shocks)
+
     def test_midas_asym_simulation(self):
         dist = Normal(self.rng)
         rng = dist.simulate([])
@@ -1600,7 +1644,6 @@ class TestBootstrapRng(TestCase):
 
 
 def test_external_rng():
-
     arch_mod = arch_model(None, mean='Constant', vol='GARCH', p=1, q=1)
     data = arch_mod.simulate(np.array([0.1, 0.1, 0.1, 0.88]), 1000)
     data.index = pd.date_range('2000-01-01', periods=data.index.shape[0])

@@ -22,7 +22,7 @@ from arch.univariate.base import ARCHModelResult, ARCHModelForecast, \
 from arch.univariate.mean import HARX, ConstantMean, ARX, ZeroMean, LS, \
     arch_model
 from arch.univariate.volatility import ConstantVariance, GARCH, HARCH, ARCH, \
-    RiskMetrics2006, EWMAVariance, EGARCH, FixedVariance
+    RiskMetrics2006, EWMAVariance, EGARCH, FixedVariance, FIGARCH, MIDASHyperbolic
 from arch.univariate.distribution import Normal, StudentsT, SkewStudent, GeneralizedError
 
 try:
@@ -39,7 +39,7 @@ DISPLAY = 'off'
 def simulated_data():
     rs = np.random.RandomState(1)
     zm = ZeroMean(volatility=GARCH(), distribution=Normal(rs))
-    sim_data = zm.simulate(np.array([0.1, 0.1, 0.8]), 1000)
+    sim_data = zm.simulate(np.array([0.1, 0.1, 0.88]), 1000)
     return sim_data.data
 
 
@@ -86,7 +86,7 @@ class TestMeanModel(TestCase):
         assert isinstance(cm.volatility, ConstantVariance)
         assert isinstance(cm.distribution, Normal)
         assert_equal(cm.lags, None)
-        res = cm.fit(disp='off')
+        res = cm.fit(disp=DISPLAY)
         expected = np.array([self.y.mean(), self.y.var()])
         assert_almost_equal(res.params, expected)
 
@@ -119,7 +119,7 @@ class TestMeanModel(TestCase):
         assert isinstance(zm.volatility, ConstantVariance)
         assert isinstance(zm.distribution, Normal)
         assert_equal(zm.lags, None)
-        res = zm.fit(disp='off')
+        res = zm.fit(disp=DISPLAY)
         assert_almost_equal(res.params, np.array([np.mean(self.y ** 2)]))
 
         forecasts = res.forecast(horizon=99)
@@ -433,7 +433,7 @@ class TestMeanModel(TestCase):
         am = ARX(y=y, x=x)
         am.fit(disp=DISPLAY).summary()
         am.volatility = ARCH(p=2)
-        results = am.fit(update_freq=0, disp='off')
+        results = am.fit(update_freq=0, disp=DISPLAY)
         assert isinstance(results.pvalues, pd.Series)
         assert_equal(list(results.pvalues.index),
                      ['Const', 'x0', 'x1', 'x2',
@@ -447,7 +447,7 @@ class TestMeanModel(TestCase):
         assert summ[:10] == repr[:10]
 
         am.volatility = ARCH(p=2)
-        results = am.fit(update_freq=0, disp='off')
+        results = am.fit(update_freq=0, disp=DISPLAY)
         assert isinstance(results.pvalues, pd.Series)
         assert_equal(list(results.pvalues.index),
                      ['Const', 'y[1]', 'y[2]', 'x0', 'x1', 'x2',
@@ -458,7 +458,7 @@ class TestMeanModel(TestCase):
         am = ARX(y=y, x=x)
         am.fit(disp=DISPLAY).summary()
         am.volatility = ARCH(p=2)
-        results = am.fit(update_freq=0, disp='off')
+        results = am.fit(update_freq=0, disp=DISPLAY)
         assert isinstance(results.pvalues, pd.Series)
         assert_equal(list(results.pvalues.index),
                      ['Const', 'x0', 'x1', 'x2',
@@ -512,6 +512,9 @@ class TestMeanModel(TestCase):
 
         am = arch_model(self.y, vol='egarch')
         assert isinstance(am.volatility, EGARCH)
+
+        am = arch_model(self.y, vol='figarch')
+        assert isinstance(am.volatility, FIGARCH)
 
         with pytest.raises(ValueError):
             arch_model(self.y, mean='unknown')
@@ -660,19 +663,19 @@ class TestMeanModel(TestCase):
         cm = ConstantMean(self.y)
         for name, process in iteritems(vp):
             cm.volatility = process()
-            cm.fit(update_freq=0, disp='off')
+            cm.fit(update_freq=0, disp=DISPLAY)
             for p in [1, 2, 3]:
                 for o in [1, 2, 3]:
                     for q in [1, 2, 3]:
                         if name in ('arch',):
                             cm.volatility = process(p=p + o + q)
-                            cm.fit(update_freq=0, disp='off')
+                            cm.fit(update_freq=0, disp=DISPLAY)
                         elif name in ('harch',):
                             cm.volatility = process(lags=[p, p + o, p + o + q])
-                            cm.fit(update_freq=0, disp='off')
+                            cm.fit(update_freq=0, disp=DISPLAY)
                         else:
                             cm.volatility = process(p=p, o=o, q=q)
-                            cm.fit(update_freq=0, disp='off')
+                            cm.fit(update_freq=0, disp=DISPLAY)
 
     def test_first_last_obs(self):
         ar = ARX(self.y, lags=5, hold_back=100)
@@ -807,7 +810,7 @@ class TestMeanModel(TestCase):
         try:
             sio = StringIO()
             sys.stdout = sio
-            am.fit(disp='off')
+            am.fit(disp=DISPLAY)
             sio.seek(0)
             output = sio.read()
             assert len(output) == 0
@@ -840,36 +843,36 @@ class TestMeanModel(TestCase):
     def test_first_after_last(self):
         am = arch_model(self.y_series)
         with pytest.raises(ValueError):
-            am.fit(disp='off', first_obs=500, last_obs=480)
+            am.fit(disp=DISPLAY, first_obs=500, last_obs=480)
 
         with pytest.raises(ValueError):
-            am.fit(disp='off',
+            am.fit(disp=DISPLAY,
                    first_obs=self.y_series.index[500],
                    last_obs=self.y_series.index[480])
 
     def test_sample_adjustment(self):
         am = arch_model(self.y_series, vol='Constant')
-        res = am.fit(disp='off')
+        res = am.fit(disp=DISPLAY)
 
-        res_adj = am.fit(disp='off',
+        res_adj = am.fit(disp=DISPLAY,
                          first_obs=0,
                          last_obs=self.y_series.shape[0] + 1)
         assert_equal(res.resid.values, res_adj.resid.values)
         assert_equal(res.params.values, res_adj.params.values)
 
-        res = am.fit(disp='off', first_obs=100)
+        res = am.fit(disp=DISPLAY, first_obs=100)
         assert res.fit_start == 100
-        res_adj = am.fit(disp='off', first_obs=self.y_series.index[100])
+        res_adj = am.fit(disp=DISPLAY, first_obs=self.y_series.index[100])
         assert_equal(res.params.values, res_adj.params.values)
         assert_equal(res.resid.values, res_adj.resid.values)
 
-        res = am.fit(disp='off', last_obs=900)
-        res2 = am.fit(disp='off', last_obs=self.y_series.index[900])
+        res = am.fit(disp=DISPLAY, last_obs=900)
+        res2 = am.fit(disp=DISPLAY, last_obs=self.y_series.index[900])
         assert_equal(res.params.values, res2.params.values)
         assert_equal(res.resid.values, res2.resid.values)
 
-        res = am.fit(disp='off', first_obs=100, last_obs=900)
-        res2 = am.fit(disp='off',
+        res = am.fit(disp=DISPLAY, first_obs=100, last_obs=900)
+        res2 = am.fit(disp=DISPLAY,
                       first_obs=self.y_series.index[100],
                       last_obs=self.y_series.index[900])
         assert_equal(res.params.values, res2.params.values)
@@ -878,32 +881,32 @@ class TestMeanModel(TestCase):
     def test_model_obs_equivalence(self):
         """Tests models that should use the same observation"""
         am = arch_model(self.y_series.iloc[100:900])
-        res = am.fit(disp='off')
+        res = am.fit(disp=DISPLAY)
         am = arch_model(self.y_series)
-        res2 = am.fit(disp='off', first_obs=100, last_obs=900)
+        res2 = am.fit(disp=DISPLAY, first_obs=100, last_obs=900)
         index = self.y_series.index
-        res3 = am.fit(disp='off', first_obs=index[100], last_obs=index[900])
+        res3 = am.fit(disp=DISPLAY, first_obs=index[100], last_obs=index[900])
         assert_equal(res.params.values, res2.params.values)
         assert_equal(res2.params.values, res3.params.values)
 
         am = arch_model(self.y_series, hold_back=100)
-        res4 = am.fit(disp='off', last_obs=900)
+        res4 = am.fit(disp=DISPLAY, last_obs=900)
         assert_equal(res.params.values, res4.params.values)
 
     def test_model_obs_equivalence_ar(self):
         """Tests models that should use the same observation"""
         am = arch_model(self.y_series.iloc[100:900], mean='AR', lags=[1, 2, 4])
-        res = am.fit(disp='off')
+        res = am.fit(disp=DISPLAY)
         am = arch_model(self.y_series, mean='AR', lags=[1, 2, 4])
-        res2 = am.fit(disp='off', first_obs=100, last_obs=900)
+        res2 = am.fit(disp=DISPLAY, first_obs=100, last_obs=900)
         index = self.y_series.index
-        res3 = am.fit(disp='off', first_obs=index[100], last_obs=index[900])
+        res3 = am.fit(disp=DISPLAY, first_obs=index[100], last_obs=index[900])
         assert_almost_equal(res.params.values, res2.params.values, decimal=4)
         assert_almost_equal(res2.params.values, res3.params.values, decimal=4)
 
         am = arch_model(self.y_series, mean='AR', lags=[1, 2, 4],
                         hold_back=100)
-        res4 = am.fit(disp='off', first_obs=4, last_obs=900)
+        res4 = am.fit(disp=DISPLAY, first_obs=4, last_obs=900)
         assert_almost_equal(res.params.values, res4.params.values, decimal=4)
         assert am.hold_back == 100
 
@@ -930,11 +933,11 @@ class TestMeanModel(TestCase):
         am = arch_model(None)
         data = am.simulate([0.0, 0.1, 0.1, 0.85], 2500)
         am = arch_model(data.data)
-        std = am.fit(disp='off')
-        loose = am.fit(tol=1e-2, disp='off')
+        std = am.fit(disp=DISPLAY)
+        loose = am.fit(tol=1e-2, disp=DISPLAY)
         assert std.loglikelihood != loose.loglikelihood
         with warnings.catch_warnings(record=True) as w:
-            short = am.fit(options={'maxiter': 3}, disp='off')
+            short = am.fit(options={'maxiter': 3}, disp=DISPLAY)
         assert len(w) == 1
         assert std.loglikelihood != short.loglikelihood
         assert short.convergence_flag != 0
@@ -981,3 +984,10 @@ def test_backcast_error(simulated_data):
     zm = ZeroMean(simulated_data, volatility=RiskMetrics2006())
     with pytest.raises(ValueError):
         zm.fit(backcast=np.ones(100), disp=DISPLAY)
+
+
+@pytest.mark.parametrize('volatility', [ConstantVariance, GARCH, EGARCH, FIGARCH, HARCH,
+                                        MIDASHyperbolic, RiskMetrics2006, EWMAVariance])
+def test_fit_smoke(simulated_data, volatility):
+    zm = ZeroMean(simulated_data, volatility=volatility())
+    zm.fit(disp=DISPLAY)
