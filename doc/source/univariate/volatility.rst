@@ -18,6 +18,12 @@ GARCH
 .. autoclass:: GARCH
    :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
 
+Fractionally Integrated (FI) GARCH
+----------------------------------
+
+.. autoclass:: FIGARCH
+   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
+
 EGARCH
 ------
 

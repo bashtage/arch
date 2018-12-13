@@ -1,3 +1,4 @@
+import os
 import timeit
 
 import numpy as np
@@ -8,6 +9,8 @@ from scipy.special import gamma
 
 import arch.univariate.recursions_python as recpy
 from arch.compat.python import range
+
+CYTHON_COVERAGE = os.environ.get('ARCH_CYTHON_COVERAGE', '0') in ('true', '1', 'True')
 
 try:
     import arch.univariate.recursions as rec_cython
@@ -49,12 +52,16 @@ class Timer(object):
         if not self._run:
             self.time()
         self.ratio = self.times[0] / self.times[1]
-
-        print(self.model_name + ' timing')
-        print(self.first_name + ': ' + str(self.times[0]) + 's')
-        print(self.second_name + ': ' + str(self.times[1]) + 's')
-        print(self.first_name + '/' + self.second_name + ' Ratio: ' +
-              str(self.ratio) + 's')
+        title = self.model_name + ' timing'
+        print(title)
+        print('-' * len(title))
+        print(self.first_name + ': ' + '{:0.3f} ms'.format(1000 * self.times[0]))
+        print(self.second_name + ': ' + '{:0.3f} ms'.format(1000 * self.times[1]))
+        if self.ratio < 1:
+            print('{0} is {1:0.1f}% faster'.format(self.first_name, 100 * (1 / self.ratio - 1)))
+        else:
+            print('{0} is {1:0.1f}% faster'.format(self.second_name, 100 * (self.ratio - 1)))
+        print(self.first_name + '/' + self.second_name + ' Ratio: {:0.3f}'.format(self.ratio))
         print('\n')
 
     def time(self):
@@ -445,8 +452,8 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([.1, 0.8, 0])
-        j = np.arange(1, 22+1)
-        weights = gamma(j+0.6) / (gamma(j+1) * gamma(0.6))
+        j = np.arange(1, 22 + 1)
+        weights = gamma(j + 0.6) / (gamma(j + 1) * gamma(0.6))
         weights = weights / weights.sum()
         recpy.midas_recursion(parameters, weights, resids, sigma2, nobs, backcast, self.var_bounds)
         sigma2_numba = sigma2.copy()
@@ -465,8 +472,8 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
 
         parameters = np.array([.1, 10e10, 0])
-        j = np.arange(1, 22+1)
-        weights = gamma(j+0.6) / (gamma(j+1) * gamma(0.6))
+        j = np.arange(1, 22 + 1)
+        weights = gamma(j + 0.6) / (gamma(j + 1) * gamma(0.6))
         weights = weights / weights.sum()
         recpy.midas_recursion_python(parameters, weights, resids, sigma2, nobs, backcast,
                                      self.var_bounds)
@@ -484,6 +491,48 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         rec.midas_recursion(parameters, weights, resids, sigma2, nobs, backcast, self.var_bounds)
         assert np.all(sigma2 >= self.var_bounds[:, 0])
         assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
+
+    def test_figarch_recursion(self):
+        nobs, resids, = self.nobs, self.resids
+        sigma2, backcast = self.sigma2, self.backcast
+        parameters = np.array([1.0, 0.2, 0.4, 0.3])
+        fresids = resids ** 2
+        p = q = 1
+        trunc_lag = 1000
+        rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backcast,
+                              self.var_bounds)
+        lam = rec.figarch_weights(parameters[1:], p, q, truncation=trunc_lag)
+        lam_rev = lam[::-1]
+        omega_tilde = parameters[0] / (1 - parameters[-1])
+        sigma2_direct = np.empty_like(sigma2)
+        for t in range(nobs):
+            backcasts = trunc_lag - t
+            sigma2_direct[t] = omega_tilde
+            if backcasts:
+                sigma2_direct[t] += backcast * lam_rev[:backcasts].sum()
+            if t:
+                sigma2_direct[t] += np.sum(lam_rev[-t:] * fresids[max(0, t - 1000):t])
+        assert_almost_equal(sigma2_direct, sigma2)
+
+        recpy.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backcast,
+                                self.var_bounds)
+        sigma2_numba = sigma2.copy()
+        recpy.figarch_recursion_python(parameters, fresids, sigma2, p, q, nobs, trunc_lag,
+                                       backcast, self.var_bounds)
+        sigma2_python = sigma2.copy()
+        rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backcast,
+                              self.var_bounds)
+        assert_almost_equal(sigma2_numba, sigma2)
+        assert_almost_equal(sigma2_python, sigma2)
+
+    def test_figarch_weights(self):
+        parameters = np.array([1.0, 0.4])
+        lam = rec.figarch_weights(parameters[1:], 0, 0, truncation=1000)
+        lam_direct = np.empty_like(lam)
+        lam_direct[0] = parameters[-1]
+        for i in range(1, 1000):
+            lam_direct[i] = (i - parameters[-1]) / (i + 1) * lam_direct[i - 1]
+        assert_almost_equal(lam, lam_direct)
 
     @pytest.mark.skipif(missing_numba or missing_extension, reason='numba not installed')
     def test_garch_performance(self):
@@ -505,6 +554,8 @@ var_bounds)
                       self.timer_setup + garch_setup)
         timer.display()
         assert timer.ratio < 10.0
+        if not (missing_numba or CYTHON_COVERAGE):
+            assert 0.1 < timer.ratio
 
     @pytest.mark.skipif(missing_numba or missing_extension, reason='numba not installed')
     def test_harch_performance(self):
@@ -526,6 +577,8 @@ rec.harch_recursion(parameters, resids, sigma2, lags, nobs, backcast, var_bounds
                       self.timer_setup + harch_setup)
         timer.display()
         assert timer.ratio < 10.0
+        if not (missing_numba or CYTHON_COVERAGE):
+            assert 0.1 < timer.ratio
 
     @pytest.mark.skipif(missing_numba or missing_extension, reason='numba not installed')
     def test_egarch_performance(self):
@@ -539,17 +592,20 @@ abs_std_resids = np.empty_like(sigma2)
         """
 
         egarch_first = """
-rec.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast,
+recpy.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast,
 var_bounds, lnsigma2, std_resids, abs_std_resids)
 """
 
         egarch_second = """
-recpy.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast,
+rec.egarch_recursion(parameters, resids, sigma2, p, o, q, nobs, backcast,
 var_bounds, lnsigma2, std_resids, abs_std_resids)
 """
         timer = Timer(egarch_first, 'Numba', egarch_second, 'Cython', 'EGARCH',
                       self.timer_setup + egarch_setup)
         timer.display()
+        assert timer.ratio < 10.0
+        if not (missing_numba or CYTHON_COVERAGE):
+            assert 0.1 < timer.ratio
 
     @pytest.mark.skipif(missing_numba or missing_extension, reason='numba not installed')
     def test_midas_performance(self):
@@ -567,10 +623,34 @@ recpy.midas_recursion(parameters, weights, resids, sigma2, nobs, backcast, var_b
         midas_second = """
 rec.midas_recursion(parameters, weights, resids, sigma2, nobs, backcast, var_bounds)
 """
-        timer = Timer(midas_first, 'Numba', midas_second, 'Cython', 'GARCH',
+        timer = Timer(midas_first, 'Numba', midas_second, 'Cython', 'MIDAS',
                       self.timer_setup + midas_setup)
         timer.display()
         assert timer.ratio < 10.0
+        if not (missing_numba or CYTHON_COVERAGE):
+            assert 0.1 < timer.ratio
+
+    @pytest.mark.skipif(missing_numba or missing_extension, reason='numba not installed')
+    def test_figarch_performance(self):
+        midas_setup = """
+p = q = 1
+trunc_lag = 1000
+parameters = np.array([1.0, 0.2, 0.2, 0.04])
+fresids = resids ** 2.0
+"""
+
+        midas_first = """
+recpy.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backcast, var_bounds)
+                """
+        midas_second = """
+rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backcast, var_bounds)
+"""
+        timer = Timer(midas_first, 'Numba', midas_second, 'Cython', 'FIGARCH',
+                      self.timer_setup + midas_setup)
+        timer.display()
+        assert timer.ratio < 10.0
+        if not (missing_numba or CYTHON_COVERAGE):
+            assert 0.1 < timer.ratio
 
 
 def test_bounds_check():

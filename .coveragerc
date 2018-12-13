@@ -24,6 +24,9 @@ exclude_lines =
     pytest.xfail
     # Ignore ImportError protection
     except ImportError
+    # Cython function declarations
+    cdef
+
 include = */arch/*
 omit =
     */_version.py

@@ -1,5 +1,6 @@
 Changes since 4.0
 =================
+- Added support for Fractionally Integrated GARCH (FIGARCH)
 - Enable user to specify a specific value of the `backcast` in place of
   the automatically generated value.
 - Fixed a big where parameter-less models where incorrectly reported as
