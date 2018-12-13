@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>arch.univariate.volatility &#8212; arch 4.6.0+22.g8e573f6 documentation</title>
+    <title>arch.univariate.volatility &#8212; arch 4.6.0+24.g2f1f6c9 documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+22.g8e573f6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+24.g2f1f6c9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -53,7 +53,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../../index.html" class="text-logo">arch 4.6.0 (+22)</a>
+    ../../../index.html" class="text-logo">arch 4.6.0 (+24)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -110,8 +110,8 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span>
 
-<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractmethod</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -120,15 +120,17 @@
 
 <span class="kn">from</span> <span class="nn">arch.compat.python</span> <span class="k">import</span> <span class="n">add_metaclass</span><span class="p">,</span> <span class="nb">range</span>
 <span class="kn">from</span> <span class="nn">arch.univariate.distribution</span> <span class="k">import</span> <span class="n">Normal</span>
-<span class="kn">from</span> <span class="nn">arch.utility.exceptions</span> <span class="k">import</span> <span class="n">initial_value_warning</span><span class="p">,</span> <span class="n">InitialValueWarning</span>
 <span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="k">import</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">AbstractDocStringInheritor</span>
+<span class="kn">from</span> <span class="nn">arch.utility.exceptions</span> <span class="k">import</span> <span class="n">initial_value_warning</span><span class="p">,</span> <span class="n">InitialValueWarning</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">arch.univariate.recursions</span> <span class="k">import</span> <span class="p">(</span><span class="n">garch_recursion</span><span class="p">,</span> <span class="n">harch_recursion</span><span class="p">,</span>
-                                            <span class="n">egarch_recursion</span><span class="p">,</span> <span class="n">midas_recursion</span><span class="p">)</span>
+                                            <span class="n">egarch_recursion</span><span class="p">,</span> <span class="n">midas_recursion</span><span class="p">,</span>
+                                            <span class="n">figarch_weights</span><span class="p">,</span> <span class="n">figarch_recursion</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
     <span class="kn">from</span> <span class="nn">arch.univariate.recursions_python</span> <span class="k">import</span> <span class="p">(</span><span class="n">garch_recursion</span><span class="p">,</span> <span class="n">harch_recursion</span><span class="p">,</span>
-                                                   <span class="n">egarch_recursion</span><span class="p">,</span> <span class="n">midas_recursion</span><span class="p">)</span>
+                                                   <span class="n">egarch_recursion</span><span class="p">,</span> <span class="n">midas_recursion</span><span class="p">,</span>
+                                                   <span class="n">figarch_recursion</span><span class="p">,</span> <span class="n">figarch_weights</span><span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;GARCH&#39;</span><span class="p">,</span> <span class="s1">&#39;ARCH&#39;</span><span class="p">,</span> <span class="s1">&#39;HARCH&#39;</span><span class="p">,</span> <span class="s1">&#39;ConstantVariance&#39;</span><span class="p">,</span> <span class="s1">&#39;EWMAVariance&#39;</span><span class="p">,</span> <span class="s1">&#39;RiskMetrics2006&#39;</span><span class="p">,</span>
            <span class="s1">&#39;EGARCH&#39;</span><span class="p">,</span> <span class="s1">&#39;FixedVariance&#39;</span><span class="p">,</span> <span class="s1">&#39;BootstrapRng&#39;</span><span class="p">,</span> <span class="s1">&#39;MIDASHyperbolic&#39;</span><span class="p">,</span> <span class="s1">&#39;VolatilityProcess&#39;</span><span class="p">]</span>
@@ -525,7 +527,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        backcast : {float, ndarray}</span>
-<span class="sd">            User-provided `backcast` that approximates sigma2[0].</span>
+<span class="sd">            User-provided ``backcast`` that approximates sigma2[0].</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -546,6 +548,10 @@
 <span class="sd">        resids : ndarray</span>
 <span class="sd">            Vector of (approximate) residuals</span>
 
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bounds : list[tuple[float,float]]</span>
+<span class="sd">            List of bounds where each element is (lower, upper).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
@@ -808,7 +814,7 @@
 <span class="sd">        Order of the symmetric innovation</span>
 <span class="sd">    o : int</span>
 <span class="sd">        Order of the asymmetric innovation</span>
-<span class="sd">    q: int</span>
+<span class="sd">    q : int</span>
 <span class="sd">        Order of the lagged (transformed) conditional variance</span>
 <span class="sd">    power : float, optional</span>
 <span class="sd">        Power to use with the innovations, abs(e) ** power.  Default is 2.0, which produces ARCH</span>
@@ -963,9 +969,6 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span>
 
 <div class="viewcode-block" id="GARCH.backcast"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.GARCH.backcast">[docs]</a>    <span class="k">def</span> <span class="nf">backcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Construct values for backcasting to start the recursion</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">power</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span>
         <span class="n">tau</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.94</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">tau</span><span class="p">))</span>
@@ -1756,7 +1759,7 @@
 <span class="sd">        \sigma_t^{2}=\lambda\sigma_{t-1}^2 + (1-\lambda)\epsilon^2_{t-1}</span>
 
 <span class="sd">    When lam is provided, this model has no parameters since the smoothing</span>
-<span class="sd">    parameter is treated as fixed. Sel lam to `None` to jointly estimate this</span>
+<span class="sd">    parameter is treated as fixed. Sel lam to ``None`` to jointly estimate this</span>
 <span class="sd">    parameter when fitting the model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -2209,9 +2212,6 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span>
 
 <div class="viewcode-block" id="EGARCH.backcast"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.EGARCH.backcast">[docs]</a>    <span class="k">def</span> <span class="nf">backcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Construct values for backcasting to start the recursion</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">EGARCH</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">backcast</span><span class="p">(</span><span class="n">resids</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="EGARCH.simulate"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.EGARCH.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">rng</span><span class="p">,</span> <span class="n">burn</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">initial_value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -2444,6 +2444,368 @@
         <span class="n">shocks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="n">simulations</span><span class="p">,</span> <span class="n">horizon</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">VarianceForecast</span><span class="p">(</span><span class="n">forecasts</span><span class="p">,</span> <span class="n">forecast_paths</span><span class="p">,</span> <span class="n">shocks</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FIGARCH"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.FIGARCH">[docs]</a><span class="k">class</span> <span class="nc">FIGARCH</span><span class="p">(</span><span class="n">VolatilityProcess</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FIGARCH model</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : {0, 1}</span>
+<span class="sd">        Order of the symmetric innovation</span>
+<span class="sd">    q : {0, 1}</span>
+<span class="sd">        Order of the lagged (transformed) conditional variance</span>
+<span class="sd">    power : float, optional</span>
+<span class="sd">        Power to use with the innovations, abs(e) ** power.  Default is 2.0,</span>
+<span class="sd">        which produces FIGARCH and related models. Using 1.0 produces</span>
+<span class="sd">        FIAVARCH and related models.  Other powers can be specified, although</span>
+<span class="sd">        these should be strictly positive, and usually larger than 0.25.</span>
+<span class="sd">    truncation : int, optional</span>
+<span class="sd">        Truncation point to use in ARCH(:math:`\infty`) representation.</span>
+<span class="sd">        Default is 1000.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    num_params : int</span>
+<span class="sd">        The number of parameters in the model</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from arch.univariate import FIGARCH</span>
+
+<span class="sd">    Standard FIGARCH</span>
+
+<span class="sd">    &gt;&gt;&gt; figarch = FIGARCH()</span>
+
+<span class="sd">    FIARCH</span>
+
+<span class="sd">    &gt;&gt;&gt; fiarch = FIGARCH(p=0)</span>
+
+<span class="sd">    FIAVGARCH process</span>
+
+<span class="sd">    &gt;&gt;&gt; fiavarch = FIGARCH(power=1.0)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    In this class of processes, the variance dynamics are</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        h_t = \omega + [1-\beta L - \phi L  (1-L)^d] \epsilon_t^2 + \beta h_{t-1}</span>
+
+<span class="sd">    where ``L`` is the lag operator and ``d`` is the fractional differencing</span>
+<span class="sd">    parameter. The model is estimated using the ARCH(:math:`\infty`)</span>
+<span class="sd">    representation,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        h_t = (1-\beta)^{-1}  \omega + \sum_{i=1}^\infty \lambda_i \epsilon_{t-i}^2</span>
+
+<span class="sd">    The weights are constructed using</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \delta_1 = d \\</span>
+<span class="sd">        \lambda_1 = d - \beta + \phi</span>
+
+<span class="sd">    and the recursive equations</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \delta_j = \frac{j - 1 - d}{j}  \delta_{j-1} \\</span>
+<span class="sd">        \lambda_j = \beta \lambda_{j-1} + \delta_j - \phi \delta_{j-1}.</span>
+
+<span class="sd">    When `power` is not 2, the ARCH(:math:`\infty`) representation is still used</span>
+<span class="sd">    where :math:`\epsilon_t^2` is replaced by :math:`|\epsilon_t|^p` and</span>
+<span class="sd">    ``p`` is the power.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FIGARCH</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">power</span> <span class="o">=</span> <span class="n">power</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">p</span> <span class="o">+</span> <span class="n">q</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_truncation</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">truncation</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">q</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">q</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;p and q must be either 0 or 1.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truncation</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;truncation must be a positive integer&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">power</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;power must be strictly positive, usually larger than 0.25&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">truncation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Truncation lag for the ARCH-infinity approximation&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truncation</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">descr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span> <span class="o">!=</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span> <span class="o">!=</span> <span class="mf">2.0</span><span class="p">:</span>
+            <span class="n">descr</span> <span class="o">=</span> <span class="n">descr</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">descr</span> <span class="o">+=</span> <span class="s1">&#39;(&#39;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">((</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">)):</span>
+            <span class="n">descr</span> <span class="o">+=</span> <span class="n">k</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span>
+        <span class="n">descr</span> <span class="o">=</span> <span class="n">descr</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+
+        <span class="k">return</span> <span class="n">descr</span>
+
+    <span class="k">def</span> <span class="nf">variance_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">2.0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">FIGARCH</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">variance_bounds</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">q</span><span class="p">,</span> <span class="n">power</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span>
+        <span class="k">if</span> <span class="n">power</span> <span class="o">==</span> <span class="mf">2.0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">q</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s1">&#39;FIARCH&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s1">&#39;FIGARCH&#39;</span>
+        <span class="k">elif</span> <span class="n">power</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">q</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s1">&#39;FIAVARCH&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s1">&#39;FIAVGARCH&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">q</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s1">&#39;Power FIARCH (power: </span><span class="si">{0:0.1f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s1">&#39;Power FIGARCH (power: </span><span class="si">{0:0.1f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FIGARCH.bounds"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.FIGARCH.bounds">[docs]</a>    <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="p">)</span>
+
+        <span class="n">bounds</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="n">v</span><span class="p">)]</span>
+        <span class="n">bounds</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">)</span>  <span class="c1"># phi</span>
+        <span class="n">bounds</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)])</span>  <span class="c1"># d</span>
+        <span class="n">bounds</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">)</span>  <span class="c1"># beta</span>
+
+        <span class="k">return</span> <span class="n">bounds</span></div>
+
+<div class="viewcode-block" id="FIGARCH.constraints"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.FIGARCH.constraints">[docs]</a>    <span class="k">def</span> <span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c1"># omega &gt; 0 &lt;- 1</span>
+        <span class="c1"># 0 &lt;= d &lt;= 1 &lt;- 2</span>
+        <span class="c1"># 0 &lt;= phi &lt;= (1 - d) / 2 &lt;- 2</span>
+        <span class="c1"># 0 &lt;= beta &lt;= d + phi &lt;- 2</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">:</span>
+            <span class="c1"># Drop column 1 and rows 1 and 2</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span></div>
+
+<div class="viewcode-block" id="FIGARCH.compute_variance"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.FIGARCH.compute_variance">[docs]</a>    <span class="k">def</span> <span class="nf">compute_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span>
+                         <span class="n">var_bounds</span><span class="p">):</span>
+        <span class="c1"># fresids is abs(resids) ** power</span>
+        <span class="n">power</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span>
+        <span class="n">fresids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span> <span class="o">**</span> <span class="n">power</span>
+
+        <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">truncation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncation</span>
+
+        <span class="n">nobs</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">figarch_recursion</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">fresids</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">truncation</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span>
+                          <span class="n">var_bounds</span><span class="p">)</span>
+        <span class="n">inv_power</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="n">power</span>
+        <span class="n">sigma2</span> <span class="o">**=</span> <span class="n">inv_power</span>
+
+        <span class="k">return</span> <span class="n">sigma2</span></div>
+
+    <span class="k">def</span> <span class="nf">backcast_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backcast</span><span class="p">):</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">FIGARCH</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">backcast_transform</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">backcast</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span>
+
+<div class="viewcode-block" id="FIGARCH.backcast"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.FIGARCH.backcast">[docs]</a>    <span class="k">def</span> <span class="nf">backcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">):</span>
+        <span class="n">power</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.94</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">tau</span><span class="p">))</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="nb">abs</span><span class="p">(</span><span class="n">resids</span><span class="p">[:</span><span class="n">tau</span><span class="p">])</span> <span class="o">**</span> <span class="n">power</span><span class="p">)</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">backcast</span></div>
+
+<div class="viewcode-block" id="FIGARCH.simulate"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.FIGARCH.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">rng</span><span class="p">,</span> <span class="n">burn</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">initial_value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">truncation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncation</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">power</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span>
+        <span class="n">lam</span> <span class="o">=</span> <span class="n">figarch_weights</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">truncation</span><span class="p">)</span>
+        <span class="n">lam_rev</span> <span class="o">=</span> <span class="n">lam</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="n">rng</span><span class="p">(</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">initial_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">persistence</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">lam</span><span class="p">)</span>
+            <span class="n">beta</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">q</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+            <span class="n">initial_value</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">beta</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">initial_value</span> <span class="o">/=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">persistence</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">initial_value</span> <span class="o">/=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">persistence</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">persistence</span> <span class="o">&gt;=</span> <span class="mf">1.0</span> <span class="ow">or</span> <span class="n">beta</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="n">initial_value_warning</span><span class="p">,</span> <span class="n">InitialValueWarning</span><span class="p">)</span>
+
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">)</span>
+        <span class="n">fsigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">)</span>
+        <span class="n">fdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">)</span>
+
+        <span class="n">fsigma</span><span class="p">[:</span><span class="n">truncation</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_value</span>
+        <span class="n">sigma2</span><span class="p">[:</span><span class="n">truncation</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_value</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">power</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[:</span><span class="n">truncation</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">[:</span><span class="n">truncation</span><span class="p">])</span> <span class="o">*</span> <span class="n">errors</span><span class="p">[:</span><span class="n">truncation</span><span class="p">]</span>
+        <span class="n">fdata</span><span class="p">[:</span><span class="n">truncation</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="n">truncation</span><span class="p">])</span> <span class="o">**</span> <span class="n">power</span>
+        <span class="n">omega</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">q</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">omega_tilde</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">truncation</span><span class="p">,</span> <span class="n">truncation</span> <span class="o">+</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">):</span>
+            <span class="n">fsigma</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">omega_tilde</span> <span class="o">+</span> <span class="n">lam_rev</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">fdata</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="n">truncation</span><span class="p">:</span><span class="n">t</span><span class="p">])</span>
+            <span class="n">sigma2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">fsigma</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">power</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+            <span class="n">fdata</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">])</span> <span class="o">**</span> <span class="n">power</span>
+
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">burn</span><span class="p">:],</span> <span class="n">sigma2</span><span class="p">[</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">burn</span><span class="p">:]</span></div>
+
+<div class="viewcode-block" id="FIGARCH.starting_values"><a class="viewcode-back" href="../../../univariate/volatility.html#arch.univariate.FIGARCH.starting_values">[docs]</a>    <span class="k">def</span> <span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">):</span>
+        <span class="n">truncation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncation</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="mi">2</span><span class="p">,</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="o">.</span><span class="mi">7</span><span class="p">]</span>
+        <span class="n">phi_ratio</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="mi">2</span><span class="p">,</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="o">.</span><span class="mi">8</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="k">else</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">beta_ratio</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="o">.</span><span class="mi">9</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="k">else</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">power</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span> <span class="o">**</span> <span class="n">power</span><span class="p">)</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">resids</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">target</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">power</span><span class="p">))</span>
+        <span class="n">target</span> <span class="o">*=</span> <span class="p">(</span><span class="n">scale</span> <span class="o">**</span> <span class="p">(</span><span class="n">power</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+
+        <span class="n">svs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">pr</span> <span class="ow">in</span> <span class="n">phi_ratio</span><span class="p">:</span>
+                <span class="n">phi</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pr</span>
+                <span class="k">for</span> <span class="n">br</span> <span class="ow">in</span> <span class="n">beta_ratio</span><span class="p">:</span>
+                    <span class="n">beta</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span> <span class="o">+</span> <span class="n">phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">br</span>
+                    <span class="n">temp</span> <span class="o">=</span> <span class="p">[</span><span class="n">phi</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">beta</span><span class="p">]</span>
+                    <span class="n">lam</span> <span class="o">=</span> <span class="n">figarch_weights</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">temp</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">truncation</span><span class="p">)</span>
+                    <span class="n">omega</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="n">target</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">lam</span><span class="p">))</span>
+                    <span class="n">svs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">omega</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">beta</span><span class="p">))</span>
+        <span class="n">svs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">svs</span><span class="p">)</span>
+        <span class="n">svs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">sv</span><span class="p">)</span> <span class="k">for</span> <span class="n">sv</span> <span class="ow">in</span> <span class="n">svs</span><span class="p">]</span>
+        <span class="n">svs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">svs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">:</span>
+            <span class="n">svs</span> <span class="o">=</span> <span class="n">svs</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">:</span>
+            <span class="n">svs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">svs</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">svs</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:]]</span>
+
+        <span class="n">var_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variance_bounds</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backcast</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="n">llfs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">svs</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sv</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">svs</span><span class="p">):</span>
+            <span class="n">llfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gaussian_loglikelihood</span><span class="p">(</span><span class="n">sv</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">)</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">llfs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">svs</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">loc</span><span class="p">)]</span></div>
+
+    <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;omega&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">:</span>
+            <span class="n">names</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span>
+        <span class="n">names</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;d&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">:</span>
+            <span class="n">names</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">names</span>
+
+    <span class="k">def</span> <span class="nf">_check_forecasting_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">horizon</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">horizon</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;analytic&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span> <span class="o">!=</span> <span class="mf">2.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Analytic forecasts not available for horizon &gt; 1 when power != 2&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_analytic_forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">horizon</span><span class="p">):</span>
+        <span class="n">sigma2</span><span class="p">,</span> <span class="n">forecasts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_step_forecast</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span>
+                                                    <span class="n">var_bounds</span><span class="p">,</span> <span class="n">horizon</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">horizon</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">forecasts</span><span class="p">[:</span><span class="n">start</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">return</span> <span class="n">VarianceForecast</span><span class="p">(</span><span class="n">forecasts</span><span class="p">)</span>
+
+        <span class="n">truncation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncation</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span>
+        <span class="n">lam</span> <span class="o">=</span> <span class="n">figarch_weights</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">truncation</span><span class="p">)</span>
+        <span class="n">lam_rev</span> <span class="o">=</span> <span class="n">lam</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">omega</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">q</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="n">omega_tilde</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span>
+        <span class="n">temp_forecasts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">horizon</span><span class="p">)</span>
+        <span class="n">resids2</span> <span class="o">=</span> <span class="n">resids</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+            <span class="n">available</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="n">truncation</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">temp_forecasts</span><span class="p">[</span><span class="n">truncation</span> <span class="o">-</span> <span class="n">available</span><span class="p">:</span><span class="n">truncation</span><span class="p">]</span> <span class="o">=</span> <span class="n">resids2</span><span class="p">[</span>
+                                                                <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="n">truncation</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">available</span> <span class="o">&lt;</span> <span class="n">truncation</span><span class="p">:</span>
+                <span class="n">temp_forecasts</span><span class="p">[:</span><span class="n">truncation</span> <span class="o">-</span> <span class="n">available</span><span class="p">]</span> <span class="o">=</span> <span class="n">backcast</span>
+            <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">horizon</span><span class="p">):</span>
+                <span class="n">lagged_forecasts</span> <span class="o">=</span> <span class="n">temp_forecasts</span><span class="p">[</span><span class="n">h</span><span class="p">:</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">h</span><span class="p">]</span>
+                <span class="n">temp_forecasts</span><span class="p">[</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">omega_tilde</span> <span class="o">+</span> <span class="n">lam_rev</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">lagged_forecasts</span><span class="p">)</span>
+            <span class="n">forecasts</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">temp_forecasts</span><span class="p">[</span><span class="n">truncation</span><span class="p">:]</span>
+
+        <span class="n">forecasts</span><span class="p">[:</span><span class="n">start</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">return</span> <span class="n">VarianceForecast</span><span class="p">(</span><span class="n">forecasts</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_simulation_forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">horizon</span><span class="p">,</span>
+                             <span class="n">simulations</span><span class="p">,</span> <span class="n">rng</span><span class="p">):</span>
+        <span class="n">sigma2</span><span class="p">,</span> <span class="n">forecasts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_step_forecast</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span>
+                                                    <span class="n">var_bounds</span><span class="p">,</span> <span class="n">horizon</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="n">simulations</span><span class="p">,</span> <span class="n">horizon</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">shocks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="n">simulations</span><span class="p">,</span> <span class="n">horizon</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+        <span class="n">power</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span>
+
+        <span class="n">truncation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncation</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span>
+        <span class="n">lam</span> <span class="o">=</span> <span class="n">figarch_weights</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">truncation</span><span class="p">)</span>
+        <span class="n">lam_rev</span> <span class="o">=</span> <span class="n">lam</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">omega</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">q</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="n">omega_tilde</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span>
+        <span class="n">fpath</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">simulations</span><span class="p">,</span> <span class="n">truncation</span> <span class="o">+</span> <span class="n">horizon</span><span class="p">))</span>
+        <span class="n">fresids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span> <span class="o">**</span> <span class="n">power</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+            <span class="n">std_shocks</span> <span class="o">=</span> <span class="n">rng</span><span class="p">((</span><span class="n">simulations</span><span class="p">,</span> <span class="n">horizon</span><span class="p">))</span>
+            <span class="n">available</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="n">truncation</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">fpath</span><span class="p">[:,</span> <span class="n">truncation</span> <span class="o">-</span> <span class="n">available</span><span class="p">:</span><span class="n">truncation</span><span class="p">]</span> <span class="o">=</span> <span class="n">fresids</span><span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">truncation</span><span class="p">):</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">available</span> <span class="o">&lt;</span> <span class="n">truncation</span><span class="p">:</span>
+                <span class="n">fpath</span><span class="p">[:,</span> <span class="p">:(</span><span class="n">truncation</span> <span class="o">-</span> <span class="n">available</span><span class="p">)]</span> <span class="o">=</span> <span class="n">backcast</span>
+            <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">horizon</span><span class="p">):</span>
+                <span class="c1"># 1. Forecast transformed variance</span>
+                <span class="n">lagged_forecasts</span> <span class="o">=</span> <span class="n">fpath</span><span class="p">[:,</span> <span class="n">h</span><span class="p">:</span><span class="n">truncation</span> <span class="o">+</span> <span class="n">h</span><span class="p">]</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="n">omega_tilde</span> <span class="o">+</span> <span class="n">lagged_forecasts</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">lam_rev</span><span class="p">)</span>
+                <span class="c1"># 2. Transform variance</span>
+                <span class="n">sigma2</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">power</span><span class="p">)</span>
+                <span class="c1"># 3. Simulate new residual</span>
+                <span class="n">shocks</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">std_shocks</span><span class="p">[:,</span> <span class="n">h</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span>
+                <span class="n">paths</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma2</span>
+                <span class="n">forecasts</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma2</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+                <span class="c1"># 4. Transform new residual</span>
+                <span class="n">fpath</span><span class="p">[:,</span> <span class="n">truncation</span> <span class="o">+</span> <span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">shocks</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="n">h</span><span class="p">])</span> <span class="o">**</span> <span class="n">power</span>
+
+        <span class="n">forecasts</span><span class="p">[:</span><span class="n">start</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">return</span> <span class="n">VarianceForecast</span><span class="p">(</span><span class="n">forecasts</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">shocks</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -2460,7 +2822,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+22.g8e573f6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.6.0+24.g2f1f6c9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
