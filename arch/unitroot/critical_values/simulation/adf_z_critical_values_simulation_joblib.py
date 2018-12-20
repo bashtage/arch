@@ -9,12 +9,13 @@ Remote clusters can be used by modifying the call to Client.
 """
 from __future__ import absolute_import, division, print_function
 
-from statsmodels.tools.parallel import parallel_func
 import datetime
-from numpy import array, savez, percentile, nan, arange, zeros
-from numpy.random import RandomState
-from .adf_simulation import adf_simulation
 
+from numpy import arange, array, nan, percentile, savez, zeros
+from numpy.random import RandomState
+from statsmodels.tools.parallel import parallel_func
+
+from .adf_simulation import adf_simulation
 
 # Number of workers
 NUM_JOBS = 4

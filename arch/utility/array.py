@@ -6,11 +6,11 @@ from __future__ import absolute_import, division, print_function
 from arch.compat.pandas import is_datetime64_dtype
 from arch.compat.python import long
 
+from abc import ABCMeta
 import datetime as dt
 
 import numpy as np
 from pandas import DataFrame, NaT, Series, Timestamp, to_datetime
-from abc import ABCMeta
 
 __all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor',
            'date_to_index', 'cutoff_to_index', 'ensure2d', 'AbstractDocStringInheritor']

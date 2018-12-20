@@ -5,10 +5,10 @@ python setup.py install --no-binary
 """
 from __future__ import absolute_import, division
 
-import numpy as np
-
 from arch.compat.numba import jit
 from arch.compat.python import range
+
+import numpy as np
 
 __all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion', 'egarch_recursion',
            'midas_recursion', 'figarch_weights', 'figarch_recursion']

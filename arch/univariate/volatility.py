@@ -5,18 +5,19 @@ same inputs.
 """
 from __future__ import absolute_import, division
 
-import itertools
+from arch.compat.python import add_metaclass, range
+
 from abc import abstractmethod
+import itertools
 from warnings import warn
 
 import numpy as np
 from numpy.random import RandomState
 from scipy.special import gammaln
 
-from arch.compat.python import add_metaclass, range
 from arch.univariate.distribution import Normal
-from arch.utility.array import ensure1d, AbstractDocStringInheritor
-from arch.utility.exceptions import initial_value_warning, InitialValueWarning
+from arch.utility.array import AbstractDocStringInheritor, ensure1d
+from arch.utility.exceptions import InitialValueWarning, initial_value_warning
 
 try:
     from arch.univariate.recursions import (garch_recursion, harch_recursion,

@@ -12,7 +12,8 @@ from __future__ import absolute_import, division, print_function
 import datetime
 
 from ipyparallel import Client
-from numpy import array, savez, percentile, nan
+from numpy import array, nan, percentile, savez
+
 from .adf_simulation import adf_simulation
 
 # Number of repetitions

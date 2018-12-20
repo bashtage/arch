@@ -1,11 +1,10 @@
 from __future__ import print_function
-import numpy as np
-from scipy.stats import norm
-
-from statsmodels.regression.linear_model import OLS, WLS
 
 from arch.compat.python import range
 
+import numpy as np
+from scipy.stats import norm
+from statsmodels.regression.linear_model import OLS, WLS
 
 trends = ('c', 'ct')
 critical_values = (1.0, 5.0, 10.0)

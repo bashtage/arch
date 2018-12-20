@@ -1,4 +1,5 @@
 from __future__ import absolute_import, division
+
 from arch.compat.python import add_metaclass, iteritems
 
 from collections import OrderedDict
@@ -6,9 +7,9 @@ from collections import OrderedDict
 import numpy as np
 import pandas as pd
 
+from arch.bootstrap.base import (CircularBlockBootstrap, MovingBlockBootstrap,
+                                 StationaryBootstrap)
 from arch.utility.array import DocStringInheritor, ensure2d
-from arch.bootstrap.base import StationaryBootstrap, CircularBlockBootstrap, \
-    MovingBlockBootstrap
 
 __all__ = ['StepM', 'SPA', 'RealityCheck']
 

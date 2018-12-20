@@ -1,7 +1,6 @@
 from __future__ import absolute_import, division
 
-from arch.compat.python import iteritems, itervalues, add_metaclass, range
-from arch.utility.array import DocStringInheritor
+from arch.compat.python import add_metaclass, iteritems, itervalues, range
 
 import copy
 
@@ -9,6 +8,8 @@ import numpy as np
 from numpy.random import RandomState
 import pandas as pd
 import scipy.stats as stats
+
+from arch.utility.array import DocStringInheritor
 
 __all__ = ['IIDBootstrap', 'StationaryBootstrap', 'CircularBlockBootstrap',
            'MovingBlockBootstrap']
@@ -121,8 +122,8 @@ class IIDBootstrap(object):
 
     To ensure a reproducible bootstrap, you must set the ``random_state``
     attribute after the bootstrap has been created. See the example below.
-    Note that ``random_state`` is a reserved keyword and cannot be used
-    as a kwarg when initializing the bootstrap.
+    Note that ``random_state`` is a reserved keyword and any variable
+    passed using this keyword must be an instance of ``RandomState``.
 
     Examples
     --------
@@ -144,14 +145,18 @@ class IIDBootstrap(object):
 
     Set the random_state if reproducibility is required
 
-    >>> bs.random_state = RandomState(1234)
+    >>> from numpy.random import RandomState
+    >>> rs = RandomState(1234)
+    >>> bs = IIDBootstrap(x, y=y, z=z, random_state=rs)
     """
 
     def __init__(self, *args, **kwargs):
-        self.random_state = RandomState()
-        self._initial_state = self.random_state.get_state()
+        self._random_state = None
         self._args = args
         self._kwargs = kwargs
+        random_state = self._kwargs.pop('random_state', None)
+        self.random_state = random_state if random_state is not None else RandomState()
+        self._initial_state = self._random_state.get_state()
         if args:
             self._num_items = len(args[0])
         elif kwargs:
@@ -201,6 +206,17 @@ class IIDBootstrap(object):
                 str(len(self.kw_data))
         html += ', <strong>ID</strong>: ' + hex(id(self)) + ')'
         return html
+
+    @property
+    def random_state(self):
+        """Set or get the instance random state"""
+        return self._random_state
+
+    @random_state.setter
+    def random_state(self, value):
+        if not isinstance(value, RandomState):
+            raise TypeError('Value being set must be a RandomState')
+        self._random_state = value
 
     @property
     def index(self):
@@ -869,8 +885,8 @@ class CircularBlockBootstrap(IIDBootstrap):
 
     To ensure a reproducible bootstrap, you must set the ``random_state``
     attribute after the bootstrap has been created. See the example below.
-    Note that ``random_state`` is a reserved keyword and cannot be used
-    as a kwarg when initializing the bootstrap.
+    Note that ``random_state`` is a reserved keyword and any variable
+    passed using this keyword must be an instance of ``RandomState``.
 
     Examples
     --------
@@ -892,7 +908,9 @@ class CircularBlockBootstrap(IIDBootstrap):
 
     Set the random_state if reproducibility is required
 
-    >>> bs.random_state = RandomState(1234)
+    >>> from numpy.random import RandomState
+    >>> rs = RandomState(1234)
+    >>> bs = CircularBlockBootstrap(17, x, y=y, z=z, random_state=rs)
     """
 
     def __init__(self, block_size, *args, **kwargs):
@@ -970,8 +988,8 @@ class StationaryBootstrap(CircularBlockBootstrap):
 
     To ensure a reproducible bootstrap, you must set the ``random_state``
     attribute after the bootstrap has been created. See the example below.
-    Note that ``random_state`` is a reserved keyword and cannot be used
-    as a kwarg when initializing the bootstrap.
+    Note that ``random_state`` is a reserved keyword and any variable
+    passed using this keyword must be an instance of ``RandomState``.
 
     Examples
     --------
@@ -993,7 +1011,9 @@ class StationaryBootstrap(CircularBlockBootstrap):
 
     Set the random_state if reproducibility is required
 
-    >>> bs.random_state = RandomState(1234)
+    >>> from numpy.random import RandomState
+    >>> rs = RandomState(1234)
+    >>> bs = StationaryBootstrap(12, x, y=y, z=z, random_state=rs)
     """
 
     def __init__(self, block_size, *args, **kwargs):
@@ -1047,8 +1067,8 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
 
     To ensure a reproducible bootstrap, you must set the ``random_state``
     attribute after the bootstrap has been created. See the example below.
-    Note that ``random_state`` is a reserved keyword and cannot be used
-    as a kwarg when initializing the bootstrap.
+    Note that ``random_state`` is a reserved keyword and any variable
+    passed using this keyword must be an instance of ``RandomState``.
 
     Examples
     --------
@@ -1070,7 +1090,9 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
 
     Set the random_state if reproducibility is required
 
-    >>> bs.random_state = RandomState(1234)
+    >>> from numpy.random import RandomState
+    >>> rs = RandomState(1234)
+    >>> bs = MovingBlockBootstrap(7, x, y=y, z=z, random_state=rs)
     """
 
     def __init__(self, block_size, *args, **kwargs):

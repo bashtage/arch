@@ -1,22 +1,25 @@
 from unittest import TestCase
 
 import numpy as np
+from numpy.random import RandomState
+from numpy.testing import assert_allclose
+import pandas as pd
 import pytest
+
+from arch.univariate import arch_model
+from arch.univariate.distribution import Normal, StudentsT
+from arch.univariate.mean import ConstantMean
+from arch.univariate.recursions_python import figarch_weights
+from arch.univariate.volatility import (EGARCH, FIGARCH, GARCH, HARCH,
+                                        BootstrapRng, ConstantVariance,
+                                        EWMAVariance, FixedVariance,
+                                        MIDASHyperbolic, RiskMetrics2006)
 
 try:
     from arch.univariate.recursions import garch_recursion
 except ImportError:
     from arch.univariate.recursions_python import garch_recursion
-from numpy.random import RandomState
-from numpy.testing import assert_allclose
-import pandas as pd
 
-from arch.univariate import arch_model
-from arch.univariate.distribution import Normal, StudentsT
-from arch.univariate.mean import ConstantMean
-from arch.univariate.volatility import GARCH, ConstantVariance, HARCH, EWMAVariance, \
-    RiskMetrics2006, BootstrapRng, EGARCH, FixedVariance, MIDASHyperbolic, FIGARCH
-from arch.univariate.recursions_python import figarch_weights
 
 
 def _compare_truncated_forecasts(full, trunc, start):

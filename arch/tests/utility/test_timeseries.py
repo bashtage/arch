@@ -4,14 +4,14 @@ from unittest import TestCase
 import warnings
 
 import numpy as np
-import pandas as pd
-import pytest
 from numpy.random import RandomState
-from numpy.testing import (assert_equal, assert_array_almost_equal,
-                           assert_array_equal)
+from numpy.testing import (assert_array_almost_equal, assert_array_equal,
+                           assert_equal)
+import pandas as pd
 from pandas.util.testing import assert_frame_equal, assert_produces_warning
+import pytest
 
-from arch.utility.timeseries import add_trend, ColumnNameConflict
+from arch.utility.timeseries import ColumnNameConflict, add_trend
 
 
 class TestAddTrend(TestCase):

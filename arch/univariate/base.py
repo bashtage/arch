@@ -2,6 +2,7 @@
 Core classes for ARCH models
 """
 from __future__ import absolute_import, division
+
 from arch.compat.python import add_metaclass, range
 
 from abc import abstractmethod
@@ -10,19 +11,20 @@ import datetime as dt
 import warnings
 
 import numpy as np
-import scipy.stats as stats
 import pandas as pd
+from scipy.optimize import OptimizeResult
+import scipy.stats as stats
 from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
 from statsmodels.iolib.table import SimpleTable
 from statsmodels.tools.numdiff import approx_fprime, approx_hess
 
 from arch.univariate.distribution import Distribution, Normal
-from arch.univariate.volatility import VolatilityProcess, ConstantVariance
-from arch.utility.array import ensure1d, AbstractDocStringInheritor
-from arch.utility.exceptions import ConvergenceWarning, StartingValueWarning, \
-    convergence_warning, starting_value_warning
+from arch.univariate.volatility import ConstantVariance, VolatilityProcess
+from arch.utility.array import AbstractDocStringInheritor, ensure1d
+from arch.utility.exceptions import (ConvergenceWarning, StartingValueWarning,
+                                     convergence_warning,
+                                     starting_value_warning)
 from arch.vendor.cached_property import cached_property
-from scipy.optimize import OptimizeResult
 
 __all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel', 'ARCHModelForecast', 'constraint']
 

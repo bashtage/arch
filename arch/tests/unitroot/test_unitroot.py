@@ -1,24 +1,25 @@
 # TODO: Tests for features that are just called
 # TODO: Test for trend='ctt'
-from __future__ import print_function, division
+from __future__ import division, print_function
 
-import warnings
+from arch.compat.python import iteritems
+
 from unittest import TestCase
+import warnings
 
 import numpy as np
-import pytest
-import scipy.stats as stats
-from numpy import log, polyval, diff, ceil
+from numpy import ceil, diff, log, polyval
 from numpy.random import RandomState
 from numpy.testing import assert_almost_equal, assert_equal
+import pytest
+import scipy.stats as stats
 from statsmodels.datasets import macrodata
 from statsmodels.regression.linear_model import OLS
 from statsmodels.tsa.stattools import _autolag, lagmat
 
-from arch.compat.python import iteritems
-from arch.unitroot import ADF, DFGLS, PhillipsPerron, KPSS, VarianceRatio
+from arch.unitroot import ADF, DFGLS, KPSS, PhillipsPerron, VarianceRatio
 from arch.unitroot.critical_values.dickey_fuller import tau_2010
-from arch.unitroot.unitroot import _autolag_ols, mackinnonp, mackinnoncrit
+from arch.unitroot.unitroot import _autolag_ols, mackinnoncrit, mackinnonp
 
 DECIMAL_5 = 5
 DECIMAL_4 = 4

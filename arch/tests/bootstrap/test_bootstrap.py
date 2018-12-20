@@ -1,27 +1,29 @@
 from __future__ import absolute_import, division
 
-import warnings
 from unittest import TestCase
+import warnings
 
 import numpy as np
 from numpy.random import RandomState
-from numpy.testing import assert_equal, assert_allclose
-from pandas.util.testing import assert_frame_equal, assert_series_equal
+from numpy.testing import assert_allclose, assert_equal
 import pandas as pd
+from pandas.util.testing import assert_frame_equal, assert_series_equal
 import pytest
 import scipy.stats as stats
 
-from arch.bootstrap import IIDBootstrap, StationaryBootstrap, \
-    MovingBlockBootstrap, CircularBlockBootstrap
+from arch.bootstrap import (CircularBlockBootstrap, IIDBootstrap,
+                            MovingBlockBootstrap, StationaryBootstrap)
+from arch.bootstrap._samplers_python import \
+    stationary_bootstrap_sample_python  # noqa
+from arch.bootstrap._samplers_python import stationary_bootstrap_sample
+from arch.bootstrap.base import _loo_jackknife
+
 try:
     from arch.bootstrap._samplers import stationary_bootstrap_sample as \
         stationary_bootstrap_sample_cython
     HAS_EXTENSION = True
 except ImportError:
     HAS_EXTENSION = False
-from arch.bootstrap._samplers_python import (stationary_bootstrap_sample,
-                                             stationary_bootstrap_sample_python)  # noqa
-from arch.bootstrap.base import _loo_jackknife
 
 
 class TestBootstrap(TestCase):
@@ -681,3 +683,12 @@ class TestBootstrap(TestCase):
         cython = stationary_bootstrap_sample_cython(indices, u, p)
         assert_equal(numba, cython)
         assert_equal(numba, python)
+
+
+def test_pass_random_state():
+    x = np.arange(1000)
+    rs = RandomState(0)
+    IIDBootstrap(x, random_state=rs)
+
+    with pytest.raises(TypeError):
+        IIDBootstrap(x, random_state=0)

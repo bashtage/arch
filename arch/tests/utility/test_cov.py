@@ -2,7 +2,7 @@ from __future__ import absolute_import, division
 
 from unittest import TestCase
 
-from numpy import log, diff
+from numpy import diff, log
 from numpy.random import RandomState
 from numpy.testing import assert_almost_equal
 import pytest

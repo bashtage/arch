@@ -5,15 +5,16 @@ import os
 from unittest import TestCase
 
 import numpy as np
-import pytest
 from numpy.random import RandomState
 from numpy.testing import assert_equal
 from pandas import DataFrame, Series, Timedelta, date_range
+import pytest
 
 from arch import doc
 from arch.univariate.base import implicit_constant
-from arch.utility.array import DocStringInheritor, cutoff_to_index, date_to_index, ensure1d, \
-    ensure2d, find_index, parse_dataframe
+from arch.utility.array import (DocStringInheritor, cutoff_to_index,
+                                date_to_index, ensure1d, ensure2d, find_index,
+                                parse_dataframe)
 
 
 class TestUtils(TestCase):

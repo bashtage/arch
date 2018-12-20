@@ -3,13 +3,14 @@ from __future__ import division
 from unittest import TestCase
 
 import numpy as np
-import pytest
-import scipy.stats as stats
 from numpy.random import RandomState
-from numpy.testing import assert_almost_equal, assert_equal, assert_array_equal
-from scipy.special import gammaln, gamma
+from numpy.testing import assert_almost_equal, assert_array_equal, assert_equal
+import pytest
+from scipy.special import gamma, gammaln
+import scipy.stats as stats
 
-from arch.univariate.distribution import Normal, StudentsT, SkewStudent, GeneralizedError
+from arch.univariate.distribution import (GeneralizedError, Normal,
+                                          SkewStudent, StudentsT)
 
 
 class TestDistributions(TestCase):

@@ -2,16 +2,15 @@ import datetime as dt
 from unittest import TestCase
 
 import numpy as np
-import pandas as pd
-import pytest
 from numpy.random import RandomState
 from numpy.testing import assert_allclose
+import pandas as pd
 from pandas.util.testing import assert_frame_equal
+import pytest
 
 from arch.tests.univariate.test_variance_forecasting import preserved_state
-from arch.univariate import HARX
-from arch.univariate import arch_model
-from arch.univariate.mean import _ar_to_impulse, _ar_forecast
+from arch.univariate import HARX, arch_model
+from arch.univariate.mean import _ar_forecast, _ar_to_impulse
 
 
 class TestForecasting(TestCase):

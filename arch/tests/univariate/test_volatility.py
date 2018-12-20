@@ -1,24 +1,27 @@
+from arch.compat.python import PY3, range
+
 import warnings
 
 import numpy as np
-import pytest
 from numpy.random import RandomState
-from numpy.testing import assert_almost_equal, assert_equal, assert_allclose, \
-    assert_array_equal
+from numpy.testing import (assert_allclose, assert_almost_equal,
+                           assert_array_equal, assert_equal)
+import pytest
 from scipy.special import gamma, gammaln
 
-from arch.compat.python import PY3, range
 from arch.univariate import recursions_python as recpy
+from arch.univariate.distribution import Normal, SkewStudent, StudentsT
+from arch.univariate.volatility import (ARCH, EGARCH, FIGARCH, GARCH, HARCH,
+                                        ConstantVariance, EWMAVariance,
+                                        FixedVariance, MIDASHyperbolic,
+                                        RiskMetrics2006)
+from arch.utility.exceptions import InitialValueWarning
 
 try:
     from arch.univariate import _recursions as rec
 except ImportError:
     rec = recpy
 
-from arch.univariate.volatility import GARCH, ARCH, HARCH, ConstantVariance, \
-    EWMAVariance, RiskMetrics2006, EGARCH, FixedVariance, MIDASHyperbolic, FIGARCH
-from arch.univariate.distribution import Normal, StudentsT, SkewStudent
-from arch.utility.exceptions import InitialValueWarning
 
 
 class TestVolatiltyProcesses(object):

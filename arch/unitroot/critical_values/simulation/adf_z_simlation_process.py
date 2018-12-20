@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import numpy as np
 from statsmodels.regression.linear_model import OLS
 

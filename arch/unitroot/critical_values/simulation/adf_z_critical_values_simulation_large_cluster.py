@@ -12,13 +12,14 @@ scale well with 128 or more engines.
 """
 from __future__ import absolute_import, division, print_function
 
+from arch.compat.python import lmap, range
+
 import datetime
 import time
 
 from ipyparallel import Client
-from numpy import array, savez, percentile, nan
+from numpy import array, nan, percentile, savez
 
-from arch.compat.python import range, lmap
 from .adf_simulation import adf_simulation
 
 # Time in seconds to sleep before checking if ready

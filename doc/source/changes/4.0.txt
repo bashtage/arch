@@ -1,5 +1,7 @@
 Changes since 4.0
 =================
+- Added ability to set the ``random_state`` when initializing a bootstrap
+  (:issue:`259`).
 - Added support for Fractionally Integrated GARCH (FIGARCH)
 - Enable user to specify a specific value of the `backcast` in place of
   the automatically generated value.

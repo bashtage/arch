@@ -1,14 +1,15 @@
+from arch.compat.python import range
+
 import os
 import timeit
 
 import numpy as np
-import pytest
 from numpy.random import RandomState
 from numpy.testing import assert_almost_equal
+import pytest
 from scipy.special import gamma
 
 import arch.univariate.recursions_python as recpy
-from arch.compat.python import range
 
 CYTHON_COVERAGE = os.environ.get('ARCH_CYTHON_COVERAGE', '0') in ('true', '1', 'True')
 

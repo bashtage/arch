@@ -1,4 +1,4 @@
-from numpy import ones, arange, vstack, cumsum, dot
+from numpy import arange, cumsum, dot, ones, vstack
 from numpy.linalg import pinv
 from numpy.random import RandomState
 

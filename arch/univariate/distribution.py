@@ -5,15 +5,16 @@ Distributions to use in ARCH models.  All distributions must inherit from
 """
 from __future__ import absolute_import, division
 
+from arch.compat.python import add_metaclass
+
 from abc import abstractmethod
 
-import scipy.stats as stats
-from numpy import (empty, array, sqrt, log, exp, sign, pi, sum, asarray,
-                   ones_like, abs, isscalar)
+from numpy import (abs, array, asarray, empty, exp, isscalar, log, ones_like,
+                   pi, sign, sqrt, sum)
 from numpy.random import RandomState
-from scipy.special import gammaln, gamma
+from scipy.special import gamma, gammaln
+import scipy.stats as stats
 
-from arch.compat.python import add_metaclass
 from arch.utility.array import AbstractDocStringInheritor
 
 __all__ = ['Distribution', 'Normal', 'StudentsT', 'SkewStudent',

@@ -1,10 +1,9 @@
 from __future__ import print_function
 
-import numpy as np
-import pandas as pd
-
 from io import StringIO
 
+import numpy as np
+import pandas as pd
 
 sio = StringIO()
 sio.write("from numpy import asarray\n\n")

@@ -3,15 +3,15 @@ from __future__ import absolute_import, division
 import numpy as np
 from numpy import linspace
 from numpy.random import RandomState
-from numpy.testing import assert_equal, assert_allclose
+from numpy.testing import assert_allclose, assert_equal
 import pandas as pd
-from pandas.util.testing import assert_series_equal, assert_frame_equal
+from pandas.util.testing import assert_frame_equal, assert_series_equal
 import pytest
 import scipy.stats as stats
 
-from arch.bootstrap import StationaryBootstrap, CircularBlockBootstrap, \
-    MovingBlockBootstrap
-from arch.bootstrap.multiple_comparison import SPA, StepM, MCS
+from arch.bootstrap import (CircularBlockBootstrap, MovingBlockBootstrap,
+                            StationaryBootstrap)
+from arch.bootstrap.multiple_comparison import MCS, SPA, StepM
 
 
 class TestSPA(object):

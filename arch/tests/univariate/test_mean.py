@@ -1,29 +1,34 @@
 from __future__ import absolute_import, division
 
+from arch.compat.python import StringIO, iteritems, range
+
 import sys
-import warnings
 from unittest import TestCase
+import warnings
 
 import numpy as np
-import pandas as pd
-import pytest
 from numpy.random import RandomState
-from numpy.testing import assert_almost_equal, assert_equal, assert_array_almost_equal
+from numpy.testing import (assert_almost_equal, assert_array_almost_equal,
+                           assert_equal)
+import pandas as pd
 from pandas.util.testing import assert_frame_equal, assert_series_equal
+import pytest
 
-from arch.compat.python import range, iteritems, StringIO
+from arch.univariate.base import (ARCHModelForecast, ARCHModelResult,
+                                  _align_forecast)
+from arch.univariate.distribution import (GeneralizedError, Normal,
+                                          SkewStudent, StudentsT)
+from arch.univariate.mean import (ARX, HARX, LS, ConstantMean, ZeroMean,
+                                  arch_model)
+from arch.univariate.volatility import (ARCH, EGARCH, FIGARCH, GARCH, HARCH,
+                                        ConstantVariance, EWMAVariance,
+                                        FixedVariance, MIDASHyperbolic,
+                                        RiskMetrics2006)
 
 try:
     import arch.univariate.recursions as rec
 except ImportError:
     import arch.univariate.recursions_python as rec  # noqa
-from arch.univariate.base import ARCHModelResult, ARCHModelForecast, \
-    _align_forecast
-from arch.univariate.mean import HARX, ConstantMean, ARX, ZeroMean, LS, \
-    arch_model
-from arch.univariate.volatility import ConstantVariance, GARCH, HARCH, ARCH, \
-    RiskMetrics2006, EWMAVariance, EGARCH, FixedVariance, FIGARCH, MIDASHyperbolic
-from arch.univariate.distribution import Normal, StudentsT, SkewStudent, GeneralizedError
 
 try:
     import matplotlib.pyplot  # noqa

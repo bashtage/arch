@@ -4,19 +4,23 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 """
 from __future__ import absolute_import, division
 
-import copy
+from arch.compat.python import iteritems, range
+
 from collections import OrderedDict
+import copy
 
 import numpy as np
 from pandas import DataFrame
 from scipy.optimize import OptimizeResult
 from statsmodels.tsa.tsatools import lagmat
 
-from arch.compat.python import range, iteritems
-from arch.univariate.base import ARCHModel, implicit_constant, ARCHModelResult, ARCHModelForecast
-from arch.univariate.distribution import Normal, StudentsT, SkewStudent, GeneralizedError
-from arch.univariate.volatility import ARCH, GARCH, HARCH, ConstantVariance, EGARCH, FIGARCH
-from arch.utility.array import ensure1d, parse_dataframe, cutoff_to_index
+from arch.univariate.base import (ARCHModel, ARCHModelForecast,
+                                  ARCHModelResult, implicit_constant)
+from arch.univariate.distribution import (GeneralizedError, Normal,
+                                          SkewStudent, StudentsT)
+from arch.univariate.volatility import (ARCH, EGARCH, FIGARCH, GARCH, HARCH,
+                                        ConstantVariance)
+from arch.utility.array import cutoff_to_index, ensure1d, parse_dataframe
 from arch.vendor.cached_property import cached_property
 
 __all__ = ['HARX', 'ConstantMean', 'ZeroMean', 'ARX', 'arch_model', 'LS']

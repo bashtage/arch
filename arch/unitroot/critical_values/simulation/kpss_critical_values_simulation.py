@@ -7,8 +7,8 @@ from __future__ import absolute_import, division, print_function
 import os
 
 import numpy as np
-import pandas as pd
 from numpy.random import RandomState
+import pandas as pd
 from statsmodels.tsa.tsatools import add_trend
 
 
