@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>arch.bootstrap.base &#8212; arch 4.7.0+1.g9e6b1dd documentation</title>
+    <title>arch.bootstrap.base &#8212; arch 4.7.0+2.g146c488 documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+2.g146c488 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -54,7 +54,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../../index.html" class="text-logo">arch 4.7.0 (+1)</a>
+    ../../../index.html" class="text-logo">arch 4.7.0 (+2)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -106,8 +106,7 @@
   <h1>Source code for arch.bootstrap.base</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span>
 
-<span class="kn">from</span> <span class="nn">arch.compat.python</span> <span class="k">import</span> <span class="n">iteritems</span><span class="p">,</span> <span class="n">itervalues</span><span class="p">,</span> <span class="n">add_metaclass</span><span class="p">,</span> <span class="nb">range</span>
-<span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="k">import</span> <span class="n">DocStringInheritor</span>
+<span class="kn">from</span> <span class="nn">arch.compat.python</span> <span class="k">import</span> <span class="n">add_metaclass</span><span class="p">,</span> <span class="n">iteritems</span><span class="p">,</span> <span class="n">itervalues</span><span class="p">,</span> <span class="nb">range</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
 
@@ -115,6 +114,8 @@
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">RandomState</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+
+<span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="k">import</span> <span class="n">DocStringInheritor</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;IIDBootstrap&#39;</span><span class="p">,</span> <span class="s1">&#39;StationaryBootstrap&#39;</span><span class="p">,</span> <span class="s1">&#39;CircularBlockBootstrap&#39;</span><span class="p">,</span>
            <span class="s1">&#39;MovingBlockBootstrap&#39;</span><span class="p">]</span>
@@ -227,8 +228,8 @@
 
 <span class="sd">    To ensure a reproducible bootstrap, you must set the ``random_state``</span>
 <span class="sd">    attribute after the bootstrap has been created. See the example below.</span>
-<span class="sd">    Note that ``random_state`` is a reserved keyword and cannot be used</span>
-<span class="sd">    as a kwarg when initializing the bootstrap.</span>
+<span class="sd">    Note that ``random_state`` is a reserved keyword and any variable</span>
+<span class="sd">    passed using this keyword must be an instance of ``RandomState``.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -250,14 +251,18 @@
 
 <span class="sd">    Set the random_state if reproducibility is required</span>
 
-<span class="sd">    &gt;&gt;&gt; bs.random_state = RandomState(1234)</span>
+<span class="sd">    &gt;&gt;&gt; from numpy.random import RandomState</span>
+<span class="sd">    &gt;&gt;&gt; rs = RandomState(1234)</span>
+<span class="sd">    &gt;&gt;&gt; bs = IIDBootstrap(x, y=y, z=z, random_state=rs)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_initial_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="n">args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="n">random_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;random_state&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">random_state</span> <span class="k">if</span> <span class="n">random_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">RandomState</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_num_items</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">elif</span> <span class="n">kwargs</span><span class="p">:</span>
@@ -307,6 +312,17 @@
                 <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kw_data</span><span class="p">))</span>
         <span class="n">html</span> <span class="o">+=</span> <span class="s1">&#39;, &lt;strong&gt;ID&lt;/strong&gt;: &#39;</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
         <span class="k">return</span> <span class="n">html</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">random_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set or get the instance random state&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span>
+
+    <span class="nd">@random_state</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">random_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">RandomState</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Value being set must be a RandomState&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -975,8 +991,8 @@
 
 <span class="sd">    To ensure a reproducible bootstrap, you must set the ``random_state``</span>
 <span class="sd">    attribute after the bootstrap has been created. See the example below.</span>
-<span class="sd">    Note that ``random_state`` is a reserved keyword and cannot be used</span>
-<span class="sd">    as a kwarg when initializing the bootstrap.</span>
+<span class="sd">    Note that ``random_state`` is a reserved keyword and any variable</span>
+<span class="sd">    passed using this keyword must be an instance of ``RandomState``.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -998,7 +1014,9 @@
 
 <span class="sd">    Set the random_state if reproducibility is required</span>
 
-<span class="sd">    &gt;&gt;&gt; bs.random_state = RandomState(1234)</span>
+<span class="sd">    &gt;&gt;&gt; from numpy.random import RandomState</span>
+<span class="sd">    &gt;&gt;&gt; rs = RandomState(1234)</span>
+<span class="sd">    &gt;&gt;&gt; bs = CircularBlockBootstrap(17, x, y=y, z=z, random_state=rs)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_size</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1076,8 +1094,8 @@
 
 <span class="sd">    To ensure a reproducible bootstrap, you must set the ``random_state``</span>
 <span class="sd">    attribute after the bootstrap has been created. See the example below.</span>
-<span class="sd">    Note that ``random_state`` is a reserved keyword and cannot be used</span>
-<span class="sd">    as a kwarg when initializing the bootstrap.</span>
+<span class="sd">    Note that ``random_state`` is a reserved keyword and any variable</span>
+<span class="sd">    passed using this keyword must be an instance of ``RandomState``.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -1099,7 +1117,9 @@
 
 <span class="sd">    Set the random_state if reproducibility is required</span>
 
-<span class="sd">    &gt;&gt;&gt; bs.random_state = RandomState(1234)</span>
+<span class="sd">    &gt;&gt;&gt; from numpy.random import RandomState</span>
+<span class="sd">    &gt;&gt;&gt; rs = RandomState(1234)</span>
+<span class="sd">    &gt;&gt;&gt; bs = StationaryBootstrap(12, x, y=y, z=z, random_state=rs)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_size</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1153,8 +1173,8 @@
 
 <span class="sd">    To ensure a reproducible bootstrap, you must set the ``random_state``</span>
 <span class="sd">    attribute after the bootstrap has been created. See the example below.</span>
-<span class="sd">    Note that ``random_state`` is a reserved keyword and cannot be used</span>
-<span class="sd">    as a kwarg when initializing the bootstrap.</span>
+<span class="sd">    Note that ``random_state`` is a reserved keyword and any variable</span>
+<span class="sd">    passed using this keyword must be an instance of ``RandomState``.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -1176,7 +1196,9 @@
 
 <span class="sd">    Set the random_state if reproducibility is required</span>
 
-<span class="sd">    &gt;&gt;&gt; bs.random_state = RandomState(1234)</span>
+<span class="sd">    &gt;&gt;&gt; from numpy.random import RandomState</span>
+<span class="sd">    &gt;&gt;&gt; rs = RandomState(1234)</span>
+<span class="sd">    &gt;&gt;&gt; bs = MovingBlockBootstrap(7, x, y=y, z=z, random_state=rs)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_size</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1222,7 +1244,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+2.g146c488 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

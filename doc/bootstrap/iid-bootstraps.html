@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Independent, Identical Distributed Data (i.i.d.) &#8212; arch 4.7.0+1.g9e6b1dd documentation</title>
+    <title>Independent, Identical Distributed Data (i.i.d.) &#8212; arch 4.7.0+2.g146c488 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="semiparametric-parametric-bootstrap.html" title="Semiparametric Bootstraps"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+2.g146c488 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" accesskey="U">Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+1)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+2)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -220,8 +220,8 @@ the same type as the input date.</p>
 attribute.</p>
 <p>To ensure a reproducible bootstrap, you must set the <code class="docutils literal notranslate"><span class="pre">random_state</span></code>
 attribute after the bootstrap has been created. See the example below.
-Note that <code class="docutils literal notranslate"><span class="pre">random_state</span></code> is a reserved keyword and cannot be used
-as a kwarg when initializing the bootstrap.</p>
+Note that <code class="docutils literal notranslate"><span class="pre">random_state</span></code> is a reserved keyword and any variable
+passed using this keyword must be an instance of <code class="docutils literal notranslate"><span class="pre">RandomState</span></code>.</p>
 <p class="rubric">Examples</p>
 <p>Data can be accessed in a number of ways.  Positional data is retained in
 the same order as it was entered when the bootstrap was initialized.
@@ -240,7 +240,9 @@ on kw_data.</p>
 </pre></div>
 </div>
 <p>Set the random_state if reproducibility is required</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bs</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">RandomState</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rs</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rs</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="method">
@@ -638,7 +640,7 @@ name of the required bootstrap</p>
         <li class="right" >
           <a href="semiparametric-parametric-bootstrap.html" title="Semiparametric Bootstraps"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+2.g146c488 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" >Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
