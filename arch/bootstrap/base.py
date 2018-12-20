@@ -119,6 +119,11 @@ class IIDBootstrap(object):
     Data entered using keyword arguments is directly accessibly as an
     attribute.
 
+    To ensure a reproducible bootstrap, you must set the ``random_state``
+    attribute after the bootstrap has been created. See the example below.
+    Note that ``random_state`` is a reserved keyword and cannot be used
+    as a kwarg when initializing the bootstrap.
+
     Examples
     --------
     Data can be accessed in a number of ways.  Positional data is retained in
@@ -136,6 +141,10 @@ class IIDBootstrap(object):
     ...     bs_x = data[0][0]
     ...     bs_y = data[1]['y']
     ...     bs_z = bs.z
+
+    Set the random_state if reproducibility is required
+
+    >>> bs.random_state = RandomState(1234)
     """
 
     def __init__(self, *args, **kwargs):
@@ -858,6 +867,11 @@ class CircularBlockBootstrap(IIDBootstrap):
     Data entered using keyword arguments is directly accessibly as an
     attribute.
 
+    To ensure a reproducible bootstrap, you must set the ``random_state``
+    attribute after the bootstrap has been created. See the example below.
+    Note that ``random_state`` is a reserved keyword and cannot be used
+    as a kwarg when initializing the bootstrap.
+
     Examples
     --------
     Data can be accessed in a number of ways.  Positional data is retained in
@@ -875,6 +889,10 @@ class CircularBlockBootstrap(IIDBootstrap):
     ...     bs_x = data[0][0]
     ...     bs_y = data[1]['y']
     ...     bs_z = bs.z
+
+    Set the random_state if reproducibility is required
+
+    >>> bs.random_state = RandomState(1234)
     """
 
     def __init__(self, block_size, *args, **kwargs):
@@ -950,6 +968,11 @@ class StationaryBootstrap(CircularBlockBootstrap):
     Data entered using keyword arguments is directly accessibly as an
     attribute.
 
+    To ensure a reproducible bootstrap, you must set the ``random_state``
+    attribute after the bootstrap has been created. See the example below.
+    Note that ``random_state`` is a reserved keyword and cannot be used
+    as a kwarg when initializing the bootstrap.
+
     Examples
     --------
     Data can be accessed in a number of ways.  Positional data is retained in
@@ -967,6 +990,10 @@ class StationaryBootstrap(CircularBlockBootstrap):
     ...     bs_x = data[0][0]
     ...     bs_y = data[1]['y']
     ...     bs_z = bs.z
+
+    Set the random_state if reproducibility is required
+
+    >>> bs.random_state = RandomState(1234)
     """
 
     def __init__(self, block_size, *args, **kwargs):
@@ -1018,6 +1045,11 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     Data entered using keyword arguments is directly accessibly as an
     attribute.
 
+    To ensure a reproducible bootstrap, you must set the ``random_state``
+    attribute after the bootstrap has been created. See the example below.
+    Note that ``random_state`` is a reserved keyword and cannot be used
+    as a kwarg when initializing the bootstrap.
+
     Examples
     --------
     Data can be accessed in a number of ways.  Positional data is retained in
@@ -1035,6 +1067,10 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     ...     bs_x = data[0][0]
     ...     bs_y = data[1]['y']
     ...     bs_z = bs.z
+
+    Set the random_state if reproducibility is required
+
+    >>> bs.random_state = RandomState(1234)
     """
 
     def __init__(self, block_size, *args, **kwargs):
