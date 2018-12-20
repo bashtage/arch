@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Volatilty Scenarios &#8212; arch 4.7.0 documentation</title>
+    <title>Volatilty Scenarios &#8212; arch 4.7.0+1.g9e6b1dd documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,6 +24,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Mean Models" href="mean.html" />
@@ -50,7 +51,7 @@
         <li class="right" >
           <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+1)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -177,18 +178,18 @@ div.nblast {
 
 /* input prompt */
 div.nbinput div.prompt pre {
-    color: #303F9F;
+    color: #307FC1;
 }
 
 /* output prompt */
 div.nboutput div.prompt pre {
-    color: #D84315;
+    color: #BF5B3D;
 }
 
 /* all prompts */
 div.nbinput div.prompt,
 div.nboutput div.prompt {
-    min-width: 9ex;
+    min-width: 7ex;
     padding-top: 0.4em;
     padding-right: 0.4em;
     text-align: right;
@@ -228,9 +229,9 @@ div.nboutput div.output_area {
 
 /* input area */
 div.nbinput div.input_area {
-    border: 1px solid #cfcfcf;
+    border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f7f7f7;
+    background: #f5f5f5;
 }
 
 /* override MathJax center alignment in output cells */
@@ -238,7 +239,7 @@ div.nboutput div[class*=MathJax] {
     text-align: left !important;
 }
 
-/* override sphinx.ext.pngmath center alignment in output cells */
+/* override sphinx.ext.imgmath center alignment in output cells */
 div.nboutput div.math p {
     text-align: left;
 }
@@ -287,27 +288,49 @@ div.nboutput div.output_area.stderr {
 
 .ansi-bold { font-weight: bold; }
 .ansi-underline { text-decoration: underline; }
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
 </style>
 <div class="section" id="Volatilty-Scenarios">
 <h1>Volatilty Scenarios<a class="headerlink" href="#Volatilty-Scenarios" title="Permalink to this headline">¶</a></h1>
-<p>Custom random-number generators can be used to implement scenarios where
-shock follow a particular pattern. For example, suppose you wanted to
-find out what would happen if there were 5 days of shocks that were
-larger than average. In most circumstances, the shocks in a GARCH model
-have unit variance. This could be changed so that the first 5 shocks
-have variance 4, or twice the standard deviation.</p>
-<p>Another scenario would be to over sample a specific period for the
-shocks. When using the standard bootstrap method (filtered historical
-simulation) the shocks are drawn using iid sampling from the history.
-While this approach is standard and well-grounded, it might be desirable
-to sample from a specific period. This can be implemented using a custom
-random number generator. This strategy is precisely how the filtered
-historical simulation is implemented internally, only where the draws
-are uniformly sampled from the entire history.</p>
+<p>Custom random-number generators can be used to implement scenarios where shock follow a particular pattern. For example, suppose you wanted to find out what would happen if there were 5 days of shocks that were larger than average. In most circumstances, the shocks in a GARCH model have unit variance. This could be changed so that the first 5 shocks have variance 4, or twice the standard deviation.</p>
+<p>Another scenario would be to over sample a specific period for the shocks. When using the standard bootstrap method (filtered historical simulation) the shocks are drawn using iid sampling from the history. While this approach is standard and well-grounded, it might be desirable to sample from a specific period. This can be implemented using a custom random number generator. This strategy is precisely how the filtered historical simulation is implemented internally, only where the draws are
+uniformly sampled from the entire history.</p>
 <p>First, some preliminaries</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -323,8 +346,7 @@ are uniformly sampled from the entire history.</p>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -335,12 +357,9 @@ are uniformly sampled from the entire history.</p>
 </pre></div>
 </div>
 </div>
-<p>This example makes use of returns from the NASDAQ index. The scenario
-bootstrap will make use of returns in the run-up to and during the
-Financial Crisis of 2008.</p>
+<p>This example makes use of returns from the NASDAQ index. The scenario bootstrap will make use of returns in the run-up to and during the Financial Crisis of 2008.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -363,23 +382,14 @@ DATE
 2000-01-07    3882.62
 </pre></div></div>
 </div>
-<p>Next, the returns are computed and the model is constructed. The model
-is constructed from the building blocks. It is a standard model and
-could have been (almost) equivalently constructed using</p>
+<p>Next, the returns are computed and the model is constructed. The model is constructed from the building blocks. It is a standard model and could have been (almost) equivalently constructed using</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mod</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">rets</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The one advantage of constructing the model using the components is that
-the NumPy <code class="docutils literal notranslate"><span class="pre">RandomState</span></code> that is used to simulate from the model can be
-externally set. This allows the generator seed to be easily set and for
-the state to reset, if needed.</p>
-<p><strong>NOTE</strong>: It is always a good idea to scale return by 100 before
-estimating ARCH-type models. This helps the optimizer converse since the
-scale of the volatility intercept is much closer to the scale of the
-other parameters in the model.</p>
+<p>The one advantage of constructing the model using the components is that the NumPy <code class="docutils literal notranslate"><span class="pre">RandomState</span></code> that is used to simulate from the model can be externally set. This allows the generator seed to be easily set and for the state to reset, if needed.</p>
+<p><strong>NOTE</strong>: It is always a good idea to scale return by 100 before estimating ARCH-type models. This helps the optimizer converse since the scale of the volatility intercept is much closer to the scale of the other parameters in the model.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -396,8 +406,7 @@ other parameters in the model.</p>
 </div>
 <p>Fitting the model is standard.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -407,8 +416,7 @@ other parameters in the model.</p>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="output_area highlight-none notranslate"><div class="highlight"><pre>
@@ -442,12 +450,9 @@ ARCHModelResult, id: 0x1b05cb127f0
 </pre></div>
 </div>
 </div>
-<p>GJR-GARCH models support analytical forecasts, which is the default. The
-forecasts are produced for all of 2017 using the estimated model
-parameters.</p>
+<p>GJR-GARCH models support analytical forecasts, which is the default. The forecasts are produced for all of 2017 using the estimated model parameters.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -478,17 +483,10 @@ DATE
 2017-01-06  0.553167  0.563897  0.574509  0.585002
 </pre></div></div>
 </div>
-<p>All GARCH specification are complete models in the sense that they
-specify a distribution. This allows simulations to be produced using the
-assumptions in the model. The <code class="docutils literal notranslate"><span class="pre">forecast</span></code> function can be made to
-produce simulations using the assumed distribution by setting
-<code class="docutils literal notranslate"><span class="pre">method='simulation'</span></code>.</p>
-<p>These forecasts are similar to the analytical forecasts above. As the
-number of simulation increases towards <span class="math notranslate nohighlight">\(\infty\)</span>, the
-simulation-based forecasts will converge to the analytical values above.</p>
+<p>All GARCH specification are complete models in the sense that they specify a distribution. This allows simulations to be produced using the assumptions in the model. The <code class="docutils literal notranslate"><span class="pre">forecast</span></code> function can be made to produce simulations using the assumed distribution by setting <code class="docutils literal notranslate"><span class="pre">method='simulation'</span></code>.</p>
+<p>These forecasts are similar to the analytical forecasts above. As the number of simulation increases towards <span class="math notranslate nohighlight">\(\infty\)</span>, the simulation-based forecasts will converge to the analytical values above.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -521,18 +519,10 @@ DATE
 </div>
 <div class="section" id="Custom-Random-Generators">
 <h2>Custom Random Generators<a class="headerlink" href="#Custom-Random-Generators" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">forecast</span></code> supports replacing the generator based on the assumed
-distribution of residuals in the model with any other generator. A shock
-generator should usually produce unit variance shocks. However, in this
-example the first 5 shocks generated have variance 2, and the remainder
-are standard normal. This scenario consists of a period of consistently
-surprising volatility where the volatility has shifted for some reason.</p>
-<p>The forecast variances are much larger and grow faster than those from
-either method previously illustrated. This reflects the increase in
-volatility in the first 5 days.</p>
+<p><code class="docutils literal notranslate"><span class="pre">forecast</span></code> supports replacing the generator based on the assumed distribution of residuals in the model with any other generator. A shock generator should usually produce unit variance shocks. However, in this example the first 5 shocks generated have variance 2, and the remainder are standard normal. This scenario consists of a period of consistently surprising volatility where the volatility has shifted for some reason.</p>
+<p>The forecast variances are much larger and grow faster than those from either method previously illustrated. This reflects the increase in volatility in the first 5 days.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -574,19 +564,11 @@ DATE
 </div>
 <div class="section" id="Bootstrap-Scenarios">
 <h2>Bootstrap Scenarios<a class="headerlink" href="#Bootstrap-Scenarios" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">forecast</span></code> supports Filtered Historical Simulation (FHS) using
-<code class="docutils literal notranslate"><span class="pre">method='bootstrap'</span></code>. This is effectively a simulation method where
-the simulated shocks are generated using iid sampling from the history
-of the demeaned and standardized return data. Custom bootstraps are
-another application of <code class="docutils literal notranslate"><span class="pre">rng</span></code>. Here an object is used to hold the
-shocks. This object exposes a method (<code class="docutils literal notranslate"><span class="pre">rng</span></code>) the acts like a random
-number generator, except that it only returns values that were provided
-in the <code class="docutils literal notranslate"><span class="pre">shocks</span></code> parameter.</p>
-<p>The internal implementation of the FHS uses a method almost identical to
-this where <code class="docutils literal notranslate"><span class="pre">shocks</span></code> contain the entire history.</p>
+<p><code class="docutils literal notranslate"><span class="pre">forecast</span></code> supports Filtered Historical Simulation (FHS) using <code class="docutils literal notranslate"><span class="pre">method='bootstrap'</span></code>. This is effectively a simulation method where the simulated shocks are generated using iid sampling from the history of the demeaned and standardized return data. Custom bootstraps are another application of <code class="docutils literal notranslate"><span class="pre">rng</span></code>. Here an object is used to hold the shocks. This object exposes a method (<code class="docutils literal notranslate"><span class="pre">rng</span></code>) the acts like a random number generator, except that it only returns values that were provided in the <code class="docutils literal notranslate"><span class="pre">shocks</span></code>
+parameter.</p>
+<p>The internal implementation of the FHS uses a method almost identical to this where <code class="docutils literal notranslate"><span class="pre">shocks</span></code> contain the entire history.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -634,14 +616,9 @@ DATE
 </div>
 <div class="section" id="Visualizing-the-differences">
 <h2>Visualizing the differences<a class="headerlink" href="#Visualizing-the-differences" title="Permalink to this headline">¶</a></h2>
-<p>The final forecast values are used to illustrate how these are
-different. The analytical and standard simulation are virtually
-identical. The simulated scenario grows rapidly for the first 5 periods
-and then more slowly. The bootstrap scenario grows quickly and
-consistently due to the magnitude of the shocks in the financial crisis.</p>
+<p>The final forecast values are used to illustrate how these are different. The analytical and standard simulation are virtually identical. The simulated scenario grows rapidly for the first 5 periods and then more slowly. The bootstrap scenario grows quickly and consistently due to the magnitude of the shocks in the financial crisis.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -665,8 +642,7 @@ consistently due to the magnitude of the shocks in the financial crisis.</p>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -677,12 +653,9 @@ consistently due to the magnitude of the shocks in the financial crisis.</p>
 </div>
 <div class="section" id="Comparing-the-paths">
 <h2>Comparing the paths<a class="headerlink" href="#Comparing-the-paths" title="Permalink to this headline">¶</a></h2>
-<p>The paths are available on the attribute <code class="docutils literal notranslate"><span class="pre">simulations</span></code>. Plotting the
-paths shows important differences between the two scenarios beyond the
-average differences plotted above. Both start at the same point.</p>
+<p>The paths are available on the attribute <code class="docutils literal notranslate"><span class="pre">simulations</span></code>. Plotting the paths shows important differences between the two scenarios beyond the average differences plotted above. Both start at the same point.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -720,11 +693,9 @@ average differences plotted above. Both start at the same point.</p>
 </div>
 <div class="section" id="Comparing-across-the-year">
 <h2>Comparing across the year<a class="headerlink" href="#Comparing-across-the-year" title="Permalink to this headline">¶</a></h2>
-<p>A hedgehog plot is useful for showing the differences between the two
-forecasting methods across the year, instead of a single day.</p>
+<p>A hedgehog plot is useful for showing the differences between the two forecasting methods across the year, instead of a single day.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -792,7 +763,7 @@ forecasting methods across the year, instead of a single day.</p>
         <li class="right" >
           <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

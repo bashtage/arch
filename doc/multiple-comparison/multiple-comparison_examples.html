@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Multiple Comparisons &#8212; arch 4.7.0 documentation</title>
+    <title>Multiple Comparisons &#8212; arch 4.7.0+1.g9e6b1dd documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,6 +24,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Module Reference" href="multiple-comparison-reference.html" />
@@ -50,7 +51,7 @@
         <li class="right" >
           <a href="multiple-comparisons.html" title="Multiple Comparison Procedures"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="multiple-comparisons.html" accesskey="U">Multiple Comparison Procedures</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+1)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -170,18 +171,18 @@ div.nblast {
 
 /* input prompt */
 div.nbinput div.prompt pre {
-    color: #303F9F;
+    color: #307FC1;
 }
 
 /* output prompt */
 div.nboutput div.prompt pre {
-    color: #D84315;
+    color: #BF5B3D;
 }
 
 /* all prompts */
 div.nbinput div.prompt,
 div.nboutput div.prompt {
-    min-width: 9ex;
+    min-width: 7ex;
     padding-top: 0.4em;
     padding-right: 0.4em;
     text-align: right;
@@ -221,9 +222,9 @@ div.nboutput div.output_area {
 
 /* input area */
 div.nbinput div.input_area {
-    border: 1px solid #cfcfcf;
+    border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f7f7f7;
+    background: #f5f5f5;
 }
 
 /* override MathJax center alignment in output cells */
@@ -231,7 +232,7 @@ div.nboutput div[class*=MathJax] {
     text-align: left !important;
 }
 
-/* override sphinx.ext.pngmath center alignment in output cells */
+/* override sphinx.ext.imgmath center alignment in output cells */
 div.nboutput div.math p {
     text-align: left;
 }
@@ -280,13 +281,46 @@ div.nboutput div.output_area.stderr {
 
 .ansi-bold { font-weight: bold; }
 .ansi-underline { text-decoration: underline; }
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
 </style>
 <div class="section" id="Multiple-Comparisons">
 <h1>Multiple Comparisons<a class="headerlink" href="#Multiple-Comparisons" title="Permalink to this headline">¶</a></h1>
 <p><em>This setup code is required to run in an IPython notebook</em></p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -308,46 +342,26 @@ div.nboutput div.output_area.stderr {
 </pre></div>
 </div>
 </div>
-<p>The multiple comparison procedures all allow for examining aspects of
-superior predictive ability. There are three available:</p>
+<p>The multiple comparison procedures all allow for examining aspects of superior predictive ability. There are three available:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">SPA</span></code> - The test of Superior Predictive Ability, also known as the
-Reality Check (and accessible as <code class="docutils literal notranslate"><span class="pre">RealityCheck</span></code>) or the bootstrap
-data snooper, examines whether any model in a set of models can
-outperform a benchmark.</li>
-<li><code class="docutils literal notranslate"><span class="pre">StepM</span></code> - The stepwise multiple testing procedure uses sequential
-testing to determine which models are superior to a benchmark.</li>
-<li><code class="docutils literal notranslate"><span class="pre">MCS</span></code> - The model confidence set which computes the set of models
-which with performance indistinguishable from others in the set.</li>
+<li><code class="docutils literal notranslate"><span class="pre">SPA</span></code> - The test of Superior Predictive Ability, also known as the Reality Check (and accessible as <code class="docutils literal notranslate"><span class="pre">RealityCheck</span></code>) or the bootstrap data snooper, examines whether any model in a set of models can outperform a benchmark.</li>
+<li><code class="docutils literal notranslate"><span class="pre">StepM</span></code> - The stepwise multiple testing procedure uses sequential testing to determine which models are superior to a benchmark.</li>
+<li><code class="docutils literal notranslate"><span class="pre">MCS</span></code> - The model confidence set which computes the set of models which with performance indistinguishable from others in the set.</li>
 </ul>
-<p>All procedures take <strong>losses</strong> as inputs. That is, smaller values are
-preferred to larger values. This is common when evaluating forecasting
-models where the loss function is usually defined as a positive function
-of the forecast error that is increasing in the absolute error. Leading
-examples are Mean Square Error (MSE) and Mean Absolute Deviation (MAD).</p>
+<p>All procedures take <strong>losses</strong> as inputs. That is, smaller values are preferred to larger values. This is common when evaluating forecasting models where the loss function is usually defined as a positive function of the forecast error that is increasing in the absolute error. Leading examples are Mean Square Error (MSE) and Mean Absolute Deviation (MAD).</p>
 <div class="section" id="The-test-of-Superior-Predictive-Ability-(SPA)">
 <h2>The test of Superior Predictive Ability (SPA)<a class="headerlink" href="#The-test-of-Superior-Predictive-Ability-(SPA)" title="Permalink to this headline">¶</a></h2>
-<p>This procedure requires a <span class="math notranslate nohighlight">\(t\)</span>-element array of benchmark losses
-and a <span class="math notranslate nohighlight">\(t\)</span> by <span class="math notranslate nohighlight">\(k\)</span>-element array of model losses. The null
-hypothesis is that no model is better than the benchmark, or</p>
+<p>This procedure requires a <span class="math notranslate nohighlight">\(t\)</span>-element array of benchmark losses and a <span class="math notranslate nohighlight">\(t\)</span> by <span class="math notranslate nohighlight">\(k\)</span>-element array of model losses. The null hypothesis is that no model is better than the benchmark, or</p>
 <div class="math notranslate nohighlight">
 \[H_0: \max_i E[L_i] \geq E[L_{bm}]\]</div>
-<p>where <span class="math notranslate nohighlight">\(L_i\)</span> is the loss from model <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(L_{bm}\)</span> is
-the loss from the benchmark model.</p>
-<p>This procedure is normally used when there are many competing
-forecasting models such as in the study of technical trading rules. The
-example below will make use of a set of models which are all
-equivalently good to a benchmark model and will serve as a <em>size study</em>.</p>
+<p>where <span class="math notranslate nohighlight">\(L_i\)</span> is the loss from model <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(L_{bm}\)</span> is the loss from the benchmark model.</p>
+<p>This procedure is normally used when there are many competing forecasting models such as in the study of technical trading rules. The example below will make use of a set of models which are all equivalently good to a benchmark model and will serve as a <em>size study</em>.</p>
 <div class="section" id="Study-Design">
 <h3>Study Design<a class="headerlink" href="#Study-Design" title="Permalink to this headline">¶</a></h3>
-<p>The study will make use of a measurement error in predictors to produce
-a large set of correlated variables that all have equal expected MSE.
-The benchmark will have identical measurement error and so all models
-have the same expected loss, although will have different forecasts.</p>
+<p>The study will make use of a measurement error in predictors to produce a large set of correlated variables that all have equal expected MSE. The benchmark will have identical measurement error and so all models have the same expected loss, although will have different forecasts.</p>
 <p>The first block computed the series to be forecast.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -362,13 +376,9 @@ have the same expected loss, although will have different forecasts.</p>
 </pre></div>
 </div>
 </div>
-<p>The next block computes the benchmark factors and the model factors by
-contaminating the original factors with noise. The models are estimated
-on the first 500 observations and predictions are made for the second
-500. Finally, losses are constructed from these predictions.</p>
+<p>The next block computes the benchmark factors and the model factors by contaminating the original factors with noise. The models are estimated on the first 500 observations and predictions are made for the second 500. Finally, losses are constructed from these predictions.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -393,20 +403,13 @@ on the first 500 observations and predictions are made for the second
 </pre></div>
 </div>
 </div>
-<p>Finally the SPA can be used. The SPA requires the <strong>losses</strong> from the
-benchmark and the models as inputs. Other inputs allow the bootstrap
-sued to be changed or for various options regarding studentization of
-the losses. <code class="docutils literal notranslate"><span class="pre">compute</span></code> does the real work, and then <code class="docutils literal notranslate"><span class="pre">pvalues</span></code>
-contains the probability that the null is true given the realizations.</p>
-<p>In this case, one would not reject. The three p-values correspond to
-different re-centerings of the losses. In general, the <code class="docutils literal notranslate"><span class="pre">consistent</span></code>
-p-value should be used. It should always be the case that</p>
+<p>Finally the SPA can be used. The SPA requires the <strong>losses</strong> from the benchmark and the models as inputs. Other inputs allow the bootstrap sued to be changed or for various options regarding studentization of the losses. <code class="docutils literal notranslate"><span class="pre">compute</span></code> does the real work, and then <code class="docutils literal notranslate"><span class="pre">pvalues</span></code> contains the probability that the null is true given the realizations.</p>
+<p>In this case, one would not reject. The three p-values correspond to different re-centerings of the losses. In general, the <code class="docutils literal notranslate"><span class="pre">consistent</span></code> p-value should be used. It should always be the case that</p>
 <div class="math notranslate nohighlight">
 \[lower \leq consistent \leq upper .\]</div>
 <p>See the original papers for more details.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -419,8 +422,7 @@ p-value should be used. It should always be the case that</p>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="output_area highlight-none notranslate"><div class="highlight"><pre>
@@ -431,14 +433,9 @@ dtype: float64
 </pre></div>
 </div>
 </div>
-<p>The same blocks can be repeated to perform a simulation study. Here I
-only use 100 replications since this should complete in a reasonable
-amount of time. Also I set <code class="docutils literal notranslate"><span class="pre">reps=250</span></code> to limit the number of bootstrap
-replications in each application of the SPA (the default is a more
-reasonable 1000).</p>
+<p>The same blocks can be repeated to perform a simulation study. Here I only use 100 replications since this should complete in a reasonable amount of time. Also I set <code class="docutils literal notranslate"><span class="pre">reps=250</span></code> to limit the number of bootstrap replications in each application of the SPA (the default is a more reasonable 1000).</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -496,12 +493,9 @@ reasonable 1000).</p>
 90
 </pre></div></div>
 </div>
-<p>Finally the pvalues can be plotted. Ideally they should form a
-<span class="math notranslate nohighlight">\(45^o\)</span> line indicating the size is correct. Both the consistent
-and upper perform well. The lower has too many small p-values.</p>
+<p>Finally the pvalues can be plotted. Ideally they should form a <span class="math notranslate nohighlight">\(45^o\)</span> line indicating the size is correct. Both the consistent and upper perform well. The lower has too many small p-values.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -528,14 +522,9 @@ and upper perform well. The lower has too many small p-values.</p>
 </div>
 <div class="section" id="Power">
 <h3>Power<a class="headerlink" href="#Power" title="Permalink to this headline">¶</a></h3>
-<p>The SPA also has power to reject then the null is violated. The
-simulation will be modified so that the amount of measurement error
-differs across models, and so that some models are actually better than
-the benchmark. The p-values should be small indicating rejection of the
-null.</p>
+<p>The SPA also has power to reject then the null is violated. The simulation will be modified so that the amount of measurement error differs across models, and so that some models are actually better than the benchmark. The p-values should be small indicating rejection of the null.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -558,8 +547,7 @@ null.</p>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="output_area highlight-none notranslate"><div class="highlight"><pre>
@@ -570,12 +558,9 @@ dtype: float64
 </pre></div>
 </div>
 </div>
-<p>Here the average losses are plotted. The higher index models are clearly
-better than the lower index models – and the benchmark model (which is
-identical to model.0).</p>
+<p>Here the average losses are plotted. The higher index models are clearly better than the lower index models – and the benchmark model (which is identical to model.0).</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -596,13 +581,9 @@ identical to model.0).</p>
 </div>
 <div class="section" id="Stepwise-Multiple-Testing-(StepM)">
 <h2>Stepwise Multiple Testing (StepM)<a class="headerlink" href="#Stepwise-Multiple-Testing-(StepM)" title="Permalink to this headline">¶</a></h2>
-<p>Stepwise Multiple Testing is similar to the SPA and has the same null.
-The primary difference is that it identifies the set of models which are
-better than the benchmark, rather than just asking the basic question if
-any model is better.</p>
+<p>Stepwise Multiple Testing is similar to the SPA and has the same null. The primary difference is that it identifies the set of models which are better than the benchmark, rather than just asking the basic question if any model is better.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -624,8 +605,7 @@ Model indices:
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -649,15 +629,9 @@ Model indices:
 </div>
 <div class="section" id="The-Model-Confidence-Set">
 <h2>The Model Confidence Set<a class="headerlink" href="#The-Model-Confidence-Set" title="Permalink to this headline">¶</a></h2>
-<p>The model confidence set takes a set of <strong>losses</strong> as its input and
-finds the set which are not statistically different from each other
-while controlling the familywise error rate. The primary output is a set
-of p-values, where models with a pvalue above the size are in the MCS.
-Small p-values indicate that the model is easily rejected from the set
-that includes the best.</p>
+<p>The model confidence set takes a set of <strong>losses</strong> as its input and finds the set which are not statistically different from each other while controlling the familywise error rate. The primary output is a set of p-values, where models with a pvalue above the size are in the MCS. Small p-values indicate that the model is easily rejected from the set that includes the best.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -717,8 +691,7 @@ Excluded
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -772,7 +745,7 @@ Excluded
         <li class="right" >
           <a href="multiple-comparisons.html" title="Multiple Comparison Procedures"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="multiple-comparisons.html" >Multiple Comparison Procedures</a> &#187;</li> 
       </ul>
     </div>

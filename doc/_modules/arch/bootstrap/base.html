@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>arch.bootstrap.base &#8212; arch 4.7.0 documentation</title>
+    <title>arch.bootstrap.base &#8212; arch 4.7.0+1.g9e6b1dd documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -24,6 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   
@@ -42,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -53,7 +54,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../../index.html" class="text-logo">arch 4.7.0</a>
+    ../../../index.html" class="text-logo">arch 4.7.0 (+1)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -224,6 +225,11 @@
 <span class="sd">    Data entered using keyword arguments is directly accessibly as an</span>
 <span class="sd">    attribute.</span>
 
+<span class="sd">    To ensure a reproducible bootstrap, you must set the ``random_state``</span>
+<span class="sd">    attribute after the bootstrap has been created. See the example below.</span>
+<span class="sd">    Note that ``random_state`` is a reserved keyword and cannot be used</span>
+<span class="sd">    as a kwarg when initializing the bootstrap.</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    Data can be accessed in a number of ways.  Positional data is retained in</span>
@@ -241,6 +247,10 @@
 <span class="sd">    ...     bs_x = data[0][0]</span>
 <span class="sd">    ...     bs_y = data[1][&#39;y&#39;]</span>
 <span class="sd">    ...     bs_z = bs.z</span>
+
+<span class="sd">    Set the random_state if reproducibility is required</span>
+
+<span class="sd">    &gt;&gt;&gt; bs.random_state = RandomState(1234)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -963,6 +973,11 @@
 <span class="sd">    Data entered using keyword arguments is directly accessibly as an</span>
 <span class="sd">    attribute.</span>
 
+<span class="sd">    To ensure a reproducible bootstrap, you must set the ``random_state``</span>
+<span class="sd">    attribute after the bootstrap has been created. See the example below.</span>
+<span class="sd">    Note that ``random_state`` is a reserved keyword and cannot be used</span>
+<span class="sd">    as a kwarg when initializing the bootstrap.</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    Data can be accessed in a number of ways.  Positional data is retained in</span>
@@ -980,6 +995,10 @@
 <span class="sd">    ...     bs_x = data[0][0]</span>
 <span class="sd">    ...     bs_y = data[1][&#39;y&#39;]</span>
 <span class="sd">    ...     bs_z = bs.z</span>
+
+<span class="sd">    Set the random_state if reproducibility is required</span>
+
+<span class="sd">    &gt;&gt;&gt; bs.random_state = RandomState(1234)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_size</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1055,6 +1074,11 @@
 <span class="sd">    Data entered using keyword arguments is directly accessibly as an</span>
 <span class="sd">    attribute.</span>
 
+<span class="sd">    To ensure a reproducible bootstrap, you must set the ``random_state``</span>
+<span class="sd">    attribute after the bootstrap has been created. See the example below.</span>
+<span class="sd">    Note that ``random_state`` is a reserved keyword and cannot be used</span>
+<span class="sd">    as a kwarg when initializing the bootstrap.</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    Data can be accessed in a number of ways.  Positional data is retained in</span>
@@ -1072,6 +1096,10 @@
 <span class="sd">    ...     bs_x = data[0][0]</span>
 <span class="sd">    ...     bs_y = data[1][&#39;y&#39;]</span>
 <span class="sd">    ...     bs_z = bs.z</span>
+
+<span class="sd">    Set the random_state if reproducibility is required</span>
+
+<span class="sd">    &gt;&gt;&gt; bs.random_state = RandomState(1234)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_size</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1123,6 +1151,11 @@
 <span class="sd">    Data entered using keyword arguments is directly accessibly as an</span>
 <span class="sd">    attribute.</span>
 
+<span class="sd">    To ensure a reproducible bootstrap, you must set the ``random_state``</span>
+<span class="sd">    attribute after the bootstrap has been created. See the example below.</span>
+<span class="sd">    Note that ``random_state`` is a reserved keyword and cannot be used</span>
+<span class="sd">    as a kwarg when initializing the bootstrap.</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    Data can be accessed in a number of ways.  Positional data is retained in</span>
@@ -1140,6 +1173,10 @@
 <span class="sd">    ...     bs_x = data[0][0]</span>
 <span class="sd">    ...     bs_y = data[1][&#39;y&#39;]</span>
 <span class="sd">    ...     bs_z = bs.z</span>
+
+<span class="sd">    Set the random_state if reproducibility is required</span>
+
+<span class="sd">    &gt;&gt;&gt; bs.random_state = RandomState(1234)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_size</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1185,7 +1222,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

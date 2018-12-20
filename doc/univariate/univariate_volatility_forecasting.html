@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Volatility Forecasting &#8212; arch 4.7.0 documentation</title>
+    <title>Volatility Forecasting &#8212; arch 4.7.0+1.g9e6b1dd documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,6 +24,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Volatilty Scenarios" href="univariate_volatility_scenarios.html" />
@@ -50,7 +51,7 @@
         <li class="right" >
           <a href="forecasting.html" title="Forecasting"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+1)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -177,18 +178,18 @@ div.nblast {
 
 /* input prompt */
 div.nbinput div.prompt pre {
-    color: #303F9F;
+    color: #307FC1;
 }
 
 /* output prompt */
 div.nboutput div.prompt pre {
-    color: #D84315;
+    color: #BF5B3D;
 }
 
 /* all prompts */
 div.nbinput div.prompt,
 div.nboutput div.prompt {
-    min-width: 9ex;
+    min-width: 7ex;
     padding-top: 0.4em;
     padding-right: 0.4em;
     text-align: right;
@@ -228,9 +229,9 @@ div.nboutput div.output_area {
 
 /* input area */
 div.nbinput div.input_area {
-    border: 1px solid #cfcfcf;
+    border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f7f7f7;
+    background: #f5f5f5;
 }
 
 /* override MathJax center alignment in output cells */
@@ -238,7 +239,7 @@ div.nboutput div[class*=MathJax] {
     text-align: left !important;
 }
 
-/* override sphinx.ext.pngmath center alignment in output cells */
+/* override sphinx.ext.imgmath center alignment in output cells */
 div.nboutput div.math p {
     text-align: left;
 }
@@ -287,13 +288,46 @@ div.nboutput div.output_area.stderr {
 
 .ansi-bold { font-weight: bold; }
 .ansi-underline { text-decoration: underline; }
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
 </style>
 <div class="section" id="Volatility-Forecasting">
 <h1>Volatility Forecasting<a class="headerlink" href="#Volatility-Forecasting" title="Permalink to this headline">¶</a></h1>
 <p><em>This setup code is required to run in an IPython notebook</em></p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -307,8 +341,7 @@ div.nboutput div.output_area.stderr {
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -321,11 +354,9 @@ div.nboutput div.output_area.stderr {
 </div>
 <div class="section" id="Data">
 <h2>Data<a class="headerlink" href="#Data" title="Permalink to this headline">¶</a></h2>
-<p>These examples make use of S&amp;P 500 data from Yahoo! using the
-pandas-datareader package to manage data download.</p>
+<p>These examples make use of S&amp;P 500 data from Yahoo! using the pandas-datareader package to manage data download.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -349,19 +380,16 @@ pandas-datareader package to manage data download.</p>
 </div>
 <div class="section" id="Basic-Forecasting">
 <h2>Basic Forecasting<a class="headerlink" href="#Basic-Forecasting" title="Permalink to this headline">¶</a></h2>
-<p>Forecasts can be generated for standard GARCH(p,q) processes using any
-of the three forecast generation methods:</p>
+<p>Forecasts can be generated for standard GARCH(p,q) processes using any of the three forecast generation methods:</p>
 <ul class="simple">
 <li>Analytical</li>
 <li>Simulation-based</li>
 <li>Bootstrap-based</li>
 </ul>
-<p>Be default forecasts will only be produced for the final observation in
-the sample so that they are out-of-sample.</p>
+<p>Be default forecasts will only be produced for the final observation in the sample so that they are out-of-sample.</p>
 <p>Forecasts start with specifying the model and estimating parameters.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -385,8 +413,7 @@ Optimization terminated successfully.    (Exit mode 0)
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -394,29 +421,17 @@ Optimization terminated successfully.    (Exit mode 0)
 </pre></div>
 </div>
 </div>
-<p>Forecasts are contained in an <code class="docutils literal notranslate"><span class="pre">ARCHModelForecast</span></code> object which has 4
-attributes:</p>
+<p>Forecasts are contained in an <code class="docutils literal notranslate"><span class="pre">ARCHModelForecast</span></code> object which has 4 attributes:</p>
 <ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">mean</span></code> - The forecast means</li>
-<li><code class="docutils literal notranslate"><span class="pre">residual_variance</span></code> - The forecast residual variances, that is
-<span class="math notranslate nohighlight">\(E_t[\epsilon_{t+h}^2]\)</span></li>
-<li><code class="docutils literal notranslate"><span class="pre">variance</span></code> - The forecast variance of the process,
-<span class="math notranslate nohighlight">\(E_t[r_{t+h}^2]\)</span>. The variance will differ from the residual
-variance whenever the model has mean dynamics, e.g., in an AR
-process.</li>
-<li><code class="docutils literal notranslate"><span class="pre">simulations</span></code> - An object that contains detailed information about
-the simulations used to generate forecasts. Only used if the forecast
-<code class="docutils literal notranslate"><span class="pre">method</span></code> is set to <code class="docutils literal notranslate"><span class="pre">'simulation'</span></code> or <code class="docutils literal notranslate"><span class="pre">'bootstrap'</span></code>. If using
-<code class="docutils literal notranslate"><span class="pre">'analytical'</span></code> (the default), this is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">residual_variance</span></code> - The forecast residual variances, that is <span class="math notranslate nohighlight">\(E_t[\epsilon_{t+h}^2]\)</span></li>
+<li><code class="docutils literal notranslate"><span class="pre">variance</span></code> - The forecast variance of the process, <span class="math notranslate nohighlight">\(E_t[r_{t+h}^2]\)</span>. The variance will differ from the residual variance whenever the model has mean dynamics, e.g., in an AR process.</li>
+<li><code class="docutils literal notranslate"><span class="pre">simulations</span></code> - An object that contains detailed information about the simulations used to generate forecasts. Only used if the forecast <code class="docutils literal notranslate"><span class="pre">method</span></code> is set to <code class="docutils literal notranslate"><span class="pre">'simulation'</span></code> or <code class="docutils literal notranslate"><span class="pre">'bootstrap'</span></code>. If using <code class="docutils literal notranslate"><span class="pre">'analytical'</span></code> (the default), this is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</li>
 </ul>
-<p>The three main outputs are all returned in <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>s with columns
-of the form <code class="docutils literal notranslate"><span class="pre">h.#</span></code> where <code class="docutils literal notranslate"><span class="pre">#</span></code> is the number of steps ahead. That is,
-<code class="docutils literal notranslate"><span class="pre">h.1</span></code> corresponds to one-step ahead forecasts while <code class="docutils literal notranslate"><span class="pre">h.10</span></code>
-corresponds to 10-steps ahead.</p>
+<p>The three main outputs are all returned in <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>s with columns of the form <code class="docutils literal notranslate"><span class="pre">h.#</span></code> where <code class="docutils literal notranslate"><span class="pre">#</span></code> is the number of steps ahead. That is, <code class="docutils literal notranslate"><span class="pre">h.1</span></code> corresponds to one-step ahead forecasts while <code class="docutils literal notranslate"><span class="pre">h.10</span></code> corresponds to 10-steps ahead.</p>
 <p>The default forecast only produces 1-step ahear forecasts.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -448,11 +463,9 @@ Date
 2016-12-30  0.400956
 </pre></div></div>
 </div>
-<p>Longer horizon forecasts can be computed by passing the parameter
-<code class="docutils literal notranslate"><span class="pre">horizon</span></code>.</p>
+<p>Longer horizon forecasts can be computed by passing the parameter <code class="docutils literal notranslate"><span class="pre">horizon</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -479,16 +492,10 @@ Date
 <h2>Alternative Forecast Generation Schemes<a class="headerlink" href="#Alternative-Forecast-Generation-Schemes" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Fixed-Window-Forecasting">
 <h3>Fixed Window Forecasting<a class="headerlink" href="#Fixed-Window-Forecasting" title="Permalink to this headline">¶</a></h3>
-<p>Fixed-windows forecasting uses data up to a specified date to generate
-all forecasts after that date. This cna be implemented by passing the
-entire data in when initializing the model and then using <code class="docutils literal notranslate"><span class="pre">last_obs</span></code>
-when calling <code class="docutils literal notranslate"><span class="pre">fit</span></code>. <code class="docutils literal notranslate"><span class="pre">forecast()</span></code> will, by default, produce forecasts
-after this final date.</p>
-<p><strong>Note</strong> <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> follow Python sequence rules so that the actual
-date in <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> is not in the sample.</p>
+<p>Fixed-windows forecasting uses data up to a specified date to generate all forecasts after that date. This cna be implemented by passing the entire data in when initializing the model and then using <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> when calling <code class="docutils literal notranslate"><span class="pre">fit</span></code>. <code class="docutils literal notranslate"><span class="pre">forecast()</span></code> will, by default, produce forecasts after this final date.</p>
+<p><strong>Note</strong> <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> follow Python sequence rules so that the actual date in <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> is not in the sample.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -522,12 +529,9 @@ Date
 </div>
 <div class="section" id="Rolling-Window-Forecasting">
 <h3>Rolling Window Forecasting<a class="headerlink" href="#Rolling-Window-Forecasting" title="Permalink to this headline">¶</a></h3>
-<p>Rolling window forecasts use a fixed sample length and then produce
-one-step from the final observation. These can be implemented using
-<code class="docutils literal notranslate"><span class="pre">first_obs</span></code> and <code class="docutils literal notranslate"><span class="pre">last_obs</span></code>.</p>
+<p>Rolling window forecasts use a fixed sample length and then produce one-step from the final observation. These can be implemented using <code class="docutils literal notranslate"><span class="pre">first_obs</span></code> and <code class="docutils literal notranslate"><span class="pre">last_obs</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -579,12 +583,9 @@ one-step from the final observation. These can be implemented using
 </div>
 <div class="section" id="Recursive-Forecast-Generation">
 <h3>Recursive Forecast Generation<a class="headerlink" href="#Recursive-Forecast-Generation" title="Permalink to this headline">¶</a></h3>
-<p>Recursive is similar to rolling except that the initial observation
-doesn’t change. This can be easily implemented by dropping the
-<code class="docutils literal notranslate"><span class="pre">first_obs</span></code> input.</p>
+<p>Recursive is similar to rolling except that the initial observation doesn’t change. This can be easily implemented by dropping the <code class="docutils literal notranslate"><span class="pre">first_obs</span></code> input.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -641,15 +642,9 @@ doesn’t change. This can be easily implemented by dropping the
 <h2>TARCH<a class="headerlink" href="#TARCH" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Analytical-Forecasts">
 <h3>Analytical Forecasts<a class="headerlink" href="#Analytical-Forecasts" title="Permalink to this headline">¶</a></h3>
-<p>All ARCH-type models have one-step analytical forecasts. Longer horizons
-only have closed forms for specific models. TARCH models do not have
-closed-form (analytical) forecasts for horizons larger than 1, and so
-simulation or bootstrapping is required. Attempting to produce forecasts
-for horizons larger than 1 using <code class="docutils literal notranslate"><span class="pre">method='analytical'</span></code> results in a
-<code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p>
+<p>All ARCH-type models have one-step analytical forecasts. Longer horizons only have closed forms for specific models. TARCH models do not have closed-form (analytical) forecasts for horizons larger than 1, and so simulation or bootstrapping is required. Attempting to produce forecasts for horizons larger than 1 using <code class="docutils literal notranslate"><span class="pre">method='analytical'</span></code> results in a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -680,12 +675,9 @@ Name: 2016-12-30 00:00:00, dtype: float64
 </div>
 <div class="section" id="Simulation-Forecasts">
 <h3>Simulation Forecasts<a class="headerlink" href="#Simulation-Forecasts" title="Permalink to this headline">¶</a></h3>
-<p>When using simulation- or bootstrap-based forecasts, an additional
-attribute of an <code class="docutils literal notranslate"><span class="pre">ARCHModelForecast</span></code> object is meaningful –
-<code class="docutils literal notranslate"><span class="pre">simulation</span></code>.</p>
+<p>When using simulation- or bootstrap-based forecasts, an additional attribute of an <code class="docutils literal notranslate"><span class="pre">ARCHModelForecast</span></code> object is meaningful – <code class="docutils literal notranslate"><span class="pre">simulation</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -703,8 +695,7 @@ attribute of an <code class="docutils literal notranslate"><span class="pre">ARC
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -727,8 +718,7 @@ attribute of an <code class="docutils literal notranslate"><span class="pre">ARC
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -738,8 +728,7 @@ attribute of an <code class="docutils literal notranslate"><span class="pre">ARC
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="output_area highlight-none notranslate"><div class="highlight"><pre>
@@ -757,15 +746,9 @@ attribute of an <code class="docutils literal notranslate"><span class="pre">ARC
 </div>
 <div class="section" id="Bootstrap-Forecasts">
 <h3>Bootstrap Forecasts<a class="headerlink" href="#Bootstrap-Forecasts" title="Permalink to this headline">¶</a></h3>
-<p>Bootstrap-based forecasts are nearly identical to simulation-based
-forecasts except that the values used to simulate the process are
-computed from historical data rather than using the assumed distribution
-of the residuals. Forecasts produced using this method also return an
-<code class="docutils literal notranslate"><span class="pre">ARCHModelForecastSimulation</span></code> containing information about the
-simulated paths.</p>
+<p>Bootstrap-based forecasts are nearly identical to simulation-based forecasts except that the values used to simulate the process are computed from historical data rather than using the assumed distribution of the residuals. Forecasts produced using this method also return an <code class="docutils literal notranslate"><span class="pre">ARCHModelForecastSimulation</span></code> containing information about the simulated paths.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -824,7 +807,7 @@ simulated paths.</p>
         <li class="right" >
           <a href="forecasting.html" title="Forecasting"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Using the Fixed Variance process &#8212; arch 4.7.0 documentation</title>
+    <title>Using the Fixed Variance process &#8212; arch 4.7.0+1.g9e6b1dd documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,6 +24,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Distributions" href="distribution.html" />
@@ -50,7 +51,7 @@
         <li class="right" >
           <a href="volatility.html" title="Volatility Processes"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+1)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -177,18 +178,18 @@ div.nblast {
 
 /* input prompt */
 div.nbinput div.prompt pre {
-    color: #303F9F;
+    color: #307FC1;
 }
 
 /* output prompt */
 div.nboutput div.prompt pre {
-    color: #D84315;
+    color: #BF5B3D;
 }
 
 /* all prompts */
 div.nbinput div.prompt,
 div.nboutput div.prompt {
-    min-width: 9ex;
+    min-width: 7ex;
     padding-top: 0.4em;
     padding-right: 0.4em;
     text-align: right;
@@ -228,9 +229,9 @@ div.nboutput div.output_area {
 
 /* input area */
 div.nbinput div.input_area {
-    border: 1px solid #cfcfcf;
+    border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f7f7f7;
+    background: #f5f5f5;
 }
 
 /* override MathJax center alignment in output cells */
@@ -238,7 +239,7 @@ div.nboutput div[class*=MathJax] {
     text-align: left !important;
 }
 
-/* override sphinx.ext.pngmath center alignment in output cells */
+/* override sphinx.ext.imgmath center alignment in output cells */
 div.nboutput div.math p {
     text-align: left;
 }
@@ -287,18 +288,47 @@ div.nboutput div.output_area.stderr {
 
 .ansi-bold { font-weight: bold; }
 .ansi-underline { text-decoration: underline; }
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
 </style>
 <div class="section" id="Using-the-Fixed-Variance-process">
 <h1>Using the Fixed Variance process<a class="headerlink" href="#Using-the-Fixed-Variance-process" title="Permalink to this headline">¶</a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> volatility process can be used to implement
-zig-zag model estimation where two steps are repeated until convergence.
-This can be used to estimate models which may not be easy to estimate as
-a single process due to numerical issues or a high-dimensional parameter
-space.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> volatility process can be used to implement zig-zag model estimation where two steps are repeated until convergence. This can be used to estimate models which may not be easy to estimate as a single process due to numerical issues or a high-dimensional parameter space.</p>
 <p><em>This setup code is required to run in an IPython notebook</em></p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -312,8 +342,7 @@ space.</p>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -328,8 +357,7 @@ space.</p>
 <h2>Setup<a class="headerlink" href="#Setup" title="Permalink to this headline">¶</a></h2>
 <p>Imports used in this example.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -341,11 +369,9 @@ space.</p>
 </div>
 <div class="section" id="Data">
 <h3>Data<a class="headerlink" href="#Data" title="Permalink to this headline">¶</a></h3>
-<p>The VIX index will be used to illustrate the use of the
-<code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> process. The data is read using <code class="docutils literal notranslate"><span class="pre">pandas-datareader</span></code>.</p>
+<p>The VIX index will be used to illustrate the use of the <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> process. The data is read using <code class="docutils literal notranslate"><span class="pre">pandas-datareader</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -367,11 +393,9 @@ space.</p>
 </div>
 <div class="section" id="Initial-Mean-Model-Estimation">
 <h3>Initial Mean Model Estimation<a class="headerlink" href="#Initial-Mean-Model-Estimation" title="Permalink to this headline">¶</a></h3>
-<p>The first step is to estimate the mean to filter the residuals using a
-constant variance.</p>
+<p>The first step is to estimate the mean to filter the residuals using a constant variance.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -419,12 +443,9 @@ Covariance estimator: White&#39;s Heteroskedasticity Consistent Estimator
 </div>
 <div class="section" id="Initial-Volatility-Model-Estimation">
 <h3>Initial Volatility Model Estimation<a class="headerlink" href="#Initial-Volatility-Model-Estimation" title="Permalink to this headline">¶</a></h3>
-<p>Using the previously estimated residuals, a volatility model can be
-estimated using a <code class="docutils literal notranslate"><span class="pre">ZeroMean</span></code>. In this example, a GJR-GARCH process is
-used for the variance.</p>
+<p>Using the previously estimated residuals, a volatility model can be estimated using a <code class="docutils literal notranslate"><span class="pre">ZeroMean</span></code>. In this example, a GJR-GARCH process is used for the variance.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -473,18 +494,10 @@ Covariance estimator: robust
 </div>
 <div class="section" id="Re-estimating-the-mean-with-a-FixedVariance">
 <h3>Re-estimating the mean with a <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code><a class="headerlink" href="#Re-estimating-the-mean-with-a-FixedVariance" title="Permalink to this headline">¶</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> requires that the variance is provided when
-initializing the object. The variance provided should have the same
-shape as the original data. Since the variance estimated from the
-GJR-GARCH model is missing the first 22 observations due to the HAR
-lags, we simply fill these with 1. These values will not be used to
-estimate the model, and so the value is not important.</p>
-<p>The summary shows that there is a single parameter, <code class="docutils literal notranslate"><span class="pre">scale</span></code>, which is
-close to 1. The mean parameters have changed which reflects the GLS-like
-weighting that this re-estimaion imposes.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> requires that the variance is provided when initializing the object. The variance provided should have the same shape as the original data. Since the variance estimated from the GJR-GARCH model is missing the first 22 observations due to the HAR lags, we simply fill these with 1. These values will not be used to estimate the model, and so the value is not important.</p>
+<p>The summary shows that there is a single parameter, <code class="docutils literal notranslate"><span class="pre">scale</span></code>, which is close to 1. The mean parameters have changed which reflects the GLS-like weighting that this re-estimaion imposes.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -546,11 +559,9 @@ Covariance estimator: robust
 </div>
 <div class="section" id="Zig-Zag-estimation">
 <h3>Zig-Zag estimation<a class="headerlink" href="#Zig-Zag-estimation" title="Permalink to this headline">¶</a></h3>
-<p>A small repetitions of the previous two steps can be used to implement a
-so-called zig-zag estimation strategy.</p>
+<p>A small repetitions of the previous two steps can be used to implement a so-called zig-zag estimation strategy.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -602,12 +613,9 @@ Covariance estimator: robust
 </div>
 <div class="section" id="Direct-Estimation">
 <h3>Direct Estimation<a class="headerlink" href="#Direct-Estimation" title="Permalink to this headline">¶</a></h3>
-<p>This model can be directly estimated. The results are provided for
-comparisson to the previous <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> estimates of the mean
-parameters.</p>
+<p>This model can be directly estimated. The results are provided for comparisson to the previous <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> estimates of the mean parameters.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -690,7 +698,7 @@ Covariance estimator: robust
         <li class="right" >
           <a href="volatility.html" title="Volatility Processes"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

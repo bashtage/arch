@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Independent, Identical Distributed Data (i.i.d.) &#8212; arch 4.7.0 documentation</title>
+    <title>Independent, Identical Distributed Data (i.i.d.) &#8212; arch 4.7.0+1.g9e6b1dd documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,6 +24,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Time-series Bootstraps" href="timeseries-bootstraps.html" />
@@ -50,7 +51,7 @@
         <li class="right" >
           <a href="semiparametric-parametric-bootstrap.html" title="Semiparametric Bootstraps"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" accesskey="U">Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+1)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -217,6 +218,10 @@ in the second (pos_data, kw_data)</p>
 the same type as the input date.</p>
 <p>Data entered using keyword arguments is directly accessibly as an
 attribute.</p>
+<p>To ensure a reproducible bootstrap, you must set the <code class="docutils literal notranslate"><span class="pre">random_state</span></code>
+attribute after the bootstrap has been created. See the example below.
+Note that <code class="docutils literal notranslate"><span class="pre">random_state</span></code> is a reserved keyword and cannot be used
+as a kwarg when initializing the bootstrap.</p>
 <p class="rubric">Examples</p>
 <p>Data can be accessed in a number of ways.  Positional data is retained in
 the same order as it was entered when the bootstrap was initialized.
@@ -232,6 +237,10 @@ on kw_data.</p>
 <span class="gp">... </span>    <span class="n">bs_x</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">... </span>    <span class="n">bs_y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
 <span class="gp">... </span>    <span class="n">bs_z</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">z</span>
+</pre></div>
+</div>
+<p>Set the random_state if reproducibility is required</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bs</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="method">
@@ -629,7 +638,7 @@ name of the required bootstrap</p>
         <li class="right" >
           <a href="semiparametric-parametric-bootstrap.html" title="Semiparametric Bootstraps"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" >Bootstrapping</a> &#187;</li> 
       </ul>
     </div>

@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>ARCH Modeling &#8212; arch 4.7.0 documentation</title>
+    <title>ARCH Modeling &#8212; arch 4.7.0+1.g9e6b1dd documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,6 +24,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Forecasting" href="forecasting.html" />
@@ -50,7 +51,7 @@
         <li class="right" >
           <a href="introduction.html" title="Introduction to ARCH Models"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+1)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -177,18 +178,18 @@ div.nblast {
 
 /* input prompt */
 div.nbinput div.prompt pre {
-    color: #303F9F;
+    color: #307FC1;
 }
 
 /* output prompt */
 div.nboutput div.prompt pre {
-    color: #D84315;
+    color: #BF5B3D;
 }
 
 /* all prompts */
 div.nbinput div.prompt,
 div.nboutput div.prompt {
-    min-width: 9ex;
+    min-width: 7ex;
     padding-top: 0.4em;
     padding-right: 0.4em;
     text-align: right;
@@ -228,9 +229,9 @@ div.nboutput div.output_area {
 
 /* input area */
 div.nbinput div.input_area {
-    border: 1px solid #cfcfcf;
+    border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f7f7f7;
+    background: #f5f5f5;
 }
 
 /* override MathJax center alignment in output cells */
@@ -238,7 +239,7 @@ div.nboutput div[class*=MathJax] {
     text-align: left !important;
 }
 
-/* override sphinx.ext.pngmath center alignment in output cells */
+/* override sphinx.ext.imgmath center alignment in output cells */
 div.nboutput div.math p {
     text-align: left;
 }
@@ -287,13 +288,46 @@ div.nboutput div.output_area.stderr {
 
 .ansi-bold { font-weight: bold; }
 .ansi-underline { text-decoration: underline; }
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
 </style>
 <div class="section" id="ARCH-Modeling">
 <h1>ARCH Modeling<a class="headerlink" href="#ARCH-Modeling" title="Permalink to this headline">¶</a></h1>
 <p><em>This setup code is required to run in an IPython notebook</em></p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -307,8 +341,7 @@ div.nboutput div.output_area.stderr {
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -321,11 +354,9 @@ div.nboutput div.output_area.stderr {
 </div>
 <div class="section" id="Setup">
 <h2>Setup<a class="headerlink" href="#Setup" title="Permalink to this headline">¶</a></h2>
-<p>These examples will all make use of financial data from Yahoo! Finance
-imported using <code class="docutils literal notranslate"><span class="pre">pandas-datareader</span></code>.</p>
+<p>These examples will all make use of financial data from Yahoo! Finance imported using <code class="docutils literal notranslate"><span class="pre">pandas-datareader</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -349,30 +380,21 @@ imported using <code class="docutils literal notranslate"><span class="pre">pand
 </div>
 <div class="section" id="Specifying-Common-Models">
 <h3>Specifying Common Models<a class="headerlink" href="#Specifying-Common-Models" title="Permalink to this headline">¶</a></h3>
-<p>The simplest way to specify a model is to use the model constructor
-<code class="docutils literal notranslate"><span class="pre">arch.arch_model</span></code> which can specify most common models. The simplest
-invocation of <code class="docutils literal notranslate"><span class="pre">arch</span></code> will return a model with a constant mean,
-GARCH(1,1) volatility process and normally distributed errors.</p>
+<p>The simplest way to specify a model is to use the model constructor <code class="docutils literal notranslate"><span class="pre">arch.arch_model</span></code> which can specify most common models. The simplest invocation of <code class="docutils literal notranslate"><span class="pre">arch</span></code> will return a model with a constant mean, GARCH(1,1) volatility process and normally distributed errors.</p>
 <div class="math notranslate nohighlight">
 \[r_t  =  \mu + \epsilon_t\]</div>
 <div class="math notranslate nohighlight">
 \[\sigma^2_t   =  \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2\]</div>
 <div class="math notranslate nohighlight">
 \[\epsilon_t  =  \sigma_t e_t,\,\,\, e_t  \sim  N(0,1)\]</div>
-<p>The model is estimated by calling <code class="docutils literal notranslate"><span class="pre">fit</span></code>. The optional inputs <code class="docutils literal notranslate"><span class="pre">iter</span></code>
-controls the frequency of output form the optimizer, and <code class="docutils literal notranslate"><span class="pre">disp</span></code>
-controls whether convergence information is returned. The results class
-returned offers direct access to the estimated parameters and related
-quantities, as well as a <code class="docutils literal notranslate"><span class="pre">summary</span></code> of the estimation results.</p>
+<p>The model is estimated by calling <code class="docutils literal notranslate"><span class="pre">fit</span></code>. The optional inputs <code class="docutils literal notranslate"><span class="pre">iter</span></code> controls the frequency of output form the optimizer, and <code class="docutils literal notranslate"><span class="pre">disp</span></code> controls whether convergence information is returned. The results class returned offers direct access to the estimated parameters and related quantities, as well as a <code class="docutils literal notranslate"><span class="pre">summary</span></code> of the estimation results.</p>
 </div>
 </div>
 <div class="section" id="GARCH-(with-a-Constant-Mean)">
 <h2>GARCH (with a Constant Mean)<a class="headerlink" href="#GARCH-(with-a-Constant-Mean)" title="Permalink to this headline">¶</a></h2>
-<p>The default set of options produces a model with a constant mean,
-GARCH(1,1) conditional variance and normal errors.</p>
+<p>The default set of options produces a model with a constant mean, GARCH(1,1) conditional variance and normal errors.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -422,11 +444,9 @@ beta[1]        0.9014  1.436e-02     62.771      0.000     [  0.873,  0.930]
 Covariance estimator: robust
 </pre></div></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">plot()</span></code> can be used to quickly visualize the standardized residuals
-and conditional volatility.</p>
+<p><code class="docutils literal notranslate"><span class="pre">plot()</span></code> can be used to quickly visualize the standardized residuals and conditional volatility.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -444,19 +464,13 @@ and conditional volatility.</p>
 </div>
 <div class="section" id="GJR-GARCH">
 <h2>GJR-GARCH<a class="headerlink" href="#GJR-GARCH" title="Permalink to this headline">¶</a></h2>
-<p>Additional inputs can be used to construct other models. This example
-sets <code class="docutils literal notranslate"><span class="pre">o</span></code> to 1, which includes one lag of an asymmetric shock which
-transforms a GARCH model into a GJR-GARCH model with variance dynamics
-given by</p>
+<p>Additional inputs can be used to construct other models. This example sets <code class="docutils literal notranslate"><span class="pre">o</span></code> to 1, which includes one lag of an asymmetric shock which transforms a GARCH model into a GJR-GARCH model with variance dynamics given by</p>
 <div class="math notranslate nohighlight">
 \[\sigma^2_t   =  \omega + \alpha \epsilon_{t-1}^2 + \gamma \epsilon_{t-1}^2 I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}^2\]</div>
-<p>where <span class="math notranslate nohighlight">\(I\)</span> is an indicator function that takes the value 1 when its
-argument is true.</p>
-<p>The log likelihood improves substantially with the introduction of an
-asymmetric term, and the parameter estimate is highly significant.</p>
+<p>where <span class="math notranslate nohighlight">\(I\)</span> is an indicator function that takes the value 1 when its argument is true.</p>
+<p>The log likelihood improves substantially with the introduction of an asymmetric term, and the parameter estimate is highly significant.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -502,23 +516,17 @@ Covariance estimator: robust
 </div>
 <div class="section" id="TARCH/ZARCH">
 <h2>TARCH/ZARCH<a class="headerlink" href="#TARCH/ZARCH" title="Permalink to this headline">¶</a></h2>
-<p>TARCH (also known as ZARCH) model the <em>volatility</em> using absolute
-values. This model is specified using <code class="docutils literal notranslate"><span class="pre">power=1.0</span></code> since the default
-power, 2, corresponds to variance processes that evolve in squares.</p>
+<p>TARCH (also known as ZARCH) model the <em>volatility</em> using absolute values. This model is specified using <code class="docutils literal notranslate"><span class="pre">power=1.0</span></code> since the default power, 2, corresponds to variance processes that evolve in squares.</p>
 <p>The volatility process in a TARCH model is given by</p>
 <div class="math notranslate nohighlight">
 \[\sigma_t  =  \omega + \alpha \left|\epsilon_{t-1}\right| + \gamma \left|\epsilon_{t-1}\right| I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}\]</div>
-<p>More general models with other powers (<span class="math notranslate nohighlight">\(\kappa\)</span>) have volatility
-dynamics given by</p>
+<p>More general models with other powers (<span class="math notranslate nohighlight">\(\kappa\)</span>) have volatility dynamics given by</p>
 <div class="math notranslate nohighlight">
 \[\sigma_t^\kappa   = \omega + \alpha \left|\epsilon_{t-1}\right|^\kappa + \gamma \left|\epsilon_{t-1}\right|^\kappa I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}^\kappa\]</div>
-<p>where the conditional variance is
-<span class="math notranslate nohighlight">\(\left(\sigma_t^\kappa\right)^{2/\kappa}\)</span>.</p>
-<p>The TARCH model also improves the fit, although the change in the log
-likelihood is less dramatic.</p>
+<p>where the conditional variance is <span class="math notranslate nohighlight">\(\left(\sigma_t^\kappa\right)^{2/\kappa}\)</span>.</p>
+<p>The TARCH model also improves the fit, although the change in the log likelihood is less dramatic.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -572,15 +580,10 @@ Covariance estimator: robust
 </div>
 <div class="section" id="Student’s-T-Errors">
 <h2>Student’s T Errors<a class="headerlink" href="#Student’s-T-Errors" title="Permalink to this headline">¶</a></h2>
-<p>Financial returns are often heavy tailed, and a Student’s T distribution
-is a simple method to capture this feature. The call to <code class="docutils literal notranslate"><span class="pre">arch</span></code> changes
-the distribution from a Normal to a Students’s T.</p>
-<p>The standardized residuals appear to be heavy tailed with an estimated
-degree of freedom near 10. The log-likelihood also shows a large
-increase.</p>
+<p>Financial returns are often heavy tailed, and a Student’s T distribution is a simple method to capture this feature. The call to <code class="docutils literal notranslate"><span class="pre">arch</span></code> changes the distribution from a Normal to a Students’s T.</p>
+<p>The standardized residuals appear to be heavy tailed with an estimated degree of freedom near 10. The log-likelihood also shows a large increase.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -639,16 +642,10 @@ Covariance estimator: robust
 </div>
 <div class="section" id="Fixing-Parameters">
 <h2>Fixing Parameters<a class="headerlink" href="#Fixing-Parameters" title="Permalink to this headline">¶</a></h2>
-<p>In some circumstances, fixed rather than estimated parameters might be
-of interest. A model-result-like class can be generated using the
-<code class="docutils literal notranslate"><span class="pre">fix()</span></code> method. The class returend is identical to the usual model
-result class except that information about inference (standard errors,
-t-stats, etc) is not available.</p>
-<p>In the example, I fix the parameters to a symmetric version of the
-previously estimated model.</p>
+<p>In some circumstances, fixed rather than estimated parameters might be of interest. A model-result-like class can be generated using the <code class="docutils literal notranslate"><span class="pre">fix()</span></code> method. The class returend is identical to the usual model result class except that information about inference (standard errors, t-stats, etc) is not available.</p>
+<p>In the example, I fix the parameters to a symmetric version of the previously estimated model.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -697,8 +694,7 @@ Since the model was not estimated, there are no std. errors.
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -718,17 +714,13 @@ Since the model was not estimated, there are no std. errors.
 </div>
 <div class="section" id="Building-a-Model-From-Components">
 <h3>Building a Model From Components<a class="headerlink" href="#Building-a-Model-From-Components" title="Permalink to this headline">¶</a></h3>
-<p>Models can also be systematically assembled from the three model
-components:</p>
+<p>Models can also be systematically assembled from the three model components:</p>
 <ul class="simple">
 <li>A mean model (<code class="docutils literal notranslate"><span class="pre">arch.mean</span></code>)<ul>
-<li>Zero mean (<code class="docutils literal notranslate"><span class="pre">ZeroMean</span></code>) - useful if using residuals from a model
-estimated separately</li>
-<li>Constant mean (<code class="docutils literal notranslate"><span class="pre">ConstantMean</span></code>) - common for most liquid
-financial assets</li>
+<li>Zero mean (<code class="docutils literal notranslate"><span class="pre">ZeroMean</span></code>) - useful if using residuals from a model estimated separately</li>
+<li>Constant mean (<code class="docutils literal notranslate"><span class="pre">ConstantMean</span></code>) - common for most liquid financial assets</li>
 <li>Autoregressive (<code class="docutils literal notranslate"><span class="pre">ARX</span></code>) with optional exogenous regressors</li>
-<li>Heterogeneous (<code class="docutils literal notranslate"><span class="pre">HARX</span></code>) autoregression with optional exogenous
-regressors</li>
+<li>Heterogeneous (<code class="docutils literal notranslate"><span class="pre">HARX</span></code>) autoregression with optional exogenous regressors</li>
 <li>Exogenous regressors only (<code class="docutils literal notranslate"><span class="pre">LS</span></code>)</li>
 </ul>
 </li>
@@ -738,14 +730,11 @@ regressors</li>
 <li>GJR-GARCH (<code class="docutils literal notranslate"><span class="pre">GARCH</span></code> using <code class="docutils literal notranslate"><span class="pre">o</span></code> argument)</li>
 <li>TARCH/ZARCH (<code class="docutils literal notranslate"><span class="pre">GARCH</span></code> using <code class="docutils literal notranslate"><span class="pre">power</span></code> argument set to <code class="docutils literal notranslate"><span class="pre">1</span></code>)</li>
 <li>Power GARCH and Asymmetric Power GARCH (<code class="docutils literal notranslate"><span class="pre">GARCH</span></code> using <code class="docutils literal notranslate"><span class="pre">power</span></code>)</li>
-<li>Exponentially Weighted Moving Average Variance with estimated
-coefficient (<code class="docutils literal notranslate"><span class="pre">EWMAVariance</span></code>)</li>
+<li>Exponentially Weighted Moving Average Variance with estimated coefficient (<code class="docutils literal notranslate"><span class="pre">EWMAVariance</span></code>)</li>
 <li>Heterogeneous ARCH (<code class="docutils literal notranslate"><span class="pre">HARCH</span></code>)</li>
 <li>Parameterless Models<ul>
-<li>Exponentially Weighted Moving Average Variance, known as
-RiskMetrics (<code class="docutils literal notranslate"><span class="pre">EWMAVariance</span></code>)</li>
-<li>Weighted averages of EWMAs, known as the RiskMetrics 2006
-methodology (<code class="docutils literal notranslate"><span class="pre">RiskMetrics2006</span></code>)</li>
+<li>Exponentially Weighted Moving Average Variance, known as RiskMetrics (<code class="docutils literal notranslate"><span class="pre">EWMAVariance</span></code>)</li>
+<li>Weighted averages of EWMAs, known as the RiskMetrics 2006 methodology (<code class="docutils literal notranslate"><span class="pre">RiskMetrics2006</span></code>)</li>
 </ul>
 </li>
 </ul>
@@ -760,14 +749,9 @@ methodology (<code class="docutils literal notranslate"><span class="pre">RiskMe
 </div>
 <div class="section" id="Mean-Models">
 <h2>Mean Models<a class="headerlink" href="#Mean-Models" title="Permalink to this headline">¶</a></h2>
-<p>The first choice is the mean model. For many liquid financial assets, a
-constant mean (or even zero) is adequate. For other series, such as
-inflation, a more complicated model may be required. These examples make
-use of Core CPI downloaded from the <a class="reference external" href="http://research.stlouisfed.org/fred2/">Federal Reserve Economic
-Data</a> site.</p>
+<p>The first choice is the mean model. For many liquid financial assets, a constant mean (or even zero) is adequate. For other series, such as inflation, a more complicated model may be required. These examples make use of Core CPI downloaded from the <a class="reference external" href="http://research.stlouisfed.org/fred2/">Federal Reserve Economic Data</a> site.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -784,12 +768,9 @@ Data</a> site.</p>
 <img alt="../_images/univariate_univariate_volatility_modeling_30_0.png" src="../_images/univariate_univariate_volatility_modeling_30_0.png" />
 </div>
 </div>
-<p>All mean models are initialized with constant variance and normal
-errors. For <code class="docutils literal notranslate"><span class="pre">ARX</span></code> models, the <code class="docutils literal notranslate"><span class="pre">lags</span></code> argument specifies the lags to
-include in the model.</p>
+<p>All mean models are initialized with constant variance and normal errors. For <code class="docutils literal notranslate"><span class="pre">ARX</span></code> models, the <code class="docutils literal notranslate"><span class="pre">lags</span></code> argument specifies the lags to include in the model.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -835,13 +816,9 @@ Covariance estimator: White&#39;s Heteroskedasticity Consistent Estimator
 </div>
 <div class="section" id="Volatility-Processes">
 <h2>Volatility Processes<a class="headerlink" href="#Volatility-Processes" title="Permalink to this headline">¶</a></h2>
-<p>Volatility processes can be added a a mean model using the
-<code class="docutils literal notranslate"><span class="pre">volatility</span></code> property. This example adds an ARCH(5) process to model
-volatility. The arguments <code class="docutils literal notranslate"><span class="pre">iter</span></code> and <code class="docutils literal notranslate"><span class="pre">disp</span></code> are used in <code class="docutils literal notranslate"><span class="pre">fit()</span></code> to
-suppress estimation output.</p>
+<p>Volatility processes can be added a a mean model using the <code class="docutils literal notranslate"><span class="pre">volatility</span></code> property. This example adds an ARCH(5) process to model volatility. The arguments <code class="docutils literal notranslate"><span class="pre">iter</span></code> and <code class="docutils literal notranslate"><span class="pre">disp</span></code> are used in <code class="docutils literal notranslate"><span class="pre">fit()</span></code> to suppress estimation output.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -890,11 +867,9 @@ alpha[5]       0.1686  7.426e-02      2.271  2.316e-02   [2.309e-02,  0.314]
 Covariance estimator: robust
 </pre></div></div>
 </div>
-<p>Plotting the standardized residuals and the conditional volatility shows
-some large (in magnitude) errors, even when standardized.</p>
+<p>Plotting the standardized residuals and the conditional volatility shows some large (in magnitude) errors, even when standardized.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -912,14 +887,10 @@ some large (in magnitude) errors, even when standardized.</p>
 </div>
 <div class="section" id="Distributions">
 <h2>Distributions<a class="headerlink" href="#Distributions" title="Permalink to this headline">¶</a></h2>
-<p>Finally the distribution can be changed from the default normal to a
-standardized Student’s T using the <code class="docutils literal notranslate"><span class="pre">distribution</span></code> property of a mean
-model.</p>
-<p>The Student’s t distribution improves the model, and the degree of
-freedom is estimated to be near 8.</p>
+<p>Finally the distribution can be changed from the default normal to a standardized Student’s T using the <code class="docutils literal notranslate"><span class="pre">distribution</span></code> property of a mean model.</p>
+<p>The Student’s t distribution improves the model, and the degree of freedom is estimated to be near 8.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -975,15 +946,9 @@ Covariance estimator: robust
 </div>
 <div class="section" id="WTI-Crude">
 <h3>WTI Crude<a class="headerlink" href="#WTI-Crude" title="Permalink to this headline">¶</a></h3>
-<p>The next example uses West Texas Intermediate Crude data from FRED.
-Theee models are fit using alternative distributional assumptions. The
-results are printed, where we can see that the normal has a much lower
-log-likelihood than either the Standard Student’s T or the Standardized
-Skew Student’s T – however, these two are fairly close. The closeness of
-the T and the Skew T indicate that returns are not heavily skewed.</p>
+<p>The next example uses West Texas Intermediate Crude data from FRED. Theee models are fit using alternative distributional assumptions. The results are printed, where we can see that the normal has a much lower log-likelihood than either the Standard Student’s T or the Standardized Skew Student’s T – however, these two are fairly close. The closeness of the T and the Skew T indicate that returns are not heavily skewed.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1022,14 +987,9 @@ nu             NaN  6.841504  6.889653
 omega     0.034733  0.026497  0.025239
 </pre></div></div>
 </div>
-<p>The standardized residuals can be computed by dividing the residuals by
-the conditional volatility. These are plotted along with the
-(unstandardized, but scaled) residuals. The non-standardized residuals
-are more peaked in the center indicating that the distribution is
-somewhat more heavy tailed than that of the standardized residuals.</p>
+<p>The standardized residuals can be computed by dividing the residuals by the conditional volatility. These are plotted along with the (unstandardized, but scaled) residuals. The non-standardized residuals are more peaked in the center indicating that the distribution is somewhat more heavy tailed than that of the standardized residuals.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1085,7 +1045,7 @@ somewhat more heavy tailed than that of the standardized residuals.</p>
         <li class="right" >
           <a href="introduction.html" title="Introduction to ARCH Models"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+1.g9e6b1dd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
