@@ -23,7 +23,6 @@ except ImportError:
     rec = recpy
 
 
-
 class TestVolatiltyProcesses(object):
     @classmethod
     def setup_class(cls):

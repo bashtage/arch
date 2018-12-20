@@ -21,7 +21,6 @@ except ImportError:
     from arch.univariate.recursions_python import garch_recursion
 
 
-
 def _compare_truncated_forecasts(full, trunc, start):
     assert np.all(np.isnan(trunc.forecasts[:start]))
     assert_allclose(trunc.forecasts[start:], full.forecasts[start:])
