@@ -23,7 +23,7 @@ A complete ARCH model is divided into three components:
 However, the simplest method to construct this model is to use the constructor
 function :py:meth:`~arch.arch_model`
 
-::
+.. code-block:: python
 
     import datetime as dt
     
@@ -40,7 +40,7 @@ function :py:meth:`~arch.arch_model`
 Alternatively, the same model can be manually assembled from the building
 blocks of an ARCH model
 
-::
+.. code-block:: python
 
     from arch import ConstantMean, GARCH, Normal
 
@@ -50,7 +50,7 @@ blocks of an ARCH model
 
 In either case, model parameters are estimated using
 
-::
+.. code-block:: python
 
     res = am.fit()
 
@@ -77,7 +77,7 @@ with the following output
                 Function evaluations: 85
                 Gradient evaluations: 12
 
-::
+.. code-block:: python
 
     print(res.summary())
 

@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Forecasting &#8212; arch 4.7.0+3.gbbfc9cd documentation</title>
+    <title>Forecasting &#8212; arch 4.7.0+4.g8a3c5ff documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="univariate_volatility_modeling.html" title="ARCH Modeling"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+3.gbbfc9cd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+4.g8a3c5ff documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+3)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+4)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -158,9 +158,9 @@ the choices available for forecasting.  The model can be described as</p>
    \sigma^2_t &amp; =    &amp; \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma^2_{t-1} \\
    e_t        &amp; \sim &amp; N(0,1)
 \end{eqnarray}</div><p>In code this model can be constructed using data from the S&amp;P 500 using</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
-<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
-<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="k">as</span> <span class="nn">web</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch</span> <span class="kn">import</span> <span class="n">arch_model</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="kn">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="kn">as</span> <span class="nn">web</span>
 <span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">sp500</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">get_data_yahoo</span><span class="p">(</span><span class="s1">&#39;^GSPC&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
@@ -170,7 +170,7 @@ the choices available for forecasting.  The model can be described as</p>
 </div>
 <p>The model will be estimated using the first 10 years to estimate parameters
 and then forecasts will be produced for the final 5.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">split_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2010</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">split_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2010</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">last_obs</span><span class="o">=</span><span class="n">split_date</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -186,7 +186,7 @@ recursively compute forecasts.</p>
    \sigma^2_{t+1} &amp; = &amp; \omega + \alpha \epsilon_t^2 + \beta \sigma^2_{t-1} \\
    \sigma^2_{t+h} &amp; = &amp; \omega + \alpha  E_{t}[\epsilon_{t+h-1}^2] + \beta E_{t}[\sigma^2_{t+h-1}] \, h \geq 2 \\
                   &amp; = &amp; \omega + \left(\alpha  + \beta\right) E_{t}[\sigma^2_{t+h-1}] \, h \geq 2
-\end{eqnarray}</div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">split_date</span><span class="p">)</span>
+\end{eqnarray}</div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">split_date</span><span class="p">)</span>
 <span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">split_date</span><span class="p">:]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -215,7 +215,7 @@ first residual, <span class="math notranslate nohighlight">\(\epsilon_{t}\)</spa
 <div class="math notranslate nohighlight">
 \begin{equation}
      E_t[\epsilon^2_{t+h}] = \sigma^2_{t+h} = B^{-1}\sum_{b=1}^B \sigma^2_{t+h,b}.
-\end{equation}</div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">split_date</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;simulation&#39;</span><span class="p">)</span>
+\end{equation}</div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">split_date</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;simulation&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -274,7 +274,7 @@ This will differ from <code class="docutils literal notranslate"><span class="pr
 (e.g. an AR model) for horizons larger than 1.</li>
 </ul>
 <p>Each attribute contains a <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> with a common structure.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">tail</span><span class="p">())</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">tail</span><span class="p">())</span>
 </pre></div>
 </div>
 <p>which returns</p>
@@ -294,8 +294,8 @@ forecast, so that <code class="docutils literal notranslate"><span class="pre">h
 made using data <strong>up to and including</strong> December 31, 2013.</p>
 <p>By default forecasts are only produced for observations after the final
 observation used to estimate the model.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">day</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">split_date</span> <span class="o">-</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">day</span><span class="p">:</span><span class="n">split_date</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">day</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">day</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">split_date</span> <span class="o">-</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">day</span><span class="p">:</span><span class="n">split_date</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">day</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>which produces</p>
@@ -494,7 +494,7 @@ that are not forecast are <code class="docutils literal notranslate"><span class
         <li class="right" >
           <a href="univariate_volatility_modeling.html" title="ARCH Modeling"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+3.gbbfc9cd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+4.g8a3c5ff documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

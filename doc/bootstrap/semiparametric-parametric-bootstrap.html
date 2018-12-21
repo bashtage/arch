@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Semiparametric Bootstraps &#8212; arch 4.7.0+3.gbbfc9cd documentation</title>
+    <title>Semiparametric Bootstraps &#8212; arch 4.7.0+4.g8a3c5ff documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="low-level-interface.html" title="Low-level Interfaces"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+3.gbbfc9cd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+4.g8a3c5ff documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" accesskey="U">Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+3)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+4)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -136,7 +136,7 @@ be input using the <code class="docutils literal notranslate"><span class="pre">
 The bootstrap step will combine the original parameter estimates and original
 regressors with bootstrapped residuals to construct a bootstrapped
 regressand.  The bootstrap regressand and regressors can then be used to
-produce a bootstraped parameter estimate.</p>
+produce a bootstrapped parameter estimate.</p>
 <p>The user-provided function must:</p>
 <ul class="simple">
 <li>Estimate the parameters when <code class="docutils literal notranslate"><span class="pre">params</span></code> is not provided</li>
@@ -144,10 +144,10 @@ produce a bootstraped parameter estimate.</p>
 to construct bootstrapped residuals, simulate the regressand, and then
 estimate the bootstrapped parameters</li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="k">def</span> <span class="nf">ols</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x_orig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="k">def</span> <span class="nf">ols</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">x_orig</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
 
     <span class="c1"># When params is not None</span>
     <span class="c1"># Bootstrap residuals</span>
@@ -155,14 +155,19 @@ estimate the bootstrapped parameters</li>
     <span class="c1"># Simulated data</span>
     <span class="n">y_star</span> <span class="o">=</span> <span class="n">x_orig</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">+</span> <span class="n">resids</span>
     <span class="c1"># Parameter estimates</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x_orig</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y_star</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x_orig</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y_star</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The function should return a 1-dimensional array. <code class="docutils literal notranslate"><span class="pre">ravel</span></code> is used above to
+ensure that the parameters estimated are 1d.</p>
+</div>
 <p>This function can then be used to perform a semiparametric bootstrap</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">IIDBootstrap</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="kn">import</span> <span class="n">IIDBootstrap</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)[:,</span> <span class="bp">None</span><span class="p">]</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">+</span> <span class="n">e</span>
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 <span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">ols</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;percentile&#39;</span><span class="p">,</span>
@@ -174,7 +179,7 @@ estimate the bootstrapped parameters</li>
 <p><code class="docutils literal notranslate"><span class="pre">functools.partial</span></code> can be used instead to provide a wrapper function which
 can then be used in the bootstrap.  This example fixed the value of <code class="docutils literal notranslate"><span class="pre">x_orig</span></code>
 so that it is not necessary to use <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="n">ols_partial</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">ols</span><span class="p">,</span> <span class="n">x_orig</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
 <span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">ols_partial</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="s1">&#39;semi&#39;</span><span class="p">)</span>
 </pre></div>
@@ -187,20 +192,20 @@ alternative method can be used to conduct a semiparametric bootstrap. This
 requires passing both the data and the estimated residuals when intializing
 the bootstrap.</p>
 <p>First, the function used must be account for this structure.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ols_semi_v2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">resids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x_orig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ols_semi_v2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">resids</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">x_orig</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
 
     <span class="c1"># Simulated data if params provided</span>
     <span class="n">y_star</span> <span class="o">=</span> <span class="n">x_orig</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">+</span> <span class="n">resids</span>
     <span class="c1"># Parameter estimates</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x_orig</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y_star</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x_orig</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y_star</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>This version can then be used to <em>directly</em> implement a semiparametric
 bootstrap, although ultimately it is not meaningfully simpler than the
 previous method.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">resids</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ols_semi_v2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">resids</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ols_semi_v2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">))</span>
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">resids</span><span class="o">=</span><span class="n">resids</span><span class="p">)</span>
 <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">ols_semi_v2</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="s1">&#39;semi&#39;</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x_orig&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">})</span>
 </pre></div>
@@ -242,24 +247,24 @@ estimate the bootstrapped parameters on the simulated data</li>
 <p>This example continues the OLS example from the semiparametric example,
 only assuming that residuals are normally distributed.  The variance
 estimator is the MLE.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ols_para</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x_orig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ols_para</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">x_orig</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="n">e</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
-        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="n">e</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">beta</span><span class="p">,</span><span class="n">sigma2</span><span class="p">])</span>
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="n">e</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">beta</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">sigma2</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span>
 
     <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">sigma2</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">e</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">x_orig</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">ystar</span> <span class="o">=</span> <span class="n">x_orig</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">x_orig</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">ystar</span> <span class="o">=</span> <span class="n">x_orig</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span>
 
     <span class="c1"># Use the plain function to compute parameters</span>
     <span class="k">return</span> <span class="n">ols_para</span><span class="p">(</span><span class="n">ystar</span><span class="p">,</span> <span class="n">x_orig</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This function can then be used to form parametric bootstrap confidence intervals.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
 <span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">ols_para</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;percentile&#39;</span><span class="p">,</span>
                  <span class="n">sampling</span><span class="o">=</span><span class="s1">&#39;parametric&#39;</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x_orig&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">})</span>
 </pre></div>
@@ -304,7 +309,7 @@ required when specifying a complete model.</p>
         <li class="right" >
           <a href="low-level-interface.html" title="Low-level Interfaces"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+3.gbbfc9cd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+4.g8a3c5ff documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" >Bootstrapping</a> &#187;</li> 
       </ul>
     </div>

@@ -7,7 +7,7 @@ traditional estimators.
 This example estimates the covariance of the mean, standard deviation and
 Sharpe ratio of the S&P 500 using Yahoo! Finance data.
 
-::
+.. code-block:: python
 
     import datetime as dt
     import pandas as pd
@@ -24,7 +24,7 @@ Sharpe ratio of the S&P 500 using Yahoo! Finance data.
 
 The function that returns the parameters.
 
-::
+.. code-block:: python
 
     def sharpe_ratio(r):
         mu = 12 * r.mean(0)
@@ -36,7 +36,7 @@ Like all applications of the bootstrap, it is important to choose a bootstrap
 that captures the dependence in the data.  This example uses the stationary
 bootstrap with an average block size of 12.
 
-::
+.. code-block:: python
 
     import pandas as pd
     from arch.bootstrap import StationaryBootstrap
@@ -50,7 +50,7 @@ bootstrap with an average block size of 12.
 
 The output is
 
-::
+.. code-block:: python
 
     >>> params
     mu        8.148534

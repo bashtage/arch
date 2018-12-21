@@ -41,7 +41,7 @@ the choices available for forecasting.  The model can be described as
 
 In code this model can be constructed using data from the S&P 500 using
 
-::
+.. code-block:: python
 
     from arch import arch_model
     import datetime as dt
@@ -55,7 +55,7 @@ In code this model can be constructed using data from the S&P 500 using
 The model will be estimated using the first 10 years to estimate parameters
 and then forecasts will be produced for the final 5.
 
-::
+.. code-block:: python
 
     split_date = dt.datetime(2010,1,1)
     res = am.fit(last_obs=split_date)
@@ -79,7 +79,7 @@ Variance forecasts are constructed for the conditional variances as
                      & = & \omega + \left(\alpha  + \beta\right) E_{t}[\sigma^2_{t+h-1}] \, h \geq 2
    \end{eqnarray}
 
-::
+.. code-block:: python
 
    forecasts = res.forecast(horizon=5, start=split_date)
    forecasts.variance[split_date:].plot()
@@ -121,7 +121,7 @@ The final variance forecasts are then computed using the :math:`B` simulations
         E_t[\epsilon^2_{t+h}] = \sigma^2_{t+h} = B^{-1}\sum_{b=1}^B \sigma^2_{t+h,b}.
    \end{equation}
 
-::
+.. code-block:: python
 
    forecasts = res.forecast(horizon=5, start=split_date, method='simulation')
 
@@ -188,7 +188,7 @@ The three core attributes are
 
 Each attribute contains a ``DataFrame`` with a common structure.
 
-::
+.. code-block:: python
 
    print(forecasts.variance.tail())
 
@@ -213,7 +213,7 @@ made using data **up to and including** December 31, 2013.
 By default forecasts are only produced for observations after the final
 observation used to estimate the model.
 
-::
+.. code-block:: python
 
    day = dt.timedelta(1)
    print(forecasts.variance[split_date - 5 * day:split_date + 5 * day])

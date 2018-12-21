@@ -8,7 +8,7 @@ from a function and the bootstrapped data.
 
 This example makes use of monthly S&P 500 data.
 
-::
+.. code-block:: python
 
     import datetime as dt
 
@@ -27,7 +27,7 @@ This example makes use of monthly S&P 500 data.
 The function will compute the Sharpe ratio -- the (annualized) mean divided by
 the (annualized) standard deviation.
 
-::
+.. code-block:: python
 
     import numpy as np
     def sharpe_ratio(x):
@@ -35,7 +35,7 @@ the (annualized) standard deviation.
 
 The bootstrapped Sharpe ratios can be directly computed using `apply`.
 
-::
+.. code-block:: python
 
     import seaborn
     from arch.bootstrap import IIDBootstrap
@@ -59,7 +59,7 @@ arguments passed when constructing the instance.
 This example makes uses of simulated data to demonstrate how to use the
 bootstrap iterator.
 
-::
+.. code-block:: python
 
     import pandas as pd
     import numpy as np

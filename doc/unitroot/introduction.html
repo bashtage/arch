@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Introduction &#8212; arch 4.7.0+3.gbbfc9cd documentation</title>
+    <title>Introduction &#8212; arch 4.7.0+4.g8a3c5ff documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="unitroot.html" title="Unit Root Testing"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+3.gbbfc9cd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+4.g8a3c5ff documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="unitroot.html" accesskey="U">Unit Root Testing</a> &#187;</li> 
       </ul>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+3)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+4)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -122,32 +122,35 @@
 can <cite>squeeze</cite> into a 1-d array, a pandas <cite>Series</cite> or a pandas <cite>DataFrame</cite> that
 contains a single variable.</p>
 <p>All tests share a common structure.  The key elements are:</p>
-<ul class="simple">
-<li><cite>stat</cite> - Returns the test statistic</li>
-<li><cite>pvalue</cite> - Returns the p-value of the test statistic</li>
-<li><cite>lags</cite> - Sets or gets the number of lags used in the model.  In most test, can be <cite>None</cite> to trigger automatic selection.</li>
-<li><dl class="first docutils">
-<dt><cite>trend</cite> - Sets of gets the trend used in the model.  Supported trends vary by model, but include:</dt>
-<dd><ul class="first last">
+<ul>
+<li><p class="first"><cite>stat</cite> - Returns the test statistic</p>
+</li>
+<li><p class="first"><cite>pvalue</cite> - Returns the p-value of the test statistic</p>
+</li>
+<li><p class="first"><cite>lags</cite> - Sets or gets the number of lags used in the model.  In most test, can be <code class="docutils literal notranslate"><span class="pre">None</span></code> to trigger automatic selection.</p>
+</li>
+<li><p class="first"><cite>trend</cite> - Sets or gets the trend used in the model.  Supported trends vary by model, but include:</p>
+<blockquote>
+<div><ul class="simple">
 <li><cite>‘nc’</cite>: No constant</li>
 <li><cite>‘c’</cite>: Constant</li>
 <li><cite>‘ct’</cite>: Constant and time trend</li>
 <li><cite>‘ctt’</cite>: Constant, time trend and quadratic time trend</li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 </li>
-<li><cite>summary()</cite> - Returns a summary object that can be printed to get a formatted table</li>
+<li><p class="first"><cite>summary()</cite> - Returns a summary object that can be printed to get a formatted table</p>
+</li>
 </ul>
 <div class="section" id="basic-example">
 <h2>Basic Example<a class="headerlink" href="#basic-example" title="Permalink to this headline">¶</a></h2>
 <p>This basic example show the use of the Augmented-Dickey fuller to test whether the default premium,
 defined as the difference between the yields of large portfolios of BAA and AAA bonds.  This example
 uses a constant and time trend.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="kn">as</span> <span class="nn">dt</span>
 
-<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="k">as</span> <span class="nn">web</span>
-<span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="k">import</span> <span class="n">ADF</span>
+<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="kn">as</span> <span class="nn">web</span>
+<span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="kn">import</span> <span class="n">ADF</span>
 
 <span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1919</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -157,7 +160,7 @@ uses a constant and time trend.</p>
 <span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;diff&#39;</span><span class="p">])</span>
 <span class="n">adf</span><span class="o">.</span><span class="n">trend</span> <span class="o">=</span> <span class="s1">&#39;ct&#39;</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+<span class="k">print</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
 <p>which yields</p>
@@ -210,7 +213,7 @@ uses a constant and time trend.</p>
         <li class="right" >
           <a href="unitroot.html" title="Unit Root Testing"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+3.gbbfc9cd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+4.g8a3c5ff documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="unitroot.html" >Unit Root Testing</a> &#187;</li> 
       </ul>
     </div>

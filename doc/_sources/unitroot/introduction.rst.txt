@@ -7,15 +7,17 @@ contains a single variable.
 
 All tests share a common structure.  The key elements are:
 
-* `stat` - Returns the test statistic
-* `pvalue` - Returns the p-value of the test statistic
-* `lags` - Sets or gets the number of lags used in the model.  In most test, can be `None` to trigger automatic selection.
-* `trend` - Sets of gets the trend used in the model.  Supported trends vary by model, but include:
+- `stat` - Returns the test statistic
+- `pvalue` - Returns the p-value of the test statistic
+- `lags` - Sets or gets the number of lags used in the model.  In most test, can be ``None`` to trigger automatic selection.
+- `trend` - Sets or gets the trend used in the model.  Supported trends vary by model, but include:
+
    - `'nc'`: No constant
    - `'c'`: Constant
    - `'ct'`: Constant and time trend
    - `'ctt'`: Constant, time trend and quadratic time trend
-* `summary()` - Returns a summary object that can be printed to get a formatted table
+
+- `summary()` - Returns a summary object that can be printed to get a formatted table
 
 
 Basic Example
@@ -26,7 +28,7 @@ defined as the difference between the yields of large portfolios of BAA and AAA 
 uses a constant and time trend.
 
 
-::
+.. code-block:: python
 
     import datetime as dt
 

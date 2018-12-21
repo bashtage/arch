@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Covariance Estimation &#8212; arch 4.7.0+3.gbbfc9cd documentation</title>
+    <title>Covariance Estimation &#8212; arch 4.7.0+4.g8a3c5ff documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="confidence-intervals.html" title="Confidence Intervals"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+3.gbbfc9cd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+4.g8a3c5ff documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" accesskey="U">Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+3)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+4)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -129,9 +129,9 @@ analytical computation is challenging, or simply as an alternative to
 traditional estimators.</p>
 <p>This example estimates the covariance of the mean, standard deviation and
 Sharpe ratio of the S&amp;P 500 using Yahoo! Finance data.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="k">as</span> <span class="nn">web</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="kn">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="kn">as</span> <span class="nn">web</span>
 
 <span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1951</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -144,7 +144,7 @@ Sharpe ratio of the S&amp;P 500 using Yahoo! Finance data.</p>
 </pre></div>
 </div>
 <p>The function that returns the parameters.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sharpe_ratio</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sharpe_ratio</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
     <span class="n">mu</span> <span class="o">=</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
     <span class="n">sr</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">/</span> <span class="n">sigma</span>
@@ -154,8 +154,8 @@ Sharpe ratio of the S&amp;P 500 using Yahoo! Finance data.</p>
 <p>Like all applications of the bootstrap, it is important to choose a bootstrap
 that captures the dependence in the data.  This example uses the stationary
 bootstrap with an average block size of 12.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="k">import</span> <span class="n">StationaryBootstrap</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="kn">import</span> <span class="n">StationaryBootstrap</span>
 
 <span class="n">bs</span> <span class="o">=</span> <span class="n">StationaryBootstrap</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="n">returns</span><span class="p">)</span>
 <span class="n">param_cov</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">)</span>
@@ -166,7 +166,7 @@ bootstrap with an average block size of 12.</p>
 </pre></div>
 </div>
 <p>The output is</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span>
 <span class="go">mu        8.148534</span>
 <span class="go">sigma    14.508540</span>
 <span class="go">SR        0.561637</span>
@@ -220,7 +220,7 @@ keyword argument <code class="docutils literal notranslate"><span class="pre">re
         <li class="right" >
           <a href="confidence-intervals.html" title="Confidence Intervals"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+3.gbbfc9cd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+4.g8a3c5ff documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" >Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
