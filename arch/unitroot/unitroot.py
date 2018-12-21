@@ -1057,7 +1057,7 @@ class KPSS(UnitRootTest):
     >>> print('{0:0.4f}'.format(kpss.stat))
     0.2870
     >>> print('{0:0.4f}'.format(kpss.pvalue))
-    0.1474
+    0.1473
     >>> kpss.trend = 'ct'
     >>> print('{0:0.4f}'.format(kpss.stat))
     0.2075

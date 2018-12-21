@@ -29,7 +29,7 @@ deviation and the Sharpe ratio.
 
 The setup makes use of return data downloaded from Yahoo!
 
-::
+.. code-block:: python
 
     import datetime as dt
 
@@ -47,7 +47,7 @@ The setup makes use of return data downloaded from Yahoo!
 
 The main function used will return a 3-element array containing the parameters.
 
-::
+.. code-block:: python
 
     def sharpe_ratio(x):
         mu, sigma = 12 * x.mean(), np.sqrt(12 * x.var())
@@ -77,7 +77,7 @@ This example makes use of the percentile bootstrap which is conceptually the
 simplest method - it constructs many bootstrap replications and returns
 order statistics from these empirical distributions.
 
-::
+.. code-block:: python
 
     from arch.bootstrap import IIDBootstrap
 
@@ -128,7 +128,7 @@ the :math:`\alpha/2` and :math:`1-\alpha/2` empirical quantiles of the bootstrap
 distribution.  When :math:`\theta` is a vector, the empirical quantiles are
 computed element-by-element.
 
-::
+.. code-block:: python
 
     from arch.bootstrap import IIDBootstrap
 
@@ -151,7 +151,7 @@ where :math:`\hat{\theta}^{\star}_{l}` and :math:`\hat{\theta}^{\star}_{u}` are
 the :math:`\alpha/2` and :math:`1-\alpha/2` empirical quantiles of the bootstrap
 distribution.
 
-::
+.. code-block:: python
 
     from arch.bootstrap import IIDBootstrap
 
@@ -173,7 +173,7 @@ distribution.  The confidence interval is then
 where :math:`\hat{\sigma}` is the bootstrap estimate of the parameter standard
 error.
 
-::
+.. code-block:: python
 
     from arch.bootstrap import IIDBootstrap
 
@@ -204,7 +204,7 @@ The version that uses a nested bootstrap is simple to implement although it can
 be slow since it requires :math:`B` inner bootstraps of each of the :math:`B`
 outer bootstraps.
 
-::
+.. code-block:: python
 
     from arch.bootstrap import IIDBootstrap
 
@@ -216,7 +216,7 @@ standard error of the parameters.  In this example, this can be done using a
 method-of-moments argument and the delta-method. A detailed description of
 the mathematical formula is beyond the intent of this document.
 
-::
+.. code-block:: python
 
     def sharpe_ratio_se(params, x):
         mu, sigma, sr = params
@@ -236,7 +236,7 @@ the mathematical formula is beyond the intent of this document.
 The studentized bootstrap can then be implemented using the standard error
 function.
 
-::
+.. code-block:: python
 
     from arch.bootstrap import IIDBootstrap
     bs = IIDBootstrap(returns)
@@ -260,7 +260,7 @@ Bias-corrected (``bc``, ``bias-corrected`` or ``debiased``)
 The bias corrected bootstrap makes use of a bootstrap estimate of the bias to
 improve confidence intervals.
 
-::
+.. code-block:: python
 
     from arch.bootstrap import IIDBootstrap
     bs = IIDBootstrap(returns)
@@ -278,7 +278,7 @@ offer higher-order accuracy if some conditions are satisfied. Bias-corrected
 confidence intervals are a special case of BCa intervals where the acceleration
 parameter is set to 0.
 
-::
+.. code-block:: python
 
     from arch.bootstrap import IIDBootstrap
 

@@ -16,7 +16,7 @@ For simplicity, consider a semiparametric bootstrap of an OLS regression.
 The bootstrap step will combine the original parameter estimates and original
 regressors with bootstrapped residuals to construct a bootstrapped
 regressand.  The bootstrap regressand and regressors can then be used to
-produce a bootstraped parameter estimate.
+produce a bootstrapped parameter estimate.
 
 The user-provided function must:
 
@@ -25,12 +25,12 @@ The user-provided function must:
   to construct bootstrapped residuals, simulate the regressand, and then
   estimate the bootstrapped parameters
 
-::
+.. code-block:: python
 
     import numpy as np
     def ols(y, x, params=None, x_orig=None):
         if params is None:
-            return np.linalg.pinv(x).dot(y)
+            return np.linalg.pinv(x).dot(y).ravel()
 
         # When params is not None
         # Bootstrap residuals
@@ -38,21 +38,26 @@ The user-provided function must:
         # Simulated data
         y_star = x_orig.dot(params) + resids
         # Parameter estimates
-        return np.linalg.pinv(x_orig).dot(y_star)
+        return np.linalg.pinv(x_orig).dot(y_star).ravel()
+
+
+.. note::
+
+  The function should return a 1-dimensional array. ``ravel`` is used above to
+  ensure that the parameters estimated are 1d.
 
 This function can then be used to perform a semiparametric bootstrap
 
-::
+.. code-block:: python
 
     from arch.bootstrap import IIDBootstrap
-    x = np.random.randn(100,3)
-    e = np.random.randn(100,1)
-    b = np.arange(1,4)
+    x = np.random.randn(100, 3)
+    e = np.random.randn(100, 1)
+    b = np.arange(1, 4)[:, None]
     y = x.dot(b) + e
     bs = IIDBootstrap(y, x)
     ci = bs.conf_int(ols, 1000, method='percentile',
                      sampling='semi', extra_kwargs={'x_orig': x})
-
 
 Using ``partial`` instead of ``extra_kwargs``
 =============================================
@@ -61,7 +66,7 @@ Using ``partial`` instead of ``extra_kwargs``
 can then be used in the bootstrap.  This example fixed the value of ``x_orig``
 so that it is not necessary to use ``extra_kwargs``.
 
-::
+.. code-block:: python
 
     from functools import partial
     ols_partial = partial(ols, x_orig=x)
@@ -77,22 +82,22 @@ the bootstrap.
 
 First, the function used must be account for this structure.
 
-::
+.. code-block:: python
 
     def ols_semi_v2(y, x, resids=None, params=None, x_orig=None):
         if params is None:
-            return np.linalg.pinv(x).dot(y)
+            return np.linalg.pinv(x).dot(y).ravel()
 
         # Simulated data if params provided
         y_star = x_orig.dot(params) + resids
         # Parameter estimates
-        return np.linalg.pinv(x_orig).dot(y_star)
+        return np.linalg.pinv(x_orig).dot(y_star).ravel()
 
 This version can then be used to *directly* implement a semiparametric
 bootstrap, although ultimately it is not meaningfully simpler than the
 previous method.
 
-::
+.. code-block:: python
 
     resids = y - x.dot(ols_semi_v2(y,x))
     bs = IIDBootstrap(y, x, resids=resids)
@@ -139,26 +144,26 @@ This example continues the OLS example from the semiparametric example,
 only assuming that residuals are normally distributed.  The variance
 estimator is the MLE.
 
-::
+.. code-block:: python
 
-    def ols_para(y, x, params=None, rng=None, x_orig=None):
+    def ols_para(y, x, params=None, state=None, x_orig=None):
         if params is None:
             beta = np.linalg.pinv(x).dot(y)
             e = y - x.dot(beta)
-            sigma2 = e.dot(e) / e.shape[0]
-            return np.hstack([beta,sigma2])
+            sigma2 = e.T.dot(e) / e.shape[0]
+            return np.r_[beta.ravel(), sigma2.ravel()]
 
         beta = params[:-1]
         sigma2 = params[-1]
-        e = rng.standard_normal(x_orig.shape[0])
-        ystar = x_orig.dot(params) + np.sqrt(sigma2) * e
+        e = state.standard_normal(x_orig.shape[0])
+        ystar = x_orig.dot(beta) + np.sqrt(sigma2) * e
 
         # Use the plain function to compute parameters
         return ols_para(ystar, x_orig)
 
 This function can then be used to form parametric bootstrap confidence intervals.
 
-::
+.. code-block:: python
 
     bs = IIDBootstrap(y,x)
     ci = bs.conf_int(ols_para, 1000, method='percentile',
