@@ -7,7 +7,7 @@ import warnings
 from numpy import (abs, arange, argwhere, array, ceil, cumsum, diff, empty,
                    float64, hstack, inf, int32, int64, interp, log, nan, ones,
                    pi, polyval, power, sort, sqrt, squeeze, sum)
-from numpy.linalg import inv, pinv, qr, solve
+from numpy.linalg import inv, pinv, qr, solve, matrix_rank
 from pandas import DataFrame
 from scipy.stats import norm
 from statsmodels.iolib.summary import Summary
@@ -208,12 +208,13 @@ def _autolag_ols(endog, exog, startlag, maxlag, method):
     qpy = q.T.dot(endog)
     ypy = endog.T.dot(endog)
     xpx = exog.T.dot(exog)
+    effective_max_lag = min(maxlag, matrix_rank(xpx) - startlag)
 
-    sigma2 = empty(maxlag + 1)
-    tstat = empty(maxlag + 1)
+    sigma2 = empty(effective_max_lag + 1)
+    tstat = empty(effective_max_lag + 1)
     nobs = float(endog.shape[0])
     tstat[0] = inf
-    for i in range(startlag, startlag + maxlag + 1):
+    for i in range(startlag, startlag + effective_max_lag + 1):
         b = solve(r[:i, :i], qpy[:i])
         sigma2[i - startlag] = (ypy - b.T.dot(xpx[:i, :i]).dot(b)) / nobs
         if method == 't-stat' and i > startlag:
@@ -256,8 +257,14 @@ def _df_select_lags(y, trend, max_lags, method, low_memory=False):
     If max_lags is None, the default value of 12 * (nobs/100)**(1/4) is used.
     """
     nobs = y.shape[0]
+    # This is the absolute maximum number of lags possible,
+    # only needed to very short time series.
+    max_max_lags = nobs // 2 - 1
+    if trend != 'nc':
+        max_max_lags -= len(trend)
     if max_lags is None:
         max_lags = int(ceil(12. * power(nobs / 100., 1 / 4.)))
+        max_lags = max(min(max_lags, max_max_lags), 0)
     if low_memory:
         out = _autolag_ols_low_memory(y, max_lags, trend, method)
         return out

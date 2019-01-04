@@ -1,5 +1,7 @@
 Changes since 4.0
 =================
+- Fixed a bug in ``ADF`` when applying to very short time series
+  (:issue:`262`).
 - Added ability to set the ``random_state`` when initializing a bootstrap
   (:issue:`259`).
 - Added support for Fractionally Integrated GARCH (FIGARCH)
