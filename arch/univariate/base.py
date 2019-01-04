@@ -16,6 +16,9 @@ from scipy.optimize import OptimizeResult
 import scipy.stats as stats
 from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
 from statsmodels.iolib.table import SimpleTable
+from statsmodels.regression.linear_model import OLS
+from statsmodels.tools.tools import add_constant
+from statsmodels.tsa.tsatools import lagmat
 from statsmodels.tools.numdiff import approx_fprime, approx_hess
 
 from arch.univariate.distribution import Distribution, Normal
@@ -24,6 +27,7 @@ from arch.utility.array import AbstractDocStringInheritor, ensure1d
 from arch.utility.exceptions import (ConvergenceWarning, StartingValueWarning,
                                      convergence_warning,
                                      starting_value_warning)
+from arch.utility.testing import WaldTestStatistic
 from arch.vendor.cached_property import cached_property
 
 __all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel', 'ARCHModelForecast', 'constraint']
@@ -1272,6 +1276,40 @@ class ARCHModelFixedResult(_SummaryRepr):
         ax.set_title(self._dep_name + ' ' + plot_type + ' Forecast Hedgehog Plot')
 
         return fig
+
+    def arch_lm_test(self, lags=None, standardized=False):
+        """
+        ARCH LM test for conditional heteroskedasticity
+
+        Parameters
+        ----------
+        lags : int, optional
+            Number of lags to include in the model.  If not specified,
+        standardized : bool, optional
+            Flag indicating to test the model residuals divided by their
+            conditional standard deviations.  If False, directly tests the
+            estimated residuals.
+
+        Returns
+        -------
+        result : WaldTestStatistic
+            Result of ARCH-LM test
+        """
+        resids = self.resid
+        nobs = resids.shape[0]
+        if standardized:
+            resids = resids / self.conditional_volatility.values
+        resid2 = resids ** 2
+        lags = int(np.ceil(12. * np.power(nobs / 100., 1 / 4.))) if lags is None else lags
+        lags = max(min(resids.shape[0] // 2 - 1, lags), 1)
+        lag, lead = lagmat(resid2, lags, 'both', 'sep', False)
+        lag = add_constant(lag)
+        res = OLS(lead, lag).fit()
+        stat = nobs * res.rsquared
+        test_type = 'R' if not standardized else 'Standardized r'
+        null = '{0}esiduals are homoskedastic.'.format(test_type)
+        alt = '{0}esiduals are conditionally heteroskedastic.'.format(test_type)
+        return WaldTestStatistic(stat, df=lags, null=null, alternative=alt, name='ARCH-LM Test')
 
 
 class ARCHModelResult(ARCHModelFixedResult):
