@@ -13,6 +13,9 @@ from numpy.testing import (assert_almost_equal, assert_array_almost_equal,
 import pandas as pd
 from pandas.util.testing import assert_frame_equal, assert_series_equal
 import pytest
+from scipy import stats
+import statsmodels.regression.linear_model as smlm
+import statsmodels.tools as smtools
 
 from arch.univariate.base import (ARCHModelForecast, ARCHModelResult,
                                   _align_forecast)
@@ -996,3 +999,37 @@ def test_backcast_error(simulated_data):
 def test_fit_smoke(simulated_data, volatility):
     zm = ZeroMean(simulated_data, volatility=volatility())
     zm.fit(disp=DISPLAY)
+
+
+def test_arch_lm(simulated_data):
+    zm = ZeroMean(simulated_data, volatility=GARCH())
+    res = zm.fit(disp=DISPLAY)
+    wald = res.arch_lm_test()
+    nobs = simulated_data.shape[0]
+    df = int(np.ceil(12. * np.power(nobs / 100., 1 / 4.)))
+    assert wald.df == df
+    assert 'Standardized' not in wald.null
+    assert 'Standardized' not in wald.alternative
+    assert 'H0: Standardized' not in wald.__repr__()
+    assert 'heteroskedastic' in wald.__repr__()
+
+    resids2 = res.resid ** 2
+    data = [resids2.shift(i) for i in range(df + 1)]
+    data = pd.concat(data, 1).dropna()
+    lhs = data.iloc[:, 0]
+    rhs = smtools.add_constant(data.iloc[:, 1:])
+    ols_res = smlm.OLS(lhs, rhs).fit()
+    assert_almost_equal(wald.stat, nobs * ols_res.rsquared)
+    assert len(wald.critical_values) == 3
+    assert '10%' in wald.critical_values
+
+    wald = res.arch_lm_test(lags=5)
+    assert wald.df == 5
+    assert_almost_equal(wald.pval, 1 - stats.chi2(5).cdf(wald.stat))
+
+    wald = res.arch_lm_test(standardized=True)
+    assert wald.df == df
+    assert 'Standardized' in wald.null
+    assert 'Standardized' in wald.alternative
+    assert_almost_equal(wald.pval, 1 - stats.chi2(df).cdf(wald.stat))
+    assert 'H0: Standardized' in wald.__repr__()
