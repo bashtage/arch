@@ -30,6 +30,7 @@ doc/_modules/arch/univariate/base.html
 doc/_modules/arch/univariate/distribution.html
 doc/_modules/arch/univariate/mean.html
 doc/_modules/arch/univariate/volatility.html
+doc/_modules/arch/utility/testing.html
 doc/_modules/arch/vendor/cached_property.html
 doc/_modules/index.html
 doc/_sources/bootstrap/background.rst.txt
@@ -61,6 +62,7 @@ doc/_sources/univariate/univariate_using_fixed_variance.ipynb.txt
 doc/_sources/univariate/univariate_volatility_forecasting.ipynb.txt
 doc/_sources/univariate/univariate_volatility_modeling.ipynb.txt
 doc/_sources/univariate/univariate_volatility_scenarios.ipynb.txt
+doc/_sources/univariate/utility.rst.txt
 doc/_sources/univariate/volatility.rst.txt
 doc/_static/ajax-loader.gif
 doc/_static/basic.css
@@ -205,4 +207,5 @@ doc/univariate/univariate_using_fixed_variance.html
 doc/univariate/univariate_volatility_forecasting.html
 doc/univariate/univariate_volatility_modeling.html
 doc/univariate/univariate_volatility_scenarios.html
+doc/univariate/utility.html
 doc/univariate/volatility.html

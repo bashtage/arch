@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Change Logs &#8212; arch 4.7.0+6.ga1a73a6 documentation</title>
+    <title>Change Logs &#8212; arch 4.7.0+8.g098c236 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -47,7 +47,7 @@
         <li class="right" >
           <a href="unitroot/tests.html" title="The Unit Root Tests"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">arch 4.7.0+6.ga1a73a6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">arch 4.7.0 (+6)</a>
+    index.html" class="text-logo">arch 4.7.0 (+8)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -116,41 +116,46 @@
 <div class="section" id="changes-since-4-0">
 <h2>Changes since 4.0<a class="headerlink" href="#changes-since-4-0" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Fixed a bug in <code class="docutils literal notranslate"><span class="pre">ADF</span></code> when applying to very short time series
+<li>Added <a class="reference internal" href="univariate/introduction.html#arch.univariate.base.ARCHModelResult.arch_lm_test" title="arch.univariate.base.ARCHModelResult.arch_lm_test"><code class="xref py py-func docutils literal notranslate"><span class="pre">arch_lm_test()</span></code></a> to
+perform ARCH-LM tests on model residuals or standardized residuals
+(<a class="reference external" href="https://github.com/bashtage/arch/issues/261">GH261</a>).</li>
+<li>Fixed a bug in <a class="reference internal" href="unitroot/tests.html#arch.unitroot.ADF" title="arch.unitroot.ADF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ADF</span></code></a> when applying to very short time series
 (<a class="reference external" href="https://github.com/bashtage/arch/issues/262">GH262</a>).</li>
 <li>Added ability to set the <code class="docutils literal notranslate"><span class="pre">random_state</span></code> when initializing a bootstrap
 (<a class="reference external" href="https://github.com/bashtage/arch/issues/259">GH259</a>).</li>
-<li>Added support for Fractionally Integrated GARCH (FIGARCH)</li>
+<li>Added support for Fractionally Integrated GARCH (FIGARCH) in
+<a class="reference internal" href="univariate/volatility.html#arch.univariate.FIGARCH" title="arch.univariate.FIGARCH"><code class="xref py py-class docutils literal notranslate"><span class="pre">FIGARCH</span></code></a>.</li>
 <li>Enable user to specify a specific value of the <cite>backcast</cite> in place of
 the automatically generated value.</li>
 <li>Fixed a big where parameter-less models where incorrectly reported as
-having constant variance (<a class="reference external" href="https://github.com/bashtage/arch/issues/248">GH248</a>)</li>
+having constant variance (<a class="reference external" href="https://github.com/bashtage/arch/issues/248">GH248</a>).</li>
 <li>Added support for MIDAS volatility processes using Hyperbolic
-weighting (<a class="reference external" href="https://github.com/bashtage/arch/issues/233">GH233</a>)</li>
+weighting in <code class="xref py py-class docutils literal notranslate"><span class="pre">MidasHyperbolic</span></code>
+(<a class="reference external" href="https://github.com/bashtage/arch/issues/233">GH233</a>).</li>
 <li>Added a parameter to forecast that allows a user-provided callable random
-generator to be used in place of the model random generator. (<a class="reference external" href="https://github.com/bashtage/arch/issues/225">GH225</a>)</li>
+generator to be used in place of the model random generator (<a class="reference external" href="https://github.com/bashtage/arch/issues/225">GH225</a>).</li>
 <li>Added a low memory automatic lag selection method that can be used with very
 large time-series.</li>
 <li>Improved performance of automatic lag selection in ADF and related tests.</li>
 <li>Added named parameters to Dickey-Fuller regressions.</li>
 <li>Removed use of the module-level NumPy RandomState. All random number
 generators use separate RandomState instances.</li>
-<li>Fixed a bug that prevented 1-step forecasts with exogenous regressors</li>
-<li>Added the Generalized Error Distribution for univariate ARCH models</li>
+<li>Fixed a bug that prevented 1-step forecasts with exogenous regressors.</li>
+<li>Added the Generalized Error Distribution for univariate ARCH models.</li>
 <li>Fixed a bug in MCS when using the max method that prevented all included
-models from being listed</li>
-<li>Added <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> volatility process which allows pre-specified
-variances to be used with a mean model.  This has been added to allow
-so-called zig-zag estimation where a mean model is estimated with a fixed
-variance, and then a variance model is estimated on the residuals using
-a <code class="docutils literal notranslate"><span class="pre">ZeroMean</span></code> variance process.</li>
+models from being listed.</li>
+<li>Added <a class="reference internal" href="univariate/volatility.html#arch.univariate.FixedVariance" title="arch.univariate.FixedVariance"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedVariance</span></code></a> volatility process which
+allows pre-specified variances to be used with a mean model.  This has been
+added to allow so-called zig-zag estimation where a mean model is estimated
+with a fixed variance, and then a variance model is estimated on the residuals
+using a <code class="docutils literal notranslate"><span class="pre">ZeroMean</span></code> variance process.</li>
 <li>Fixed a bug that prevented <code class="docutils literal notranslate"><span class="pre">fix</span></code> from being used with a new model
-(<a class="reference external" href="https://github.com/bashtage/arch/issues/156">GH156</a>)</li>
-<li>Added <code class="docutils literal notranslate"><span class="pre">first_obs</span></code> and <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> parameters to <code class="docutils literal notranslate"><span class="pre">fix</span></code> to mimic <code class="docutils literal notranslate"><span class="pre">fit</span></code></li>
+(<a class="reference external" href="https://github.com/bashtage/arch/issues/156">GH156</a>).</li>
+<li>Added <code class="docutils literal notranslate"><span class="pre">first_obs</span></code> and <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> parameters to <code class="docutils literal notranslate"><span class="pre">fix</span></code> to mimic <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</li>
 <li>Added ability to jointly estimate smoothing parameter in EWMA variance when
-fitting the model</li>
+fitting the model.</li>
 <li>Added ability to pass optimization options to ARCH model estimation
-(<a class="reference external" href="https://github.com/bashtage/arch/issues/195">GH195</a>)</li>
+(<a class="reference external" href="https://github.com/bashtage/arch/issues/195">GH195</a>).</li>
 </ul>
 </div>
 <div class="section" id="changes-since-3-0">
@@ -232,7 +237,7 @@ functions such as <cite>conf_int</cite> or <cite>cov</cite>, or as a low level i
         <li class="right" >
           <a href="unitroot/tests.html" title="The Unit Root Tests"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">arch 4.7.0+6.ga1a73a6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

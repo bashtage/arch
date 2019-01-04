@@ -15,4 +15,5 @@ Univariate Volatility Models
     Volatility Processes <volatility>
     Using the Fixed Variance Process <univariate_using_fixed_variance.ipynb>
     Distributions <distribution>
+    Utilities <utility>
     Background and References <background>

@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Introduction to ARCH Models &#8212; arch 4.7.0+6.ga1a73a6 documentation</title>
+    <title>Introduction to ARCH Models &#8212; arch 4.7.0+8.g098c236 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="univariate.html" title="Univariate Volatility Models"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+6.ga1a73a6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+6)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+8)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -81,6 +81,7 @@
 <li class="toctree-l2"><a class="reference internal" href="volatility.html">Volatility Processes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="univariate_using_fixed_variance.html">Using the Fixed Variance Process</a></li>
 <li class="toctree-l2"><a class="reference internal" href="distribution.html">Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utility.html">Utilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
 </ul>
 </li>
@@ -415,6 +416,32 @@ slice notation <cite>fit_start:fit_stop</cite></li>
 </dd></dl>
 
 <dl class="method">
+<dt id="arch.univariate.base.ARCHModelResult.arch_lm_test">
+<code class="descname">arch_lm_test</code><span class="sig-paren">(</span><em>lags=None</em>, <em>standardized=False</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.arch_lm_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>ARCH LM test for conditional heteroskedasticity</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of lags to include in the model.  If not specified,</li>
+<li><strong>standardized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating to test the model residuals divided by their
+conditional standard deviations.  If False, directly tests the
+estimated residuals.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> – Result of ARCH-LM test</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="utility.html#arch.utility.testing.WaldTestStatistic" title="arch.utility.testing.WaldTestStatistic">WaldTestStatistic</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt>
 <code class="descname">conf_int</code><span class="sig-paren">(</span><em>alpha=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelResult.conf_int"><span class="viewcode-link">[source]</span></a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
@@ -713,6 +740,32 @@ contain nan-values in locations not used in estimation</li>
 </dd></dl>
 
 <dl class="method">
+<dt id="arch.univariate.base.ARCHModelFixedResult.arch_lm_test">
+<code class="descname">arch_lm_test</code><span class="sig-paren">(</span><em>lags=None</em>, <em>standardized=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.arch_lm_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.arch_lm_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>ARCH LM test for conditional heteroskedasticity</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of lags to include in the model.  If not specified,</li>
+<li><strong>standardized</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating to test the model residuals divided by their
+conditional standard deviations.  If False, directly tests the
+estimated residuals.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> – Result of ARCH-LM test</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="utility.html#arch.utility.testing.WaldTestStatistic" title="arch.utility.testing.WaldTestStatistic">WaldTestStatistic</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt>
 <code class="descname">forecast</code><span class="sig-paren">(</span><em>params=None</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.forecast"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Construct forecasts from estimated model</p>
@@ -928,7 +981,7 @@ latex</td>
         <li class="right" >
           <a href="univariate.html" title="Univariate Volatility Models"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+6.ga1a73a6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

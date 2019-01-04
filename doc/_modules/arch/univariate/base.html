@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>arch.univariate.base &#8212; arch 4.7.0+6.ga1a73a6 documentation</title>
+    <title>arch.univariate.base &#8212; arch 4.7.0+8.g098c236 documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+6.ga1a73a6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -54,7 +54,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../../index.html" class="text-logo">arch 4.7.0 (+6)</a>
+    ../../../index.html" class="text-logo">arch 4.7.0 (+8)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -122,6 +122,9 @@
 <span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
 <span class="kn">from</span> <span class="nn">statsmodels.iolib.summary</span> <span class="k">import</span> <span class="n">Summary</span><span class="p">,</span> <span class="n">fmt_2cols</span><span class="p">,</span> <span class="n">fmt_params</span>
 <span class="kn">from</span> <span class="nn">statsmodels.iolib.table</span> <span class="k">import</span> <span class="n">SimpleTable</span>
+<span class="kn">from</span> <span class="nn">statsmodels.regression.linear_model</span> <span class="k">import</span> <span class="n">OLS</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tools.tools</span> <span class="k">import</span> <span class="n">add_constant</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tsa.tsatools</span> <span class="k">import</span> <span class="n">lagmat</span>
 <span class="kn">from</span> <span class="nn">statsmodels.tools.numdiff</span> <span class="k">import</span> <span class="n">approx_fprime</span><span class="p">,</span> <span class="n">approx_hess</span>
 
 <span class="kn">from</span> <span class="nn">arch.univariate.distribution</span> <span class="k">import</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">Normal</span>
@@ -130,6 +133,7 @@
 <span class="kn">from</span> <span class="nn">arch.utility.exceptions</span> <span class="k">import</span> <span class="p">(</span><span class="n">ConvergenceWarning</span><span class="p">,</span> <span class="n">StartingValueWarning</span><span class="p">,</span>
                                      <span class="n">convergence_warning</span><span class="p">,</span>
                                      <span class="n">starting_value_warning</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">arch.utility.testing</span> <span class="k">import</span> <span class="n">WaldTestStatistic</span>
 <span class="kn">from</span> <span class="nn">arch.vendor.cached_property</span> <span class="k">import</span> <span class="n">cached_property</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;implicit_constant&#39;</span><span class="p">,</span> <span class="s1">&#39;ARCHModelResult&#39;</span><span class="p">,</span> <span class="s1">&#39;ARCHModel&#39;</span><span class="p">,</span> <span class="s1">&#39;ARCHModelForecast&#39;</span><span class="p">,</span> <span class="s1">&#39;constraint&#39;</span><span class="p">]</span>
@@ -1377,7 +1381,41 @@
         <span class="n">plot_type</span> <span class="o">=</span> <span class="s1">&#39;Mean&#39;</span> <span class="k">if</span> <span class="n">plot_mean</span> <span class="k">else</span> <span class="s1">&#39;Volatility&#39;</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dep_name</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">plot_type</span> <span class="o">+</span> <span class="s1">&#39; Forecast Hedgehog Plot&#39;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">fig</span></div></div>
+        <span class="k">return</span> <span class="n">fig</span></div>
+
+<div class="viewcode-block" id="ARCHModelFixedResult.arch_lm_test"><a class="viewcode-back" href="../../../univariate/introduction.html#arch.univariate.base.ARCHModelFixedResult.arch_lm_test">[docs]</a>    <span class="k">def</span> <span class="nf">arch_lm_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">standardized</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ARCH LM test for conditional heteroskedasticity</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lags : int, optional</span>
+<span class="sd">            Number of lags to include in the model.  If not specified,</span>
+<span class="sd">        standardized : bool, optional</span>
+<span class="sd">            Flag indicating to test the model residuals divided by their</span>
+<span class="sd">            conditional standard deviations.  If False, directly tests the</span>
+<span class="sd">            estimated residuals.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : WaldTestStatistic</span>
+<span class="sd">            Result of ARCH-LM test</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resid</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">standardized</span><span class="p">:</span>
+            <span class="n">resids</span> <span class="o">=</span> <span class="n">resids</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">resid2</span> <span class="o">=</span> <span class="n">resids</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">lags</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">12.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">nobs</span> <span class="o">/</span> <span class="mf">100.</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">4.</span><span class="p">)))</span> <span class="k">if</span> <span class="n">lags</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">lags</span>
+        <span class="n">lags</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">lags</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">lag</span><span class="p">,</span> <span class="n">lead</span> <span class="o">=</span> <span class="n">lagmat</span><span class="p">(</span><span class="n">resid2</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="s1">&#39;sep&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">lag</span> <span class="o">=</span> <span class="n">add_constant</span><span class="p">(</span><span class="n">lag</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">OLS</span><span class="p">(</span><span class="n">lead</span><span class="p">,</span> <span class="n">lag</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="n">stat</span> <span class="o">=</span> <span class="n">nobs</span> <span class="o">*</span> <span class="n">res</span><span class="o">.</span><span class="n">rsquared</span>
+        <span class="n">test_type</span> <span class="o">=</span> <span class="s1">&#39;R&#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">standardized</span> <span class="k">else</span> <span class="s1">&#39;Standardized r&#39;</span>
+        <span class="n">null</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">esiduals are homoskedastic.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_type</span><span class="p">)</span>
+        <span class="n">alt</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">esiduals are conditionally heteroskedastic.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">WaldTestStatistic</span><span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">lags</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="n">null</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="n">alt</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ARCH-LM Test&#39;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ARCHModelResult"><a class="viewcode-back" href="../../../univariate/introduction.html#arch.univariate.base.ARCHModelResult">[docs]</a><span class="k">class</span> <span class="nc">ARCHModelResult</span><span class="p">(</span><span class="n">ARCHModelFixedResult</span><span class="p">):</span>
@@ -1805,7 +1843,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+6.ga1a73a6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

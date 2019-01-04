@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Theoretical Background &#8212; arch 4.7.0+8.g098c236 documentation</title>
+    <title>Utilities &#8212; arch 4.7.0+8.g098c236 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -27,8 +27,8 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Bootstrapping" href="../bootstrap/bootstrap.html" />
-    <link rel="prev" title="Utilities" href="utility.html" />
+    <link rel="next" title="Theoretical Background" href="background.html" />
+    <link rel="prev" title="Distributions" href="distribution.html" />
   
   
    
@@ -46,10 +46,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../bootstrap/bootstrap.html" title="Bootstrapping"
+          <a href="background.html" title="Theoretical Background"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="utility.html" title="Utilities"
+          <a href="distribution.html" title="Distributions"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
@@ -81,8 +81,8 @@
 <li class="toctree-l2"><a class="reference internal" href="volatility.html">Volatility Processes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="univariate_using_fixed_variance.html">Using the Fixed Variance Process</a></li>
 <li class="toctree-l2"><a class="reference internal" href="distribution.html">Distributions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utility.html">Utilities</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Background and References</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../bootstrap/bootstrap.html">Bootstrapping</a></li>
@@ -118,15 +118,63 @@
               
                 <li><a href="univariate.html">Univariate Volatility Models</a></li>
               
-              <li>Theoretical Background</li>
+              <li>Utilities</li>
             </ol>
           </div>
           
           <div class="document clearer body">
             
-  <div class="section" id="theoretical-background">
-<h1>Theoretical Background<a class="headerlink" href="#theoretical-background" title="Permalink to this headline">¶</a></h1>
-<p><em>To be completed</em></p>
+  <div class="section" id="utilities">
+<h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h1>
+<p>Utilities that do not fit well on other pages.</p>
+<span class="target" id="module-arch.utility.testing"></span><div class="section" id="test-results">
+<h2>Test Results<a class="headerlink" href="#test-results" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arch.utility.testing.WaldTestStatistic">
+<em class="property">class </em><code class="descclassname">arch.utility.testing.</code><code class="descname">WaldTestStatistic</code><span class="sig-paren">(</span><em>stat</em>, <em>df</em>, <em>null</em>, <em>alternative</em>, <em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/utility/testing.html#WaldTestStatistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.utility.testing.WaldTestStatistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test statistic holder for Wald-type tests</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – The test statistic</li>
+<li><strong>df</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Degree of freedom.</li>
+<li><strong>null</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – A statement of the test’s null hypothesis</li>
+<li><strong>alternative</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – A statement of the test’s alternative hypothesis</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Name of test</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="arch.utility.testing.WaldTestStatistic.critical_values">
+<code class="descname">critical_values</code><a class="headerlink" href="#arch.utility.testing.WaldTestStatistic.critical_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Critical values test for common test sizes</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.utility.testing.WaldTestStatistic.null">
+<code class="descname">null</code><a class="headerlink" href="#arch.utility.testing.WaldTestStatistic.null" title="Permalink to this definition">¶</a></dt>
+<dd><p>Null hypothesis</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.utility.testing.WaldTestStatistic.pval">
+<code class="descname">pval</code><a class="headerlink" href="#arch.utility.testing.WaldTestStatistic.pval" title="Permalink to this definition">¶</a></dt>
+<dd><p>P-value of test statistic</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arch.utility.testing.WaldTestStatistic.stat">
+<code class="descname">stat</code><a class="headerlink" href="#arch.utility.testing.WaldTestStatistic.stat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test statistic</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -135,11 +183,11 @@
   <div class="footer-relations">
     
       <div class="pull-left">
-        <a class="btn btn-default" href="utility.html" title="previous chapter (use the left arrow)">Utilities</a>
+        <a class="btn btn-default" href="distribution.html" title="previous chapter (use the left arrow)">Distributions</a>
       </div>
     
       <div class="pull-right">
-        <a class="btn btn-default" href="../bootstrap/bootstrap.html" title="next chapter (use the right arrow)">Bootstrapping</a>
+        <a class="btn btn-default" href="background.html" title="next chapter (use the right arrow)">Theoretical Background</a>
       </div>
     </div>
     <div class="clearer"></div>
@@ -157,10 +205,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../bootstrap/bootstrap.html" title="Bootstrapping"
+          <a href="background.html" title="Theoretical Background"
              >next</a> |</li>
         <li class="right" >
-          <a href="utility.html" title="Utilities"
+          <a href="distribution.html" title="Distributions"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
