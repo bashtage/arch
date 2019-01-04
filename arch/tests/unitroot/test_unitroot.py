@@ -433,3 +433,13 @@ def test_mackinnoncrit_errors():
     cv_50 = mackinnoncrit(nobs=50)
     cv_inf = mackinnoncrit()
     assert np.all(cv_50 <= cv_inf)
+
+
+def test_adf_short_timeseries():
+    # GH 262
+    import numpy as np
+    from arch.unitroot import ADF
+    x = np.asarray([0., 0., 0., 0., 0., 0., 1., 1., 0., 0.])
+    adf = ADF(x)
+    assert_almost_equal(adf.stat, -2.236, decimal=3)
+    assert adf.lags == 1
