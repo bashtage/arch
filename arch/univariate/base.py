@@ -1078,12 +1078,20 @@ class ARCHModelFixedResult(_SummaryRepr):
         >>> fig = res.plot(scale=360)
         """
         from matplotlib.pyplot import figure
+
+        def _set_tight_x(axis, index):
+            try:
+                axis.set_xlim(index[0], index[-1])
+            except ValueError:
+                pass
+
         fig = figure()
 
         ax = fig.add_subplot(2, 1, 1)
         ax.plot(self._index, self.resid / self.conditional_volatility)
         ax.set_title('Standardized Residuals')
         ax.axes.xaxis.set_ticklabels([])
+        _set_tight_x(ax, self._index)
 
         ax = fig.add_subplot(2, 1, 2)
         vol = self.conditional_volatility
@@ -1100,6 +1108,7 @@ class ARCHModelFixedResult(_SummaryRepr):
             title = 'Conditional Volatility'
 
         ax.plot(self._index, vol)
+        _set_tight_x(ax, self._index)
         ax.set_title(title)
 
         return fig

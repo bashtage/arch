@@ -6,3 +6,4 @@ git clone --branch=master --depth=10 https://github.com/statsmodels/statsmodels.
 cd statsmodels
 python setup.py install
 cd $GITDIR
+pip install seaborn
