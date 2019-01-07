@@ -7,7 +7,7 @@ import warnings
 from numpy import (abs, arange, argwhere, array, ceil, cumsum, diff, empty,
                    float64, hstack, inf, int32, int64, interp, log, nan, ones,
                    pi, polyval, power, sort, sqrt, squeeze, sum)
-from numpy.linalg import inv, pinv, qr, solve, matrix_rank
+from numpy.linalg import inv, matrix_rank, pinv, qr, solve
 from pandas import DataFrame
 from scipy.stats import norm
 from statsmodels.iolib.summary import Summary

@@ -1,6 +1,7 @@
-from __future__ import division, absolute_import
+from __future__ import absolute_import, division
 
 from collections import OrderedDict
+
 from scipy.stats import chi2
 
 from arch.vendor.cached_property import cached_property

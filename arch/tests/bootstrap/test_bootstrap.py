@@ -12,7 +12,8 @@ import pytest
 import scipy.stats as stats
 
 from arch.bootstrap import (CircularBlockBootstrap, IIDBootstrap,
-                            MovingBlockBootstrap, StationaryBootstrap)
+                            IndependentSamplesBootstrap, MovingBlockBootstrap,
+                            StationaryBootstrap)
 from arch.bootstrap._samplers_python import \
     stationary_bootstrap_sample_python  # noqa
 from arch.bootstrap._samplers_python import stationary_bootstrap_sample
@@ -692,3 +693,88 @@ def test_pass_random_state():
 
     with pytest.raises(TypeError):
         IIDBootstrap(x, random_state=0)
+
+
+def test_iid_unequal_equiv():
+    rs = RandomState(0)
+    x = rs.randn(500)
+    rs1 = RandomState(0)
+    bs1 = IIDBootstrap(x, random_state=rs1)
+
+    rs2 = RandomState(0)
+    bs2 = IndependentSamplesBootstrap(x, random_state=rs2)
+
+    v1 = bs1.var(np.mean)
+    v2 = bs2.var(np.mean)
+    assert_allclose(v1, v2)
+
+
+def test_unequal_bs():
+    def mean_diff(*args):
+        return args[0].mean() - args[1].mean()
+
+    rs = RandomState(0)
+    x = rs.randn(800)
+    y = rs.randn(200)
+
+    bs = IndependentSamplesBootstrap(x, y, random_state=rs)
+    variance = bs.var(mean_diff)
+    assert variance > 0
+    ci = bs.conf_int(mean_diff)
+    assert ci[0] < ci[1]
+    applied = bs.apply(mean_diff, 1000)
+    assert len(applied) == 1000
+
+    x = pd.Series(x)
+    y = pd.Series(y)
+    bs = IndependentSamplesBootstrap(x, y)
+    variance = bs.var(mean_diff)
+    assert variance > 0
+
+
+def test_unequal_bs_kwargs():
+    def mean_diff(x, y):
+        return x.mean() - y.mean()
+
+    rs = RandomState(0)
+    x = rs.randn(800)
+    y = rs.randn(200)
+
+    bs = IndependentSamplesBootstrap(x=x, y=y, random_state=rs)
+    variance = bs.var(mean_diff)
+    assert variance > 0
+    ci = bs.conf_int(mean_diff)
+    assert ci[0] < ci[1]
+    applied = bs.apply(mean_diff, 1000)
+
+    x = pd.Series(x)
+    y = pd.Series(y)
+    bs = IndependentSamplesBootstrap(x=x, y=y, random_state=rs)
+    variance = bs.var(mean_diff)
+    assert variance > 0
+
+    assert len(applied) == 1000
+
+
+def test_unequal_reset():
+    def mean_diff(*args):
+        return args[0].mean() - args[1].mean()
+
+    rs = RandomState(0)
+    x = rs.randn(800)
+    y = rs.randn(200)
+    orig_state = rs.get_state()
+    bs = IndependentSamplesBootstrap(x, y, random_state=rs)
+    variance = bs.var(mean_diff)
+    assert variance > 0
+    bs.reset()
+    state = bs.get_state()
+    assert_equal(state[1], orig_state[1])
+
+    bs = IndependentSamplesBootstrap(x, y)
+    bs.seed(0)
+    orig_state = bs.get_state()
+    bs.var(mean_diff)
+    bs.reset(use_seed=True)
+    state = bs.get_state()
+    assert_equal(state[1], orig_state[1])

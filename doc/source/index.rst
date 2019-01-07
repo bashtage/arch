@@ -14,7 +14,7 @@ Contents
 ========
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 3
 
     Univariate Volatility Models <univariate/univariate>
     Bootstrapping <bootstrap/bootstrap>
@@ -26,8 +26,8 @@ Citation
 ========
 This package should be cited using Zenodo. For example, for the 4.6 release,
 
-.. [*] Kevin Sheppard. (2018, October 3). bashtage/arch: Release 4.6.0 (Version 4.6.0).
-   Zenodo. http://doi.org/10.5281/zenodo.1443315
+.. [*] Kevin Sheppard. (2018, December 13). bashtage/arch: Release 4.7.0 (Version 4.7.0).
+   Zenodo. https://doi.org/10.5281/zenodo.2240590
 
 .. image:: https://zenodo.org/badge/23468876.svg
    :target: https://zenodo.org/badge/latestdoi/23468876

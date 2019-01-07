@@ -11,8 +11,9 @@ from __future__ import absolute_import, division, print_function
 
 import datetime
 
-from ipyparallel import Client
 from numpy import array, nan, percentile, savez
+
+from ipyparallel import Client
 
 from .adf_simulation import adf_simulation
 

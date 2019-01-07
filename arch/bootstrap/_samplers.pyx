@@ -2,6 +2,7 @@
 #cython: language_level=3, boundscheck=False, wraparound=False, cdivision=True
 
 import numpy as np
+
 cimport numpy as np
 cimport cython
 
@@ -34,4 +35,4 @@ def stationary_bootstrap_sample(np.int64_t[:] indices,
             if indices[i] == num_items:
                 indices[i] = 0
 
-    return indices
+    return np.asarray(indices)

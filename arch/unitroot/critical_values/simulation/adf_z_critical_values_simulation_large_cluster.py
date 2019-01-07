@@ -17,8 +17,9 @@ from arch.compat.python import lmap, range
 import datetime
 import time
 
-from ipyparallel import Client
 from numpy import array, nan, percentile, savez
+
+from ipyparallel import Client
 
 from .adf_simulation import adf_simulation
 
