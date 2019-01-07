@@ -9,7 +9,9 @@ env:
     - USE_NUMBA=true
     - STATSMODELS_MASTER=false
     - DOCBUILD=false
+    - PYTEST_PATTERN="(not slow)"
     - secure: "dCvSzHmiqumrvQDQJXaPukd2TEituoUJTRJeBrLfEg0f1ZtAkoEcCudXuissODo1s/e+zClEhn3GRMGZc9QxKI0w8VHWeyMDHjFhyl4wubi35biUpXijYgs6IMqqdIo5oKcnMR6jG8uzuzPGDCpZh49+DgGU5E7rGHBgJ5Tdo8s="
+
 
 matrix:
   fast_finish: true
@@ -51,11 +53,12 @@ matrix:
       - PYTHON=3.6
       - DOCBUILD=true
       - MATPLOTLIB=3
+      - PYTEST_PATTERN="(slow or not slow)"
 
 before_install:
   - git fetch --tags
   - sudo apt-get -y install pandoc
-  - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda3.sh
+  - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda3.sh -nv
   - chmod +x miniconda3.sh
   - ./miniconda3.sh -b
   - export PATH=/home/travis/miniconda3/bin:$PATH
@@ -73,13 +76,13 @@ before_install:
   - PKGS="${PKGS} patsy"; if [[ -n ${PATSY} ]]; then PKGS="${PKGS}=${PATSY}"; fi;
   - PKGS="${PKGS} pandas"; if [[ -n ${PANDAS} ]]; then PKGS="${PKGS}=${PANDAS}"; fi;
   - PKGS="${PKGS} Cython"; if [[ -n ${CYTHON} ]]; then PKGS="${PKGS}=${CYTHON}"; fi;
-  - if [[  -n ${MATPLOTLIB} ]]; then PKGS="${PKGS} matplotlib=${MATPLOTLIB}"; fi;
+  - if [[  -n ${MATPLOTLIB} ]]; then PKGS="${PKGS} matplotlib=${MATPLOTLIB} seaborn"; fi;
   - PKGS="${PKGS} statsmodels"; if [[ -n ${STATSMODELS} ]]; then PKGS="${PKGS}=${STATSMODELS}"; fi;
   - if [[ ${USE_NUMBA} = true ]]; then PKGS="${PKGS} numba"; if [[ -n ${NUMBA} ]]; then PKGS="${PKGS}=${NUMBA}";  fi; fi;
   - echo conda create --yes --quiet -n arch-test ${PKGS}
   - conda create --yes --quiet -n arch-test ${PKGS}
   - source activate arch-test
-  - pip install flake8 nbconvert nbformat pytest coverage coveralls pytest-cov codecov pytest-xdist cached_property
+  - pip install cached_property flake8 "pytest<4.1" pytest-xdist pytest-cov coverage coveralls codecov nbformat nbconvert!=5.4 jupyter_client ipython jupyter -q
   - if [[ "$STATSMODELS_MASTER" == true ]]; then sh ./ci/statsmodels-master.sh; fi;
   - |
     if [[ "$DOCBUILD" == true ]]; then
@@ -101,7 +104,8 @@ install:
 script:
   - set -e
   - python ci/performance.py
-  - pytest -r a ${COVERAGE_OPTS} arch --durations=25
+  - echo pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
+  - pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
   - |
     if [[ "$DOCBUILD" = true ]]; then
       python setup.py install
