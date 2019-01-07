@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>ARCH Modeling &#8212; arch 4.7.0+8.g098c236 documentation</title>
+    <title>ARCH Modeling &#8212; arch 4.7.0+10.gf78f7ce documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="introduction.html" title="Introduction to ARCH Models"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+8)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+10)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -355,19 +355,19 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="section" id="Setup">
 <h2>Setup<a class="headerlink" href="#Setup" title="Permalink to this headline">¶</a></h2>
-<p>These examples will all make use of financial data from Yahoo! Finance imported using <code class="docutils literal notranslate"><span class="pre">pandas-datareader</span></code>.</p>
+<p>These examples will all make use of financial data from Yahoo! Finance. This data set can be loaded from <code class="docutils literal notranslate"><span class="pre">arch.data.sp500</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="kn">as</span> <span class="nn">dt</span>
-<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="kn">as</span> <span class="nn">web</span>
+<span class="kn">import</span> <span class="nn">arch.data.sp500</span>
 <span class="n">st</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1988</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">en</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">get_data_famafrench</span><span class="p">(</span><span class="s1">&#39;F-F_Research_Data_Factors_daily&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">st</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">en</span><span class="p">)</span>
-<span class="n">mkt_returns</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span> <span class="o">+</span>  <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span>
-<span class="n">returns</span> <span class="o">=</span> <span class="n">mkt_returns</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sp500</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">market</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Adj Close&#39;</span><span class="p">]</span>
+<span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">market</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">figure</span> <span class="o">=</span> <span class="n">returns</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -411,35 +411,35 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     41,   Neg. LLF: 9820.63969763662
-Iteration:     10,   Func. Count:     74,   Neg. LLF: 9817.274895653107
+Iteration:      5,   Func. Count:     39,   Neg. LLF: 6942.159596737265
+Iteration:     10,   Func. Count:     72,   Neg. LLF: 6936.718529994181
 Optimization terminated successfully.    (Exit mode 0)
-            Current function value: 9817.274187120329
-            Iterations: 13
-            Function evaluations: 92
-            Gradient evaluations: 13
+            Current function value: 6936.718476989043
+            Iterations: 11
+            Function evaluations: 79
+            Gradient evaluations: 11
                      Constant Mean - GARCH Model Results
 ==============================================================================
-Dep. Variable:                   None   R-squared:                      -0.000
-Mean Model:             Constant Mean   Adj. R-squared:                 -0.000
-Vol Model:                      GARCH   Log-Likelihood:               -9817.27
-Distribution:                  Normal   AIC:                           19642.5
-Method:            Maximum Likelihood   BIC:                           19670.3
-                                        No. Observations:                 7561
-Date:                Thu, Sep 27 2018   Df Residuals:                     7557
-Time:                        15:25:43   Df Model:                            4
+Dep. Variable:              Adj Close   R-squared:                      -0.001
+Mean Model:             Constant Mean   Adj. R-squared:                 -0.001
+Vol Model:                      GARCH   Log-Likelihood:               -6936.72
+Distribution:                  Normal   AIC:                           13881.4
+Method:            Maximum Likelihood   BIC:                           13907.5
+                                        No. Observations:                 5030
+Date:                Sun, Jan 06 2019   Df Residuals:                     5026
+Time:                        18:35:30   Df Model:                            4
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
 ----------------------------------------------------------------------------
-mu             0.0687  9.098e-03      7.555  4.176e-14 [5.091e-02,8.657e-02]
+mu             0.0564  1.149e-02      4.906  9.302e-07 [3.384e-02,7.887e-02]
                               Volatility Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
 ----------------------------------------------------------------------------
-omega          0.0151  4.174e-03      3.622  2.923e-04 [6.937e-03,2.330e-02]
-alpha[1]       0.0836  1.231e-02      6.788  1.138e-11   [5.943e-02,  0.108]
-beta[1]        0.9014  1.436e-02     62.771      0.000     [  0.873,  0.930]
+omega          0.0175  4.683e-03      3.738  1.854e-04 [8.328e-03,2.669e-02]
+alpha[1]       0.1022  1.301e-02      7.852  4.105e-15   [7.665e-02,  0.128]
+beta[1]        0.8852  1.380e-02     64.125      0.000     [  0.858,  0.912]
 ============================================================================
 
 Covariance estimator: robust
@@ -488,27 +488,27 @@ Covariance estimator: robust
 <div class="highlight"><pre>
                    Constant Mean - GJR-GARCH Model Results
 ==============================================================================
-Dep. Variable:                   None   R-squared:                      -0.000
+Dep. Variable:              Adj Close   R-squared:                      -0.000
 Mean Model:             Constant Mean   Adj. R-squared:                 -0.000
-Vol Model:                  GJR-GARCH   Log-Likelihood:               -9713.51
-Distribution:                  Normal   AIC:                           19437.0
-Method:            Maximum Likelihood   BIC:                           19471.7
-                                        No. Observations:                 7561
-Date:                Thu, Sep 27 2018   Df Residuals:                     7556
-Time:                        15:25:43   Df Model:                            5
-                                 Mean Model
-============================================================================
-                 coef    std err          t      P&gt;|t|      95.0% Conf. Int.
-----------------------------------------------------------------------------
-mu             0.0442  8.759e-03      5.051  4.398e-07 [2.707e-02,6.141e-02]
+Vol Model:                  GJR-GARCH   Log-Likelihood:               -6822.88
+Distribution:                  Normal   AIC:                           13655.8
+Method:            Maximum Likelihood   BIC:                           13688.4
+                                        No. Observations:                 5030
+Date:                Sun, Jan 06 2019   Df Residuals:                     5025
+Time:                        18:35:31   Df Model:                            5
+                                  Mean Model
+=============================================================================
+                 coef    std err          t      P&gt;|t|       95.0% Conf. Int.
+-----------------------------------------------------------------------------
+mu             0.0175  1.145e-02      1.529      0.126 [-4.936e-03,3.995e-02]
                                Volatility Model
 =============================================================================
                  coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 -----------------------------------------------------------------------------
-omega          0.0186  4.608e-03      4.044  5.252e-05  [9.603e-03,2.766e-02]
-alpha[1]   5.9351e-03  5.981e-03      0.992      0.321 [-5.788e-03,1.766e-02]
-gamma[1]       0.1355  2.086e-02      6.495  8.291e-11    [9.459e-02,  0.176]
-beta[1]        0.9044  1.464e-02     61.778      0.000      [  0.876,  0.933]
+omega          0.0196  4.051e-03      4.830  1.362e-06  [1.163e-02,2.751e-02]
+alpha[1]       0.0000  1.026e-02      0.000      1.000 [-2.011e-02,2.011e-02]
+gamma[1]       0.1831  2.266e-02      8.079  6.543e-16      [  0.139,  0.227]
+beta[1]        0.8922  1.458e-02     61.200      0.000      [  0.864,  0.921]
 =============================================================================
 
 Covariance estimator: robust
@@ -542,38 +542,37 @@ Covariance estimator: robust
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     54,   Neg. LLF: 9701.46915224492
-Iteration:     10,   Func. Count:     94,   Neg. LLF: 9685.575185675976
-Iteration:     15,   Func. Count:    130,   Neg. LLF: 9683.248100354442
+Iteration:      5,   Func. Count:     49,   Neg. LLF: 6807.734808859357
+Iteration:     10,   Func. Count:     88,   Neg. LLF: 6799.179902576483
 Optimization terminated successfully.    (Exit mode 0)
-            Current function value: 9683.248099008848
-            Iterations: 16
-            Function evaluations: 137
-            Gradient evaluations: 16
+            Current function value: 6799.17852245191
+            Iterations: 14
+            Function evaluations: 116
+            Gradient evaluations: 13
                   Constant Mean - TARCH/ZARCH Model Results
 ==============================================================================
-Dep. Variable:                   None   R-squared:                      -0.000
+Dep. Variable:              Adj Close   R-squared:                      -0.000
 Mean Model:             Constant Mean   Adj. R-squared:                 -0.000
-Vol Model:                TARCH/ZARCH   Log-Likelihood:               -9683.25
-Distribution:                  Normal   AIC:                           19376.5
-Method:            Maximum Likelihood   BIC:                           19411.1
-                                        No. Observations:                 7561
-Date:                Thu, Sep 27 2018   Df Residuals:                     7556
-Time:                        15:25:43   Df Model:                            5
-                                 Mean Model
-============================================================================
-                 coef    std err          t      P&gt;|t|      95.0% Conf. Int.
-----------------------------------------------------------------------------
-mu             0.0386  8.899e-03      4.338  1.437e-05 [2.116e-02,5.604e-02]
-                              Volatility Model
-============================================================================
-                 coef    std err          t      P&gt;|t|      95.0% Conf. Int.
-----------------------------------------------------------------------------
-omega          0.0215  4.333e-03      4.961  6.998e-07 [1.301e-02,2.999e-02]
-alpha[1]       0.0137  6.461e-03      2.114  3.448e-02 [9.980e-04,2.632e-02]
-gamma[1]       0.1195  1.440e-02      8.301  1.031e-16   [9.130e-02,  0.148]
-beta[1]        0.9213  1.010e-02     91.219      0.000     [  0.901,  0.941]
-============================================================================
+Vol Model:                TARCH/ZARCH   Log-Likelihood:               -6799.18
+Distribution:                  Normal   AIC:                           13608.4
+Method:            Maximum Likelihood   BIC:                           13641.0
+                                        No. Observations:                 5030
+Date:                Sun, Jan 06 2019   Df Residuals:                     5025
+Time:                        18:35:31   Df Model:                            5
+                                  Mean Model
+=============================================================================
+                 coef    std err          t      P&gt;|t|       95.0% Conf. Int.
+-----------------------------------------------------------------------------
+mu             0.0143  1.091e-02      1.311      0.190 [-7.080e-03,3.570e-02]
+                               Volatility Model
+=============================================================================
+                 coef    std err          t      P&gt;|t|       95.0% Conf. Int.
+-----------------------------------------------------------------------------
+omega          0.0258  4.100e-03      6.299  2.986e-10  [1.779e-02,3.386e-02]
+alpha[1]   3.0844e-09  9.156e-03  3.369e-07      1.000 [-1.794e-02,1.794e-02]
+gamma[1]       0.1707  1.601e-02     10.664  1.499e-26      [  0.139,  0.202]
+beta[1]        0.9098  9.672e-03     94.066      0.000      [  0.891,  0.929]
+=============================================================================
 
 Covariance estimator: robust
 </pre></div></div>
@@ -599,42 +598,41 @@ Covariance estimator: robust
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     56,   Neg. LLF: 9535.100867863783
-Iteration:     10,   Func. Count:    100,   Neg. LLF: 9506.165300845836
-Iteration:     15,   Func. Count:    140,   Neg. LLF: 9505.38232521017
+Iteration:      5,   Func. Count:     54,   Neg. LLF: 6726.105730454241
+Iteration:     10,   Func. Count:     99,   Neg. LLF: 6722.15350898595
 Optimization terminated successfully.    (Exit mode 0)
-            Current function value: 9505.381447531525
-            Iterations: 17
-            Function evaluations: 156
-            Gradient evaluations: 17
+            Current function value: 6722.151180623825
+            Iterations: 12
+            Function evaluations: 113
+            Gradient evaluations: 11
                      Constant Mean - TARCH/ZARCH Model Results
 ====================================================================================
-Dep. Variable:                         None   R-squared:                      -0.000
+Dep. Variable:                    Adj Close   R-squared:                      -0.000
 Mean Model:                   Constant Mean   Adj. R-squared:                 -0.000
-Vol Model:                      TARCH/ZARCH   Log-Likelihood:               -9505.38
-Distribution:      Standardized Student&#39;s t   AIC:                           19022.8
-Method:                  Maximum Likelihood   BIC:                           19064.3
-                                              No. Observations:                 7561
-Date:                      Thu, Sep 27 2018   Df Residuals:                     7555
-Time:                              15:25:43   Df Model:                            6
+Vol Model:                      TARCH/ZARCH   Log-Likelihood:               -6722.15
+Distribution:      Standardized Student&#39;s t   AIC:                           13456.3
+Method:                  Maximum Likelihood   BIC:                           13495.4
+                                              No. Observations:                 5030
+Date:                      Sun, Jan 06 2019   Df Residuals:                     5024
+Time:                              18:35:31   Df Model:                            6
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
 ----------------------------------------------------------------------------
-mu             0.0593  8.031e-03      7.383  1.553e-13 [4.355e-02,7.503e-02]
+mu             0.0323  3.948e-03      8.170  3.082e-16 [2.452e-02,4.000e-02]
                                Volatility Model
 =============================================================================
                  coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 -----------------------------------------------------------------------------
-omega          0.0153  3.142e-03      4.875  1.087e-06  [9.159e-03,2.148e-02]
-alpha[1]   7.9884e-03  4.902e-03      1.630      0.103 [-1.619e-03,1.760e-02]
-gamma[1]       0.1258  1.335e-02      9.420  4.514e-21    [9.959e-02,  0.152]
-beta[1]        0.9291  8.308e-03    111.830      0.000      [  0.913,  0.945]
+omega          0.0201  3.514e-03      5.710  1.131e-08  [1.318e-02,2.695e-02]
+alpha[1]   6.0368e-15  8.228e-03  7.337e-13      1.000 [-1.613e-02,1.613e-02]
+gamma[1]       0.1721  1.515e-02     11.362  6.460e-30      [  0.142,  0.202]
+beta[1]        0.9139  9.578e-03     95.416      0.000      [  0.895,  0.933]
                               Distribution
 ========================================================================
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
-nu             6.8360      0.575     11.896  1.241e-32 [  5.710,  7.962]
+nu             7.9558      0.882      9.021  1.862e-19 [  6.227,  9.684]
 ========================================================================
 
 Covariance estimator: robust
@@ -662,14 +660,14 @@ Covariance estimator: robust
 <div class="highlight"><pre>
                       Constant Mean - TARCH/ZARCH Model Results
 =====================================================================================
-Dep. Variable:                          None   R-squared:                          --
+Dep. Variable:                     Adj Close   R-squared:                          --
 Mean Model:                    Constant Mean   Adj. R-squared:                     --
-Vol Model:                       TARCH/ZARCH   Log-Likelihood:               -9690.73
-Distribution:       Standardized Student&#39;s t   AIC:                           19393.5
-Method:            User-specified Parameters   BIC:                           19435.1
-                                               No. Observations:                 7561
-Date:                       Thu, Sep 27 2018
-Time:                               15:25:43
+Vol Model:                       TARCH/ZARCH   Log-Likelihood:               -6908.93
+Distribution:       Standardized Student&#39;s t   AIC:                           13829.9
+Method:            User-specified Parameters   BIC:                           13869.0
+                                               No. Observations:                 5030
+Date:                       Sun, Jan 06 2019
+Time:                               18:35:31
       Mean Model
 =====================
                  coef
@@ -691,7 +689,7 @@ nu             8.0000
 =====================
 
 Results generated with user-specified parameters.
-Since the model was not estimated, there are no std. errors.
+Std. errors not available when the model is not estimated,
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -756,7 +754,8 @@ Since the model was not estimated, there are no std. errors.
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">core_cpi</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;CPILFESL&quot;</span><span class="p">,</span> <span class="s2">&quot;fred&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1957</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span></span><span class="kn">import</span> <span class="nn">arch.data.core_cpi</span>
+<span class="n">core_cpi</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">core_cpi</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="n">ann_inflation</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">core_cpi</span><span class="o">.</span><span class="n">CPILFESL</span><span class="o">.</span><span class="n">pct_change</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">ann_inflation</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
@@ -790,25 +789,25 @@ Since the model was not estimated, there are no std. errors.
 ==============================================================================
 Dep. Variable:               CPILFESL   R-squared:                       0.991
 Mean Model:                        AR   Adj. R-squared:                  0.991
-Vol Model:          Constant Variance   Log-Likelihood:               -13.7178
-Distribution:                  Normal   AIC:                           37.4356
-Method:            Maximum Likelihood   BIC:                           59.9043
-                                        No. Observations:                  661
-Date:                Thu, Sep 27 2018   Df Residuals:                      656
-Time:                        15:25:44   Df Model:                            5
+Vol Model:          Constant Variance   Log-Likelihood:                11.2764
+Distribution:                  Normal   AIC:                          -12.5529
+Method:            Maximum Likelihood   BIC:                           10.3364
+                                        No. Observations:                  719
+Date:                Sun, Jan 06 2019   Df Residuals:                      714
+Time:                        18:35:32   Df Model:                            5
                                    Mean Model
 ===============================================================================
                    coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 -------------------------------------------------------------------------------
-Const            0.0424  2.197e-02      1.929  5.372e-02 [-6.781e-04,8.542e-02]
-CPILFESL[1]      1.1927  3.513e-02     33.950 1.229e-252      [  1.124,  1.262]
-CPILFESL[3]     -0.1803  4.123e-02     -4.374  1.218e-05   [ -0.261,-9.954e-02]
-CPILFESL[12]    -0.0235  1.384e-02     -1.695  9.001e-02 [-5.060e-02,3.663e-03]
+Const            0.0402  2.030e-02      1.981  4.762e-02  [4.218e-04,8.001e-02]
+CPILFESL[1]      1.1921  3.475e-02     34.306 6.315e-258      [  1.124,  1.260]
+CPILFESL[3]     -0.1798  4.076e-02     -4.411  1.030e-05   [ -0.260,-9.989e-02]
+CPILFESL[12]    -0.0232  1.370e-02     -1.692  9.058e-02 [-5.002e-02,3.666e-03]
                               Volatility Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
 ----------------------------------------------------------------------------
-sigma2         0.0610  6.992e-03      8.728  2.590e-18 [4.733e-02,7.474e-02]
+sigma2         0.0567  6.449e-03      8.799  1.381e-18 [4.410e-02,6.938e-02]
 ============================================================================
 
 Covariance estimator: White&#39;s Heteroskedasticity Consistent Estimator
@@ -839,30 +838,30 @@ Covariance estimator: White&#39;s Heteroskedasticity Consistent Estimator
 ==============================================================================
 Dep. Variable:               CPILFESL   R-squared:                       0.991
 Mean Model:                        AR   Adj. R-squared:                  0.991
-Vol Model:                       ARCH   Log-Likelihood:                83.8447
-Distribution:                  Normal   AIC:                          -147.689
-Method:            Maximum Likelihood   BIC:                          -102.752
-                                        No. Observations:                  661
-Date:                Thu, Sep 27 2018   Df Residuals:                      651
-Time:                        15:25:44   Df Model:                           10
+Vol Model:                       ARCH   Log-Likelihood:                136.522
+Distribution:                  Normal   AIC:                          -253.044
+Method:            Maximum Likelihood   BIC:                          -207.265
+                                        No. Observations:                  719
+Date:                Sun, Jan 06 2019   Df Residuals:                      709
+Time:                        18:35:32   Df Model:                           10
                                    Mean Model
 ===============================================================================
                    coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 -------------------------------------------------------------------------------
-Const            0.0268  2.207e-02      1.212      0.225 [-1.651e-02,7.002e-02]
-CPILFESL[1]      1.0854  3.840e-02     28.266 9.157e-176      [  1.010,  1.161]
-CPILFESL[3]     -0.0755  4.148e-02     -1.821  6.854e-02    [ -0.157,5.747e-03]
-CPILFESL[12]    -0.0210  1.195e-02     -1.761  7.829e-02 [-4.446e-02,2.381e-03]
+Const            0.0285  1.883e-02      1.513      0.130 [-8.411e-03,6.541e-02]
+CPILFESL[1]      1.0860  3.534e-02     30.725 2.609e-207      [  1.017,  1.155]
+CPILFESL[3]     -0.0788  3.855e-02     -2.045  4.084e-02   [ -0.154,-3.283e-03]
+CPILFESL[12]    -0.0189  1.157e-02     -1.630      0.103 [-4.154e-02,3.822e-03]
                               Volatility Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
 ----------------------------------------------------------------------------
-omega      9.9111e-03  2.195e-03      4.515  6.342e-06 [5.608e-03,1.421e-02]
-alpha[1]       0.1291  4.090e-02      3.157  1.594e-03   [4.895e-02,  0.209]
-alpha[2]       0.2279  6.468e-02      3.524  4.258e-04     [  0.101,  0.355]
-alpha[3]       0.1698  7.121e-02      2.385  1.709e-02   [3.026e-02,  0.309]
-alpha[4]       0.2643  8.318e-02      3.177  1.489e-03     [  0.101,  0.427]
-alpha[5]       0.1686  7.426e-02      2.271  2.316e-02   [2.309e-02,  0.314]
+omega      7.6869e-03  1.602e-03      4.799  1.591e-06 [4.548e-03,1.083e-02]
+alpha[1]       0.1345  4.003e-02      3.359  7.826e-04   [5.600e-02,  0.213]
+alpha[2]       0.2280  6.284e-02      3.628  2.860e-04     [  0.105,  0.351]
+alpha[3]       0.1838  6.801e-02      2.702  6.894e-03   [5.047e-02,  0.317]
+alpha[4]       0.2538  7.826e-02      3.242  1.185e-03     [  0.100,  0.407]
+alpha[5]       0.1954  7.092e-02      2.756  5.856e-03   [5.643e-02,  0.334]
 ============================================================================
 
 Covariance estimator: robust
@@ -911,35 +910,35 @@ Covariance estimator: robust
 ====================================================================================
 Dep. Variable:                     CPILFESL   R-squared:                       0.991
 Mean Model:                              AR   Adj. R-squared:                  0.991
-Vol Model:                             ARCH   Log-Likelihood:                89.4699
-Distribution:      Standardized Student&#39;s t   AIC:                          -156.940
-Method:                  Maximum Likelihood   BIC:                          -107.509
-                                              No. Observations:                  661
-Date:                      Thu, Sep 27 2018   Df Residuals:                      650
-Time:                              15:25:44   Df Model:                           11
+Vol Model:                             ARCH   Log-Likelihood:                142.863
+Distribution:      Standardized Student&#39;s t   AIC:                          -263.727
+Method:                  Maximum Likelihood   BIC:                          -213.370
+                                              No. Observations:                  719
+Date:                      Sun, Jan 06 2019   Df Residuals:                      708
+Time:                              18:35:32   Df Model:                           11
                                    Mean Model
 ===============================================================================
                    coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 -------------------------------------------------------------------------------
-Const            0.0281  2.252e-02      1.249      0.212 [-1.600e-02,7.227e-02]
-CPILFESL[1]      1.0851  3.920e-02     27.683 1.134e-168      [  1.008,  1.162]
-CPILFESL[3]     -0.0697  4.277e-02     -1.629      0.103    [ -0.154,1.416e-02]
-CPILFESL[12]    -0.0266  1.525e-02     -1.742  8.157e-02 [-5.643e-02,3.328e-03]
+Const            0.0312  1.861e-02      1.678  9.342e-02 [-5.254e-03,6.769e-02]
+CPILFESL[1]      1.0843  3.525e-02     30.762 8.340e-208      [  1.015,  1.153]
+CPILFESL[3]     -0.0730  3.873e-02     -1.885  5.945e-02    [ -0.149,2.910e-03]
+CPILFESL[12]    -0.0236  1.316e-02     -1.791  7.330e-02 [-4.935e-02,2.224e-03]
                               Volatility Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
 ----------------------------------------------------------------------------
-omega          0.0117  3.142e-03      3.710  2.071e-04 [5.499e-03,1.782e-02]
-alpha[1]       0.1669  5.233e-02      3.189  1.426e-03   [6.433e-02,  0.269]
-alpha[2]       0.2185  6.648e-02      3.287  1.012e-03   [8.823e-02,  0.349]
-alpha[3]       0.1370  6.928e-02      1.977  4.805e-02   [1.178e-03,  0.273]
-alpha[4]       0.2186  7.738e-02      2.825  4.734e-03   [6.691e-02,  0.370]
-alpha[5]       0.1596  8.579e-02      1.861  6.275e-02  [-8.496e-03,  0.328]
+omega      8.7359e-03  2.063e-03      4.235  2.283e-05 [4.693e-03,1.278e-02]
+alpha[1]       0.1715  5.064e-02      3.386  7.086e-04   [7.222e-02,  0.271]
+alpha[2]       0.2202  6.394e-02      3.444  5.742e-04   [9.486e-02,  0.345]
+alpha[3]       0.1547  6.327e-02      2.445  1.447e-02   [3.071e-02,  0.279]
+alpha[4]       0.2117  7.287e-02      2.905  3.675e-03   [6.885e-02,  0.355]
+alpha[5]       0.1959  7.852e-02      2.494  1.262e-02   [4.197e-02,  0.350]
                               Distribution
 ========================================================================
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
-nu             9.1012      3.834      2.374  1.759e-02 [  1.588, 16.615]
+nu             9.0444      3.365      2.688  7.193e-03 [  2.449, 15.640]
 ========================================================================
 
 Covariance estimator: robust
@@ -954,8 +953,9 @@ Covariance estimator: robust
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-<span class="n">crude</span><span class="o">=</span><span class="n">web</span><span class="o">.</span><span class="n">get_data_fred</span><span class="p">(</span><span class="s1">&#39;DCOILWTICO&#39;</span><span class="p">,</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="n">crude_ret</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">crude</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="kn">import</span> <span class="nn">arch.data.wti</span>
+<span class="n">crude</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">wti</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">crude_ret</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">crude</span><span class="o">.</span><span class="n">DCOILWTICO</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">res_normal</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
 <span class="n">res_t</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
 <span class="n">res_skewt</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">&#39;skewt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
@@ -975,17 +975,17 @@ Covariance estimator: robust
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-normal   -8227.359031
-t        -8128.534732
-skewt    -8126.303934
+normal   -18165.858870
+t        -17919.643916
+skewt    -17916.669052
 dtype: float64
             normal         t     skewt
-alpha[1]  0.054488  0.046069  0.045908
-beta[1]   0.940953  0.949954  0.950364
-lambda         NaN       NaN -0.048593
-mu        0.065643  0.076392  0.057599
-nu             NaN  6.841504  6.889653
-omega     0.034733  0.026497  0.025239
+alpha[1]  0.085627  0.064980  0.064889
+beta[1]   0.909098  0.927950  0.928215
+lambda         NaN       NaN -0.036986
+mu        0.046682  0.056438  0.040928
+nu             NaN  6.178652  6.186604
+omega     0.055806  0.048516  0.047683
 </pre></div></div>
 </div>
 <p>The standardized residuals can be computed by dividing the residuals by the conditional volatility. These are plotted along with the (unstandardized, but scaled) residuals. The non-standardized residuals are more peaked in the center indicating that the distribution is somewhat more heavy tailed than that of the standardized residuals.</p>
@@ -1046,7 +1046,7 @@ omega     0.034733  0.026497  0.025239
         <li class="right" >
           <a href="introduction.html" title="Introduction to ARCH Models"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

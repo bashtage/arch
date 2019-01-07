@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Bootstrap Examples &#8212; arch 4.7.0+8.g098c236 documentation</title>
+    <title>Bootstrap Examples &#8212; arch 4.7.0+10.gf78f7ce documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="bootstrap.html" title="Bootstrapping"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" accesskey="U">Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+8)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+10)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -342,7 +342,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="section" id="Sharpe-Ratio">
 <h2>Sharpe Ratio<a class="headerlink" href="#Sharpe-Ratio" title="Permalink to this headline">¶</a></h2>
-<p>The Sharpe Ratio is an important measure of return per unit of risk. The example shows how to estimate the variance of the Sharpe Ratio and how to construct confidence intervals for the Sharpe Ratio using a long series of U.S. equity data. First, the data is imported using pandas.</p>
+<p>The Sharpe Ratio is an important measure of return per unit of risk. The example shows how to estimate the variance of the Sharpe Ratio and how to construct confidence intervals for the Sharpe Ratio using a long series of U.S. equity data.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -350,13 +350,9 @@ div.rendered_html tbody tr:hover {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="kn">as</span> <span class="nn">web</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">ff</span><span class="o">=</span><span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;F-F_Research_Data_Factors&#39;</span><span class="p">,</span> <span class="s1">&#39;famafrench&#39;</span><span class="p">)</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="n">ff</span><span class="o">=</span><span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;F-F_Research_Data_Factors_TXT&#39;</span><span class="p">,</span> <span class="s1">&#39;famafrench&#39;</span><span class="p">)</span>
-<span class="n">ff</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="kn">import</span> <span class="nn">arch.data.frenchdata</span>
 
+<span class="n">ff</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frenchdata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -376,15 +372,15 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-           Mkt-RF         SMB         HML          RF
-count  103.000000  103.000000  103.000000  103.000000
-mean     1.139806    0.107379   -0.131068    0.020680
-std      3.542553    2.273547    2.162328    0.037397
-min     -7.890000   -4.370000   -4.500000    0.000000
-25%     -0.985000   -1.720000   -1.530000    0.000000
-50%      1.180000    0.320000   -0.290000    0.010000
-75%      3.155000    1.230000    1.015000    0.020000
-max     11.350000    5.490000    8.270000    0.160000
+            Mkt-RF          SMB          HML           RF
+count  1109.000000  1109.000000  1109.000000  1109.000000
+mean      0.659946     0.206555     0.368864     0.274220
+std       5.327524     3.191132     3.482352     0.253377
+min     -29.130000   -16.870000   -13.280000    -0.060000
+25%      -1.970000    -1.560000    -1.320000     0.030000
+50%       1.020000     0.070000     0.140000     0.230000
+75%       3.610000     1.730000     1.740000     0.430000
+max      38.850000    36.700000    35.460000     1.350000
 </pre></div></div>
 </div>
 <p>The next step is to construct a function that computes the Sharpe Ratio. This function also return the annualized mean and annualized standard deviation which will allow the covariance matrix of these parameters to be estimated using the bootstrap.</p>
@@ -418,9 +414,9 @@ max     11.350000    5.490000    8.270000    0.160000
 </pre></div>
 </div>
 <div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>mu       13.677670
-sigma    12.271762
-SR        1.114564
+<span></span>mu        7.919351
+sigma    18.455084
+SR        0.429115
 dtype: float64
 </pre></div>
 </div>
@@ -470,14 +466,14 @@ dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
              mu     sigma        SR
-mu     6.799678 -1.070593  0.673616
-sigma -1.070593  1.785856 -0.264456
-SR     0.673616 -0.264456  0.083816
+mu     4.184270 -0.656202  0.241363
+sigma -0.656202  3.419632 -0.115155
+SR     0.241363 -0.115155  0.015927
 
 
-mu       2.607619
-sigma    1.336359
-SR       0.289510
+mu       2.045549
+sigma    1.849225
+SR       0.126203
 Name: Std Errors, dtype: float64
 </pre></div></div>
 </div>
@@ -498,8 +494,8 @@ Name: Std Errors, dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
               mu      sigma        SR
-Lower   8.300243  10.087436  0.472338
-Upper  18.961893  14.968219  1.600511
+Lower   4.151897  14.863379  0.176354
+Upper  11.906546  21.536175  0.650400
 </pre></div></div>
 </div>
 <p>Alternative confidence intervals can be computed using a variety of methods. Setting <code class="docutils literal notranslate"><span class="pre">reuse=True</span></code> allows the previous bootstrap results to be used when constructing confidence intervals using alternative methods.</p>
@@ -520,8 +516,8 @@ Upper  18.961893  14.968219  1.600511
 <div class="output_area docutils container">
 <div class="highlight"><pre>
               mu      sigma        SR
-Lower   8.393447   9.575305  0.628618
-Upper  19.055097  14.456088  1.756791
+Lower   3.932156  15.373992  0.207830
+Upper  11.686804  22.046788  0.681875
 </pre></div></div>
 </div>
 </div>
@@ -534,17 +530,8 @@ Upper  19.055097  14.456088  1.756791
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">urllib2</span>
-    <span class="kn">import</span> <span class="nn">StringIO</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">urllib.request</span> <span class="kn">as</span> <span class="nn">urllib2</span>
-    <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
-
-<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://stats.idre.ucla.edu/stat/stata/dae/binary.dta&#39;</span>
-<span class="n">binary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_stata</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span></span><span class="kn">import</span>  <span class="nn">arch.data.binary</span>
+<span class="n">binary</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">binary</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="n">binary</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="k">print</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
 </pre></div>
@@ -557,8 +544,8 @@ Upper  19.055097  14.456088  1.756791
 <div class="highlight"><pre>
             admit         gre         gpa       rank
 count  400.000000  400.000000  400.000000  400.00000
-mean     0.317500  587.700012    3.389900    2.48500
-std      0.466087  115.516541    0.380567    0.94446
+mean     0.317500  587.700000    3.389900    2.48500
+std      0.466087  115.516536    0.380567    0.94446
 min      0.000000  220.000000    2.260000    1.00000
 25%      0.000000  520.000000    3.130000    2.00000
 50%      0.000000  580.000000    3.395000    2.00000
@@ -655,9 +642,9 @@ dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
           Const           gre       gpa
-Const  0.450423 -8.740087e-05 -0.114939
-gre   -0.000087  4.328506e-07 -0.000050
-gpa   -0.114939 -5.012678e-05  0.042329
+Const  0.413324 -7.744736e-05 -0.106408
+gre   -0.000077  4.193731e-07 -0.000050
+gpa   -0.106408 -5.002967e-05  0.039866
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -677,14 +664,14 @@ gpa   -0.114939 -5.012678e-05  0.042329
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Const    0.671135
-gre      0.000658
-gpa      0.205740
+Const    0.642903
+gre      0.000648
+gpa      0.199666
 dtype: float64
 T-stats
-Const   -4.475306
-gre      2.496583
-gpa      2.209460
+Const   -4.671835
+gre      2.536383
+gpa      2.276681
 dtype: float64
 </pre></div></div>
 </div>
@@ -705,8 +692,8 @@ dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
           Const       gre       gpa
-Lower -4.205996  0.000348  0.044685
-Upper -1.641689  0.003006  0.829251
+Lower -4.133344  0.000375  0.077522
+Upper -1.788764  0.002871  0.803992
 </pre></div></div>
 </div>
 </div>
@@ -741,9 +728,9 @@ Upper -1.641689  0.003006  0.829251
 <div class="output_area docutils container">
 <div class="highlight"><pre>
           Const           gre       gpa
-Const  0.450423 -8.740087e-05 -0.114939
-gre   -0.000087  4.328506e-07 -0.000050
-gpa   -0.114939 -5.012678e-05  0.042329
+Const  0.413324 -7.744736e-05 -0.106408
+gre   -0.000077  4.193731e-07 -0.000050
+gpa   -0.106408 -5.002967e-05  0.039866
 </pre></div></div>
 </div>
 </div>
@@ -783,7 +770,7 @@ gpa   -0.114939 -5.012678e-05  0.042329
         <li class="right" >
           <a href="bootstrap.html" title="Bootstrapping"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" >Bootstrapping</a> &#187;</li> 
       </ul>
     </div>

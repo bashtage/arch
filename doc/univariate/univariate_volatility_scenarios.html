@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Volatilty Scenarios &#8212; arch 4.7.0+8.g098c236 documentation</title>
+    <title>Volatilty Scenarios &#8212; arch 4.7.0+10.gf78f7ce documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+8)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+10)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -341,7 +341,6 @@ uniformly sampled from the entire history.</p>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">seaborn</span>
-<span class="kn">import</span> <span class="nn">pandas_datareader</span> <span class="kn">as</span> <span class="nn">pdr</span>
 <span class="n">seaborn</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s1">&#39;darkgrid&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -364,7 +363,9 @@ uniformly sampled from the entire history.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">nasdaq</span> <span class="o">=</span> <span class="n">pdr</span><span class="o">.</span><span class="n">fred</span><span class="o">.</span><span class="n">FredReader</span><span class="p">(</span><span class="s1">&#39;NASDAQCOM&#39;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1-1-2000&#39;</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="s1">&#39;1-1-2018&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span></span><span class="kn">import</span> <span class="nn">arch.data.nasdaq</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">nasdaq</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">nasdaq</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Adj Close&#39;</span><span class="p">]</span>
 <span class="k">print</span><span class="p">(</span><span class="n">nasdaq</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 </div>
@@ -374,13 +375,13 @@ uniformly sampled from the entire history.</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-            NASDAQCOM
-DATE
-2000-01-03    4131.15
-2000-01-04    3901.69
-2000-01-05    3877.54
-2000-01-06    3727.13
-2000-01-07    3882.62
+Date
+1999-01-04    2208.050049
+1999-01-05    2251.270020
+1999-01-06    2320.860107
+1999-01-07    2326.090088
+1999-01-08    2344.409912
+Name: Adj Close, dtype: float64
 </pre></div></div>
 </div>
 <p>Next, the returns are computed and the model is constructed. The model is constructed from the building blocks. It is a standard model and could have been (almost) equivalently constructed using</p>
@@ -423,31 +424,31 @@ DATE
 <div class="output_area highlight-none notranslate"><div class="highlight"><pre>
 <span></span>                   Constant Mean - GJR-GARCH Model Results
 ==============================================================================
-Dep. Variable:              NASDAQCOM   R-squared:                      -0.000
+Dep. Variable:              Adj Close   R-squared:                      -0.000
 Mean Model:             Constant Mean   Adj. R-squared:                 -0.000
-Vol Model:                  GJR-GARCH   Log-Likelihood:               -7472.03
-Distribution:                  Normal   AIC:                           14954.1
-Method:            Maximum Likelihood   BIC:                           14986.3
-                                        No. Observations:                 4695
-Date:                Thu, Sep 27 2018   Df Residuals:                     4690
-Time:                        15:26:52   Df Model:                            5
+Vol Model:                  GJR-GARCH   Log-Likelihood:               -8196.75
+Distribution:                  Normal   AIC:                           16403.5
+Method:            Maximum Likelihood   BIC:                           16436.1
+                                        No. Observations:                 5030
+Date:                Mon, Jan 07 2019   Df Residuals:                     5025
+Time:                        11:12:39   Df Model:                            5
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
 ----------------------------------------------------------------------------
-mu             0.0297  1.491e-02      1.992  4.643e-02 [4.704e-04,5.893e-02]
+mu             0.0376  1.476e-02      2.549  1.081e-02 [8.693e-03,6.656e-02]
                                Volatility Model
 =============================================================================
                  coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 -----------------------------------------------------------------------------
-omega          0.0169  4.601e-03      3.670  2.424e-04  [7.868e-03,2.590e-02]
-alpha[1]       0.0000  7.140e-03      0.000      1.000 [-1.399e-02,1.399e-02]
-gamma[1]       0.1265  1.744e-02      7.251  4.137e-13    [9.228e-02,  0.161]
-beta[1]        0.9256  1.244e-02     74.415      0.000      [  0.901,  0.950]
+omega          0.0214  5.001e-03      4.281  1.861e-05  [1.161e-02,3.121e-02]
+alpha[1]       0.0152  8.442e-03      1.802  7.148e-02 [-1.330e-03,3.176e-02]
+gamma[1]       0.1265  2.024e-02      6.250  4.109e-10    [8.684e-02,  0.166]
+beta[1]        0.9100  1.107e-02     82.232      0.000      [  0.888,  0.932]
 =============================================================================
 
 Covariance estimator: robust
-ARCHModelResult, id: 0x1b05cb127f0
+ARCHModelResult, id: 0x2a8cedf18d0
 </pre></div>
 </div>
 </div>
@@ -468,20 +469,20 @@ ARCHModelResult, id: 0x1b05cb127f0
 <div class="output_area docutils container">
 <div class="highlight"><pre>
                 h.01      h.02      h.03      h.04      h.05      h.06  \
-DATE
-2017-01-02  0.580045  0.590476  0.600792  0.610993  0.621080  0.631055
-2017-01-03  0.553798  0.564522  0.575126  0.585613  0.595982  0.606237
-2017-01-04  0.529503  0.540497  0.551369  0.562120  0.572751  0.583264
-2017-01-05  0.507015  0.518259  0.529378  0.540374  0.551247  0.561999
-2017-01-06  0.486199  0.497675  0.509023  0.520245  0.531342  0.542315
+Date
+2017-01-03  0.623295  0.637504  0.651549  0.665431  0.679154  0.692717
+2017-01-04  0.599455  0.613940  0.628257  0.642408  0.656397  0.670223
+2017-01-05  0.567297  0.582153  0.596837  0.611352  0.625699  0.639880
+2017-01-06  0.542506  0.557649  0.572616  0.587410  0.602034  0.616488
+2017-01-09  0.515452  0.530906  0.546183  0.561282  0.576208  0.590961
 
                 h.07      h.08      h.09      h.10
-DATE
-2017-01-02  0.640919  0.650674  0.660320  0.669858
-2017-01-03  0.616377  0.626404  0.636320  0.646126
-2017-01-04  0.593659  0.603940  0.614105  0.624158
-2017-01-05  0.572631  0.583145  0.593542  0.603824
-2017-01-06  0.553167  0.563897  0.574509  0.585002
+Date
+2017-01-03  0.706124  0.719376  0.732475  0.745423
+2017-01-04  0.683890  0.697399  0.710752  0.723950
+2017-01-05  0.653897  0.667753  0.681448  0.694985
+2017-01-06  0.630776  0.644899  0.658858  0.672656
+2017-01-09  0.605543  0.619957  0.634205  0.648288
 </pre></div></div>
 </div>
 <p>All GARCH specification are complete models in the sense that they specify a distribution. This allows simulations to be produced using the assumptions in the model. The <code class="docutils literal notranslate"><span class="pre">forecast</span></code> function can be made to produce simulations using the assumed distribution by setting <code class="docutils literal notranslate"><span class="pre">method='simulation'</span></code>.</p>
@@ -502,20 +503,20 @@ DATE
 <div class="output_area docutils container">
 <div class="highlight"><pre>
                 h.01      h.02      h.03      h.04      h.05      h.06  \
-DATE
-2017-01-02  0.580045  0.590403  0.598096  0.609930  0.616253  0.626874
-2017-01-03  0.553798  0.567418  0.581017  0.591527  0.598513  0.603279
-2017-01-04  0.529503  0.541442  0.552064  0.563919  0.569974  0.580534
-2017-01-05  0.507015  0.516400  0.526907  0.538021  0.545443  0.554512
-2017-01-06  0.486199  0.495461  0.505577  0.518608  0.534521  0.545152
+Date
+2017-01-03  0.623295  0.637251  0.647817  0.663746  0.673404  0.687952
+2017-01-04  0.599455  0.617539  0.635838  0.649695  0.659733  0.667267
+2017-01-05  0.567297  0.583415  0.597571  0.613065  0.621790  0.636180
+2017-01-06  0.542506  0.555688  0.570280  0.585426  0.595551  0.608487
+2017-01-09  0.515452  0.528771  0.542658  0.559684  0.580434  0.594855
 
                 h.07      h.08      h.09      h.10
-DATE
-2017-01-02  0.633377  0.640617  0.647898  0.656073
-2017-01-03  0.618454  0.627658  0.633192  0.641493
-2017-01-04  0.590986  0.600379  0.612958  0.622361
-2017-01-05  0.561961  0.576138  0.587727  0.593812
-2017-01-06  0.552813  0.565625  0.574218  0.588634
+Date
+2017-01-03  0.697221  0.707707  0.717701  0.729465
+2017-01-04  0.686503  0.699708  0.707203  0.718560
+2017-01-05  0.650287  0.663344  0.679835  0.692300
+2017-01-06  0.619195  0.638180  0.653185  0.661366
+2017-01-09  0.605136  0.621835  0.634091  0.653222
 </pre></div></div>
 </div>
 <div class="section" id="Custom-Random-Generators">
@@ -546,20 +547,20 @@ DATE
 <div class="output_area docutils container">
 <div class="highlight"><pre>
                 h.01      h.02      h.03      h.04      h.05      h.06  \
-DATE
-2017-01-02  0.580045  0.627008  0.670593  0.726040  0.770887  0.827587
-2017-01-03  0.553798  0.605332  0.660221  0.709851  0.755653  0.794870
-2017-01-04  0.529503  0.575869  0.622036  0.672072  0.712424  0.767144
-2017-01-05  0.507015  0.546602  0.590346  0.637349  0.677891  0.727246
-2017-01-06  0.486199  0.523992  0.564631  0.615177  0.677983  0.728223
+Date
+2017-01-03  0.623295  0.685911  0.745202  0.821112  0.886289  0.966737
+2017-01-04  0.599455  0.668181  0.743119  0.811486  0.877539  0.936587
+2017-01-05  0.567297  0.629195  0.691225  0.758891  0.816663  0.893986
+2017-01-06  0.542506  0.596301  0.656603  0.721505  0.778286  0.849680
+2017-01-09  0.515452  0.567086  0.622224  0.689831  0.775048  0.845656
 
                 h.07      h.08      h.09      h.10
-DATE
-2017-01-02  0.830443  0.835040  0.839207  0.846161
-2017-01-03  0.809932  0.816872  0.818132  0.823916
-2017-01-04  0.776076  0.782297  0.794378  0.800691
-2017-01-05  0.731660  0.744623  0.754475  0.757505
-2017-01-06  0.732785  0.743466  0.750469  0.764813
+Date
+2017-01-03  0.970796  0.977504  0.982202  0.992547
+2017-01-04  0.955295  0.965540  0.966432  0.974248
+2017-01-05  0.905952  0.915208  0.930777  0.938636
+2017-01-06  0.856175  0.873866  0.886221  0.890002
+2017-01-09  0.851104  0.864591  0.874696  0.894397
 </pre></div></div>
 </div>
 </div>
@@ -598,20 +599,20 @@ parameter.</p>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
                 h.01      h.02      h.03      h.04      h.05      h.06  \
-DATE
-2017-01-02  0.580045  0.627731  0.671806  0.710768  0.768906  0.808972
-2017-01-03  0.553798  0.601034  0.643942  0.686704  0.733541  0.783090
-2017-01-04  0.529503  0.573559  0.615961  0.660616  0.704348  0.755170
-2017-01-05  0.507015  0.551867  0.598752  0.643247  0.681701  0.727702
-2017-01-06  0.486199  0.520973  0.557449  0.602373  0.648293  0.701349
+Date
+2017-01-03  0.623295  0.676081  0.734322  0.779325  0.828189  0.898202
+2017-01-04  0.599455  0.645237  0.697133  0.750169  0.816280  0.888417
+2017-01-05  0.567297  0.610493  0.665995  0.722954  0.777860  0.840369
+2017-01-06  0.542506  0.597387  0.644534  0.691387  0.741206  0.783319
+2017-01-09  0.515452  0.561312  0.611026  0.647824  0.700559  0.757398
 
                 h.07      h.08      h.09      h.10
-DATE
-2017-01-02  0.872246  0.916471  0.973876  1.038470
-2017-01-03  0.822505  0.876280  0.930863  0.984509
-2017-01-04  0.819018  0.870309  0.931131  0.988081
-2017-01-05  0.780660  0.833911  0.883571  0.947947
-2017-01-06  0.762154  0.814151  0.863550  0.909780
+Date
+2017-01-03  0.958215  1.043704  1.124684  1.203893
+2017-01-04  0.945120  1.013400  1.084043  1.158148
+2017-01-05  0.889032  0.961424  1.022413  1.097192
+2017-01-06  0.840667  0.895559  0.957266  1.019497
+2017-01-09  0.820788  0.887791  0.938708  1.028614
 </pre></div></div>
 </div>
 </div>
@@ -666,21 +667,23 @@ DATE
 <span class="n">sim_paths</span> <span class="o">=</span> <span class="n">sim_forecasts</span><span class="o">.</span><span class="n">simulations</span><span class="o">.</span><span class="n">residual_variances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
 <span class="n">bs_paths</span> <span class="o">=</span> <span class="n">bs_forecasts</span><span class="o">.</span><span class="n">simulations</span><span class="o">.</span><span class="n">residual_variances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
 
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
 <span class="c1"># Plot the paths and the mean, set the axis to have the same limit</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">sim_paths</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">sim_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">sim_paths</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">sim_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
              <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Model-based Simulation&#39;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
 
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">bs_paths</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">bs_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">bs_paths</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span> <span class="o">*</span> <span class="n">bs_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
              <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
 <span class="n">title</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Bootstrap Scenario&#39;</span><span class="p">)</span>
-
 </pre></div>
 </div>
 </div>
@@ -703,9 +706,9 @@ DATE
 <span></span><span class="n">analytic</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">bs</span> <span class="o">=</span> <span class="n">bs_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">vol</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">[</span><span class="s1">&#39;2017-1-1&#39;</span><span class="p">:</span><span class="s1">&#39;2018-1-1&#39;</span><span class="p">]</span>
+<span class="n">vol</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">[</span><span class="s1">&#39;2017-1-1&#39;</span><span class="p">:</span><span class="s1">&#39;2019-1-1&#39;</span><span class="p">]</span>
 <span class="n">idx</span> <span class="o">=</span> <span class="n">vol</span><span class="o">.</span><span class="n">index</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">)</span> <span class="o">*</span> <span class="n">vol</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">)</span> <span class="o">*</span> <span class="n">vol</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">vol</span><span class="p">),</span> <span class="mi">22</span><span class="p">):</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">analytic</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
@@ -718,6 +721,7 @@ DATE
 <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Annualized Vol.&#39;</span><span class="p">,</span> <span class="s1">&#39;Analytic Forecast&#39;</span><span class="p">,</span>
           <span class="s1">&#39;Bootstrap Scenario Forecast&#39;</span><span class="p">]</span>
 <span class="n">legend</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">xlim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">vol</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">vol</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -764,7 +768,7 @@ DATE
         <li class="right" >
           <a href="univariate_volatility_forecasting.html" title="Volatility Forecasting"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

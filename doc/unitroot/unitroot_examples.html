@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Unit Root Testing &#8212; arch 4.7.0+8.g098c236 documentation</title>
+    <title>Unit Root Testing &#8212; arch 4.7.0+10.gf78f7ce documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="introduction.html" title="Introduction"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="unitroot.html" accesskey="U">Unit Root Testing</a> &#187;</li> 
       </ul>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+8)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+10)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -355,11 +355,11 @@ div.rendered_html tbody tr:hover {
 <span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="kn">as</span> <span class="nn">dt</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="kn">as</span> <span class="nn">sm</span>
-<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="kn">as</span> <span class="nn">web</span>
-<span class="n">aaa</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;AAA&quot;</span><span class="p">,</span> <span class="s2">&quot;fred&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1919</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
-<span class="n">baa</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;BAA&quot;</span><span class="p">,</span> <span class="s2">&quot;fred&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1919</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
-<span class="n">baa</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">aaa</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]</span>
-<span class="n">default</span> <span class="o">=</span> <span class="n">baa</span> <span class="o">-</span> <span class="n">aaa</span>
+<span class="kn">import</span> <span class="nn">arch.data.default</span>
+<span class="n">default_data</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">default</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">default</span> <span class="o">=</span> <span class="n">default_data</span><span class="o">.</span><span class="n">BAA</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">default</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
+<span class="n">default</span> <span class="o">=</span> <span class="n">default</span> <span class="o">-</span> <span class="n">default_data</span><span class="o">.</span><span class="n">AAA</span><span class="o">.</span><span class="n">values</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">default</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -413,8 +413,8 @@ div.rendered_html tbody tr:hover {
 <div class="highlight"><pre>
    Augmented Dickey-Fuller Results
 =====================================
-Test Statistic                 -3.241
-P-value                         0.018
+Test Statistic                 -3.356
+P-value                         0.013
 Lags                               21
 -------------------------------------
 
@@ -445,8 +445,8 @@ Alternative Hypothesis: The process is weakly stationary.
 <div class="highlight"><pre>
    Augmented Dickey-Fuller Results
 =====================================
-Test Statistic                 -3.427
-P-value                         0.010
+Test Statistic                 -3.582
+P-value                         0.006
 Lags                                5
 -------------------------------------
 
@@ -484,8 +484,8 @@ Alternative Hypothesis: The process is weakly stationary.
 <div class="highlight"><pre>
    Augmented Dickey-Fuller Results
 =====================================
-Test Statistic                 -3.661
-P-value                         0.025
+Test Statistic                 -3.786
+P-value                         0.017
 Lags                                5
 -------------------------------------
 
@@ -518,34 +518,34 @@ Alternative Hypothesis: The process is weakly stationary.
 ==============================================================================
 Dep. Variable:                      y   R-squared:                       0.095
 Model:                            OLS   Adj. R-squared:                  0.090
-Method:                 Least Squares   F-statistic:                     17.00
-Date:                Thu, 27 Sep 2018   Prob (F-statistic):           1.84e-21
-Time:                        15:31:57   Log-Likelihood:                 575.20
-No. Observations:                1135   AIC:                            -1134.
-Df Residuals:                    1127   BIC:                            -1094.
+Method:                 Least Squares   F-statistic:                     17.83
+Date:                Sun, 06 Jan 2019   Prob (F-statistic):           1.30e-22
+Time:                        18:26:47   Log-Likelihood:                 630.15
+No. Observations:                1194   AIC:                            -1244.
+Df Residuals:                    1186   BIC:                            -1204.
 Df Model:                           7
 Covariance Type:            nonrobust
 ==============================================================================
                  coef    std err          t      P&gt;|t|      [0.025      0.975]
 ------------------------------------------------------------------------------
-Level.L1      -0.0246      0.007     -3.661      0.000      -0.038      -0.011
-Diff.L1        0.2190      0.030      7.344      0.000       0.160       0.277
-Diff.L2       -0.0549      0.030     -1.802      0.072      -0.115       0.005
-Diff.L3       -0.1398      0.030     -4.649      0.000      -0.199      -0.081
-Diff.L4       -0.0519      0.030     -1.716      0.086      -0.111       0.007
-Diff.L5        0.0426      0.030      1.431      0.153      -0.016       0.101
-const          0.0389      0.014      2.796      0.005       0.012       0.066
-trend      -1.817e-05   1.41e-05     -1.285      0.199   -4.59e-05    9.58e-06
+Level.L1      -0.0248      0.007     -3.786      0.000      -0.038      -0.012
+Diff.L1        0.2229      0.029      7.669      0.000       0.166       0.280
+Diff.L2       -0.0525      0.030     -1.769      0.077      -0.111       0.006
+Diff.L3       -0.1363      0.029     -4.642      0.000      -0.194      -0.079
+Diff.L4       -0.0510      0.030     -1.727      0.084      -0.109       0.007
+Diff.L5        0.0440      0.029      1.516      0.130      -0.013       0.101
+const          0.0383      0.013      2.858      0.004       0.012       0.065
+trend      -1.586e-05   1.29e-05     -1.230      0.219   -4.11e-05    9.43e-06
 ==============================================================================
-Omnibus:                      623.301   Durbin-Watson:                   2.001
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):           128496.439
-Skew:                          -1.393   Prob(JB):                         0.00
-Kurtosis:                      55.051   Cond. No.                     5.30e+03
+Omnibus:                      665.553   Durbin-Watson:                   2.000
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):           146083.295
+Skew:                          -1.425   Prob(JB):                         0.00
+Kurtosis:                      57.113   Cond. No.                     5.70e+03
 ==============================================================================
 
 Warnings:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The condition number is large, 5.3e+03. This might indicate that there are
+[2] The condition number is large, 5.7e+03. This might indicate that there are
 strong multicollinearity or other numerical problems.
 </pre></div></div>
 </div>
@@ -612,8 +612,8 @@ strong multicollinearity or other numerical problems.
 <div class="highlight"><pre>
       Dickey-Fuller GLS Results
 =====================================
-Test Statistic                 -2.252
-P-value                         0.024
+Test Statistic                 -2.322
+P-value                         0.020
 Lags                               21
 -------------------------------------
 
@@ -641,8 +641,8 @@ Alternative Hypothesis: The process is weakly stationary.
 <div class="highlight"><pre>
       Dickey-Fuller GLS Results
 =====================================
-Test Statistic                 -3.406
-P-value                         0.010
+Test Statistic                 -3.464
+P-value                         0.009
 Lags                               21
 -------------------------------------
 
@@ -675,8 +675,8 @@ Alternative Hypothesis: The process is weakly stationary.
 <div class="highlight"><pre>
      Phillips-Perron Test (Z-tau)
 =====================================
-Test Statistic                 -3.761
-P-value                         0.003
+Test Statistic                 -3.898
+P-value                         0.002
 Lags                               23
 -------------------------------------
 
@@ -704,8 +704,8 @@ Alternative Hypothesis: The process is weakly stationary.
 <div class="highlight"><pre>
      Phillips-Perron Test (Z-tau)
 =====================================
-Test Statistic                 -3.876
-P-value                         0.002
+Test Statistic                 -4.024
+P-value                         0.001
 Lags                               12
 -------------------------------------
 
@@ -733,8 +733,8 @@ Alternative Hypothesis: The process is weakly stationary.
 <div class="highlight"><pre>
      Phillips-Perron Test (Z-tau)
 =====================================
-Test Statistic                 -4.142
-P-value                         0.005
+Test Statistic                 -4.262
+P-value                         0.004
 Lags                               12
 -------------------------------------
 
@@ -762,13 +762,13 @@ Alternative Hypothesis: The process is weakly stationary.
 <div class="highlight"><pre>
      Phillips-Perron Test (Z-rho)
 =====================================
-Test Statistic                -33.974
+Test Statistic                -36.114
 P-value                         0.000
 Lags                               12
 -------------------------------------
 
 Trend: Constant and Linear Time Trend
-Critical Values: -29.15 (1%), -21.60 (5%), -18.16 (10%)
+Critical Values: -29.16 (1%), -21.60 (5%), -18.17 (10%)
 Null Hypothesis: The process contains a unit root.
 Alternative Hypothesis: The process is weakly stationary.
 </pre></div></div>
@@ -796,7 +796,7 @@ Alternative Hypothesis: The process is weakly stationary.
 <div class="highlight"><pre>
     KPSS Stationarity Test Results
 =====================================
-Test Statistic                  0.941
+Test Statistic                  0.976
 P-value                         0.003
 Lags                               23
 -------------------------------------
@@ -825,8 +825,8 @@ Alternative Hypothesis: The process contains a unit root.
 <div class="highlight"><pre>
     KPSS Stationarity Test Results
 =====================================
-Test Statistic                  0.361
-P-value                         0.000
+Test Statistic                  0.354
+P-value                         0.001
 Lags                               23
 -------------------------------------
 
@@ -847,12 +847,8 @@ Alternative Hypothesis: The process contains a unit root.
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">pandas_datareader</span> <span class="kn">as</span> <span class="nn">web</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">ff</span><span class="o">=</span><span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;F-F_Research_Data_Factors&#39;</span><span class="p">,</span> <span class="s1">&#39;famafrench&#39;</span><span class="p">)</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="n">ff</span><span class="o">=</span><span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;F-F_Research_Data_Factors_TXT&#39;</span><span class="p">,</span> <span class="s1">&#39;famafrench&#39;</span><span class="p">)</span>
-<span class="n">ff</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="kn">import</span> <span class="nn">arch.data.frenchdata</span>
+<span class="n">ff</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frenchdata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="n">excess_market</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Excess Market</span>
 <span class="k">print</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
 </pre></div>
@@ -863,15 +859,15 @@ Alternative Hypothesis: The process contains a unit root.
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-           Mkt-RF         SMB         HML          RF
-count  103.000000  103.000000  103.000000  103.000000
-mean     1.139806    0.107379   -0.131068    0.020680
-std      3.542553    2.273547    2.162328    0.037397
-min     -7.890000   -4.370000   -4.500000    0.000000
-25%     -0.985000   -1.720000   -1.530000    0.000000
-50%      1.180000    0.320000   -0.290000    0.010000
-75%      3.155000    1.230000    1.015000    0.020000
-max     11.350000    5.490000    8.270000    0.160000
+            Mkt-RF          SMB          HML           RF
+count  1109.000000  1109.000000  1109.000000  1109.000000
+mean      0.659946     0.206555     0.368864     0.274220
+std       5.327524     3.191132     3.482352     0.253377
+min     -29.130000   -16.870000   -13.280000    -0.060000
+25%      -1.970000    -1.560000    -1.320000     0.030000
+50%       1.020000     0.070000     0.140000     0.230000
+75%       3.610000     1.730000     1.740000     0.430000
+max      38.850000    36.700000    35.460000     1.350000
 </pre></div></div>
 </div>
 <p>The variance ratio compares the variance of a 1-period return to that of a multi-period return. The comparison length has to be set when initializing the test.</p>
@@ -894,7 +890,7 @@ max     11.350000    5.490000    8.270000    0.160000
 <div class="highlight"><pre>
      Variance-Ratio Test Results
 =====================================
-Test Statistic                 -4.555
+Test Statistic                -10.057
 P-value                         0.000
 Lags                               12
 -------------------------------------
@@ -922,8 +918,8 @@ Computed with overlapping blocks (de-biased)
 <div class="highlight"><pre>
      Variance-Ratio Test Results
 =====================================
-Test Statistic                 -1.944
-P-value                         0.052
+Test Statistic                 -6.206
+P-value                         0.000
 Lags                               12
 -------------------------------------
 
@@ -935,9 +931,9 @@ Computed with non-overlapping blocks
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-c:\git\arch\arch\unitroot\unitroot.py:1228: InvalidLengthWarning:
+c:\git\arch\arch\unitroot\unitroot.py:1248: InvalidLengthWarning:
 The length of y is not an exact multiple of 12, and so the final
-6 observations have been dropped.
+4 observations have been dropped.
 
   InvalidLengthWarning)
 </pre></div></div>
@@ -979,7 +975,7 @@ The length of y is not an exact multiple of 12, and so the final
         <li class="right" >
           <a href="introduction.html" title="Introduction"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="unitroot.html" >Unit Root Testing</a> &#187;</li> 
       </ul>
     </div>

@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Using the Fixed Variance process &#8212; arch 4.7.0+8.g098c236 documentation</title>
+    <title>Using the Fixed Variance process &#8212; arch 4.7.0+10.gf78f7ce documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="volatility.html" title="Volatility Processes"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+8)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+10)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -364,21 +364,21 @@ div.rendered_html tbody tr:hover {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="kn">as</span> <span class="nn">dt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pandas_datareader</span> <span class="kn">import</span> <span class="n">data</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="Data">
 <h3>Data<a class="headerlink" href="#Data" title="Permalink to this headline">¶</a></h3>
-<p>The VIX index will be used to illustrate the use of the <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> process. The data is read using <code class="docutils literal notranslate"><span class="pre">pandas-datareader</span></code>.</p>
+<p>The VIX index will be used to illustrate the use of the <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> process. The data is from FRED and is provided by the <code class="docutils literal notranslate"><span class="pre">arch</span></code> package.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">dr</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">FredReader</span><span class="p">(</span><span class="s1">&#39;VIXCLS&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">))</span>
-<span class="n">vix_data</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">vix</span> <span class="o">=</span> <span class="n">vix_data</span><span class="o">.</span><span class="n">VIXCLS</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span></span><span class="kn">import</span> <span class="nn">arch.data.vix</span>
+
+<span class="n">vix_data</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">vix</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">vix</span> <span class="o">=</span> <span class="n">vix_data</span><span class="o">.</span><span class="n">vix</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">vix</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;VIX Index&#39;</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">vix</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;VIX Index&#39;</span><span class="p">)</span>
 </pre></div>
@@ -415,27 +415,27 @@ div.rendered_html tbody tr:hover {
 <div class="highlight"><pre>
                     HAR - Constant Variance Model Results
 ==============================================================================
-Dep. Variable:              VIX Index   R-squared:                       0.965
-Mean Model:                       HAR   Adj. R-squared:                  0.965
-Vol Model:          Constant Variance   Log-Likelihood:               -8600.27
-Distribution:                  Normal   AIC:                           17210.5
-Method:            Maximum Likelihood   BIC:                           17242.6
-                                        No. Observations:                 4506
-Date:                Thu, Sep 27 2018   Df Residuals:                     4501
-Time:                        15:27:49   Df Model:                            5
-                                    Mean Model
-==================================================================================
-                      coef    std err          t      P&gt;|t|       95.0% Conf. Int.
-----------------------------------------------------------------------------------
-Const               0.2202      0.112      1.959  5.013e-02   [-1.208e-04,  0.440]
-VIX Index[0:1]      0.8418  4.112e-02     20.473  3.722e-93      [  0.761,  0.922]
-VIX Index[0:5]      0.1150  4.780e-02      2.407  1.610e-02    [2.135e-02,  0.209]
-VIX Index[0:22]     0.0319  2.484e-02      1.283      0.199 [-1.681e-02,8.058e-02]
+Dep. Variable:              VIX Index   R-squared:                       0.876
+Mean Model:                       HAR   Adj. R-squared:                  0.876
+Vol Model:          Constant Variance   Log-Likelihood:               -2267.95
+Distribution:                  Normal   AIC:                           4545.90
+Method:            Maximum Likelihood   BIC:                           4571.50
+                                        No. Observations:                 1237
+Date:                Sun, Jan 06 2019   Df Residuals:                     1232
+Time:                        18:17:10   Df Model:                            5
+                                   Mean Model
+================================================================================
+                      coef    std err          t      P&gt;|t|     95.0% Conf. Int.
+--------------------------------------------------------------------------------
+Const               0.6335      0.189      3.359  7.831e-04    [  0.264,  1.003]
+VIX Index[0:1]      0.9287  6.589e-02     14.095  4.056e-45    [  0.800,  1.058]
+VIX Index[0:5]     -0.0318  6.449e-02     -0.492      0.622  [ -0.158,9.463e-02]
+VIX Index[0:22]     0.0612  3.180e-02      1.926  5.409e-02 [-1.076e-03,  0.124]
                             Volatility Model
 ========================================================================
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
-sigma2         2.6628      0.176     15.110  1.396e-51 [  2.317,  3.008]
+sigma2         2.2910      0.396      5.782  7.361e-09 [  1.514,  3.068]
 ========================================================================
 
 Covariance estimator: White&#39;s Heteroskedasticity Consistent Estimator
@@ -465,22 +465,22 @@ Covariance estimator: White&#39;s Heteroskedasticity Consistent Estimator
                      Zero Mean - GJR-GARCH Model Results
 ==============================================================================
 Dep. Variable:                  resid   R-squared:                       0.000
-Mean Model:                 Zero Mean   Adj. R-squared:                  0.000
-Vol Model:                  GJR-GARCH   Log-Likelihood:               -7167.57
-Distribution:                  Normal   AIC:                           14343.1
-Method:            Maximum Likelihood   BIC:                           14368.8
-                                        No. Observations:                 4506
-Date:                Thu, Sep 27 2018   Df Residuals:                     4502
-Time:                        15:27:49   Df Model:                            4
-                             Volatility Model
-==========================================================================
-                 coef    std err          t      P&gt;|t|    95.0% Conf. Int.
---------------------------------------------------------------------------
-omega          0.0738  1.683e-02      4.382  1.174e-05 [4.077e-02,  0.107]
-alpha[1]       0.2680  3.863e-02      6.937  4.004e-12   [  0.192,  0.344]
-gamma[1]      -0.2680  3.575e-02     -7.496  6.599e-14   [ -0.338, -0.198]
-beta[1]        0.8234  2.399e-02     34.318 4.173e-258   [  0.776,  0.870]
-==========================================================================
+Mean Model:                 Zero Mean   Adj. R-squared:                  0.001
+Vol Model:                  GJR-GARCH   Log-Likelihood:               -1936.93
+Distribution:                  Normal   AIC:                           3881.86
+Method:            Maximum Likelihood   BIC:                           3902.35
+                                        No. Observations:                 1237
+Date:                Sun, Jan 06 2019   Df Residuals:                     1233
+Time:                        18:17:10   Df Model:                            4
+                              Volatility Model
+===========================================================================
+                 coef    std err          t      P&gt;|t|     95.0% Conf. Int.
+---------------------------------------------------------------------------
+omega          0.2355  9.134e-02      2.578  9.932e-03  [5.647e-02,  0.415]
+alpha[1]       0.7217      0.374      1.931  5.353e-02 [-1.098e-02,  1.454]
+gamma[1]      -0.7217      0.252     -2.859  4.255e-03    [ -1.217, -0.227]
+beta[1]        0.5789      0.184      3.140  1.692e-03    [  0.218,  0.940]
+===========================================================================
 
 Covariance estimator: robust
 </pre></div></div>
@@ -517,41 +517,42 @@ Covariance estimator: robust
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      1,   Func. Count:      7,   Neg. LLF: 7167.56600290707
-Iteration:      2,   Func. Count:     21,   Neg. LLF: 7167.542807019507
-Iteration:      3,   Func. Count:     32,   Neg. LLF: 7164.798624995907
-Iteration:      4,   Func. Count:     43,   Neg. LLF: 7162.605127839062
-Iteration:      5,   Func. Count:     53,   Neg. LLF: 7162.600913736296
-Iteration:      6,   Func. Count:     63,   Neg. LLF: 7162.600864075792
-Iteration:      7,   Func. Count:     70,   Neg. LLF: 7162.600859729137
+Iteration:      1,   Func. Count:      7,   Neg. LLF: 1936.9320776132129
+Iteration:      2,   Func. Count:     20,   Neg. LLF: 1936.2884244078432
+Iteration:      3,   Func. Count:     30,   Neg. LLF: 1936.173303940313
+Iteration:      4,   Func. Count:     39,   Neg. LLF: 1936.1217869245936
+Iteration:      5,   Func. Count:     48,   Neg. LLF: 1936.066653561499
+Iteration:      6,   Func. Count:     58,   Neg. LLF: 1936.063430293817
+Iteration:      7,   Func. Count:     65,   Neg. LLF: 1935.9527544039636
+Iteration:      8,   Func. Count:     72,   Neg. LLF: 1935.9470521933054
 Optimization terminated successfully.    (Exit mode 0)
-            Current function value: 7162.6008597291375
-            Iterations: 7
-            Function evaluations: 70
-            Gradient evaluations: 7
+            Current function value: 1935.947051582333
+            Iterations: 8
+            Function evaluations: 73
+            Gradient evaluations: 8
                       HAR - Fixed Variance Model Results
 ==============================================================================
-Dep. Variable:              VIX Index   R-squared:                       0.965
-Mean Model:                       HAR   Adj. R-squared:                  0.965
-Vol Model:             Fixed Variance   Log-Likelihood:               -7162.60
-Distribution:                  Normal   AIC:                           14335.2
-Method:            Maximum Likelihood   BIC:                           14367.3
-                                        No. Observations:                 4506
-Date:                Thu, Sep 27 2018   Df Residuals:                     4501
-Time:                        15:27:49   Df Model:                            5
+Dep. Variable:              VIX Index   R-squared:                       0.876
+Mean Model:                       HAR   Adj. R-squared:                  0.876
+Vol Model:             Fixed Variance   Log-Likelihood:               -1935.95
+Distribution:                  Normal   AIC:                           3881.89
+Method:            Maximum Likelihood   BIC:                           3907.50
+                                        No. Observations:                 1237
+Date:                Sun, Jan 06 2019   Df Residuals:                     1232
+Time:                        18:17:10   Df Model:                            5
                                     Mean Model
-=================================================================================
-                      coef    std err          t      P&gt;|t|      95.0% Conf. Int.
----------------------------------------------------------------------------------
-Const               0.2256  5.095e-02      4.427  9.560e-06     [  0.126,  0.325]
-VIX Index[0:1]      0.8969  1.780e-02     50.383      0.000     [  0.862,  0.932]
-VIX Index[0:5]      0.0570  2.204e-02      2.587  9.681e-03   [1.382e-02,  0.100]
-VIX Index[0:22]     0.0347  1.201e-02      2.891  3.836e-03 [1.119e-02,5.826e-02]
+==================================================================================
+                      coef    std err          t      P&gt;|t|       95.0% Conf. Int.
+----------------------------------------------------------------------------------
+Const               0.5584      0.153      3.661  2.507e-04      [  0.260,  0.857]
+VIX Index[0:1]      0.9376  3.625e-02     25.866 1.607e-147      [  0.867,  1.009]
+VIX Index[0:5]     -0.0249  3.782e-02     -0.657      0.511 [-9.899e-02,4.926e-02]
+VIX Index[0:22]     0.0493  2.102e-02      2.344  1.909e-02  [8.064e-03,9.044e-02]
                             Volatility Model
 ========================================================================
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
-scale          0.9978  4.106e-02     24.299 2.020e-130 [  0.917,  1.078]
+scale          0.9986  8.081e-02     12.358  4.420e-35 [  0.840,  1.157]
 ========================================================================
 
 Covariance estimator: robust
@@ -590,22 +591,22 @@ Covariance estimator: robust
 4
                     HAR - Fixed Variance (Unit Scale) Model Results
 =======================================================================================
-Dep. Variable:                       VIX Index   R-squared:                       0.965
-Mean Model:                                HAR   Adj. R-squared:                  0.965
-Vol Model:         Fixed Variance (Unit Scale)   Log-Likelihood:               -7165.87
-Distribution:                           Normal   AIC:                           14339.7
-Method:                     Maximum Likelihood   BIC:                           14365.4
-                                                 No. Observations:                 4506
-Date:                         Thu, Sep 27 2018   Df Residuals:                     4502
-Time:                                 15:27:50   Df Model:                            4
+Dep. Variable:                       VIX Index   R-squared:                       0.876
+Mean Model:                                HAR   Adj. R-squared:                  0.876
+Vol Model:         Fixed Variance (Unit Scale)   Log-Likelihood:               -1935.74
+Distribution:                           Normal   AIC:                           3879.48
+Method:                     Maximum Likelihood   BIC:                           3899.96
+                                                 No. Observations:                 1237
+Date:                         Sun, Jan 06 2019   Df Residuals:                     1233
+Time:                                 18:17:10   Df Model:                            4
                                     Mean Model
 =================================================================================
                       coef    std err          t      P&gt;|t|      95.0% Conf. Int.
 ---------------------------------------------------------------------------------
-Const               0.2237  5.102e-02      4.385  1.159e-05     [  0.124,  0.324]
-VIX Index[0:1]      0.8971  1.781e-02     50.362      0.000     [  0.862,  0.932]
-VIX Index[0:5]      0.0567  2.206e-02      2.571  1.015e-02 [1.348e-02,9.995e-02]
-VIX Index[0:22]     0.0349  1.203e-02      2.901  3.720e-03 [1.132e-02,5.849e-02]
+Const               0.5602      0.152      3.681  2.323e-04     [  0.262,  0.858]
+VIX Index[0:1]      0.9381  3.616e-02     25.940 2.388e-148     [  0.867,  1.009]
+VIX Index[0:5]     -0.0262  3.774e-02     -0.693      0.488   [ -0.100,4.781e-02]
+VIX Index[0:22]     0.0499  2.099e-02      2.380  1.733e-02 [8.810e-03,9.109e-02]
 =================================================================================
 
 Covariance estimator: robust
@@ -633,31 +634,31 @@ Covariance estimator: robust
 <div class="highlight"><pre>
                         HAR - GJR-GARCH Model Results
 ==============================================================================
-Dep. Variable:              VIX Index   R-squared:                       0.965
-Mean Model:                       HAR   Adj. R-squared:                  0.965
-Vol Model:                  GJR-GARCH   Log-Likelihood:               -7159.40
-Distribution:                  Normal   AIC:                           14334.8
-Method:            Maximum Likelihood   BIC:                           14386.1
-                                        No. Observations:                 4506
-Date:                Thu, Sep 27 2018   Df Residuals:                     4498
-Time:                        15:27:50   Df Model:                            8
-                                    Mean Model
-=================================================================================
-                      coef    std err          t      P&gt;|t|      95.0% Conf. Int.
----------------------------------------------------------------------------------
-Const               0.3235  9.679e-02      3.342  8.313e-04     [  0.134,  0.513]
-VIX Index[0:1]      0.8709  1.993e-02     43.693      0.000     [  0.832,  0.910]
-VIX Index[0:5]      0.0753  2.353e-02      3.201  1.370e-03   [2.920e-02,  0.121]
-VIX Index[0:22]     0.0348  1.733e-02      2.009  4.449e-02 [8.581e-04,6.879e-02]
-                             Volatility Model
-==========================================================================
-                 coef    std err          t      P&gt;|t|    95.0% Conf. Int.
---------------------------------------------------------------------------
-omega          0.0779  1.888e-02      4.128  3.662e-05 [4.093e-02,  0.115]
-alpha[1]       0.2672  4.465e-02      5.985  2.164e-09   [  0.180,  0.355]
-gamma[1]      -0.2672  4.949e-02     -5.400  6.664e-08   [ -0.364, -0.170]
-beta[1]        0.8149  3.654e-02     22.300 3.713e-110   [  0.743,  0.886]
-==========================================================================
+Dep. Variable:              VIX Index   R-squared:                       0.876
+Mean Model:                       HAR   Adj. R-squared:                  0.875
+Vol Model:                  GJR-GARCH   Log-Likelihood:               -1932.61
+Distribution:                  Normal   AIC:                           3881.23
+Method:            Maximum Likelihood   BIC:                           3922.19
+                                        No. Observations:                 1237
+Date:                Sun, Jan 06 2019   Df Residuals:                     1229
+Time:                        18:17:10   Df Model:                            8
+                                   Mean Model
+================================================================================
+                      coef    std err          t      P&gt;|t|     95.0% Conf. Int.
+--------------------------------------------------------------------------------
+Const               0.7796      1.190      0.655      0.513    [ -1.554,  3.113]
+VIX Index[0:1]      0.9180      0.291      3.156  1.597e-03    [  0.348,  1.488]
+VIX Index[0:5]     -0.0393      0.296     -0.133      0.894    [ -0.620,  0.541]
+VIX Index[0:22]     0.0632  6.353e-02      0.994      0.320 [-6.136e-02,  0.188]
+                            Volatility Model
+========================================================================
+                 coef    std err          t      P&gt;|t|  95.0% Conf. Int.
+------------------------------------------------------------------------
+omega          0.2357      0.250      0.944      0.345 [ -0.254,  0.725]
+alpha[1]       0.7091      1.069      0.664      0.507 [ -1.386,  2.804]
+gamma[1]      -0.7091      0.519     -1.367      0.172 [ -1.726,  0.308]
+beta[1]        0.5579      0.855      0.653      0.514 [ -1.117,  2.233]
+========================================================================
 
 Covariance estimator: robust
 </pre></div></div>
@@ -699,7 +700,7 @@ Covariance estimator: robust
         <li class="right" >
           <a href="volatility.html" title="Volatility Processes"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

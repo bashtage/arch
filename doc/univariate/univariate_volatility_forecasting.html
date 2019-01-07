@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Volatility Forecasting &#8212; arch 4.7.0+8.g098c236 documentation</title>
+    <title>Volatility Forecasting &#8212; arch 4.7.0+10.gf78f7ce documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="forecasting.html" title="Forecasting"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+8)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+10)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -355,7 +355,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="section" id="Data">
 <h2>Data<a class="headerlink" href="#Data" title="Permalink to this headline">¶</a></h2>
-<p>These examples make use of S&amp;P 500 data from Yahoo! using the pandas-datareader package to manage data download.</p>
+<p>These examples make use of S&amp;P 500 data from Yahoo! that is available from <code class="docutils literal notranslate"><span class="pre">arch.data.sp500</span></code>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
@@ -366,15 +366,14 @@ div.rendered_html tbody tr:hover {
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="kn">as</span> <span class="nn">web</span>
-
+<span class="kn">import</span> <span class="nn">arch.data.sp500</span>
 <span class="kn">from</span> <span class="nn">arch</span> <span class="kn">import</span> <span class="n">arch_model</span>
 
 <span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">get_data_famafrench</span><span class="p">(</span><span class="s1">&#39;F-F_Research_Data_Factors_daily&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
-<span class="n">mkt_returns</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span> <span class="o">+</span>  <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span>
-<span class="n">returns</span> <span class="o">=</span> <span class="n">mkt_returns</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sp500</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">market</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Adj Close&#39;</span><span class="p">]</span>
+<span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">market</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -404,12 +403,12 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     39,   Neg. LLF: 6130.463290480577
-Iteration:     10,   Func. Count:     71,   Neg. LLF: 6128.47317714312
+Iteration:      5,   Func. Count:     39,   Neg. LLF: 6942.159596737265
+Iteration:     10,   Func. Count:     72,   Neg. LLF: 6936.718529994181
 Optimization terminated successfully.    (Exit mode 0)
-            Current function value: 6128.473168195432
+            Current function value: 6936.718476989043
             Iterations: 11
-            Function evaluations: 77
+            Function evaluations: 79
             Gradient evaluations: 11
 </pre></div></div>
 </div>
@@ -449,19 +448,19 @@ Optimization terminated successfully.    (Exit mode 0)
 <div class="highlight"><pre>
                  h.1
 Date
-2016-12-28       NaN
-2016-12-29       NaN
-2016-12-30  0.061285
-                 h.1
+2018-12-27       NaN
+2018-12-28       NaN
+2018-12-31  0.056353
+                h.1
 Date
-2016-12-28       NaN
-2016-12-29       NaN
-2016-12-30  0.400956
-                 h.1
+2018-12-27      NaN
+2018-12-28      NaN
+2018-12-31  3.59647
+                h.1
 Date
-2016-12-28       NaN
-2016-12-29       NaN
-2016-12-30  0.400956
+2018-12-27      NaN
+2018-12-28      NaN
+2018-12-31  3.59647
 </pre></div></div>
 </div>
 <p>Longer horizon forecasts can be computed by passing the parameter <code class="docutils literal notranslate"><span class="pre">horizon</span></code>.</p>
@@ -480,11 +479,11 @@ Date
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-                 h.1       h.2       h.3       h.4       h.5
+                h.1       h.2       h.3       h.4     h.5
 Date
-2016-12-28       NaN       NaN       NaN       NaN       NaN
-2016-12-29       NaN       NaN       NaN       NaN       NaN
-2016-12-30  0.400956  0.416563  0.431896  0.446961  0.461762
+2018-12-27      NaN       NaN       NaN       NaN     NaN
+2018-12-28      NaN       NaN       NaN       NaN     NaN
+2018-12-31  3.59647  3.568502  3.540887  3.513621  3.4867
 </pre></div></div>
 </div>
 <p>Values that are not computed are <code class="docutils literal notranslate"><span class="pre">nan</span></code>-filled.</p>
@@ -511,20 +510,20 @@ Date
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     38,   Neg. LLF: 4204.91956121224
-Iteration:     10,   Func. Count:     72,   Neg. LLF: 4202.815024845146
+Iteration:      5,   Func. Count:     38,   Neg. LLF: 4559.84602040562
+Iteration:     10,   Func. Count:     72,   Neg. LLF: 4555.383725179201
 Optimization terminated successfully.    (Exit mode 0)
-            Current function value: 4202.812110685669
-            Iterations: 12
-            Function evaluations: 84
-            Gradient evaluations: 12
+            Current function value: 4555.285110045353
+            Iterations: 14
+            Function evaluations: 97
+            Gradient evaluations: 14
                  h.1       h.2       h.3       h.4       h.5
 Date
-2010-12-31  0.365727  0.376462  0.387106  0.397660  0.408124
-2011-01-03  0.451526  0.461532  0.471453  0.481290  0.491043
-2011-01-04  0.432131  0.442302  0.452387  0.462386  0.472300
-2011-01-05  0.430051  0.440239  0.450341  0.460358  0.470289
-2011-01-06  0.407841  0.418219  0.428508  0.438710  0.448825
+2010-12-31  0.381757  0.390905  0.399988  0.409008  0.417964
+2011-01-03  0.451724  0.460381  0.468976  0.477512  0.485987
+2011-01-04  0.428416  0.437236  0.445994  0.454691  0.463326
+2011-01-05  0.420554  0.429429  0.438242  0.446993  0.455683
+2011-01-06  0.402483  0.411486  0.420425  0.429301  0.438115
 </pre></div></div>
 </div>
 </div>
@@ -559,26 +558,26 @@ Date
 <div class="highlight"><pre>
 ....................
                  h.1       h.2       h.3
-2009-12-31  0.598199  0.605960  0.613661
-2010-01-04  0.771974  0.778431  0.784837
-2010-01-05  0.724185  0.731008  0.737781
-2010-01-06  0.674237  0.681423  0.688555
-2010-01-07  0.637534  0.644995  0.652399
-2010-01-08  0.601684  0.609451  0.617161
-2010-01-11  0.562393  0.570450  0.578447
-2010-01-12  0.613401  0.621098  0.628738
-2010-01-13  0.623059  0.630676  0.638236
-2010-01-14  0.584403  0.592291  0.600119
-2010-01-15  0.654097  0.661483  0.668813
-2010-01-19  0.725471  0.732355  0.739187
-2010-01-20  0.758532  0.765176  0.771770
-2010-01-21  0.958742  0.964005  0.969229
-2010-01-22  1.272999  1.276121  1.279220
-2010-01-25  1.182257  1.186084  1.189883
-2010-01-26  1.110357  1.114637  1.118885
-2010-01-27  1.044077  1.048777  1.053442
-2010-01-28  1.085489  1.089873  1.094223
-2010-01-29  1.088349  1.092875  1.097367
+2009-12-31  0.615314  0.621743  0.628133
+2010-01-04  0.751747  0.757343  0.762905
+2010-01-05  0.710453  0.716315  0.722142
+2010-01-06  0.666244  0.672346  0.678411
+2010-01-07  0.634424  0.640706  0.646949
+2010-01-08  0.600109  0.606595  0.613040
+2010-01-11  0.565514  0.572212  0.578869
+2010-01-12  0.599561  0.606051  0.612501
+2010-01-13  0.608309  0.614748  0.621148
+2010-01-14  0.575065  0.581756  0.588406
+2010-01-15  0.629890  0.636245  0.642561
+2010-01-19  0.695074  0.701042  0.706974
+2010-01-20  0.737154  0.742908  0.748627
+2010-01-21  0.954167  0.958725  0.963255
+2010-01-22  1.253453  1.256401  1.259332
+2010-01-25  1.178691  1.182043  1.185374
+2010-01-26  1.112205  1.115886  1.119545
+2010-01-27  1.051295  1.055327  1.059335
+2010-01-28  1.085678  1.089512  1.093324
+2010-01-29  1.085786  1.089593  1.093378
 </pre></div></div>
 </div>
 </div>
@@ -615,26 +614,26 @@ Date
 <div class="highlight"><pre>
 ....................
                  h.1       h.2       h.3
-2009-12-31  0.598199  0.605960  0.613661
-2010-01-04  0.772200  0.778629  0.785009
-2010-01-05  0.723347  0.730126  0.736853
-2010-01-06  0.673796  0.680934  0.688017
-2010-01-07  0.637555  0.644959  0.652306
-2010-01-08  0.600834  0.608511  0.616129
-2010-01-11  0.561436  0.569411  0.577324
-2010-01-12  0.612214  0.619798  0.627322
-2010-01-13  0.622095  0.629604  0.637055
-2010-01-14  0.583425  0.591215  0.598945
-2010-01-15  0.652960  0.660231  0.667447
-2010-01-19  0.724212  0.730968  0.737673
-2010-01-20  0.757280  0.763797  0.770264
-2010-01-21  0.956394  0.961508  0.966583
-2010-01-22  1.268445  1.271402  1.274337
-2010-01-25  1.177405  1.180991  1.184549
-2010-01-26  1.106326  1.110404  1.114450
-2010-01-27  1.040930  1.045462  1.049959
-2010-01-28  1.082130  1.086370  1.090577
-2010-01-29  1.082251  1.086487  1.090690
+2009-12-31  0.615314  0.621743  0.628133
+2010-01-04  0.751723  0.757321  0.762885
+2010-01-05  0.709956  0.715791  0.721591
+2010-01-06  0.666057  0.672146  0.678197
+2010-01-07  0.634503  0.640776  0.647011
+2010-01-08  0.600417  0.606893  0.613329
+2010-01-11  0.565684  0.572369  0.579014
+2010-01-12  0.599963  0.606438  0.612874
+2010-01-13  0.608558  0.614982  0.621366
+2010-01-14  0.575020  0.581639  0.588217
+2010-01-15  0.629696  0.635989  0.642244
+2010-01-19  0.694735  0.700656  0.706541
+2010-01-20  0.736509  0.742193  0.747842
+2010-01-21  0.952751  0.957245  0.961713
+2010-01-22  1.251145  1.254050  1.256936
+2010-01-25  1.176864  1.180162  1.183441
+2010-01-26  1.110848  1.114497  1.118124
+2010-01-27  1.050102  1.054077  1.058028
+2010-01-28  1.084669  1.088454  1.092216
+2010-01-29  1.085003  1.088783  1.092541
 </pre></div></div>
 </div>
 </div>
@@ -662,15 +661,15 @@ Date
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     44,   Neg. LLF: 6037.930348216891
-Iteration:     10,   Func. Count:     82,   Neg. LLF: 6034.462050551085
+Iteration:      5,   Func. Count:     44,   Neg. LLF: 6827.96641441215
+Iteration:     10,   Func. Count:     84,   Neg. LLF: 6822.8830945206155
 Optimization terminated successfully.    (Exit mode 0)
-            Current function value: 6034.461795250723
-            Iterations: 12
-            Function evaluations: 96
-            Gradient evaluations: 12
-h.1    0.449483
-Name: 2016-12-30 00:00:00, dtype: float64
+            Current function value: 6822.882823359995
+            Iterations: 13
+            Function evaluations: 106
+            Gradient evaluations: 13
+h.1    3.010188
+Name: 2018-12-31 00:00:00, dtype: float64
 </pre></div></div>
 </div>
 </div>
@@ -733,7 +732,7 @@ Name: 2016-12-30 00:00:00, dtype: float64
 </pre></div>
 </div>
 <div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x1ba000f9cf8&gt;
+<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x22dd7ff1128&gt;
 </pre></div>
 </div>
 </div>
@@ -808,7 +807,7 @@ Name: 2016-12-30 00:00:00, dtype: float64
         <li class="right" >
           <a href="forecasting.html" title="Forecasting"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+8.g098c236 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
