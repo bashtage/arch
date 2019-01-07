@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>ARCH Modeling &#8212; arch 4.7.0+10.gf78f7ce documentation</title>
+    <title>ARCH Modeling &#8212; arch 4.7.0+12.g1a7572d documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="introduction.html" title="Introduction to ARCH Models"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+12.g1a7572d documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+10)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+12)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -362,9 +362,11 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="kn">as</span> <span class="nn">dt</span>
+
 <span class="kn">import</span> <span class="nn">arch.data.sp500</span>
-<span class="n">st</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1988</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">en</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">st</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1988</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">en</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sp500</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="n">market</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Adj Close&#39;</span><span class="p">]</span>
 <span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">market</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
@@ -400,6 +402,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">arch</span> <span class="kn">import</span> <span class="n">arch_model</span>
+
 <span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
@@ -698,7 +701,8 @@ Std. errors not available when the model is not estimated,
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">,</span><span class="n">fixed_res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">,</span> <span class="n">fixed_res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">],</span>
+               <span class="mi">1</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Estimated&#39;</span><span class="p">,</span> <span class="s1">&#39;Fixed&#39;</span><span class="p">]</span>
 <span class="n">subplot</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
@@ -775,7 +779,8 @@ Std. errors not available when the model is not estimated,
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="kn">import</span> <span class="n">ARX</span>
-<span class="n">ar</span> <span class="o">=</span> <span class="n">ARX</span><span class="p">(</span><span class="n">ann_inflation</span><span class="p">,</span> <span class="n">lags</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">])</span>
+
+<span class="n">ar</span> <span class="o">=</span> <span class="n">ARX</span><span class="p">(</span><span class="n">ann_inflation</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">])</span>
 <span class="k">print</span><span class="p">(</span><span class="n">ar</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
@@ -823,6 +828,7 @@ Covariance estimator: White&#39;s Heteroskedasticity Consistent Estimator
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="kn">import</span> <span class="n">ARCH</span><span class="p">,</span> <span class="n">GARCH</span>
+
 <span class="n">ar</span><span class="o">.</span><span class="n">volatility</span> <span class="o">=</span> <span class="n">ARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
@@ -895,6 +901,7 @@ Covariance estimator: robust
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="kn">import</span> <span class="n">StudentsT</span>
+
 <span class="n">ar</span><span class="o">.</span><span class="n">distribution</span> <span class="o">=</span> <span class="n">StudentsT</span><span class="p">()</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
@@ -953,18 +960,21 @@ Covariance estimator: robust
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
 <span class="kn">import</span> <span class="nn">arch.data.wti</span>
+
 <span class="n">crude</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">wti</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="n">crude_ret</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">crude</span><span class="o">.</span><span class="n">DCOILWTICO</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">res_normal</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
 <span class="n">res_t</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
 <span class="n">res_skewt</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">&#39;skewt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
-<span class="n">lls</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">(((</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">),</span>
-                 <span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">res_t</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">),</span>
-                 <span class="p">(</span><span class="s1">&#39;skewt&#39;</span><span class="p">,</span> <span class="n">res_skewt</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">))))</span>
+<span class="n">lls</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+    <span class="n">OrderedDict</span><span class="p">(((</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">),</span>
+                 <span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">res_t</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;skewt&#39;</span><span class="p">,</span>
+                                              <span class="n">res_skewt</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">))))</span>
 <span class="k">print</span><span class="p">(</span><span class="n">lls</span><span class="p">)</span>
-<span class="n">params</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">(((</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">params</span><span class="p">),</span>
-                 <span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">res_t</span><span class="o">.</span><span class="n">params</span><span class="p">),</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="n">OrderedDict</span><span class="p">(((</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">params</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">res_t</span><span class="o">.</span><span class="n">params</span><span class="p">),</span>
                  <span class="p">(</span><span class="s1">&#39;skewt&#39;</span><span class="p">,</span> <span class="n">res_skewt</span><span class="o">.</span><span class="n">params</span><span class="p">))))</span>
 <span class="k">print</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 </pre></div>
@@ -996,9 +1006,9 @@ omega     0.055806  0.048516  0.047683
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">std_resid</span> <span class="o">=</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">conditional_volatility</span>
 <span class="n">unit_var_resid</span> <span class="o">=</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">std_resid</span><span class="p">,</span> <span class="n">unit_var_resid</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">std_resid</span><span class="p">,</span> <span class="n">unit_var_resid</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Std Resids&#39;</span><span class="p">,</span> <span class="s1">&#39;Unit Variance Resids&#39;</span><span class="p">]</span>
-<span class="n">subplot</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;kde&#39;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">subplot</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;kde&#39;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -1046,7 +1056,7 @@ omega     0.055806  0.048516  0.047683
         <li class="right" >
           <a href="introduction.html" title="Introduction to ARCH Models"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+12.g1a7572d documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

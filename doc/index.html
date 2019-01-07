@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>ARCH &#8212; arch 4.7.0+10.gf78f7ce documentation</title>
+    <title>ARCH &#8212; arch 4.7.0+12.g1a7572d documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -47,7 +47,7 @@
         <li class="right" >
           <a href="univariate/univariate.html" title="Univariate Volatility Models"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">arch 4.7.0+12.g1a7572d documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    #" class="text-logo">arch 4.7.0 (+10)</a>
+    #" class="text-logo">arch 4.7.0 (+12)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -119,11 +119,175 @@ routines relevant for the analysis of financial data.</p>
 <h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="univariate/univariate.html">Univariate Volatility Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bootstrap/bootstrap.html">Bootstrapping</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="unitroot/unitroot.html">Unit Root Tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changes.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="univariate/univariate.html">Univariate Volatility Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="univariate/introduction.html">Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="univariate/introduction.html#core-model-constructor">Core Model Constructor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/introduction.html#model-results">Model Results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="univariate/univariate_volatility_modeling.html">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_modeling.html#Setup">Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_modeling.html#GARCH-(with-a-Constant-Mean)">GARCH (with a Constant Mean)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_modeling.html#GJR-GARCH">GJR-GARCH</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_modeling.html#TARCH/ZARCH">TARCH/ZARCH</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_modeling.html#Student’s-T-Errors">Student’s T Errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_modeling.html#Fixing-Parameters">Fixing Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_modeling.html#Mean-Models">Mean Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_modeling.html#Volatility-Processes">Volatility Processes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_modeling.html#Distributions">Distributions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="univariate/forecasting.html">Forecasting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="univariate/forecasting.html#analytical-forecasts">Analytical Forecasts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/forecasting.html#simulation-forecasts">Simulation Forecasts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/forecasting.html#bootstrap-forecasts">Bootstrap Forecasts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/forecasting.html#forecasting-options">Forecasting Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/forecasting.html#understanding-forecast-output">Understanding Forecast Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/forecasting.html#output-classes">Output Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="univariate/univariate_volatility_forecasting.html">Forecasting Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_forecasting.html#Data">Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_forecasting.html#Basic-Forecasting">Basic Forecasting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_forecasting.html#Alternative-Forecast-Generation-Schemes">Alternative Forecast Generation Schemes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_forecasting.html#TARCH">TARCH</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="univariate/univariate_volatility_scenarios.html">Forecasting Scenarios</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_scenarios.html#Custom-Random-Generators">Custom Random Generators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_scenarios.html#Bootstrap-Scenarios">Bootstrap Scenarios</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_scenarios.html#Visualizing-the-differences">Visualizing the differences</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_scenarios.html#Comparing-the-paths">Comparing the paths</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_volatility_scenarios.html#Comparing-across-the-year">Comparing across the year</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="univariate/mean.html">Mean Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="univariate/mean.html#no-mean">No Mean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/mean.html#constant-mean">Constant Mean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/mean.html#autoregressions">Autoregressions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/mean.html#heterogeneous-autoregressions">Heterogeneous Autoregressions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/mean.html#least-squares">Least Squares</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/mean.html#writing-new-mean-models">Writing New Mean Models</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="univariate/volatility.html">Volatility Processes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="univariate/volatility.html#constant-variance">Constant Variance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/volatility.html#garch">GARCH</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/volatility.html#fractionally-integrated-fi-garch">Fractionally Integrated (FI) GARCH</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/volatility.html#egarch">EGARCH</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/volatility.html#harch">HARCH</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/volatility.html#midas-hyperbolic">MIDAS Hyperbolic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/volatility.html#arch">ARCH</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/volatility.html#parameterless-variance-processes">Parameterless Variance Processes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/volatility.html#ewma-variance">EWMA Variance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/volatility.html#riskmetrics-2006">RiskMetrics (2006)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/volatility.html#fixedvariance">FixedVariance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/volatility.html#writing-new-volatility-processes">Writing New Volatility Processes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="univariate/univariate_using_fixed_variance.html">Using the Fixed Variance Process</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="univariate/univariate_using_fixed_variance.html#Setup">Setup</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="univariate/distribution.html">Distributions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="univariate/distribution.html#normal">Normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/distribution.html#student-s-t">Student’s t</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/distribution.html#skew-student-s-t">Skew Student’s t</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/distribution.html#generalized-error-ged">Generalized Error (GED)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="univariate/distribution.html#writing-new-distributions">Writing New Distributions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="univariate/utility.html">Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="univariate/utility.html#test-results">Test Results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="univariate/background.html">Background and References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bootstrap/bootstrap.html">Bootstrapping</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bootstrap/bootstrap_examples.html">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bootstrap/bootstrap_examples.html#Sharpe-Ratio">Sharpe Ratio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootstrap/bootstrap_examples.html#Probit-(Statsmodels)">Probit (Statsmodels)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootstrap/bootstrap_examples.html#Bootstrapping-Uneven-Length-Samples">Bootstrapping Uneven Length Samples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bootstrap/confidence-intervals.html">Confidence Interval Construction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bootstrap/confidence-intervals.html#setup">Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootstrap/confidence-intervals.html#confidence-interval-types">Confidence Interval Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootstrap/confidence-intervals.html#confidence-interval-methods">Confidence Interval Methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bootstrap/parameter-covariance-estimation.html">Parameter Covariance Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootstrap/low-level-interface.html">Low-level Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bootstrap/low-level-interface.html#constructing-parameter-estimates">Constructing Parameter Estimates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootstrap/low-level-interface.html#the-bootstrap-iterator">The Bootstrap Iterator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bootstrap/semiparametric-parametric-bootstrap.html">Semiparametric Bootstraps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bootstrap/semiparametric-parametric-bootstrap.html#using-partial-instead-of-extra-kwargs">Using <code class="docutils literal notranslate"><span class="pre">partial</span></code> instead of <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootstrap/semiparametric-parametric-bootstrap.html#semiparametric-bootstrap-alternative-method">Semiparametric Bootstrap (Alternative Method)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bootstrap/semiparametric-parametric-bootstrap.html#parametric-bootstraps">Parametric Bootstraps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootstrap/iid-bootstraps.html">Independent, Identical Distributed Data (i.i.d.)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootstrap/iid-bootstraps.html#independent-samples">Independent Samples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootstrap/timeseries-bootstraps.html">Bootstraps for Time-series Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bootstrap/timeseries-bootstraps.html#the-stationary-bootstrap">The Stationary Bootstrap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootstrap/timeseries-bootstraps.html#the-circular-block-bootstrap">The Circular Block Bootstrap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bootstrap/timeseries-bootstraps.html#the-moving-block-bootstrap">The Moving Block Bootstrap</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bootstrap/background.html">Background and References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="multiple-comparison/multiple-comparisons.html">Multiple Comparison Problems</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="multiple-comparison/multiple-comparison_examples.html">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="multiple-comparison/multiple-comparison_examples.html#The-test-of-Superior-Predictive-Ability-(SPA)">The test of Superior Predictive Ability (SPA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multiple-comparison/multiple-comparison_examples.html#Stepwise-Multiple-Testing-(StepM)">Stepwise Multiple Testing (StepM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multiple-comparison/multiple-comparison_examples.html#The-Model-Confidence-Set">The Model Confidence Set</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="multiple-comparison/multiple-comparison-reference.html">Module Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="multiple-comparison/multiple-comparison-reference.html#test-of-superior-predictive-ability-spa-reality-check">Test of Superior Predictive Ability (SPA), Reality Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multiple-comparison/multiple-comparison-reference.html#stepwise-multiple-testing-stepm">Stepwise Multiple Testing (StepM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multiple-comparison/multiple-comparison-reference.html#model-confidence-set-mcs">Model Confidence Set (MCS)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="multiple-comparison/background.html">Background and References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="unitroot/unitroot.html">Unit Root Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="unitroot/introduction.html">Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="unitroot/introduction.html#basic-example">Basic Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="unitroot/unitroot_examples.html">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="unitroot/unitroot_examples.html#Setup">Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitroot/unitroot_examples.html#Augmented-Dickey-Fuller-Testing">Augmented Dickey-Fuller Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitroot/unitroot_examples.html#Dickey-Fuller-GLS-Testing">Dickey-Fuller GLS Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitroot/unitroot_examples.html#Phillips-Perron-Testing">Phillips-Perron Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitroot/unitroot_examples.html#KPSS-Testing">KPSS Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitroot/unitroot_examples.html#Variance-Ratio-Testing">Variance Ratio Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="unitroot/tests.html">Unit Root Tests</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="unitroot/tests.html#augmented-dickey-fuller-testing">Augmented-Dickey Fuller Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitroot/tests.html#dickey-fuller-gls-testing">Dickey-Fuller GLS Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitroot/tests.html#phillips-perron-testing">Phillips-Perron Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitroot/tests.html#variance-ratios">Variance Ratios</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitroot/tests.html#kpss-testing">KPSS Testing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#changes-since-4-0">Changes since 4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#changes-since-3-0">Changes since 3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#changes-since-2-1">Changes since 2.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#changes-since-2-0">Changes since 2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html#changes-since-1-0">Changes since 1.0</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -133,8 +297,8 @@ routines relevant for the analysis of financial data.</p>
 <table class="docutils footnote" frame="void" id="id1" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[*]</td><td>Kevin Sheppard. (2018, October 3). bashtage/arch: Release 4.6.0 (Version 4.6.0).
-Zenodo. <a class="reference external" href="http://doi.org/10.5281/zenodo.1443315">http://doi.org/10.5281/zenodo.1443315</a></td></tr>
+<tr><td class="label">[*]</td><td>Kevin Sheppard. (2018, December 13). bashtage/arch: Release 4.7.0 (Version 4.7.0).
+Zenodo. <a class="reference external" href="https://doi.org/10.5281/zenodo.2240590">https://doi.org/10.5281/zenodo.2240590</a></td></tr>
 </tbody>
 </table>
 <a class="reference external image-reference" href="https://zenodo.org/badge/latestdoi/23468876"><img alt="https://zenodo.org/badge/23468876.svg" src="https://zenodo.org/badge/23468876.svg" /></a>
@@ -175,7 +339,7 @@ Zenodo. <a class="reference external" href="http://doi.org/10.5281/zenodo.144331
         <li class="right" >
           <a href="univariate/univariate.html" title="Univariate Volatility Models"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">arch 4.7.0+12.g1a7572d documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

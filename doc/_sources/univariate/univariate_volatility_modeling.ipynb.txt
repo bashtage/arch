@@ -74,9 +74,11 @@
    ],
    "source": [
     "import datetime as dt\n",
+    "\n",
     "import arch.data.sp500\n",
-    "st = dt.datetime(1988,1,1)\n",
-    "en = dt.datetime(2018,1,1)\n",
+    "\n",
+    "st = dt.datetime(1988, 1, 1)\n",
+    "en = dt.datetime(2018, 1, 1)\n",
     "data = arch.data.sp500.load()\n",
     "market = data['Adj Close']\n",
     "returns = 100 * market.pct_change().dropna()\n",
@@ -167,7 +169,8 @@
    ],
    "source": [
     "from arch import arch_model\n",
-    "am = arch_model(returns) \n",
+    "\n",
+    "am = arch_model(returns)\n",
     "res = am.fit(update_freq=5)\n",
     "print(res.summary())"
    ]
@@ -499,7 +502,8 @@
    ],
    "source": [
     "import pandas as pd\n",
-    "df = pd.concat([res.conditional_volatility,fixed_res.conditional_volatility],1)\n",
+    "df = pd.concat([res.conditional_volatility, fixed_res.conditional_volatility],\n",
+    "               1)\n",
     "df.columns = ['Estimated', 'Fixed']\n",
     "subplot = df.plot()"
    ]
@@ -625,7 +629,8 @@
    ],
    "source": [
     "from arch.univariate import ARX\n",
-    "ar = ARX(ann_inflation, lags = [1, 3, 12])\n",
+    "\n",
+    "ar = ARX(ann_inflation, lags=[1, 3, 12])\n",
     "print(ar.fit().summary())"
    ]
   },
@@ -688,6 +693,7 @@
    ],
    "source": [
     "from arch.univariate import ARCH, GARCH\n",
+    "\n",
     "ar.volatility = ARCH(p=5)\n",
     "res = ar.fit(update_freq=0, disp='off')\n",
     "print(res.summary())"
@@ -790,6 +796,7 @@
    ],
    "source": [
     "from arch.univariate import StudentsT\n",
+    "\n",
     "ar.distribution = StudentsT()\n",
     "res = ar.fit(update_freq=0, disp='off')\n",
     "print(res.summary())"
@@ -834,18 +841,21 @@
    ],
    "source": [
     "from collections import OrderedDict\n",
+    "\n",
     "import arch.data.wti\n",
+    "\n",
     "crude = arch.data.wti.load()\n",
     "crude_ret = 100 * crude.DCOILWTICO.dropna().pct_change().dropna()\n",
     "res_normal = arch_model(crude_ret).fit(disp='off')\n",
     "res_t = arch_model(crude_ret, dist='t').fit(disp='off')\n",
     "res_skewt = arch_model(crude_ret, dist='skewt').fit(disp='off')\n",
-    "lls = pd.Series(OrderedDict((('normal', res_normal.loglikelihood),\n",
-    "                 ('t', res_t.loglikelihood),\n",
-    "                 ('skewt', res_skewt.loglikelihood))))\n",
+    "lls = pd.Series(\n",
+    "    OrderedDict((('normal', res_normal.loglikelihood),\n",
+    "                 ('t', res_t.loglikelihood), ('skewt',\n",
+    "                                              res_skewt.loglikelihood))))\n",
     "print(lls)\n",
-    "params = pd.DataFrame(OrderedDict((('normal', res_normal.params),\n",
-    "                 ('t', res_t.params),\n",
+    "params = pd.DataFrame(\n",
+    "    OrderedDict((('normal', res_normal.params), ('t', res_t.params),\n",
     "                 ('skewt', res_skewt.params))))\n",
     "print(params)"
    ]
@@ -878,9 +888,9 @@
    "source": [
     "std_resid = res_normal.resid / res_normal.conditional_volatility\n",
     "unit_var_resid = res_normal.resid / res_normal.resid.std()\n",
-    "df = pd.concat([std_resid, unit_var_resid],1)\n",
+    "df = pd.concat([std_resid, unit_var_resid], 1)\n",
     "df.columns = ['Std Resids', 'Unit Variance Resids']\n",
-    "subplot = df.plot(kind='kde', xlim=(-4,4))"
+    "subplot = df.plot(kind='kde', xlim=(-4, 4))"
    ]
   }
  ],

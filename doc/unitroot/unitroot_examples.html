@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Unit Root Testing &#8212; arch 4.7.0+10.gf78f7ce documentation</title>
+    <title>Unit Root Testing &#8212; arch 4.7.0+12.g1a7572d documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="introduction.html" title="Introduction"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+12.g1a7572d documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="unitroot.html" accesskey="U">Unit Root Testing</a> &#187;</li> 
       </ul>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+10)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+12)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -353,9 +353,12 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="kn">as</span> <span class="nn">dt</span>
+
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="kn">as</span> <span class="nn">sm</span>
+
 <span class="kn">import</span> <span class="nn">arch.data.default</span>
+
 <span class="n">default_data</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">default</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="n">default</span> <span class="o">=</span> <span class="n">default_data</span><span class="o">.</span><span class="n">BAA</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">default</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
@@ -401,6 +404,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="kn">import</span> <span class="n">ADF</span>
+
 <span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
 </pre></div>
@@ -554,11 +558,12 @@ strong multicollinearity or other numerical problems.
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+
 <span class="n">resids</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">reg_res</span><span class="o">.</span><span class="n">resid</span><span class="p">)</span>
 <span class="n">resids</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">default</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span>
-<span class="n">resids</span><span class="o">.</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;resids&#39;</span><span class="p">]</span>
+<span class="n">resids</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;resids&#39;</span><span class="p">]</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -600,6 +605,7 @@ strong multicollinearity or other numerical problems.
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="kn">import</span> <span class="n">DFGLS</span>
+
 <span class="n">dfgls</span> <span class="o">=</span> <span class="n">DFGLS</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">dfgls</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
 </pre></div>
@@ -663,6 +669,7 @@ Alternative Hypothesis: The process is weakly stationary.
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="kn">import</span> <span class="n">PhillipsPerron</span>
+
 <span class="n">pp</span> <span class="o">=</span> <span class="n">PhillipsPerron</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
 </pre></div>
@@ -784,6 +791,7 @@ Alternative Hypothesis: The process is weakly stationary.
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="kn">import</span> <span class="n">KPSS</span>
+
 <span class="n">kpss</span> <span class="o">=</span> <span class="n">KPSS</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">kpss</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
 </pre></div>
@@ -849,7 +857,7 @@ Alternative Hypothesis: The process contains a unit root.
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">arch.data.frenchdata</span>
 <span class="n">ff</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frenchdata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
-<span class="n">excess_market</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Excess Market</span>
+<span class="n">excess_market</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># Excess Market</span>
 <span class="k">print</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
 </pre></div>
 </div>
@@ -975,7 +983,7 @@ The length of y is not an exact multiple of 12, and so the final
         <li class="right" >
           <a href="introduction.html" title="Introduction"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+12.g1a7572d documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="unitroot.html" >Unit Root Testing</a> &#187;</li> 
       </ul>
     </div>

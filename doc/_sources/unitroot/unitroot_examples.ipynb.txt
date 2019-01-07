@@ -73,9 +73,12 @@
    ],
    "source": [
     "import datetime as dt\n",
+    "\n",
     "import pandas as pd\n",
     "import statsmodels.api as sm\n",
+    "\n",
     "import arch.data.default\n",
+    "\n",
     "default_data = arch.data.default.load()\n",
     "default = default_data.BAA.copy()\n",
     "default.name = 'default'\n",
@@ -156,6 +159,7 @@
    ],
    "source": [
     "from arch.unitroot import ADF\n",
+    "\n",
     "adf = ADF(default)\n",
     "print(adf.summary().as_text())"
    ]
@@ -336,11 +340,12 @@
     }
    ],
    "source": [
-    "import pandas as pd\n",
     "import matplotlib.pyplot as plt\n",
+    "import pandas as pd\n",
+    "\n",
     "resids = pd.DataFrame(reg_res.resid)\n",
     "resids.index = default.index[6:]\n",
-    "resids.columns=['resids']\n",
+    "resids.columns = ['resids']\n",
     "fig = resids.plot()"
    ]
   },
@@ -415,6 +420,7 @@
    ],
    "source": [
     "from arch.unitroot import DFGLS\n",
+    "\n",
     "dfgls = DFGLS(default)\n",
     "print(dfgls.summary().as_text())"
    ]
@@ -495,6 +501,7 @@
    ],
    "source": [
     "from arch.unitroot import PhillipsPerron\n",
+    "\n",
     "pp = PhillipsPerron(default)\n",
     "print(pp.summary().as_text())"
    ]
@@ -645,6 +652,7 @@
    ],
    "source": [
     "from arch.unitroot import KPSS\n",
+    "\n",
     "kpss = KPSS(default)\n",
     "print(kpss.summary().as_text())"
    ]
@@ -724,7 +732,7 @@
     "import pandas as pd\n",
     "import arch.data.frenchdata\n",
     "ff = arch.data.frenchdata.load()\n",
-    "excess_market = ff.iloc[:,0]  # Excess Market\n",
+    "excess_market = ff.iloc[:, 0]  # Excess Market\n",
     "print(ff.describe())"
    ]
   },

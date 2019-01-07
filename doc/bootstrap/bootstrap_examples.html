@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Bootstrap Examples &#8212; arch 4.7.0+10.gf78f7ce documentation</title>
+    <title>Bootstrap Examples &#8212; arch 4.7.0+12.g1a7572d documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="bootstrap.html" title="Bootstrapping"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+12.g1a7572d documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" accesskey="U">Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
@@ -62,7 +62,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+10)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+12)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -79,7 +79,8 @@
 <li class="toctree-l2"><a class="reference internal" href="low-level-interface.html">Low-level Interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="semiparametric-parametric-bootstrap.html">Semiparametric Bootstraps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="semiparametric-parametric-bootstrap.html#parametric-bootstraps">Parametric Bootstraps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="iid-bootstraps.html">Bootstraps for IID data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iid-bootstraps.html">Independent, Identical Distributed Data (i.i.d.)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iid-bootstraps.html#independent-samples">Independent Samples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="timeseries-bootstraps.html">Bootstraps for Time-series Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="background.html">Background and References</a></li>
 </ul>
@@ -335,7 +336,15 @@ div.rendered_html tbody tr:hover {
 
 <span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">import</span> <span class="nn">seaborn</span>
-<span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
 <span class="n">seaborn</span><span class="o">.</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
 </pre></div>
 </div>
@@ -344,12 +353,13 @@ div.rendered_html tbody tr:hover {
 <h2>Sharpe Ratio<a class="headerlink" href="#Sharpe-Ratio" title="Permalink to this headline">¶</a></h2>
 <p>The Sharpe Ratio is an important measure of return per unit of risk. The example shows how to estimate the variance of the Sharpe Ratio and how to construct confidence intervals for the Sharpe Ratio using a long series of U.S. equity data.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+
 <span class="kn">import</span> <span class="nn">arch.data.frenchdata</span>
 
 <span class="n">ff</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frenchdata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
@@ -358,11 +368,11 @@ div.rendered_html tbody tr:hover {
 </div>
 <p>The data set contains the Fama-French factors, including the excess market return.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">excess_market</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<span></span><span class="n">excess_market</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
 <span class="k">print</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
 </pre></div>
 </div>
@@ -385,22 +395,21 @@ max      38.850000    36.700000    35.460000     1.350000
 </div>
 <p>The next step is to construct a function that computes the Sharpe Ratio. This function also return the annualized mean and annualized standard deviation which will allow the covariance matrix of these parameters to be estimated using the bootstrap.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="k">def</span> <span class="nf">sharpe_ratio</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">var</span><span class="p">())</span>
-    <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">mu</span> <span class="o">/</span> <span class="n">sigma</span> <span class="p">])</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">mu</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">])</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
     <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;sigma&#39;</span><span class="p">,</span> <span class="s1">&#39;SR&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
-
 </pre></div>
 </div>
 </div>
 <p>The function can be called directly on the data to show full sample estimates.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -410,7 +419,7 @@ max      38.850000    36.700000    35.460000     1.350000
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="output_area highlight-none notranslate"><div class="highlight"><pre>
@@ -426,14 +435,15 @@ dtype: float64
 <p><em>The bootstrap chosen must be appropriate for the data. Squared returns are serially correlated, and so a time-series bootstrap is required.</em></p>
 <p>Bootstraps are initialized with any bootstrap specific parameters and the data to be used in the bootstrap. Here the <code class="docutils literal notranslate"><span class="pre">12</span></code> is the average window length in the Stationary Bootstrap, and the next input is the data to be bootstrapped.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="kn">import</span> <span class="n">StationaryBootstrap</span>
+
 <span class="n">bs</span> <span class="o">=</span> <span class="n">StationaryBootstrap</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="n">excess_market</span><span class="p">)</span>
 <span class="n">results</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">2500</span><span class="p">)</span>
-<span class="n">SR</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">:],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SR&#39;</span><span class="p">])</span>
+<span class="n">SR</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SR&#39;</span><span class="p">])</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">SR</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -442,11 +452,11 @@ dtype: float64
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/bootstrap_bootstrap_examples_14_0.png" src="../_images/bootstrap_bootstrap_examples_14_0.png" />
+<img alt="../_images/bootstrap_bootstrap_examples_15_0.png" src="../_images/bootstrap_bootstrap_examples_15_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -466,46 +476,24 @@ dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
              mu     sigma        SR
-mu     4.184270 -0.656202  0.241363
-sigma -0.656202  3.419632 -0.115155
-SR     0.241363 -0.115155  0.015927
+mu     3.874404 -0.603203  0.224206
+sigma -0.603203  3.167124 -0.106284
+SR     0.224206 -0.106284  0.014801
 
 
-mu       2.045549
-sigma    1.849225
-SR       0.126203
+mu       1.968351
+sigma    1.779642
+SR       0.121661
 Name: Std Errors, dtype: float64
 </pre></div></div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;basic&#39;</span><span class="p">)</span>
-<span class="n">ci</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">ci</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Lower&#39;</span><span class="p">,</span><span class="s1">&#39;Upper&#39;</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">ci</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-              mu      sigma        SR
-Lower   4.151897  14.863379  0.176354
-Upper  11.906546  21.536175  0.650400
-</pre></div></div>
-</div>
-<p>Alternative confidence intervals can be computed using a variety of methods. Setting <code class="docutils literal notranslate"><span class="pre">reuse=True</span></code> allows the previous bootstrap results to be used when constructing confidence intervals using alternative methods.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;percentile&#39;</span><span class="p">,</span> <span class="n">reuse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">ci</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">ci</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Lower&#39;</span><span class="p">,</span><span class="s1">&#39;Upper&#39;</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span></span><span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;basic&#39;</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">ci</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Lower&#39;</span><span class="p">,</span> <span class="s1">&#39;Upper&#39;</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">ci</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -516,8 +504,30 @@ Upper  11.906546  21.536175  0.650400
 <div class="output_area docutils container">
 <div class="highlight"><pre>
               mu      sigma        SR
-Lower   3.932156  15.373992  0.207830
-Upper  11.686804  22.046788  0.681875
+Lower   4.043646  14.604871  0.159696
+Upper  11.898403  21.642641  0.651425
+</pre></div></div>
+</div>
+<p>Alternative confidence intervals can be computed using a variety of methods. Setting <code class="docutils literal notranslate"><span class="pre">reuse=True</span></code> allows the previous bootstrap results to be used when constructing confidence intervals using alternative methods.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;percentile&#39;</span><span class="p">,</span> <span class="n">reuse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">ci</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Lower&#39;</span><span class="p">,</span> <span class="s1">&#39;Upper&#39;</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">ci</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+              mu      sigma        SR
+Lower   3.940298  15.267526  0.206805
+Upper  11.795056  22.305297  0.698534
 </pre></div></div>
 </div>
 </div>
@@ -526,11 +536,12 @@ Upper  11.686804  22.046788  0.681875
 <h2>Probit (Statsmodels)<a class="headerlink" href="#Probit-(Statsmodels)" title="Permalink to this headline">¶</a></h2>
 <p>The second example makes use of a Probit model from Statsmodels. The demo data is university admissions data which contains a binary variable for being admitted, GRE score, GPA score and quartile rank. This data is downloaded from the internet and imported using pandas.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span>  <span class="nn">arch.data.binary</span>
+<span></span><span class="kn">import</span> <span class="nn">arch.data.binary</span>
+
 <span class="n">binary</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">binary</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="n">binary</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="k">print</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
@@ -557,17 +568,19 @@ max      1.000000  800.000000    4.000000    4.00000
 <h3>Fitting the model directly<a class="headerlink" href="#Fitting-the-model-directly" title="Permalink to this headline">¶</a></h3>
 <p>The first steps are to build the regressor and the dependent variable arrays. Then, using these arrays, the model can be estimated by calling <code class="docutils literal notranslate"><span class="pre">fit</span></code></p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">endog</span> <span class="o">=</span> <span class="n">binary</span><span class="p">[[</span><span class="s1">&#39;admit&#39;</span><span class="p">]]</span>
-<span class="n">exog</span> <span class="o">=</span> <span class="n">binary</span><span class="p">[[</span><span class="s1">&#39;gre&#39;</span><span class="p">,</span><span class="s1">&#39;gpa&#39;</span><span class="p">]]</span>
+<span></span><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="kn">as</span> <span class="nn">sm</span>
+
+<span class="n">endog</span> <span class="o">=</span> <span class="n">binary</span><span class="p">[[</span><span class="s1">&#39;admit&#39;</span><span class="p">]]</span>
+<span class="n">exog</span> <span class="o">=</span> <span class="n">binary</span><span class="p">[[</span><span class="s1">&#39;gre&#39;</span><span class="p">,</span> <span class="s1">&#39;gpa&#39;</span><span class="p">]]</span>
 <span class="n">const</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">index</span><span class="o">=</span><span class="n">endog</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
 <span class="n">const</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Const&#39;</span>
 <span class="n">exog</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">const</span><span class="p">,</span> <span class="n">exog</span><span class="o">.</span><span class="n">gre</span><span class="p">,</span> <span class="n">exog</span><span class="o">.</span><span class="n">gpa</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+
 <span class="c1"># Estimate the model</span>
-<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="kn">as</span> <span class="nn">sm</span>
 <span class="n">mod</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Probit</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">)</span>
 <span class="n">fit</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">params</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">params</span>
@@ -591,7 +604,7 @@ dtype: float64
 <h3>The wrapper function<a class="headerlink" href="#The-wrapper-function" title="Permalink to this headline">¶</a></h3>
 <p>Most models in Statsmodels are implemented as classes, require an explicit call to <code class="docutils literal notranslate"><span class="pre">fit</span></code> and return a class containing parameter estimates and other quantities. These classes cannot be directly used with the bootstrap methods. However, a simple wrapper can be written that takes the data as the only inputs and returns parameters estimated using a Statsmodel model.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -602,7 +615,7 @@ dtype: float64
 </div>
 <p>A call to this function should return the same parameter values.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -611,7 +624,7 @@ dtype: float64
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="output_area highlight-none notranslate"><div class="highlight"><pre>
@@ -624,11 +637,12 @@ dtype: float64
 </div>
 <p>The wrapper can be directly used to estimate the parameter covariance or to construct confidence intervals.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="kn">import</span> <span class="n">IIDBootstrap</span>
+
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">endog</span><span class="o">=</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="o">=</span><span class="n">exog</span><span class="p">)</span>
 <span class="n">cov</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">probit_wrap</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
 <span class="n">cov</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">exog</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">exog</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
@@ -642,13 +656,13 @@ dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
           Const           gre       gpa
-Const  0.413324 -7.744736e-05 -0.106408
-gre   -0.000077  4.193731e-07 -0.000050
-gpa   -0.106408 -5.002967e-05  0.039866
+Const  0.407738 -8.715284e-05 -0.102690
+gre   -0.000087  4.167214e-07 -0.000047
+gpa   -0.102690 -4.722585e-05  0.038263
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -664,24 +678,24 @@ gpa   -0.106408 -5.002967e-05  0.039866
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Const    0.642903
-gre      0.000648
-gpa      0.199666
+Const    0.638543
+gre      0.000646
+gpa      0.195610
 dtype: float64
 T-stats
-Const   -4.671835
-gre      2.536383
-gpa      2.276681
+Const   -4.703730
+gre      2.544440
+gpa      2.323885
 dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">probit_wrap</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;basic&#39;</span><span class="p">)</span>
-<span class="n">ci</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">ci</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Lower&#39;</span><span class="p">,</span><span class="s1">&#39;Upper&#39;</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">exog</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="n">ci</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">ci</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Lower&#39;</span><span class="p">,</span> <span class="s1">&#39;Upper&#39;</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">exog</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">ci</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -692,8 +706,8 @@ dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
           Const       gre       gpa
-Lower -4.133344  0.000375  0.077522
-Upper -1.788764  0.002871  0.803992
+Lower -4.137120  0.000319  0.045809
+Upper -1.656545  0.002898  0.821124
 </pre></div></div>
 </div>
 </div>
@@ -701,7 +715,7 @@ Upper -1.788764  0.002871  0.803992
 <h3>Speeding things up<a class="headerlink" href="#Speeding-things-up" title="Permalink to this headline">¶</a></h3>
 <p>Starting values can be provided to <code class="docutils literal notranslate"><span class="pre">fit</span></code> which can save time finding starting values. Since the bootstrap parameter estimates should be close to the original sample estimates, the full sample estimated parameters are reasonable starting values. These can be passed using the <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code> dictionary to a modified wrapper that will accept a keyword argument containing starting values.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -711,12 +725,15 @@ Upper -1.788764  0.002871  0.803992
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">bs</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>  <span class="c1"># Reset to original state for comparability</span>
-<span class="n">cov</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">probit_wrap_start_params</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">extra_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;start_params&#39;</span><span class="p">:</span> <span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">})</span>
+<span class="n">cov</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span>
+    <span class="n">probit_wrap_start_params</span><span class="p">,</span>
+    <span class="mi">1000</span><span class="p">,</span>
+    <span class="n">extra_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;start_params&#39;</span><span class="p">:</span> <span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">})</span>
 <span class="n">cov</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">exog</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">exog</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
 </pre></div>
@@ -728,11 +745,46 @@ Upper -1.788764  0.002871  0.803992
 <div class="output_area docutils container">
 <div class="highlight"><pre>
           Const           gre       gpa
-Const  0.413324 -7.744736e-05 -0.106408
-gre   -0.000077  4.193731e-07 -0.000050
-gpa   -0.106408 -5.002967e-05  0.039866
+Const  0.407738 -8.715284e-05 -0.102690
+gre   -0.000087  4.167214e-07 -0.000047
+gpa   -0.102690 -4.722585e-05  0.038263
 </pre></div></div>
 </div>
+</div>
+</div>
+<div class="section" id="Bootstrapping-Uneven-Length-Samples">
+<h2>Bootstrapping Uneven Length Samples<a class="headerlink" href="#Bootstrapping-Uneven-Length-Samples" title="Permalink to this headline">¶</a></h2>
+<p>Independent samples of uneven length are common in experiment settings, e.g., A/B testing of a website. The <code class="docutils literal notranslate"><span class="pre">IIDBootstrap</span></code> allows for arbitrary dependence within an observation index and so cannot be naturally applied to these data sets. The <code class="docutils literal notranslate"><span class="pre">IndependentSamplesBootstrap</span></code> allows datasets with variables of different lengths to be sampled by exploiting the independence of the values to separately bootstrap each component. Below is an example showing how a confidence interval can be constructed
+for the difference in means of two groups.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="kn">import</span> <span class="n">IndependentSamplesBootstrap</span>
+
+
+<span class="k">def</span> <span class="nf">mean_diff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+
+<span class="n">rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">treatment</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="o">+</span> <span class="n">rs</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">control</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="mi">800</span><span class="p">)</span>
+
+<span class="n">bs</span> <span class="o">=</span> <span class="n">IndependentSamplesBootstrap</span><span class="p">(</span><span class="n">treatment</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rs</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">mean_diff</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;studentized&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[[0.1991302 ]
+ [0.51317728]]
+</pre></div></div>
 </div>
 </div>
 </div>
@@ -770,7 +822,7 @@ gpa   -0.106408 -5.002967e-05  0.039866
         <li class="right" >
           <a href="bootstrap.html" title="Bootstrapping"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+10.gf78f7ce documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+12.g1a7572d documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" >Bootstrapping</a> &#187;</li> 
       </ul>
     </div>

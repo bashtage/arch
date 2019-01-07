@@ -59,11 +59,12 @@
     "\n",
     "import numpy as np\n",
     "import pandas as pd\n",
-    "import arch.data.sp500\n",
-    "from arch import arch_model\n",
     "\n",
-    "start = dt.datetime(2000,1,1)\n",
-    "end = dt.datetime(2017,1,1)\n",
+    "from arch import arch_model\n",
+    "import arch.data.sp500\n",
+    "\n",
+    "start = dt.datetime(2000, 1, 1)\n",
+    "end = dt.datetime(2017, 1, 1)\n",
     "data = arch.data.sp500.load()\n",
     "market = data['Adj Close']\n",
     "returns = 100 * market.pct_change().dropna()"
@@ -248,7 +249,7 @@
     }
    ],
    "source": [
-    "res = am.fit(last_obs = '2011-1-1', update_freq=5)\n",
+    "res = am.fit(last_obs='2011-1-1', update_freq=5)\n",
     "forecasts = res.forecast(horizon=5)\n",
     "print(forecasts.variance.dropna().head())"
    ]
@@ -304,9 +305,9 @@
     "for i in range(20):\n",
     "    sys.stdout.write('.')\n",
     "    sys.stdout.flush()\n",
-    "    res = am.fit(first_obs=i, last_obs=i+end_loc, disp='off')\n",
+    "    res = am.fit(first_obs=i, last_obs=i + end_loc, disp='off')\n",
     "    temp = res.forecast(horizon=3).variance\n",
-    "    fcast = temp.iloc[i+end_loc-1]\n",
+    "    fcast = temp.iloc[i + end_loc - 1]\n",
     "    forecasts[fcast.name] = fcast\n",
     "print()\n",
     "print(pd.DataFrame(forecasts).T)"
@@ -356,8 +357,9 @@
     }
    ],
    "source": [
-    "import pandas as pd\n",
     "import numpy as np\n",
+    "import pandas as pd\n",
+    "\n",
     "index = returns.index\n",
     "start_loc = 0\n",
     "end_loc = np.where(index >= '2010-1-1')[0].min()\n",
@@ -365,9 +367,9 @@
     "for i in range(20):\n",
     "    sys.stdout.write('.')\n",
     "    sys.stdout.flush()\n",
-    "    res = am.fit(last_obs=i+end_loc, disp='off')\n",
+    "    res = am.fit(last_obs=i + end_loc, disp='off')\n",
     "    temp = res.forecast(horizon=3).variance\n",
-    "    fcast = temp.iloc[i+end_loc-1]\n",
+    "    fcast = temp.iloc[i + end_loc - 1]\n",
     "    forecasts[fcast.name] = fcast\n",
     "print()\n",
     "print(pd.DataFrame(forecasts).T)"
@@ -447,8 +449,9 @@
    ],
    "source": [
     "import matplotlib.pyplot as plt\n",
-    "fig, ax = plt.subplots(1,1)\n",
-    "subplot = (res.conditional_volatility['2016'] ** 2.0).plot(ax=ax, title='Conditional Variance')"
+    "fig, ax = plt.subplots(1, 1)\n",
+    "subplot = (res.conditional_volatility['2016']**2.0).plot(\n",
+    "    ax=ax, title='Conditional Variance')"
    ]
   },
   {
@@ -473,7 +476,7 @@
     "forecasts = res.forecast(horizon=5, method='simulation')\n",
     "sims = forecasts.simulations\n",
     "\n",
-    "lines = plt.plot(sims.residual_variances[-1,::10].T, color='#9cb2d6')\n",
+    "lines = plt.plot(sims.residual_variances[-1, ::10].T, color='#9cb2d6')\n",
     "lines[0].set_label('Simulated path')\n",
     "line = plt.plot(forecasts.variance.iloc[-1].values, color='#002868')\n",
     "line[0].set_label('Expected variance')\n",
@@ -544,7 +547,7 @@
     "forecasts = res.forecast(horizon=5, method='bootstrap')\n",
     "sims = forecasts.simulations\n",
     "\n",
-    "lines = plt.plot(sims.residual_variances[-1,::10].T, color='#9cb2d6')\n",
+    "lines = plt.plot(sims.residual_variances[-1, ::10].T, color='#9cb2d6')\n",
     "lines[0].set_label('Simulated path')\n",
     "line = plt.plot(forecasts.variance.iloc[-1].values, color='#002868')\n",
     "line[0].set_label('Expected variance')\n",
