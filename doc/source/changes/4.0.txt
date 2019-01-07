@@ -1,5 +1,8 @@
 Changes since 4.0
 =================
+- Added :class:`~arch.bootstrap.IndependentSamplesBootstrap` to
+  perform bootstrap inference on statistics from independent samples that may
+  have uneven length (:issue:`260`).
 - Added :func:`~arch.univariate.base.ARCHModelResult.arch_lm_test` to
   perform ARCH-LM tests on model residuals or standardized residuals
   (:issue:`261`).

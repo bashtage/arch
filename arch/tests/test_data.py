@@ -1,7 +1,8 @@
-import pytest
-import os
 import glob
+import os
+
 import pandas as pd
+import pytest
 
 CURR_DIR = os.path.split(os.path.abspath(__file__))[0]
 FILES = glob.glob(os.path.join(CURR_DIR, '..', 'data', '*'))

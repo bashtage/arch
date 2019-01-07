@@ -12,7 +12,7 @@ import scipy.stats as stats
 from arch.utility.array import DocStringInheritor
 
 __all__ = ['IIDBootstrap', 'StationaryBootstrap', 'CircularBlockBootstrap',
-           'MovingBlockBootstrap']
+           'MovingBlockBootstrap', 'IndependentSamplesBootstrap']
 
 try:
     from arch.bootstrap._samplers import stationary_bootstrap_sample
@@ -148,7 +148,13 @@ class IIDBootstrap(object):
     >>> from numpy.random import RandomState
     >>> rs = RandomState(1234)
     >>> bs = IIDBootstrap(x, y=y, z=z, random_state=rs)
+
+    See also
+    --------
+    arch.bootstrap.IndependentSamplesBootstrap
     """
+
+    _common_size_required = True
 
     def __init__(self, *args, **kwargs):
         self._random_state = None
@@ -165,11 +171,11 @@ class IIDBootstrap(object):
 
         all_args = list(args)
         all_args.extend([v for v in itervalues(kwargs)])
-
-        for arg in all_args:
-            if len(arg) != self._num_items:
-                raise ValueError("All inputs must have the same number of "
-                                 "elements in axis 0")
+        if self._common_size_required:
+            for arg in all_args:
+                if len(arg) != self._num_items:
+                    raise ValueError("All inputs must have the same number of "
+                                     "elements in axis 0")
         self._index = np.arange(self._num_items)
 
         self._parameters = []
@@ -317,8 +323,7 @@ class IIDBootstrap(object):
         dictionary
         """
         for _ in range(reps):
-            indices = np.asarray(self.update_indices())
-            self._index = indices
+            self._index = self.update_indices()
             yield self._resample()
 
     def conf_int(self, func, reps=1000, method='basic', size=0.95, tail='two',
@@ -820,8 +825,8 @@ class IIDBootstrap(object):
         Update indices for the next iteration of the bootstrap.  This must
         be overridden when creating new bootstraps.
         """
-        return self.random_state.randint(self._num_items,
-                                         size=self._num_items)
+        return self._random_state.randint(self._num_items,
+                                          size=self._num_items)
 
     def _resample(self):
         """
@@ -840,6 +845,160 @@ class IIDBootstrap(object):
                 named_data[key] = values.iloc[indices]
             else:
                 named_data[key] = values[indices]
+            setattr(self, key, named_data[key])
+
+        self.pos_data = pos_data
+        self.kw_data = named_data
+        self.data = (pos_data, named_data)
+        return self.data
+
+
+class IndependentSamplesBootstrap(IIDBootstrap):
+    """
+    Bootstrap the independently resamples each input
+
+    Parameters
+    ----------
+    args
+        Positional arguments to bootstrap
+    kwargs
+        Keyword arguments to bootstrap
+
+    Attributes
+    ----------
+    index : ndarray
+        The current index of the bootstrap
+    data : tuple
+        Two-element tuple with the pos_data in the first position and kw_data
+        in the second (pos_data, kw_data)
+    pos_data : tuple
+        Tuple containing the positional arguments (in the order entered)
+    kw_data : dict
+        Dictionary containing the keyword arguments
+    random_state : RandomState
+        RandomState instance used by bootstrap
+
+    Notes
+    -----
+    This bootstrap independently resamples each input and so is only
+    appropriate when the inputs are independent. This structure allows
+    bootstrapping statistics that depend on samples with unequal length, as
+    is common in some experiments. If data have cross-sectional dependence, so
+    that observation ``i`` is related accross all inputs, this bootstrap is
+    inappropriate.
+
+    Supports numpy arrays and pandas Series and DataFrames.  Data returned has
+    the same type as the input date.
+
+    Data entered using keyword arguments is directly accessibly as an
+    attribute.
+
+    To ensure a reproducible bootstrap, you must set the ``random_state``
+    attribute after the bootstrap has been created. See the example below.
+    Note that ``random_state`` is a reserved keyword and any variable
+    passed using this keyword must be an instance of ``RandomState``.
+
+    Examples
+    --------
+    Data can be accessed in a number of ways.  Positional data is retained in
+    the same order as it was entered when the bootstrap was initialized.
+    Keyword data is available both as an attribute or using a dictionary syntax
+    on kw_data.
+
+    >>> from arch.bootstrap import IndependentSamplesBootstrap
+    >>> from numpy.random import standard_normal
+    >>> y = standard_normal(500)
+    >>> x = standard_normal(200)
+    >>> z = standard_normal(2000)
+    >>> bs = IndependentSamplesBootstrap(x, y=y, z=z)
+    >>> for data in bs.bootstrap(100):
+    ...     bs_x = data[0][0]
+    ...     bs_y = data[1]['y']
+    ...     bs_z = bs.z
+
+    Set the random_state if reproducibility is required
+
+    >>> from numpy.random import RandomState
+    >>> rs = RandomState(1234)
+    >>> bs = IndependentSamplesBootstrap(x, y=y, z=z, random_state=rs)
+
+    See also
+    --------
+    arch.bootstrap.IIDBootstrap
+    """
+
+    _common_size_required = False
+
+    def __init__(self, *args, **kwargs):
+        super(IndependentSamplesBootstrap, self).__init__(*args, **kwargs)
+        self._name = 'Heterogeneous IID Bootstrap'
+        self._num_args = len(args)
+        self._num_arg_items = [len(arg) for arg in args]
+        self._num_kw_items = {key: len(kwargs[key]) for key in self._kwargs}
+
+    def update_indices(self):
+        """
+        Update indices for the next iteration of the bootstrap.  This must
+        be overridden when creating new bootstraps.
+        """
+        randint = self._random_state.randint
+        pos_indices = [randint(self._num_arg_items[i], size=self._num_arg_items[i])
+                       for i in range(self._num_args)]
+        kw_indices = {key: randint(self._num_kw_items[key], size=self._num_kw_items[key])
+                      for key in self._kwargs}
+        return pos_indices, kw_indices
+
+    @property
+    def index(self):
+        """
+        Returns the current index of the bootstrap
+
+        Returns
+        -------
+        index : tuple[list[ndarray], dict[str, ndarray]]
+            2-element tuple containing a list and a dictionary. The list
+            contains indices for each of the positional arguments.  The
+            dictionary contains the indices of keyword arguments.
+        """
+        return self._index
+
+    def reset(self, use_seed=True):
+        """
+        Resets the bootstrap to either its initial state or the last seed.
+
+        Parameters
+        ----------
+        use_seed : bool, optional
+            Flag indicating whether to use the last seed if provided.  If
+            False or if no seed has been set, the bootstrap will be reset
+            to the initial state.  Default is True
+        """
+        pos_indices = [np.arange(self._num_arg_items[i]) for i in range(self._num_args)]
+        kw_indices = {key: np.arange(self._num_kw_items[key]) for key in self._kwargs}
+        self._index = pos_indices, kw_indices
+        self._resample()
+        self.random_state.set_state(self._initial_state)
+        if use_seed and self._seed is not None:
+            self.seed(self._seed)
+        return None
+
+    def _resample(self):
+        """
+        Resample all data using the values in _index
+        """
+        pos_indices, kw_indices = self._index
+        pos_data = []
+        for i, values in enumerate(self._args):
+            if isinstance(values, (pd.Series, pd.DataFrame)):
+                pos_data.append(values.iloc[pos_indices[i]])
+            else:
+                pos_data.append(values[pos_indices[i]])
+        named_data = {}
+        for key, values in iteritems(self._kwargs):
+            if isinstance(values, (pd.Series, pd.DataFrame)):
+                named_data[key] = values.iloc[kw_indices[key]]
+            else:
+                named_data[key] = values[kw_indices[key]]
             setattr(self, key, named_data[key])
 
         self.pos_data = pos_data
