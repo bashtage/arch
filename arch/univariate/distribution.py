@@ -39,7 +39,7 @@ class Distribution(object):
 
     def _check_constraints(self, params):
         bounds = self.bounds(None)
-        if params is not None or len(bounds) > 0:
+        if params is not None:
             if len(params) != len(bounds):
                 raise ValueError('parameters must have {0} elements'.format(len(bounds)))
         if params is None or len(bounds) == 0:
@@ -298,6 +298,7 @@ class Normal(Distribution):
 
     def ppf(self, pits, parameters=None):
         self._check_constraints(parameters)
+        pits = asarray(pits)
         return stats.norm.ppf(pits)
 
 
@@ -408,6 +409,7 @@ class StudentsT(Distribution):
 
     def ppf(self, pits, parameters=None):
         self._check_constraints(parameters)
+        pits = asarray(pits)
         nu = parameters[0]
         var = nu / (nu - 2)
         return stats.t(nu, scale=1.0 / sqrt(var)).ppf(pits)
@@ -629,6 +631,7 @@ class SkewStudent(Distribution):
         scalar = isscalar(pits)
         if scalar:
             pits = array([pits])
+        pits = asarray(pits)
         eta, lam = parameters
 
         a = self.__const_a(parameters)
@@ -757,6 +760,7 @@ class GeneralizedError(Distribution):
 
     def ppf(self, pits, parameters=None):
         self._check_constraints(parameters)
+        pits = asarray(pits)
         nu = parameters[0]
         var = stats.gennorm(nu).var()
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).ppf(pits)
