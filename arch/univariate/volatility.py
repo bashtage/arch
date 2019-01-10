@@ -192,7 +192,8 @@ class VolatilityProcess(object):
         """
         pass
 
-    def _one_step_forecast(self, parameters, resids, backcast, var_bounds, horizon):
+    def _one_step_forecast(self, parameters, insample_parameters, resids, backcast, var_bounds,
+                           horizon, start):
         """
         One-step ahead forecast
 
@@ -200,6 +201,10 @@ class VolatilityProcess(object):
         ----------
         parameters : ndarray
             Parameters required to forecast the volatility model
+        insample_parameters  ndarray
+            Parameters used to compute in-sample volatility. Set equal to
+            parameters to use the same values to fit the model and to
+            forecast from the model.
         resids : ndarray
             Residuals to use in the recursion
         backcast : float
@@ -209,6 +214,8 @@ class VolatilityProcess(object):
         horizon : int
             Forecast horizon.  Must be 1 or larger.  Forecasts are produced
             for horizons in [1, horizon].
+        start : int
+            Observation index of first out-of-sample forecast
 
         Returns
         -------
@@ -221,15 +228,43 @@ class VolatilityProcess(object):
         _resids = np.concatenate((resids, [0]))
         _var_bounds = np.concatenate((var_bounds, [[0, np.inf]]))
         sigma2 = np.zeros(t + 1)
-        self.compute_variance(parameters, _resids, sigma2, backcast, _var_bounds)
-        forecasts = np.zeros((t, horizon))
-        forecasts[:, 0] = sigma2[1:]
+        self.compute_variance(insample_parameters, _resids, sigma2, backcast, _var_bounds)
+        forecasts = np.full((t, horizon), np.nan)
+        forecasts[start:, 0] = sigma2[start + 1:]
         sigma2 = sigma2[:-1]
-
+        self._update_one_step_forecast(parameters, resids, backcast, sigma2, forecasts, start)
         return sigma2, forecasts
 
     @abstractmethod
-    def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+    def _update_one_step_forecast(self, parameters, resids, backcast, sigma2, forecasts, start):
+        """
+        Update the out-of-sample forecasts using the correct parameters
+
+        Parameters
+        ----------
+        parameters : ndarray
+            Parameters required to forecast the volatility model
+        resids : ndarray
+            Residuals to use in the recursion
+        backcast : float
+            Value to use when initializing the recursion
+        sigma2 : ndarray
+            t element array containing the one-step ahead forecasts
+        forecasts : ndarray
+            t by horizon array containing the one-step ahead forecasts in the first location
+        start : int
+            Observation index of first out-of-sample forecast
+
+        Returns
+        -------
+        forecasts : ndarray
+            t by horizon array containing the updates one-step ahead forecasts in column 0
+        """
+        pass
+
+    @abstractmethod
+    def _analytic_forecast(self, parameters, insample_parameters, resids, backcast, var_bounds,
+                           start, horizon):
         """
         Analytic multi-step volatility forecasts from the model
 
@@ -237,6 +272,10 @@ class VolatilityProcess(object):
         ----------
         parameters : ndarray
             Parameters required to forecast the volatility model
+        insample_parameters  ndarray
+            Parameters used to compute in-sample volatility. Set equal to 
+            parameters to use the same values to fit the model and to 
+            forecast from the model.
         resids : ndarray
             Residuals to use in the recursion
         backcast : float
@@ -259,8 +298,8 @@ class VolatilityProcess(object):
         pass
 
     @abstractmethod
-    def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
-                             simulations, rng):
+    def _simulation_forecast(self, parameters, insample_parameters, resids, backcast, var_bounds,
+                             start, horizon, simulations, rng):
         """
         Simulation-based volatility forecasts from the model
 
@@ -268,6 +307,10 @@ class VolatilityProcess(object):
         ----------
         parameters : ndarray
             Parameters required to forecast the volatility model
+        insample_parameters  ndarray
+            Parameters used to compute in-sample volatility. Set equal to 
+            parameters to use the same values to fit the model and to 
+            forecast from the model.
         resids : ndarray
             Residuals to use in the recursion
         backcast : float
@@ -296,8 +339,8 @@ class VolatilityProcess(object):
         """
         pass
 
-    def _bootstrap_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
-                            simulations, random_state):
+    def _bootstrap_forecast(self, parameters, insample_parameters, resids, backcast, var_bounds,
+                            start, horizon, simulations, random_state):
         """
         Simulation-based volatility forecasts using model residuals
 
@@ -305,6 +348,10 @@ class VolatilityProcess(object):
         ----------
         parameters : ndarray
             Parameters required to forecast the volatility model
+        insample_parameters :  ndarray
+            Parameters used to compute in-sample volatility. Set equal to 
+            parameters to use the same values to fit the model and to 
+            forecast from the model.
         resids : ndarray
             Residuals to use in the recursion
         backcast : float
@@ -336,8 +383,8 @@ class VolatilityProcess(object):
             raise ValueError('start must include more than {0} '
                              'observations'.format(self._min_bootstrap_obs))
         rng = BootstrapRng(std_resid, start, random_state=random_state).rng()
-        return self._simulation_forecast(parameters, resids, backcast, var_bounds,
-                                         start, horizon, simulations, rng)
+        return self._simulation_forecast(parameters, insample_parameters, resids, backcast,
+                                         var_bounds, start, horizon, simulations, rng)
 
     def variance_bounds(self, resids, power=2.0):
         """
@@ -494,7 +541,8 @@ class VolatilityProcess(object):
         pass
 
     def forecast(self, parameters, resids, backcast, var_bounds, start=None, horizon=1,
-                 method='analytic', simulations=1000, rng=None, random_state=None):
+                 method='analytic', simulations=1000, rng=None, random_state=None,
+                 insample_parameters=None):
         """
         Forecast volatility from the model
 
@@ -525,6 +573,9 @@ class VolatilityProcess(object):
             samples numbers with that shape.
         random_state : RandomState, optional
             NumPy RandomState instance to use when method is 'bootstrap'
+        insample_parameters : ndarray, optional
+            Parameters to use for in-sample volatility fitting.  It not 
+            provided, insample_parameters is set to parameters.
 
         Returns
         -------
@@ -545,6 +596,9 @@ class VolatilityProcess(object):
         to use this method when not available will raise a ValueError.
         """
         parameters = np.asarray(parameters)
+        if insample_parameters is None:
+            insample_parameters = parameters
+        insample_parameters = np.asarray(insample_parameters)
         method = method.lower()
         if method not in ('analytic', 'simulation', 'bootstrap'):
             raise ValueError('{0} is not a known forecasting method'.format(method))
@@ -553,18 +607,18 @@ class VolatilityProcess(object):
 
         start = len(resids) - 1 if start is None else start
         if method == 'analytic':
-            return self._analytic_forecast(parameters, resids, backcast, var_bounds, start,
-                                           horizon)
+            return self._analytic_forecast(parameters, insample_parameters, resids, backcast,
+                                           var_bounds, start, horizon)
         elif method == 'simulation':
-            return self._simulation_forecast(parameters, resids, backcast, var_bounds, start,
-                                             horizon, simulations, rng)
+            return self._simulation_forecast(parameters, insample_parameters, resids, backcast,
+                                             var_bounds, start, horizon, simulations, rng)
         else:
             if start < 10 or (horizon / start) >= .2:
                 raise ValueError('Bootstrap forecasting requires at least 10 initial '
                                  'observations, and the ratio of horizon-to-start < 20%.')
 
-            return self._bootstrap_forecast(parameters, resids, backcast, var_bounds, start,
-                                            horizon, simulations, random_state)
+            return self._bootstrap_forecast(parameters, insample_parameters, resids, backcast,
+                                            var_bounds, start, horizon, simulations, random_state)
 
     @abstractmethod
     def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
@@ -667,7 +721,11 @@ class ConstantVariance(VolatilityProcess):
     def _check_forecasting_method(self, method, horizon):
         return
 
-    def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+    def _update_one_step_forecast(self, parameters, resids, backcast, sigma2, forecasts, start):
+        return forecasts
+
+    def _analytic_forecast(self, parameters, insample_parameters, resids, backcast, var_bounds,
+                           start, horizon):
         t = resids.shape[0]
         forecasts = np.full((t, horizon), np.nan)
 
@@ -675,8 +733,8 @@ class ConstantVariance(VolatilityProcess):
         forecast_paths = None
         return VarianceForecast(forecasts, forecast_paths)
 
-    def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
-                             simulations, rng):
+    def _simulation_forecast(self, parameters, insample_parameters, resids, backcast, var_bounds,
+                             start, horizon, simulations, rng):
         t = resids.shape[0]
         forecasts = np.full((t, horizon), np.nan)
         forecast_paths = np.full((t, simulations, horizon), np.nan)
@@ -965,12 +1023,37 @@ class GARCH(VolatilityProcess):
             raise ValueError('Analytic forecasts not available for horizon > 1 when power != 2')
         return
 
-    def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+    def _update_one_step_forecast(self, parameters, resids, backcast, sigma2, forecasts, start):
+        p, o, q = self.p, self.o, self.q
+        t = resids.shape[0]
 
-        sigma2, forecasts = self._one_step_forecast(parameters, resids, backcast,
-                                                    var_bounds, horizon)
+        sresids = resids < 0
+        power = self.power
+        power_resids = np.abs(resids) ** power
+        half_power = power / 2.0
+        for i in range(start, t):
+            # 1-step ahead using time i information
+            fcast = parameters[0]
+            for j in range(p):
+                shock = power_resids[i - j] if (i - j) >= 0 else backcast ** half_power
+                fcast += parameters[1 + j] * shock
+            for j in range(o):
+                if (i - j) >= 0:
+                    shock = power_resids[i - j] * sresids[i - j]
+                else:
+                    shock = 0.5 * backcast ** half_power
+                fcast += parameters[1 + p + j] * shock
+            for j in range(q):
+                lag = sigma2 ** half_power if (i - j) >= 0 else backcast ** half_power
+                fcast += parameters[1 + p + o + j] * lag
+            forecasts[i, 0] = fcast ** (2.0 / power)
+        return forecasts
+
+    def _analytic_forecast(self, parameters, insample_parameters, resids, backcast, var_bounds, start, horizon):
+
+        sigma2, forecasts = self._one_step_forecast(parameters, insample_parameters, resids,
+                                                    backcast, var_bounds, horizon, start)
         if horizon == 1:
-            forecasts[:start] = np.nan
             return VarianceForecast(forecasts)
 
         t = resids.shape[0]
@@ -1051,11 +1134,11 @@ class GARCH(VolatilityProcess):
 
         return np.mean(forecast_paths, 0), forecast_paths, shock[:, m:]
 
-    def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
-                             simulations, rng):
+    def _simulation_forecast(self, parameters, insample_parameters, resids, backcast, var_bounds,
+                             start, horizon, simulations, rng):
 
-        sigma2, forecasts = self._one_step_forecast(parameters, resids, backcast,
-                                                    var_bounds, horizon)
+        sigma2, forecasts = self._one_step_forecast(parameters, insample_parameters, resids,
+                                                    backcast, var_bounds, horizon, start)
         t = resids.shape[0]
         paths = np.full((t, simulations, horizon), np.nan)
         shocks = np.full((t, simulations, horizon), np.nan)

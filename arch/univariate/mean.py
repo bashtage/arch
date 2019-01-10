@@ -610,7 +610,7 @@ class HARX(ARCHModel):
                                copy.deepcopy(self))
 
     def forecast(self, params, horizon=1, start=None, align='origin',
-                 method='analytic', simulations=1000, rng=None):
+                 method='analytic', simulations=1000, rng=None, insample_params=None):
         # Check start
         earliest, default_start = self._fit_indices
         default_start = max(0, default_start - 1)
@@ -623,22 +623,26 @@ class HARX(ARCHModel):
         # Parse params
         params = np.asarray(params)
         mp, vp, dp = self._parse_parameters(params)
-
+        insample_mp, insample_vp, insample_db = mp, vp, dp
+        if insample_params is not None:
+            insample_mp, insample_vp, insample_db = self._parse_parameters(insample_params)
         #####################################
         # Compute residual variance forecasts
         #####################################
         # Back cast should use only the sample used in fitting
-        resids = self.resids(mp)
+        resids = self.resids(insample_mp)
         backcast = self._volatility.backcast(resids)
-        full_resids = self.resids(mp, self._y[earliest:], self.regressors[earliest:])
+        full_resids = self.resids(insample_mp, self._y[earliest:], self.regressors[earliest:])
         vb = self._volatility.variance_bounds(full_resids, 2.0)
         if rng is None:
             rng = self._distribution.simulate(dp)
         variance_start = max(0, start_index - earliest)
+        # TODO: Adapt for in-sample parameters
         vfcast = self._volatility.forecast(vp, full_resids, backcast, vb,
                                            start=variance_start,
                                            horizon=horizon, method=method,
-                                           simulations=simulations, rng=rng)
+                                           simulations=simulations, rng=rng,
+                                           insample_params=insample_vp)
         var_fcasts = vfcast.forecasts
         var_fcasts = _forecast_pad(earliest, var_fcasts)
 

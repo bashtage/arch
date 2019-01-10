@@ -712,9 +712,9 @@ class ARCHModel(object):
 
     @abstractmethod
     def forecast(self, params, horizon=1, start=None, align='origin', method='analytic',
-                 simulations=1000, rng=None):
+                 simulations=1000, rng=None, insample_params=None):
         """
-        Construct forecasts from estimated model
+        Construct forecasts from a model
 
         Parameters
         ----------
@@ -749,6 +749,11 @@ class ARCHModel(object):
             Custom random number generator to use in simulation-based forecasts.
             Must produce random samples using the syntax `rng(size)` where size
             the 2-element tuple (simulations, horizon).
+        insample_params : {ndarray, Series}, optional
+            Parameters to use when computing in-sample residuals. If not
+            provided, insample_params is set to params. Setting this input
+            allows for alternative parameters to be used to produce forecasts
+            while keeping the in-sample parameters fixed.
 
         Returns
         -------
@@ -765,7 +770,7 @@ class ARCHModel(object):
         >>> sim_data.index = pd.date_range('2000-01-01',periods=250)
         >>> am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22],  vol='Constant')
         >>> res = am.fit()
-        >>> fig = res.hedgehog_plot()
+        >>> forecasts = res.forecast(horizon=5)
 
         Notes
         -----
@@ -1114,13 +1119,13 @@ class ARCHModelFixedResult(_SummaryRepr):
         return fig
 
     def forecast(self, params=None, horizon=1, start=None, align='origin', method='analytic',
-                 simulations=1000, rng=None):
+                 simulations=1000, rng=None, insample_params=None):
         """
-        Construct forecasts from estimated model
+        Construct forecasts from a model
 
         Parameters
         ----------
-        params : ndarray, optional
+        params : {ndarray, Series}, optional
             Alternative parameters to use.  If not provided, the parameters
             estimated when fitting the model are used.  Must be identical in
             shape to the parameters computed by fitting the model.
@@ -1151,6 +1156,11 @@ class ARCHModelFixedResult(_SummaryRepr):
             Custom random number generator to use in simulation-based forecasts.
             Must produce random samples using the syntax `rng(size)` where size
             the 2-element tuple (simulations, horizon).
+        insample_params : {ndarray, Series}, optional
+            Parameters to use when computing in-sample residuals. If not
+            provided, insample_params is set to params. Setting this input
+            allows for alternative parameters to be used to produce forecasts
+            while keeping the in-sample parameters fixed.
 
         Returns
         -------
@@ -1182,19 +1192,25 @@ class ARCHModelFixedResult(_SummaryRepr):
         if params is None:
             params = self._params
         else:
-            if (params.size != np.array(self._params).size or
+            if (params.size != np.asarray(self._params).size or
                     params.ndim != self._params.ndim):
                 raise ValueError('params have incorrect dimensions')
-        return self.model.forecast(params, horizon, start, align, method, simulations, rng)
+        if insample_params is not None:
+            if (insample_params.size != np.asarray(params).size or
+                    insample_params.ndim != params.ndim):
+                raise ValueError('model_params have incorrect dimensions')
 
-    def hedgehog_plot(self, params=None, horizon=10, step=10, start=None,
-                      type='volatility', method='analytic', simulations=1000):
+        return self.model.forecast(params, horizon, start, align, method, simulations, rng,
+                                   insample_params)
+
+    def hedgehog_plot(self, params=None, horizon=10, step=10, start=None, type='volatility',
+                      method='analytic', simulations=1000, rng=None, insample_params=None):
         """
         Plot forecasts from estimated model
 
         Parameters
         ----------
-        params : {ndarray, Series}
+        params : {ndarray, Series}, optional
             Alternative parameters to use.  If not provided, the parameters
             computed by fitting the model are used.  Must be 1-d and identical
             in shape to the parameters computed by fitting the model.
@@ -1219,6 +1235,15 @@ class ARCHModelFixedResult(_SummaryRepr):
         simulations : int
             Number of simulations to run when computing the forecast using
             either simulation or bootstrap.
+        rng : callable, optional
+            Custom random number generator to use in simulation-based forecasts.
+            Must produce random samples using the syntax `rng(size)` where size
+            the 2-element tuple (simulations, horizon).
+        insample_params : {ndarray, Series}, optional
+            Parameters to use when computing in-sample residuals. If not
+            provided, insample_params is set to params. Setting this input
+            allows for alternative parameters to be used to produce forecasts
+            while keeping the in-sample parameters fixed.
 
         Returns
         -------
@@ -1244,14 +1269,16 @@ class ARCHModelFixedResult(_SummaryRepr):
             start = 0
             while invalid_start:
                 try:
-                    forecasts = self.forecast(params, horizon, start,
-                                              method=method, simulations=simulations)
+                    forecasts = self.forecast(params, horizon, start, method=method,
+                                              simulations=simulations, rng=rng,
+                                              insample_params=insample_params)
                     invalid_start = False
                 except ValueError:
                     start += 1
         else:
             forecasts = self.forecast(params, horizon, start, method=method,
-                                      simulations=simulations)
+                                      simulations=simulations, rng=rng,
+                                      insample_params=insample_params)
 
         fig, ax = plt.subplots(1, 1)
         use_date = isinstance(self._dep_var.index, pd.DatetimeIndex)
