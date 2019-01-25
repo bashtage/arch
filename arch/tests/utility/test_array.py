@@ -165,6 +165,11 @@ class TestUtils(TestCase):
         with pytest.raises(ValueError):
             date_to_index('NaT', idx)
 
+        #  check whether this also works for a localized datetimeindex
+        date_index = date_range('20000101', periods=3000, freq='W', tz='Europe/Berlin')
+        index = date_to_index(date_index[0], date_index)
+        assert_equal(index, 0)
+
     def test_date_to_index_timestamp(self):
         dr = date_range('20000101', periods=3000, freq='W')
         y = Series(np.arange(3000.0), index=dr)

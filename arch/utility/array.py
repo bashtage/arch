@@ -3,7 +3,7 @@ Utility functions that do not explicitly relate to Volatility modeling
 """
 from __future__ import absolute_import, division, print_function
 
-from arch.compat.pandas import is_datetime64_dtype
+from arch.compat.pandas import is_datetime64_any_dtype
 from arch.compat.python import long
 
 from abc import ABCMeta
@@ -141,7 +141,7 @@ def date_to_index(date, date_index):
     -----
     Assumes dates are increasing and unique.
     """
-    if not is_datetime64_dtype(date_index):
+    if not is_datetime64_any_dtype(date_index):
         raise ValueError('date_index must be a datetime64 array')
 
     if not np.all((np.diff(date_index.values).astype(dtype=np.int64)) > 0):
