@@ -166,6 +166,7 @@ doc/_static/jquery.js
 doc/_static/jquery.min.map
 doc/_static/js/bootstrap.js
 doc/_static/js/bootstrap.min.js
+doc/_static/language_data.js
 doc/_static/minus.png
 doc/_static/plus.png
 doc/_static/pygments.css
