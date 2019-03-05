@@ -32,6 +32,8 @@ try:
 except ImportError:
     missing_numba = True
 
+pytestmark = pytest.mark.filterwarnings('ignore::arch.compat.numba.PerformanceWarning')
+
 
 class Timer(object):
     def __init__(self, first, first_name, second, second_name, model_name,
