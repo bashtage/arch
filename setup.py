@@ -26,8 +26,7 @@ except ImportError:
         raise ImportError('cython is required for cython coverage. Unset '
                           'ARCH_CYTHON_COVERAGE')
 
-    class _build_ext(object):
-        pass
+    from setuptools.command.build_ext import build_ext as _build_ext
 
 FAILED_COMPILER_ERROR = """
 ******************************************************************************

@@ -82,7 +82,7 @@ before_install:
   - echo conda create --yes --quiet -n arch-test ${PKGS}
   - conda create --yes --quiet -n arch-test ${PKGS}
   - source activate arch-test
-  - pip install cached_property flake8 "pytest<4.1" pytest-xdist pytest-cov coverage coveralls codecov nbformat nbconvert!=5.4 jupyter_client ipython jupyter -q
+  - pip install cached_property flake8 pytest pytest-xdist pytest-cov coverage coveralls codecov nbformat nbconvert!=5.4 jupyter_client ipython jupyter -q
   - if [[ "$STATSMODELS_MASTER" == true ]]; then sh ./ci/statsmodels-master.sh; fi;
   - |
     if [[ "$DOCBUILD" == true ]]; then
