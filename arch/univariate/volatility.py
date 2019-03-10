@@ -948,8 +948,7 @@ class GARCH(VolatilityProcess):
             if q > 0:
                 sv[1 + p + o:1 + p + o + q] = agb / q
             svs.append(sv)
-            llfs[i] = self._gaussian_loglikelihood(sv, resids, backcast,
-                                                   var_bounds)
+            llfs[i] = self._gaussian_loglikelihood(sv, resids, backcast, var_bounds)
         loc = np.argmax(llfs)
 
         return svs[int(loc)]
@@ -2702,3 +2701,163 @@ class FIGARCH(VolatilityProcess):
 
         forecasts[:start] = np.nan
         return VarianceForecast(forecasts, paths, shocks)
+
+
+class VarianceTargetingGARCH(GARCH):
+    r"""
+    GARCH and related model estimation
+
+    The following models can be specified using GARCH:
+        * ARCH(p)
+        * GARCH(p,q)
+        * GJR-GARCH(p,o,q)
+        * AVARCH(p)
+        * AVGARCH(p,q)
+        * TARCH(p,o,q)
+        * Models with arbitrary, pre-specified powers
+
+    Parameters
+    ----------
+    p : int
+        Order of the symmetric innovation
+    o : int
+        Order of the asymmetric innovation
+    q: int
+        Order of the lagged (transformed) conditional variance
+
+    Attributes
+    ----------
+    num_params : int
+        The number of parameters in the model
+
+    Examples
+    --------
+    >>> from arch.univariate import VarianceTargetingGARCH
+
+    Standard GARCH(1,1) with targeting
+
+    >>> vt = VarianceTargetingGARCH(p=1, q=1)
+
+    Asymmetric GJR-GARCH process with targeting
+
+    >>> vt = VarianceTargetingGARCH(p=1, o=1, q=1)
+
+    Notes
+    -----
+    In this class of processes, the variance dynamics are
+
+    .. math::
+
+        \sigma_{t}^{\lambda}=
+        bar{\omega}(1-\sum_{i=1}^{p}\alpha_{i}
+            - \frac{1}{2}\sum_{j=1}^{o}\gamma_{j}
+            - \sum_{k=1}^{q}\beta_{k})
+        + \sum_{i=1}^{p}\alpha_{i}\left|\epsilon_{t-i}\right|^{\lambda}
+        +\sum_{j=1}^{o}\gamma_{j}\left|\epsilon_{t-j}\right|^{\lambda}
+        I\left[\epsilon_{t-j}<0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}
+    """
+
+    def __init__(self, p=1, o=0, q=1):
+        super(VarianceTargetingGARCH, self).__init__()
+        self.p = int(p)
+        self.o = int(o)
+        self.q = int(q)
+        self.num_params = p + o + q
+        if p < 0 or o < 0 or q < 0:
+            raise ValueError('All lags lengths must be non-negative')
+        if p == 0 and o == 0:
+            raise ValueError('One of p or o must be strictly positive')
+        self.name = 'Variance Targeting ' + self._name()
+
+    def bounds(self, resids):
+        bounds = super(VarianceTargetingGARCH, self).bounds(resids)
+        return bounds[1:]
+
+    def constraints(self):
+        a, b = super(VarianceTargetingGARCH, self).constraints()
+        a = a[1:, 1:]
+        b = b[1:]
+        return a, b
+
+    def compute_variance(self, parameters, resids, sigma2, backcast,
+                         var_bounds):
+
+        # Add target
+        target = (resids ** 2).mean()
+        abar = parameters[:self.p].sum()
+        gbar = parameters[self.p:self.p + self.o].sum()
+        bbar = parameters[self.p + self.o:].sum()
+        omega = target * (1 - abar - 0.5 * gbar - bbar)
+        omega = max(omega, np.finfo(np.double).eps)
+        parameters = np.r_[omega, parameters]
+
+        fresids = np.abs(resids) ** 2.0
+        sresids = np.sign(resids)
+
+        p, o, q = self.p, self.o, self.q
+        nobs = resids.shape[0]
+
+        garch_recursion(parameters, fresids, sresids, sigma2, p, o, q, nobs,
+                        backcast, var_bounds)
+        return sigma2
+
+    def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
+        if initial_value is None:
+            initial_value = parameters[0]
+
+        parameters = self._targeting_to_stangard_garch(parameters)
+        return super(VarianceTargetingGARCH, self).simulate(parameters, nobs, rng, burn=burn,
+                                                            initial_value=initial_value)
+
+    def _targeting_to_stangard_garch(self, parameters):
+        p, o = self.p, self.o
+        abar = parameters[:p].sum()
+        gbar = parameters[p:p + o].sum()
+        bbar = parameters[p + o:].sum()
+        const = parameters[0](1 - abar - 0.5 * gbar - bbar)
+        return np.r_[const, parameters]
+
+    def parameter_names(self):
+        return _common_names(self.p, self.o, self.q)[1:]
+
+    def _analytic_forecast(self, parameters, resids, backcast, var_bounds, start, horizon):
+        parameters = self._targeting_to_stangard_garch(parameters)
+        return super(VarianceTargetingGARCH, self)._analytic_forecast(parameters, resids,
+                                                                      backcast, var_bounds,
+                                                                      start, horizon)
+
+    def _simulation_forecast(self, parameters, resids, backcast, var_bounds, start, horizon,
+                             simulations, rng):
+        parameters = self._targeting_to_stangard_garch(parameters)
+        return super(VarianceTargetingGARCH, self)._simulation_forecast(parameters, resids,
+                                                                        backcast, var_bounds,
+                                                                        start, horizon,
+                                                                        simulations, rng)
+
+    def starting_values(self, resids):
+        p, o, q = self.p, self.o, self.q
+        alphas = [.01, .05, .1, .2]
+        gammas = alphas
+        abg = [.5, .7, .9, .98]
+        abgs = list(itertools.product(*[alphas, gammas, abg]))
+
+        svs = []
+        var_bounds = self.variance_bounds(resids)
+        backcast = self.backcast(resids)
+        llfs = np.zeros(len(abgs))
+        for i, values in enumerate(abgs):
+            alpha, gamma, agb = values
+            sv = np.ones(p + o + q)
+            if p > 0:
+                sv[:p] = alpha / p
+                agb -= alpha
+            if o > 0:
+                sv[p: p + o] = gamma / o
+                agb -= gamma / 2.0
+            if q > 0:
+                sv[p + o:] = agb / q
+            svs.append(sv)
+            llfs[i] = self._gaussian_loglikelihood(sv, resids, backcast, var_bounds)
+        loc = np.argmax(llfs)
+
+        return svs[int(loc)]
