@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>arch.unitroot.unitroot &#8212; arch 4.7.0+20.g8953c73 documentation</title>
+    <title>arch.unitroot.unitroot &#8212; arch 4.7.0+22.g777d9ba documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+20.g8953c73 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+22.g777d9ba documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -55,7 +55,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../../index.html" class="text-logo">arch 4.7.0 (+20)</a>
+    ../../../index.html" class="text-logo">arch 4.7.0 (+22)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -111,9 +111,10 @@
 
 <span class="kn">import</span> <span class="nn">warnings</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="n">arange</span><span class="p">,</span> <span class="n">argwhere</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">ceil</span><span class="p">,</span> <span class="n">cumsum</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span>
-                   <span class="n">float64</span><span class="p">,</span> <span class="n">hstack</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="n">int32</span><span class="p">,</span> <span class="n">int64</span><span class="p">,</span> <span class="n">interp</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span>
-                   <span class="n">pi</span><span class="p">,</span> <span class="n">polyval</span><span class="p">,</span> <span class="n">power</span><span class="p">,</span> <span class="n">sort</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">squeeze</span><span class="p">,</span> <span class="nb">sum</span><span class="p">,</span> <span class="n">amin</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="n">amin</span><span class="p">,</span> <span class="n">arange</span><span class="p">,</span> <span class="n">argwhere</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">ceil</span><span class="p">,</span> <span class="n">cumsum</span><span class="p">,</span> <span class="n">diag</span><span class="p">,</span>
+                   <span class="n">diff</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">float64</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">hstack</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="n">int32</span><span class="p">,</span> <span class="n">int64</span><span class="p">,</span>
+                   <span class="n">interp</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">polyval</span><span class="p">,</span> <span class="n">power</span><span class="p">,</span> <span class="n">sort</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span>
+                   <span class="n">squeeze</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="k">import</span> <span class="n">inv</span><span class="p">,</span> <span class="n">matrix_rank</span><span class="p">,</span> <span class="n">pinv</span><span class="p">,</span> <span class="n">qr</span><span class="p">,</span> <span class="n">solve</span>
 <span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">DataFrame</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">norm</span>
@@ -135,20 +136,22 @@
                                                          <span class="n">tau_min</span><span class="p">,</span> <span class="n">tau_small_p</span><span class="p">,</span>
                                                          <span class="n">tau_star</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">arch.unitroot.critical_values.kpss</span> <span class="k">import</span> <span class="n">kpss_critical_values</span>
+<span class="kn">from</span> <span class="nn">arch.unitroot.critical_values.zivot_andrews</span> <span class="k">import</span> <span class="n">za_critical_values</span>
 <span class="kn">from</span> <span class="nn">arch.utility</span> <span class="k">import</span> <span class="n">cov_nw</span>
-<span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="k">import</span> <span class="n">DocStringInheritor</span><span class="p">,</span> <span class="n">ensure1d</span>
+<span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="k">import</span> <span class="n">DocStringInheritor</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">ensure2d</span>
 <span class="kn">from</span> <span class="nn">arch.utility.exceptions</span> <span class="k">import</span> <span class="n">InvalidLengthWarning</span><span class="p">,</span> <span class="n">invalid_length_doc</span>
 <span class="kn">from</span> <span class="nn">arch.utility.timeseries</span> <span class="k">import</span> <span class="n">add_trend</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ADF&#39;</span><span class="p">,</span> <span class="s1">&#39;DFGLS&#39;</span><span class="p">,</span> <span class="s1">&#39;PhillipsPerron&#39;</span><span class="p">,</span> <span class="s1">&#39;KPSS&#39;</span><span class="p">,</span> <span class="s1">&#39;VarianceRatio&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;kpss_crit&#39;</span><span class="p">,</span> <span class="s1">&#39;mackinnoncrit&#39;</span><span class="p">,</span> <span class="s1">&#39;mackinnonp&#39;</span><span class="p">]</span>
+           <span class="s1">&#39;kpss_crit&#39;</span><span class="p">,</span> <span class="s1">&#39;mackinnoncrit&#39;</span><span class="p">,</span> <span class="s1">&#39;mackinnonp&#39;</span><span class="p">,</span> <span class="s1">&#39;ZivotAndrews&#39;</span><span class="p">]</span>
 
 <span class="n">TREND_MAP</span> <span class="o">=</span> <span class="p">{</span><span class="kc">None</span><span class="p">:</span> <span class="s1">&#39;nc&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;ct&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;ctt&#39;</span><span class="p">}</span>
 
 <span class="n">TREND_DESCRIPTION</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;nc&#39;</span><span class="p">:</span> <span class="s1">&#39;No Trend&#39;</span><span class="p">,</span>
                      <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="s1">&#39;Constant&#39;</span><span class="p">,</span>
                      <span class="s1">&#39;ct&#39;</span><span class="p">:</span> <span class="s1">&#39;Constant and Linear Time Trend&#39;</span><span class="p">,</span>
-                     <span class="s1">&#39;ctt&#39;</span><span class="p">:</span> <span class="s1">&#39;Constant, Linear and Quadratic Time Trends&#39;</span><span class="p">}</span>
+                     <span class="s1">&#39;ctt&#39;</span><span class="p">:</span> <span class="s1">&#39;Constant, Linear and Quadratic Time Trends&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="s1">&#39;Linear Time Trend (No Constant)&#39;</span><span class="p">}</span>
 
 
 <span class="k">def</span> <span class="nf">_select_best_ic</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">tstat</span><span class="p">):</span>
@@ -694,21 +697,19 @@
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
-<span class="sd">    Greene, W. H. 2011. Econometric Analysis. Prentice Hall: Upper Saddle</span>
-<span class="sd">    River, New Jersey.</span>
+<span class="sd">    .. [*] Greene, W. H. 2011. Econometric Analysis. Prentice Hall: Upper</span>
+<span class="sd">       Saddle River, New Jersey.</span>
 
-<span class="sd">    Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton</span>
-<span class="sd">    University Press.</span>
+<span class="sd">    .. [*] Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton</span>
+<span class="sd">       University Press.</span>
 
-<span class="sd">    P-Values (regression surface approximation)</span>
-<span class="sd">    MacKinnon, J.G. 1994.  &quot;Approximate asymptotic distribution functions for</span>
-<span class="sd">    unit-root and cointegration bootstrap.  `Journal of Business and Economic</span>
-<span class="sd">    Statistics` 12, 167-76.</span>
+<span class="sd">    .. [*] MacKinnon, J.G. 1994.  &quot;Approximate asymptotic distribution</span>
+<span class="sd">       functions for unit-root and cointegration bootstrap.  `Journal of</span>
+<span class="sd">       Business and Economic Statistics` 12, 167-76.</span>
 
-<span class="sd">    Critical values</span>
-<span class="sd">    MacKinnon, J.G. 2010. &quot;Critical Values for Cointegration Tests.&quot;  Queen&#39;s</span>
-<span class="sd">    University, Dept of Economics, Working Papers.  Available at</span>
-<span class="sd">    http://ideas.repec.org/p/qed/wpaper/1227.html</span>
+<span class="sd">    .. [*] MacKinnon, J.G. 2010. &quot;Critical Values for Cointegration Tests.&quot;</span>
+<span class="sd">       Queen&#39;s University, Dept of Economics, Working Papers.  Available at</span>
+<span class="sd">       http://ideas.repec.org/p/qed/wpaper/1227.html</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">,</span>
@@ -816,7 +817,7 @@
 <span class="sd">    appears to be a unit root.</span>
 
 <span class="sd">    DFGLS differs from the ADF test in that an initial GLS detrending step</span>
-<span class="sd">    is used before a trend-less ADF regression is run.</span>
+<span class="sd">    is used before a trend-less ADF regression is run [1]_.</span>
 
 <span class="sd">    Critical values and p-values when trend is &#39;c&#39; are identical to</span>
 <span class="sd">    the ADF.  When trend is set to &#39;ct, they are from ...</span>
@@ -843,8 +844,8 @@
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
-<span class="sd">    Elliott, G. R., T. J. Rothenberg, and J. H. Stock. 1996. Efficient bootstrap</span>
-<span class="sd">    for an autoregressive unit root. Econometrica 64: 813-836</span>
+<span class="sd">    .. [1] Elliott, G. R., T. J. Rothenberg, and J. H. Stock. 1996. Efficient</span>
+<span class="sd">      bootstrap for an autoregressive unit root. Econometrica 64: 813-836</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">,</span>
@@ -979,17 +980,17 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The null hypothesis of the Phillips-Perron (PP) test is that there is a</span>
-<span class="sd">    unit root, with the alternative that there is no unit root. If the pvalue</span>
+<span class="sd">    unit root, with the alternative that there is no unit root [1]_. If the pvalue</span>
 <span class="sd">    is above a critical size, then the null cannot be rejected that there</span>
 <span class="sd">    and the series appears to be a unit root.</span>
 
 <span class="sd">    Unlike the ADF test, the regression estimated includes only one lag of</span>
 <span class="sd">    the dependant variable, in addition to trend terms. Any serial</span>
 <span class="sd">    correlation in the regression errors is accounted for using a long-run</span>
-<span class="sd">    variance estimator (currently Newey-West).</span>
+<span class="sd">    variance estimator (currently Newey-West [2]_).</span>
 
 <span class="sd">    The p-values are obtained through regression surface approximation from</span>
-<span class="sd">    MacKinnon (1994) using the updated 2010 tables.</span>
+<span class="sd">    MacKinnon (1994) using the updated 2010 tables ([3]_, [4]_).</span>
 <span class="sd">    If the p-value is close to significant, then the critical values should be</span>
 <span class="sd">    used to judge whether to reject the null.</span>
 
@@ -1020,25 +1021,23 @@
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
-<span class="sd">    Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton</span>
-<span class="sd">    University Press.</span>
+<span class="sd">    .. [*] Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton</span>
+<span class="sd">       University Press.</span>
 
-<span class="sd">    Newey, W. K., and K. D. West. 1987. A simple, positive semidefinite,</span>
-<span class="sd">    heteroskedasticity and autocorrelation consistent covariance matrix.</span>
-<span class="sd">    Econometrica 55, 703-708.</span>
+<span class="sd">    .. [2] Newey, W. K., and K. D. West. 1987. &quot;A simple, positive</span>
+<span class="sd">       semidefinite, heteroskedasticity and autocorrelation consistent covariance</span>
+<span class="sd">       matrix&quot;. Econometrica 55, 703-708.</span>
 
-<span class="sd">    Phillips, P. C. B., and P. Perron. 1988. Testing for a unit root in</span>
-<span class="sd">    time series regression. Biometrika 75, 335-346.</span>
+<span class="sd">    .. [1] Phillips, P. C. B., and P. Perron. 1988. &quot;Testing for a unit root in</span>
+<span class="sd">       time series regression&quot;. Biometrika 75, 335-346.</span>
 
-<span class="sd">    P-Values (regression surface approximation)</span>
-<span class="sd">    MacKinnon, J.G. 1994.  &quot;Approximate asymptotic distribution functions for</span>
-<span class="sd">    unit-root and cointegration bootstrap.  `Journal of Business and Economic</span>
-<span class="sd">    Statistics` 12, 167-76.</span>
+<span class="sd">    .. [3] MacKinnon, J.G. 1994.  &quot;Approximate asymptotic distribution</span>
+<span class="sd">       functions for unit-root and cointegration bootstrap&quot;.  Journal of</span>
+<span class="sd">       Business and  Economic Statistics. 12, 167-76.</span>
 
-<span class="sd">    Critical values</span>
-<span class="sd">    MacKinnon, J.G. 2010. &quot;Critical Values for Cointegration Tests.&quot;  Queen&#39;s</span>
-<span class="sd">    University, Dept of Economics, Working Papers.  Available at</span>
-<span class="sd">    http://ideas.repec.org/p/qed/wpaper/1227.html</span>
+<span class="sd">    .. [4] MacKinnon, J.G. 2010. &quot;Critical Values for Cointegration Tests.&quot;</span>
+<span class="sd">       Queen&#39;s University, Dept of Economics, Working Papers.  Available at</span>
+<span class="sd">       http://ideas.repec.org/p/qed/wpaper/1227.html</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s1">&#39;tau&#39;</span><span class="p">):</span>
@@ -1130,8 +1129,8 @@
 <span class="sd">    lags : int, optional</span>
 <span class="sd">        The number of lags to use in the Newey-West estimator of the long-run</span>
 <span class="sd">        covariance.  If omitted or None, the number of lags is calculated</span>
-<span class="sd">        with the data-dependent method of Hobijn et al. (1998). See also</span>
-<span class="sd">        Andrews (1991), Newey &amp; West (1994), and Schwert (1989).</span>
+<span class="sd">        with the data-dependent method of Hobijn et al. (1998) [2]_. See also</span>
+<span class="sd">        Andrews (1991) [3]_, Newey &amp; West (1994) [4]_, and Schwert (1989) [5]_.</span>
 <span class="sd">        Set lags=-1 to use the old method that only depends on the sample</span>
 <span class="sd">        size, 12 * (nobs/100) ** (1/4).</span>
 <span class="sd">    trend : {&#39;c&#39;, &#39;ct&#39;}, optional</span>
@@ -1155,9 +1154,9 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The null hypothesis of the KPSS test is that the series is weakly</span>
-<span class="sd">    stationary and the alternative is that it is non-stationary. If the</span>
-<span class="sd">    p-value is above a critical size, then the null cannot be rejected</span>
-<span class="sd">    that there and the series appears stationary.</span>
+<span class="sd">    stationary and the alternative is that it is non-stationary [1]_.</span>
+<span class="sd">    If the p-value is above a critical size, then the null cannot be</span>
+<span class="sd">    rejected that there and the series appears stationary.</span>
 
 <span class="sd">    The p-values and critical values were computed using an extensive</span>
 <span class="sd">    simulation based on 100,000,000 replications using series with 2,000</span>
@@ -1183,21 +1182,22 @@
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
-<span class="sd">    Andrews, D.W.K. (1991). Heteroskedasticity and autocorrelation consistent</span>
-<span class="sd">    covariance matrix estimation. Econometrica, 59: 817-858.</span>
+<span class="sd">    .. [3] Andrews, D.W.K. (1991). &quot;Heteroskedasticity and autocorrelation</span>
+<span class="sd">       consistent covariance matrix estimation&quot;. Econometrica, 59: 817-858.</span>
 
-<span class="sd">    Hobijn, B., Frances, B.H., &amp; Ooms, M. (2004). Generalizations of the</span>
-<span class="sd">    KPSS-test for stationarity. Statistica Neerlandica, 52: 483-502.</span>
+<span class="sd">    .. [2] Hobijn, B., Frances, B.H., &amp; Ooms, M. (2004). Generalizations</span>
+<span class="sd">       of the KPSS-test for stationarity. Statistica Neerlandica, 52: 483-502.</span>
 
-<span class="sd">    Kwiatkowski, D.; Phillips, P. C. B.; Schmidt, P.; Shin, Y. (1992). &quot;Testing</span>
-<span class="sd">    the null hypothesis of stationarity against the alternative of a unit</span>
-<span class="sd">    root&quot;. Journal of Econometrics 54 (1-3), 159-178</span>
+<span class="sd">    .. [1] Kwiatkowski, D.; Phillips, P. C. B.; Schmidt, P.; Shin, Y. (1992).</span>
+<span class="sd">       &quot;Testing the null hypothesis of stationarity against the alternative of</span>
+<span class="sd">       a unit root&quot;. Journal of Econometrics 54 (1-3), 159-178</span>
 
-<span class="sd">    Newey, W.K., &amp; West, K.D. (1994). Automatic lag selection in covariance</span>
-<span class="sd">    matrix estimation. Review of Economic Studies, 61: 631-653.</span>
+<span class="sd">    .. [4] Newey, W.K., &amp; West, K.D. (1994). &quot;Automatic lag selection in</span>
+<span class="sd">       covariance matrix estimation&quot;. Review of Economic Studies, 61: 631-653.</span>
 
-<span class="sd">    Schwert, G. W. (1989). Tests for unit roots: A Monte Carlo investigation.</span>
-<span class="sd">    Journal of Business and Economic Statistics, 7 (2): 147-159.</span>
+<span class="sd">    .. [5] Schwert, G. W. (1989). &quot;Tests for unit roots: A Monte Carlo</span>
+<span class="sd">       investigation&quot;. Journal of Business and Economic Statistics, 7 (2):</span>
+<span class="sd">       147-159.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">):</span>
@@ -1239,9 +1239,10 @@
 
     <span class="k">def</span> <span class="nf">_autolag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Computes the number of lags for covariance matrix estimation in KPSS test</span>
-<span class="sd">        using method of Hobijn et al (1998). See also Andrews (1991), Newey &amp; West</span>
-<span class="sd">        (1994), and Schwert (1989). Assumes Bartlett / Newey-West kernel.</span>
+<span class="sd">        Computes the number of lags for covariance matrix estimation in KPSS</span>
+<span class="sd">        test using method of Hobijn et al (1998). See also Andrews (1991),</span>
+<span class="sd">        Newey &amp; West (1994), and Schwert (1989). Assumes Bartlett / Newey-West</span>
+<span class="sd">        kernel.</span>
 
 <span class="sd">        Written by Jim Varanelli</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1259,6 +1260,193 @@
         <span class="n">gamma_hat</span> <span class="o">=</span> <span class="mf">1.1447</span> <span class="o">*</span> <span class="n">power</span><span class="p">(</span><span class="n">s_hat</span> <span class="o">*</span> <span class="n">s_hat</span><span class="p">,</span> <span class="n">pwr</span><span class="p">)</span>
         <span class="n">autolags</span> <span class="o">=</span> <span class="n">amin</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">gamma_hat</span> <span class="o">*</span> <span class="n">power</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="p">,</span> <span class="n">pwr</span><span class="p">))])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="n">autolags</span></div>
+
+
+<div class="viewcode-block" id="ZivotAndrews"><a class="viewcode-back" href="../../../unitroot/tests.html#arch.unitroot.ZivotAndrews">[docs]</a><span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">DocStringInheritor</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">ZivotAndrews</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Zivot-Andrews structural-break unit-root test</span>
+
+<span class="sd">    The Zivot-Andrews test can be used to test for a unit root in a</span>
+<span class="sd">    univariate process in the presence of serial correlation and a</span>
+<span class="sd">    single structural break.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array_like</span>
+<span class="sd">        data series</span>
+<span class="sd">    lags : int, optional</span>
+<span class="sd">        The number of lags to use in the ADF regression.  If omitted or None,</span>
+<span class="sd">        `method` is used to automatically select the lag length with no more</span>
+<span class="sd">        than `max_lags` are included.</span>
+<span class="sd">    trend : {&#39;nc&#39;, &#39;c&#39;, &#39;ct&#39;, &#39;ctt&#39;}, optional</span>
+<span class="sd">        The trend component to include in the Zivot-Andrews test</span>
+<span class="sd">        &#39;c&#39; - Include a constant (Default)</span>
+<span class="sd">        &#39;t&#39; - Include a linear time trend</span>
+<span class="sd">        &#39;ct&#39; - Include a constant and linear time trend</span>
+<span class="sd">    trim : float</span>
+<span class="sd">        percentage of series at begin/end to exclude from break-period</span>
+<span class="sd">        calculation in range [0, 0.333] (default=0.15)</span>
+<span class="sd">    max_lags : int, optional</span>
+<span class="sd">        The maximum number of lags to use when selecting lag length</span>
+<span class="sd">    method : {&#39;AIC&#39;, &#39;BIC&#39;, &#39;t-stat&#39;}, optional</span>
+<span class="sd">        The method to use when selecting the lag length</span>
+<span class="sd">        &#39;AIC&#39; - Select the minimum of the Akaike IC</span>
+<span class="sd">        &#39;BIC&#39; - Select the minimum of the Schwarz/Bayesian IC</span>
+<span class="sd">        &#39;t-stat&#39; - Select the minimum of the Schwarz/Bayesian IC</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    stat</span>
+<span class="sd">    pvalue</span>
+<span class="sd">    critical_values</span>
+<span class="sd">    null_hypothesis</span>
+<span class="sd">    alternative_hypothesis</span>
+<span class="sd">    summary</span>
+<span class="sd">    regression</span>
+<span class="sd">    valid_trends</span>
+<span class="sd">    y</span>
+<span class="sd">    trend</span>
+<span class="sd">    lags</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    H0 = unit root with a single structural break</span>
+
+<span class="sd">    Algorithm follows Baum (2004/2015) [1]_ approximation to original</span>
+<span class="sd">    Zivot-Andrews [2]_ method. Rather than performing an autolag regression at</span>
+<span class="sd">    each candidate break period (as per the original paper), a single</span>
+<span class="sd">    autolag regression is run up-front on the base model (constant + trend</span>
+<span class="sd">    with no dummies) to determine the best lag length. This lag length is</span>
+<span class="sd">    then used for all subsequent break-period regressions. This results in</span>
+<span class="sd">    significant run time reduction but also slightly more pessimistic test</span>
+<span class="sd">    statistics than the original Zivot-Andrews method,</span>
+
+<span class="sd">    No attempt has been made to characterize the size/power tradeoff.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Baum, C.F. (2004). ZANDREWS: Stata module to calculate Zivot-Andrews</span>
+<span class="sd">       unit root test in presence of structural break,&quot; Statistical Software</span>
+<span class="sd">       Components S437301, Boston College Department of Economics, revised</span>
+<span class="sd">       2015.</span>
+
+<span class="sd">    .. [*] Schwert, G.W. (1989). Tests for unit roots: A Monte Carlo</span>
+<span class="sd">       investigation. Journal of Business &amp; Economic Statistics, 7: 147-159.</span>
+
+<span class="sd">    .. [2] Zivot, E., and Andrews, D.W.K. (1992). Further evidence on the great</span>
+<span class="sd">       crash, the oil-price shock, and the unit-root hypothesis. Journal of</span>
+<span class="sd">       Business &amp; Economic Studies, 10: 251-270.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">trim</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">max_lags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;AIC&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ZivotAndrews</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">trend</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;ct&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">trim</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">or</span> <span class="n">trim</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">trim</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="mf">3.</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;trim must be a float in range [0, 0.333]&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trim</span> <span class="o">=</span> <span class="n">trim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_lags</span> <span class="o">=</span> <span class="n">max_lags</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_test_name</span> <span class="o">=</span> <span class="s1">&#39;Zivot-Andrews&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_stats</span> <span class="o">=</span> <span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">nan</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_null_hypothesis</span> <span class="o">=</span> <span class="s1">&#39;The process contains a unit root with a single structural break.&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_alternative_hypothesis</span> <span class="o">=</span> <span class="s1">&#39;The process is trend and break stationary.&#39;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_quick_ols</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Minimal implementation of LS estimator for internal use</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">xpxi</span> <span class="o">=</span> <span class="n">inv</span><span class="p">(</span><span class="n">exog</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">exog</span><span class="p">))</span>
+        <span class="n">xpy</span> <span class="o">=</span> <span class="n">exog</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">endog</span><span class="p">)</span>
+        <span class="n">nobs</span><span class="p">,</span> <span class="n">k_exog</span> <span class="o">=</span> <span class="n">exog</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">xpxi</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">xpy</span><span class="p">)</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">endog</span> <span class="o">-</span> <span class="n">exog</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">k_exog</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">b</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">diag</span><span class="p">(</span><span class="n">sigma2</span> <span class="o">*</span> <span class="n">xpxi</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This is the core routine that computes the test statistic, computes</span>
+<span class="sd">        the p-value and constructs the critical values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">trim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trim</span>
+        <span class="n">trend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span>
+
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">ensure2d</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">baselags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">max_lags</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_lags</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s1">&#39;ct&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="n">baselags</span> <span class="o">=</span> <span class="n">adf</span><span class="o">.</span><span class="n">lags</span>
+
+        <span class="n">trimcnt</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nobs</span> <span class="o">*</span> <span class="n">trim</span><span class="p">)</span>
+        <span class="n">start_period</span> <span class="o">=</span> <span class="n">trimcnt</span>
+        <span class="n">end_period</span> <span class="o">=</span> <span class="n">nobs</span> <span class="o">-</span> <span class="n">trimcnt</span>
+        <span class="k">if</span> <span class="n">trend</span> <span class="o">==</span> <span class="s1">&#39;ct&#39;</span><span class="p">:</span>
+            <span class="n">basecols</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">basecols</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="c1"># first-diff y and standardize for numerical stability</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">diff</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">dy</span> <span class="o">/=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">dy</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dy</span><span class="p">))</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+        <span class="c1"># reserve exog space</span>
+        <span class="n">exog</span> <span class="o">=</span> <span class="n">empty</span><span class="p">((</span><span class="n">dy</span><span class="p">[</span><span class="n">baselags</span><span class="p">:]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">basecols</span> <span class="o">+</span> <span class="n">baselags</span><span class="p">))</span>
+        <span class="c1"># normalize constant for stability in long time series</span>
+        <span class="n">c_const</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span>  <span class="c1"># Normalize</span>
+        <span class="n">exog</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">c_const</span>
+        <span class="c1"># lagged y and dy</span>
+        <span class="n">exog</span><span class="p">[:,</span> <span class="n">basecols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">baselags</span><span class="p">:(</span><span class="n">nobs</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">exog</span><span class="p">[:,</span> <span class="n">basecols</span><span class="p">:]</span> <span class="o">=</span> <span class="n">lagmat</span><span class="p">(</span><span class="n">dy</span><span class="p">,</span> <span class="n">baselags</span><span class="p">,</span> <span class="n">trim</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)[</span><span class="n">baselags</span><span class="p">:</span><span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">baselags</span><span class="p">]</span>
+        <span class="c1"># better time trend: t_const @ t_const = 1 for large nobs</span>
+        <span class="n">t_const</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">nobs</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">t_const</span> <span class="o">*=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="n">nobs</span> <span class="o">**</span> <span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># iterate through the time periods</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">full</span><span class="p">(</span><span class="n">end_period</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">bp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_period</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">end_period</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="c1"># update intercept dummy / trend / trend dummy</span>
+            <span class="n">cutoff</span> <span class="o">=</span> <span class="p">(</span><span class="n">bp</span> <span class="o">-</span> <span class="p">(</span><span class="n">baselags</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">trend</span> <span class="o">!=</span> <span class="s1">&#39;t&#39;</span><span class="p">:</span>
+                <span class="n">exog</span><span class="p">[:</span><span class="n">cutoff</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">exog</span><span class="p">[</span><span class="n">cutoff</span><span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">c_const</span>
+                <span class="n">exog</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_const</span><span class="p">[(</span><span class="n">baselags</span> <span class="o">+</span> <span class="mi">2</span><span class="p">):(</span><span class="n">nobs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+                <span class="k">if</span> <span class="n">trend</span> <span class="o">==</span> <span class="s1">&#39;ct&#39;</span><span class="p">:</span>
+                    <span class="n">exog</span><span class="p">[:</span><span class="n">cutoff</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">exog</span><span class="p">[</span><span class="n">cutoff</span><span class="p">:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_const</span><span class="p">[</span><span class="mi">1</span><span class="p">:(</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">bp</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">exog</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_const</span><span class="p">[(</span><span class="n">baselags</span> <span class="o">+</span> <span class="mi">2</span><span class="p">):(</span><span class="n">nobs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+                <span class="n">exog</span><span class="p">[:(</span><span class="n">cutoff</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">exog</span><span class="p">[(</span><span class="n">cutoff</span><span class="o">-</span><span class="mi">1</span><span class="p">):,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_const</span><span class="p">[</span><span class="mi">0</span><span class="p">:(</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">bp</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+            <span class="c1"># check exog rank on first iteration</span>
+            <span class="k">if</span> <span class="n">bp</span> <span class="o">==</span> <span class="n">start_period</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">rank</span> <span class="o">=</span> <span class="n">matrix_rank</span><span class="p">(</span><span class="n">exog</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">rank</span> <span class="o">&lt;</span> <span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;ZA: auxiliary exog matrix is not full rank.</span><span class="se">\n</span><span class="s1"> cols &#39;</span>
+                                     <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">. rank = </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">rank</span><span class="p">))</span>
+            <span class="n">stats</span><span class="p">[</span><span class="n">bp</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quick_ols</span><span class="p">(</span><span class="n">dy</span><span class="p">[</span><span class="n">baselags</span><span class="p">:],</span> <span class="n">exog</span><span class="p">)[</span><span class="n">basecols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># return best seen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_stats</span><span class="p">[</span><span class="n">start_period</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">end_period</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="n">start_period</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">end_period</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span> <span class="o">=</span> <span class="n">amin</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cv_interpolate</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_cv_interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Linear interpolation for Zivot-Andrews p-values and critical values</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The p-values are linearly interpolated from the quantiles of the</span>
+<span class="sd">        simulated ZA test statistic distribution</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">za_critical_values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">table</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">table</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># ZA cv table contains quantiles multiplied by 100</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pvalue</span> <span class="o">=</span> <span class="n">interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span>
+        <span class="n">cv</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]</span>
+        <span class="n">crit_value</span> <span class="o">=</span> <span class="n">interp</span><span class="p">(</span><span class="n">cv</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_critical_values</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;1%&quot;</span><span class="p">:</span> <span class="n">crit_value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;5%&quot;</span><span class="p">:</span> <span class="n">crit_value</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;10%&quot;</span><span class="p">:</span> <span class="n">crit_value</span><span class="p">[</span><span class="mi">2</span><span class="p">]}</span></div>
 
 
 <div class="viewcode-block" id="VarianceRatio"><a class="viewcode-back" href="../../../unitroot/tests.html#arch.unitroot.VarianceRatio">[docs]</a><span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">DocStringInheritor</span><span class="p">)</span>
@@ -1307,8 +1495,8 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The null hypothesis of a VR is that the process is a random walk, possibly</span>
-<span class="sd">    plus drift.  Rejection of the null with a positive test statistic indicates</span>
-<span class="sd">    the presence of positive serial correlation in the time series.</span>
+<span class="sd">    plus drift.  Rejection of the null with a positive test statistic</span>
+<span class="sd">    indicates the presence of positive serial correlation in the time series.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -1324,10 +1512,9 @@
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
-<span class="sd">    Campbell, John Y., Lo, Andrew W. and MacKinlay, A. Craig. (1997) The</span>
-<span class="sd">    Econometrics of Financial Markets. Princeton, NJ: Princeton University</span>
-<span class="sd">    Press.</span>
-
+<span class="sd">    .. [*] Campbell, John Y., Lo, Andrew W. and MacKinlay, A. Craig. (1997) The</span>
+<span class="sd">       Econometrics of Financial Markets. Princeton, NJ: Princeton University</span>
+<span class="sd">       Press.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">debiased</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -1648,7 +1835,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+20.g8953c73 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+22.g777d9ba documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

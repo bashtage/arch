@@ -10,8 +10,9 @@ This module contains a number of routines:
 * Augmented Dickey-Fuller (:py:class:`~arch.unitroot.ADF`)
 * Dickey-Fuller GLS (:py:class:`~arch.unitroot.DFGLS`)
 * Phillips-Perron (:py:class:`~arch.unitroot.PhillipsPerron`)
-* Variance Ratio (:py:class:`~arch.unitroot.VarianceRatio`)
 * KPSS (:py:class:`~arch.unitroot.KPSS`)
+* Zivot-Andrews (:py:class:`~arch.unitroot.ZivotAndrews`)
+* Variance Ratio (:py:class:`~arch.unitroot.VarianceRatio`)
 
 
 The first four all start with the null of a unit root and have an alternative
