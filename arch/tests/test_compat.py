@@ -1,6 +1,9 @@
-import pytest
-import numpy as np
 from arch.compat.numba import PerformanceWarning
+
+import numpy as np
+import pytest
+
+from arch.univariate.recursions_python import arch_recursion
 
 try:
     import numba  # noqa: F401
@@ -8,8 +11,6 @@ try:
     HAS_NUMBA = True
 except ImportError:
     HAS_NUMBA = False
-
-from arch.univariate.recursions_python import arch_recursion
 
 
 @pytest.mark.skipif(HAS_NUMBA, reason='Can only test when numba is not available.')
