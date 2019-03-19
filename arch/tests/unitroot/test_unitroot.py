@@ -13,7 +13,7 @@ from numpy.random import RandomState
 from numpy.testing import assert_almost_equal, assert_equal
 import pytest
 import scipy.stats as stats
-from statsmodels.datasets import macrodata
+from statsmodels.datasets import macrodata, sunspots, randhie, modechoice, nile
 from statsmodels.regression.linear_model import OLS
 from statsmodels.tsa.stattools import _autolag, lagmat
 
@@ -32,7 +32,9 @@ class TestUnitRoot(TestCase):
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)
-        cls.cpi = log(macrodata.load().data['cpi'])
+        data = macrodata.load().data
+        cls.cpi = log(data['cpi'])
+        cls.realgdp = data['realgdp']
         cls.inflation = diff(cls.cpi)
         cls.inflation_change = diff(cls.inflation)
 
@@ -103,7 +105,7 @@ class TestUnitRoot(TestCase):
                                              'stationary.'
 
     def test_kpss_auto(self):
-        kpss = KPSS(self.inflation)
+        kpss = KPSS(self.inflation, lags=-1)
         m = self.inflation.shape[0]
         lags = np.ceil(12.0 * (m / 100) ** (1.0 / 4))
         assert_equal(kpss.lags, lags)
@@ -443,3 +445,18 @@ def test_adf_short_timeseries():
     adf = ADF(x)
     assert_almost_equal(adf.stat, -2.236, decimal=3)
     assert adf.lags == 1
+
+
+kpss_autolag_data = ((macrodata.load().data['realgdp'], 'c', 9),
+                     (sunspots.load().data['SUNACTIVITY'], 'c', 7),
+                     (nile.load().data['volume'], 'c', 5),
+                     (randhie.load().data['lncoins'], 'ct', 75),
+                     (modechoice.load().data['invt'], 'ct', 18))
+
+
+@pytest.mark.filterwarnings('ignore::DeprecationWarning')
+@pytest.mark.parametrize('data,trend,lags', kpss_autolag_data)
+def test_kpss_data_dependent_lags(data, trend, lags):
+    # real GDP from macrodata data set
+    kpss = KPSS(data, trend=trend)
+    assert_equal(kpss.lags, lags)

@@ -6,7 +6,7 @@ import warnings
 
 from numpy import (abs, arange, argwhere, array, ceil, cumsum, diff, empty,
                    float64, hstack, inf, int32, int64, interp, log, nan, ones,
-                   pi, polyval, power, sort, sqrt, squeeze, sum)
+                   pi, polyval, power, sort, sqrt, squeeze, sum, amin)
 from numpy.linalg import inv, matrix_rank, pinv, qr, solve
 from pandas import DataFrame
 from scipy.stats import norm
@@ -1022,8 +1022,11 @@ class KPSS(UnitRootTest):
         The data to test for stationarity
     lags : int, optional
         The number of lags to use in the Newey-West estimator of the long-run
-        covariance.  If omitted or None, the lag length is set automatically to
-        12 * (nobs/100) ** (1/4)
+        covariance.  If omitted or None, the number of lags is calculated
+        with the data-dependent method of Hobijn et al. (1998). See also
+        Andrews (1991), Newey & West (1994), and Schwert (1989).
+        Set lags=-1 to use the old method that only depends on the sample
+        size, 12 * (nobs/100) ** (1/4).
     trend : {'c', 'ct'}, optional
         The trend component to include in the ADF test
             'c' - Include a constant (Default)
@@ -1073,17 +1076,38 @@ class KPSS(UnitRootTest):
 
     References
     ----------
+    Andrews, D.W.K. (1991). Heteroskedasticity and autocorrelation consistent
+    covariance matrix estimation. Econometrica, 59: 817-858.
+
+    Hobijn, B., Frances, B.H., & Ooms, M. (2004). Generalizations of the
+    KPSS-test for stationarity. Statistica Neerlandica, 52: 483-502.
+
     Kwiatkowski, D.; Phillips, P. C. B.; Schmidt, P.; Shin, Y. (1992). "Testing
     the null hypothesis of stationarity against the alternative of a unit
     root". Journal of Econometrics 54 (1-3), 159-178
+
+    Newey, W.K., & West, K.D. (1994). Automatic lag selection in covariance
+    matrix estimation. Review of Economic Studies, 61: 631-653.
+
+    Schwert, G. W. (1989). Tests for unit roots: A Monte Carlo investigation.
+    Journal of Business and Economic Statistics, 7 (2): 147-159.
     """
 
     def __init__(self, y, lags=None, trend='c'):
         valid_trends = ('c', 'ct')
+        if lags is None:
+            import warnings
+            warnings.warn('Lag selection has changed to use a data-dependent method. To use the '
+                          'old method that only depends on time, set lags=-1', DeprecationWarning)
+        self._legacy_lag_selection = False
+        if lags == -1:
+            self._legacy_lag_selection = True
+            lags = None
         super(KPSS, self).__init__(y, lags, trend, valid_trends)
         self._test_name = 'KPSS Stationarity Test'
         self._null_hypothesis = 'The process is weakly stationary.'
         self._alternative_hypothesis = 'The process contains a unit root.'
+        self._resids = None
 
     def _compute_statistic(self):
         # 1. Estimate model with trend
@@ -1091,9 +1115,12 @@ class KPSS(UnitRootTest):
         z = add_trend(nobs=nobs, trend=trend)
         res = OLS(y, z).fit()
         # 2. Compute KPSS test
-        u = res.resid
+        self._resids = u = res.resid
         if self._lags is None:
-            self._lags = int(ceil(12. * power(nobs / 100., 1 / 4.)))
+            if self._legacy_lag_selection:
+                self._lags = int(ceil(12. * power(nobs / 100., 1 / 4.)))
+            else:
+                self._autolag()
         lam = cov_nw(u, self._lags, demean=False)
         s = cumsum(u)
         self._stat = 1 / (nobs ** 2.0) * sum(s ** 2.0) / lam
@@ -1102,6 +1129,29 @@ class KPSS(UnitRootTest):
         self._critical_values = {"1%": critical_values[0],
                                  "5%": critical_values[1],
                                  "10%": critical_values[2]}
+
+    def _autolag(self):
+        """
+        Computes the number of lags for covariance matrix estimation in KPSS test
+        using method of Hobijn et al (1998). See also Andrews (1991), Newey & West
+        (1994), and Schwert (1989). Assumes Bartlett / Newey-West kernel.
+
+        Written by Jim Varanelli
+        """
+        resids = self._resids
+        covlags = int(power(self._nobs, 2. / 9.))
+        s0 = sum(resids**2) / self._nobs
+        s1 = 0
+        for i in range(1, covlags + 1):
+            resids_prod = resids[i:].dot(resids[:self._nobs - i])
+            resids_prod /= self._nobs / 2
+            s0 += resids_prod
+            s1 += i * resids_prod
+        s_hat = s1 / s0
+        pwr = 1. / 3.
+        gamma_hat = 1.1447 * power(s_hat * s_hat, pwr)
+        autolags = amin([self._nobs, int(gamma_hat * power(self._nobs, pwr))])
+        self._lags = autolags
 
 
 @add_metaclass(DocStringInheritor)

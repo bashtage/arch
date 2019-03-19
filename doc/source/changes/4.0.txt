@@ -1,5 +1,8 @@
 Changes since 4.0
 =================
+- Added data dependent lag length seelction to the KPSS test,
+  :class:`~arch.unitroot.KPSS`. This code was originally written by
+  Jim Varanelli
 - Added :class:`~arch.bootstrap.IndependentSamplesBootstrap` to
   perform bootstrap inference on statistics from independent samples that may
   have uneven length (:issue:`260`).
