@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>The Unit Root Tests &#8212; arch 4.7.0+18.gd37eede documentation</title>
+    <title>The Unit Root Tests &#8212; arch 4.7.0+20.g8953c73 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="unitroot_examples.html" title="Unit Root Testing"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+18.gd37eede documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+20.g8953c73 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="unitroot.html" accesskey="U">Unit Root Testing</a> &#187;</li> 
       </ul>
     </div>
@@ -63,7 +63,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+18)</a>
+    ../index.html" class="text-logo">arch 4.7.0 (+20)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -729,8 +729,11 @@ Press.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – The data to test for stationarity</li>
 <li><strong>lags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of lags to use in the Newey-West estimator of the long-run
-covariance.  If omitted or None, the lag length is set automatically to
-12 * (nobs/100) ** (1/4)</li>
+covariance.  If omitted or None, the number of lags is calculated
+with the data-dependent method of Hobijn et al. (1998). See also
+Andrews (1991), Newey &amp; West (1994), and Schwert (1989).
+Set lags=-1 to use the old method that only depends on the sample
+size, 12 * (nobs/100) ** (1/4).</li>
 <li><strong>trend</strong> (<em>{'c'</em><em>, </em><em>'ct'}</em><em>, </em><em>optional</em>) – <dl class="docutils">
 <dt>The trend component to include in the ADF test</dt>
 <dd>’c’ - Include a constant (Default)
@@ -819,9 +822,17 @@ observations.</p>
 </pre></div>
 </div>
 <p class="rubric">References</p>
+<p>Andrews, D.W.K. (1991). Heteroskedasticity and autocorrelation consistent
+covariance matrix estimation. Econometrica, 59: 817-858.</p>
+<p>Hobijn, B., Frances, B.H., &amp; Ooms, M. (2004). Generalizations of the
+KPSS-test for stationarity. Statistica Neerlandica, 52: 483-502.</p>
 <p>Kwiatkowski, D.; Phillips, P. C. B.; Schmidt, P.; Shin, Y. (1992). “Testing
 the null hypothesis of stationarity against the alternative of a unit
 root”. Journal of Econometrics 54 (1-3), 159-178</p>
+<p>Newey, W.K., &amp; West, K.D. (1994). Automatic lag selection in covariance
+matrix estimation. Review of Economic Studies, 61: 631-653.</p>
+<p>Schwert, G. W. (1989). Tests for unit roots: A Monte Carlo investigation.
+Journal of Business and Economic Statistics, 7 (2): 147-159.</p>
 <dl class="method">
 <dt>
 <code class="descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
@@ -866,7 +877,7 @@ root”. Journal of Econometrics 54 (1-3), 159-178</p>
         <li class="right" >
           <a href="unitroot_examples.html" title="Unit Root Testing"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+18.gd37eede documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+20.g8953c73 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="unitroot.html" >Unit Root Testing</a> &#187;</li> 
       </ul>
     </div>
