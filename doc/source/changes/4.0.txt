@@ -1,8 +1,10 @@
 Changes since 4.0
 =================
-- Added data dependent lag length seelction to the KPSS test,
+- Added Zivot-Andrews unit root test :class:`~arch.unitroot.ZivotAndrews`.
+  This code was originally written by Jim Varanelli.
+- Added data dependent lag length selection to the KPSS test,
   :class:`~arch.unitroot.KPSS`. This code was originally written by
-  Jim Varanelli
+  Jim Varanelli.
 - Added :class:`~arch.bootstrap.IndependentSamplesBootstrap` to
   perform bootstrap inference on statistics from independent samples that may
   have uneven length (:issue:`260`).

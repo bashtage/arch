@@ -1,5 +1,6 @@
 from __future__ import absolute_import, division
 
-from arch.unitroot.unitroot import ADF, KPSS, DFGLS, VarianceRatio, PhillipsPerron
+from arch.unitroot.unitroot import (ADF, DFGLS, KPSS, PhillipsPerron,
+                                    VarianceRatio, ZivotAndrews)
 
-__all__ = ['ADF', 'KPSS', 'DFGLS', 'VarianceRatio', 'PhillipsPerron']
+__all__ = ['ADF', 'KPSS', 'DFGLS', 'VarianceRatio', 'PhillipsPerron', 'ZivotAndrews']

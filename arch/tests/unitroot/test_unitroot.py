@@ -4,20 +4,23 @@ from __future__ import division, print_function
 
 from arch.compat.python import iteritems
 
-from unittest import TestCase
+from collections import namedtuple
+import os
 import warnings
 
 import numpy as np
 from numpy import ceil, diff, log, polyval
 from numpy.random import RandomState
 from numpy.testing import assert_almost_equal, assert_equal
+import pandas as pd
 import pytest
 import scipy.stats as stats
-from statsmodels.datasets import macrodata, sunspots, randhie, modechoice, nile
+from statsmodels.datasets import macrodata, modechoice, nile, randhie, sunspots
 from statsmodels.regression.linear_model import OLS
 from statsmodels.tsa.stattools import _autolag, lagmat
 
-from arch.unitroot import ADF, DFGLS, KPSS, PhillipsPerron, VarianceRatio
+from arch.unitroot import (ADF, DFGLS, KPSS, PhillipsPerron, VarianceRatio,
+                           ZivotAndrews)
 from arch.unitroot.critical_values.dickey_fuller import tau_2010
 from arch.unitroot.unitroot import _autolag_ols, mackinnoncrit, mackinnonp
 
@@ -27,8 +30,12 @@ DECIMAL_3 = 3
 DECIMAL_2 = 2
 DECIMAL_1 = 1
 
+BASE_PATH = os.path.split(os.path.abspath(__file__))[0]
+DATA_PATH = os.path.join(BASE_PATH, 'data')
+ZIVOT_ANDREWS_DATA = pd.read_csv(os.path.join(DATA_PATH, 'zivot-andrews.csv'), index_col=0)
 
-class TestUnitRoot(TestCase):
+
+class TestUnitRoot(object):
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)
@@ -267,7 +274,7 @@ class TestUnitRoot(TestCase):
         assert isinstance(vr, VarianceRatio)
 
 
-class TestAutolagOLS(TestCase):
+class TestAutolagOLS(object):
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)
@@ -460,3 +467,41 @@ def test_kpss_data_dependent_lags(data, trend, lags):
     # real GDP from macrodata data set
     kpss = KPSS(data, trend=trend)
     assert_equal(kpss.lags, lags)
+
+
+za_test_result = namedtuple('za_test_result',
+                            ['stat', 'pvalue', 'lags', 'trend',
+                             'max_lags', 'method', 'actual_lags', ])
+
+series = {
+    'REAL_GNP': za_test_result(stat=-5.57615, pvalue=0.00312, lags=8, trend='c', max_lags=None,
+                               method=None, actual_lags=8),
+    'GNP_DEFLATOR': za_test_result(stat=-4.12155, pvalue=0.28024, lags=None, trend='c', max_lags=8,
+                                   method='t-stat', actual_lags=5),
+    'STOCK_PRICES': za_test_result(stat=-5.60689, pvalue=0.00894, lags=None, trend='ct',
+                                   max_lags=8, method='t-stat', actual_lags=1),
+    'REAL_GNP_QTR': za_test_result(stat=-3.02761, pvalue=0.63993, lags=None, trend='t',
+                                   max_lags=12, method='t-stat', actual_lags=12),
+    'RAND10000': za_test_result(stat=-3.48223, pvalue=0.69111, lags=None, trend='c',
+                                max_lags=None, method='t-stat', actual_lags=25)
+}
+
+
+@pytest.mark.parametrize('series_name', series.keys())
+def test_zivot_andrews(series_name):
+    # Test results from package urca.ur.za (1.13-0)
+    y = ZIVOT_ANDREWS_DATA[series_name].dropna()
+    result = series[series_name]
+    za = ZivotAndrews(y, lags=result.lags, trend=result.trend, max_lags=result.max_lags,
+                      method=result.method)
+    assert_almost_equal(za.stat, result.stat, decimal=3)
+    assert_almost_equal(za.pvalue, result.pvalue, decimal=3)
+    assert_equal(za.lags, result.actual_lags)
+    assert isinstance(za.__repr__(), str)
+
+
+def test_zivot_andrews_error():
+    series_name = 'REAL_GNP'
+    y = ZIVOT_ANDREWS_DATA[series_name].dropna()
+    with pytest.raises(ValueError):
+        ZivotAndrews(y, trim=0.5)

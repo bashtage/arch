@@ -4,9 +4,10 @@ from arch.compat.python import add_metaclass, lmap, long, range
 
 import warnings
 
-from numpy import (abs, arange, argwhere, array, ceil, cumsum, diff, empty,
-                   float64, hstack, inf, int32, int64, interp, log, nan, ones,
-                   pi, polyval, power, sort, sqrt, squeeze, sum, amin)
+from numpy import (abs, amin, arange, argwhere, array, ceil, cumsum, diag,
+                   diff, empty, float64, full, hstack, inf, int32, int64,
+                   interp, log, nan, ones, pi, polyval, power, sort, sqrt,
+                   squeeze, sum)
 from numpy.linalg import inv, matrix_rank, pinv, qr, solve
 from pandas import DataFrame
 from scipy.stats import norm
@@ -28,20 +29,22 @@ from arch.unitroot.critical_values.dickey_fuller import (adf_z_cv_approx,
                                                          tau_min, tau_small_p,
                                                          tau_star)
 from arch.unitroot.critical_values.kpss import kpss_critical_values
+from arch.unitroot.critical_values.zivot_andrews import za_critical_values
 from arch.utility import cov_nw
-from arch.utility.array import DocStringInheritor, ensure1d
+from arch.utility.array import DocStringInheritor, ensure1d, ensure2d
 from arch.utility.exceptions import InvalidLengthWarning, invalid_length_doc
 from arch.utility.timeseries import add_trend
 
 __all__ = ['ADF', 'DFGLS', 'PhillipsPerron', 'KPSS', 'VarianceRatio',
-           'kpss_crit', 'mackinnoncrit', 'mackinnonp']
+           'kpss_crit', 'mackinnoncrit', 'mackinnonp', 'ZivotAndrews']
 
 TREND_MAP = {None: 'nc', 0: 'c', 1: 'ct', 2: 'ctt'}
 
 TREND_DESCRIPTION = {'nc': 'No Trend',
                      'c': 'Constant',
                      'ct': 'Constant and Linear Time Trend',
-                     'ctt': 'Constant, Linear and Quadratic Time Trends'}
+                     'ctt': 'Constant, Linear and Quadratic Time Trends',
+                     't': 'Linear Time Trend (No Constant)'}
 
 
 def _select_best_ic(method, nobs, sigma2, tstat):
@@ -587,21 +590,19 @@ class ADF(UnitRootTest):
 
     References
     ----------
-    Greene, W. H. 2011. Econometric Analysis. Prentice Hall: Upper Saddle
-    River, New Jersey.
+    .. [*] Greene, W. H. 2011. Econometric Analysis. Prentice Hall: Upper
+       Saddle River, New Jersey.
 
-    Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton
-    University Press.
+    .. [*] Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton
+       University Press.
 
-    P-Values (regression surface approximation)
-    MacKinnon, J.G. 1994.  "Approximate asymptotic distribution functions for
-    unit-root and cointegration bootstrap.  `Journal of Business and Economic
-    Statistics` 12, 167-76.
+    .. [*] MacKinnon, J.G. 1994.  "Approximate asymptotic distribution
+       functions for unit-root and cointegration bootstrap.  `Journal of
+       Business and Economic Statistics` 12, 167-76.
 
-    Critical values
-    MacKinnon, J.G. 2010. "Critical Values for Cointegration Tests."  Queen's
-    University, Dept of Economics, Working Papers.  Available at
-    http://ideas.repec.org/p/qed/wpaper/1227.html
+    .. [*] MacKinnon, J.G. 2010. "Critical Values for Cointegration Tests."
+       Queen's University, Dept of Economics, Working Papers.  Available at
+       http://ideas.repec.org/p/qed/wpaper/1227.html
     """
 
     def __init__(self, y, lags=None, trend='c',
@@ -709,7 +710,7 @@ class DFGLS(UnitRootTest):
     appears to be a unit root.
 
     DFGLS differs from the ADF test in that an initial GLS detrending step
-    is used before a trend-less ADF regression is run.
+    is used before a trend-less ADF regression is run [1]_.
 
     Critical values and p-values when trend is 'c' are identical to
     the ADF.  When trend is set to 'ct, they are from ...
@@ -736,8 +737,8 @@ class DFGLS(UnitRootTest):
 
     References
     ----------
-    Elliott, G. R., T. J. Rothenberg, and J. H. Stock. 1996. Efficient bootstrap
-    for an autoregressive unit root. Econometrica 64: 813-836
+    .. [1] Elliott, G. R., T. J. Rothenberg, and J. H. Stock. 1996. Efficient
+      bootstrap for an autoregressive unit root. Econometrica 64: 813-836
     """
 
     def __init__(self, y, lags=None, trend='c',
@@ -872,17 +873,17 @@ class PhillipsPerron(UnitRootTest):
     Notes
     -----
     The null hypothesis of the Phillips-Perron (PP) test is that there is a
-    unit root, with the alternative that there is no unit root. If the pvalue
+    unit root, with the alternative that there is no unit root [1]_. If the pvalue
     is above a critical size, then the null cannot be rejected that there
     and the series appears to be a unit root.
 
     Unlike the ADF test, the regression estimated includes only one lag of
     the dependant variable, in addition to trend terms. Any serial
     correlation in the regression errors is accounted for using a long-run
-    variance estimator (currently Newey-West).
+    variance estimator (currently Newey-West [2]_).
 
     The p-values are obtained through regression surface approximation from
-    MacKinnon (1994) using the updated 2010 tables.
+    MacKinnon (1994) using the updated 2010 tables ([3]_, [4]_).
     If the p-value is close to significant, then the critical values should be
     used to judge whether to reject the null.
 
@@ -913,25 +914,23 @@ class PhillipsPerron(UnitRootTest):
 
     References
     ----------
-    Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton
-    University Press.
+    .. [*] Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton
+       University Press.
 
-    Newey, W. K., and K. D. West. 1987. A simple, positive semidefinite,
-    heteroskedasticity and autocorrelation consistent covariance matrix.
-    Econometrica 55, 703-708.
+    .. [2] Newey, W. K., and K. D. West. 1987. "A simple, positive
+       semidefinite, heteroskedasticity and autocorrelation consistent covariance
+       matrix". Econometrica 55, 703-708.
 
-    Phillips, P. C. B., and P. Perron. 1988. Testing for a unit root in
-    time series regression. Biometrika 75, 335-346.
+    .. [1] Phillips, P. C. B., and P. Perron. 1988. "Testing for a unit root in
+       time series regression". Biometrika 75, 335-346.
 
-    P-Values (regression surface approximation)
-    MacKinnon, J.G. 1994.  "Approximate asymptotic distribution functions for
-    unit-root and cointegration bootstrap.  `Journal of Business and Economic
-    Statistics` 12, 167-76.
+    .. [3] MacKinnon, J.G. 1994.  "Approximate asymptotic distribution
+       functions for unit-root and cointegration bootstrap".  Journal of
+       Business and  Economic Statistics. 12, 167-76.
 
-    Critical values
-    MacKinnon, J.G. 2010. "Critical Values for Cointegration Tests."  Queen's
-    University, Dept of Economics, Working Papers.  Available at
-    http://ideas.repec.org/p/qed/wpaper/1227.html
+    .. [4] MacKinnon, J.G. 2010. "Critical Values for Cointegration Tests."
+       Queen's University, Dept of Economics, Working Papers.  Available at
+       http://ideas.repec.org/p/qed/wpaper/1227.html
     """
 
     def __init__(self, y, lags=None, trend='c', test_type='tau'):
@@ -1023,8 +1022,8 @@ class KPSS(UnitRootTest):
     lags : int, optional
         The number of lags to use in the Newey-West estimator of the long-run
         covariance.  If omitted or None, the number of lags is calculated
-        with the data-dependent method of Hobijn et al. (1998). See also
-        Andrews (1991), Newey & West (1994), and Schwert (1989).
+        with the data-dependent method of Hobijn et al. (1998) [2]_. See also
+        Andrews (1991) [3]_, Newey & West (1994) [4]_, and Schwert (1989) [5]_.
         Set lags=-1 to use the old method that only depends on the sample
         size, 12 * (nobs/100) ** (1/4).
     trend : {'c', 'ct'}, optional
@@ -1048,9 +1047,9 @@ class KPSS(UnitRootTest):
     Notes
     -----
     The null hypothesis of the KPSS test is that the series is weakly
-    stationary and the alternative is that it is non-stationary. If the
-    p-value is above a critical size, then the null cannot be rejected
-    that there and the series appears stationary.
+    stationary and the alternative is that it is non-stationary [1]_.
+    If the p-value is above a critical size, then the null cannot be
+    rejected that there and the series appears stationary.
 
     The p-values and critical values were computed using an extensive
     simulation based on 100,000,000 replications using series with 2,000
@@ -1076,21 +1075,22 @@ class KPSS(UnitRootTest):
 
     References
     ----------
-    Andrews, D.W.K. (1991). Heteroskedasticity and autocorrelation consistent
-    covariance matrix estimation. Econometrica, 59: 817-858.
+    .. [3] Andrews, D.W.K. (1991). "Heteroskedasticity and autocorrelation
+       consistent covariance matrix estimation". Econometrica, 59: 817-858.
 
-    Hobijn, B., Frances, B.H., & Ooms, M. (2004). Generalizations of the
-    KPSS-test for stationarity. Statistica Neerlandica, 52: 483-502.
+    .. [2] Hobijn, B., Frances, B.H., & Ooms, M. (2004). Generalizations
+       of the KPSS-test for stationarity. Statistica Neerlandica, 52: 483-502.
 
-    Kwiatkowski, D.; Phillips, P. C. B.; Schmidt, P.; Shin, Y. (1992). "Testing
-    the null hypothesis of stationarity against the alternative of a unit
-    root". Journal of Econometrics 54 (1-3), 159-178
+    .. [1] Kwiatkowski, D.; Phillips, P. C. B.; Schmidt, P.; Shin, Y. (1992).
+       "Testing the null hypothesis of stationarity against the alternative of
+       a unit root". Journal of Econometrics 54 (1-3), 159-178
 
-    Newey, W.K., & West, K.D. (1994). Automatic lag selection in covariance
-    matrix estimation. Review of Economic Studies, 61: 631-653.
+    .. [4] Newey, W.K., & West, K.D. (1994). "Automatic lag selection in
+       covariance matrix estimation". Review of Economic Studies, 61: 631-653.
 
-    Schwert, G. W. (1989). Tests for unit roots: A Monte Carlo investigation.
-    Journal of Business and Economic Statistics, 7 (2): 147-159.
+    .. [5] Schwert, G. W. (1989). "Tests for unit roots: A Monte Carlo
+       investigation". Journal of Business and Economic Statistics, 7 (2):
+       147-159.
     """
 
     def __init__(self, y, lags=None, trend='c'):
@@ -1132,9 +1132,10 @@ class KPSS(UnitRootTest):
 
     def _autolag(self):
         """
-        Computes the number of lags for covariance matrix estimation in KPSS test
-        using method of Hobijn et al (1998). See also Andrews (1991), Newey & West
-        (1994), and Schwert (1989). Assumes Bartlett / Newey-West kernel.
+        Computes the number of lags for covariance matrix estimation in KPSS
+        test using method of Hobijn et al (1998). See also Andrews (1991),
+        Newey & West (1994), and Schwert (1989). Assumes Bartlett / Newey-West
+        kernel.
 
         Written by Jim Varanelli
         """
@@ -1152,6 +1153,193 @@ class KPSS(UnitRootTest):
         gamma_hat = 1.1447 * power(s_hat * s_hat, pwr)
         autolags = amin([self._nobs, int(gamma_hat * power(self._nobs, pwr))])
         self._lags = autolags
+
+
+@add_metaclass(DocStringInheritor)
+class ZivotAndrews(UnitRootTest):
+    """
+    Zivot-Andrews structural-break unit-root test
+
+    The Zivot-Andrews test can be used to test for a unit root in a
+    univariate process in the presence of serial correlation and a
+    single structural break.
+
+    Parameters
+    ----------
+    y : array_like
+        data series
+    lags : int, optional
+        The number of lags to use in the ADF regression.  If omitted or None,
+        `method` is used to automatically select the lag length with no more
+        than `max_lags` are included.
+    trend : {'nc', 'c', 'ct', 'ctt'}, optional
+        The trend component to include in the Zivot-Andrews test
+        'c' - Include a constant (Default)
+        't' - Include a linear time trend
+        'ct' - Include a constant and linear time trend
+    trim : float
+        percentage of series at begin/end to exclude from break-period
+        calculation in range [0, 0.333] (default=0.15)
+    max_lags : int, optional
+        The maximum number of lags to use when selecting lag length
+    method : {'AIC', 'BIC', 't-stat'}, optional
+        The method to use when selecting the lag length
+        'AIC' - Select the minimum of the Akaike IC
+        'BIC' - Select the minimum of the Schwarz/Bayesian IC
+        't-stat' - Select the minimum of the Schwarz/Bayesian IC
+
+    Attributes
+    ----------
+    stat
+    pvalue
+    critical_values
+    null_hypothesis
+    alternative_hypothesis
+    summary
+    regression
+    valid_trends
+    y
+    trend
+    lags
+
+    Notes
+    -----
+    H0 = unit root with a single structural break
+
+    Algorithm follows Baum (2004/2015) [1]_ approximation to original
+    Zivot-Andrews [2]_ method. Rather than performing an autolag regression at
+    each candidate break period (as per the original paper), a single
+    autolag regression is run up-front on the base model (constant + trend
+    with no dummies) to determine the best lag length. This lag length is
+    then used for all subsequent break-period regressions. This results in
+    significant run time reduction but also slightly more pessimistic test
+    statistics than the original Zivot-Andrews method,
+
+    No attempt has been made to characterize the size/power tradeoff.
+
+    References
+    ----------
+    .. [1] Baum, C.F. (2004). ZANDREWS: Stata module to calculate Zivot-Andrews
+       unit root test in presence of structural break," Statistical Software
+       Components S437301, Boston College Department of Economics, revised
+       2015.
+
+    .. [*] Schwert, G.W. (1989). Tests for unit roots: A Monte Carlo
+       investigation. Journal of Business & Economic Statistics, 7: 147-159.
+
+    .. [2] Zivot, E., and Andrews, D.W.K. (1992). Further evidence on the great
+       crash, the oil-price shock, and the unit-root hypothesis. Journal of
+       Business & Economic Studies, 10: 251-270.
+    """
+    def __init__(self, y, lags=None, trend='c', trim=0.15, max_lags=None, method='AIC'):
+        super(ZivotAndrews, self).__init__(y, lags, trend, ('c', 't', 'ct'))
+        if not isinstance(trim, float) or trim < 0 or trim > (1. / 3.):
+            raise ValueError('trim must be a float in range [0, 0.333]')
+        self._trim = trim
+        self._max_lags = max_lags
+        self._method = method
+        self._test_name = 'Zivot-Andrews'
+        self._all_stats = full(self._y.shape[0], nan)
+        self._null_hypothesis = 'The process contains a unit root with a single structural break.'
+        self._alternative_hypothesis = 'The process is trend and break stationary.'
+
+    @staticmethod
+    def _quick_ols(endog, exog):
+        """
+        Minimal implementation of LS estimator for internal use
+        """
+        xpxi = inv(exog.T.dot(exog))
+        xpy = exog.T.dot(endog)
+        nobs, k_exog = exog.shape
+        b = xpxi.dot(xpy)
+        e = endog - exog.dot(b)
+        sigma2 = e.T.dot(e) / (nobs - k_exog)
+        return b / sqrt(diag(sigma2 * xpxi))
+
+    def _compute_statistic(self):
+        """This is the core routine that computes the test statistic, computes
+        the p-value and constructs the critical values.
+        """
+        trim = self._trim
+        trend = self._trend
+
+        y = self._y
+        y = ensure2d(y, 'y')
+        nobs = y.shape[0]
+
+        if self._lags is not None:
+            baselags = self._lags
+        else:
+            adf = ADF(self._y, max_lags=self._max_lags, trend='ct', method=self._method)
+            self._lags = baselags = adf.lags
+
+        trimcnt = int(nobs * trim)
+        start_period = trimcnt
+        end_period = nobs - trimcnt
+        if trend == 'ct':
+            basecols = 5
+        else:
+            basecols = 4
+        # first-diff y and standardize for numerical stability
+        dy = diff(y, axis=0)[:, 0]
+        dy /= sqrt(dy.T.dot(dy))
+        y = y / sqrt(y.T.dot(y))
+        # reserve exog space
+        exog = empty((dy[baselags:].shape[0], basecols + baselags))
+        # normalize constant for stability in long time series
+        c_const = 1 / sqrt(nobs)  # Normalize
+        exog[:, 0] = c_const
+        # lagged y and dy
+        exog[:, basecols - 1] = y[baselags:(nobs - 1), 0]
+        exog[:, basecols:] = lagmat(dy, baselags, trim='none')[baselags:exog.shape[0] + baselags]
+        # better time trend: t_const @ t_const = 1 for large nobs
+        t_const = arange(1.0, nobs + 2)
+        t_const *= sqrt(3) / nobs ** (3 / 2)
+        # iterate through the time periods
+        stats = full(end_period + 1, inf)
+        for bp in range(start_period + 1, end_period + 1):
+            # update intercept dummy / trend / trend dummy
+            cutoff = (bp - (baselags + 1))
+            if trend != 't':
+                exog[:cutoff, 1] = 0
+                exog[cutoff:, 1] = c_const
+                exog[:, 2] = t_const[(baselags + 2):(nobs + 1)]
+                if trend == 'ct':
+                    exog[:cutoff, 3] = 0
+                    exog[cutoff:, 3] = t_const[1:(nobs - bp + 1)]
+            else:
+                exog[:, 1] = t_const[(baselags + 2):(nobs + 1)]
+                exog[:(cutoff-1), 2] = 0
+                exog[(cutoff-1):, 2] = t_const[0:(nobs - bp + 1)]
+            # check exog rank on first iteration
+            if bp == start_period + 1:
+                rank = matrix_rank(exog)
+                if rank < exog.shape[1]:
+                    raise ValueError('ZA: auxiliary exog matrix is not full rank.\n cols '
+                                     '{0}. rank = {1}'.format(exog.shape[1], rank))
+            stats[bp] = self._quick_ols(dy[baselags:], exog)[basecols - 1]
+        # return best seen
+        self._all_stats[start_period+1:end_period+1] = stats[start_period+1:end_period+1]
+        self._stat = amin(stats)
+        self._cv_interpolate()
+
+    def _cv_interpolate(self):
+        """
+        Linear interpolation for Zivot-Andrews p-values and critical values
+
+        Notes
+        -----
+        The p-values are linearly interpolated from the quantiles of the
+        simulated ZA test statistic distribution
+        """
+        table = za_critical_values[self._trend]
+        y = table[:, 0]
+        x = table[:, 1]
+        # ZA cv table contains quantiles multiplied by 100
+        self._pvalue = interp(self.stat, x, y) / 100.0
+        cv = [1.0, 5.0, 10.0]
+        crit_value = interp(cv, y, x)
+        self._critical_values = {"1%": crit_value[0], "5%": crit_value[1], "10%": crit_value[2]}
 
 
 @add_metaclass(DocStringInheritor)
@@ -1200,8 +1388,8 @@ class VarianceRatio(UnitRootTest):
     Notes
     -----
     The null hypothesis of a VR is that the process is a random walk, possibly
-    plus drift.  Rejection of the null with a positive test statistic indicates
-    the presence of positive serial correlation in the time series.
+    plus drift.  Rejection of the null with a positive test statistic
+    indicates the presence of positive serial correlation in the time series.
 
     Examples
     --------
@@ -1217,10 +1405,9 @@ class VarianceRatio(UnitRootTest):
 
     References
     ----------
-    Campbell, John Y., Lo, Andrew W. and MacKinlay, A. Craig. (1997) The
-    Econometrics of Financial Markets. Princeton, NJ: Princeton University
-    Press.
-
+    .. [*] Campbell, John Y., Lo, Andrew W. and MacKinlay, A. Craig. (1997) The
+       Econometrics of Financial Markets. Princeton, NJ: Princeton University
+       Press.
     """
 
     def __init__(self, y, lags=2, trend='c', debiased=True,

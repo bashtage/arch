@@ -25,6 +25,12 @@ Phillips-Perron Testing
 .. autoclass:: PhillipsPerron
    :members: summary
 
+Zivot-Andrews Testing
+---------------------
+
+.. autoclass:: ZivotAndrews
+   :members: summary
+
 
 Variance Ratios
 ---------------
