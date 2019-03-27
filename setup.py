@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+from collections import defaultdict
 import fnmatch
 import os
 import sys
@@ -117,15 +118,16 @@ except (ImportError, OSError):
     warnings.warn("Unable to convert README.md to README.rst", UserWarning)
     description = open('README.md').read()
 
-additional_files = []
+package_data = defaultdict(list)
+filetypes = ['*.csv', '*.csv.gz']
+for root, _, filenames in os.walk(os.path.join(os.getcwd(), 'arch')):  # noqa: E501
+    matches = []
+    for filetype in filetypes:
+        for filename in fnmatch.filter(filenames, filetype):
+            matches.append(filename)
+    if matches:
+        package_data['.'.join(os.path.relpath(root).split(os.path.sep))] = filetypes
 
-for root, dirnames, filenames in os.walk('./arch/data'):
-    for filename in fnmatch.filter(filenames, '*.csv.gz'):
-        additional_files.append(os.path.join(root, filename))
-
-for root, dirnames, filenames in os.walk('./arch/tests'):
-    for filename in fnmatch.filter(filenames, '*.csv'):
-        additional_files.append(os.path.join(root, filename))
 
 def run_setup(binary=True):
     if not binary:
@@ -165,8 +167,8 @@ def run_setup(binary=True):
                     'Dickey Fuller', 'time series', 'confidence intervals',
                     'multiple comparisons', 'Reality Check', 'SPA', 'StepM'],
           zip_safe=False,
-          include_package_data=True,
-          package_data={'arch': additional_files},
+          include_package_data=False,
+          package_data=package_data,
           distclass=BinaryDistribution,
           classifiers=[
               'Development Status :: 5 - Production/Stable',
