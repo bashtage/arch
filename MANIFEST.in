@@ -5,3 +5,5 @@ include arch/bootstrap/_samplers.pyx
 include arch/univariate/recursions.pyx
 include versioneer.py
 include arch/_version.py
+recursive-include arch/tests *.csv
+recursive-include arch/data *.csv.gz

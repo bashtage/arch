@@ -1,5 +1,5 @@
-Changes since 4.0
-=================
+Release 4.8
+===========
 - Added Zivot-Andrews unit root test :class:`~arch.unitroot.ZivotAndrews`.
   This code was originally written by Jim Varanelli.
 - Added data dependent lag length selection to the KPSS test,
@@ -15,20 +15,33 @@ Changes since 4.0
   (:issue:`262`).
 - Added ability to set the ``random_state`` when initializing a bootstrap
   (:issue:`259`).
+
+Release 4.7
+===========
 - Added support for Fractionally Integrated GARCH (FIGARCH) in
   :class:`~arch.univariate.FIGARCH`.
 - Enable user to specify a specific value of the `backcast` in place of
   the automatically generated value.
 - Fixed a big where parameter-less models where incorrectly reported as
   having constant variance (:issue:`248`).
+
+
+Release 4.6
+===========
 - Added support for MIDAS volatility processes using Hyperbolic
   weighting in :class:`~arch.univariate.MidasHyperbolic`
   (:issue:`233`).
+
+Release 4.5
+===========
 - Added a parameter to forecast that allows a user-provided callable random
   generator to be used in place of the model random generator (:issue:`225`).
 - Added a low memory automatic lag selection method that can be used with very
   large time-series.
 - Improved performance of automatic lag selection in ADF and related tests.
+
+Release 4.4
+===========
 - Added named parameters to Dickey-Fuller regressions.
 - Removed use of the module-level NumPy RandomState. All random number
   generators use separate RandomState instances.
@@ -36,11 +49,17 @@ Changes since 4.0
 - Added the Generalized Error Distribution for univariate ARCH models.
 - Fixed a bug in MCS when using the max method that prevented all included
   models from being listed.
+
+Release 4.3
+===========
 - Added :class:`~arch.univariate.FixedVariance` volatility process which
   allows pre-specified variances to be used with a mean model.  This has been
   added to allow so-called zig-zag estimation where a mean model is estimated
   with a fixed variance, and then a variance model is estimated on the residuals
   using a ``ZeroMean`` variance process.
+
+Release 4.2
+===========
 - Fixed a bug that prevented ``fix`` from being used with a new model
   (:issue:`156`).
 - Added ``first_obs`` and ``last_obs`` parameters to ``fix`` to mimic ``fit``.

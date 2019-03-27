@@ -34,6 +34,13 @@ to improve performance)
 * [Bootstrapping](#bootstrap)
 * [Multiple Comparison Tests](#multiple-comparison)
 
+### Python 2.7 Support
+
+Version 4.8 is the final version that officially supports or is tested on 
+Python 2.7,  and is the final version that has Python 2.7 wheels. It is 
+time to move to Python 3.5+, and to enjoy the substantial improvement 
+available in recent Python releases.
+
 ## Documentation
 
 Released documentation is hosted on
@@ -100,6 +107,7 @@ res = am.fit()
 * Dickey-Fuller GLS
 * Phillips-Perron
 * KPSS
+* Zivot-Andrews
 * Variance Ratio tests
 
 See the [unit root testing example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/unitroot_examples.ipynb) for examples of testing series for unit roots.
@@ -165,7 +173,7 @@ for examples of the multiple comparison procedures.
 These requirements reflect the testing environment.  It is possible
 that arch will work with older versions.
 
-* Python (2.7, 3.5 - 3.7)
+* Python (3.5+)
 * NumPy (1.13+)
 * SciPy (0.19+)
 * Pandas (0.21+)
@@ -221,12 +229,10 @@ conda install arch -c bashtage
 ### Windows
 
 Building extension using the community edition of Visual Studio is
-well supported for Python 3.5+.  Building extensions for 64-bit Windows
-for use in Python 2.7 is also supported using Microsoft Visual C++
-Compiler for Python 2.7.  Building on other combinations of Python/Windows
-is more difficult and is not necessary when Numba is installed since
-just-in-time compiled code (Numba) runs as fast as ahead-of-time
-compiled extensions.
+well supported for Python 3.5+.  Building on other combinations of 
+Python/Windows is more difficult and is not necessary when Numba 
+is installed since just-in-time compiled code (Numba) runs as fast as
+ahead-of-time compiled extensions.
 
 ### Developing
 

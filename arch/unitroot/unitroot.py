@@ -710,7 +710,7 @@ class DFGLS(UnitRootTest):
     appears to be a unit root.
 
     DFGLS differs from the ADF test in that an initial GLS detrending step
-    is used before a trend-less ADF regression is run [1]_.
+    is used before a trend-less ADF regression is run.
 
     Critical values and p-values when trend is 'c' are identical to
     the ADF.  When trend is set to 'ct, they are from ...
@@ -737,8 +737,8 @@ class DFGLS(UnitRootTest):
 
     References
     ----------
-    .. [1] Elliott, G. R., T. J. Rothenberg, and J. H. Stock. 1996. Efficient
-      bootstrap for an autoregressive unit root. Econometrica 64: 813-836
+    .. [*] Elliott, G. R., T. J. Rothenberg, and J. H. Stock. 1996. Efficient
+           bootstrap for an autoregressive unit root. Econometrica 64: 813-836
     """
 
     def __init__(self, y, lags=None, trend='c',
@@ -873,17 +873,17 @@ class PhillipsPerron(UnitRootTest):
     Notes
     -----
     The null hypothesis of the Phillips-Perron (PP) test is that there is a
-    unit root, with the alternative that there is no unit root [1]_. If the pvalue
+    unit root, with the alternative that there is no unit root. If the pvalue
     is above a critical size, then the null cannot be rejected that there
     and the series appears to be a unit root.
 
     Unlike the ADF test, the regression estimated includes only one lag of
     the dependant variable, in addition to trend terms. Any serial
     correlation in the regression errors is accounted for using a long-run
-    variance estimator (currently Newey-West [2]_).
+    variance estimator (currently Newey-West).
 
     The p-values are obtained through regression surface approximation from
-    MacKinnon (1994) using the updated 2010 tables ([3]_, [4]_).
+    MacKinnon (1994) using the updated 2010 tables.
     If the p-value is close to significant, then the critical values should be
     used to judge whether to reject the null.
 
@@ -915,22 +915,22 @@ class PhillipsPerron(UnitRootTest):
     References
     ----------
     .. [*] Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton
-       University Press.
+           University Press.
 
-    .. [2] Newey, W. K., and K. D. West. 1987. "A simple, positive
-       semidefinite, heteroskedasticity and autocorrelation consistent covariance
-       matrix". Econometrica 55, 703-708.
+    .. [*] Newey, W. K., and K. D. West. 1987. "A simple, positive
+           semidefinite, heteroskedasticity and autocorrelation consistent covariance
+           matrix". Econometrica 55, 703-708.
 
-    .. [1] Phillips, P. C. B., and P. Perron. 1988. "Testing for a unit root in
-       time series regression". Biometrika 75, 335-346.
+    .. [*] Phillips, P. C. B., and P. Perron. 1988. "Testing for a unit root in
+           time series regression". Biometrika 75, 335-346.
 
-    .. [3] MacKinnon, J.G. 1994.  "Approximate asymptotic distribution
-       functions for unit-root and cointegration bootstrap".  Journal of
-       Business and  Economic Statistics. 12, 167-76.
+    .. [*] MacKinnon, J.G. 1994.  "Approximate asymptotic distribution
+           functions for unit-root and cointegration bootstrap".  Journal of
+           Business and  Economic Statistics. 12, 167-76.
 
-    .. [4] MacKinnon, J.G. 2010. "Critical Values for Cointegration Tests."
-       Queen's University, Dept of Economics, Working Papers.  Available at
-       http://ideas.repec.org/p/qed/wpaper/1227.html
+    .. [*] MacKinnon, J.G. 2010. "Critical Values for Cointegration Tests."
+           Queen's University, Dept of Economics, Working Papers.  Available at
+           http://ideas.repec.org/p/qed/wpaper/1227.html
     """
 
     def __init__(self, y, lags=None, trend='c', test_type='tau'):
@@ -1022,8 +1022,8 @@ class KPSS(UnitRootTest):
     lags : int, optional
         The number of lags to use in the Newey-West estimator of the long-run
         covariance.  If omitted or None, the number of lags is calculated
-        with the data-dependent method of Hobijn et al. (1998) [2]_. See also
-        Andrews (1991) [3]_, Newey & West (1994) [4]_, and Schwert (1989) [5]_.
+        with the data-dependent method of Hobijn et al. (1998). See also
+        Andrews (1991), Newey & West (1994), and Schwert (1989).
         Set lags=-1 to use the old method that only depends on the sample
         size, 12 * (nobs/100) ** (1/4).
     trend : {'c', 'ct'}, optional
@@ -1047,7 +1047,7 @@ class KPSS(UnitRootTest):
     Notes
     -----
     The null hypothesis of the KPSS test is that the series is weakly
-    stationary and the alternative is that it is non-stationary [1]_.
+    stationary and the alternative is that it is non-stationary.
     If the p-value is above a critical size, then the null cannot be
     rejected that there and the series appears stationary.
 
@@ -1075,22 +1075,22 @@ class KPSS(UnitRootTest):
 
     References
     ----------
-    .. [3] Andrews, D.W.K. (1991). "Heteroskedasticity and autocorrelation
-       consistent covariance matrix estimation". Econometrica, 59: 817-858.
+    .. [*] Andrews, D.W.K. (1991). "Heteroskedasticity and autocorrelation
+           consistent covariance matrix estimation". Econometrica, 59: 817-858.
 
-    .. [2] Hobijn, B., Frances, B.H., & Ooms, M. (2004). Generalizations
-       of the KPSS-test for stationarity. Statistica Neerlandica, 52: 483-502.
+    .. [*] Hobijn, B., Frances, B.H., & Ooms, M. (2004). Generalizations
+           of the KPSS-test for stationarity. Statistica Neerlandica, 52: 483-502.
 
-    .. [1] Kwiatkowski, D.; Phillips, P. C. B.; Schmidt, P.; Shin, Y. (1992).
-       "Testing the null hypothesis of stationarity against the alternative of
-       a unit root". Journal of Econometrics 54 (1-3), 159-178
+    .. [*] Kwiatkowski, D.; Phillips, P. C. B.; Schmidt, P.; Shin, Y. (1992).
+           "Testing the null hypothesis of stationarity against the alternative of
+           a unit root". Journal of Econometrics 54 (1-3), 159-178
 
-    .. [4] Newey, W.K., & West, K.D. (1994). "Automatic lag selection in
-       covariance matrix estimation". Review of Economic Studies, 61: 631-653.
+    .. [*] Newey, W.K., & West, K.D. (1994). "Automatic lag selection in
+           covariance matrix estimation". Review of Economic Studies, 61: 631-653.
 
-    .. [5] Schwert, G. W. (1989). "Tests for unit roots: A Monte Carlo
-       investigation". Journal of Business and Economic Statistics, 7 (2):
-       147-159.
+    .. [*] Schwert, G. W. (1989). "Tests for unit roots: A Monte Carlo
+           investigation". Journal of Business and Economic Statistics, 7 (2):
+           147-159.
     """
 
     def __init__(self, y, lags=None, trend='c'):
@@ -1206,8 +1206,8 @@ class ZivotAndrews(UnitRootTest):
     -----
     H0 = unit root with a single structural break
 
-    Algorithm follows Baum (2004/2015) [1]_ approximation to original
-    Zivot-Andrews [2]_ method. Rather than performing an autolag regression at
+    Algorithm follows Baum (2004/2015) approximation to original
+    Zivot-Andrews method. Rather than performing an autolag regression at
     each candidate break period (as per the original paper), a single
     autolag regression is run up-front on the base model (constant + trend
     with no dummies) to determine the best lag length. This lag length is
@@ -1219,17 +1219,17 @@ class ZivotAndrews(UnitRootTest):
 
     References
     ----------
-    .. [1] Baum, C.F. (2004). ZANDREWS: Stata module to calculate Zivot-Andrews
-       unit root test in presence of structural break," Statistical Software
-       Components S437301, Boston College Department of Economics, revised
-       2015.
+    .. [*] Baum, C.F. (2004). ZANDREWS: Stata module to calculate Zivot-Andrews
+           unit root test in presence of structural break," Statistical Software
+           Components S437301, Boston College Department of Economics, revised
+           2015.
 
     .. [*] Schwert, G.W. (1989). Tests for unit roots: A Monte Carlo
-       investigation. Journal of Business & Economic Statistics, 7: 147-159.
+           investigation. Journal of Business & Economic Statistics, 7: 147-159.
 
-    .. [2] Zivot, E., and Andrews, D.W.K. (1992). Further evidence on the great
-       crash, the oil-price shock, and the unit-root hypothesis. Journal of
-       Business & Economic Studies, 10: 251-270.
+    .. [*] Zivot, E., and Andrews, D.W.K. (1992). Further evidence on the great
+           crash, the oil-price shock, and the unit-root hypothesis. Journal of
+           Business & Economic Studies, 10: 251-270.
     """
     def __init__(self, y, lags=None, trend='c', trim=0.15, max_lags=None, method='AIC'):
         super(ZivotAndrews, self).__init__(y, lags, trend, ('c', 't', 'ct'))

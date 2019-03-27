@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import fnmatch
 import os
 import sys
 from distutils.errors import CCompilerError, DistutilsExecError, DistutilsPlatformError
@@ -28,7 +29,7 @@ except ImportError:
 
     from setuptools.command.build_ext import build_ext as _build_ext
 
-FAILED_COMPILER_ERROR = """
+FAILED_COMPILER_WARNING = """
 ******************************************************************************
 *                               WARNING                                      *
 ******************************************************************************
@@ -58,7 +59,7 @@ class build_ext(_build_ext):
         _build_ext.build_extensions(self)
 
 
-SETUP_REQUIREMENTS = {'numpy': '1.12'}
+SETUP_REQUIREMENTS = {'numpy': '1.13'}
 INSTALL_REQUIREMENTS = SETUP_REQUIREMENTS.copy()
 INSTALL_REQUIREMENTS.update({'scipy': '0.19',
                              'pandas': '0.20',
@@ -116,6 +117,15 @@ except (ImportError, OSError):
     warnings.warn("Unable to convert README.md to README.rst", UserWarning)
     description = open('README.md').read()
 
+additional_files = []
+
+for root, dirnames, filenames in os.walk('./arch/data'):
+    for filename in fnmatch.filter(filenames, '*.csv.gz'):
+        additional_files.append(os.path.join(root, filename))
+
+for root, dirnames, filenames in os.walk('./arch/tests'):
+    for filename in fnmatch.filter(filenames, '*.csv'):
+        additional_files.append(os.path.join(root, filename))
 
 def run_setup(binary=True):
     if not binary:
@@ -156,6 +166,7 @@ def run_setup(binary=True):
                     'multiple comparisons', 'Reality Check', 'SPA', 'StepM'],
           zip_safe=False,
           include_package_data=True,
+          package_data={'arch': additional_files},
           distclass=BinaryDistribution,
           classifiers=[
               'Development Status :: 5 - Production/Stable',
@@ -190,4 +201,4 @@ except (CCompilerError, DistutilsExecError, DistutilsPlatformError, IOError, Val
     run_setup(binary=False)
     import warnings
 
-    warnings.warn(FAILED_COMPILER_ERROR, UserWarning)
+    warnings.warn(FAILED_COMPILER_WARNING, UserWarning)
