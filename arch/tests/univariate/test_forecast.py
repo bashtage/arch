@@ -497,7 +497,7 @@ class TestForecasting(TestCase):
         res_holdback = mod.fit()
         mod = arch_model(y, mean='AR', lags=1)
         res = mod.fit()
-        assert_allclose(res_holdback.params, res.params)
+        assert_allclose(res_holdback.params, res.params, rtol=1e-4, atol=1e-4)
 
     def test_forecast_exogenous_regressors(self):
         y = self.rng.randn(1000, 1)
