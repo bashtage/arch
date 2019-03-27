@@ -8,9 +8,9 @@ class PerformanceWarning(UserWarning):
 
 
 performance_warning = '''
-numba is not available, and to this function is being executed without JIT
-compilation. Either installing numba or reinstalling in an environment with
-Cython available is strongly recommended.'''
+numba is not available, and this function is being executed without JIT
+compilation. Either install numba or reinstalling after installing Cython
+is strongly recommended.'''
 
 try:
     from numba import jit

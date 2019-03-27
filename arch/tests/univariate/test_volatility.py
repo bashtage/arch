@@ -22,6 +22,8 @@ try:
 except ImportError:
     rec = recpy
 
+pytestmark = pytest.mark.filterwarnings('ignore::arch.compat.numba.PerformanceWarning')
+
 
 class TestVolatiltyProcesses(object):
     @classmethod
