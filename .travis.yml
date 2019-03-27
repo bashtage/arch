@@ -37,7 +37,7 @@ matrix:
       - NUMBA=0.38
       - NUMPY=1.14
       - SCIPY=1.0
-      - MATPLOTLIB=2.0
+      - MATPLOTLIB=2
       - PANDAS=0.22
       - STATSMODELS_MASTER=true
   - python: 3.6
@@ -45,6 +45,12 @@ matrix:
       - PYTHON=3.6
       - DOCBUILD=true
       - MATPLOTLIB=3
+  - python: 3.6
+    env:
+      - PYTHON=3.6
+      - USE_NUMBA=false
+      - MATPLOTLIB=3
+      - COVERAGE=true
       - PYTEST_PATTERN="(slow or not slow)"
 
 before_install:
