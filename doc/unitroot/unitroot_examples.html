@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Unit Root Testing &#8212; arch 4.7.0+24.g54fc67e documentation</title>
+    <title>Unit Root Testing &#8212; arch 4.8.0 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="introduction.html" title="Introduction"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+24.g54fc67e documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="unitroot.html" accesskey="U">Unit Root Testing</a> &#187;</li> 
       </ul>
     </div>
@@ -63,7 +63,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.7.0 (+24)</a>
+    ../index.html" class="text-logo">arch 4.8.0</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -524,8 +524,8 @@ Alternative Hypothesis: The process is weakly stationary.
 Dep. Variable:                      y   R-squared:                       0.095
 Model:                            OLS   Adj. R-squared:                  0.090
 Method:                 Least Squares   F-statistic:                     17.83
-Date:                Sun, 06 Jan 2019   Prob (F-statistic):           1.30e-22
-Time:                        18:26:47   Log-Likelihood:                 630.15
+Date:                Wed, 27 Mar 2019   Prob (F-statistic):           1.30e-22
+Time:                        08:34:31   Log-Likelihood:                 630.15
 No. Observations:                1194   AIC:                            -1244.
 Df Residuals:                    1186   BIC:                            -1204.
 Df Model:                           7
@@ -805,9 +805,9 @@ Alternative Hypothesis: The process is weakly stationary.
 <div class="highlight"><pre>
     KPSS Stationarity Test Results
 =====================================
-Test Statistic                  0.976
-P-value                         0.003
-Lags                               23
+Test Statistic                  1.088
+P-value                         0.002
+Lags                               20
 -------------------------------------
 
 Trend: Constant
@@ -834,9 +834,9 @@ Alternative Hypothesis: The process contains a unit root.
 <div class="highlight"><pre>
     KPSS Stationarity Test Results
 =====================================
-Test Statistic                  0.354
-P-value                         0.001
-Lags                               23
+Test Statistic                  0.393
+P-value                         0.000
+Lags                               20
 -------------------------------------
 
 Trend: Constant and Linear Time Trend
@@ -846,11 +846,45 @@ Alternative Hypothesis: The process contains a unit root.
 </pre></div></div>
 </div>
 </div>
+<div class="section" id="Zivot-Andrews-Test">
+<h2>Zivot-Andrews Test<a class="headerlink" href="#Zivot-Andrews-Test" title="Permalink to this headline">¶</a></h2>
+<p>The Zivot-Andrews test allows the possibility of a single structural break in the series. Here we test the default using the test.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">arch.unitroot</span> <span class="kn">import</span> <span class="n">ZivotAndrews</span>
+
+<span class="n">za</span> <span class="o">=</span> <span class="n">ZivotAndrews</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">za</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+        Zivot-Andrews Results
+=====================================
+Test Statistic                 -4.900
+P-value                         0.040
+Lags                               21
+-------------------------------------
+
+Trend: Constant
+Critical Values: -5.28 (1%), -4.81 (5%), -4.57 (10%)
+Null Hypothesis: The process contains a unit root with a single structural break.
+Alternative Hypothesis: The process is trend and break stationary.
+</pre></div></div>
+</div>
+</div>
 <div class="section" id="Variance-Ratio-Testing">
 <h2>Variance Ratio Testing<a class="headerlink" href="#Variance-Ratio-Testing" title="Permalink to this headline">¶</a></h2>
 <p>Variance ratio tests are not usually used as unit root tests, and are instead used for testing whether a financial return series is a pure random walk versus having some predictability. This example uses the excess return on the market from Ken French’s data.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -882,7 +916,7 @@ max      38.850000    36.700000    35.460000     1.350000
 <p>The variance ratio compares the variance of a 1-period return to that of a multi-period return. The comparison length has to be set when initializing the test.</p>
 <p>This example compares 1-month to 12-month returns, and the null that the series is a pure random walk is rejected. Negative values indicate some positive autocorrelation in the returns (momentum).</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -909,7 +943,7 @@ Computed with overlapping blocks (de-biased)
 </div>
 <p>By default the VR test uses all overlapping blocks to estimate the variance of the long period’s return. This can be changed by setting <code class="docutils literal notranslate"><span class="pre">overlap=False</span></code>. This lowers the power but doesn’t change the conclusion.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -940,7 +974,7 @@ Computed with non-overlapping blocks
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-c:\git\arch\arch\unitroot\unitroot.py:1248: InvalidLengthWarning:
+c:\git\arch\arch\unitroot\unitroot.py:1485: InvalidLengthWarning:
 The length of y is not an exact multiple of 12, and so the final
 4 observations have been dropped.
 
@@ -984,7 +1018,7 @@ The length of y is not an exact multiple of 12, and so the final
         <li class="right" >
           <a href="introduction.html" title="Introduction"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.7.0+24.g54fc67e documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="unitroot.html" >Unit Root Testing</a> &#187;</li> 
       </ul>
     </div>

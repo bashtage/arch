@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>arch.unitroot.unitroot &#8212; arch 4.7.0+24.g54fc67e documentation</title>
+    <title>arch.unitroot.unitroot &#8212; arch 4.8.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+24.g54fc67e documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.8.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -55,7 +55,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../../index.html" class="text-logo">arch 4.7.0 (+24)</a>
+    ../../../index.html" class="text-logo">arch 4.8.0</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -817,7 +817,7 @@
 <span class="sd">    appears to be a unit root.</span>
 
 <span class="sd">    DFGLS differs from the ADF test in that an initial GLS detrending step</span>
-<span class="sd">    is used before a trend-less ADF regression is run [1]_.</span>
+<span class="sd">    is used before a trend-less ADF regression is run.</span>
 
 <span class="sd">    Critical values and p-values when trend is &#39;c&#39; are identical to</span>
 <span class="sd">    the ADF.  When trend is set to &#39;ct, they are from ...</span>
@@ -844,8 +844,8 @@
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
-<span class="sd">    .. [1] Elliott, G. R., T. J. Rothenberg, and J. H. Stock. 1996. Efficient</span>
-<span class="sd">      bootstrap for an autoregressive unit root. Econometrica 64: 813-836</span>
+<span class="sd">    .. [*] Elliott, G. R., T. J. Rothenberg, and J. H. Stock. 1996. Efficient</span>
+<span class="sd">           bootstrap for an autoregressive unit root. Econometrica 64: 813-836</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">,</span>
@@ -980,17 +980,17 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The null hypothesis of the Phillips-Perron (PP) test is that there is a</span>
-<span class="sd">    unit root, with the alternative that there is no unit root [1]_. If the pvalue</span>
+<span class="sd">    unit root, with the alternative that there is no unit root. If the pvalue</span>
 <span class="sd">    is above a critical size, then the null cannot be rejected that there</span>
 <span class="sd">    and the series appears to be a unit root.</span>
 
 <span class="sd">    Unlike the ADF test, the regression estimated includes only one lag of</span>
 <span class="sd">    the dependant variable, in addition to trend terms. Any serial</span>
 <span class="sd">    correlation in the regression errors is accounted for using a long-run</span>
-<span class="sd">    variance estimator (currently Newey-West [2]_).</span>
+<span class="sd">    variance estimator (currently Newey-West).</span>
 
 <span class="sd">    The p-values are obtained through regression surface approximation from</span>
-<span class="sd">    MacKinnon (1994) using the updated 2010 tables ([3]_, [4]_).</span>
+<span class="sd">    MacKinnon (1994) using the updated 2010 tables.</span>
 <span class="sd">    If the p-value is close to significant, then the critical values should be</span>
 <span class="sd">    used to judge whether to reject the null.</span>
 
@@ -1022,22 +1022,22 @@
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 <span class="sd">    .. [*] Hamilton, J. D. 1994. Time Series Analysis. Princeton: Princeton</span>
-<span class="sd">       University Press.</span>
+<span class="sd">           University Press.</span>
 
-<span class="sd">    .. [2] Newey, W. K., and K. D. West. 1987. &quot;A simple, positive</span>
-<span class="sd">       semidefinite, heteroskedasticity and autocorrelation consistent covariance</span>
-<span class="sd">       matrix&quot;. Econometrica 55, 703-708.</span>
+<span class="sd">    .. [*] Newey, W. K., and K. D. West. 1987. &quot;A simple, positive</span>
+<span class="sd">           semidefinite, heteroskedasticity and autocorrelation consistent covariance</span>
+<span class="sd">           matrix&quot;. Econometrica 55, 703-708.</span>
 
-<span class="sd">    .. [1] Phillips, P. C. B., and P. Perron. 1988. &quot;Testing for a unit root in</span>
-<span class="sd">       time series regression&quot;. Biometrika 75, 335-346.</span>
+<span class="sd">    .. [*] Phillips, P. C. B., and P. Perron. 1988. &quot;Testing for a unit root in</span>
+<span class="sd">           time series regression&quot;. Biometrika 75, 335-346.</span>
 
-<span class="sd">    .. [3] MacKinnon, J.G. 1994.  &quot;Approximate asymptotic distribution</span>
-<span class="sd">       functions for unit-root and cointegration bootstrap&quot;.  Journal of</span>
-<span class="sd">       Business and  Economic Statistics. 12, 167-76.</span>
+<span class="sd">    .. [*] MacKinnon, J.G. 1994.  &quot;Approximate asymptotic distribution</span>
+<span class="sd">           functions for unit-root and cointegration bootstrap&quot;.  Journal of</span>
+<span class="sd">           Business and  Economic Statistics. 12, 167-76.</span>
 
-<span class="sd">    .. [4] MacKinnon, J.G. 2010. &quot;Critical Values for Cointegration Tests.&quot;</span>
-<span class="sd">       Queen&#39;s University, Dept of Economics, Working Papers.  Available at</span>
-<span class="sd">       http://ideas.repec.org/p/qed/wpaper/1227.html</span>
+<span class="sd">    .. [*] MacKinnon, J.G. 2010. &quot;Critical Values for Cointegration Tests.&quot;</span>
+<span class="sd">           Queen&#39;s University, Dept of Economics, Working Papers.  Available at</span>
+<span class="sd">           http://ideas.repec.org/p/qed/wpaper/1227.html</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">test_type</span><span class="o">=</span><span class="s1">&#39;tau&#39;</span><span class="p">):</span>
@@ -1129,8 +1129,8 @@
 <span class="sd">    lags : int, optional</span>
 <span class="sd">        The number of lags to use in the Newey-West estimator of the long-run</span>
 <span class="sd">        covariance.  If omitted or None, the number of lags is calculated</span>
-<span class="sd">        with the data-dependent method of Hobijn et al. (1998) [2]_. See also</span>
-<span class="sd">        Andrews (1991) [3]_, Newey &amp; West (1994) [4]_, and Schwert (1989) [5]_.</span>
+<span class="sd">        with the data-dependent method of Hobijn et al. (1998). See also</span>
+<span class="sd">        Andrews (1991), Newey &amp; West (1994), and Schwert (1989).</span>
 <span class="sd">        Set lags=-1 to use the old method that only depends on the sample</span>
 <span class="sd">        size, 12 * (nobs/100) ** (1/4).</span>
 <span class="sd">    trend : {&#39;c&#39;, &#39;ct&#39;}, optional</span>
@@ -1154,7 +1154,7 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The null hypothesis of the KPSS test is that the series is weakly</span>
-<span class="sd">    stationary and the alternative is that it is non-stationary [1]_.</span>
+<span class="sd">    stationary and the alternative is that it is non-stationary.</span>
 <span class="sd">    If the p-value is above a critical size, then the null cannot be</span>
 <span class="sd">    rejected that there and the series appears stationary.</span>
 
@@ -1182,22 +1182,22 @@
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
-<span class="sd">    .. [3] Andrews, D.W.K. (1991). &quot;Heteroskedasticity and autocorrelation</span>
-<span class="sd">       consistent covariance matrix estimation&quot;. Econometrica, 59: 817-858.</span>
+<span class="sd">    .. [*] Andrews, D.W.K. (1991). &quot;Heteroskedasticity and autocorrelation</span>
+<span class="sd">           consistent covariance matrix estimation&quot;. Econometrica, 59: 817-858.</span>
 
-<span class="sd">    .. [2] Hobijn, B., Frances, B.H., &amp; Ooms, M. (2004). Generalizations</span>
-<span class="sd">       of the KPSS-test for stationarity. Statistica Neerlandica, 52: 483-502.</span>
+<span class="sd">    .. [*] Hobijn, B., Frances, B.H., &amp; Ooms, M. (2004). Generalizations</span>
+<span class="sd">           of the KPSS-test for stationarity. Statistica Neerlandica, 52: 483-502.</span>
 
-<span class="sd">    .. [1] Kwiatkowski, D.; Phillips, P. C. B.; Schmidt, P.; Shin, Y. (1992).</span>
-<span class="sd">       &quot;Testing the null hypothesis of stationarity against the alternative of</span>
-<span class="sd">       a unit root&quot;. Journal of Econometrics 54 (1-3), 159-178</span>
+<span class="sd">    .. [*] Kwiatkowski, D.; Phillips, P. C. B.; Schmidt, P.; Shin, Y. (1992).</span>
+<span class="sd">           &quot;Testing the null hypothesis of stationarity against the alternative of</span>
+<span class="sd">           a unit root&quot;. Journal of Econometrics 54 (1-3), 159-178</span>
 
-<span class="sd">    .. [4] Newey, W.K., &amp; West, K.D. (1994). &quot;Automatic lag selection in</span>
-<span class="sd">       covariance matrix estimation&quot;. Review of Economic Studies, 61: 631-653.</span>
+<span class="sd">    .. [*] Newey, W.K., &amp; West, K.D. (1994). &quot;Automatic lag selection in</span>
+<span class="sd">           covariance matrix estimation&quot;. Review of Economic Studies, 61: 631-653.</span>
 
-<span class="sd">    .. [5] Schwert, G. W. (1989). &quot;Tests for unit roots: A Monte Carlo</span>
-<span class="sd">       investigation&quot;. Journal of Business and Economic Statistics, 7 (2):</span>
-<span class="sd">       147-159.</span>
+<span class="sd">    .. [*] Schwert, G. W. (1989). &quot;Tests for unit roots: A Monte Carlo</span>
+<span class="sd">           investigation&quot;. Journal of Business and Economic Statistics, 7 (2):</span>
+<span class="sd">           147-159.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">):</span>
@@ -1313,8 +1313,8 @@
 <span class="sd">    -----</span>
 <span class="sd">    H0 = unit root with a single structural break</span>
 
-<span class="sd">    Algorithm follows Baum (2004/2015) [1]_ approximation to original</span>
-<span class="sd">    Zivot-Andrews [2]_ method. Rather than performing an autolag regression at</span>
+<span class="sd">    Algorithm follows Baum (2004/2015) approximation to original</span>
+<span class="sd">    Zivot-Andrews method. Rather than performing an autolag regression at</span>
 <span class="sd">    each candidate break period (as per the original paper), a single</span>
 <span class="sd">    autolag regression is run up-front on the base model (constant + trend</span>
 <span class="sd">    with no dummies) to determine the best lag length. This lag length is</span>
@@ -1326,17 +1326,17 @@
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
-<span class="sd">    .. [1] Baum, C.F. (2004). ZANDREWS: Stata module to calculate Zivot-Andrews</span>
-<span class="sd">       unit root test in presence of structural break,&quot; Statistical Software</span>
-<span class="sd">       Components S437301, Boston College Department of Economics, revised</span>
-<span class="sd">       2015.</span>
+<span class="sd">    .. [*] Baum, C.F. (2004). ZANDREWS: Stata module to calculate Zivot-Andrews</span>
+<span class="sd">           unit root test in presence of structural break,&quot; Statistical Software</span>
+<span class="sd">           Components S437301, Boston College Department of Economics, revised</span>
+<span class="sd">           2015.</span>
 
 <span class="sd">    .. [*] Schwert, G.W. (1989). Tests for unit roots: A Monte Carlo</span>
-<span class="sd">       investigation. Journal of Business &amp; Economic Statistics, 7: 147-159.</span>
+<span class="sd">           investigation. Journal of Business &amp; Economic Statistics, 7: 147-159.</span>
 
-<span class="sd">    .. [2] Zivot, E., and Andrews, D.W.K. (1992). Further evidence on the great</span>
-<span class="sd">       crash, the oil-price shock, and the unit-root hypothesis. Journal of</span>
-<span class="sd">       Business &amp; Economic Studies, 10: 251-270.</span>
+<span class="sd">    .. [*] Zivot, E., and Andrews, D.W.K. (1992). Further evidence on the great</span>
+<span class="sd">           crash, the oil-price shock, and the unit-root hypothesis. Journal of</span>
+<span class="sd">           Business &amp; Economic Studies, 10: 251-270.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">trim</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">max_lags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;AIC&#39;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ZivotAndrews</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">trend</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;ct&#39;</span><span class="p">))</span>
@@ -1835,7 +1835,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.7.0+24.g54fc67e documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.8.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
