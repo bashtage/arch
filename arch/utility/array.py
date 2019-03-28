@@ -10,7 +10,7 @@ from abc import ABCMeta
 import datetime as dt
 
 import numpy as np
-from pandas import DataFrame, NaT, Series, Timestamp, to_datetime
+from pandas import DataFrame, NaT, Series, Timestamp, to_datetime, DatetimeIndex
 
 __all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor',
            'date_to_index', 'cutoff_to_index', 'ensure2d', 'AbstractDocStringInheritor']
@@ -148,6 +148,10 @@ def date_to_index(date, date_index):
         raise ValueError('date_index is not monotonic and unique')
     if not isinstance(date, (dt.datetime, np.datetime64, str)):
         raise ValueError("date must be a datetime, datetime64 or string")
+    elif isinstance(date, Timestamp):
+        if date_index.tzinfo is not None:
+            date = date.tz_convert('GMT').tz_localize(None)
+        date = date.to_datetime64()
     elif isinstance(date, dt.datetime):
         date = np.datetime64(date)
     elif isinstance(date, str):
@@ -156,6 +160,10 @@ def date_to_index(date, date_index):
             date = np.datetime64(to_datetime(date, errors='coerce'))
         except (ValueError, TypeError):
             raise ValueError('date:' + orig_date + ' cannot be parsed to a date.')
+
+    if isinstance(date_index, DatetimeIndex):
+        if date_index.tzinfo is not None:
+            date_index = date_index.tz_convert('GMT').tz_localize(None)
 
     date_index = np.asarray(date_index)
 
