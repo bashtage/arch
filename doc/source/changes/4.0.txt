@@ -1,3 +1,7 @@
+Release 4.8.1
+=============
+- Fixed a bug which prevented extension modules from being correctly imported.
+
 Release 4.8
 ===========
 - Added Zivot-Andrews unit root test :class:`~arch.unitroot.ZivotAndrews`.
