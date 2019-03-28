@@ -94,13 +94,26 @@ before_install:
   - if [[ "$COVERAGE" == true ]]; then export COVERAGE_OPTS="--cov-config .coveragerc --cov=arch"; fi
 
 install:
-  - python setup.py develop
+  - |
+    if [[ "$COVERAGE" == true ]]; then
+      python setup.py develop
+    else
+      pip install .
+    fi
 
 script:
   - set -e
   - python ci/performance.py
-  - echo pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
-  - pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
+  - |
+    if [[ "$COVERAGE" == true ]]; then
+      echo pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
+      pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
+    else
+      mkdir test
+      cd test
+      python -c "import arch; arch.test(['-r a','-m (not slow)','--durations=25'])"
+      cd ..
+    fi
   - |
     if [[ "$DOCBUILD" = true ]]; then
       python setup.py install
