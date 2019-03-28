@@ -6,7 +6,7 @@ from arch.utility.cov import cov_nw
 PKG = os.path.dirname(os.path.dirname(__file__))
 
 
-def test(extra_args=None):
+def test(extra_args=None, exit=True):
     try:
         import pytest
     except ImportError:
@@ -19,7 +19,9 @@ def test(extra_args=None):
         cmd = extra_args[:]
     cmd = [PKG] + cmd
     print("running: pytest {}".format(' '.join(cmd)))
-    sys.exit(pytest.main(cmd))
+    status = pytest.main(cmd)
+    if exit:
+        sys.exit(status)
 
 
 __all__ = ['cov_nw', 'test']
