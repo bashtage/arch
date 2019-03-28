@@ -9,7 +9,7 @@ import pytest
 from arch.univariate import arch_model
 from arch.univariate.distribution import Normal, StudentsT
 from arch.univariate.mean import ConstantMean
-from arch.univariate.recursions_python import figarch_weights
+from arch.univariate.recursions import figarch_weights
 from arch.univariate.volatility import (EGARCH, FIGARCH, GARCH, HARCH,
                                         BootstrapRng, ConstantVariance,
                                         EWMAVariance, FixedVariance,

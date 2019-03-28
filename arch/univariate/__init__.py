@@ -9,8 +9,15 @@ from arch.univariate.volatility import (ARCH, EGARCH, FIGARCH, GARCH, HARCH,
                                         FixedVariance, MIDASHyperbolic,
                                         RiskMetrics2006)
 
+from arch.univariate import recursions_python
+try:
+    from arch.univariate import recursions
+except ImportError:
+    recursions = recursions_python
+
 __all__ = ['HARX', 'ConstantMean', 'ZeroMean', 'ARX', 'arch_model', 'LS',
            'GARCH', 'ARCH', 'HARCH', 'ConstantVariance',
            'EWMAVariance', 'RiskMetrics2006', 'EGARCH',
            'Distribution', 'Normal', 'StudentsT', 'SkewStudent', 'GeneralizedError',
-           'FixedVariance', 'MIDASHyperbolic', 'FIGARCH']
+           'FixedVariance', 'MIDASHyperbolic', 'FIGARCH', 'recursions',
+           'recursions_python']
