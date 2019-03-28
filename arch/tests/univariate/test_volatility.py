@@ -18,7 +18,7 @@ from arch.univariate.volatility import (ARCH, EGARCH, FIGARCH, GARCH, HARCH,
 from arch.utility.exceptions import InitialValueWarning
 
 try:
-    from arch.univariate import _recursions as rec
+    from arch.univariate import recursions as rec
 except ImportError:
     rec = recpy
 
@@ -1052,8 +1052,8 @@ class TestVolatiltyProcesses(object):
         resids = self.resids
         direct_params = parameters.copy()
         direct_params[-1] = 0.0  # gamma, strip theta
-        rec.midas_recursion_python(direct_params, weights, resids, cond_var_direct, self.T,
-                                   backcast, var_bounds)
+        recpy.midas_recursion_python(direct_params, weights, resids, cond_var_direct, self.T,
+                                     backcast, var_bounds)
         assert_allclose(self.sigma2, cond_var_direct)
 
         a, b = midas.constraints()
@@ -1132,8 +1132,8 @@ class TestVolatiltyProcesses(object):
         assert_allclose(direct_weights, weights)
         resids = self.resids
         direct_params = parameters[:3].copy()
-        rec.midas_recursion_python(direct_params, weights, resids, cond_var_direct, self.T,
-                                   backcast, var_bounds)
+        recpy.midas_recursion_python(direct_params, weights, resids, cond_var_direct, self.T,
+                                     backcast, var_bounds)
         assert_allclose(self.sigma2, cond_var_direct)
 
         a, b = midas.constraints()
@@ -1217,8 +1217,8 @@ class TestVolatiltyProcesses(object):
         fresids = self.resids ** 2
         p = q = 1
         nobs = self.resids.shape[0]
-        rec.figarch_recursion_python(parameters, fresids, cond_var_direct, p, q,
-                                     nobs, trunc_lag, backcast, var_bounds)
+        recpy.figarch_recursion_python(parameters, fresids, cond_var_direct, p, q,
+                                       nobs, trunc_lag, backcast, var_bounds)
         assert_allclose(self.sigma2, cond_var_direct)
 
         a, b = figarch.constraints()
@@ -1385,6 +1385,6 @@ def test_figarch_weights():
     params = np.array([0.2, 0.4, 0.2])
     lam_py = recpy.figarch_weights_python(params, 1, 1, 1000)
     lam_nb = recpy.figarch_weights(params, 1, 1, 1000)
-    lam_cy = rec.figarch_weights_python(params, 1, 1, 1000)
+    lam_cy = rec.figarch_weights(params, 1, 1, 1000)
     assert_allclose(lam_py, lam_nb)
     assert_allclose(lam_py, lam_cy)

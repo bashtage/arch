@@ -668,6 +668,7 @@ class TestBootstrap(TestCase):
             assert kw['x'].shape == self.x_df.shape
 
     @pytest.mark.skipif(not HAS_EXTENSION, reason='Extension not built.')
+    @pytest.mark.filterwarnings('ignore::arch.compat.numba.PerformanceWarning')
     def test_samplers(self):
         """
         Test all three implementations are identical
