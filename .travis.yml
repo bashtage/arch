@@ -19,6 +19,19 @@ env:
 matrix:
   fast_finish: true
   include:
+  - python: 3.7
+    env:
+      - PYTHON=3.7
+      - MATPLOTLIB=3
+      - COVERAGE=true
+      - ARCH_CYTHON_COVERAGE=true
+  - python: 3.6
+    env:
+      - PYTHON=3.6
+      - USE_NUMBA=false
+      - MATPLOTLIB=3
+      - COVERAGE=true
+      - PYTEST_PATTERN="(slow or not slow)"
   - python: 3.5
     env:
       - PYTHON=3.5
@@ -26,11 +39,6 @@ matrix:
       - MATPLOTLIB=2
       - NUMPY=1.13
       - SCIPY=0.19
-  - python: 3.7
-    env:
-      - PYTHON=3.7
-      - MATPLOTLIB=3
-      - COVERAGE=true
   - python: 3.6
     env:
       - PYTHON=3.6
@@ -45,13 +53,6 @@ matrix:
       - PYTHON=3.6
       - DOCBUILD=true
       - MATPLOTLIB=3
-  - python: 3.6
-    env:
-      - PYTHON=3.6
-      - USE_NUMBA=false
-      - MATPLOTLIB=3
-      - COVERAGE=true
-      - PYTEST_PATTERN="(slow or not slow)"
 
 before_install:
   - git fetch --tags
@@ -90,17 +91,29 @@ before_install:
   - conda list
   - export PYTHONHASHSEED=0
   - export MKL_NUM_THREADS=1
-  - export ARCH_CYTHON_COVERAGE="$COVERAGE"
   - if [[ "$COVERAGE" == true ]]; then export COVERAGE_OPTS="--cov-config .coveragerc --cov=arch"; fi
 
 install:
-  - python setup.py develop
+  - |
+    if [[ "$COVERAGE" == true ]]; then
+      python setup.py develop
+    else
+      pip install .
+    fi
 
 script:
   - set -e
   - python ci/performance.py
-  - echo pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
-  - pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
+  - |
+    if [[ "$COVERAGE" == true ]]; then
+      echo pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
+      pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
+    else
+      mkdir test
+      cd test
+      python -c "import arch; arch.test(['-r a','-m (not slow)','--durations=25'])"
+      cd ..
+    fi
   - |
     if [[ "$DOCBUILD" = true ]]; then
       python setup.py install
