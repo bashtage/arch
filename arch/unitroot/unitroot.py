@@ -1513,14 +1513,16 @@ class VarianceRatio(UnitRootTest):
         if not overlap:
             self._stat_variance = 2.0 * (q - 1)
         elif not robust:
-            self._stat_variance = (2 * (2 * q - 1) * (q - 1)) / (2 * q)
+            # GH 286, CLM 2.4.39
+            self._stat_variance = (2 * (2 * q - 1) * (q - 1)) / (3 * q)
         else:
             z2 = (delta_y - mu) ** 2.0
             scale = sum(z2) ** 2.0
             theta = 0.0
             for k in range(1, q):
                 delta = nq * z2[k:].dot(z2[:-k]) / scale
-                theta += (1 - k / q) ** 2.0 * delta
+                # GH 286, CLM 2.4.43
+                theta += 4 * (1 - k / q) ** 2.0 * delta
             self._stat_variance = theta
         self._vr = sigma2_q / sigma2_1
         self._stat = sqrt(nq) * (self._vr - 1) / sqrt(self._stat_variance)
