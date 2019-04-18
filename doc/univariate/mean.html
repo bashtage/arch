@@ -1,12 +1,10 @@
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -16,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Mean Models &#8212; arch 4.8.1+3.gf545506 documentation</title>
+    <title>Mean Models &#8212; arch 4.8.1+5.g3dfd977 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -52,7 +50,7 @@
         <li class="right" >
           <a href="univariate_volatility_scenarios.html" title="Volatilty Scenarios"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+3.gf545506 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -63,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.8.1 (+3)</a>
+    ../index.html" class="text-logo">arch 4.8.1 (+5)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -135,22 +133,18 @@
 <dt id="arch.univariate.ZeroMean">
 <em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">ZeroMean</code><span class="sig-paren">(</span><em>y=None</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ZeroMean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ZeroMean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model with zero conditional mean estimation and simulation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</li>
-<li><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</p></li>
+<li><p><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
 estimating model parameters.  Used when comparing models with different
-lag lengths to estimate on the common sample.</li>
-<li><strong>volatility</strong> (<a class="reference internal" href="volatility.html#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess"><em>VolatilityProcess</em></a><em>, </em><em>optional</em>) – Volatility process to use in the model</li>
-<li><strong>distribution</strong> (<a class="reference internal" href="distribution.html#arch.univariate.Distribution" title="arch.univariate.Distribution"><em>Distribution</em></a><em>, </em><em>optional</em>) – Error distribution to use in the model</li>
+lag lengths to estimate on the common sample.</p></li>
+<li><p><strong>volatility</strong> (<a class="reference internal" href="volatility.html#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess"><em>VolatilityProcess</em></a><em>, </em><em>optional</em>) – Volatility process to use in the model</p></li>
+<li><p><strong>distribution</strong> (<a class="reference internal" href="distribution.html#arch.univariate.Distribution" title="arch.univariate.Distribution"><em>Distribution</em></a><em>, </em><em>optional</em>) – Error distribution to use in the model</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">ZeroMean</span>
@@ -167,41 +161,37 @@ lag lengths to estimate on the common sample.</li>
 <dt id="arch.univariate.ZeroMean.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em>, <em>backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>update_freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
-<cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</li>
-<li><strong>disp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Either ‘final’ to print optimization result or ‘off’ to display
-nothing</li>
-<li><strong>starting_values</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
-are constructed by the model components.</li>
-<li><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>update_freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
+<cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</p></li>
+<li><p><strong>disp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Either ‘final’ to print optimization result or ‘off’ to display
+nothing</p></li>
+<li><p><strong>starting_values</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
+are constructed by the model components.</p></li>
+<li><p><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
-corresponds to Bollerslev-Wooldridge covariance estimator.</li>
-<li><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
-<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
-<li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
-include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
-<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
+corresponds to Bollerslev-Wooldridge covariance estimator.</p></li>
+<li><p><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</p></li>
+<li><p><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</p></li>
+<li><p><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</p></li>
+<li><p><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</p></li>
+<li><p><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
+include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</p></li>
+<li><p><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
 since model-specific non-linear transformations are applied to
-value before computing the variance recusions.</li>
+value before computing the variance recusions.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> – Object containing model results</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelResult" title="arch.univariate.base.ARCHModelResult">ARCHModelResult</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>results</strong> – Object containing model results</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelResult" title="arch.univariate.base.ARCHModelResult">ARCHModelResult</a></p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>A ConvergenceWarning is raised if SciPy’s optimizer indicates
 difficulty finding the optimum.</p>
@@ -212,27 +202,23 @@ difficulty finding the optimum.</p>
 <dt id="arch.univariate.ZeroMean.fix">
 <code class="descname">fix</code><span class="sig-paren">(</span><em>params</em>, <em>first_obs=None</em>, <em>last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.fix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows an ARCHModelFixedResult to be constructed from fixed parameters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – User specified parameters to use when generating the result. Must
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – User specified parameters to use when generating the result. Must
 have the correct number of parameters for a given choice of mean
-model, volatility model and distribution.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
+model, volatility model and distribution.</p></li>
+<li><p><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</p></li>
+<li><p><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> – Object containing model results</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelFixedResult" title="arch.univariate.base.ARCHModelFixedResult">ARCHModelFixedResult</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>results</strong> – Object containing model results</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelFixedResult" title="arch.univariate.base.ARCHModelFixedResult">ARCHModelFixedResult</a></p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Parameters are not checked against model-specific constraints.</p>
 </dd></dl>
@@ -241,47 +227,43 @@ model, volatility model and distribution.</li>
 <dt id="arch.univariate.ZeroMean.forecast">
 <code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
-shape to the parameters computed by fitting the model.</li>
-<li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+shape to the parameters computed by fitting the model.</p></li>
+<li><p><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</p></li>
+<li><p><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
-to a date time, such as in ‘1945-01-01’.</li>
-<li><strong>align</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
+to a date time, such as in ‘1945-01-01’.</p></li>
+<li><p><strong>align</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
 of forecasts contains the forecasts for t+1, t+2, …, t+h. When
 set to ‘target’, the t-th row contains the 1-step ahead forecast
 from time t-1, the 2 step from time t-2, …, and the h-step from
 time t-h.  ‘target’ simplified computing forecast errors since the
-realization and h-step forecast are aligned.</li>
-<li><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em>) – Method to use when producing the forecast. The default is analytic.
+realization and h-step forecast are aligned.</p></li>
+<li><p><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em>) – Method to use when producing the forecast. The default is analytic.
 The method only affects the variance forecast generation.  Not all
 volatility models support all methods. In particular, volatility
 models that do not evolve in squares such as EGARCH or TARCH do not
-support the ‘analytic’ method for horizons &gt; 1.</li>
-<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
-either simulation or bootstrap.</li>
-<li><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
+support the ‘analytic’ method for horizons &gt; 1.</p></li>
+<li><p><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
+either simulation or bootstrap.</p></li>
+<li><p><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
 Must produce random samples using the syntax <cite>rng(size)</cite> where size
-the 2-element tuple (simulations, horizon).</li>
+the 2-element tuple (simulations, horizon).</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>forecasts</strong> – t by h data frame containing the forecasts.  The alignment of the
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>forecasts</strong> – t by h data frame containing the forecasts.  The alignment of the
 forecasts is controlled by <cite>align</cite>.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="forecasting.html#arch.univariate.base.ARCHModelForecast" title="arch.univariate.base.ARCHModelForecast">ARCHModelForecast</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="forecasting.html#arch.univariate.base.ARCHModelForecast" title="arch.univariate.base.ARCHModelForecast">ARCHModelForecast</a></p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
@@ -316,57 +298,49 @@ evaluating, but still in the same column.</p>
 <dt id="arch.univariate.ZeroMean.resids">
 <code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ZeroMean.resids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ZeroMean.resids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute model residuals</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>ndarray</em>) – Model parameters</li>
-<li><strong>y</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
-<li><strong>regressors</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>ndarray</em>) – Model parameters</p></li>
+<li><p><strong>y</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</p></li>
+<li><p><strong>regressors</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>resids</strong> – Model residuals</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>resids</strong> – Model residuals</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.ZeroMean.simulate">
 <code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ZeroMean.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ZeroMean.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulated data from a zero mean model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em>) – Parameters to use when simulating the model.  Parameter order is
-[volatility distribution]. There are no mean parameters.</li>
-<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of series to simulate</li>
-<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
-dependence on initial values.</li>
-<li><strong>initial_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – This value is not used.</li>
-<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – This value is not used.</li>
-<li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em>) – Parameters to use when simulating the model.  Parameter order is
+[volatility distribution]. There are no mean parameters.</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of series to simulate</p></li>
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
+dependence on initial values.</p></li>
+<li><p><strong>initial_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – This value is not used.</p></li>
+<li><p><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – This value is not used.</p></li>
+<li><p><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>simulated_data</strong> – DataFrame with columns data containing the simulated values,
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>simulated_data</strong> – DataFrame with columns data containing the simulated values,
 volatility, containing the conditional volatility and errors
 containing the errors used in the simulation</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataFrame</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <p>Basic data simulation with no mean and constant volatility</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">ZeroMean</span>
@@ -391,22 +365,18 @@ containing the errors used in the simulation</p>
 <dt id="arch.univariate.ConstantMean">
 <em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">ConstantMean</code><span class="sig-paren">(</span><em>y=None</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ConstantMean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantMean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constant mean model estimation and simulation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</li>
-<li><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</p></li>
+<li><p><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
 estimating model parameters.  Used when comparing models with different
-lag lengths to estimate on the common sample.</li>
-<li><strong>volatility</strong> (<a class="reference internal" href="volatility.html#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess"><em>VolatilityProcess</em></a><em>, </em><em>optional</em>) – Volatility process to use in the model</li>
-<li><strong>distribution</strong> (<a class="reference internal" href="distribution.html#arch.univariate.Distribution" title="arch.univariate.Distribution"><em>Distribution</em></a><em>, </em><em>optional</em>) – Error distribution to use in the model</li>
+lag lengths to estimate on the common sample.</p></li>
+<li><p><strong>volatility</strong> (<a class="reference internal" href="volatility.html#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess"><em>VolatilityProcess</em></a><em>, </em><em>optional</em>) – Volatility process to use in the model</p></li>
+<li><p><strong>distribution</strong> (<a class="reference internal" href="distribution.html#arch.univariate.Distribution" title="arch.univariate.Distribution"><em>Distribution</em></a><em>, </em><em>optional</em>) – Error distribution to use in the model</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">ConstantMean</span>
@@ -423,41 +393,37 @@ lag lengths to estimate on the common sample.</li>
 <dt id="arch.univariate.ConstantMean.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em>, <em>backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>update_freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
-<cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</li>
-<li><strong>disp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Either ‘final’ to print optimization result or ‘off’ to display
-nothing</li>
-<li><strong>starting_values</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
-are constructed by the model components.</li>
-<li><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>update_freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
+<cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</p></li>
+<li><p><strong>disp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Either ‘final’ to print optimization result or ‘off’ to display
+nothing</p></li>
+<li><p><strong>starting_values</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
+are constructed by the model components.</p></li>
+<li><p><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
-corresponds to Bollerslev-Wooldridge covariance estimator.</li>
-<li><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
-<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
-<li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
-include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
-<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
+corresponds to Bollerslev-Wooldridge covariance estimator.</p></li>
+<li><p><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</p></li>
+<li><p><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</p></li>
+<li><p><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</p></li>
+<li><p><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</p></li>
+<li><p><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
+include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</p></li>
+<li><p><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
 since model-specific non-linear transformations are applied to
-value before computing the variance recusions.</li>
+value before computing the variance recusions.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> – Object containing model results</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelResult" title="arch.univariate.base.ARCHModelResult">ARCHModelResult</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>results</strong> – Object containing model results</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelResult" title="arch.univariate.base.ARCHModelResult">ARCHModelResult</a></p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>A ConvergenceWarning is raised if SciPy’s optimizer indicates
 difficulty finding the optimum.</p>
@@ -468,47 +434,43 @@ difficulty finding the optimum.</p>
 <dt id="arch.univariate.ConstantMean.forecast">
 <code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
-shape to the parameters computed by fitting the model.</li>
-<li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+shape to the parameters computed by fitting the model.</p></li>
+<li><p><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</p></li>
+<li><p><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
-to a date time, such as in ‘1945-01-01’.</li>
-<li><strong>align</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
+to a date time, such as in ‘1945-01-01’.</p></li>
+<li><p><strong>align</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
 of forecasts contains the forecasts for t+1, t+2, …, t+h. When
 set to ‘target’, the t-th row contains the 1-step ahead forecast
 from time t-1, the 2 step from time t-2, …, and the h-step from
 time t-h.  ‘target’ simplified computing forecast errors since the
-realization and h-step forecast are aligned.</li>
-<li><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em>) – Method to use when producing the forecast. The default is analytic.
+realization and h-step forecast are aligned.</p></li>
+<li><p><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em>) – Method to use when producing the forecast. The default is analytic.
 The method only affects the variance forecast generation.  Not all
 volatility models support all methods. In particular, volatility
 models that do not evolve in squares such as EGARCH or TARCH do not
-support the ‘analytic’ method for horizons &gt; 1.</li>
-<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
-either simulation or bootstrap.</li>
-<li><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
+support the ‘analytic’ method for horizons &gt; 1.</p></li>
+<li><p><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
+either simulation or bootstrap.</p></li>
+<li><p><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
 Must produce random samples using the syntax <cite>rng(size)</cite> where size
-the 2-element tuple (simulations, horizon).</li>
+the 2-element tuple (simulations, horizon).</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>forecasts</strong> – t by h data frame containing the forecasts.  The alignment of the
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>forecasts</strong> – t by h data frame containing the forecasts.  The alignment of the
 forecasts is controlled by <cite>align</cite>.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="forecasting.html#arch.univariate.base.ARCHModelForecast" title="arch.univariate.base.ARCHModelForecast">ARCHModelForecast</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="forecasting.html#arch.univariate.base.ARCHModelForecast" title="arch.univariate.base.ARCHModelForecast">ARCHModelForecast</a></p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
@@ -543,58 +505,50 @@ evaluating, but still in the same column.</p>
 <dt id="arch.univariate.ConstantMean.resids">
 <code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ConstantMean.resids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantMean.resids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute model residuals</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>ndarray</em>) – Model parameters</li>
-<li><strong>y</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
-<li><strong>regressors</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>ndarray</em>) – Model parameters</p></li>
+<li><p><strong>y</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</p></li>
+<li><p><strong>regressors</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>resids</strong> – Model residuals</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>resids</strong> – Model residuals</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantMean.simulate">
 <code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ConstantMean.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantMean.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulated data from a constant mean model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
 [mean volatility distribution]. There is one parameter in the mean
-model, mu.</li>
-<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of series to simulate</li>
-<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
-dependence on initial values.</li>
-<li><strong>initial_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – This value is not used.</li>
-<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – This value is not used.</li>
-<li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+model, mu.</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of series to simulate</p></li>
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
+dependence on initial values.</p></li>
+<li><p><strong>initial_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – This value is not used.</p></li>
+<li><p><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) – This value is not used.</p></li>
+<li><p><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>simulated_data</strong> – DataFrame with columns data containing the simulated values,
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>simulated_data</strong> – DataFrame with columns data containing the simulated values,
 volatility, containing the conditional volatility and errors
 containing the errors used in the simulation</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataFrame</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <p>Basic data simulation with a constant mean and volatility</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -619,25 +573,21 @@ containing the errors used in the simulation</p>
 <em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">ARX</code><span class="sig-paren">(</span><em>y=None</em>, <em>x=None</em>, <em>lags=None</em>, <em>constant=True</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ARX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ARX" title="Permalink to this definition">¶</a></dt>
 <dd><p>Autoregressive model with optional exogenous regressors estimation and
 simulation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</li>
-<li><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs by k element array containing exogenous regressors</li>
-<li><strong>lags</strong> (<em>scalar</em><em>, </em><em>1-d array</em><em>, </em><em>optional</em>) – Description of lag structure of the HAR.  Scalar included all lags
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</p></li>
+<li><p><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs by k element array containing exogenous regressors</p></li>
+<li><p><strong>lags</strong> (<em>scalar</em><em>, </em><em>1-d array</em><em>, </em><em>optional</em>) – Description of lag structure of the HAR.  Scalar included all lags
 between 1 and the value.  A 1-d array includes the AR lags lags[0],
-lags[1], …</li>
-<li><strong>constant</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag whether the model should include a constant</li>
-<li><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
+lags[1], …</p></li>
+<li><p><strong>constant</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag whether the model should include a constant</p></li>
+<li><p><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
 estimating model parameters.  Used when comparing models with different
-lag lengths to estimate on the common sample.</li>
+lag lengths to estimate on the common sample.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">ARX</span>
@@ -659,41 +609,37 @@ lag lengths to estimate on the common sample.</li>
 <dt id="arch.univariate.ARX.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em>, <em>backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>update_freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
-<cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</li>
-<li><strong>disp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Either ‘final’ to print optimization result or ‘off’ to display
-nothing</li>
-<li><strong>starting_values</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
-are constructed by the model components.</li>
-<li><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>update_freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
+<cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</p></li>
+<li><p><strong>disp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Either ‘final’ to print optimization result or ‘off’ to display
+nothing</p></li>
+<li><p><strong>starting_values</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
+are constructed by the model components.</p></li>
+<li><p><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
-corresponds to Bollerslev-Wooldridge covariance estimator.</li>
-<li><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
-<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
-<li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
-include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
-<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
+corresponds to Bollerslev-Wooldridge covariance estimator.</p></li>
+<li><p><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</p></li>
+<li><p><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</p></li>
+<li><p><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</p></li>
+<li><p><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</p></li>
+<li><p><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
+include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</p></li>
+<li><p><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
 since model-specific non-linear transformations are applied to
-value before computing the variance recusions.</li>
+value before computing the variance recusions.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> – Object containing model results</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelResult" title="arch.univariate.base.ARCHModelResult">ARCHModelResult</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>results</strong> – Object containing model results</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelResult" title="arch.univariate.base.ARCHModelResult">ARCHModelResult</a></p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>A ConvergenceWarning is raised if SciPy’s optimizer indicates
 difficulty finding the optimum.</p>
@@ -704,27 +650,23 @@ difficulty finding the optimum.</p>
 <dt id="arch.univariate.ARX.fix">
 <code class="descname">fix</code><span class="sig-paren">(</span><em>params</em>, <em>first_obs=None</em>, <em>last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.fix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows an ARCHModelFixedResult to be constructed from fixed parameters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – User specified parameters to use when generating the result. Must
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – User specified parameters to use when generating the result. Must
 have the correct number of parameters for a given choice of mean
-model, volatility model and distribution.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
+model, volatility model and distribution.</p></li>
+<li><p><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</p></li>
+<li><p><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> – Object containing model results</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelFixedResult" title="arch.univariate.base.ARCHModelFixedResult">ARCHModelFixedResult</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>results</strong> – Object containing model results</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelFixedResult" title="arch.univariate.base.ARCHModelFixedResult">ARCHModelFixedResult</a></p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Parameters are not checked against model-specific constraints.</p>
 </dd></dl>
@@ -733,47 +675,43 @@ model, volatility model and distribution.</li>
 <dt id="arch.univariate.ARX.forecast">
 <code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
-shape to the parameters computed by fitting the model.</li>
-<li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+shape to the parameters computed by fitting the model.</p></li>
+<li><p><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</p></li>
+<li><p><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
-to a date time, such as in ‘1945-01-01’.</li>
-<li><strong>align</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
+to a date time, such as in ‘1945-01-01’.</p></li>
+<li><p><strong>align</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
 of forecasts contains the forecasts for t+1, t+2, …, t+h. When
 set to ‘target’, the t-th row contains the 1-step ahead forecast
 from time t-1, the 2 step from time t-2, …, and the h-step from
 time t-h.  ‘target’ simplified computing forecast errors since the
-realization and h-step forecast are aligned.</li>
-<li><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em>) – Method to use when producing the forecast. The default is analytic.
+realization and h-step forecast are aligned.</p></li>
+<li><p><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em>) – Method to use when producing the forecast. The default is analytic.
 The method only affects the variance forecast generation.  Not all
 volatility models support all methods. In particular, volatility
 models that do not evolve in squares such as EGARCH or TARCH do not
-support the ‘analytic’ method for horizons &gt; 1.</li>
-<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
-either simulation or bootstrap.</li>
-<li><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
+support the ‘analytic’ method for horizons &gt; 1.</p></li>
+<li><p><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
+either simulation or bootstrap.</p></li>
+<li><p><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
 Must produce random samples using the syntax <cite>rng(size)</cite> where size
-the 2-element tuple (simulations, horizon).</li>
+the 2-element tuple (simulations, horizon).</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>forecasts</strong> – t by h data frame containing the forecasts.  The alignment of the
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>forecasts</strong> – t by h data frame containing the forecasts.  The alignment of the
 forecasts is controlled by <cite>align</cite>.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="forecasting.html#arch.univariate.base.ARCHModelForecast" title="arch.univariate.base.ARCHModelForecast">ARCHModelForecast</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="forecasting.html#arch.univariate.base.ARCHModelForecast" title="arch.univariate.base.ARCHModelForecast">ARCHModelForecast</a></p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
@@ -808,63 +746,55 @@ evaluating, but still in the same column.</p>
 <dt id="arch.univariate.ARX.resids">
 <code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.resids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute model residuals</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>ndarray</em>) – Model parameters</li>
-<li><strong>y</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
-<li><strong>regressors</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>ndarray</em>) – Model parameters</p></li>
+<li><p><strong>y</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</p></li>
+<li><p><strong>regressors</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>resids</strong> – Model residuals</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>resids</strong> – Model residuals</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.ARX.simulate">
 <code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulates data from a linear regression, AR or HAR models</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
 [mean volatility distribution] where the parameters of the mean
 model are ordered [constant lag[0] lag[1] … lag[p] ex[0] …
 ex[k-1]] where lag[j] indicates the coefficient on the jth lag in
 the model and ex[j] is the coefficient on the jth exogenous
-variable.</li>
-<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of series to simulate</li>
-<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
-dependence on initial values.</li>
-<li><strong>initial_value</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
-use when initializing the model.  If omitted, 0.0 is used.</li>
-<li><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
-simulation.</li>
-<li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+variable.</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of series to simulate</p></li>
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
+dependence on initial values.</p></li>
+<li><p><strong>initial_value</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
+use when initializing the model.  If omitted, 0.0 is used.</p></li>
+<li><p><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
+simulation.</p></li>
+<li><p><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>simulated_data</strong> – DataFrame with columns data containing the simulated values,
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>simulated_data</strong> – DataFrame with columns data containing the simulated values,
 volatility, containing the conditional volatility and errors
 containing the errors used in the simulation</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataFrame</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">HARX</span><span class="p">,</span> <span class="n">GARCH</span>
@@ -898,30 +828,26 @@ to have nobs plus burn data points</p>
 <em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">HARX</code><span class="sig-paren">(</span><em>y=None</em>, <em>x=None</em>, <em>lags=None</em>, <em>constant=True</em>, <em>use_rotated=False</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX" title="Permalink to this definition">¶</a></dt>
 <dd><p>Heterogeneous Autoregression (HAR), with optional exogenous regressors,
 model estimation and simulation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</li>
-<li><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs by k element array containing exogenous regressors</li>
-<li><strong>lags</strong> (<em>{scalar</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Description of lag structure of the HAR.  Scalar included all lags
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – nobs element vector containing the dependent variable</p></li>
+<li><p><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs by k element array containing exogenous regressors</p></li>
+<li><p><strong>lags</strong> (<em>{scalar</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Description of lag structure of the HAR.  Scalar included all lags
 between 1 and the value.  A 1-d array includes the HAR lags 1:lags[0],
 1:lags[1], … A 2-d array includes the HAR lags of the form
-lags[0,j]:lags[1,j] for all columns of lags.</li>
-<li><strong>constant</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag whether the model should include a constant</li>
-<li><strong>use_rotated</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating to use the alternative rotated form of the HAR where
-HAR lags do not overlap</li>
-<li><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
+lags[0,j]:lags[1,j] for all columns of lags.</p></li>
+<li><p><strong>constant</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag whether the model should include a constant</p></li>
+<li><p><strong>use_rotated</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating to use the alternative rotated form of the HAR where
+HAR lags do not overlap</p></li>
+<li><p><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
 estimating model parameters.  Used when comparing models with different
-lag lengths to estimate on the common sample.</li>
-<li><strong>volatility</strong> (<a class="reference internal" href="volatility.html#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess"><em>VolatilityProcess</em></a><em>, </em><em>optional</em>) – Volatility process to use in the model</li>
-<li><strong>distribution</strong> (<a class="reference internal" href="distribution.html#arch.univariate.Distribution" title="arch.univariate.Distribution"><em>Distribution</em></a><em>, </em><em>optional</em>) – Error distribution to use in the model</li>
+lag lengths to estimate on the common sample.</p></li>
+<li><p><strong>volatility</strong> (<a class="reference internal" href="volatility.html#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess"><em>VolatilityProcess</em></a><em>, </em><em>optional</em>) – Volatility process to use in the model</p></li>
+<li><p><strong>distribution</strong> (<a class="reference internal" href="distribution.html#arch.univariate.Distribution" title="arch.univariate.Distribution"><em>Distribution</em></a><em>, </em><em>optional</em>) – Error distribution to use in the model</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">HARX</span>
@@ -947,41 +873,37 @@ lag lengths to estimate on the common sample.</li>
 <dt id="arch.univariate.HARX.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em>, <em>backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>update_freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
-<cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</li>
-<li><strong>disp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Either ‘final’ to print optimization result or ‘off’ to display
-nothing</li>
-<li><strong>starting_values</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
-are constructed by the model components.</li>
-<li><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>update_freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
+<cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</p></li>
+<li><p><strong>disp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Either ‘final’ to print optimization result or ‘off’ to display
+nothing</p></li>
+<li><p><strong>starting_values</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
+are constructed by the model components.</p></li>
+<li><p><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
-corresponds to Bollerslev-Wooldridge covariance estimator.</li>
-<li><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
-<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
-<li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
-include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
-<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
+corresponds to Bollerslev-Wooldridge covariance estimator.</p></li>
+<li><p><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</p></li>
+<li><p><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</p></li>
+<li><p><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</p></li>
+<li><p><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</p></li>
+<li><p><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
+include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</p></li>
+<li><p><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
 since model-specific non-linear transformations are applied to
-value before computing the variance recusions.</li>
+value before computing the variance recusions.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> – Object containing model results</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelResult" title="arch.univariate.base.ARCHModelResult">ARCHModelResult</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>results</strong> – Object containing model results</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelResult" title="arch.univariate.base.ARCHModelResult">ARCHModelResult</a></p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>A ConvergenceWarning is raised if SciPy’s optimizer indicates
 difficulty finding the optimum.</p>
@@ -992,27 +914,23 @@ difficulty finding the optimum.</p>
 <dt id="arch.univariate.HARX.fix">
 <code class="descname">fix</code><span class="sig-paren">(</span><em>params</em>, <em>first_obs=None</em>, <em>last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.fix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows an ARCHModelFixedResult to be constructed from fixed parameters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – User specified parameters to use when generating the result. Must
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – User specified parameters to use when generating the result. Must
 have the correct number of parameters for a given choice of mean
-model, volatility model and distribution.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
+model, volatility model and distribution.</p></li>
+<li><p><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</p></li>
+<li><p><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> – Object containing model results</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelFixedResult" title="arch.univariate.base.ARCHModelFixedResult">ARCHModelFixedResult</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>results</strong> – Object containing model results</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelFixedResult" title="arch.univariate.base.ARCHModelFixedResult">ARCHModelFixedResult</a></p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Parameters are not checked against model-specific constraints.</p>
 </dd></dl>
@@ -1021,47 +939,43 @@ model, volatility model and distribution.</li>
 <dt id="arch.univariate.HARX.forecast">
 <code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX.forecast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em><em>, </em><em>optional</em>) – Alternative parameters to use.  If not provided, the parameters
 estimated when fitting the model are used.  Must be identical in
-shape to the parameters computed by fitting the model.</li>
-<li><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</li>
-<li><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
+shape to the parameters computed by fitting the model.</p></li>
+<li><p><strong>horizon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of steps to forecast</p></li>
+<li><p><strong>start</strong> (<em>{int</em><em>, </em><em>datetime</em><em>, </em><em>Timestamp</em><em>, </em><em>str}</em><em>, </em><em>optional</em>) – An integer, datetime or str indicating the first observation to
 produce the forecast for.  Datetimes can only be used with pandas
 inputs that have a datetime index. Strings must be convertible
-to a date time, such as in ‘1945-01-01’.</li>
-<li><strong>align</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
+to a date time, such as in ‘1945-01-01’.</p></li>
+<li><p><strong>align</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Either ‘origin’ or ‘target’.  When set of ‘origin’, the t-th row
 of forecasts contains the forecasts for t+1, t+2, …, t+h. When
 set to ‘target’, the t-th row contains the 1-step ahead forecast
 from time t-1, the 2 step from time t-2, …, and the h-step from
 time t-h.  ‘target’ simplified computing forecast errors since the
-realization and h-step forecast are aligned.</li>
-<li><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em>) – Method to use when producing the forecast. The default is analytic.
+realization and h-step forecast are aligned.</p></li>
+<li><p><strong>method</strong> (<em>{'analytic'</em><em>, </em><em>'simulation'</em><em>, </em><em>'bootstrap'}</em>) – Method to use when producing the forecast. The default is analytic.
 The method only affects the variance forecast generation.  Not all
 volatility models support all methods. In particular, volatility
 models that do not evolve in squares such as EGARCH or TARCH do not
-support the ‘analytic’ method for horizons &gt; 1.</li>
-<li><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
-either simulation or bootstrap.</li>
-<li><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
+support the ‘analytic’ method for horizons &gt; 1.</p></li>
+<li><p><strong>simulations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of simulations to run when computing the forecast using
+either simulation or bootstrap.</p></li>
+<li><p><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
 Must produce random samples using the syntax <cite>rng(size)</cite> where size
-the 2-element tuple (simulations, horizon).</li>
+the 2-element tuple (simulations, horizon).</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>forecasts</strong> – t by h data frame containing the forecasts.  The alignment of the
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>forecasts</strong> – t by h data frame containing the forecasts.  The alignment of the
 forecasts is controlled by <cite>align</cite>.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="forecasting.html#arch.univariate.base.ARCHModelForecast" title="arch.univariate.base.ARCHModelForecast">ARCHModelForecast</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="forecasting.html#arch.univariate.base.ARCHModelForecast" title="arch.univariate.base.ARCHModelForecast">ARCHModelForecast</a></p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch</span> <span class="k">import</span> <span class="n">arch_model</span>
@@ -1096,63 +1010,55 @@ evaluating, but still in the same column.</p>
 <dt id="arch.univariate.HARX.resids">
 <code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX.resids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX.resids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute model residuals</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>ndarray</em>) – Model parameters</li>
-<li><strong>y</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
-<li><strong>regressors</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>ndarray</em>) – Model parameters</p></li>
+<li><p><strong>y</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</p></li>
+<li><p><strong>regressors</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>resids</strong> – Model residuals</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>resids</strong> – Model residuals</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.HARX.simulate">
 <code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulates data from a linear regression, AR or HAR models</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
 [mean volatility distribution] where the parameters of the mean
 model are ordered [constant lag[0] lag[1] … lag[p] ex[0] …
 ex[k-1]] where lag[j] indicates the coefficient on the jth lag in
 the model and ex[j] is the coefficient on the jth exogenous
-variable.</li>
-<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of series to simulate</li>
-<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
-dependence on initial values.</li>
-<li><strong>initial_value</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
-use when initializing the model.  If omitted, 0.0 is used.</li>
-<li><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
-simulation.</li>
-<li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+variable.</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of series to simulate</p></li>
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
+dependence on initial values.</p></li>
+<li><p><strong>initial_value</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
+use when initializing the model.  If omitted, 0.0 is used.</p></li>
+<li><p><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
+simulation.</p></li>
+<li><p><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>simulated_data</strong> – DataFrame with columns data containing the simulated values,
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>simulated_data</strong> – DataFrame with columns data containing the simulated values,
 volatility, containing the conditional volatility and errors
 containing the errors used in the simulation</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataFrame</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">HARX</span><span class="p">,</span> <span class="n">GARCH</span>
@@ -1185,22 +1091,18 @@ to have nobs plus burn data points</p>
 <dt id="arch.univariate.LS">
 <em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">LS</code><span class="sig-paren">(</span><em>y=None</em>, <em>x=None</em>, <em>constant=True</em>, <em>hold_back=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#LS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.LS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Least squares model estimation and simulation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>y</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs element vector containing the dependent variable</li>
-<li><strong>y</strong> – nobs by k element array containing exogenous regressors</li>
-<li><strong>constant</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag whether the model should include a constant</li>
-<li><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs element vector containing the dependent variable</p></li>
+<li><p><strong>y</strong> – nobs by k element array containing exogenous regressors</p></li>
+<li><p><strong>constant</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag whether the model should include a constant</p></li>
+<li><p><strong>hold_back</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of observations at the start of the sample to exclude when
 estimating model parameters.  Used when comparing models with different
-lag lengths to estimate on the common sample.</li>
+lag lengths to estimate on the common sample.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">LS</span>
@@ -1218,41 +1120,37 @@ lag lengths to estimate on the common sample.</li>
 <dt id="arch.univariate.LS.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em>, <em>backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>update_freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
-<cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</li>
-<li><strong>disp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Either ‘final’ to print optimization result or ‘off’ to display
-nothing</li>
-<li><strong>starting_values</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
-are constructed by the model components.</li>
-<li><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>update_freq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Frequency of iteration updates.  Output is generated every
+<cite>update_freq</cite> iterations. Set to 0 to disable iterative output.</p></li>
+<li><p><strong>disp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Either ‘final’ to print optimization result or ‘off’ to display
+nothing</p></li>
+<li><p><strong>starting_values</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Array of starting values to use.  If not provided, starting values
+are constructed by the model components.</p></li>
+<li><p><strong>cov_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Estimation method of parameter covariance.  Supported options are
 ‘robust’, which does not assume the Information Matrix Equality
 holds and ‘classic’ which does.  In the ARCH literature, ‘robust’
-corresponds to Bollerslev-Wooldridge covariance estimator.</li>
-<li><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</li>
-<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</li>
-<li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
-include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</li>
-<li><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
+corresponds to Bollerslev-Wooldridge covariance estimator.</p></li>
+<li><p><strong>show_warning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether convergence warnings should be shown.</p></li>
+<li><p><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when estimating model</p></li>
+<li><p><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when estimating model</p></li>
+<li><p><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance for termination.</p></li>
+<li><p><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – Options to pass to <cite>scipy.optimize.minimize</cite>.  Valid entries
+include ‘ftol’, ‘eps’, ‘disp’, and ‘maxiter’.</p></li>
+<li><p><strong>backcast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to use as backcast. Should be measure <span class="math notranslate nohighlight">\(\sigma^2_0\)</span>
 since model-specific non-linear transformations are applied to
-value before computing the variance recusions.</li>
+value before computing the variance recusions.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> – Object containing model results</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelResult" title="arch.univariate.base.ARCHModelResult">ARCHModelResult</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>results</strong> – Object containing model results</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelResult" title="arch.univariate.base.ARCHModelResult">ARCHModelResult</a></p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>A ConvergenceWarning is raised if SciPy’s optimizer indicates
 difficulty finding the optimum.</p>
@@ -1263,27 +1161,23 @@ difficulty finding the optimum.</p>
 <dt id="arch.univariate.LS.fix">
 <code class="descname">fix</code><span class="sig-paren">(</span><em>params</em>, <em>first_obs=None</em>, <em>last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.fix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows an ARCHModelFixedResult to be constructed from fixed parameters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – User specified parameters to use when generating the result. Must
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – User specified parameters to use when generating the result. Must
 have the correct number of parameters for a given choice of mean
-model, volatility model and distribution.</li>
-<li><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</li>
-<li><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</li>
+model, volatility model and distribution.</p></li>
+<li><p><strong>first_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – First observation to use when fixing model</p></li>
+<li><p><strong>last_obs</strong> (<em>{int</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>datetime</em><em>, </em><em>Timestamp}</em>) – Last observation to use when fixing model</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> – Object containing model results</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelFixedResult" title="arch.univariate.base.ARCHModelFixedResult">ARCHModelFixedResult</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>results</strong> – Object containing model results</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelFixedResult" title="arch.univariate.base.ARCHModelFixedResult">ARCHModelFixedResult</a></p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Parameters are not checked against model-specific constraints.</p>
 </dd></dl>
@@ -1292,63 +1186,55 @@ model, volatility model and distribution.</li>
 <dt id="arch.univariate.LS.resids">
 <code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.resids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute model residuals</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>ndarray</em>) – Model parameters</li>
-<li><strong>y</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</li>
-<li><strong>regressors</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>ndarray</em>) – Model parameters</p></li>
+<li><p><strong>y</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative values to use when computing model residuals</p></li>
+<li><p><strong>regressors</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Alternative regressor values to use when computing model residuals</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>resids</strong> – Model residuals</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>resids</strong> – Model residuals</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.LS.simulate">
 <code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulates data from a linear regression, AR or HAR models</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>params</strong> (<em>ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>ndarray</em>) – Parameters to use when simulating the model.  Parameter order is
 [mean volatility distribution] where the parameters of the mean
 model are ordered [constant lag[0] lag[1] … lag[p] ex[0] …
 ex[k-1]] where lag[j] indicates the coefficient on the jth lag in
 the model and ex[j] is the coefficient on the jth exogenous
-variable.</li>
-<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of series to simulate</li>
-<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
-dependence on initial values.</li>
-<li><strong>initial_value</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
-use when initializing the model.  If omitted, 0.0 is used.</li>
-<li><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
-simulation.</li>
-<li><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</li>
+variable.</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of series to simulate</p></li>
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of values to simulate to initialize the model and remove
+dependence on initial values.</p></li>
+<li><p><strong>initial_value</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – Either a scalar value or <cite>max(lags)</cite> array set of initial values to
+use when initializing the model.  If omitted, 0.0 is used.</p></li>
+<li><p><strong>x</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em><em>, </em><em>optional</em>) – nobs + burn by k array of exogenous variables to include in the
+simulation.</p></li>
+<li><p><strong>initial_value_vol</strong> (<em>{ndarray</em><em>, </em><em>float}</em><em>, </em><em>optional</em>) – An array or scalar to use when initializing the volatility process.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>simulated_data</strong> – DataFrame with columns data containing the simulated values,
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>simulated_data</strong> – DataFrame with columns data containing the simulated values,
 volatility, containing the conditional volatility and errors
 containing the errors used in the simulation</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataFrame</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="k">import</span> <span class="n">HARX</span><span class="p">,</span> <span class="n">GARCH</span>
@@ -1426,7 +1312,7 @@ to override but recommended where applicable.</p>
         <li class="right" >
           <a href="univariate_volatility_scenarios.html" title="Volatilty Scenarios"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+3.gf545506 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

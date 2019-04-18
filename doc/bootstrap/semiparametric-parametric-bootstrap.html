@@ -1,12 +1,10 @@
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -16,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Semiparametric Bootstraps &#8212; arch 4.8.1+3.gf545506 documentation</title>
+    <title>Semiparametric Bootstraps &#8212; arch 4.8.1+5.g3dfd977 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -52,7 +50,7 @@
         <li class="right" >
           <a href="low-level-interface.html" title="Low-level Interfaces"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+3.gf545506 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" accesskey="U">Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
@@ -63,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.8.1 (+3)</a>
+    ../index.html" class="text-logo">arch 4.8.1 (+5)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -141,10 +139,10 @@ regressand.  The bootstrap regressand and regressors can then be used to
 produce a bootstrapped parameter estimate.</p>
 <p>The user-provided function must:</p>
 <ul class="simple">
-<li>Estimate the parameters when <code class="docutils literal notranslate"><span class="pre">params</span></code> is not provided</li>
-<li>Estimate residuals from bootstrapped data when <code class="docutils literal notranslate"><span class="pre">params</span></code> is provided
+<li><p>Estimate the parameters when <code class="docutils literal notranslate"><span class="pre">params</span></code> is not provided</p></li>
+<li><p>Estimate residuals from bootstrapped data when <code class="docutils literal notranslate"><span class="pre">params</span></code> is provided
 to construct bootstrapped residuals, simulate the regressand, and then
-estimate the bootstrapped parameters</li>
+estimate the bootstrapped parameters</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="k">def</span> <span class="nf">ols</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">x_orig</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -161,8 +159,8 @@ estimate the bootstrapped parameters</li>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The function should return a 1-dimensional array. <code class="docutils literal notranslate"><span class="pre">ravel</span></code> is used above to
+<p class="admonition-title">Note</p>
+<p>The function should return a 1-dimensional array. <code class="docutils literal notranslate"><span class="pre">ravel</span></code> is used above to
 ensure that the parameters estimated are 1d.</p>
 </div>
 <p>This function can then be used to perform a semiparametric bootstrap</p>
@@ -213,8 +211,8 @@ previous method.</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This alternative method is more useful when computing residuals is
+<p class="admonition-title">Note</p>
+<p>This alternative method is more useful when computing residuals is
 relatively expensive when compared to simulating data or estimating
 parameters.  These circumstances are rarely encountered in actual problems.</p>
 </div>
@@ -228,8 +226,8 @@ semiparametric cousins.  Instead of sampling the data to simulate the data
 bootstrap makes use of a fully parametric model to simulate data using a
 pseudo-random number generator.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Parametric bootstraps are model-based methods to construct exact
+<p class="admonition-title">Warning</p>
+<p>Parametric bootstraps are model-based methods to construct exact
 confidence intervals through integration.   Since these confidence
 intervals should be exact, bootstrap methods which make use of
 asymptotic normality are required (and may not be desirable).</p>
@@ -242,9 +240,9 @@ data.  The second is <code class="docutils literal notranslate"><span class="pre
 This is provided to facilitate simulation in a reproducible manner.</p>
 <p>A parametric bootstrap function must:</p>
 <ul class="simple">
-<li>Estimate the parameters when <code class="docutils literal notranslate"><span class="pre">params</span></code> is not provided</li>
-<li>Simulate data when <code class="docutils literal notranslate"><span class="pre">params</span></code> is provided and then
-estimate the bootstrapped parameters on the simulated data</li>
+<li><p>Estimate the parameters when <code class="docutils literal notranslate"><span class="pre">params</span></code> is not provided</p></li>
+<li><p>Simulate data when <code class="docutils literal notranslate"><span class="pre">params</span></code> is provided and then
+estimate the bootstrapped parameters on the simulated data</p></li>
 </ul>
 <p>This example continues the OLS example from the semiparametric example,
 only assuming that residuals are normally distributed.  The variance
@@ -272,8 +270,8 @@ estimator is the MLE.</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The parameter vector in this example includes the variance since this is
+<p class="admonition-title">Note</p>
+<p>The parameter vector in this example includes the variance since this is
 required when specifying a complete model.</p>
 </div>
 </div>
@@ -311,7 +309,7 @@ required when specifying a complete model.</p>
         <li class="right" >
           <a href="low-level-interface.html" title="Low-level Interfaces"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+3.gf545506 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" >Bootstrapping</a> &#187;</li> 
       </ul>
     </div>

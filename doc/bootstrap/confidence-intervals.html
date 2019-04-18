@@ -1,12 +1,10 @@
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -16,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Confidence Intervals &#8212; arch 4.8.1+3.gf545506 documentation</title>
+    <title>Confidence Intervals &#8212; arch 4.8.1+5.g3dfd977 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -52,7 +50,7 @@
         <li class="right" >
           <a href="bootstrap_examples.html" title="Bootstrap Examples"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+3.gf545506 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" accesskey="U">Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
@@ -63,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.8.1 (+3)</a>
+    ../index.html" class="text-logo">arch 4.8.1 (+5)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -129,35 +127,37 @@
 <p>The confidence interval function allows three types of confidence intervals to
 be constructed:</p>
 <ul class="simple">
-<li>Nonparametric, which only resamples the data</li>
-<li>Semi-parametric, which use resampled residuals</li>
-<li>Parametric, which simulate residuals</li>
+<li><p>Nonparametric, which only resamples the data</p></li>
+<li><p>Semi-parametric, which use resampled residuals</p></li>
+<li><p>Parametric, which simulate residuals</p></li>
 </ul>
 <p>Confidence intervals can then be computed using one of 6 methods:</p>
 <ul class="simple">
-<li>Basic (<code class="docutils literal notranslate"><span class="pre">basic</span></code>)</li>
-<li>Percentile (<code class="docutils literal notranslate"><span class="pre">percentile</span></code>)</li>
-<li>Studentized (<code class="docutils literal notranslate"><span class="pre">studentized</span></code>)</li>
-<li>Asymptotic using parameter covariance (<code class="docutils literal notranslate"><span class="pre">norm</span></code>, <code class="docutils literal notranslate"><span class="pre">var</span></code> or <code class="docutils literal notranslate"><span class="pre">cov</span></code>)</li>
-<li>Bias-corrected (<code class="docutils literal notranslate"><span class="pre">bc</span></code>, <code class="docutils literal notranslate"><span class="pre">bias-corrected</span></code> or <code class="docutils literal notranslate"><span class="pre">debiased</span></code>)</li>
-<li>Bias-corrected and accelerated (<code class="docutils literal notranslate"><span class="pre">bca</span></code>)</li>
+<li><p>Basic (<code class="docutils literal notranslate"><span class="pre">basic</span></code>)</p></li>
+<li><p>Percentile (<code class="docutils literal notranslate"><span class="pre">percentile</span></code>)</p></li>
+<li><p>Studentized (<code class="docutils literal notranslate"><span class="pre">studentized</span></code>)</p></li>
+<li><p>Asymptotic using parameter covariance (<code class="docutils literal notranslate"><span class="pre">norm</span></code>, <code class="docutils literal notranslate"><span class="pre">var</span></code> or <code class="docutils literal notranslate"><span class="pre">cov</span></code>)</p></li>
+<li><p>Bias-corrected (<code class="docutils literal notranslate"><span class="pre">bc</span></code>, <code class="docutils literal notranslate"><span class="pre">bias-corrected</span></code> or <code class="docutils literal notranslate"><span class="pre">debiased</span></code>)</p></li>
+<li><p>Bias-corrected and accelerated (<code class="docutils literal notranslate"><span class="pre">bca</span></code>)</p></li>
 </ul>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#setup" id="id1">Setup</a></li>
-<li><a class="reference internal" href="#confidence-interval-types" id="id2">Confidence Interval Types</a><ul>
-<li><a class="reference internal" href="#nonparametric-confidence-intervals" id="id3">Nonparametric Confidence Intervals</a></li>
-<li><a class="reference internal" href="#semi-parametric-confidence-intervals" id="id4">Semi-parametric Confidence Intervals</a></li>
-<li><a class="reference internal" href="#parametric-confidence-intervals" id="id5">Parametric Confidence Intervals</a></li>
+<li><p><a class="reference internal" href="#setup" id="id1">Setup</a></p></li>
+<li><p><a class="reference internal" href="#confidence-interval-types" id="id2">Confidence Interval Types</a></p>
+<ul>
+<li><p><a class="reference internal" href="#nonparametric-confidence-intervals" id="id3">Nonparametric Confidence Intervals</a></p></li>
+<li><p><a class="reference internal" href="#semi-parametric-confidence-intervals" id="id4">Semi-parametric Confidence Intervals</a></p></li>
+<li><p><a class="reference internal" href="#parametric-confidence-intervals" id="id5">Parametric Confidence Intervals</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#confidence-interval-methods" id="id6">Confidence Interval Methods</a><ul>
-<li><a class="reference internal" href="#basic-basic" id="id7">Basic (<code class="docutils literal notranslate"><span class="pre">basic</span></code>)</a></li>
-<li><a class="reference internal" href="#percentile-percentile" id="id8">Percentile (<code class="docutils literal notranslate"><span class="pre">percentile</span></code>)</a></li>
-<li><a class="reference internal" href="#asymptotic-normal-approximation-norm-cov-or-var" id="id9">Asymptotic Normal Approximation (<code class="docutils literal notranslate"><span class="pre">norm</span></code>, <code class="docutils literal notranslate"><span class="pre">cov</span></code> or <code class="docutils literal notranslate"><span class="pre">var</span></code>)</a></li>
-<li><a class="reference internal" href="#studentized-studentized" id="id10">Studentized (<code class="docutils literal notranslate"><span class="pre">studentized</span></code>)</a></li>
-<li><a class="reference internal" href="#bias-corrected-bc-bias-corrected-or-debiased" id="id11">Bias-corrected (<code class="docutils literal notranslate"><span class="pre">bc</span></code>, <code class="docutils literal notranslate"><span class="pre">bias-corrected</span></code> or <code class="docutils literal notranslate"><span class="pre">debiased</span></code>)</a></li>
-<li><a class="reference internal" href="#bias-corrected-and-accelerated-bca" id="id12">Bias-corrected and accelerated (<code class="docutils literal notranslate"><span class="pre">bca</span></code>)</a></li>
+<li><p><a class="reference internal" href="#confidence-interval-methods" id="id6">Confidence Interval Methods</a></p>
+<ul>
+<li><p><a class="reference internal" href="#basic-basic" id="id7">Basic (<code class="docutils literal notranslate"><span class="pre">basic</span></code>)</a></p></li>
+<li><p><a class="reference internal" href="#percentile-percentile" id="id8">Percentile (<code class="docutils literal notranslate"><span class="pre">percentile</span></code>)</a></p></li>
+<li><p><a class="reference internal" href="#asymptotic-normal-approximation-norm-cov-or-var" id="id9">Asymptotic Normal Approximation (<code class="docutils literal notranslate"><span class="pre">norm</span></code>, <code class="docutils literal notranslate"><span class="pre">cov</span></code> or <code class="docutils literal notranslate"><span class="pre">var</span></code>)</a></p></li>
+<li><p><a class="reference internal" href="#studentized-studentized" id="id10">Studentized (<code class="docutils literal notranslate"><span class="pre">studentized</span></code>)</a></p></li>
+<li><p><a class="reference internal" href="#bias-corrected-bc-bias-corrected-or-debiased" id="id11">Bias-corrected (<code class="docutils literal notranslate"><span class="pre">bc</span></code>, <code class="docutils literal notranslate"><span class="pre">bias-corrected</span></code> or <code class="docutils literal notranslate"><span class="pre">debiased</span></code>)</a></p></li>
+<li><p><a class="reference internal" href="#bias-corrected-and-accelerated-bca" id="id12">Bias-corrected and accelerated (<code class="docutils literal notranslate"><span class="pre">bca</span></code>)</a></p></li>
 </ul>
 </li>
 </ul>
@@ -191,8 +191,8 @@ deviation and the Sharpe ratio.</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Functions must return 1-d NumPy arrays or Pandas Series.</p>
+<p class="admonition-title">Note</p>
+<p>Functions must return 1-d NumPy arrays or Pandas Series.</p>
 </div>
 </div>
 <div class="section" id="confidence-interval-types">
@@ -217,8 +217,8 @@ order statistics from these empirical distributions.</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">While returns have little serial correlation, squared returns are highly
+<p class="admonition-title">Note</p>
+<p>While returns have little serial correlation, squared returns are highly
 persistent.  The IID bootstrap is not a good choice here.  Instead a
 time-series bootstrap with an appropriately chosen block size should be
 used.</p>
@@ -236,8 +236,8 @@ used.</p>
 <div class="section" id="confidence-interval-methods">
 <h2><a class="toc-backref" href="#id6">Confidence Interval Methods</a><a class="headerlink" href="#confidence-interval-methods" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last"><code class="docutils literal notranslate"><span class="pre">conf_int</span></code> can construct two-sided, upper or lower (one-sided) confidence
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">conf_int</span></code> can construct two-sided, upper or lower (one-sided) confidence
 intervals.  All examples use two-sided, 95% confidence intervals (the
 default).  This can be modified using the keyword inputs <code class="docutils literal notranslate"><span class="pre">type</span></code>
 (<code class="docutils literal notranslate"><span class="pre">'upper'</span></code>, <code class="docutils literal notranslate"><span class="pre">'lower'</span></code> or <code class="docutils literal notranslate"><span class="pre">'two-sided'</span></code>) and <code class="docutils literal notranslate"><span class="pre">size</span></code>.</p>
@@ -346,13 +346,13 @@ function.</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Standard error functions must return a 1-d array with the same number
+<p class="admonition-title">Note</p>
+<p>Standard error functions must return a 1-d array with the same number
 of element as params.</p>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Standard error functions must match the patters
+<p class="admonition-title">Note</p>
+<p>Standard error functions must match the patters
 <code class="docutils literal notranslate"><span class="pre">std_err_func(params,</span> <span class="pre">*args,</span> <span class="pre">**kwargs)</span></code> where <code class="docutils literal notranslate"><span class="pre">params</span></code> is an array
 of estimated parameters constructed using <code class="docutils literal notranslate"><span class="pre">*args</span></code> and <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code>.</p>
 </div>
@@ -432,7 +432,7 @@ are</p>
         <li class="right" >
           <a href="bootstrap_examples.html" title="Bootstrap Examples"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+3.gf545506 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" >Bootstrapping</a> &#187;</li> 
       </ul>
     </div>

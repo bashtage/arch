@@ -1,12 +1,10 @@
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -16,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Volatility Processes &#8212; arch 4.8.1+3.gf545506 documentation</title>
+    <title>Volatility Processes &#8212; arch 4.8.1+5.g3dfd977 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -52,7 +50,7 @@
         <li class="right" >
           <a href="mean.html" title="Mean Models"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+3.gf545506 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -63,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.8.1 (+3)</a>
+    ../index.html" class="text-logo">arch 4.8.1 (+5)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -142,77 +140,68 @@ volatility.</p>
 <dt id="arch.univariate.ConstantVariance.backcast">
 <code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.backcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantVariance.bounds">
 <code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List of bounds where each element is (lower, upper).</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantVariance.compute_variance">
 <code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</li>
-<li><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
-when the model contains multiple components.</li>
-<li><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+when the model contains multiple components.</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantVariance.constraints">
 <code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
-by number of parameters</li>
-<li><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</li>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+by number of parameters</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Values returned are used in constructing linear inequality
 constraints of the form A.dot(parameters) - b &gt;= 0</p>
@@ -222,50 +211,45 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dt id="arch.univariate.ConstantVariance.simulate">
 <code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
-a vector of random numbers</li>
-<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
-the simulation</li>
-<li><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
-simulation</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+a vector of random numbers</p></li>
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+the simulation</p></li>
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+simulation</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</li>
-<li><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantVariance.starting_values">
 <code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
-values</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -277,47 +261,39 @@ values</td>
 <dt id="arch.univariate.GARCH">
 <em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">GARCH</code><span class="sig-paren">(</span><em>p=1</em>, <em>o=0</em>, <em>q=1</em>, <em>power=2.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH" title="Permalink to this definition">¶</a></dt>
 <dd><p>GARCH and related model estimation</p>
-<dl class="docutils">
-<dt>The following models can be specified using GARCH:</dt>
-<dd><ul class="first last simple">
-<li>ARCH(p)</li>
-<li>GARCH(p,q)</li>
-<li>GJR-GARCH(p,o,q)</li>
-<li>AVARCH(p)</li>
-<li>AVGARCH(p,q)</li>
-<li>TARCH(p,o,q)</li>
-<li>Models with arbitrary, pre-specified powers</li>
+<dl class="simple">
+<dt>The following models can be specified using GARCH:</dt><dd><ul class="simple">
+<li><p>ARCH(p)</p></li>
+<li><p>GARCH(p,q)</p></li>
+<li><p>GJR-GARCH(p,o,q)</p></li>
+<li><p>AVARCH(p)</p></li>
+<li><p>AVGARCH(p,q)</p></li>
+<li><p>TARCH(p,o,q)</p></li>
+<li><p>Models with arbitrary, pre-specified powers</p></li>
 </ul>
 </dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the symmetric innovation</li>
-<li><strong>o</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the asymmetric innovation</li>
-<li><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the lagged (transformed) conditional variance</li>
-<li><strong>power</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Power to use with the innovations, abs(e) ** power.  Default is 2.0, which produces ARCH
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the symmetric innovation</p></li>
+<li><p><strong>o</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the asymmetric innovation</p></li>
+<li><p><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the lagged (transformed) conditional variance</p></li>
+<li><p><strong>power</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Power to use with the innovations, abs(e) ** power.  Default is 2.0, which produces ARCH
 and related models. Using 1.0 produces AVARCH and related models.  Other powers can be
-specified, although these should be strictly positive, and usually larger than 0.25.</li>
+specified, although these should be strictly positive, and usually larger than 0.25.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="arch.univariate.GARCH.num_params">
 <code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.GARCH.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <p class="rubric">Examples</p>
@@ -347,77 +323,68 @@ I\left[\epsilon_{t-j}&lt;0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}\
 <dt id="arch.univariate.GARCH.backcast">
 <code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.backcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.GARCH.bounds">
 <code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List of bounds where each element is (lower, upper).</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.GARCH.compute_variance">
 <code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</li>
-<li><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
-when the model contains multiple components.</li>
-<li><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+when the model contains multiple components.</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.GARCH.constraints">
 <code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
-by number of parameters</li>
-<li><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</li>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+by number of parameters</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Values returned are used in constructing linear inequality
 constraints of the form A.dot(parameters) - b &gt;= 0</p>
@@ -427,50 +394,45 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dt id="arch.univariate.GARCH.simulate">
 <code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
-a vector of random numbers</li>
-<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
-the simulation</li>
-<li><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
-simulation</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+a vector of random numbers</p></li>
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+the simulation</p></li>
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+simulation</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</li>
-<li><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.GARCH.starting_values">
 <code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
-values</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -482,36 +444,29 @@ values</td>
 <dt id="arch.univariate.FIGARCH">
 <em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">FIGARCH</code><span class="sig-paren">(</span><em>p=1</em>, <em>q=1</em>, <em>power=2.0</em>, <em>truncation=1000</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH" title="Permalink to this definition">¶</a></dt>
 <dd><p>FIGARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>p</strong> (<em>{0</em><em>, </em><em>1}</em>) – Order of the symmetric innovation</li>
-<li><strong>q</strong> (<em>{0</em><em>, </em><em>1}</em>) – Order of the lagged (transformed) conditional variance</li>
-<li><strong>power</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Power to use with the innovations, abs(e) ** power.  Default is 2.0,
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<em>{0</em><em>, </em><em>1}</em>) – Order of the symmetric innovation</p></li>
+<li><p><strong>q</strong> (<em>{0</em><em>, </em><em>1}</em>) – Order of the lagged (transformed) conditional variance</p></li>
+<li><p><strong>power</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Power to use with the innovations, abs(e) ** power.  Default is 2.0,
 which produces FIGARCH and related models. Using 1.0 produces
 FIAVARCH and related models.  Other powers can be specified, although
-these should be strictly positive, and usually larger than 0.25.</li>
-<li><strong>truncation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Truncation point to use in ARCH(<span class="math notranslate nohighlight">\(\infty\)</span>) representation.
-Default is 1000.</li>
+these should be strictly positive, and usually larger than 0.25.</p></li>
+<li><p><strong>truncation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Truncation point to use in ARCH(<span class="math notranslate nohighlight">\(\infty\)</span>) representation.
+Default is 1000.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="arch.univariate.FIGARCH.num_params">
 <code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.FIGARCH.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <p class="rubric">Examples</p>
@@ -554,77 +509,68 @@ where <span class="math notranslate nohighlight">\(\epsilon_t^2\)</span> is repl
 <dt id="arch.univariate.FIGARCH.backcast">
 <code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.backcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.FIGARCH.bounds">
 <code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List of bounds where each element is (lower, upper).</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.FIGARCH.compute_variance">
 <code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</li>
-<li><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
-when the model contains multiple components.</li>
-<li><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+when the model contains multiple components.</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.FIGARCH.constraints">
 <code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
-by number of parameters</li>
-<li><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</li>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+by number of parameters</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Values returned are used in constructing linear inequality
 constraints of the form A.dot(parameters) - b &gt;= 0</p>
@@ -634,50 +580,45 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dt id="arch.univariate.FIGARCH.simulate">
 <code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
-a vector of random numbers</li>
-<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
-the simulation</li>
-<li><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
-simulation</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+a vector of random numbers</p></li>
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+the simulation</p></li>
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+simulation</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</li>
-<li><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.FIGARCH.starting_values">
 <code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
-values</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -689,31 +630,24 @@ values</td>
 <dt id="arch.univariate.EGARCH">
 <em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">EGARCH</code><span class="sig-paren">(</span><em>p=1</em>, <em>o=0</em>, <em>q=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH" title="Permalink to this definition">¶</a></dt>
 <dd><p>EGARCH model estimation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the symmetric innovation</li>
-<li><strong>o</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the asymmetric innovation</li>
-<li><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the lagged (transformed) conditional variance</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the symmetric innovation</p></li>
+<li><p><strong>o</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the asymmetric innovation</p></li>
+<li><p><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the lagged (transformed) conditional variance</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="arch.univariate.EGARCH.num_params">
 <code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.EGARCH.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <p class="rubric">Examples</p>
@@ -745,77 +679,68 @@ values</td>
 <dt id="arch.univariate.EGARCH.backcast">
 <code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.backcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.EGARCH.bounds">
 <code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List of bounds where each element is (lower, upper).</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.EGARCH.compute_variance">
 <code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</li>
-<li><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
-when the model contains multiple components.</li>
-<li><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+when the model contains multiple components.</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.EGARCH.constraints">
 <code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
-by number of parameters</li>
-<li><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</li>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+by number of parameters</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Values returned are used in constructing linear inequality
 constraints of the form A.dot(parameters) - b &gt;= 0</p>
@@ -825,50 +750,45 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dt id="arch.univariate.EGARCH.simulate">
 <code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
-a vector of random numbers</li>
-<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
-the simulation</li>
-<li><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
-simulation</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+a vector of random numbers</p></li>
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+the simulation</p></li>
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+simulation</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</li>
-<li><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.EGARCH.starting_values">
 <code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
-values</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -880,26 +800,20 @@ values</td>
 <dt id="arch.univariate.HARCH">
 <em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">HARCH</code><span class="sig-paren">(</span><em>lags=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH" title="Permalink to this definition">¶</a></dt>
 <dd><p>Heterogeneous ARCH process</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>lags</strong> (<em>{list</em><em>, </em><em>array</em><em>, </em><em>int}</em>) – List of lags to include in the model, or if scalar, includes all lags up the value</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>lags</strong> (<em>{list</em><em>, </em><em>array</em><em>, </em><em>int}</em>) – List of lags to include in the model, or if scalar, includes all lags up the value</p>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="arch.univariate.HARCH.num_params">
 <code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.HARCH.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <p class="rubric">Examples</p>
@@ -930,77 +844,68 @@ ARCH process have been restricted.</p>
 <dt id="arch.univariate.HARCH.backcast">
 <code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARCH.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.HARCH.bounds">
 <code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List of bounds where each element is (lower, upper).</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.HARCH.compute_variance">
 <code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</li>
-<li><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
-when the model contains multiple components.</li>
-<li><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+when the model contains multiple components.</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.HARCH.constraints">
 <code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
-by number of parameters</li>
-<li><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</li>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+by number of parameters</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Values returned are used in constructing linear inequality
 constraints of the form A.dot(parameters) - b &gt;= 0</p>
@@ -1010,50 +915,45 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dt id="arch.univariate.HARCH.simulate">
 <code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
-a vector of random numbers</li>
-<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
-the simulation</li>
-<li><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
-simulation</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+a vector of random numbers</p></li>
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+the simulation</p></li>
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+simulation</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</li>
-<li><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.HARCH.starting_values">
 <code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
-values</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1065,30 +965,23 @@ values</td>
 <dt id="arch.univariate.MIDASHyperbolic">
 <em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">MIDASHyperbolic</code><span class="sig-paren">(</span><em>m=22</em>, <em>asym=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic" title="Permalink to this definition">¶</a></dt>
 <dd><p>MIDAS Hyperbolic ARCH process</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of maximum lag to include in the model</li>
-<li><strong>asym</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Flag indicating whether to include an asymmetric term</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of maximum lag to include in the model</p></li>
+<li><p><strong>asym</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Flag indicating whether to include an asymmetric term</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="arch.univariate.MIDASHyperbolic.num_params">
 <code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <p class="rubric">Examples</p>
@@ -1119,75 +1012,65 @@ values</td>
 <p>where <span class="math notranslate nohighlight">\(\Gamma\)</span> is the gamma function. <span class="math notranslate nohighlight">\(\{\phi_i(\theta)\}\)</span> is
 normalized so that <span class="math notranslate nohighlight">\(\sum \phi_i(\theta)=1\)</span></p>
 <p class="rubric">References</p>
-<table class="docutils footnote" frame="void" id="id1" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[*]</td><td>Foroni, Claudia, and Massimiliano Marcellino. “A survey of
-Econometric Methods for Mixed-Frequency Data”. Norges Bank. (2013).</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="id2" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[†]</td><td>Sheppard, Kevin. “Direct volatility modeling”. Manuscript. (2018).</td></tr>
-</tbody>
-</table>
+<dl class="footnote brackets">
+<dt class="label" id="id1"><span class="brackets">*</span></dt>
+<dd><p>Foroni, Claudia, and Massimiliano Marcellino. “A survey of
+Econometric Methods for Mixed-Frequency Data”. Norges Bank. (2013).</p>
+</dd>
+<dt class="label" id="id2"><span class="brackets">†</span></dt>
+<dd><p>Sheppard, Kevin. “Direct volatility modeling”. Manuscript. (2018).</p>
+</dd>
+</dl>
 <dl class="method">
 <dt id="arch.univariate.MIDASHyperbolic.backcast">
 <code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.MIDASHyperbolic.bounds">
 <code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List of bounds where each element is (lower, upper).</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.MIDASHyperbolic.compute_variance">
 <code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</li>
-<li><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
-when the model contains multiple components.</li>
-<li><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+when the model contains multiple components.</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1198,11 +1081,11 @@ when the model contains multiple components.</li>
 <p>Parameters are (omega, alpha, gamma, theta)</p>
 <p>A.dot(parameters) - b &gt;= 0</p>
 <ol class="arabic simple">
-<li>omega &gt;0</li>
-<li>alpha&gt;0 or alpha + gamma &gt; 0</li>
-<li>alpha&lt;1 or alpha+0.5*gamma&lt;1</li>
-<li>theta &gt; 0</li>
-<li>theta &lt; 1</li>
+<li><p>omega &gt;0</p></li>
+<li><p>alpha&gt;0 or alpha + gamma &gt; 0</p></li>
+<li><p>alpha&lt;1 or alpha+0.5*gamma&lt;1</p></li>
+<li><p>theta &gt; 0</p></li>
+<li><p>theta &lt; 1</p></li>
 </ol>
 </dd></dl>
 
@@ -1210,50 +1093,45 @@ when the model contains multiple components.</li>
 <dt id="arch.univariate.MIDASHyperbolic.simulate">
 <code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
-a vector of random numbers</li>
-<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
-the simulation</li>
-<li><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
-simulation</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+a vector of random numbers</p></li>
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+the simulation</p></li>
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+simulation</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</li>
-<li><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.MIDASHyperbolic.starting_values">
 <code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
-values</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1265,26 +1143,20 @@ values</td>
 <dt id="arch.univariate.ARCH">
 <em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">ARCH</code><span class="sig-paren">(</span><em>p=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ARCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ARCH" title="Permalink to this definition">¶</a></dt>
 <dd><p>ARCH process</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the symmetric innovation</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the symmetric innovation</p>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="arch.univariate.ARCH.num_params">
 <code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.ARCH.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <p class="rubric">Examples</p>
@@ -1304,77 +1176,68 @@ values</td>
 <dt id="arch.univariate.ARCH.backcast">
 <code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARCH.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.ARCH.bounds">
 <code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARCH.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List of bounds where each element is (lower, upper).</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.ARCH.compute_variance">
 <code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARCH.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</li>
-<li><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
-when the model contains multiple components.</li>
-<li><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+when the model contains multiple components.</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.ARCH.constraints">
 <code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARCH.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
-by number of parameters</li>
-<li><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</li>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+by number of parameters</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Values returned are used in constructing linear inequality
 constraints of the form A.dot(parameters) - b &gt;= 0</p>
@@ -1384,50 +1247,45 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dt id="arch.univariate.ARCH.simulate">
 <code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARCH.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
-a vector of random numbers</li>
-<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
-the simulation</li>
-<li><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
-simulation</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+a vector of random numbers</p></li>
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+the simulation</p></li>
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+simulation</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</li>
-<li><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.ARCH.starting_values">
 <code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ARCH.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ARCH.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
-values</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1445,27 +1303,21 @@ are estimable.</p>
 <em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">EWMAVariance</code><span class="sig-paren">(</span><em>lam=0.94</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">arch.univariate.volatility.VolatilityProcess</span></code></a></p>
 <p>Exponentially Weighted Moving-Average (RiskMetrics) Variance process</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>lam</strong> (<em>{float</em><em>, </em><em>None}</em><em>, </em><em>optional</em>) – Smoothing parameter. Default is 0.94. Set to None to estimate lam
-jointly with other model parameters</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>lam</strong> (<em>{float</em><em>, </em><em>None}</em><em>, </em><em>optional</em>) – Smoothing parameter. Default is 0.94. Set to None to estimate lam
+jointly with other model parameters</p>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="arch.univariate.EWMAVariance.num_params">
 <code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.EWMAVariance.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <p class="rubric">Examples</p>
@@ -1485,77 +1337,68 @@ parameter when fitting the model.</p>
 <dt id="arch.univariate.EWMAVariance.backcast">
 <code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.EWMAVariance.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.EWMAVariance.bounds">
 <code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List of bounds where each element is (lower, upper).</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.EWMAVariance.compute_variance">
 <code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</li>
-<li><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
-when the model contains multiple components.</li>
-<li><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+when the model contains multiple components.</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.EWMAVariance.constraints">
 <code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
-by number of parameters</li>
-<li><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</li>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+by number of parameters</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Values returned are used in constructing linear inequality
 constraints of the form A.dot(parameters) - b &gt;= 0</p>
@@ -1565,50 +1408,45 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dt id="arch.univariate.EWMAVariance.simulate">
 <code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
-a vector of random numbers</li>
-<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
-the simulation</li>
-<li><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
-simulation</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+a vector of random numbers</p></li>
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+the simulation</p></li>
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+simulation</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</li>
-<li><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.EWMAVariance.starting_values">
 <code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
-values</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1621,32 +1459,25 @@ values</td>
 <em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">RiskMetrics2006</code><span class="sig-paren">(</span><em>tau0=1560</em>, <em>tau1=4</em>, <em>kmax=14</em>, <em>rho=1.4142135623730951</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">arch.univariate.volatility.VolatilityProcess</span></code></a></p>
 <p>RiskMetrics 2006 Variance process</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>tau0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Length of long cycle. Default is 1560.</li>
-<li><strong>tau1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Length of short cycle. Default is 4.</li>
-<li><strong>kmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of components. Default is 14.</li>
-<li><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Relative scale of adjacent cycles. Default is sqrt(2)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tau0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Length of long cycle. Default is 1560.</p></li>
+<li><p><strong>tau1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Length of short cycle. Default is 4.</p></li>
+<li><p><strong>kmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of components. Default is 14.</p></li>
+<li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Relative scale of adjacent cycles. Default is sqrt(2)</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="arch.univariate.RiskMetrics2006.num_params">
 <code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.RiskMetrics2006.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <p class="rubric">Examples</p>
@@ -1663,77 +1494,68 @@ processes where the smoothing parameters and weights are determined by tau0, tau
 <dt id="arch.univariate.RiskMetrics2006.backcast">
 <code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.backcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>backcast</strong> – Backcast values for each EWMA component</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>backcast</strong> – Backcast values for each EWMA component</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.RiskMetrics2006.bounds">
 <code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>bounds</strong> – List of bounds where each element is (lower, upper).</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.RiskMetrics2006.compute_variance">
 <code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</li>
-<li><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</li>
-<li><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</li>
-<li><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
-when the model contains multiple components.</li>
-<li><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+when the model contains multiple components.</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.RiskMetrics2006.constraints">
 <code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
-by number of parameters</li>
-<li><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</li>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+by number of parameters</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Values returned are used in constructing linear inequality
 constraints of the form A.dot(parameters) - b &gt;= 0</p>
@@ -1743,50 +1565,45 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dt id="arch.univariate.RiskMetrics2006.simulate">
 <code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</li>
-<li><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</li>
-<li><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
-a vector of random numbers</li>
-<li><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
-the simulation</li>
-<li><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
-simulation</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+a vector of random numbers</p></li>
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+the simulation</p></li>
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+simulation</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</li>
-<li><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.RiskMetrics2006.starting_values">
 <code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
-values</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>sv</strong> – Array of starting values</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1801,21 +1618,17 @@ the so-called zig-zag algorithm to be used.  See the example for usage.</p>
 <em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">FixedVariance</code><span class="sig-paren">(</span><em>variance</em>, <em>unit_scale=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FixedVariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FixedVariance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">arch.univariate.volatility.VolatilityProcess</span></code></a></p>
 <p>Fixed volatility process</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>variance</strong> (<em>{array</em><em>, </em><em>Series}</em>) – Array containing the variances to use.  Should have the same shape as the data used in the
-model.</li>
-<li><strong>unit_scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag whether to enforce a unit scale.  If False, a scale parameter will be estimated so
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variance</strong> (<em>{array</em><em>, </em><em>Series}</em>) – Array containing the variances to use.  Should have the same shape as the data used in the
+model.</p></li>
+<li><p><strong>unit_scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag whether to enforce a unit scale.  If False, a scale parameter will be estimated so
 that the model variance will be proportional to <code class="docutils literal notranslate"><span class="pre">variance</span></code>.  If True, the model variance
-is set of <code class="docutils literal notranslate"><span class="pre">variance</span></code></li>
+is set of <code class="docutils literal notranslate"><span class="pre">variance</span></code></p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Allows a fixed set of variances to be used when estimating a mean model, allowing GLS
 estimation.</p>
@@ -1869,7 +1682,7 @@ separately from the conditional variance, even though parameters are estimated j
         <li class="right" >
           <a href="mean.html" title="Mean Models"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+3.gf545506 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

@@ -1,12 +1,10 @@
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -16,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Module Reference &#8212; arch 4.8.1+3.gf545506 documentation</title>
+    <title>Module Reference &#8212; arch 4.8.1+5.g3dfd977 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -52,7 +50,7 @@
         <li class="right" >
           <a href="multiple-comparison_examples.html" title="Multiple Comparisons"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+3.gf545506 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="multiple-comparisons.html" accesskey="U">Multiple Comparison Procedures</a> &#187;</li> 
       </ul>
     </div>
@@ -63,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.8.1 (+3)</a>
+    ../index.html" class="text-logo">arch 4.8.1 (+5)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -140,30 +138,26 @@ there are potentially alternative models being considered.</p>
 <em class="property">class </em><code class="descclassname">arch.bootstrap.</code><code class="descname">SPA</code><span class="sig-paren">(</span><em>benchmark</em>, <em>models</em>, <em>block_size=None</em>, <em>reps=1000</em>, <em>bootstrap='stationary'</em>, <em>studentize=True</em>, <em>nested=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/multiple_comparison.html#SPA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.SPA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implementation of the Test of Superior Predictive Ability (SPA),
 which is also known as the Reality Check or Bootstrap Data Snooper.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>benchmark</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – T element array of benchmark model <em>losses</em></li>
-<li><strong>models</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em>) – T  by k element array of alternative model <em>losses</em></li>
-<li><strong>block_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>benchmark</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – T element array of benchmark model <em>losses</em></p></li>
+<li><p><strong>models</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em>) – T  by k element array of alternative model <em>losses</em></p></li>
+<li><p><strong>block_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
 is used.  In general, this should be provided and chosen to be
-appropriate for the data.</li>
-<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</li>
-<li><strong>bootstrap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
+appropriate for the data.</p></li>
+<li><p><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</p></li>
+<li><p><strong>bootstrap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
 ‘stationary’ or ‘sb’: Stationary bootstrap (Default)
 ‘circular’ or ‘cbb’: Circular block bootstrap
-‘moving block’ or ‘mbb’: Moving block bootstrap</li>
-<li><strong>studentize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Flag indicating to studentize loss differentials. Default is True</li>
-<li><strong>nested=False</strong> – Flag indicating to use a nested bootstrap to compute variances for
+‘moving block’ or ‘mbb’: Moving block bootstrap</p></li>
+<li><p><strong>studentize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Flag indicating to studentize loss differentials. Default is True</p></li>
+<li><p><strong>nested=False</strong> – Flag indicating to use a nested bootstrap to compute variances for
 studentization.  Default is False.  Note that this can be slow since
-the procedure requires k extra bootstraps.</li>
+the procedure requires k extra bootstraps.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="method">
 <dt id="arch.bootstrap.SPA.compute">
 <code class="descname">compute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/multiple_comparison.html#SPA.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.SPA.compute" title="Permalink to this definition">¶</a></dt>
@@ -196,18 +190,17 @@ no. 5, 1097-1126.</p>
 <p>Hansen, P. R. (2005). “A test for superior predictive ability.”
 Journal of Business &amp; Economic Statistics, 23(4)</p>
 <p class="rubric">Notes</p>
-<dl class="docutils">
-<dt>The three p-value correspond to different re-centering decisions.</dt>
-<dd><ul class="first last simple">
-<li>Upper : Never recenter to all models are relevant to distribution</li>
-<li>Consistent : Only recenter if closer than a log(log(t)) bound</li>
-<li>Lower : Never recenter a model if worse than benchmark</li>
+<dl class="simple">
+<dt>The three p-value correspond to different re-centering decisions.</dt><dd><ul class="simple">
+<li><p>Upper : Never recenter to all models are relevant to distribution</p></li>
+<li><p>Consistent : Only recenter if closer than a log(log(t)) bound</p></li>
+<li><p>Lower : Never recenter a model if worse than benchmark</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#arch.bootstrap.StepM" title="arch.bootstrap.StepM"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#arch.bootstrap.StepM" title="arch.bootstrap.StepM"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepM</span></code></a></p>
 </div>
 <dl class="method">
 <dt>
@@ -219,19 +212,18 @@ Journal of Business &amp; Economic Statistics, 23(4)</p>
 <dt id="arch.bootstrap.SPA.critical_values">
 <code class="descname">critical_values</code><span class="sig-paren">(</span><em>pvalue=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/multiple_comparison.html#SPA.critical_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.SPA.critical_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns data-dependent critical values</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pvalue</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – P-value in (0,1) to use when computing the critical values.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>crit_vals</strong> – Series containing critical values for the lower, consistent and
-upper methodologies</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Series</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pvalue</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – P-value in (0,1) to use when computing the critical values.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>crit_vals</strong> – Series containing critical values for the lower, consistent and
+upper methodologies</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Series</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -239,17 +231,15 @@ upper methodologies</td>
 <code class="descname">pvalues</code><a class="headerlink" href="#arch.bootstrap.SPA.pvalues" title="Permalink to this definition">¶</a></dt>
 <dd><p>P-values corresponding to the lower, consistent and
 upper p-values.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>pvals</strong> – Three p-values corresponding to the lower bound, the consistent
-estimator, and the upper bound.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Series</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>pvals</strong> – Three p-values corresponding to the lower bound, the consistent
+estimator, and the upper bound.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Series</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -267,32 +257,28 @@ to allow multiple calls.</p>
 <dt id="arch.bootstrap.StepM">
 <em class="property">class </em><code class="descclassname">arch.bootstrap.</code><code class="descname">StepM</code><span class="sig-paren">(</span><em>benchmark</em>, <em>models</em>, <em>size=0.05</em>, <em>block_size=None</em>, <em>reps=1000</em>, <em>bootstrap='stationary'</em>, <em>studentize=True</em>, <em>nested=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/multiple_comparison.html#StepM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.StepM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implementation of Romano and Wolf’s StepM multiple comparison procedure</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>benchmark</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – T element array of benchmark model <em>losses</em></li>
-<li><strong>models</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em>) – T by k element array of alternative model <em>losses</em></li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value in (0,1) to use as the test size when implementing the
-comparison. Default value is 0.05.</li>
-<li><strong>block_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>benchmark</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – T element array of benchmark model <em>losses</em></p></li>
+<li><p><strong>models</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em>) – T by k element array of alternative model <em>losses</em></p></li>
+<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value in (0,1) to use as the test size when implementing the
+comparison. Default value is 0.05.</p></li>
+<li><p><strong>block_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
 is used.  In general, this should be provided and chosen to be
-appropriate for the data.</li>
-<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</li>
-<li><strong>bootstrap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
+appropriate for the data.</p></li>
+<li><p><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</p></li>
+<li><p><strong>bootstrap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
 ‘stationary’ or ‘sb’: Stationary bootstrap (Default)
 ‘circular’ or ‘cbb’: Circular block bootstrap
-‘moving block’ or ‘mbb’: Moving block bootstrap</li>
-<li><strong>studentize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating to studentize loss differentials. Default is True</li>
-<li><strong>nested</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating to use a nested bootstrap to compute variances for
+‘moving block’ or ‘mbb’: Moving block bootstrap</p></li>
+<li><p><strong>studentize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating to studentize loss differentials. Default is True</p></li>
+<li><p><strong>nested</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating to use a nested bootstrap to compute variances for
 studentization.  Default is False.  Note that this can be slow since
-the procedure requires k extra bootstraps.</li>
+the procedure requires k extra bootstraps.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="method">
 <dt id="arch.bootstrap.StepM.compute">
 <code class="descname">compute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/multiple_comparison.html#StepM.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.StepM.compute" title="Permalink to this definition">¶</a></dt>
@@ -307,8 +293,8 @@ data snooping.” Econometrica, 73(4), 1237-1282.</p>
 multiple comparison procedure.  Uses SPA and the consistent selection
 procedure.</p>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#arch.bootstrap.SPA" title="arch.bootstrap.SPA"><code class="xref py py-class docutils literal notranslate"><span class="pre">SPA</span></code></a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#arch.bootstrap.SPA" title="arch.bootstrap.SPA"><code class="xref py py-class docutils literal notranslate"><span class="pre">SPA</span></code></a></p>
 </div>
 <dl class="method">
 <dt>
@@ -320,17 +306,15 @@ procedure.</p>
 <dt id="arch.bootstrap.StepM.superior_models">
 <code class="descname">superior_models</code><a class="headerlink" href="#arch.bootstrap.StepM.superior_models" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of the indices or column names of the superior models</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>superior_models</strong> – List of superior models.  Contains column indices if models is an
-array or contains column names if models is a DataFrame.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>superior_models</strong> – List of superior models.  Contains column indices if models is an
+array or contains column names if models is a DataFrame.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -348,29 +332,25 @@ Familywise Error Rate rather than the usual test size.</p>
 <dt id="arch.bootstrap.MCS">
 <em class="property">class </em><code class="descclassname">arch.bootstrap.</code><code class="descname">MCS</code><span class="sig-paren">(</span><em>losses</em>, <em>size</em>, <em>reps=1000</em>, <em>block_size=None</em>, <em>method='R'</em>, <em>bootstrap='stationary'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/multiple_comparison.html#MCS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.MCS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implementation of the Model Confidence Set (MCS)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>losses</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em>) – T by k array containing losses from a set of models</li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value in (0,1) to use as the test size when implementing the
-mcs. Default value is 0.05.</li>
-<li><strong>block_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>losses</strong> (<em>{ndarray</em><em>, </em><em>DataFrame}</em>) – T by k array containing losses from a set of models</p></li>
+<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value in (0,1) to use as the test size when implementing the
+mcs. Default value is 0.05.</p></li>
+<li><p><strong>block_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Length of window to use in the bootstrap.  If not provided, sqrt(T)
 is used.  In general, this should be provided and chosen to be
-appropriate for the data.</li>
-<li><strong>method</strong> (<em>{'max'</em><em>, </em><em>'R'}</em><em>, </em><em>optional</em>) – MCS test and elimination implementation method, either ‘max’ or ‘R’.
-Default is ‘R’.</li>
-<li><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</li>
-<li><strong>bootstrap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
+appropriate for the data.</p></li>
+<li><p><strong>method</strong> (<em>{'max'</em><em>, </em><em>'R'}</em><em>, </em><em>optional</em>) – MCS test and elimination implementation method, either ‘max’ or ‘R’.
+Default is ‘R’.</p></li>
+<li><p><strong>reps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap replications to uses.  Default is 1000.</p></li>
+<li><p><strong>bootstrap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Bootstrap to use.  Options are
 ‘stationary’ or ‘sb’: Stationary bootstrap (Default)
 ‘circular’ or ‘cbb’: Circular block bootstrap
-‘moving block’ or ‘mbb’: Moving block bootstrap</li>
+‘moving block’ or ‘mbb’: Moving block bootstrap</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="method">
 <dt id="arch.bootstrap.MCS.compute">
 <code class="descname">compute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/multiple_comparison.html#MCS.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.MCS.compute" title="Permalink to this definition">¶</a></dt>
@@ -423,7 +403,7 @@ Econometrica, 79(2), 453-497.</p>
         <li class="right" >
           <a href="multiple-comparison_examples.html" title="Multiple Comparisons"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+3.gf545506 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="multiple-comparisons.html" >Multiple Comparison Procedures</a> &#187;</li> 
       </ul>
     </div>

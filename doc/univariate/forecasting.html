@@ -1,12 +1,10 @@
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -16,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Forecasting &#8212; arch 4.8.1+3.gf545506 documentation</title>
+    <title>Forecasting &#8212; arch 4.8.1+5.g3dfd977 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -52,7 +50,7 @@
         <li class="right" >
           <a href="univariate_volatility_modeling.html" title="ARCH Modeling"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+3.gf545506 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -63,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.8.1 (+3)</a>
+    ../index.html" class="text-logo">arch 4.8.1 (+5)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -134,23 +132,23 @@ non-linear in the sense that they do not evolve using squares or residuals
 do not normally have analytically tractable multi-period forecasts available.</p>
 <p>All models support three methods of forecasting:</p>
 <ul class="simple">
-<li>Analytical: analytical forecasts are always available for the 1-step ahead
+<li><p>Analytical: analytical forecasts are always available for the 1-step ahead
 forecast due to the structure of ARCH-type models.  Multi-step analytical
 forecasts are only available for model which are linear in the square of
-the residual, such as GARCH or HARCH.</li>
-<li>Simulation: simulation-based forecasts are always available for any
+the residual, such as GARCH or HARCH.</p></li>
+<li><p>Simulation: simulation-based forecasts are always available for any
 horizon, although they are only useful for horizons larger than 1 since
 the first out-of-sample forecast from an ARCH-type model is always fixed.
 Simulation-based forecasts make use fo the structure of an ARCH-type model
 to forward simulate using the assumed distribution of residuals, e.g., a
-Normal or Student’s t.</li>
-<li>Bootstrap: bootstrap-based forecasts are similar to simulation based
+Normal or Student’s t.</p></li>
+<li><p>Bootstrap: bootstrap-based forecasts are similar to simulation based
 forecasts except that they make use of the standardized residuals
 from the actual data used in the estimation rather than assuming a
 specific distribution. Like simulation-base forecasts, bootstrap-based
 forecasts are only useful for horizons larger than 1. Additionally,
 the bootstrap forecasting method requires a minimal amount of in-sample
-data to use prior to producing the forecasts.</li>
+data to use prior to producing the forecasts.</p></li>
 </ul>
 <p>This document will use a standard GARCH(1,1) with a constant mean to explain
 the choices available for forecasting.  The model can be described as</p>
@@ -241,25 +239,25 @@ data available at time <span class="math notranslate nohighlight">\(t\)</span> a
 <p>The <a class="reference internal" href="introduction.html#arch.univariate.base.ARCHModelResult.forecast" title="arch.univariate.base.ARCHModelResult.forecast"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forecast()</span></code></a>  method
 is attached to a model fit result.`</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">params</span></code> - The model parameters used to forecast the mean and variance.
+<li><p><code class="docutils literal notranslate"><span class="pre">params</span></code> - The model parameters used to forecast the mean and variance.
 If not specified, the parameters estimated during the call to <code class="docutils literal notranslate"><span class="pre">fit</span></code>
-the produced the result are used.</li>
-<li><code class="docutils literal notranslate"><span class="pre">horizon</span></code> - A positve integer value indicating the maximum horizon to
-produce forecasts.</li>
-<li><code class="docutils literal notranslate"><span class="pre">start</span></code> - A positive integer or, if the input to the mode is a DataFrame,
+the produced the result are used.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">horizon</span></code> - A positve integer value indicating the maximum horizon to
+produce forecasts.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start</span></code> - A positive integer or, if the input to the mode is a DataFrame,
 a date (string, datetime, datetime64 or Timestamp). Forecasts are produced
 from <code class="docutils literal notranslate"><span class="pre">start</span></code> until the end of the sample.  If not provided, <code class="docutils literal notranslate"><span class="pre">start</span></code> is
 set to the length of the input data minus 1 so that only 1 forecast is
-produced.</li>
-<li><code class="docutils literal notranslate"><span class="pre">align</span></code> - One of ‘origin’ (default) or ‘target’ that describes how the
+produced.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">align</span></code> - One of ‘origin’ (default) or ‘target’ that describes how the
 forecasts aligned in the output. Origin aligns forecasts to the last
 observation used in producing the forecast, while target aligns forecasts
-to the observation index that is being forecast.</li>
-<li><code class="docutils literal notranslate"><span class="pre">method</span></code> - One of ‘analytic’ (default), ‘simulation’ or ‘bootstrap’ that
+to the observation index that is being forecast.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">method</span></code> - One of ‘analytic’ (default), ‘simulation’ or ‘bootstrap’ that
 describes the method used to produce the forecasts.  Not all methods are
-available for all horizons.</li>
-<li><code class="docutils literal notranslate"><span class="pre">simulations</span></code> - A non-negative integer indicating the number of
-simulation to use when <code class="docutils literal notranslate"><span class="pre">method</span></code> is ‘simulation’ or ‘bootstrap’</li>
+available for all horizons.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">simulations</span></code> - A non-negative integer indicating the number of
+simulation to use when <code class="docutils literal notranslate"><span class="pre">method</span></code> is ‘simulation’ or ‘bootstrap’</p></li>
 </ul>
 </div>
 <div class="section" id="understanding-forecast-output">
@@ -270,11 +268,11 @@ attributes and 1 which may be useful when using simulation- or bootstrap-based
 forecasts.</p>
 <p>The three core attributes are</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">mean</span></code> - The forecast conditional mean.</li>
-<li><code class="docutils literal notranslate"><span class="pre">variance</span></code> - The forecast conditional variance.</li>
-<li><code class="docutils literal notranslate"><span class="pre">residual_variance</span></code> - The forecast conditional variance of residuals.
+<li><p><code class="docutils literal notranslate"><span class="pre">mean</span></code> - The forecast conditional mean.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">variance</span></code> - The forecast conditional variance.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">residual_variance</span></code> - The forecast conditional variance of residuals.
 This will differ from <code class="docutils literal notranslate"><span class="pre">variance</span></code> whenever the model has dynamics
-(e.g. an AR model) for horizons larger than 1.</li>
+(e.g. an AR model) for horizons larger than 1.</p></li>
 </ul>
 <p>Each attribute contains a <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> with a common structure.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">tail</span><span class="p">())</span>
@@ -322,65 +320,52 @@ that are not forecast are <code class="docutils literal notranslate"><span class
 <dt id="arch.univariate.base.ARCHModelForecast">
 <em class="property">class </em><code class="descclassname">arch.univariate.base.</code><code class="descname">ARCHModelForecast</code><span class="sig-paren">(</span><em>index</em>, <em>mean</em>, <em>variance</em>, <em>residual_variance</em>, <em>simulated_paths=None</em>, <em>simulated_variances=None</em>, <em>simulated_residual_variances=None</em>, <em>simulated_residuals=None</em>, <em>align='origin'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelForecast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelForecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for forecasts from an ARCH Model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>index</strong> (<em>{list</em><em>, </em><em>ndarray}</em>) – </li>
-<li><strong>mean</strong> (<em>ndarray</em>) – </li>
-<li><strong>variance</strong> (<em>ndarray</em>) – </li>
-<li><strong>residual_variance</strong> (<em>ndarray</em>) – </li>
-<li><strong>simulated_paths</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – </li>
-<li><strong>simulated_variances</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – </li>
-<li><strong>simulated_residual_variances</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – </li>
-<li><strong>simulated_residuals</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – </li>
-<li><strong>align</strong> (<em>{'origin'</em><em>, </em><em>'target'}</em>) – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>{list</em><em>, </em><em>ndarray}</em>) – </p></li>
+<li><p><strong>mean</strong> (<em>ndarray</em>) – </p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) – </p></li>
+<li><p><strong>residual_variance</strong> (<em>ndarray</em>) – </p></li>
+<li><p><strong>simulated_paths</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>simulated_variances</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>simulated_residual_variances</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>simulated_residuals</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>align</strong> (<em>{'origin'</em><em>, </em><em>'target'}</em>) – </p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelForecast.mean">
 <code class="descname">mean</code><a class="headerlink" href="#arch.univariate.base.ARCHModelForecast.mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Forecast values for the conditional mean of the process</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelForecast.variance">
 <code class="descname">variance</code><a class="headerlink" href="#arch.univariate.base.ARCHModelForecast.variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Forecast values for the conditional variance of the process</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelForecast.residual_variance">
 <code class="descname">residual_variance</code><a class="headerlink" href="#arch.univariate.base.ARCHModelForecast.residual_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Forecast values for the conditional variance of the residuals</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -389,74 +374,58 @@ that are not forecast are <code class="docutils literal notranslate"><span class
 <dt id="arch.univariate.base.ARCHModelForecastSimulation">
 <em class="property">class </em><code class="descclassname">arch.univariate.base.</code><code class="descname">ARCHModelForecastSimulation</code><span class="sig-paren">(</span><em>values</em>, <em>residuals</em>, <em>variances</em>, <em>residual_variances</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelForecastSimulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelForecastSimulation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for a simulation or bootstrap-based forecasts from an ARCH Model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>values</strong> – </li>
-<li><strong>residuals</strong> – </li>
-<li><strong>variances</strong> – </li>
-<li><strong>residual_variances</strong> – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> – </p></li>
+<li><p><strong>residuals</strong> – </p></li>
+<li><p><strong>variances</strong> – </p></li>
+<li><p><strong>residual_variances</strong> – </p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelForecastSimulation.values">
 <code class="descname">values</code><a class="headerlink" href="#arch.univariate.base.ARCHModelForecastSimulation.values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulated values of the process</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelForecastSimulation.residuals">
 <code class="descname">residuals</code><a class="headerlink" href="#arch.univariate.base.ARCHModelForecastSimulation.residuals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulated residuals used to produce the values</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelForecastSimulation.variances">
 <code class="descname">variances</code><a class="headerlink" href="#arch.univariate.base.ARCHModelForecastSimulation.variances" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulated variances of the values</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelForecastSimulation.residual_variances">
 <code class="descname">residual_variances</code><a class="headerlink" href="#arch.univariate.base.ARCHModelForecastSimulation.residual_variances" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulated variance of the residuals</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">DataFrame</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -497,7 +466,7 @@ that are not forecast are <code class="docutils literal notranslate"><span class
         <li class="right" >
           <a href="univariate_volatility_modeling.html" title="ARCH Modeling"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+3.gf545506 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

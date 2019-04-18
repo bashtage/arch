@@ -1,12 +1,10 @@
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -16,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Volatility Forecasting &#8212; arch 4.8.1+3.gf545506 documentation</title>
+    <title>Volatility Forecasting &#8212; arch 4.8.1+5.g3dfd977 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -52,7 +50,7 @@
         <li class="right" >
           <a href="forecasting.html" title="Forecasting"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+3.gf545506 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -63,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.8.1 (+3)</a>
+    ../index.html" class="text-logo">arch 4.8.1 (+5)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -383,9 +381,9 @@ div.rendered_html tbody tr:hover {
 <h2>Basic Forecasting<a class="headerlink" href="#Basic-Forecasting" title="Permalink to this headline">¶</a></h2>
 <p>Forecasts can be generated for standard GARCH(p,q) processes using any of the three forecast generation methods:</p>
 <ul class="simple">
-<li>Analytical</li>
-<li>Simulation-based</li>
-<li>Bootstrap-based</li>
+<li><p>Analytical</p></li>
+<li><p>Simulation-based</p></li>
+<li><p>Bootstrap-based</p></li>
 </ul>
 <p>Be default forecasts will only be produced for the final observation in the sample so that they are out-of-sample.</p>
 <p>Forecasts start with specifying the model and estimating parameters.</p>
@@ -424,10 +422,10 @@ Optimization terminated successfully.    (Exit mode 0)
 </div>
 <p>Forecasts are contained in an <code class="docutils literal notranslate"><span class="pre">ARCHModelForecast</span></code> object which has 4 attributes:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">mean</span></code> - The forecast means</li>
-<li><code class="docutils literal notranslate"><span class="pre">residual_variance</span></code> - The forecast residual variances, that is <span class="math notranslate nohighlight">\(E_t[\epsilon_{t+h}^2]\)</span></li>
-<li><code class="docutils literal notranslate"><span class="pre">variance</span></code> - The forecast variance of the process, <span class="math notranslate nohighlight">\(E_t[r_{t+h}^2]\)</span>. The variance will differ from the residual variance whenever the model has mean dynamics, e.g., in an AR process.</li>
-<li><code class="docutils literal notranslate"><span class="pre">simulations</span></code> - An object that contains detailed information about the simulations used to generate forecasts. Only used if the forecast <code class="docutils literal notranslate"><span class="pre">method</span></code> is set to <code class="docutils literal notranslate"><span class="pre">'simulation'</span></code> or <code class="docutils literal notranslate"><span class="pre">'bootstrap'</span></code>. If using <code class="docutils literal notranslate"><span class="pre">'analytical'</span></code> (the default), this is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mean</span></code> - The forecast means</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">residual_variance</span></code> - The forecast residual variances, that is <span class="math notranslate nohighlight">\(E_t[\epsilon_{t+h}^2]\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">variance</span></code> - The forecast variance of the process, <span class="math notranslate nohighlight">\(E_t[r_{t+h}^2]\)</span>. The variance will differ from the residual variance whenever the model has mean dynamics, e.g., in an AR process.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">simulations</span></code> - An object that contains detailed information about the simulations used to generate forecasts. Only used if the forecast <code class="docutils literal notranslate"><span class="pre">method</span></code> is set to <code class="docutils literal notranslate"><span class="pre">'simulation'</span></code> or <code class="docutils literal notranslate"><span class="pre">'bootstrap'</span></code>. If using <code class="docutils literal notranslate"><span class="pre">'analytical'</span></code> (the default), this is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 <p>The three main outputs are all returned in <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>s with columns of the form <code class="docutils literal notranslate"><span class="pre">h.#</span></code> where <code class="docutils literal notranslate"><span class="pre">#</span></code> is the number of steps ahead. That is, <code class="docutils literal notranslate"><span class="pre">h.1</span></code> corresponds to one-step ahead forecasts while <code class="docutils literal notranslate"><span class="pre">h.10</span></code> corresponds to 10-steps ahead.</p>
 <p>The default forecast only produces 1-step ahear forecasts.</p>
@@ -983,7 +981,7 @@ dtype: float64
         <li class="right" >
           <a href="forecasting.html" title="Forecasting"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+3.gf545506 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
