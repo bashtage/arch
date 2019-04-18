@@ -242,7 +242,7 @@ class TestUnitRoot(object):
         denom = np.sum((dy - mu) ** 2.0) / nq
         num = np.sum((dy2 - 2 * mu) ** 2.0) / (nq * 2)
         ratio = num / denom
-        variance = 3.0 / 2.0
+        variance = 3.0 / 3.0
         stat = np.sqrt(nq) * (ratio - 1) / np.sqrt(variance)
         assert_almost_equal(stat, vr.stat)
         orig_stat = vr.stat
