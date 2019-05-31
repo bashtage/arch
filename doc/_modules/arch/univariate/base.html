@@ -14,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>arch.univariate.base &#8212; arch 4.8.1+5.g3dfd977 documentation</title>
+    <title>arch.univariate.base &#8212; arch 4.8.1+7.g497819e documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.8.1+7.g497819e documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -53,7 +53,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../../index.html" class="text-logo">arch 4.8.1 (+5)</a>
+    ../../../index.html" class="text-logo">arch 4.8.1 (+7)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -817,7 +817,7 @@
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s1">&#39;origin&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;analytic&#39;</span><span class="p">,</span>
-                 <span class="n">simulations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">simulations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct forecasts from estimated model</span>
 
@@ -854,6 +854,8 @@
 <span class="sd">            Custom random number generator to use in simulation-based forecasts.</span>
 <span class="sd">            Must produce random samples using the syntax `rng(size)` where size</span>
 <span class="sd">            the 2-element tuple (simulations, horizon).</span>
+<span class="sd">        random_state : RandomState, optional</span>
+<span class="sd">            NumPy RandomState instance to use when method is &#39;bootstrap&#39;</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1219,7 +1221,7 @@
         <span class="k">return</span> <span class="n">fig</span></div>
 
 <div class="viewcode-block" id="ARCHModelFixedResult.forecast"><a class="viewcode-back" href="../../../univariate/introduction.html#arch.univariate.base.ARCHModelFixedResult.forecast">[docs]</a>    <span class="k">def</span> <span class="nf">forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s1">&#39;origin&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;analytic&#39;</span><span class="p">,</span>
-                 <span class="n">simulations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">simulations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct forecasts from estimated model</span>
 
@@ -1256,6 +1258,8 @@
 <span class="sd">            Custom random number generator to use in simulation-based forecasts.</span>
 <span class="sd">            Must produce random samples using the syntax `rng(size)` where size</span>
 <span class="sd">            the 2-element tuple (simulations, horizon).</span>
+<span class="sd">        random_state : RandomState, optional</span>
+<span class="sd">            NumPy RandomState instance to use when method is &#39;bootstrap&#39;</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1290,7 +1294,8 @@
             <span class="k">if</span> <span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="ow">or</span>
                     <span class="n">params</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">ndim</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;params have incorrect dimensions&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">horizon</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">simulations</span><span class="p">,</span> <span class="n">rng</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">horizon</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">simulations</span><span class="p">,</span> <span class="n">rng</span><span class="p">,</span>
+                                   <span class="n">random_state</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ARCHModelFixedResult.hedgehog_plot"><a class="viewcode-back" href="../../../univariate/introduction.html#arch.univariate.base.ARCHModelFixedResult.hedgehog_plot">[docs]</a>    <span class="k">def</span> <span class="nf">hedgehog_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                       <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;volatility&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;analytic&#39;</span><span class="p">,</span> <span class="n">simulations</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
@@ -1851,7 +1856,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.8.1+7.g497819e documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

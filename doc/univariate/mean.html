@@ -14,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Mean Models &#8212; arch 4.8.1+5.g3dfd977 documentation</title>
+    <title>Mean Models &#8212; arch 4.8.1+7.g497819e documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="univariate_volatility_scenarios.html" title="Volatilty Scenarios"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+7.g497819e documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.8.1 (+5)</a>
+    ../index.html" class="text-logo">arch 4.8.1 (+7)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -225,7 +225,7 @@ model, volatility model and distribution.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.ZeroMean.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -254,6 +254,7 @@ either simulation or bootstrap.</p></li>
 <li><p><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
 Must produce random samples using the syntax <cite>rng(size)</cite> where size
 the 2-element tuple (simulations, horizon).</p></li>
+<li><p><strong>random_state</strong> (<em>RandomState</em><em>, </em><em>optional</em>) – NumPy RandomState instance to use when method is ‘bootstrap’</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -432,7 +433,7 @@ difficulty finding the optimum.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantMean.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -461,6 +462,7 @@ either simulation or bootstrap.</p></li>
 <li><p><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
 Must produce random samples using the syntax <cite>rng(size)</cite> where size
 the 2-element tuple (simulations, horizon).</p></li>
+<li><p><strong>random_state</strong> (<em>RandomState</em><em>, </em><em>optional</em>) – NumPy RandomState instance to use when method is ‘bootstrap’</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -673,7 +675,7 @@ model, volatility model and distribution.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.ARX.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -702,6 +704,7 @@ either simulation or bootstrap.</p></li>
 <li><p><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
 Must produce random samples using the syntax <cite>rng(size)</cite> where size
 the 2-element tuple (simulations, horizon).</p></li>
+<li><p><strong>random_state</strong> (<em>RandomState</em><em>, </em><em>optional</em>) – NumPy RandomState instance to use when method is ‘bootstrap’</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -937,7 +940,7 @@ model, volatility model and distribution.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.HARX.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX.forecast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX.forecast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -966,6 +969,7 @@ either simulation or bootstrap.</p></li>
 <li><p><strong>rng</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom random number generator to use in simulation-based forecasts.
 Must produce random samples using the syntax <cite>rng(size)</cite> where size
 the 2-element tuple (simulations, horizon).</p></li>
+<li><p><strong>random_state</strong> (<em>RandomState</em><em>, </em><em>optional</em>) – NumPy RandomState instance to use when method is ‘bootstrap’</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1312,7 +1316,7 @@ to override but recommended where applicable.</p>
         <li class="right" >
           <a href="univariate_volatility_scenarios.html" title="Volatilty Scenarios"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+5.g3dfd977 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+7.g497819e documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
