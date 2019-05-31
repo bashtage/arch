@@ -610,7 +610,7 @@ class HARX(ARCHModel):
                                copy.deepcopy(self))
 
     def forecast(self, params, horizon=1, start=None, align='origin',
-                 method='analytic', simulations=1000, rng=None):
+                 method='analytic', simulations=1000, rng=None, random_state=None):
         # Check start
         earliest, default_start = self._fit_indices
         default_start = max(0, default_start - 1)
@@ -635,10 +635,10 @@ class HARX(ARCHModel):
         if rng is None:
             rng = self._distribution.simulate(dp)
         variance_start = max(0, start_index - earliest)
-        vfcast = self._volatility.forecast(vp, full_resids, backcast, vb,
-                                           start=variance_start,
+        vfcast = self._volatility.forecast(vp, full_resids, backcast, vb, start=variance_start,
                                            horizon=horizon, method=method,
-                                           simulations=simulations, rng=rng)
+                                           simulations=simulations, rng=rng,
+                                           random_state=random_state)
         var_fcasts = vfcast.forecasts
         var_fcasts = _forecast_pad(earliest, var_fcasts)
 

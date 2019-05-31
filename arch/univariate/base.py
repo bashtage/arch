@@ -712,7 +712,7 @@ class ARCHModel(object):
 
     @abstractmethod
     def forecast(self, params, horizon=1, start=None, align='origin', method='analytic',
-                 simulations=1000, rng=None):
+                 simulations=1000, rng=None, random_state=None):
         """
         Construct forecasts from estimated model
 
@@ -749,6 +749,8 @@ class ARCHModel(object):
             Custom random number generator to use in simulation-based forecasts.
             Must produce random samples using the syntax `rng(size)` where size
             the 2-element tuple (simulations, horizon).
+        random_state : RandomState, optional
+            NumPy RandomState instance to use when method is 'bootstrap'
 
         Returns
         -------
@@ -1114,7 +1116,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         return fig
 
     def forecast(self, params=None, horizon=1, start=None, align='origin', method='analytic',
-                 simulations=1000, rng=None):
+                 simulations=1000, rng=None, random_state=None):
         """
         Construct forecasts from estimated model
 
@@ -1151,6 +1153,8 @@ class ARCHModelFixedResult(_SummaryRepr):
             Custom random number generator to use in simulation-based forecasts.
             Must produce random samples using the syntax `rng(size)` where size
             the 2-element tuple (simulations, horizon).
+        random_state : RandomState, optional
+            NumPy RandomState instance to use when method is 'bootstrap'
 
         Returns
         -------
@@ -1185,7 +1189,8 @@ class ARCHModelFixedResult(_SummaryRepr):
             if (params.size != np.array(self._params).size or
                     params.ndim != self._params.ndim):
                 raise ValueError('params have incorrect dimensions')
-        return self.model.forecast(params, horizon, start, align, method, simulations, rng)
+        return self.model.forecast(params, horizon, start, align, method, simulations, rng,
+                                   random_state)
 
     def hedgehog_plot(self, params=None, horizon=10, step=10, start=None,
                       type='volatility', method='analytic', simulations=1000):
