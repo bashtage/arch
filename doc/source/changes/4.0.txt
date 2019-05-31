@@ -1,3 +1,12 @@
+Changes since 4.8.1
+===================
+- Added `random_state` argument to :func:`~arch.univariate.HARX.forecast`
+  to allow a :class:`~numpy.random.RandomState` object to be passed in when
+  forecasting when `method='bootstrap'`. This allows the repeatable forecast to
+  be produced (:issue:`290`).
+- Fixed a bug in :class:`~arch.unitroot.VarianceRatio` that used the wrong
+  variance in nonrobust inference with overlapping samples (:issue:`286`).
+
 Release 4.8.1
 =============
 - Fixed a bug which prevented extension modules from being correctly imported.

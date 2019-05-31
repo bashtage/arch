@@ -379,6 +379,19 @@ class TestForecasting(TestCase):
             lrv.iloc[:, i:i + 1] = rv.values[:, :i + 1].dot(weights[::-1])
         assert_frame_equal(lrv, forecast.variance)
 
+    def test_ar1_forecast_bootstrap(self):
+        am = arch_model(self.ar1, mean='AR', vol='GARCH', lags=[1])
+        res = am.fit(disp='off')
+        rs = np.random.RandomState(98765432)
+        state = rs.get_state()
+        forecast = res.forecast(horizon=5, start=900, method='bootstrap',
+                                random_state=rs)
+        rs.set_state(state)
+        repeat = res.forecast(horizon=5, start=900, method='bootstrap',
+                              random_state=rs)
+        assert_frame_equal(forecast.mean, repeat.mean, check_less_precise=True)
+        assert_frame_equal(forecast.variance, repeat.variance, check_less_precise=True)
+
     def test_ar2_garch11(self):
         pass
 
