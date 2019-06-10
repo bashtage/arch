@@ -132,13 +132,13 @@ volatility.</p>
 <h2>Constant Variance<a class="headerlink" href="#constant-variance" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.ConstantVariance">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">ConstantVariance</code><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">ConstantVariance</code><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constant volatility process</p>
 <p class="rubric">Notes</p>
 <p>Model has the same variance in all periods</p>
 <dl class="method">
 <dt id="arch.univariate.ConstantVariance.backcast">
-<code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.backcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.backcast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">backcast</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.backcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -155,7 +155,7 @@ volatility.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantVariance.bounds">
-<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -172,7 +172,7 @@ volatility.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantVariance.compute_variance">
-<code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.compute_variance" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">compute_variance</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">resids</em>, <em class="sig-param">sigma2</em>, <em class="sig-param">backcast</em>, <em class="sig-param">var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -190,7 +190,7 @@ when the model contains multiple components.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantVariance.constraints">
-<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.constraints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -209,7 +209,7 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantVariance.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">nobs</em>, <em class="sig-param">rng</em>, <em class="sig-param">burn=500</em>, <em class="sig-param">initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -236,7 +236,7 @@ simulation</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantVariance.starting_values">
-<code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.starting_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ConstantVariance.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantVariance.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -259,7 +259,7 @@ values</p>
 <h2>GARCH<a class="headerlink" href="#garch" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.GARCH">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">GARCH</code><span class="sig-paren">(</span><em>p=1</em>, <em>o=0</em>, <em>q=1</em>, <em>power=2.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">GARCH</code><span class="sig-paren">(</span><em class="sig-param">p=1</em>, <em class="sig-param">o=0</em>, <em class="sig-param">q=1</em>, <em class="sig-param">power=2.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH" title="Permalink to this definition">¶</a></dt>
 <dd><p>GARCH and related model estimation</p>
 <dl class="simple">
 <dt>The following models can be specified using GARCH:</dt><dd><ul class="simple">
@@ -287,7 +287,7 @@ specified, although these should be strictly positive, and usually larger than 0
 </dl>
 <dl class="attribute">
 <dt id="arch.univariate.GARCH.num_params">
-<code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.GARCH.num_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">num_params</code><a class="headerlink" href="#arch.univariate.GARCH.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -321,7 +321,7 @@ specified, although these should be strictly positive, and usually larger than 0
 I\left[\epsilon_{t-j}&lt;0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}\]</div>
 <dl class="method">
 <dt id="arch.univariate.GARCH.backcast">
-<code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.backcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.backcast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">backcast</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.backcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -338,7 +338,7 @@ I\left[\epsilon_{t-j}&lt;0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}\
 
 <dl class="method">
 <dt id="arch.univariate.GARCH.bounds">
-<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -355,7 +355,7 @@ I\left[\epsilon_{t-j}&lt;0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}\
 
 <dl class="method">
 <dt id="arch.univariate.GARCH.compute_variance">
-<code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.compute_variance" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">compute_variance</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">resids</em>, <em class="sig-param">sigma2</em>, <em class="sig-param">backcast</em>, <em class="sig-param">var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -373,7 +373,7 @@ when the model contains multiple components.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.GARCH.constraints">
-<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.constraints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -392,7 +392,7 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 
 <dl class="method">
 <dt id="arch.univariate.GARCH.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">nobs</em>, <em class="sig-param">rng</em>, <em class="sig-param">burn=500</em>, <em class="sig-param">initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -419,7 +419,7 @@ simulation</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.GARCH.starting_values">
-<code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.starting_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#GARCH.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GARCH.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -442,7 +442,7 @@ values</p>
 <h2>Fractionally Integrated (FI) GARCH<a class="headerlink" href="#fractionally-integrated-fi-garch" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.FIGARCH">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">FIGARCH</code><span class="sig-paren">(</span><em>p=1</em>, <em>q=1</em>, <em>power=2.0</em>, <em>truncation=1000</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">FIGARCH</code><span class="sig-paren">(</span><em class="sig-param">p=1</em>, <em class="sig-param">q=1</em>, <em class="sig-param">power=2.0</em>, <em class="sig-param">truncation=1000</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH" title="Permalink to this definition">¶</a></dt>
 <dd><p>FIGARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -460,7 +460,7 @@ Default is 1000.</p></li>
 </dl>
 <dl class="attribute">
 <dt id="arch.univariate.FIGARCH.num_params">
-<code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.FIGARCH.num_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">num_params</code><a class="headerlink" href="#arch.univariate.FIGARCH.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -507,7 +507,7 @@ where <span class="math notranslate nohighlight">\(\epsilon_t^2\)</span> is repl
 <code class="docutils literal notranslate"><span class="pre">p</span></code> is the power.</p>
 <dl class="method">
 <dt id="arch.univariate.FIGARCH.backcast">
-<code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.backcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.backcast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">backcast</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.backcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -524,7 +524,7 @@ where <span class="math notranslate nohighlight">\(\epsilon_t^2\)</span> is repl
 
 <dl class="method">
 <dt id="arch.univariate.FIGARCH.bounds">
-<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -541,7 +541,7 @@ where <span class="math notranslate nohighlight">\(\epsilon_t^2\)</span> is repl
 
 <dl class="method">
 <dt id="arch.univariate.FIGARCH.compute_variance">
-<code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.compute_variance" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">compute_variance</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">resids</em>, <em class="sig-param">sigma2</em>, <em class="sig-param">backcast</em>, <em class="sig-param">var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -559,7 +559,7 @@ when the model contains multiple components.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.FIGARCH.constraints">
-<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.constraints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -578,7 +578,7 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 
 <dl class="method">
 <dt id="arch.univariate.FIGARCH.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">nobs</em>, <em class="sig-param">rng</em>, <em class="sig-param">burn=500</em>, <em class="sig-param">initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -605,7 +605,7 @@ simulation</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.FIGARCH.starting_values">
-<code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.starting_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FIGARCH.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FIGARCH.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -628,7 +628,7 @@ values</p>
 <h2>EGARCH<a class="headerlink" href="#egarch" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.EGARCH">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">EGARCH</code><span class="sig-paren">(</span><em>p=1</em>, <em>o=0</em>, <em>q=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">EGARCH</code><span class="sig-paren">(</span><em class="sig-param">p=1</em>, <em class="sig-param">o=0</em>, <em class="sig-param">q=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH" title="Permalink to this definition">¶</a></dt>
 <dd><p>EGARCH model estimation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -641,7 +641,7 @@ values</p>
 </dl>
 <dl class="attribute">
 <dt id="arch.univariate.EGARCH.num_params">
-<code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.EGARCH.num_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">num_params</code><a class="headerlink" href="#arch.univariate.EGARCH.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -677,7 +677,7 @@ values</p>
 <p>where <span class="math notranslate nohighlight">\(e_{t}=\epsilon_{t}/\sigma_{t}\)</span>.</p>
 <dl class="method">
 <dt id="arch.univariate.EGARCH.backcast">
-<code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.backcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.backcast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">backcast</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.backcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -694,7 +694,7 @@ values</p>
 
 <dl class="method">
 <dt id="arch.univariate.EGARCH.bounds">
-<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -711,7 +711,7 @@ values</p>
 
 <dl class="method">
 <dt id="arch.univariate.EGARCH.compute_variance">
-<code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.compute_variance" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">compute_variance</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">resids</em>, <em class="sig-param">sigma2</em>, <em class="sig-param">backcast</em>, <em class="sig-param">var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -729,7 +729,7 @@ when the model contains multiple components.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.EGARCH.constraints">
-<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.constraints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -748,7 +748,7 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 
 <dl class="method">
 <dt id="arch.univariate.EGARCH.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">nobs</em>, <em class="sig-param">rng</em>, <em class="sig-param">burn=500</em>, <em class="sig-param">initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -775,7 +775,7 @@ simulation</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.EGARCH.starting_values">
-<code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.starting_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EGARCH.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EGARCH.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -798,7 +798,7 @@ values</p>
 <h2>HARCH<a class="headerlink" href="#harch" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.HARCH">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">HARCH</code><span class="sig-paren">(</span><em>lags=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">HARCH</code><span class="sig-paren">(</span><em class="sig-param">lags=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH" title="Permalink to this definition">¶</a></dt>
 <dd><p>Heterogeneous ARCH process</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -807,7 +807,7 @@ values</p>
 </dl>
 <dl class="attribute">
 <dt id="arch.univariate.HARCH.num_params">
-<code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.HARCH.num_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">num_params</code><a class="headerlink" href="#arch.univariate.HARCH.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -842,7 +842,7 @@ values</p>
 ARCH process have been restricted.</p>
 <dl class="method">
 <dt id="arch.univariate.HARCH.backcast">
-<code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARCH.backcast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">backcast</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARCH.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -859,7 +859,7 @@ ARCH process have been restricted.</p>
 
 <dl class="method">
 <dt id="arch.univariate.HARCH.bounds">
-<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH.bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -876,7 +876,7 @@ ARCH process have been restricted.</p>
 
 <dl class="method">
 <dt id="arch.univariate.HARCH.compute_variance">
-<code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH.compute_variance" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">compute_variance</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">resids</em>, <em class="sig-param">sigma2</em>, <em class="sig-param">backcast</em>, <em class="sig-param">var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -894,7 +894,7 @@ when the model contains multiple components.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.HARCH.constraints">
-<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH.constraints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -913,7 +913,7 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 
 <dl class="method">
 <dt id="arch.univariate.HARCH.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">nobs</em>, <em class="sig-param">rng</em>, <em class="sig-param">burn=500</em>, <em class="sig-param">initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -940,7 +940,7 @@ simulation</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.HARCH.starting_values">
-<code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH.starting_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#HARCH.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARCH.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -963,7 +963,7 @@ values</p>
 <h2>MIDAS Hyperbolic<a class="headerlink" href="#midas-hyperbolic" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.MIDASHyperbolic">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">MIDASHyperbolic</code><span class="sig-paren">(</span><em>m=22</em>, <em>asym=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">MIDASHyperbolic</code><span class="sig-paren">(</span><em class="sig-param">m=22</em>, <em class="sig-param">asym=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic" title="Permalink to this definition">¶</a></dt>
 <dd><p>MIDAS Hyperbolic ARCH process</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -975,7 +975,7 @@ values</p>
 </dl>
 <dl class="attribute">
 <dt id="arch.univariate.MIDASHyperbolic.num_params">
-<code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.num_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">num_params</code><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1023,7 +1023,7 @@ Econometric Methods for Mixed-Frequency Data”. Norges Bank. (2013).</p>
 </dl>
 <dl class="method">
 <dt id="arch.univariate.MIDASHyperbolic.backcast">
-<code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.backcast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">backcast</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1040,7 +1040,7 @@ Econometric Methods for Mixed-Frequency Data”. Norges Bank. (2013).</p>
 
 <dl class="method">
 <dt id="arch.univariate.MIDASHyperbolic.bounds">
-<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1057,7 +1057,7 @@ Econometric Methods for Mixed-Frequency Data”. Norges Bank. (2013).</p>
 
 <dl class="method">
 <dt id="arch.univariate.MIDASHyperbolic.compute_variance">
-<code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.compute_variance" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">compute_variance</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">resids</em>, <em class="sig-param">sigma2</em>, <em class="sig-param">backcast</em>, <em class="sig-param">var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1075,7 +1075,7 @@ when the model contains multiple components.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.MIDASHyperbolic.constraints">
-<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.constraints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constraints</p>
 <p class="rubric">Notes</p>
 <p>Parameters are (omega, alpha, gamma, theta)</p>
@@ -1091,7 +1091,7 @@ when the model contains multiple components.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.MIDASHyperbolic.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">nobs</em>, <em class="sig-param">rng</em>, <em class="sig-param">burn=500</em>, <em class="sig-param">initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1118,7 +1118,7 @@ simulation</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.MIDASHyperbolic.starting_values">
-<code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.starting_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#MIDASHyperbolic.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.MIDASHyperbolic.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1141,7 +1141,7 @@ values</p>
 <h2>ARCH<a class="headerlink" href="#arch" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.ARCH">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">ARCH</code><span class="sig-paren">(</span><em>p=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ARCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ARCH" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">ARCH</code><span class="sig-paren">(</span><em class="sig-param">p=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ARCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ARCH" title="Permalink to this definition">¶</a></dt>
 <dd><p>ARCH process</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1150,7 +1150,7 @@ values</p>
 </dl>
 <dl class="attribute">
 <dt id="arch.univariate.ARCH.num_params">
-<code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.ARCH.num_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">num_params</code><a class="headerlink" href="#arch.univariate.ARCH.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1174,7 +1174,7 @@ values</p>
 \[\sigma_t^{2}=\omega+\sum_{i=1}^{p}\alpha_{i}\epsilon_{t-i}^{2}\]</div>
 <dl class="method">
 <dt id="arch.univariate.ARCH.backcast">
-<code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARCH.backcast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">backcast</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARCH.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1191,7 +1191,7 @@ values</p>
 
 <dl class="method">
 <dt id="arch.univariate.ARCH.bounds">
-<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARCH.bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARCH.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1208,7 +1208,7 @@ values</p>
 
 <dl class="method">
 <dt id="arch.univariate.ARCH.compute_variance">
-<code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARCH.compute_variance" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">compute_variance</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">resids</em>, <em class="sig-param">sigma2</em>, <em class="sig-param">backcast</em>, <em class="sig-param">var_bounds</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARCH.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1226,7 +1226,7 @@ when the model contains multiple components.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.ARCH.constraints">
-<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARCH.constraints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARCH.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1245,7 +1245,7 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 
 <dl class="method">
 <dt id="arch.univariate.ARCH.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARCH.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">nobs</em>, <em class="sig-param">rng</em>, <em class="sig-param">burn=500</em>, <em class="sig-param">initial_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARCH.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1272,7 +1272,7 @@ simulation</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.ARCH.starting_values">
-<code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ARCH.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ARCH.starting_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#ARCH.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ARCH.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1300,7 +1300,7 @@ are estimable.</p>
 <h2>EWMA Variance<a class="headerlink" href="#ewma-variance" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.EWMAVariance">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">EWMAVariance</code><span class="sig-paren">(</span><em>lam=0.94</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">EWMAVariance</code><span class="sig-paren">(</span><em class="sig-param">lam=0.94</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">arch.univariate.volatility.VolatilityProcess</span></code></a></p>
 <p>Exponentially Weighted Moving-Average (RiskMetrics) Variance process</p>
 <dl class="field-list simple">
@@ -1311,7 +1311,7 @@ jointly with other model parameters</p>
 </dl>
 <dl class="attribute">
 <dt id="arch.univariate.EWMAVariance.num_params">
-<code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.EWMAVariance.num_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">num_params</code><a class="headerlink" href="#arch.univariate.EWMAVariance.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1335,7 +1335,7 @@ parameter is treated as fixed. Sel lam to <code class="docutils literal notransl
 parameter when fitting the model.</p>
 <dl class="method">
 <dt id="arch.univariate.EWMAVariance.backcast">
-<code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.EWMAVariance.backcast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">backcast</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.EWMAVariance.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1352,7 +1352,7 @@ parameter when fitting the model.</p>
 
 <dl class="method">
 <dt id="arch.univariate.EWMAVariance.bounds">
-<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance.bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1369,7 +1369,7 @@ parameter when fitting the model.</p>
 
 <dl class="method">
 <dt id="arch.univariate.EWMAVariance.compute_variance">
-<code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance.compute_variance" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">compute_variance</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">resids</em>, <em class="sig-param">sigma2</em>, <em class="sig-param">backcast</em>, <em class="sig-param">var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1387,7 +1387,7 @@ when the model contains multiple components.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.EWMAVariance.constraints">
-<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance.constraints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1406,7 +1406,7 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 
 <dl class="method">
 <dt id="arch.univariate.EWMAVariance.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">nobs</em>, <em class="sig-param">rng</em>, <em class="sig-param">burn=500</em>, <em class="sig-param">initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1433,7 +1433,7 @@ simulation</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.EWMAVariance.starting_values">
-<code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance.starting_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#EWMAVariance.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.EWMAVariance.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1456,7 +1456,7 @@ values</p>
 <h2>RiskMetrics (2006)<a class="headerlink" href="#riskmetrics-2006" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.RiskMetrics2006">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">RiskMetrics2006</code><span class="sig-paren">(</span><em>tau0=1560</em>, <em>tau1=4</em>, <em>kmax=14</em>, <em>rho=1.4142135623730951</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">RiskMetrics2006</code><span class="sig-paren">(</span><em class="sig-param">tau0=1560</em>, <em class="sig-param">tau1=4</em>, <em class="sig-param">kmax=14</em>, <em class="sig-param">rho=1.4142135623730951</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">arch.univariate.volatility.VolatilityProcess</span></code></a></p>
 <p>RiskMetrics 2006 Variance process</p>
 <dl class="field-list simple">
@@ -1471,7 +1471,7 @@ values</p>
 </dl>
 <dl class="attribute">
 <dt id="arch.univariate.RiskMetrics2006.num_params">
-<code class="descname">num_params</code><a class="headerlink" href="#arch.univariate.RiskMetrics2006.num_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">num_params</code><a class="headerlink" href="#arch.univariate.RiskMetrics2006.num_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of parameters in the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1492,7 +1492,7 @@ processes where the smoothing parameters and weights are determined by tau0, tau
 <p>This model has no parameters since the smoothing parameter is fixed.</p>
 <dl class="method">
 <dt id="arch.univariate.RiskMetrics2006.backcast">
-<code class="descname">backcast</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.backcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.backcast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">backcast</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.backcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.backcast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1509,7 +1509,7 @@ processes where the smoothing parameters and weights are determined by tau0, tau
 
 <dl class="method">
 <dt id="arch.univariate.RiskMetrics2006.bounds">
-<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1526,7 +1526,7 @@ processes where the smoothing parameters and weights are determined by tau0, tau
 
 <dl class="method">
 <dt id="arch.univariate.RiskMetrics2006.compute_variance">
-<code class="descname">compute_variance</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>backcast</em>, <em>var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.compute_variance" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">compute_variance</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">resids</em>, <em class="sig-param">sigma2</em>, <em class="sig-param">backcast</em>, <em class="sig-param">var_bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.compute_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.compute_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1544,7 +1544,7 @@ when the model contains multiple components.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.RiskMetrics2006.constraints">
-<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.constraints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct parameter constraints arrays for parameter estimation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1563,7 +1563,7 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 
 <dl class="method">
 <dt id="arch.univariate.RiskMetrics2006.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em>, <em>nobs</em>, <em>rng</em>, <em>burn=500</em>, <em>initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">nobs</em>, <em class="sig-param">rng</em>, <em class="sig-param">burn=500</em>, <em class="sig-param">initial_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate data from the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1590,7 +1590,7 @@ simulation</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.RiskMetrics2006.starting_values">
-<code class="descname">starting_values</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.starting_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#RiskMetrics2006.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.RiskMetrics2006.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1615,7 +1615,7 @@ values</p>
 the so-called zig-zag algorithm to be used.  See the example for usage.</p>
 <dl class="class">
 <dt id="arch.univariate.FixedVariance">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">FixedVariance</code><span class="sig-paren">(</span><em>variance</em>, <em>unit_scale=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FixedVariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FixedVariance" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">FixedVariance</code><span class="sig-paren">(</span><em class="sig-param">variance</em>, <em class="sig-param">unit_scale=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/volatility.html#FixedVariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.FixedVariance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arch.univariate.volatility.VolatilityProcess" title="arch.univariate.volatility.VolatilityProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">arch.univariate.volatility.VolatilityProcess</span></code></a></p>
 <p>Fixed volatility process</p>
 <dl class="field-list simple">
@@ -1641,7 +1641,7 @@ estimation.</p>
 all public methods.</p>
 <dl class="class">
 <dt id="arch.univariate.volatility.VolatilityProcess">
-<em class="property">class </em><code class="descclassname">arch.univariate.volatility.</code><code class="descname">VolatilityProcess</code><a class="reference internal" href="../_modules/arch/univariate/volatility.html#VolatilityProcess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.volatility.VolatilityProcess" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.volatility.</code><code class="sig-name descname">VolatilityProcess</code><a class="reference internal" href="../_modules/arch/univariate/volatility.html#VolatilityProcess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.volatility.VolatilityProcess" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract base class for ARCH models.  Allows the conditional mean model to be specified
 separately from the conditional variance, even though parameters are estimated jointly.</p>
 </dd></dl>

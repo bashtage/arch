@@ -220,7 +220,7 @@ blocks of an ARCH model</p>
 using a simple model constructor.</p>
 <dl class="function">
 <dt id="arch.arch_model">
-<code class="descclassname">arch.</code><code class="descname">arch_model</code><span class="sig-paren">(</span><em>y</em>, <em>x=None</em>, <em>mean='Constant'</em>, <em>lags=0</em>, <em>vol='Garch'</em>, <em>p=1</em>, <em>o=0</em>, <em>q=1</em>, <em>power=2.0</em>, <em>dist='Normal'</em>, <em>hold_back=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#arch_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.arch_model" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">arch.</code><code class="sig-name descname">arch_model</code><span class="sig-paren">(</span><em class="sig-param">y</em>, <em class="sig-param">x=None</em>, <em class="sig-param">mean='Constant'</em>, <em class="sig-param">lags=0</em>, <em class="sig-param">vol='Garch'</em>, <em class="sig-param">p=1</em>, <em class="sig-param">o=0</em>, <em class="sig-param">q=1</em>, <em class="sig-param">power=2.0</em>, <em class="sig-param">dist='Normal'</em>, <em class="sig-param">hold_back=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#arch_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.arch_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function to simplify initialization of ARCH models</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -294,7 +294,7 @@ when <cite>mean=’zero’</cite>, are silently ignored.</p>
 <p>All model return the same object, a results class (<code class="xref py py-class docutils literal notranslate"><span class="pre">ARCHModelResult</span></code>)</p>
 <dl class="class">
 <dt id="arch.univariate.base.ARCHModelResult">
-<em class="property">class </em><code class="descclassname">arch.univariate.base.</code><code class="descname">ARCHModelResult</code><span class="sig-paren">(</span><em>params</em>, <em>param_cov</em>, <em>r2</em>, <em>resid</em>, <em>volatility</em>, <em>cov_type</em>, <em>dep_var</em>, <em>names</em>, <em>loglikelihood</em>, <em>is_pandas</em>, <em>optim_output</em>, <em>fit_start</em>, <em>fit_stop</em>, <em>model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelResult" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.base.</code><code class="sig-name descname">ARCHModelResult</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">param_cov</em>, <em class="sig-param">r2</em>, <em class="sig-param">resid</em>, <em class="sig-param">volatility</em>, <em class="sig-param">cov_type</em>, <em class="sig-param">dep_var</em>, <em class="sig-param">names</em>, <em class="sig-param">loglikelihood</em>, <em class="sig-param">is_pandas</em>, <em class="sig-param">optim_output</em>, <em class="sig-param">fit_start</em>, <em class="sig-param">fit_stop</em>, <em class="sig-param">model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Results from estimation of an ARCHModel model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -321,25 +321,25 @@ slice notation <cite>fit_start:fit_stop</cite></p></li>
 </dl>
 <dl class="method">
 <dt id="arch.univariate.base.ARCHModelResult.summary">
-<code class="descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelResult.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.summary" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelResult.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produce a summary of the results</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.base.ARCHModelResult.plot">
-<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produce a plot of the volatility and standardized residuals</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.base.ARCHModelResult.conf_int">
-<code class="descname">conf_int</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelResult.conf_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.conf_int" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">conf_int</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelResult.conf_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.conf_int" title="Permalink to this definition">¶</a></dt>
 <dd><p>Confidence intervals</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.loglikelihood">
-<code class="descname">loglikelihood</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.loglikelihood" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">loglikelihood</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.loglikelihood" title="Permalink to this definition">¶</a></dt>
 <dd><p>Value of the log-likelihood</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -350,7 +350,7 @@ slice notation <cite>fit_start:fit_stop</cite></p></li>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.params">
-<code class="descname">params</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">params</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimated parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -361,7 +361,7 @@ slice notation <cite>fit_start:fit_stop</cite></p></li>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.param_cov">
-<code class="descname">param_cov</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.param_cov" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">param_cov</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.param_cov" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimated variance-covariance of the parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -372,7 +372,7 @@ slice notation <cite>fit_start:fit_stop</cite></p></li>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.resid">
-<code class="descname">resid</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.resid" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resid</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.resid" title="Permalink to this definition">¶</a></dt>
 <dd><p>nobs element array containing model residuals</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -383,7 +383,7 @@ slice notation <cite>fit_start:fit_stop</cite></p></li>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelResult.model">
-<code class="descname">model</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.model" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">model</code><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model instance used to produce the fit</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -394,7 +394,7 @@ slice notation <cite>fit_start:fit_stop</cite></p></li>
 
 <dl class="method">
 <dt id="arch.univariate.base.ARCHModelResult.arch_lm_test">
-<code class="descname">arch_lm_test</code><span class="sig-paren">(</span><em>lags=None</em>, <em>standardized=False</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.arch_lm_test" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">arch_lm_test</code><span class="sig-paren">(</span><em class="sig-param">lags=None</em>, <em class="sig-param">standardized=False</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.arch_lm_test" title="Permalink to this definition">¶</a></dt>
 <dd><p>ARCH LM test for conditional heteroskedasticity</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -416,7 +416,7 @@ estimated residuals.</p></li>
 
 <dl class="method">
 <dt>
-<code class="descname">conf_int</code><span class="sig-paren">(</span><em>alpha=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelResult.conf_int"><span class="viewcode-link">[source]</span></a></dt>
+<code class="sig-name descname">conf_int</code><span class="sig-paren">(</span><em class="sig-param">alpha=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelResult.conf_int"><span class="viewcode-link">[source]</span></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Size (prob.) to use when constructing the confidence interval.</p>
@@ -433,7 +433,7 @@ ith parameter</p>
 
 <dl class="method">
 <dt id="arch.univariate.base.ARCHModelResult.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>params=None</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forecast</code><span class="sig-paren">(</span><em class="sig-param">params=None</em>, <em class="sig-param">horizon=1</em>, <em class="sig-param">start=None</em>, <em class="sig-param">align='origin'</em>, <em class="sig-param">method='analytic'</em>, <em class="sig-param">simulations=1000</em>, <em class="sig-param">rng=None</em>, <em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -494,7 +494,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.base.ARCHModelResult.hedgehog_plot">
-<code class="descname">hedgehog_plot</code><span class="sig-paren">(</span><em>params=None</em>, <em>horizon=10</em>, <em>step=10</em>, <em>start=None</em>, <em>type='volatility'</em>, <em>method='analytic'</em>, <em>simulations=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.hedgehog_plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">hedgehog_plot</code><span class="sig-paren">(</span><em class="sig-param">params=None</em>, <em class="sig-param">horizon=10</em>, <em class="sig-param">step=10</em>, <em class="sig-param">start=None</em>, <em class="sig-param">type='volatility'</em>, <em class="sig-param">method='analytic'</em>, <em class="sig-param">simulations=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.base.ARCHModelResult.hedgehog_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot forecasts from estimated model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -541,7 +541,7 @@ either simulation or bootstrap.</p></li>
 
 <dl class="method">
 <dt>
-<code class="descname">plot</code><span class="sig-paren">(</span><em>annualize=None</em>, <em>scale=None</em><span class="sig-paren">)</span></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">annualize=None</em>, <em class="sig-param">scale=None</em><span class="sig-paren">)</span></dt>
 <dd><p>Plot standardized residuals and conditional volatility</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -583,7 +583,7 @@ most days of the year</p>
 
 <dl class="method">
 <dt>
-<code class="descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelResult.summary"><span class="viewcode-link">[source]</span></a></dt>
+<code class="sig-name descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelResult.summary"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Constructs a summary of the results from a fit model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -603,7 +603,7 @@ that lacks some properties of a (<a class="reference internal" href="#arch.univa
 relevant when parameters are not estimated.</p>
 <dl class="class">
 <dt id="arch.univariate.base.ARCHModelFixedResult">
-<em class="property">class </em><code class="descclassname">arch.univariate.base.</code><code class="descname">ARCHModelFixedResult</code><span class="sig-paren">(</span><em>params</em>, <em>resid</em>, <em>volatility</em>, <em>dep_var</em>, <em>names</em>, <em>loglikelihood</em>, <em>is_pandas</em>, <em>model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.base.</code><code class="sig-name descname">ARCHModelFixedResult</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">resid</em>, <em class="sig-param">volatility</em>, <em class="sig-param">dep_var</em>, <em class="sig-param">names</em>, <em class="sig-param">loglikelihood</em>, <em class="sig-param">is_pandas</em>, <em class="sig-param">model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Results for fixed parameters for an ARCHModel model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -622,25 +622,25 @@ contain nan-values in locations not used in estimation</p></li>
 </dl>
 <dl class="method">
 <dt id="arch.univariate.base.ARCHModelFixedResult.summary">
-<code class="descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.summary" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produce a summary of the results</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.base.ARCHModelFixedResult.plot">
-<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produce a plot of the volatility and standardized residuals</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="arch.univariate.base.ARCHModelFixedResult.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.forecast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forecast</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.forecast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from a model</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.loglikelihood">
-<code class="descname">loglikelihood</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.loglikelihood" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">loglikelihood</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.loglikelihood" title="Permalink to this definition">¶</a></dt>
 <dd><p>Value of the log-likelihood</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -651,7 +651,7 @@ contain nan-values in locations not used in estimation</p></li>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.params">
-<code class="descname">params</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">params</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimated parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -662,7 +662,7 @@ contain nan-values in locations not used in estimation</p></li>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.resid">
-<code class="descname">resid</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.resid" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resid</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.resid" title="Permalink to this definition">¶</a></dt>
 <dd><p>nobs element array containing model residuals</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -673,7 +673,7 @@ contain nan-values in locations not used in estimation</p></li>
 
 <dl class="attribute">
 <dt id="arch.univariate.base.ARCHModelFixedResult.model">
-<code class="descname">model</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.model" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">model</code><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model instance used to produce the fit</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -684,7 +684,7 @@ contain nan-values in locations not used in estimation</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.base.ARCHModelFixedResult.arch_lm_test">
-<code class="descname">arch_lm_test</code><span class="sig-paren">(</span><em>lags=None</em>, <em>standardized=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.arch_lm_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.arch_lm_test" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">arch_lm_test</code><span class="sig-paren">(</span><em class="sig-param">lags=None</em>, <em class="sig-param">standardized=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.arch_lm_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.arch_lm_test" title="Permalink to this definition">¶</a></dt>
 <dd><p>ARCH LM test for conditional heteroskedasticity</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -706,7 +706,7 @@ estimated residuals.</p></li>
 
 <dl class="method">
 <dt>
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>params=None</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.forecast"><span class="viewcode-link">[source]</span></a></dt>
+<code class="sig-name descname">forecast</code><span class="sig-paren">(</span><em class="sig-param">params=None</em>, <em class="sig-param">horizon=1</em>, <em class="sig-param">start=None</em>, <em class="sig-param">align='origin'</em>, <em class="sig-param">method='analytic'</em>, <em class="sig-param">simulations=1000</em>, <em class="sig-param">rng=None</em>, <em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.forecast"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -767,7 +767,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.base.ARCHModelFixedResult.hedgehog_plot">
-<code class="descname">hedgehog_plot</code><span class="sig-paren">(</span><em>params=None</em>, <em>horizon=10</em>, <em>step=10</em>, <em>start=None</em>, <em>type='volatility'</em>, <em>method='analytic'</em>, <em>simulations=1000</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.hedgehog_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.hedgehog_plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">hedgehog_plot</code><span class="sig-paren">(</span><em class="sig-param">params=None</em>, <em class="sig-param">horizon=10</em>, <em class="sig-param">step=10</em>, <em class="sig-param">start=None</em>, <em class="sig-param">type='volatility'</em>, <em class="sig-param">method='analytic'</em>, <em class="sig-param">simulations=1000</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.hedgehog_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModelFixedResult.hedgehog_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot forecasts from estimated model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -814,7 +814,7 @@ either simulation or bootstrap.</p></li>
 
 <dl class="method">
 <dt>
-<code class="descname">plot</code><span class="sig-paren">(</span><em>annualize=None</em>, <em>scale=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.plot"><span class="viewcode-link">[source]</span></a></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">annualize=None</em>, <em class="sig-param">scale=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.plot"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Plot standardized residuals and conditional volatility</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -856,7 +856,7 @@ most days of the year</p>
 
 <dl class="method">
 <dt>
-<code class="descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.summary"><span class="viewcode-link">[source]</span></a></dt>
+<code class="sig-name descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModelFixedResult.summary"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Constructs a summary of the results from a fit model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>

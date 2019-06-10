@@ -138,7 +138,7 @@ for this reason.</p>
 <h2>The Stationary Bootstrap<a class="headerlink" href="#the-stationary-bootstrap" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.bootstrap.StationaryBootstrap">
-<em class="property">class </em><code class="descclassname">arch.bootstrap.</code><code class="descname">StationaryBootstrap</code><span class="sig-paren">(</span><em>block_size</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#StationaryBootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.bootstrap.</code><code class="sig-name descname">StationaryBootstrap</code><span class="sig-paren">(</span><em class="sig-param">block_size</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#StationaryBootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Politis and Romano (1994) bootstrap with expon. distributed block sizes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -151,7 +151,7 @@ for this reason.</p>
 </dl>
 <dl class="attribute">
 <dt id="arch.bootstrap.StationaryBootstrap.index">
-<code class="descname">index</code><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.index" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">index</code><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.index" title="Permalink to this definition">¶</a></dt>
 <dd><p>The current index of the bootstrap</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -162,7 +162,7 @@ for this reason.</p>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.StationaryBootstrap.data">
-<code class="descname">data</code><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">data</code><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Two-element tuple with the pos_data in the first position and kw_data
 in the second (pos_data, kw_data)</p>
 <dl class="field-list simple">
@@ -174,7 +174,7 @@ in the second (pos_data, kw_data)</p>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.StationaryBootstrap.pos_data">
-<code class="descname">pos_data</code><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.pos_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">pos_data</code><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.pos_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tuple containing the positional arguments (in the order entered)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -185,7 +185,7 @@ in the second (pos_data, kw_data)</p>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.StationaryBootstrap.kw_data">
-<code class="descname">kw_data</code><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.kw_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">kw_data</code><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.kw_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dictionary containing the keyword arguments</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -196,7 +196,7 @@ in the second (pos_data, kw_data)</p>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.StationaryBootstrap.random_state">
-<code class="descname">random_state</code><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.random_state" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">random_state</code><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.random_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>RandomState instance used by bootstrap</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -239,7 +239,7 @@ on kw_data.</p>
 </div>
 <dl class="method">
 <dt id="arch.bootstrap.StationaryBootstrap.apply">
-<code class="descname">apply</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.apply" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">apply</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">reps=1000</em>, <em class="sig-param">extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.apply" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies a function to bootstrap replicated data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -280,7 +280,7 @@ these are appended to kwargs before calling func</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.StationaryBootstrap.bootstrap">
-<code class="descname">bootstrap</code><span class="sig-paren">(</span><em>reps</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.bootstrap" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bootstrap</code><span class="sig-paren">(</span><em class="sig-param">reps</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.bootstrap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterator for use when bootstrapping</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -317,7 +317,7 @@ dictionary</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.StationaryBootstrap.conf_int">
-<code class="descname">conf_int</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>method='basic'</em>, <em>size=0.95</em>, <em>tail='two'</em>, <em>extra_kwargs=None</em>, <em>reuse=False</em>, <em>sampling='nonparametric'</em>, <em>std_err_func=None</em>, <em>studentize_reps=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.conf_int" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">conf_int</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">reps=1000</em>, <em class="sig-param">method='basic'</em>, <em class="sig-param">size=0.95</em>, <em class="sig-param">tail='two'</em>, <em class="sig-param">extra_kwargs=None</em>, <em class="sig-param">reuse=False</em>, <em class="sig-param">sampling='nonparametric'</em>, <em class="sig-param">std_err_func=None</em>, <em class="sig-param">studentize_reps=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.conf_int" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -400,7 +400,7 @@ to ‘bc’ method</p></li>
 
 <dl class="method">
 <dt id="arch.bootstrap.StationaryBootstrap.cov">
-<code class="descname">cov</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>recenter=True</em>, <em>extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.cov" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cov</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">reps=1000</em>, <em class="sig-param">recenter=True</em>, <em class="sig-param">extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.cov" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute parameter covariance using bootstrap</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -460,7 +460,7 @@ name of the required bootstrap</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.StationaryBootstrap.get_state">
-<code class="descname">get_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.get_state" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.get_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the state of the bootstrap’s random number generator</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -474,7 +474,7 @@ name of the required bootstrap</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.StationaryBootstrap.reset">
-<code class="descname">reset</code><span class="sig-paren">(</span><em>use_seed=True</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param">use_seed=True</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resets the bootstrap to either its initial state or the last seed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -487,7 +487,7 @@ to the initial state.  Default is True</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.StationaryBootstrap.seed">
-<code class="descname">seed</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.seed" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">seed</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.seed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Seeds the bootstrap’s random number generator</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -498,7 +498,7 @@ to the initial state.  Default is True</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.StationaryBootstrap.set_state">
-<code class="descname">set_state</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.set_state" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_state</code><span class="sig-paren">(</span><em class="sig-param">state</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.set_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the state of the bootstrap’s random number generator</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -509,7 +509,7 @@ to the initial state.  Default is True</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.StationaryBootstrap.var">
-<code class="descname">var</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>recenter=True</em>, <em>extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.var" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">var</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">reps=1000</em>, <em class="sig-param">recenter=True</em>, <em class="sig-param">extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute parameter variance using bootstrap</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -574,7 +574,7 @@ name of the required bootstrap</p>
 <h2>The Circular Block Bootstrap<a class="headerlink" href="#the-circular-block-bootstrap" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.bootstrap.CircularBlockBootstrap">
-<em class="property">class </em><code class="descclassname">arch.bootstrap.</code><code class="descname">CircularBlockBootstrap</code><span class="sig-paren">(</span><em>block_size</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#CircularBlockBootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.bootstrap.</code><code class="sig-name descname">CircularBlockBootstrap</code><span class="sig-paren">(</span><em class="sig-param">block_size</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#CircularBlockBootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bootstrap based on blocks of the same length with end-to-start wrap around</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -587,7 +587,7 @@ name of the required bootstrap</p>
 </dl>
 <dl class="attribute">
 <dt id="arch.bootstrap.CircularBlockBootstrap.index">
-<code class="descname">index</code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.index" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">index</code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.index" title="Permalink to this definition">¶</a></dt>
 <dd><p>The current index of the bootstrap</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -598,7 +598,7 @@ name of the required bootstrap</p>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.CircularBlockBootstrap.data">
-<code class="descname">data</code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">data</code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Two-element tuple with the pos_data in the first position and kw_data
 in the second (pos_data, kw_data)</p>
 <dl class="field-list simple">
@@ -610,7 +610,7 @@ in the second (pos_data, kw_data)</p>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.CircularBlockBootstrap.pos_data">
-<code class="descname">pos_data</code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.pos_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">pos_data</code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.pos_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tuple containing the positional arguments (in the order entered)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -621,7 +621,7 @@ in the second (pos_data, kw_data)</p>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.CircularBlockBootstrap.kw_data">
-<code class="descname">kw_data</code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.kw_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">kw_data</code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.kw_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dictionary containing the keyword arguments</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -632,7 +632,7 @@ in the second (pos_data, kw_data)</p>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.CircularBlockBootstrap.random_state">
-<code class="descname">random_state</code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.random_state" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">random_state</code><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.random_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>RandomState instance used by bootstrap</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -675,7 +675,7 @@ on kw_data.</p>
 </div>
 <dl class="method">
 <dt id="arch.bootstrap.CircularBlockBootstrap.apply">
-<code class="descname">apply</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.apply" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">apply</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">reps=1000</em>, <em class="sig-param">extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.apply" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies a function to bootstrap replicated data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -716,7 +716,7 @@ these are appended to kwargs before calling func</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.CircularBlockBootstrap.bootstrap">
-<code class="descname">bootstrap</code><span class="sig-paren">(</span><em>reps</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.bootstrap" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bootstrap</code><span class="sig-paren">(</span><em class="sig-param">reps</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.bootstrap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterator for use when bootstrapping</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -753,7 +753,7 @@ dictionary</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.CircularBlockBootstrap.conf_int">
-<code class="descname">conf_int</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>method='basic'</em>, <em>size=0.95</em>, <em>tail='two'</em>, <em>extra_kwargs=None</em>, <em>reuse=False</em>, <em>sampling='nonparametric'</em>, <em>std_err_func=None</em>, <em>studentize_reps=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.conf_int" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">conf_int</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">reps=1000</em>, <em class="sig-param">method='basic'</em>, <em class="sig-param">size=0.95</em>, <em class="sig-param">tail='two'</em>, <em class="sig-param">extra_kwargs=None</em>, <em class="sig-param">reuse=False</em>, <em class="sig-param">sampling='nonparametric'</em>, <em class="sig-param">std_err_func=None</em>, <em class="sig-param">studentize_reps=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.conf_int" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -836,7 +836,7 @@ to ‘bc’ method</p></li>
 
 <dl class="method">
 <dt id="arch.bootstrap.CircularBlockBootstrap.cov">
-<code class="descname">cov</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>recenter=True</em>, <em>extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.cov" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cov</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">reps=1000</em>, <em class="sig-param">recenter=True</em>, <em class="sig-param">extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.cov" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute parameter covariance using bootstrap</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -896,7 +896,7 @@ name of the required bootstrap</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.CircularBlockBootstrap.get_state">
-<code class="descname">get_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.get_state" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.get_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the state of the bootstrap’s random number generator</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -910,7 +910,7 @@ name of the required bootstrap</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.CircularBlockBootstrap.reset">
-<code class="descname">reset</code><span class="sig-paren">(</span><em>use_seed=True</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param">use_seed=True</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resets the bootstrap to either its initial state or the last seed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -923,7 +923,7 @@ to the initial state.  Default is True</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.CircularBlockBootstrap.seed">
-<code class="descname">seed</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.seed" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">seed</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.seed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Seeds the bootstrap’s random number generator</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -934,7 +934,7 @@ to the initial state.  Default is True</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.CircularBlockBootstrap.set_state">
-<code class="descname">set_state</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.set_state" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_state</code><span class="sig-paren">(</span><em class="sig-param">state</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.set_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the state of the bootstrap’s random number generator</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -945,7 +945,7 @@ to the initial state.  Default is True</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.CircularBlockBootstrap.var">
-<code class="descname">var</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>recenter=True</em>, <em>extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.var" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">var</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">reps=1000</em>, <em class="sig-param">recenter=True</em>, <em class="sig-param">extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.CircularBlockBootstrap.var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute parameter variance using bootstrap</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1010,7 +1010,7 @@ name of the required bootstrap</p>
 <h2>The Moving Block Bootstrap<a class="headerlink" href="#the-moving-block-bootstrap" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.bootstrap.MovingBlockBootstrap">
-<em class="property">class </em><code class="descclassname">arch.bootstrap.</code><code class="descname">MovingBlockBootstrap</code><span class="sig-paren">(</span><em>block_size</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#MovingBlockBootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.bootstrap.</code><code class="sig-name descname">MovingBlockBootstrap</code><span class="sig-paren">(</span><em class="sig-param">block_size</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/bootstrap/base.html#MovingBlockBootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bootstrap based on blocks of the same length without wrap around</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1023,7 +1023,7 @@ name of the required bootstrap</p>
 </dl>
 <dl class="attribute">
 <dt id="arch.bootstrap.MovingBlockBootstrap.index">
-<code class="descname">index</code><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.index" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">index</code><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.index" title="Permalink to this definition">¶</a></dt>
 <dd><p>The current index of the bootstrap</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1034,7 +1034,7 @@ name of the required bootstrap</p>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.MovingBlockBootstrap.data">
-<code class="descname">data</code><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">data</code><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Two-element tuple with the pos_data in the first position and kw_data
 in the second (pos_data, kw_data)</p>
 <dl class="field-list simple">
@@ -1046,7 +1046,7 @@ in the second (pos_data, kw_data)</p>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.MovingBlockBootstrap.pos_data">
-<code class="descname">pos_data</code><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.pos_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">pos_data</code><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.pos_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tuple containing the positional arguments (in the order entered)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1057,7 +1057,7 @@ in the second (pos_data, kw_data)</p>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.MovingBlockBootstrap.kw_data">
-<code class="descname">kw_data</code><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.kw_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">kw_data</code><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.kw_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dictionary containing the keyword arguments</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1068,7 +1068,7 @@ in the second (pos_data, kw_data)</p>
 
 <dl class="attribute">
 <dt id="arch.bootstrap.MovingBlockBootstrap.random_state">
-<code class="descname">random_state</code><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.random_state" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">random_state</code><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.random_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>RandomState instance used by bootstrap</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -1111,7 +1111,7 @@ on kw_data.</p>
 </div>
 <dl class="method">
 <dt id="arch.bootstrap.MovingBlockBootstrap.apply">
-<code class="descname">apply</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.apply" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">apply</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">reps=1000</em>, <em class="sig-param">extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.apply" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies a function to bootstrap replicated data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1152,7 +1152,7 @@ these are appended to kwargs before calling func</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.MovingBlockBootstrap.bootstrap">
-<code class="descname">bootstrap</code><span class="sig-paren">(</span><em>reps</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.bootstrap" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bootstrap</code><span class="sig-paren">(</span><em class="sig-param">reps</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.bootstrap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterator for use when bootstrapping</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1189,7 +1189,7 @@ dictionary</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.MovingBlockBootstrap.conf_int">
-<code class="descname">conf_int</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>method='basic'</em>, <em>size=0.95</em>, <em>tail='two'</em>, <em>extra_kwargs=None</em>, <em>reuse=False</em>, <em>sampling='nonparametric'</em>, <em>std_err_func=None</em>, <em>studentize_reps=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.conf_int" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">conf_int</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">reps=1000</em>, <em class="sig-param">method='basic'</em>, <em class="sig-param">size=0.95</em>, <em class="sig-param">tail='two'</em>, <em class="sig-param">extra_kwargs=None</em>, <em class="sig-param">reuse=False</em>, <em class="sig-param">sampling='nonparametric'</em>, <em class="sig-param">std_err_func=None</em>, <em class="sig-param">studentize_reps=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.conf_int" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1272,7 +1272,7 @@ to ‘bc’ method</p></li>
 
 <dl class="method">
 <dt id="arch.bootstrap.MovingBlockBootstrap.cov">
-<code class="descname">cov</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>recenter=True</em>, <em>extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.cov" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cov</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">reps=1000</em>, <em class="sig-param">recenter=True</em>, <em class="sig-param">extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.cov" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute parameter covariance using bootstrap</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1332,7 +1332,7 @@ name of the required bootstrap</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.MovingBlockBootstrap.get_state">
-<code class="descname">get_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.get_state" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.get_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the state of the bootstrap’s random number generator</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1346,7 +1346,7 @@ name of the required bootstrap</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.MovingBlockBootstrap.reset">
-<code class="descname">reset</code><span class="sig-paren">(</span><em>use_seed=True</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param">use_seed=True</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resets the bootstrap to either its initial state or the last seed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1359,7 +1359,7 @@ to the initial state.  Default is True</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.MovingBlockBootstrap.seed">
-<code class="descname">seed</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.seed" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">seed</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.seed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Seeds the bootstrap’s random number generator</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1370,7 +1370,7 @@ to the initial state.  Default is True</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.MovingBlockBootstrap.set_state">
-<code class="descname">set_state</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.set_state" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_state</code><span class="sig-paren">(</span><em class="sig-param">state</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.set_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the state of the bootstrap’s random number generator</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1381,7 +1381,7 @@ to the initial state.  Default is True</p>
 
 <dl class="method">
 <dt id="arch.bootstrap.MovingBlockBootstrap.var">
-<code class="descname">var</code><span class="sig-paren">(</span><em>func</em>, <em>reps=1000</em>, <em>recenter=True</em>, <em>extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.var" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">var</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">reps=1000</em>, <em class="sig-param">recenter=True</em>, <em class="sig-param">extra_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.bootstrap.MovingBlockBootstrap.var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute parameter variance using bootstrap</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

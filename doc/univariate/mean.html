@@ -131,7 +131,7 @@
 <h2>No Mean<a class="headerlink" href="#no-mean" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.ZeroMean">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">ZeroMean</code><span class="sig-paren">(</span><em>y=None</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ZeroMean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ZeroMean" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">ZeroMean</code><span class="sig-paren">(</span><em class="sig-param">y=None</em>, <em class="sig-param">hold_back=None</em>, <em class="sig-param">volatility=None</em>, <em class="sig-param">distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ZeroMean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ZeroMean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model with zero conditional mean estimation and simulation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -159,7 +159,7 @@ lag lengths to estimate on the common sample.</p></li>
 \[y_t = \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.ZeroMean.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em>, <em>backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">update_freq=1</em>, <em class="sig-param">disp='final'</em>, <em class="sig-param">starting_values=None</em>, <em class="sig-param">cov_type='robust'</em>, <em class="sig-param">show_warning=True</em>, <em class="sig-param">first_obs=None</em>, <em class="sig-param">last_obs=None</em>, <em class="sig-param">tol=None</em>, <em class="sig-param">options=None</em>, <em class="sig-param">backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -200,7 +200,7 @@ difficulty finding the optimum.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ZeroMean.fix">
-<code class="descname">fix</code><span class="sig-paren">(</span><em>params</em>, <em>first_obs=None</em>, <em>last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.fix" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fix</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">first_obs=None</em>, <em class="sig-param">last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.fix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows an ARCHModelFixedResult to be constructed from fixed parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -225,7 +225,7 @@ model, volatility model and distribution.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.ZeroMean.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forecast</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">horizon=1</em>, <em class="sig-param">start=None</em>, <em class="sig-param">align='origin'</em>, <em class="sig-param">method='analytic'</em>, <em class="sig-param">simulations=1000</em>, <em class="sig-param">rng=None</em>, <em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ZeroMean.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -297,7 +297,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ZeroMean.resids">
-<code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ZeroMean.resids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ZeroMean.resids" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resids</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">y=None</em>, <em class="sig-param">regressors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ZeroMean.resids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ZeroMean.resids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute model residuals</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -318,7 +318,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ZeroMean.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ZeroMean.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ZeroMean.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">nobs</em>, <em class="sig-param">burn=500</em>, <em class="sig-param">initial_value=None</em>, <em class="sig-param">x=None</em>, <em class="sig-param">initial_value_vol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ZeroMean.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ZeroMean.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulated data from a zero mean model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -364,7 +364,7 @@ containing the errors used in the simulation</p>
 <h2>Constant Mean<a class="headerlink" href="#constant-mean" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.ConstantMean">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">ConstantMean</code><span class="sig-paren">(</span><em>y=None</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ConstantMean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantMean" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">ConstantMean</code><span class="sig-paren">(</span><em class="sig-param">y=None</em>, <em class="sig-param">hold_back=None</em>, <em class="sig-param">volatility=None</em>, <em class="sig-param">distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ConstantMean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantMean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constant mean model estimation and simulation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -392,7 +392,7 @@ lag lengths to estimate on the common sample.</p></li>
 \[y_t = \mu + \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.ConstantMean.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em>, <em>backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">update_freq=1</em>, <em class="sig-param">disp='final'</em>, <em class="sig-param">starting_values=None</em>, <em class="sig-param">cov_type='robust'</em>, <em class="sig-param">show_warning=True</em>, <em class="sig-param">first_obs=None</em>, <em class="sig-param">last_obs=None</em>, <em class="sig-param">tol=None</em>, <em class="sig-param">options=None</em>, <em class="sig-param">backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -433,7 +433,7 @@ difficulty finding the optimum.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantMean.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forecast</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">horizon=1</em>, <em class="sig-param">start=None</em>, <em class="sig-param">align='origin'</em>, <em class="sig-param">method='analytic'</em>, <em class="sig-param">simulations=1000</em>, <em class="sig-param">rng=None</em>, <em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ConstantMean.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -505,7 +505,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantMean.resids">
-<code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ConstantMean.resids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantMean.resids" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resids</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">y=None</em>, <em class="sig-param">regressors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ConstantMean.resids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantMean.resids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute model residuals</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -526,7 +526,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ConstantMean.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ConstantMean.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantMean.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">nobs</em>, <em class="sig-param">burn=500</em>, <em class="sig-param">initial_value=None</em>, <em class="sig-param">x=None</em>, <em class="sig-param">initial_value_vol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ConstantMean.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ConstantMean.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulated data from a constant mean model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -572,7 +572,7 @@ containing the errors used in the simulation</p>
 <h2>Autoregressions<a class="headerlink" href="#autoregressions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.ARX">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">ARX</code><span class="sig-paren">(</span><em>y=None</em>, <em>x=None</em>, <em>lags=None</em>, <em>constant=True</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ARX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ARX" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">ARX</code><span class="sig-paren">(</span><em class="sig-param">y=None</em>, <em class="sig-param">x=None</em>, <em class="sig-param">lags=None</em>, <em class="sig-param">constant=True</em>, <em class="sig-param">hold_back=None</em>, <em class="sig-param">volatility=None</em>, <em class="sig-param">distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#ARX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.ARX" title="Permalink to this definition">¶</a></dt>
 <dd><p>Autoregressive model with optional exogenous regressors estimation and
 simulation</p>
 <dl class="field-list simple">
@@ -609,7 +609,7 @@ lag lengths to estimate on the common sample.</p></li>
 + \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.ARX.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em>, <em>backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">update_freq=1</em>, <em class="sig-param">disp='final'</em>, <em class="sig-param">starting_values=None</em>, <em class="sig-param">cov_type='robust'</em>, <em class="sig-param">show_warning=True</em>, <em class="sig-param">first_obs=None</em>, <em class="sig-param">last_obs=None</em>, <em class="sig-param">tol=None</em>, <em class="sig-param">options=None</em>, <em class="sig-param">backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -650,7 +650,7 @@ difficulty finding the optimum.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ARX.fix">
-<code class="descname">fix</code><span class="sig-paren">(</span><em>params</em>, <em>first_obs=None</em>, <em>last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.fix" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fix</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">first_obs=None</em>, <em class="sig-param">last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.fix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows an ARCHModelFixedResult to be constructed from fixed parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -675,7 +675,7 @@ model, volatility model and distribution.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.ARX.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forecast</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">horizon=1</em>, <em class="sig-param">start=None</em>, <em class="sig-param">align='origin'</em>, <em class="sig-param">method='analytic'</em>, <em class="sig-param">simulations=1000</em>, <em class="sig-param">rng=None</em>, <em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -747,7 +747,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ARX.resids">
-<code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.resids" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resids</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">y=None</em>, <em class="sig-param">regressors=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.resids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute model residuals</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -768,7 +768,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.ARX.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">nobs</em>, <em class="sig-param">burn=500</em>, <em class="sig-param">initial_value=None</em>, <em class="sig-param">x=None</em>, <em class="sig-param">initial_value_vol=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.ARX.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulates data from a linear regression, AR or HAR models</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -828,7 +828,7 @@ to have nobs plus burn data points</p>
 <h2>Heterogeneous Autoregressions<a class="headerlink" href="#heterogeneous-autoregressions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.HARX">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">HARX</code><span class="sig-paren">(</span><em>y=None</em>, <em>x=None</em>, <em>lags=None</em>, <em>constant=True</em>, <em>use_rotated=False</em>, <em>hold_back=None</em>, <em>volatility=None</em>, <em>distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">HARX</code><span class="sig-paren">(</span><em class="sig-param">y=None</em>, <em class="sig-param">x=None</em>, <em class="sig-param">lags=None</em>, <em class="sig-param">constant=True</em>, <em class="sig-param">use_rotated=False</em>, <em class="sig-param">hold_back=None</em>, <em class="sig-param">volatility=None</em>, <em class="sig-param">distribution=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX" title="Permalink to this definition">¶</a></dt>
 <dd><p>Heterogeneous Autoregression (HAR), with optional exogenous regressors,
 model estimation and simulation</p>
 <dl class="field-list simple">
@@ -874,7 +874,7 @@ lag lengths to estimate on the common sample.</p></li>
 <span class="math notranslate nohighlight">\(y_t\)</span> between <span class="math notranslate nohighlight">\(t-L_{i,0}\)</span> and <span class="math notranslate nohighlight">\(t - L_{i,1}\)</span>.</p>
 <dl class="method">
 <dt id="arch.univariate.HARX.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em>, <em>backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">update_freq=1</em>, <em class="sig-param">disp='final'</em>, <em class="sig-param">starting_values=None</em>, <em class="sig-param">cov_type='robust'</em>, <em class="sig-param">show_warning=True</em>, <em class="sig-param">first_obs=None</em>, <em class="sig-param">last_obs=None</em>, <em class="sig-param">tol=None</em>, <em class="sig-param">options=None</em>, <em class="sig-param">backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -915,7 +915,7 @@ difficulty finding the optimum.</p>
 
 <dl class="method">
 <dt id="arch.univariate.HARX.fix">
-<code class="descname">fix</code><span class="sig-paren">(</span><em>params</em>, <em>first_obs=None</em>, <em>last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.fix" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fix</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">first_obs=None</em>, <em class="sig-param">last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.HARX.fix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows an ARCHModelFixedResult to be constructed from fixed parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -940,7 +940,7 @@ model, volatility model and distribution.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.HARX.forecast">
-<code class="descname">forecast</code><span class="sig-paren">(</span><em>params</em>, <em>horizon=1</em>, <em>start=None</em>, <em>align='origin'</em>, <em>method='analytic'</em>, <em>simulations=1000</em>, <em>rng=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX.forecast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX.forecast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forecast</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">horizon=1</em>, <em class="sig-param">start=None</em>, <em class="sig-param">align='origin'</em>, <em class="sig-param">method='analytic'</em>, <em class="sig-param">simulations=1000</em>, <em class="sig-param">rng=None</em>, <em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX.forecast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX.forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct forecasts from estimated model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1012,7 +1012,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.HARX.resids">
-<code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX.resids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX.resids" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resids</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">y=None</em>, <em class="sig-param">regressors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX.resids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX.resids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute model residuals</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1033,7 +1033,7 @@ evaluating, but still in the same column.</p>
 
 <dl class="method">
 <dt id="arch.univariate.HARX.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">nobs</em>, <em class="sig-param">burn=500</em>, <em class="sig-param">initial_value=None</em>, <em class="sig-param">x=None</em>, <em class="sig-param">initial_value_vol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#HARX.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.HARX.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulates data from a linear regression, AR or HAR models</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1093,7 +1093,7 @@ to have nobs plus burn data points</p>
 <h2>Least Squares<a class="headerlink" href="#least-squares" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.LS">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">LS</code><span class="sig-paren">(</span><em>y=None</em>, <em>x=None</em>, <em>constant=True</em>, <em>hold_back=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#LS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.LS" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">LS</code><span class="sig-paren">(</span><em class="sig-param">y=None</em>, <em class="sig-param">x=None</em>, <em class="sig-param">constant=True</em>, <em class="sig-param">hold_back=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/mean.html#LS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.LS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Least squares model estimation and simulation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1122,7 +1122,7 @@ lag lengths to estimate on the common sample.</p></li>
 \[y_t = \mu + \gamma' x_t + \epsilon_t\]</div>
 <dl class="method">
 <dt id="arch.univariate.LS.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>update_freq=1</em>, <em>disp='final'</em>, <em>starting_values=None</em>, <em>cov_type='robust'</em>, <em>show_warning=True</em>, <em>first_obs=None</em>, <em>last_obs=None</em>, <em>tol=None</em>, <em>options=None</em>, <em>backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">update_freq=1</em>, <em class="sig-param">disp='final'</em>, <em class="sig-param">starting_values=None</em>, <em class="sig-param">cov_type='robust'</em>, <em class="sig-param">show_warning=True</em>, <em class="sig-param">first_obs=None</em>, <em class="sig-param">last_obs=None</em>, <em class="sig-param">tol=None</em>, <em class="sig-param">options=None</em>, <em class="sig-param">backcast=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model given a nobs by 1 vector of sigma2 values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1163,7 +1163,7 @@ difficulty finding the optimum.</p>
 
 <dl class="method">
 <dt id="arch.univariate.LS.fix">
-<code class="descname">fix</code><span class="sig-paren">(</span><em>params</em>, <em>first_obs=None</em>, <em>last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.fix" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fix</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">first_obs=None</em>, <em class="sig-param">last_obs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.fix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows an ARCHModelFixedResult to be constructed from fixed parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1188,7 +1188,7 @@ model, volatility model and distribution.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.LS.resids">
-<code class="descname">resids</code><span class="sig-paren">(</span><em>params</em>, <em>y=None</em>, <em>regressors=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.resids" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resids</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">y=None</em>, <em class="sig-param">regressors=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.resids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute model residuals</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1209,7 +1209,7 @@ model, volatility model and distribution.</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.LS.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>params</em>, <em>nobs</em>, <em>burn=500</em>, <em>initial_value=None</em>, <em>x=None</em>, <em>initial_value_vol=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">nobs</em>, <em class="sig-param">burn=500</em>, <em class="sig-param">initial_value=None</em>, <em class="sig-param">x=None</em>, <em class="sig-param">initial_value_vol=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arch.univariate.LS.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulates data from a linear regression, AR or HAR models</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1272,7 +1272,7 @@ methods. There are two optional private methods that should be provided if
 applicable.</p>
 <dl class="class">
 <dt id="arch.univariate.base.ARCHModel">
-<em class="property">class </em><code class="descclassname">arch.univariate.base.</code><code class="descname">ARCHModel</code><span class="sig-paren">(</span><em>y=None</em>, <em>volatility=None</em>, <em>distribution=None</em>, <em>hold_back=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.base.</code><code class="sig-name descname">ARCHModel</code><span class="sig-paren">(</span><em class="sig-param">y=None</em>, <em class="sig-param">volatility=None</em>, <em class="sig-param">distribution=None</em>, <em class="sig-param">hold_back=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/base.html#ARCHModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.base.ARCHModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract base class for mean models in ARCH processes.  Specifies the
 conditional mean process.</p>
 <p>All public methods that raise NotImplementedError should be overridden by

@@ -131,11 +131,11 @@
 <h2>Normal<a class="headerlink" href="#normal" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.Normal">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">Normal</code><span class="sig-paren">(</span><em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Normal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Normal" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">Normal</code><span class="sig-paren">(</span><em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Normal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Normal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Standard normal distribution for use with ARCH models</p>
 <dl class="method">
 <dt id="arch.univariate.Normal.bounds">
-<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Normal.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Normal.bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Normal.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Normal.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Residuals to use when computing the bounds</p>
@@ -151,7 +151,7 @@
 
 <dl class="method">
 <dt id="arch.univariate.Normal.constraints">
-<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Normal.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Normal.constraints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Normal.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Normal.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
@@ -167,7 +167,7 @@
 
 <dl class="method">
 <dt id="arch.univariate.Normal.loglikelihood">
-<code class="descname">loglikelihood</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>individual=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Normal.loglikelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Normal.loglikelihood" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">loglikelihood</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">resids</em>, <em class="sig-param">sigma2</em>, <em class="sig-param">individual=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Normal.loglikelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Normal.loglikelihood" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the log-likelihood of assuming residuals are normally
 distributed, conditional on the variance</p>
 <dl class="field-list simple">
@@ -197,7 +197,7 @@ likelihoods (True) or the sum (False)</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.Normal.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Normal.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Normal.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Normal.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Normal.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulates i.i.d. draws from the distribution</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -215,7 +215,7 @@ draws from the distribution</p>
 
 <dl class="method">
 <dt id="arch.univariate.Normal.starting_values">
-<code class="descname">starting_values</code><span class="sig-paren">(</span><em>std_resid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Normal.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Normal.starting_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">std_resid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Normal.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Normal.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>std_resid</strong> (<em>ndarray</em>) – Estimated standardized residuals to use in computing starting
@@ -239,11 +239,11 @@ values for the shape parameter</p>
 <h2>Student’s t<a class="headerlink" href="#student-s-t" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.StudentsT">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">StudentsT</code><span class="sig-paren">(</span><em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">StudentsT</code><span class="sig-paren">(</span><em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Standardized Student’s distribution for use with ARCH models</p>
 <dl class="method">
 <dt id="arch.univariate.StudentsT.bounds">
-<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT.bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Residuals to use when computing the bounds</p>
@@ -259,7 +259,7 @@ values for the shape parameter</p>
 
 <dl class="method">
 <dt id="arch.univariate.StudentsT.constraints">
-<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT.constraints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
@@ -275,7 +275,7 @@ values for the shape parameter</p>
 
 <dl class="method">
 <dt id="arch.univariate.StudentsT.loglikelihood">
-<code class="descname">loglikelihood</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>individual=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT.loglikelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT.loglikelihood" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">loglikelihood</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">resids</em>, <em class="sig-param">sigma2</em>, <em class="sig-param">individual=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT.loglikelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT.loglikelihood" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the log-likelihood of assuming residuals are have a
 standardized (to have unit variance) Student’s t distribution,
 conditional on the variance.</p>
@@ -308,7 +308,7 @@ likelihoods (True) or the sum (False)</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.StudentsT.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulates i.i.d. draws from the distribution</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -326,7 +326,7 @@ draws from the distribution</p>
 
 <dl class="method">
 <dt id="arch.univariate.StudentsT.starting_values">
-<code class="descname">starting_values</code><span class="sig-paren">(</span><em>std_resid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT.starting_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">std_resid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>std_resid</strong> (<em>ndarray</em>) – Estimated standardized residuals to use in computing starting
@@ -351,7 +351,7 @@ produce a moment-based estimator for the starting values.</p>
 <h2>Skew Student’s t<a class="headerlink" href="#skew-student-s-t" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.SkewStudent">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">SkewStudent</code><span class="sig-paren">(</span><em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">SkewStudent</code><span class="sig-paren">(</span><em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Standardized Skewed Student’s <a class="footnote-reference brackets" href="#id2" id="id1">1</a> distribution for use with ARCH models</p>
 <p class="rubric">Notes</p>
 <p>The Standardized Skewed Student’s distribution takes two parameters,
@@ -369,7 +369,7 @@ distribution is identical to a standardized Student’s t.</p>
 </dl>
 <dl class="method">
 <dt id="arch.univariate.SkewStudent.bounds">
-<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent.bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Residuals to use when computing the bounds</p>
@@ -385,7 +385,7 @@ distribution is identical to a standardized Student’s t.</p>
 
 <dl class="method">
 <dt id="arch.univariate.SkewStudent.constraints">
-<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent.constraints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
@@ -401,7 +401,7 @@ distribution is identical to a standardized Student’s t.</p>
 
 <dl class="method">
 <dt id="arch.univariate.SkewStudent.loglikelihood">
-<code class="descname">loglikelihood</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>individual=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent.loglikelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent.loglikelihood" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">loglikelihood</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">resids</em>, <em class="sig-param">sigma2</em>, <em class="sig-param">individual=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent.loglikelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent.loglikelihood" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the log-likelihood of assuming residuals are have a
 standardized (to have unit variance) Skew Student’s t distribution,
 conditional on the variance.</p>
@@ -442,7 +442,7 @@ The constants <span class="math notranslate nohighlight">\(a\)</span>, <span cla
 
 <dl class="method">
 <dt id="arch.univariate.SkewStudent.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulates i.i.d. draws from the distribution</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -460,7 +460,7 @@ draws from the distribution</p>
 
 <dl class="method">
 <dt id="arch.univariate.SkewStudent.starting_values">
-<code class="descname">starting_values</code><span class="sig-paren">(</span><em>std_resid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent.starting_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">std_resid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>std_resid</strong> (<em>ndarray</em>) – Estimated standardized residuals to use in computing starting
@@ -485,11 +485,11 @@ produce a moment-based estimator for the starting values.</p>
 <h2>Generalized Error (GED)<a class="headerlink" href="#generalized-error-ged" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.GeneralizedError">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">GeneralizedError</code><span class="sig-paren">(</span><em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#GeneralizedError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GeneralizedError" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">GeneralizedError</code><span class="sig-paren">(</span><em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#GeneralizedError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GeneralizedError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generalized Error distribution for use with ARCH models</p>
 <dl class="method">
 <dt id="arch.univariate.GeneralizedError.bounds">
-<code class="descname">bounds</code><span class="sig-paren">(</span><em>resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#GeneralizedError.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GeneralizedError.bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#GeneralizedError.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GeneralizedError.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Residuals to use when computing the bounds</p>
@@ -505,7 +505,7 @@ produce a moment-based estimator for the starting values.</p>
 
 <dl class="method">
 <dt id="arch.univariate.GeneralizedError.constraints">
-<code class="descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#GeneralizedError.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GeneralizedError.constraints" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">constraints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#GeneralizedError.constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GeneralizedError.constraints" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
@@ -521,7 +521,7 @@ produce a moment-based estimator for the starting values.</p>
 
 <dl class="method">
 <dt id="arch.univariate.GeneralizedError.loglikelihood">
-<code class="descname">loglikelihood</code><span class="sig-paren">(</span><em>parameters</em>, <em>resids</em>, <em>sigma2</em>, <em>individual=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#GeneralizedError.loglikelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GeneralizedError.loglikelihood" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">loglikelihood</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">resids</em>, <em class="sig-param">sigma2</em>, <em class="sig-param">individual=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#GeneralizedError.loglikelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GeneralizedError.loglikelihood" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the log-likelihood of assuming residuals are have a
 Generalized Error Distribution, conditional on the variance.</p>
 <dl class="field-list simple">
@@ -555,7 +555,7 @@ likelihoods (True) or the sum (False)</p></li>
 
 <dl class="method">
 <dt id="arch.univariate.GeneralizedError.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#GeneralizedError.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GeneralizedError.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#GeneralizedError.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GeneralizedError.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulates i.i.d. draws from the distribution</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -573,7 +573,7 @@ draws from the distribution</p>
 
 <dl class="method">
 <dt id="arch.univariate.GeneralizedError.starting_values">
-<code class="descname">starting_values</code><span class="sig-paren">(</span><em>std_resid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#GeneralizedError.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GeneralizedError.starting_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">std_resid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#GeneralizedError.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GeneralizedError.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>std_resid</strong> (<em>ndarray</em>) – Estimated standardized residuals to use in computing starting
@@ -599,7 +599,7 @@ values for the shape parameter</p>
 methods.</p>
 <dl class="class">
 <dt id="arch.univariate.Distribution">
-<em class="property">class </em><code class="descclassname">arch.univariate.</code><code class="descname">Distribution</code><span class="sig-paren">(</span><em>name</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Distribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Distribution" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">Distribution</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Distribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Distribution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Template for subclassing only</p>
 </dd></dl>
 
