@@ -14,6 +14,7 @@ import pandas as pd
 from pandas.util.testing import assert_frame_equal, assert_series_equal
 import pytest
 from scipy import stats
+from scipy.optimize import OptimizeResult
 import statsmodels.regression.linear_model as smlm
 import statsmodels.tools as smtools
 
@@ -439,7 +440,9 @@ class TestMeanModel(TestCase):
         y = x.sum(1) + 3 * self.rng.randn(500)
 
         am = ARX(y=y, x=x)
-        am.fit(disp=DISPLAY).summary()
+        res = am.fit(disp=DISPLAY)
+        res.summary()
+        assert isinstance(res.optimization_result, OptimizeResult)
         am.volatility = ARCH(p=2)
         results = am.fit(update_freq=0, disp=DISPLAY)
         assert isinstance(results.pvalues, pd.Series)

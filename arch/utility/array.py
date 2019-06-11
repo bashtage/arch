@@ -10,7 +10,8 @@ from abc import ABCMeta
 import datetime as dt
 
 import numpy as np
-from pandas import DataFrame, NaT, Series, Timestamp, to_datetime, DatetimeIndex
+from pandas import (DataFrame, DatetimeIndex, NaT, Series, Timestamp,
+                    to_datetime)
 
 __all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor',
            'date_to_index', 'cutoff_to_index', 'ensure2d', 'AbstractDocStringInheritor']
