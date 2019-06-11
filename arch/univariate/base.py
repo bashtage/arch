@@ -1355,6 +1355,8 @@ class ARCHModelResult(ARCHModelFixedResult):
         Loglikelihood at estimated parameters
     is_pandas : bool
         Whether the original input was pandas
+    optim_output : OptimizeResult
+        Result of log-likelihood optimization
     fit_start : int
         Integer index of the first observation used to fit the model
     fit_stop : int
@@ -1606,6 +1608,18 @@ WARNING: The optimizer did not indicate successful convergence. The message was
         scipy.optimize.minimize result flag
         """
         return self._optim_output.status
+
+    @property
+    def optimization_result(self):
+        """
+        Information about the covergence of theloglikelihood optimization
+
+        Returns
+        -------
+        optim_result : OptimizeResult
+            Result from numerical optimization of the log-likelihood.
+        """
+        return self._optim_output
 
 
 def _align_forecast(f, align):

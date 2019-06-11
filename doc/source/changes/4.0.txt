@@ -1,5 +1,7 @@
 Changes since 4.8.1
 ===================
+- Added :func:`~arch.univariate.base.ARCHModelResult.optimization_result` to
+  simplify checking for convergence of the numerical optimizer (:issue:`292`).
 - Added `random_state` argument to :func:`~arch.univariate.HARX.forecast`
   to allow a :class:`~numpy.random.RandomState` object to be passed in when
   forecasting when `method='bootstrap'`. This allows the repeatable forecast to

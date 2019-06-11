@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+from arch.univariate import recursions_python
 from arch.univariate.distribution import (Distribution, GeneralizedError,
                                           Normal, SkewStudent, StudentsT)
 from arch.univariate.mean import (ARX, HARX, LS, ConstantMean, ZeroMean,
@@ -9,7 +10,6 @@ from arch.univariate.volatility import (ARCH, EGARCH, FIGARCH, GARCH, HARCH,
                                         FixedVariance, MIDASHyperbolic,
                                         RiskMetrics2006)
 
-from arch.univariate import recursions_python
 try:
     from arch.univariate import recursions
 except ImportError:
