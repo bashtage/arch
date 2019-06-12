@@ -593,10 +593,16 @@ class TestBootstrap(TestCase):
         # bca_lims = np.array(output[1])[:, 0]
         # # bca confidence intervals for: 0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975
         # bcajack_ci_90 = [bca_lims[1], bca_lims[-2]]
+        # print('bcajack_ci_90: {}'.format(bcajack_ci_90))
         arch_ci = list(arch_ci[:, -1])
         print('arch ci: {}'.format(arch_ci))
-        bcajack_ci_90 = [0.4275558602676563, 0.5321144646287552]
-        assert_allclose(arch_ci, bcajack_ci_90, atol=0.005)
+        # bcajack should estimate similar "a" using jackknife on the same observations
+        assert_allclose(arch_bs._a, -0.0004068984)
+        # bcajack returns b (or z0) = -0.03635412, but based on different bootstrap samples
+        assert_allclose(arch_bs._b, 0.04764396)
+        # bcajack_ci_90 = [0.42696, 0.53188]
+        saved_arch_ci_90 = [0.42719805360154717, 0.5336561953393736]
+        assert_allclose(arch_ci, saved_arch_ci_90)
 
     def test_bca(self):
         num_bootstrap = 20
