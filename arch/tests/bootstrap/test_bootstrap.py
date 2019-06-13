@@ -563,7 +563,7 @@ class TestBootstrap(TestCase):
         base = self.func(self.x)
         nobs = self.x.shape[0]
         jk = _loo_jackknife(self.func, nobs, [self.x], {})
-        u = (nobs - 1) * (jk - base)
+        u = (nobs - 1) * (jk - jk.mean())
         u2 = np.sum(u * u, 0)
         u3 = np.sum(u * u * u, 0)
         a = u3 / (6.0 * (u2 ** 1.5))
