@@ -546,17 +546,17 @@ class TestBootstrap(TestCase):
         assert_allclose(results, results_series)
 
     def test_bca_against_bcajack(self):
-        import rpy2.rinterface as ri
-        import rpy2.robjects as robjects
-        import rpy2.robjects.numpy2ri
-        from rpy2.robjects.packages import importr
-        rpy2.robjects.numpy2ri.activate()
-        utils = importr('utils')
-        try:
-            bcaboot = importr('bcaboot')
-        except Exception:
-            utils.install_packages('bcaboot', repos='http://cran.us.r-project.org')
-            bcaboot = importr('bcaboot')
+        # import rpy2.rinterface as ri
+        # import rpy2.robjects as robjects
+        # import rpy2.robjects.numpy2ri
+        # from rpy2.robjects.packages import importr
+        # rpy2.robjects.numpy2ri.activate()
+        # utils = importr('utils')
+        # try:
+        #     bcaboot = importr('bcaboot')
+        # except Exception:
+        #     utils.install_packages('bcaboot', repos='http://cran.us.r-project.org')
+        #     bcaboot = importr('bcaboot')
 
         rng_seed_obs = 42
         rs = np.random.RandomState(rng_seed_obs)
@@ -581,24 +581,24 @@ class TestBootstrap(TestCase):
             method='bca',
         )
 
-        # callable from R
-        @ri.rternalize
-        def func_r(x):
-            x = np.asarray(x)
-            _mean = x.mean(axis=0)
-            return float(_mean[1] / _mean[0])
+        # # callable from R
+        # @ri.rternalize
+        # def func_r(x):
+        #     x = np.asarray(x)
+        #     _mean = x.mean(axis=0)
+        #     return float(_mean[1] / _mean[0])
 
-        output = bcaboot.bcajack(x=observations, B=float(B), func=func_r)
-        print(output[1])
-        print(output[2])
-        print('arch [ a: {} ]'.format(arch_bs._a))
+        # output = bcaboot.bcajack(x=observations, B=float(B), func=func_r)
+        # print(output[1])
+        # print(output[2])
+        print('\narch [ a: {} ]'.format(arch_bs._a))
         print('arch [ b: {} ]'.format(arch_bs._b))
+        # bca_lims = np.array(output[1])[:, 0]
+        # # bca confidence intervals for: 0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975
+        # bcajack_ci_90 = [bca_lims[1], bca_lims[-2]]
         arch_ci = list(arch_ci[:, -1])
-        bca_lims = np.array(output[1])[:, 0]
-        # bca confidence intervals for: 0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975
-        bcajack_ci_90 = [bca_lims[1], bca_lims[-2]]
-        print(arch_ci)
-        print(bcajack_ci_90)
+        print('arch ci: {}'.format(arch_ci))
+        bcajack_ci_90 = [0.4275558602676563, 0.5321144646287552]
         assert_allclose(arch_ci, bcajack_ci_90, atol=0.005)
 
     def test_bca(self):
