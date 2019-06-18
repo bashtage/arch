@@ -487,7 +487,7 @@ class IIDBootstrap(object):
                     nobs = self._num_items
                     jk_params = _loo_jackknife(func, nobs, self._args,
                                                self._kwargs)
-                    u = (nobs - 1) * (jk_params - jk_params.mean())
+                    u = jk_params.mean() - jk_params
                     numer = np.sum(u ** 3, 0)
                     denom = 6 * (np.sum(u ** 2, 0) ** (3.0 / 2.0))
                     small = denom < (np.abs(numer) * np.finfo(np.float64).eps)

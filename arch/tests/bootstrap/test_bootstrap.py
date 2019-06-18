@@ -545,6 +545,9 @@ class TestBootstrap(TestCase):
         results_series = _loo_jackknife(self.func, len(y), (y,), {})
         assert_allclose(results, results_series)
 
+    def test_bca_against_bcajack(self):
+        pass
+
     def test_bca(self):
         num_bootstrap = 20
         bs = IIDBootstrap(self.x)
@@ -563,7 +566,7 @@ class TestBootstrap(TestCase):
         base = self.func(self.x)
         nobs = self.x.shape[0]
         jk = _loo_jackknife(self.func, nobs, [self.x], {})
-        u = (nobs - 1) * (jk - jk.mean())
+        u = jk.mean() - jk
         u2 = np.sum(u * u, 0)
         u3 = np.sum(u * u * u, 0)
         a = u3 / (6.0 * (u2 ** 1.5))
