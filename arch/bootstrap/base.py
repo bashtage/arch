@@ -501,6 +501,10 @@ class IIDBootstrap(object):
                 else:
                     a = 0.0
 
+                # TODO: save these parameters?
+                self._a = a
+                self._b = b
+
                 percentiles = stats.norm.cdf(b + (b + norm_quantiles) /
                                              (1.0 - a * (b + norm_quantiles)))
                 percentiles = list(100 * percentiles)

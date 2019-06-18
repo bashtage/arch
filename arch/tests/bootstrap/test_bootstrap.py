@@ -546,7 +546,57 @@ class TestBootstrap(TestCase):
         assert_allclose(results, results_series)
 
     def test_bca_against_bcajack(self):
-        pass
+        import rpy2.rinterface as ri
+        import rpy2.robjects as robjects
+        import rpy2.robjects.numpy2ri
+        from rpy2.robjects.packages import importr
+        rpy2.robjects.numpy2ri.activate()
+        utils = importr('utils')
+        try:
+            bcaboot = importr('bcaboot')
+        except Exception:
+            utils.install_packages('bcaboot', repos='http://cran.us.r-project.org')
+            bcaboot = importr('bcaboot')
+        observations = np.random.multivariate_normal(mean=[8, 4], cov=np.identity(2), size=20)
+        n = observations.shape[0]
+        eta = observations.mean(axis=0)
+        cov = np.identity(2)
+        B = 2000
+        rng_seed = 123
+        rs = np.random.RandomState(rng_seed)
+        arch_bs = IIDBootstrap(observations, random_state=rs)
+        confidence_interval_size = 0.90
+
+        def func(x):
+            sample = x.mean(axis=0)
+            return sample[1] / sample[0]
+
+        arch_ci = arch_bs.conf_int(
+            func=func,
+            reps=B,
+            size=confidence_interval_size,
+            method='bca',
+        )
+
+        # callable from R
+        @ri.rternalize
+        def func_r(x):
+            x = np.asarray(x)
+            _mean = x.mean(axis=0)
+            return float(_mean[1] / _mean[0])
+
+        output = bcaboot.bcajack(x=observations, B=float(B), func=func_r)
+        print(output[1])
+        print(output[2])
+        print('arch [ a: {} ]'.format(arch_bs._a))
+        print('arch [ b: {} ]'.format(arch_bs._b))
+        arch_ci = list(arch_ci[:, -1])
+        bca_lims = np.array(output[1])[:, 0]
+        # bca confidence intervals for: 0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975
+        bcajack_ci_90 = [bca_lims[1], bca_lims[-2]]
+        print(arch_ci)
+        print(bcajack_ci_90)
+        assert_allclose(arch_ci, bcajack_ci_90, atol=0.005)
 
     def test_bca(self):
         num_bootstrap = 20
