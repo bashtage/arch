@@ -561,9 +561,6 @@ class TestBootstrap(TestCase):
         rng_seed_obs = 42
         rs = np.random.RandomState(rng_seed_obs)
         observations = rs.multivariate_normal(mean=[8, 4], cov=np.identity(2), size=20)
-        n = observations.shape[0]
-        eta = observations.mean(axis=0)
-        cov = np.identity(2)
         B = 2000
         rng_seed = 123
         rs = np.random.RandomState(rng_seed)
