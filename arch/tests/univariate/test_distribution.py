@@ -13,6 +13,11 @@ from arch.univariate.distribution import (GeneralizedError, Normal,
                                           SkewStudent, StudentsT)
 
 
+@pytest.fixture(params=[GeneralizedError, SkewStudent, StudentsT])
+def distribution(request):
+    return request.param
+
+
 class TestDistributions(TestCase):
     @classmethod
     def setup_class(cls):
@@ -175,3 +180,12 @@ def test_invalid_params():
     dist = StudentsT()
     with pytest.raises(ValueError):
         dist.ppf(pits, [1.0])
+
+
+def test_no_parameters_error(distribution):
+    dist = distribution()
+    pits = np.arange(1, 100.0) / 100.0
+    with pytest.raises(ValueError):
+        dist.ppf(pits, None)
+    with pytest.raises(ValueError):
+        dist.cdf(pits, None)

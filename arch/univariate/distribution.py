@@ -39,16 +39,17 @@ class Distribution(object):
 
     def _check_constraints(self, params):
         bounds = self.bounds(None)
-        if params is not None:
-            if len(params) != len(bounds):
-                raise ValueError('parameters must have {0} elements'.format(len(bounds)))
-        if params is None or len(bounds) == 0:
+        nparams = 0 if params is None else len(params)
+        if nparams != len(bounds):
+            raise ValueError('parameters must have {0} elements'.format(len(bounds)))
+        if len(bounds) == 0:
             return
         params = asarray(params)
         for p, n, b in zip(params, self.name, bounds):
             if not (b[0] <= p <= b[1]):
                 raise ValueError('{0} does not satisfy the bounds requirement '
                                  'of ({1}, {2})'.format(n, *b))
+        return params
 
     @property
     def random_state(self):
@@ -189,7 +190,8 @@ class Distribution(object):
         pits : ndarray
             Probability-integral-transformed values in the interval (0, 1).
         parameters : ndarray, optional
-            Distribution parameters.
+            Distribution parameters. Use ``None`` for parameterless
+            distributions.
 
         Returns
         -------
@@ -207,8 +209,9 @@ class Distribution(object):
         ----------
         resids : ndarray
             Values at which to evaluate the cdf
-        parameters : ndarray, optional
-            Distribution parameters.
+        parameters : ndarray
+            Distribution parameters. Use ``None`` for parameterless
+            distributions.
 
         Returns
         -------
@@ -402,13 +405,13 @@ class StudentsT(Distribution):
         return ['nu']
 
     def cdf(self, resids, parameters=None):
-        self._check_constraints(parameters)
+        parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = nu / (nu - 2)
         return stats.t(nu, scale=1.0 / sqrt(var)).cdf(resids)
 
     def ppf(self, pits, parameters=None):
-        self._check_constraints(parameters)
+        parameters = self._check_constraints(parameters)
         pits = asarray(pits)
         nu = parameters[0]
         var = nu / (nu - 2)
@@ -606,7 +609,7 @@ class SkewStudent(Distribution):
         return gammaln((eta + 1) / 2) - gammaln(eta / 2) - log(pi * (eta - 2)) / 2
 
     def cdf(self, resids, parameters=None):
-        self._check_constraints(parameters)
+        parameters = self._check_constraints(parameters)
         scalar = isscalar(resids)
         if scalar:
             resids = array([resids])
@@ -627,7 +630,7 @@ class SkewStudent(Distribution):
         return p
 
     def ppf(self, pits, parameters=None):
-        self._check_constraints(parameters)
+        parameters = self._check_constraints(parameters)
         scalar = isscalar(pits)
         if scalar:
             pits = array([pits])
@@ -759,14 +762,14 @@ class GeneralizedError(Distribution):
         return ['nu']
 
     def ppf(self, pits, parameters=None):
-        self._check_constraints(parameters)
+        parameters = self._check_constraints(parameters)
         pits = asarray(pits)
         nu = parameters[0]
         var = stats.gennorm(nu).var()
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).ppf(pits)
 
     def cdf(self, resids, parameters=None):
-        self._check_constraints(parameters)
+        parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = stats.gennorm(nu).var()
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).cdf(resids)

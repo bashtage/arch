@@ -1,10 +1,11 @@
 from __future__ import print_function
 
 from collections import defaultdict
+from distutils.errors import (CCompilerError, DistutilsExecError,
+                              DistutilsPlatformError)
 import fnmatch
 import os
 import sys
-from distutils.errors import CCompilerError, DistutilsExecError, DistutilsPlatformError
 
 import pkg_resources
 from setuptools import Command, Extension, find_packages, setup

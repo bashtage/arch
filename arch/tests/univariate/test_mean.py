@@ -60,6 +60,9 @@ class TestMeanModel(TestCase):
         cls.resids = cls.rng.randn(cls.T)
         zm = ZeroMean()
         zm.volatility = GARCH()
+        seed = 12345
+        random_state = np.random.RandomState(seed)
+        zm.distribution = Normal(random_state=random_state)
         sim_data = zm.simulate(np.array([0.1, 0.1, 0.8]), 1000)
         with pytest.raises(ValueError):
             zm.simulate(np.array([0.1, 0.1, 0.8]), 1000, initial_value=3.0)

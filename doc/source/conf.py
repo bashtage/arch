@@ -7,10 +7,10 @@
 # http://www.sphinx-doc.org/en/master/config
 
 # -- Path setup --------------------------------------------------------------
+from distutils.version import LooseVersion
 import glob
 import os
 import shutil
-from distutils.version import LooseVersion
 
 import arch
 
