@@ -588,8 +588,10 @@ class TestBootstrap(TestCase):
         # output = bcaboot.bcajack(x=observations, B=float(B), func=func_r)
         # print(output[1])
         # print(output[2])
-        print('\narch [ a: {} ]'.format(arch_bs._a))
-        print('arch [ b: {} ]'.format(arch_bs._b))
+        a = arch_bs.get_bca_acceleration(func)
+        b = arch_bs.get_bca_bias()
+        print('\narch [ a: {} ]'.format(a))
+        print('arch [ b: {} ]'.format(b))
         # bca_lims = np.array(output[1])[:, 0]
         # # bca confidence intervals for: 0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975
         # bcajack_ci_90 = [bca_lims[1], bca_lims[-2]]
@@ -597,9 +599,9 @@ class TestBootstrap(TestCase):
         arch_ci = list(arch_ci[:, -1])
         print('arch ci: {}'.format(arch_ci))
         # bcajack should estimate similar "a" using jackknife on the same observations
-        assert_allclose(arch_bs._a, -0.0004068984)
+        assert_allclose(a, -0.0004068984)
         # bcajack returns b (or z0) = -0.03635412, but based on different bootstrap samples
-        assert_allclose(arch_bs._b, 0.04764396)
+        assert_allclose(b, 0.04764396)
         # bcajack_ci_90 = [0.42696, 0.53188]
         saved_arch_ci_90 = [0.42719805360154717, 0.5336561953393736]
         assert_allclose(arch_ci, saved_arch_ci_90)
