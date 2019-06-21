@@ -545,6 +545,67 @@ class TestBootstrap(TestCase):
         results_series = _loo_jackknife(self.func, len(y), (y,), {})
         assert_allclose(results, results_series)
 
+    def test_bca_against_bcajack(self):
+        # import rpy2.rinterface as ri
+        # import rpy2.robjects as robjects
+        # import rpy2.robjects.numpy2ri
+        # from rpy2.robjects.packages import importr
+        # rpy2.robjects.numpy2ri.activate()
+        # utils = importr('utils')
+        # try:
+        #     bcaboot = importr('bcaboot')
+        # except Exception:
+        #     utils.install_packages('bcaboot', repos='http://cran.us.r-project.org')
+        #     bcaboot = importr('bcaboot')
+
+        rng_seed_obs = 42
+        rs = np.random.RandomState(rng_seed_obs)
+        observations = rs.multivariate_normal(mean=[8, 4], cov=np.identity(2), size=20)
+        B = 2000
+        rng_seed = 123
+        rs = np.random.RandomState(rng_seed)
+        arch_bs = IIDBootstrap(observations, random_state=rs)
+        confidence_interval_size = 0.90
+
+        def func(x):
+            sample = x.mean(axis=0)
+            return sample[1] / sample[0]
+
+        arch_ci = arch_bs.conf_int(
+            func=func,
+            reps=B,
+            size=confidence_interval_size,
+            method='bca',
+        )
+
+        # # callable from R
+        # @ri.rternalize
+        # def func_r(x):
+        #     x = np.asarray(x)
+        #     _mean = x.mean(axis=0)
+        #     return float(_mean[1] / _mean[0])
+
+        # output = bcaboot.bcajack(x=observations, B=float(B), func=func_r)
+        # print(output[1])
+        # print(output[2])
+        a = arch_bs.get_bca_acceleration(func)
+        b = arch_bs.get_bca_bias()
+        print('\narch [ a: {} ]'.format(a))
+        print('arch [ b: {} ]'.format(b))
+        # bca_lims = np.array(output[1])[:, 0]
+        # # bca confidence intervals for: 0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975
+        # bcajack_ci_90 = [bca_lims[1], bca_lims[-2]]
+        # print('bcajack_ci_90: {}'.format(bcajack_ci_90))
+        arch_ci = list(arch_ci[:, -1])
+        print('arch ci: {}'.format(arch_ci))
+        # bcajack should estimate similar "a" using jackknife on the same observations
+        assert_allclose(a, -0.0004068984)
+        # bcajack returns b (or z0) = -0.03635412, but based on different bootstrap samples
+        assert_allclose(b, 0.04764396)
+        # bcajack_ci_90 = [0.42696, 0.53188]
+        saved_arch_ci_90 = [0.42719805360154717, 0.5336561953393736]
+        assert_allclose(arch_ci, saved_arch_ci_90)
+
     def test_bca(self):
         num_bootstrap = 20
         bs = IIDBootstrap(self.x)
@@ -563,7 +624,7 @@ class TestBootstrap(TestCase):
         base = self.func(self.x)
         nobs = self.x.shape[0]
         jk = _loo_jackknife(self.func, nobs, [self.x], {})
-        u = (nobs - 1) * (jk - jk.mean())
+        u = jk.mean() - jk
         u2 = np.sum(u * u, 0)
         u3 = np.sum(u * u * u, 0)
         a = u3 / (6.0 * (u2 ** 1.5))

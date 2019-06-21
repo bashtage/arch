@@ -20,6 +20,35 @@ except ImportError:  # pragma: no cover
     from arch.bootstrap._samplers_python import stationary_bootstrap_sample
 
 
+def _get_acceleration(jk_params):
+    """
+    Estimates the BCa acceleration parameter using jackknife estimates
+    of theta.
+
+    Parameters
+    ----------
+    jk_params : ndarray
+        Array containing the jackknife results where row i corresponds to
+        leaving observation i out of the sample. Returned by _loo_jackknife.
+
+    Returns
+    -------
+    a : float
+        Value of the acceleration parameter "a" used in the BCa bootstrap.
+    """
+    u = jk_params.mean() - jk_params
+    numer = np.sum(u**3, 0)
+    denom = 6 * (np.sum(u**2, 0)**(3.0 / 2.0))
+    small = denom < (np.abs(numer) * np.finfo(np.float64).eps)
+    if small.any():
+        message = 'Jackknife variance estimate {jk_var} is ' \
+                    'too small to use BCa'
+        raise RuntimeError(message.format(jk_var=denom))
+    a = numer / denom
+    a = np.atleast_1d(a)
+    return a[:, None]
+
+
 def _loo_jackknife(func, nobs, args, kwargs):
     """
     Leave one out jackknife estimation
@@ -480,27 +509,11 @@ class IIDBootstrap(object):
             if method in ('debiased', 'bc', 'bias-corrected', 'bca'):
                 # bias corrected uses modified percentiles, but is
                 # otherwise identical to the percentile method
-                p = (results < base).mean(axis=0)
-                b = stats.norm.ppf(p)
-                b = b[:, None]
+                b = self.get_bca_bias()
                 if method == 'bca':
-                    nobs = self._num_items
-                    jk_params = _loo_jackknife(func, nobs, self._args,
-                                               self._kwargs)
-                    u = (nobs - 1) * (jk_params - jk_params.mean())
-                    numer = np.sum(u ** 3, 0)
-                    denom = 6 * (np.sum(u ** 2, 0) ** (3.0 / 2.0))
-                    small = denom < (np.abs(numer) * np.finfo(np.float64).eps)
-                    if small.any():
-                        message = 'Jackknife variance estimate {jk_var} is ' \
-                                  'too small to use BCa'
-                        raise RuntimeError(message.format(jk_var=denom))
-                    a = numer / denom
-                    a = np.atleast_1d(a)
-                    a = a[:, None]
+                    a = self.get_bca_acceleration(func)
                 else:
                     a = 0.0
-
                 percentiles = stats.norm.cdf(b + (b + norm_quantiles) /
                                              (1.0 - a * (b + norm_quantiles)))
                 percentiles = list(100 * percentiles)
@@ -542,6 +555,16 @@ class IIDBootstrap(object):
             lower.fill(-1 * np.inf)
 
         return np.vstack((lower, upper))
+
+    def get_bca_bias(self):
+        p = (self._results < self._base).mean(axis=0)
+        b = stats.norm.ppf(p)
+        return b[:, None]
+
+    def get_bca_acceleration(self, func):
+        nobs = self._num_items
+        jk_params = _loo_jackknife(func, nobs, self._args, self._kwargs)
+        return _get_acceleration(jk_params)
 
     def clone(self, *args, **kwargs):
         """
