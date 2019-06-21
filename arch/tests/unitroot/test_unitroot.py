@@ -3,6 +3,7 @@
 from __future__ import division, print_function
 
 from arch.compat.python import iteritems
+from arch.compat.statsmodels import dataset_loader
 
 from collections import namedtuple
 import os
@@ -39,7 +40,8 @@ class TestUnitRoot(object):
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)
-        data = macrodata.load().data
+
+        data = dataset_loader(macrodata)
         cls.cpi = log(data['cpi'])
         cls.realgdp = data['realgdp']
         cls.inflation = diff(cls.cpi)
@@ -289,7 +291,7 @@ class TestAutolagOLS(object):
         cls.x = cls.x[100:]
         cls.z = cls.y + cls.x.sum(1)
 
-        cls.cpi = log(macrodata.load().data['cpi'])
+        cls.cpi = log(dataset_loader(macrodata)['cpi'])
         cls.inflation = diff(cls.cpi)
         cls.inflation_change = diff(cls.inflation)
 
@@ -454,11 +456,11 @@ def test_adf_short_timeseries():
     assert adf.lags == 1
 
 
-kpss_autolag_data = ((macrodata.load().data['realgdp'], 'c', 9),
-                     (sunspots.load().data['SUNACTIVITY'], 'c', 7),
-                     (nile.load().data['volume'], 'c', 5),
-                     (randhie.load().data['lncoins'], 'ct', 75),
-                     (modechoice.load().data['invt'], 'ct', 18))
+kpss_autolag_data = ((dataset_loader(macrodata)['realgdp'], 'c', 9),
+                     (dataset_loader(sunspots)['SUNACTIVITY'], 'c', 7),
+                     (dataset_loader(nile)['volume'], 'c', 5),
+                     (dataset_loader(randhie)['lncoins'], 'ct', 75),
+                     (dataset_loader(modechoice)['invt'], 'ct', 18))
 
 
 @pytest.mark.filterwarnings('ignore::DeprecationWarning')
