@@ -793,6 +793,9 @@ def test_unequal_bs():
     variance = bs.var(mean_diff)
     assert variance > 0
 
+    with pytest.raises(ValueError, match='BCa cannot be applied'):
+        bs.conf_int(mean_diff, method='bca')
+
 
 def test_unequal_bs_kwargs():
     def mean_diff(x, y):

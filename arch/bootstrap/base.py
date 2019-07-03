@@ -511,6 +511,12 @@ class IIDBootstrap(object):
                 # otherwise identical to the percentile method
                 b = self.get_bca_bias()
                 if method == 'bca':
+                    lens = [len(arg) for arg in self._args] + \
+                           [len(kwarg) for kwarg in self._kwargs.values()]
+                    if min(lens) != max(lens):
+                        raise ValueError('BCa cannot be applied to statistics '
+                                         'computed from datasets with '
+                                         'different lengths')
                     a = self.get_bca_acceleration(func)
                 else:
                     a = 0.0
