@@ -509,7 +509,7 @@ class IIDBootstrap(object):
             if method in ('debiased', 'bc', 'bias-corrected', 'bca'):
                 # bias corrected uses modified percentiles, but is
                 # otherwise identical to the percentile method
-                b = self.get_bca_bias()
+                b = self._bca_bias()
                 if method == 'bca':
                     lens = [len(arg) for arg in self._args] + \
                            [len(kwarg) for kwarg in self._kwargs.values()]
@@ -517,7 +517,7 @@ class IIDBootstrap(object):
                         raise ValueError('BCa cannot be applied to statistics '
                                          'computed from datasets with '
                                          'different lengths')
-                    a = self.get_bca_acceleration(func)
+                    a = self._bca_acceleration(func)
                 else:
                     a = 0.0
                 percentiles = stats.norm.cdf(b + (b + norm_quantiles) /
@@ -562,12 +562,12 @@ class IIDBootstrap(object):
 
         return np.vstack((lower, upper))
 
-    def get_bca_bias(self):
+    def _bca_bias(self):
         p = (self._results < self._base).mean(axis=0)
         b = stats.norm.ppf(p)
         return b[:, None]
 
-    def get_bca_acceleration(self, func):
+    def _bca_acceleration(self, func):
         nobs = self._num_items
         jk_params = _loo_jackknife(func, nobs, self._args, self._kwargs)
         return _get_acceleration(jk_params)

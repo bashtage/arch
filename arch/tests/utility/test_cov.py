@@ -1,12 +1,14 @@
 from __future__ import absolute_import, division
 
+from arch.compat.statsmodels import dataset_loader
+
 from unittest import TestCase
 
 from numpy import diff, log
 from numpy.random import RandomState
 from numpy.testing import assert_almost_equal
 import pytest
-from statsmodels.datasets.macrodata import load
+from statsmodels.datasets import macrodata
 
 from arch.utility import cov_nw
 
@@ -17,7 +19,7 @@ class TestVarNW(TestCase):
     def setup_class(cls):
 
         cls.rng = RandomState(12345)
-        cls.cpi = log(load().data['cpi'])
+        cls.cpi = log(dataset_loader(macrodata)['cpi'])
         cls.inflation = diff(cls.cpi)
 
     def test_cov_nw(self):
