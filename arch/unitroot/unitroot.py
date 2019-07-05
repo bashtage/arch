@@ -1736,6 +1736,10 @@ def auto_bandwidth(y, kernel="ba"):
         The Bandwidth     
     """
 
+    y = np.asarray(y)
+    if y.ndim!=1 or y.shape[0]<2:
+        raise ValueError('Data must be of dimension 1 and contain more than one observation')
+        
     n = int(4*((len(y)/100)**(2/9)))       
     sig = (n+1)*[0]
 
