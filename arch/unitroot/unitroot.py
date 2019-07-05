@@ -1723,29 +1723,29 @@ def auto_bandwidth(y, kernel="ba"):
     ----------
     y : {ndarray, Series}
     Data on which to apply the bandwidth selction
-     
+
     kernel : {'ba', 'pa', 'qs'}
     The kernel function to use for selecting the bandwidth
       - "ba": Bartlett kernel (default value)
       - "pa": Parzen kernel
       - "qs": Quadratic Spectral kernel
-     
+
     Returns
     -------
     bandwidth : float
         The Bandwidth     
     """
 
-    n = int(4 * ((len(y)/100) ** (2/9)))       
+    n = int(4*((len(y)/100)**(2/9)))       
     sig = (n+1)*[0]
 
     for i in range(n+1):
-        sig[i] = np.sum(np.dot(y[i:], y[:len(y) - i]) )
+        sig[i] = np.sum(np.dot(y[i:], y[:len(y)-i]))
 
-    sigma_m1 = sig[1:len(sig)] #sigma without the 1st element    
-    s0 = sig[0] + 2 * np.sum(sigma_m1)         
+    sigma_m1 = sig[1:len(sig)]  #sigma without the 1st element    
+    s0 = sig[0]+2*np.sum(sigma_m1)         
 
-    q=0
+    q = 0
     gamma = 0
 
     if kernel == "ba":
@@ -1757,18 +1757,18 @@ def auto_bandwidth(y, kernel="ba"):
     elif kernel in ["pa", "qs"]:
         s2 = 0
         for j in range(len(sigma_m1)):
-            s2 += ((j+1)** 2)*sigma_m1[j]  
+            s2 += ((j+1)**2)*sigma_m1[j]  
         s2 *= 2
         q = 2  
-    t_power = 1 / (2 * q + 1)    
+    t_power = 1/(2*q+1)    
 
     if kernel == "ba":        
         gamma = 1.1447 * (((s1 / s0)** 2)**t_power)
     elif kernel == "pa" :                 
-         gamma = 2.6614 * (((s2 / s0)** 2)**t_power)
+        gamma = 2.6614 * (((s2 / s0)** 2)**t_power)
     elif kernel == "qs":         
-         gamma = 1.3221 * (((s2 / s0)** 2)**t_power)
-        
+        gamma = 1.3221 * (((s2 / s0)** 2)**t_power)
+
     bandwidth = gamma * np.power(len(y), t_power)
 
     return bandwidth
