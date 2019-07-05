@@ -1715,62 +1715,60 @@ def kpss_crit(stat, trend='c'):
 
     return pvalue, crit_value
 
-  def BandWidthNW(y, kernel = "ba"):
-    '''
-    | Automatic bandwidth selection of Andrews (1991) and of Newey and West (1994)
-    | 
-    | y: Data on which to apply the bandwidth selction
-    | kernel: The kernel function to use for selecting the bandwidth
-    |  - "ba": Bartlett kernel (default value)
-    |  - "pa": Parzen kernel
-    |  - "qs": Quadratic Spectral kernel
-    | 
-    | return the Bandwidth
-    '''
+def auto_bandwidth(y, kernel="ba"):
+    """
+    Automatic bandwidth selection of Andrews (1991) and of Newey and West (1994)
+    
+    Parameters
+    ----------
+    y : {ndarray, Series}
+    Data on which to apply the bandwidth selction
+     
+    kernel : {'ba', 'pa', 'qs'}
+    The kernel function to use for selecting the bandwidth
+      - "ba": Bartlett kernel (default value)
+      - "pa": Parzen kernel
+      - "qs": Quadratic Spectral kernel
+     
+    Returns
+    -------
+    bandwidth : float
+        The Bandwidth     
+    """
 
     n = int(4 * np.power(len(y)/100, 2/9))       
     sig = (n+1)*[0]
 
     for i in range(n+1):
-
         sig[i] = np.sum(np.dot(y[i:], y[:len(y) - i]) )
 
-    sigmaM1 = sig[1:len(sig)] #sigma without the 1st element    
-    s0 = sig[0] + 2 * np.sum(sigmaM1)         
+    sigma_m1 = sig[1:len(sig)] #sigma without the 1st element    
+    s0 = sig[0] + 2 * np.sum(sigma_m1)         
 
     q=0
     gamma = 0
 
     if kernel == "ba":
-
         s1 = 0
-
-        for j in range(len(sigmaM1)):
-            s1 += (j+1)*sigmaM1[j] 
-
+        for j in range(len(sigma_m1)):
+            s1 += (j+1)*sigma_m1[j] 
         s1 *= 2
         q = 1    
-
     elif kernel in ["pa", "qs"]:
-
         s2 = 0
-
-        for j in range(len(sigmaM1)):
-            s2 += np.power((j+1), 2)*sigmaM1[j] 
-
+        for j in range(len(sigma_m1)):
+            s2 += np.power((j+1), 2)*sigma_m1[j] 
         s2 *= 2
         q = 2  
-
-
-    Tpower = 1 / (2 * q + 1)    
+    t_power = 1 / (2 * q + 1)    
 
     if kernel == "ba":        
-        gamma = 1.1447 * np.power((np.power(s1 / s0, 2)),Tpower)            
+        gamma = 1.1447 * np.power((np.power(s1 / s0, 2)),t_power)            
     elif kernel == "pa" :        
-         gamma = 2.6614 * np.power((np.power(s2 / s0, 2)),Tpower)         
+         gamma = 2.6614 * np.power((np.power(s2 / s0, 2)),t_power)         
     elif kernel == "qs":        
-         gamma = 1.3221 * np.power((np.power(s2 / s0, 2)),Tpower)   
+         gamma = 1.3221 * np.power((np.power(s2 / s0, 2)),t_power)   
 
-    bandwidth = gamma * np.power(len(y), Tpower)
+    bandwidth = gamma * np.power(len(y), t_power)
 
     return bandwidth
