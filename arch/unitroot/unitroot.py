@@ -1736,7 +1736,7 @@ def auto_bandwidth(y, kernel="ba"):
         The Bandwidth     
     """
 
-    n = int(4 * np.power(len(y)/100, 2/9))       
+    n = int(4 * ((len(y)/100) ** (2/9)))       
     sig = (n+1)*[0]
 
     for i in range(n+1):
@@ -1757,18 +1757,18 @@ def auto_bandwidth(y, kernel="ba"):
     elif kernel in ["pa", "qs"]:
         s2 = 0
         for j in range(len(sigma_m1)):
-            s2 += np.power((j+1), 2)*sigma_m1[j] 
+            s2 += ((j+1)** 2)*sigma_m1[j]  
         s2 *= 2
         q = 2  
     t_power = 1 / (2 * q + 1)    
 
     if kernel == "ba":        
-        gamma = 1.1447 * np.power((np.power(s1 / s0, 2)),t_power)            
-    elif kernel == "pa" :        
-         gamma = 2.6614 * np.power((np.power(s2 / s0, 2)),t_power)         
-    elif kernel == "qs":        
-         gamma = 1.3221 * np.power((np.power(s2 / s0, 2)),t_power)   
-
+        gamma = 1.1447 * (((s1 / s0)** 2)**t_power)
+    elif kernel == "pa" :                 
+         gamma = 2.6614 * (((s2 / s0)** 2)**t_power)
+    elif kernel == "qs":         
+         gamma = 1.3221 * (((s2 / s0)** 2)**t_power)
+        
     bandwidth = gamma * np.power(len(y), t_power)
 
     return bandwidth
