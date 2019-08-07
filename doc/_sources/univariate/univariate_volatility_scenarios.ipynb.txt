@@ -4,7 +4,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "# Volatilty Scenarios\n",
+    "# Volatility Scenarios\n",
     "\n",
     "Custom random-number generators can be used to implement scenarios where shock follow a particular pattern.  For example, suppose you wanted to find out what would happen if there were 5 days of shocks that were larger than average.  In most circumstances, the shocks in a GARCH model have unit variance.  This could be changed so that the first 5 shocks have variance 4, or twice the standard deviation. \n",
     "\n",

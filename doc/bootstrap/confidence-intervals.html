@@ -14,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Confidence Intervals &#8212; arch 4.8.1+25.g6cca064 documentation</title>
+    <title>Confidence Intervals &#8212; arch 4.8.1+27.gd2d3454 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="bootstrap_examples.html" title="Bootstrap Examples"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" accesskey="U">Bootstrapping</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.8.1 (+25)</a>
+    ../index.html" class="text-logo">arch 4.8.1 (+27)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -165,7 +165,7 @@ be constructed:</p>
 <div class="section" id="setup">
 <h2><a class="toc-backref" href="#id1">Setup</a><a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
 <p>All examples will construct confidence intervals for the Sharpe ratio of the
-S&amp;P 500, which is the ratio of the assumalized mean to the annualized standard
+S&amp;P 500, which is the ratio of the annualized mean to the annualized standard
 deviation.  The parameters will be the annualized mean, the annualized standard
 deviation and the Sharpe ratio.</p>
 <p>The setup makes use of return data downloaded from Yahoo!</p>
@@ -202,7 +202,7 @@ non-parametric; these only make use of parameter estimates from both the
 original data as well as the resampled data.  Semi-parametric mix the original
 data with a limited form of resampling, usually for residuals.  Finally,
 parametric bootstrap confidence intervals make use of a parametric distribution
-to construct “as-if” exact confidence intervals.</p>
+to construct &quot;as-if&quot; exact confidence intervals.</p>
 <div class="section" id="nonparametric-confidence-intervals">
 <h3><a class="toc-backref" href="#id3">Nonparametric Confidence Intervals</a><a class="headerlink" href="#nonparametric-confidence-intervals" title="Permalink to this headline">¶</a></h3>
 <p>Non-parametric sampling is the simplest method to construct confidence
@@ -262,7 +262,7 @@ computed element-by-element.</p>
 </div>
 <div class="section" id="percentile-percentile">
 <h3><a class="toc-backref" href="#id8">Percentile (<code class="docutils literal notranslate"><span class="pre">percentile</span></code>)</a><a class="headerlink" href="#percentile-percentile" title="Permalink to this headline">¶</a></h3>
-<p>The percentile method directly constructs condifence intervals from the emprical
+<p>The percentile method directly constructs confidence intervals from the empirical
 CDF of the bootstrap parameter estimates, <span class="math notranslate nohighlight">\(\hat{\theta}_b^\star\)</span>.
 The confidence interval is then defined.</p>
 <div class="math notranslate nohighlight">
@@ -279,7 +279,7 @@ distribution.</p>
 </div>
 <div class="section" id="asymptotic-normal-approximation-norm-cov-or-var">
 <h3><a class="toc-backref" href="#id9">Asymptotic Normal Approximation (<code class="docutils literal notranslate"><span class="pre">norm</span></code>, <code class="docutils literal notranslate"><span class="pre">cov</span></code> or <code class="docutils literal notranslate"><span class="pre">var</span></code>)</a><a class="headerlink" href="#asymptotic-normal-approximation-norm-cov-or-var" title="Permalink to this headline">¶</a></h3>
-<p>The asymptotic normal approximation method estimates the covairance of
+<p>The asymptotic normal approximation method estimates the covariance of
 the parameters and then combines this with the usual quantiles from a normal
 distribution.  The confidence interval is then</p>
 <div class="math notranslate nohighlight">
@@ -432,7 +432,7 @@ are</p>
         <li class="right" >
           <a href="bootstrap_examples.html" title="Bootstrap Examples"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="bootstrap.html" >Bootstrapping</a> &#187;</li> 
       </ul>
     </div>

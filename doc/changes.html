@@ -14,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Change Logs &#8212; arch 4.8.1+25.g6cca064 documentation</title>
+    <title>Change Logs &#8212; arch 4.8.1+27.gd2d3454 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="unitroot/tests.html" title="The Unit Root Tests"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">arch 4.8.1 (+25)</a>
+    index.html" class="text-logo">arch 4.8.1 (+27)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -123,13 +123,22 @@
 <div class="section" id="changes-since-4-8-1">
 <h2>Changes since 4.8.1<a class="headerlink" href="#changes-since-4-8-1" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
+<li><p>Added a parameter <cite>rescale</cite> to <code class="xref py py-func docutils literal notranslate"><span class="pre">arch_model()</span></code>
+that allows the estimator to rescale data if it may help parameter
+estimation. If <cite>rescale=True</cite>, then the data will be rescaled by a power
+of 10 (e.g., 10, 100, or 1000) to produce a series with a residual
+variance between 1 and 1000. The model is then estimated on the rescaled
+data. The scale is reported <code class="xref py py-func docutils literal notranslate"><span class="pre">scale()</span></code>.
+If <cite>rescale=None</cite>, a warning is produced if the data appear to be poorly
+scaled, but no change of scale is applied. If <cite>rescale=False</cite>, no scale
+change is applied and no warning is issued.</p></li>
 <li><p>Fixed a bug when using the BCA bootstrap method where the leave-one-out
 jackknife used the wrong centering variable (<a class="reference external" href="https://github.com/bashtage/arch/issues/288">GH288</a>).</p></li>
 <li><p>Added <code class="xref py py-func docutils literal notranslate"><span class="pre">optimization_result()</span></code> to
 simplify checking for convergence of the numerical optimizer (<a class="reference external" href="https://github.com/bashtage/arch/issues/292">GH292</a>).</p></li>
 <li><p>Added <cite>random_state</cite> argument to <a class="reference internal" href="univariate/mean.html#arch.univariate.HARX.forecast" title="arch.univariate.HARX.forecast"><code class="xref py py-func docutils literal notranslate"><span class="pre">forecast()</span></code></a>
-to allow a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.RandomState.html#numpy.random.RandomState" title="(in NumPy v1.16)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a> object to be passed in when
-forecasting when <cite>method=’bootstrap’</cite>. This allows the repeatable forecast to
+to allow a <code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code> object to be passed in when
+forecasting when <cite>method='bootstrap'</cite>. This allows the repeatable forecast to
 be produced (<a class="reference external" href="https://github.com/bashtage/arch/issues/290">GH290</a>).</p></li>
 <li><p>Fixed a bug in <a class="reference internal" href="unitroot/tests.html#arch.unitroot.VarianceRatio" title="arch.unitroot.VarianceRatio"><code class="xref py py-class docutils literal notranslate"><span class="pre">VarianceRatio</span></code></a> that used the wrong
 variance in nonrobust inference with overlapping samples (<a class="reference external" href="https://github.com/bashtage/arch/issues/286">GH286</a>).</p></li>
@@ -231,7 +240,7 @@ fitting the model.</p></li>
 <li><p>Added volatility hedgehog plot</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">fix</span></code> to arch models which allows for user specified parameters
 instead of estimated parameters.</p></li>
-<li><p>Added Hansen’s Skew T distribution to distribution (Stanislav Khrapov)</p></li>
+<li><p>Added Hansen's Skew T distribution to distribution (Stanislav Khrapov)</p></li>
 <li><p>Updated IPython notebooks to latest IPython version</p></li>
 <li><p>Bug and typo fixes to IPython notebooks</p></li>
 <li><p>Changed MCS to give a pvalue of 1.0 to best model.  Previously was NaN</p></li>
@@ -303,7 +312,7 @@ functions such as <cite>conf_int</cite> or <cite>cov</cite>, or as a low level i
         <li class="right" >
           <a href="unitroot/tests.html" title="The Unit Root Tests"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

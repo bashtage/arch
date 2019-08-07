@@ -14,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Volatility Processes &#8212; arch 4.8.1+25.g6cca064 documentation</title>
+    <title>Volatility Processes &#8212; arch 4.8.1+27.gd2d3454 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="mean.html" title="Mean Models"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.8.1 (+25)</a>
+    ../index.html" class="text-logo">arch 4.8.1 (+27)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -142,10 +142,10 @@ volatility.</p>
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+<dd class="field-even"><p><strong>backcast</strong> -- Value to use in backcasting in the volatility recursion</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
@@ -159,10 +159,10 @@ volatility.</p>
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+<dd class="field-even"><p><strong>bounds</strong> -- List of bounds where each element is (lower, upper).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
@@ -177,12 +177,12 @@ volatility.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
-<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
-<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
-<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+<li><p><strong>parameters</strong> (<em>ndarray</em>) -- Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) -- Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) -- Value to use when initializing ARCH recursion. Can be an ndarray
 when the model contains multiple components.</p></li>
-<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) -- Array containing columns of lower and upper bounds</p></li>
 </ul>
 </dd>
 </dl>
@@ -195,9 +195,9 @@ when the model contains multiple components.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+<li><p><strong>A</strong> (<em>ndarray</em>) -- Parameters loadings in constraint. Shape is number of constraints
 by number of parameters</p></li>
-<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) -- Constraint values, one for each constraint</p></li>
 </ul>
 </p>
 </dd>
@@ -214,20 +214,20 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
-<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
-<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) -- Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) -- Callable function that takes a single integer input and returns
 a vector of random numbers</p></li>
-<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) -- Number of additional observations to generate when initializing
 the simulation</p></li>
-<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) -- Scalar or array of initial values to use when initializing the
 simulation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
-<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) -- The simulated variance</p></li>
 </ul>
 </p>
 </dd>
@@ -240,11 +240,11 @@ simulation</p></li>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Array of (approximate) residuals to use when computing starting
 values</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+<dd class="field-even"><p><strong>sv</strong> -- Array of starting values</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -276,10 +276,10 @@ values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the symmetric innovation</p></li>
-<li><p><strong>o</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the asymmetric innovation</p></li>
-<li><p><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the lagged (transformed) conditional variance</p></li>
-<li><p><strong>power</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Power to use with the innovations, abs(e) ** power.  Default is 2.0, which produces ARCH
+<li><p><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Order of the symmetric innovation</p></li>
+<li><p><strong>o</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Order of the asymmetric innovation</p></li>
+<li><p><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Order of the lagged (transformed) conditional variance</p></li>
+<li><p><strong>power</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) -- Power to use with the innovations, abs(e) ** power.  Default is 2.0, which produces ARCH
 and related models. Using 1.0 produces AVARCH and related models.  Other powers can be
 specified, although these should be strictly positive, and usually larger than 0.25.</p></li>
 </ul>
@@ -325,10 +325,10 @@ I\left[\epsilon_{t-j}&lt;0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}\
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+<dd class="field-even"><p><strong>backcast</strong> -- Value to use in backcasting in the volatility recursion</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
@@ -342,10 +342,10 @@ I\left[\epsilon_{t-j}&lt;0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}\
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+<dd class="field-even"><p><strong>bounds</strong> -- List of bounds where each element is (lower, upper).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
@@ -360,12 +360,12 @@ I\left[\epsilon_{t-j}&lt;0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}\
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
-<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
-<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
-<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+<li><p><strong>parameters</strong> (<em>ndarray</em>) -- Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) -- Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) -- Value to use when initializing ARCH recursion. Can be an ndarray
 when the model contains multiple components.</p></li>
-<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) -- Array containing columns of lower and upper bounds</p></li>
 </ul>
 </dd>
 </dl>
@@ -378,9 +378,9 @@ when the model contains multiple components.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+<li><p><strong>A</strong> (<em>ndarray</em>) -- Parameters loadings in constraint. Shape is number of constraints
 by number of parameters</p></li>
-<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) -- Constraint values, one for each constraint</p></li>
 </ul>
 </p>
 </dd>
@@ -397,20 +397,20 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
-<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
-<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) -- Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) -- Callable function that takes a single integer input and returns
 a vector of random numbers</p></li>
-<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) -- Number of additional observations to generate when initializing
 the simulation</p></li>
-<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) -- Scalar or array of initial values to use when initializing the
 simulation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
-<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) -- The simulated variance</p></li>
 </ul>
 </p>
 </dd>
@@ -423,11 +423,11 @@ simulation</p></li>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Array of (approximate) residuals to use when computing starting
 values</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+<dd class="field-even"><p><strong>sv</strong> -- Array of starting values</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -447,13 +447,13 @@ values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>p</strong> (<em>{0</em><em>, </em><em>1}</em>) – Order of the symmetric innovation</p></li>
-<li><p><strong>q</strong> (<em>{0</em><em>, </em><em>1}</em>) – Order of the lagged (transformed) conditional variance</p></li>
-<li><p><strong>power</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Power to use with the innovations, abs(e) ** power.  Default is 2.0,
+<li><p><strong>p</strong> (<em>{0</em><em>, </em><em>1}</em>) -- Order of the symmetric innovation</p></li>
+<li><p><strong>q</strong> (<em>{0</em><em>, </em><em>1}</em>) -- Order of the lagged (transformed) conditional variance</p></li>
+<li><p><strong>power</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) -- Power to use with the innovations, abs(e) ** power.  Default is 2.0,
 which produces FIGARCH and related models. Using 1.0 produces
 FIAVARCH and related models.  Other powers can be specified, although
 these should be strictly positive, and usually larger than 0.25.</p></li>
-<li><p><strong>truncation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Truncation point to use in ARCH(<span class="math notranslate nohighlight">\(\infty\)</span>) representation.
+<li><p><strong>truncation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) -- Truncation point to use in ARCH(<span class="math notranslate nohighlight">\(\infty\)</span>) representation.
 Default is 1000.</p></li>
 </ul>
 </dd>
@@ -511,10 +511,10 @@ where <span class="math notranslate nohighlight">\(\epsilon_t^2\)</span> is repl
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+<dd class="field-even"><p><strong>backcast</strong> -- Value to use in backcasting in the volatility recursion</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
@@ -528,10 +528,10 @@ where <span class="math notranslate nohighlight">\(\epsilon_t^2\)</span> is repl
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+<dd class="field-even"><p><strong>bounds</strong> -- List of bounds where each element is (lower, upper).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
@@ -546,12 +546,12 @@ where <span class="math notranslate nohighlight">\(\epsilon_t^2\)</span> is repl
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
-<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
-<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
-<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+<li><p><strong>parameters</strong> (<em>ndarray</em>) -- Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) -- Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) -- Value to use when initializing ARCH recursion. Can be an ndarray
 when the model contains multiple components.</p></li>
-<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) -- Array containing columns of lower and upper bounds</p></li>
 </ul>
 </dd>
 </dl>
@@ -564,9 +564,9 @@ when the model contains multiple components.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+<li><p><strong>A</strong> (<em>ndarray</em>) -- Parameters loadings in constraint. Shape is number of constraints
 by number of parameters</p></li>
-<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) -- Constraint values, one for each constraint</p></li>
 </ul>
 </p>
 </dd>
@@ -583,20 +583,20 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
-<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
-<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) -- Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) -- Callable function that takes a single integer input and returns
 a vector of random numbers</p></li>
-<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) -- Number of additional observations to generate when initializing
 the simulation</p></li>
-<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) -- Scalar or array of initial values to use when initializing the
 simulation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
-<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) -- The simulated variance</p></li>
 </ul>
 </p>
 </dd>
@@ -609,11 +609,11 @@ simulation</p></li>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Array of (approximate) residuals to use when computing starting
 values</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+<dd class="field-even"><p><strong>sv</strong> -- Array of starting values</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -633,9 +633,9 @@ values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the symmetric innovation</p></li>
-<li><p><strong>o</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the asymmetric innovation</p></li>
-<li><p><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the lagged (transformed) conditional variance</p></li>
+<li><p><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Order of the symmetric innovation</p></li>
+<li><p><strong>o</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Order of the asymmetric innovation</p></li>
+<li><p><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Order of the lagged (transformed) conditional variance</p></li>
 </ul>
 </dd>
 </dl>
@@ -681,10 +681,10 @@ values</p>
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+<dd class="field-even"><p><strong>backcast</strong> -- Value to use in backcasting in the volatility recursion</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
@@ -698,10 +698,10 @@ values</p>
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+<dd class="field-even"><p><strong>bounds</strong> -- List of bounds where each element is (lower, upper).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
@@ -716,12 +716,12 @@ values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
-<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
-<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
-<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+<li><p><strong>parameters</strong> (<em>ndarray</em>) -- Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) -- Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) -- Value to use when initializing ARCH recursion. Can be an ndarray
 when the model contains multiple components.</p></li>
-<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) -- Array containing columns of lower and upper bounds</p></li>
 </ul>
 </dd>
 </dl>
@@ -734,9 +734,9 @@ when the model contains multiple components.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+<li><p><strong>A</strong> (<em>ndarray</em>) -- Parameters loadings in constraint. Shape is number of constraints
 by number of parameters</p></li>
-<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) -- Constraint values, one for each constraint</p></li>
 </ul>
 </p>
 </dd>
@@ -753,20 +753,20 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
-<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
-<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) -- Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) -- Callable function that takes a single integer input and returns
 a vector of random numbers</p></li>
-<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) -- Number of additional observations to generate when initializing
 the simulation</p></li>
-<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) -- Scalar or array of initial values to use when initializing the
 simulation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
-<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) -- The simulated variance</p></li>
 </ul>
 </p>
 </dd>
@@ -779,11 +779,11 @@ simulation</p></li>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Array of (approximate) residuals to use when computing starting
 values</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+<dd class="field-even"><p><strong>sv</strong> -- Array of starting values</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -802,7 +802,7 @@ values</p>
 <dd><p>Heterogeneous ARCH process</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>lags</strong> (<em>{list</em><em>, </em><em>array</em><em>, </em><em>int}</em>) – List of lags to include in the model, or if scalar, includes all lags up the value</p>
+<dd class="field-odd"><p><strong>lags</strong> (<em>{list</em><em>, </em><em>array</em><em>, </em><em>int}</em>) -- List of lags to include in the model, or if scalar, includes all lags up the value</p>
 </dd>
 </dl>
 <dl class="attribute">
@@ -846,10 +846,10 @@ ARCH process have been restricted.</p>
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+<dd class="field-even"><p><strong>backcast</strong> -- Value to use in backcasting in the volatility recursion</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
@@ -863,10 +863,10 @@ ARCH process have been restricted.</p>
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+<dd class="field-even"><p><strong>bounds</strong> -- List of bounds where each element is (lower, upper).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
@@ -881,12 +881,12 @@ ARCH process have been restricted.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
-<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
-<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
-<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+<li><p><strong>parameters</strong> (<em>ndarray</em>) -- Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) -- Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) -- Value to use when initializing ARCH recursion. Can be an ndarray
 when the model contains multiple components.</p></li>
-<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) -- Array containing columns of lower and upper bounds</p></li>
 </ul>
 </dd>
 </dl>
@@ -899,9 +899,9 @@ when the model contains multiple components.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+<li><p><strong>A</strong> (<em>ndarray</em>) -- Parameters loadings in constraint. Shape is number of constraints
 by number of parameters</p></li>
-<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) -- Constraint values, one for each constraint</p></li>
 </ul>
 </p>
 </dd>
@@ -918,20 +918,20 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
-<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
-<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) -- Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) -- Callable function that takes a single integer input and returns
 a vector of random numbers</p></li>
-<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) -- Number of additional observations to generate when initializing
 the simulation</p></li>
-<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) -- Scalar or array of initial values to use when initializing the
 simulation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
-<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) -- The simulated variance</p></li>
 </ul>
 </p>
 </dd>
@@ -944,11 +944,11 @@ simulation</p></li>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Array of (approximate) residuals to use when computing starting
 values</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+<dd class="field-even"><p><strong>sv</strong> -- Array of starting values</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -968,8 +968,8 @@ values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Length of maximum lag to include in the model</p></li>
-<li><p><strong>asym</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Flag indicating whether to include an asymmetric term</p></li>
+<li><p><strong>m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Length of maximum lag to include in the model</p></li>
+<li><p><strong>asym</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) -- Flag indicating whether to include an asymmetric term</p></li>
 </ul>
 </dd>
 </dl>
@@ -1014,11 +1014,11 @@ normalized so that <span class="math notranslate nohighlight">\(\sum \phi_i(\the
 <p class="rubric">References</p>
 <dl class="footnote brackets">
 <dt class="label" id="id1"><span class="brackets">*</span></dt>
-<dd><p>Foroni, Claudia, and Massimiliano Marcellino. “A survey of
-Econometric Methods for Mixed-Frequency Data”. Norges Bank. (2013).</p>
+<dd><p>Foroni, Claudia, and Massimiliano Marcellino. &quot;A survey of
+Econometric Methods for Mixed-Frequency Data&quot;. Norges Bank. (2013).</p>
 </dd>
 <dt class="label" id="id2"><span class="brackets">†</span></dt>
-<dd><p>Sheppard, Kevin. “Direct volatility modeling”. Manuscript. (2018).</p>
+<dd><p>Sheppard, Kevin. &quot;Direct volatility modeling&quot;. Manuscript. (2018).</p>
 </dd>
 </dl>
 <dl class="method">
@@ -1027,10 +1027,10 @@ Econometric Methods for Mixed-Frequency Data”. Norges Bank. (2013).</p>
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+<dd class="field-even"><p><strong>backcast</strong> -- Value to use in backcasting in the volatility recursion</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
@@ -1044,10 +1044,10 @@ Econometric Methods for Mixed-Frequency Data”. Norges Bank. (2013).</p>
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+<dd class="field-even"><p><strong>bounds</strong> -- List of bounds where each element is (lower, upper).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
@@ -1062,12 +1062,12 @@ Econometric Methods for Mixed-Frequency Data”. Norges Bank. (2013).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
-<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
-<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
-<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+<li><p><strong>parameters</strong> (<em>ndarray</em>) -- Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) -- Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) -- Value to use when initializing ARCH recursion. Can be an ndarray
 when the model contains multiple components.</p></li>
-<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) -- Array containing columns of lower and upper bounds</p></li>
 </ul>
 </dd>
 </dl>
@@ -1096,20 +1096,20 @@ when the model contains multiple components.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
-<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
-<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) -- Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) -- Callable function that takes a single integer input and returns
 a vector of random numbers</p></li>
-<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) -- Number of additional observations to generate when initializing
 the simulation</p></li>
-<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) -- Scalar or array of initial values to use when initializing the
 simulation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
-<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) -- The simulated variance</p></li>
 </ul>
 </p>
 </dd>
@@ -1122,11 +1122,11 @@ simulation</p></li>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Array of (approximate) residuals to use when computing starting
 values</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+<dd class="field-even"><p><strong>sv</strong> -- Array of starting values</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -1145,7 +1145,7 @@ values</p>
 <dd><p>ARCH process</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Order of the symmetric innovation</p>
+<dd class="field-odd"><p><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Order of the symmetric innovation</p>
 </dd>
 </dl>
 <dl class="attribute">
@@ -1178,10 +1178,10 @@ values</p>
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+<dd class="field-even"><p><strong>backcast</strong> -- Value to use in backcasting in the volatility recursion</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
@@ -1195,10 +1195,10 @@ values</p>
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+<dd class="field-even"><p><strong>bounds</strong> -- List of bounds where each element is (lower, upper).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
@@ -1213,12 +1213,12 @@ values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
-<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
-<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
-<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+<li><p><strong>parameters</strong> (<em>ndarray</em>) -- Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) -- Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) -- Value to use when initializing ARCH recursion. Can be an ndarray
 when the model contains multiple components.</p></li>
-<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) -- Array containing columns of lower and upper bounds</p></li>
 </ul>
 </dd>
 </dl>
@@ -1231,9 +1231,9 @@ when the model contains multiple components.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+<li><p><strong>A</strong> (<em>ndarray</em>) -- Parameters loadings in constraint. Shape is number of constraints
 by number of parameters</p></li>
-<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) -- Constraint values, one for each constraint</p></li>
 </ul>
 </p>
 </dd>
@@ -1250,20 +1250,20 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
-<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
-<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) -- Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) -- Callable function that takes a single integer input and returns
 a vector of random numbers</p></li>
-<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) -- Number of additional observations to generate when initializing
 the simulation</p></li>
-<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) -- Scalar or array of initial values to use when initializing the
 simulation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
-<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) -- The simulated variance</p></li>
 </ul>
 </p>
 </dd>
@@ -1276,11 +1276,11 @@ simulation</p></li>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Array of (approximate) residuals to use when computing starting
 values</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+<dd class="field-even"><p><strong>sv</strong> -- Array of starting values</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -1305,7 +1305,7 @@ are estimable.</p>
 <p>Exponentially Weighted Moving-Average (RiskMetrics) Variance process</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>lam</strong> (<em>{float</em><em>, </em><em>None}</em><em>, </em><em>optional</em>) – Smoothing parameter. Default is 0.94. Set to None to estimate lam
+<dd class="field-odd"><p><strong>lam</strong> (<em>{float</em><em>, </em><em>None}</em><em>, </em><em>optional</em>) -- Smoothing parameter. Default is 0.94. Set to None to estimate lam
 jointly with other model parameters</p>
 </dd>
 </dl>
@@ -1331,7 +1331,7 @@ jointly with other model parameters</p>
 <div class="math notranslate nohighlight">
 \[\sigma_t^{2}=\lambda\sigma_{t-1}^2 + (1-\lambda)\epsilon^2_{t-1}\]</div>
 <p>When lam is provided, this model has no parameters since the smoothing
-parameter is treated as fixed. Sel lam to <code class="docutils literal notranslate"><span class="pre">None</span></code> to jointly estimate this
+parameter is treated as fixed. Set lam to <code class="docutils literal notranslate"><span class="pre">None</span></code> to jointly estimate this
 parameter when fitting the model.</p>
 <dl class="method">
 <dt id="arch.univariate.EWMAVariance.backcast">
@@ -1339,10 +1339,10 @@ parameter when fitting the model.</p>
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>backcast</strong> – Value to use in backcasting in the volatility recursion</p>
+<dd class="field-even"><p><strong>backcast</strong> -- Value to use in backcasting in the volatility recursion</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
@@ -1356,10 +1356,10 @@ parameter when fitting the model.</p>
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+<dd class="field-even"><p><strong>bounds</strong> -- List of bounds where each element is (lower, upper).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
@@ -1374,12 +1374,12 @@ parameter when fitting the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
-<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
-<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
-<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+<li><p><strong>parameters</strong> (<em>ndarray</em>) -- Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) -- Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) -- Value to use when initializing ARCH recursion. Can be an ndarray
 when the model contains multiple components.</p></li>
-<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) -- Array containing columns of lower and upper bounds</p></li>
 </ul>
 </dd>
 </dl>
@@ -1392,9 +1392,9 @@ when the model contains multiple components.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+<li><p><strong>A</strong> (<em>ndarray</em>) -- Parameters loadings in constraint. Shape is number of constraints
 by number of parameters</p></li>
-<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) -- Constraint values, one for each constraint</p></li>
 </ul>
 </p>
 </dd>
@@ -1411,20 +1411,20 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
-<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
-<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) -- Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) -- Callable function that takes a single integer input and returns
 a vector of random numbers</p></li>
-<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) -- Number of additional observations to generate when initializing
 the simulation</p></li>
-<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) -- Scalar or array of initial values to use when initializing the
 simulation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
-<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) -- The simulated variance</p></li>
 </ul>
 </p>
 </dd>
@@ -1437,11 +1437,11 @@ simulation</p></li>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Array of (approximate) residuals to use when computing starting
 values</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+<dd class="field-even"><p><strong>sv</strong> -- Array of starting values</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -1462,10 +1462,10 @@ values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>tau0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Length of long cycle. Default is 1560.</p></li>
-<li><p><strong>tau1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Length of short cycle. Default is 4.</p></li>
-<li><p><strong>kmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of components. Default is 14.</p></li>
-<li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Relative scale of adjacent cycles. Default is sqrt(2)</p></li>
+<li><p><strong>tau0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) -- Length of long cycle. Default is 1560.</p></li>
+<li><p><strong>tau1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) -- Length of short cycle. Default is 4.</p></li>
+<li><p><strong>kmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) -- Number of components. Default is 14.</p></li>
+<li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) -- Relative scale of adjacent cycles. Default is sqrt(2)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1496,10 +1496,10 @@ processes where the smoothing parameters and weights are determined by tau0, tau
 <dd><p>Construct values for backcasting to start the recursion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>backcast</strong> – Backcast values for each EWMA component</p>
+<dd class="field-even"><p><strong>backcast</strong> -- Backcast values for each EWMA component</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -1513,10 +1513,10 @@ processes where the smoothing parameters and weights are determined by tau0, tau
 <dd><p>Returns bounds for parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Vector of (approximate) residuals</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of (approximate) residuals</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>bounds</strong> – List of bounds where each element is (lower, upper).</p>
+<dd class="field-even"><p><strong>bounds</strong> -- List of bounds where each element is (lower, upper).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>,<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]]</p>
@@ -1531,12 +1531,12 @@ processes where the smoothing parameters and weights are determined by tau0, tau
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>ndarray</em>) – Model parameters</p></li>
-<li><p><strong>resids</strong> (<em>ndarray</em>) – Vector of mean zero residuals</p></li>
-<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Array with same size as resids to store the conditional variance</p></li>
-<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) – Value to use when initializing ARCH recursion. Can be an ndarray
+<li><p><strong>parameters</strong> (<em>ndarray</em>) -- Model parameters</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- Vector of mean zero residuals</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) -- Array with same size as resids to store the conditional variance</p></li>
+<li><p><strong>backcast</strong> (<em>{float</em><em>, </em><em>ndarray}</em>) -- Value to use when initializing ARCH recursion. Can be an ndarray
 when the model contains multiple components.</p></li>
-<li><p><strong>var_bounds</strong> (<em>ndarray</em>) – Array containing columns of lower and upper bounds</p></li>
+<li><p><strong>var_bounds</strong> (<em>ndarray</em>) -- Array containing columns of lower and upper bounds</p></li>
 </ul>
 </dd>
 </dl>
@@ -1549,9 +1549,9 @@ when the model contains multiple components.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>A</strong> (<em>ndarray</em>) – Parameters loadings in constraint. Shape is number of constraints
+<li><p><strong>A</strong> (<em>ndarray</em>) -- Parameters loadings in constraint. Shape is number of constraints
 by number of parameters</p></li>
-<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values, one for each constraint</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) -- Constraint values, one for each constraint</p></li>
 </ul>
 </p>
 </dd>
@@ -1568,20 +1568,20 @@ constraints of the form A.dot(parameters) - b &gt;= 0</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) – Parameters required to simulate the volatility model</p></li>
-<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of data points to simulate</p></li>
-<li><p><strong>rng</strong> (<em>callable</em>) – Callable function that takes a single integer input and returns
+<li><p><strong>parameters</strong> (<em>{ndarray</em><em>, </em><em>Series}</em>) -- Parameters required to simulate the volatility model</p></li>
+<li><p><strong>nobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- Number of data points to simulate</p></li>
+<li><p><strong>rng</strong> (<em>callable</em>) -- Callable function that takes a single integer input and returns
 a vector of random numbers</p></li>
-<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of additional observations to generate when initializing
+<li><p><strong>burn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) -- Number of additional observations to generate when initializing
 the simulation</p></li>
-<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Scalar or array of initial values to use when initializing the
+<li><p><strong>initial_value</strong> (<em>{float</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) -- Scalar or array of initial values to use when initializing the
 simulation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>resids</strong> (<em>ndarray</em>) – The simulated residuals</p></li>
-<li><p><strong>variance</strong> (<em>ndarray</em>) – The simulated variance</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- The simulated residuals</p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) -- The simulated variance</p></li>
 </ul>
 </p>
 </dd>
@@ -1594,11 +1594,11 @@ simulation</p></li>
 <dd><p>Returns starting values for the ARCH model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Array of (approximate) residuals to use when computing starting
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Array of (approximate) residuals to use when computing starting
 values</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>sv</strong> – Array of starting values</p>
+<dd class="field-even"><p><strong>sv</strong> -- Array of starting values</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -1621,9 +1621,9 @@ the so-called zig-zag algorithm to be used.  See the example for usage.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>variance</strong> (<em>{array</em><em>, </em><em>Series}</em>) – Array containing the variances to use.  Should have the same shape as the data used in the
+<li><p><strong>variance</strong> (<em>{array</em><em>, </em><em>Series}</em>) -- Array containing the variances to use.  Should have the same shape as the data used in the
 model.</p></li>
-<li><p><strong>unit_scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag whether to enforce a unit scale.  If False, a scale parameter will be estimated so
+<li><p><strong>unit_scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) -- Flag whether to enforce a unit scale.  If False, a scale parameter will be estimated so
 that the model variance will be proportional to <code class="docutils literal notranslate"><span class="pre">variance</span></code>.  If True, the model variance
 is set of <code class="docutils literal notranslate"><span class="pre">variance</span></code></p></li>
 </ul>
@@ -1682,7 +1682,7 @@ separately from the conditional variance, even though parameters are estimated j
         <li class="right" >
           <a href="mean.html" title="Mean Models"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

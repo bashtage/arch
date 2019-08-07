@@ -14,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>arch.univariate.mean &#8212; arch 4.8.1+25.g6cca064 documentation</title>
+    <title>arch.univariate.mean &#8212; arch 4.8.1+27.gd2d3454 documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -53,7 +53,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../../index.html" class="text-logo">arch 4.8.1 (+25)</a>
+    ../../../index.html" class="text-logo">arch 4.8.1 (+27)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -223,6 +223,11 @@
 <span class="sd">        Volatility process to use in the model</span>
 <span class="sd">    distribution : Distribution, optional</span>
 <span class="sd">        Error distribution to use in the model</span>
+<span class="sd">    rescale : bool, optional</span>
+<span class="sd">        Flag indicating whether to automatically rescale data if the scale of the</span>
+<span class="sd">        data is likely to produce convergence issues when estimating model parameters.</span>
+<span class="sd">        If False, the model is estimated on the data without transformation.  If True,</span>
+<span class="sd">        than y is rescaled and the new scale is reported in the estimation results.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -252,10 +257,11 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">constant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                  <span class="n">use_rotated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">volatility</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">HARX</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">,</span>
                                    <span class="n">volatility</span><span class="o">=</span><span class="n">volatility</span><span class="p">,</span>
-                                   <span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">)</span>
+                                   <span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">,</span>
+                                   <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">x</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_x_names</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_x_index</span> <span class="o">=</span> <span class="kc">None</span>
@@ -808,6 +814,11 @@
 <span class="sd">        Volatility process to use in the model</span>
 <span class="sd">    distribution : Distribution, optional</span>
 <span class="sd">        Error distribution to use in the model</span>
+<span class="sd">    rescale : bool, optional</span>
+<span class="sd">        Flag indicating whether to automatically rescale data if the scale of the</span>
+<span class="sd">        data is likely to produce convergence issues when estimating model parameters.</span>
+<span class="sd">        If False, the model is estimated on the data without transformation.  If True,</span>
+<span class="sd">        than y is rescaled and the new scale is reported in the estimation results.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -827,10 +838,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">volatility</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">volatility</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ConstantMean</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">,</span>
                                            <span class="n">volatility</span><span class="o">=</span><span class="n">volatility</span><span class="p">,</span>
-                                           <span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">)</span>
+                                           <span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">,</span>
+                                           <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Constant Mean&#39;</span>
 
     <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -925,6 +937,11 @@
 <span class="sd">        Volatility process to use in the model</span>
 <span class="sd">    distribution : Distribution, optional</span>
 <span class="sd">        Error distribution to use in the model</span>
+<span class="sd">    rescale : bool, optional</span>
+<span class="sd">        Flag indicating whether to automatically rescale data if the scale of the</span>
+<span class="sd">        data is likely to produce convergence issues when estimating model parameters.</span>
+<span class="sd">        If False, the model is estimated on the data without transformation.  If True,</span>
+<span class="sd">        than y is rescaled and the new scale is reported in the estimation results.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -944,14 +961,15 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">volatility</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">volatility</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">rescale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ZeroMean</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">y</span><span class="p">,</span>
                                        <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                                        <span class="n">constant</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                                        <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">,</span>
                                        <span class="n">volatility</span><span class="o">=</span><span class="n">volatility</span><span class="p">,</span>
-                                       <span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">)</span>
+                                       <span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">,</span>
+                                       <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Zero Mean&#39;</span>
 
     <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1051,6 +1069,11 @@
 <span class="sd">        Number of observations at the start of the sample to exclude when</span>
 <span class="sd">        estimating model parameters.  Used when comparing models with different</span>
 <span class="sd">        lag lengths to estimate on the common sample.</span>
+<span class="sd">    rescale : bool, optional</span>
+<span class="sd">        Flag indicating whether to automatically rescale data if the scale of the</span>
+<span class="sd">        data is likely to produce convergence issues when estimating model parameters.</span>
+<span class="sd">        If False, the model is estimated on the data without transformation.  If True,</span>
+<span class="sd">        than y is rescaled and the new scale is reported in the estimation results.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -1077,7 +1100,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">constant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">hold_back</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">volatility</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">hold_back</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">volatility</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">rescale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Convert lags to 2-d format</span>
 
         <span class="k">if</span> <span class="n">lags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1097,7 +1121,7 @@
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;lags does not follow a supported format&#39;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ARX</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">constant</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span>
                                   <span class="n">hold_back</span><span class="p">,</span> <span class="n">volatility</span><span class="o">=</span><span class="n">volatility</span><span class="p">,</span>
-                                  <span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">)</span>
+                                  <span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;AR&#39;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+=</span> <span class="s1">&#39;-X&#39;</span>
@@ -1148,6 +1172,11 @@
 <span class="sd">        Number of observations at the start of the sample to exclude when</span>
 <span class="sd">        estimating model parameters.  Used when comparing models with different</span>
 <span class="sd">        lag lengths to estimate on the common sample.</span>
+<span class="sd">    rescale : bool, optional</span>
+<span class="sd">        Flag indicating whether to automatically rescale data if the scale of the</span>
+<span class="sd">        data is likely to produce convergence issues when estimating model parameters.</span>
+<span class="sd">        If False, the model is estimated on the data without transformation.  If True,</span>
+<span class="sd">        than y is rescaled and the new scale is reported in the estimation results.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -1168,9 +1197,11 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">constant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">constant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">rescale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Convert lags to 2-d format</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">LS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">constant</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">hold_back</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">constant</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">hold_back</span><span class="p">,</span>
+                                 <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Least Squares&#39;</span>
 
     <span class="k">def</span> <span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -1178,7 +1209,7 @@
 
 
 <div class="viewcode-block" id="arch_model"><a class="viewcode-back" href="../../../univariate/introduction.html#arch.arch_model">[docs]</a><span class="k">def</span> <span class="nf">arch_model</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="s1">&#39;Constant&#39;</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="s1">&#39;Garch&#39;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-               <span class="n">power</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">&#39;Normal&#39;</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+               <span class="n">power</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s1">&#39;Normal&#39;</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convenience function to simplify initialization of ARCH models</span>
 
@@ -1267,19 +1298,19 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown model type in dist&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">mean</span> <span class="o">==</span> <span class="s1">&#39;zero&#39;</span><span class="p">:</span>
-        <span class="n">am</span> <span class="o">=</span> <span class="n">ZeroMean</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">)</span>
+        <span class="n">am</span> <span class="o">=</span> <span class="n">ZeroMean</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">mean</span> <span class="o">==</span> <span class="s1">&#39;constant&#39;</span><span class="p">:</span>
-        <span class="n">am</span> <span class="o">=</span> <span class="n">ConstantMean</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">)</span>
+        <span class="n">am</span> <span class="o">=</span> <span class="n">ConstantMean</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">mean</span> <span class="o">==</span> <span class="s1">&#39;harx&#39;</span><span class="p">:</span>
-        <span class="n">am</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">)</span>
+        <span class="n">am</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">mean</span> <span class="o">==</span> <span class="s1">&#39;har&#39;</span><span class="p">:</span>
-        <span class="n">am</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">)</span>
+        <span class="n">am</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">mean</span> <span class="o">==</span> <span class="s1">&#39;arx&#39;</span><span class="p">:</span>
-        <span class="n">am</span> <span class="o">=</span> <span class="n">ARX</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">)</span>
+        <span class="n">am</span> <span class="o">=</span> <span class="n">ARX</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">mean</span> <span class="o">==</span> <span class="s1">&#39;ar&#39;</span><span class="p">:</span>
-        <span class="n">am</span> <span class="o">=</span> <span class="n">ARX</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">)</span>
+        <span class="n">am</span> <span class="o">=</span> <span class="n">ARX</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lags</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">am</span> <span class="o">=</span> <span class="n">LS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">)</span>
+        <span class="n">am</span> <span class="o">=</span> <span class="n">LS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">hold_back</span><span class="o">=</span><span class="n">hold_back</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">vol</span> <span class="o">==</span> <span class="s1">&#39;constant&#39;</span><span class="p">:</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">ConstantVariance</span><span class="p">()</span>
@@ -1323,7 +1354,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

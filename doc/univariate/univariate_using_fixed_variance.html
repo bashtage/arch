@@ -14,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Using the Fixed Variance process &#8212; arch 4.8.1+25.g6cca064 documentation</title>
+    <title>Using the Fixed Variance process &#8212; arch 4.8.1+27.gd2d3454 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="volatility.html" title="Volatility Processes"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.8.1 (+25)</a>
+    ../index.html" class="text-logo">arch 4.8.1 (+27)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -498,7 +498,7 @@ Covariance estimator: robust
 <div class="section" id="Re-estimating-the-mean-with-a-FixedVariance">
 <h3>Re-estimating the mean with a <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code><a class="headerlink" href="#Re-estimating-the-mean-with-a-FixedVariance" title="Permalink to this headline">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> requires that the variance is provided when initializing the object. The variance provided should have the same shape as the original data. Since the variance estimated from the GJR-GARCH model is missing the first 22 observations due to the HAR lags, we simply fill these with 1. These values will not be used to estimate the model, and so the value is not important.</p>
-<p>The summary shows that there is a single parameter, <code class="docutils literal notranslate"><span class="pre">scale</span></code>, which is close to 1. The mean parameters have changed which reflects the GLS-like weighting that this re-estimaion imposes.</p>
+<p>The summary shows that there is a single parameter, <code class="docutils literal notranslate"><span class="pre">scale</span></code>, which is close to 1. The mean parameters have changed which reflects the GLS-like weighting that this re-estimation imposes.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
@@ -617,7 +617,7 @@ Covariance estimator: robust
 </div>
 <div class="section" id="Direct-Estimation">
 <h3>Direct Estimation<a class="headerlink" href="#Direct-Estimation" title="Permalink to this headline">¶</a></h3>
-<p>This model can be directly estimated. The results are provided for comparisson to the previous <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> estimates of the mean parameters.</p>
+<p>This model can be directly estimated. The results are provided for comparison to the previous <code class="docutils literal notranslate"><span class="pre">FixedVariance</span></code> estimates of the mean parameters.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
@@ -702,7 +702,7 @@ Covariance estimator: robust
         <li class="right" >
           <a href="volatility.html" title="Volatility Processes"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

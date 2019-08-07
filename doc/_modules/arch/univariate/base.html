@@ -14,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>arch.univariate.base &#8212; arch 4.8.1+25.g6cca064 documentation</title>
+    <title>arch.univariate.base &#8212; arch 4.8.1+27.gd2d3454 documentation</title>
     <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -53,7 +53,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../../index.html" class="text-logo">arch 4.8.1 (+25)</a>
+    ../../../index.html" class="text-logo">arch 4.8.1 (+27)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -130,8 +130,8 @@
 <span class="kn">from</span> <span class="nn">arch.univariate.volatility</span> <span class="k">import</span> <span class="n">ConstantVariance</span><span class="p">,</span> <span class="n">VolatilityProcess</span>
 <span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="k">import</span> <span class="n">AbstractDocStringInheritor</span><span class="p">,</span> <span class="n">ensure1d</span>
 <span class="kn">from</span> <span class="nn">arch.utility.exceptions</span> <span class="k">import</span> <span class="p">(</span><span class="n">ConvergenceWarning</span><span class="p">,</span> <span class="n">StartingValueWarning</span><span class="p">,</span>
-                                     <span class="n">convergence_warning</span><span class="p">,</span>
-                                     <span class="n">starting_value_warning</span><span class="p">)</span>
+                                     <span class="n">DataScaleWarning</span><span class="p">,</span> <span class="n">convergence_warning</span><span class="p">,</span>
+                                     <span class="n">data_scale_warning</span><span class="p">,</span> <span class="n">starting_value_warning</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">arch.utility.testing</span> <span class="k">import</span> <span class="n">WaldTestStatistic</span>
 <span class="kn">from</span> <span class="nn">arch.vendor.cached_property</span> <span class="k">import</span> <span class="n">cached_property</span>
 
@@ -250,7 +250,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">volatility</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">hold_back</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">hold_back</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="c1"># Set on model fit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span> <span class="o">=</span> <span class="kc">None</span>
@@ -267,6 +267,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">hold_back</span> <span class="o">=</span> <span class="n">hold_back</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hold_back</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">hold_back</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">hold_back</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rescale</span> <span class="o">=</span> <span class="n">rescale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="mf">1.0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span> <span class="o">=</span> <span class="kc">None</span>
@@ -344,6 +347,26 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Distribution</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must subclass Distribution&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">_check_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">):</span>
+        <span class="n">check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rescale</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">orig_scale</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+        <span class="n">rescale</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="mf">1.0</span> <span class="o">&lt;=</span> <span class="n">scale</span> <span class="o">&lt;</span> <span class="mf">1000.0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">scale</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="n">rescale</span> <span class="o">*=</span> <span class="mi">10</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rescale</span> <span class="o">/=</span> <span class="mi">10</span>
+            <span class="n">scale</span> <span class="o">=</span> <span class="n">orig_scale</span> <span class="o">*</span> <span class="n">rescale</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">rescale</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rescale</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">data_scale_warning</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">orig_scale</span><span class="p">,</span> <span class="n">rescale</span><span class="p">),</span>
+                          <span class="n">DataScaleWarning</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">rescale</span>
 
     <span class="k">def</span> <span class="nf">_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -555,7 +578,7 @@
 <span class="sd">        backcast : float, optional</span>
 <span class="sd">            Value to use as backcast. Should be measure :math:`\sigma^2_0`</span>
 <span class="sd">            since model-specific non-linear transformations are applied to</span>
-<span class="sd">            value before computing the variance recusions.</span>
+<span class="sd">            value before computing the variance recursions.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -576,13 +599,21 @@
         <span class="n">v</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span>
         <span class="n">offsets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_params</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">num_params</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">num_params</span><span class="p">))</span>
         <span class="n">total_params</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">offsets</span><span class="p">)</span>
+
         <span class="c1"># Closed form is applicable when model has no parameters</span>
         <span class="c1"># Or when distribution is normal and constant variance</span>
-
         <span class="n">has_closed_form</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">closed_form</span> <span class="ow">and</span> <span class="n">d</span><span class="o">.</span><span class="n">num_params</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ConstantVariance</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_sample</span><span class="p">(</span><span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span><span class="p">)</span>
 
         <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_scale</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="c1"># Scale changed, rescale data and reset model</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_original</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_sample</span><span class="p">(</span><span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span><span class="p">)</span>
+            <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">())</span>
+
         <span class="k">if</span> <span class="n">backcast</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">backcast</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">backcast</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1195,7 +1226,7 @@
         <span class="n">fig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">()</span>
 
         <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Standardized Residuals&#39;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([])</span>
         <span class="n">_set_tight_x</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">)</span>
@@ -1214,7 +1245,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Conditional Volatility&#39;</span>
 
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">,</span> <span class="n">vol</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">vol</span><span class="p">)</span>
         <span class="n">_set_tight_x</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
 
@@ -1505,6 +1536,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_r2</span> <span class="o">=</span> <span class="n">r2</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cov_type</span> <span class="o">=</span> <span class="n">cov_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_optim_output</span> <span class="o">=</span> <span class="n">optim_output</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The scale applied to the original data before estimating the model.</span>
+
+<span class="sd">        If scale=1.0, the the data have not been rescaled.  Otherwise, the</span>
+<span class="sd">        model parameters have been estimated on scale * y.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">scale</span>
 
 <div class="viewcode-block" id="ARCHModelResult.conf_int"><a class="viewcode-back" href="../../../univariate/introduction.html#arch.univariate.base.ARCHModelResult.conf_int">[docs]</a>    <span class="k">def</span> <span class="nf">conf_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1870,7 +1911,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

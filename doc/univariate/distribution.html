@@ -14,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Distributions &#8212; arch 4.8.1+25.g6cca064 documentation</title>
+    <title>Distributions &#8212; arch 4.8.1+27.gd2d3454 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="univariate_using_fixed_variance.html" title="Using the Fixed Variance process"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.8.1 (+25)</a>
+    ../index.html" class="text-logo">arch 4.8.1 (+27)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -138,10 +138,10 @@
 <code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Normal.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Normal.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Residuals to use when computing the bounds</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Residuals to use when computing the bounds</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>bounds</strong> – List containing a single tuple with (lower, upper) bounds</p>
+<dd class="field-even"><p><strong>bounds</strong> -- List containing a single tuple with (lower, upper) bounds</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></p>
@@ -155,8 +155,8 @@
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>A</strong> (<em>ndarray</em>) – Constraint loadings</p></li>
-<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values</p></li>
+<li><p><strong>A</strong> (<em>ndarray</em>) -- Constraint loadings</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) -- Constraint values</p></li>
 </ul>
 </p>
 </dd>
@@ -173,16 +173,16 @@ distributed, conditional on the variance</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>ndarray</em>) – The normal likelihood has no shape parameters. Empty since the
+<li><p><strong>parameters</strong> (<em>ndarray</em>) -- The normal likelihood has no shape parameters. Empty since the
 standard normal has no shape parameters.</p></li>
-<li><p><strong>resids</strong> (<em>ndarray</em>) – The residuals to use in the log-likelihood calculation</p></li>
-<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Conditional variances of resids</p></li>
-<li><p><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- The residuals to use in the log-likelihood calculation</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) -- Conditional variances of resids</p></li>
+<li><p><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) -- Flag indicating whether to return the vector of individual log
 likelihoods (True) or the sum (False)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>ll</strong> – The log-likelihood</p>
+<dd class="field-even"><p><strong>ll</strong> -- The log-likelihood</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
@@ -201,10 +201,10 @@ likelihoods (True) or the sum (False)</p></li>
 <dd><p>Simulates i.i.d. draws from the distribution</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>parameters</strong> (<em>ndarray</em>) – Distribution parameters</p>
+<dd class="field-odd"><p><strong>parameters</strong> (<em>ndarray</em>) -- Distribution parameters</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>simulator</strong> – Callable that take a single output size argument and returns i.i.d.
+<dd class="field-even"><p><strong>simulator</strong> -- Callable that take a single output size argument and returns i.i.d.
 draws from the distribution</p>
 </dd>
 <dt class="field-odd">Return type</dt>
@@ -218,11 +218,11 @@ draws from the distribution</p>
 <code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">std_resid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#Normal.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.Normal.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>std_resid</strong> (<em>ndarray</em>) – Estimated standardized residuals to use in computing starting
+<dd class="field-odd"><p><strong>std_resid</strong> (<em>ndarray</em>) -- Estimated standardized residuals to use in computing starting
 values for the shape parameter</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>sv</strong> – The estimated shape parameters for the distribution</p>
+<dd class="field-even"><p><strong>sv</strong> -- The estimated shape parameters for the distribution</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -236,20 +236,20 @@ values for the shape parameter</p>
 
 </div>
 <div class="section" id="student-s-t">
-<h2>Student’s t<a class="headerlink" href="#student-s-t" title="Permalink to this headline">¶</a></h2>
+<h2>Student's t<a class="headerlink" href="#student-s-t" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.StudentsT">
 <em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">StudentsT</code><span class="sig-paren">(</span><em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Standardized Student’s distribution for use with ARCH models</p>
+<dd><p>Standardized Student's distribution for use with ARCH models</p>
 <dl class="method">
 <dt id="arch.univariate.StudentsT.bounds">
 <code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Residuals to use when computing the bounds</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Residuals to use when computing the bounds</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>bounds</strong> – List containing a single tuple with (lower, upper) bounds</p>
+<dd class="field-even"><p><strong>bounds</strong> -- List containing a single tuple with (lower, upper) bounds</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></p>
@@ -263,8 +263,8 @@ values for the shape parameter</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>A</strong> (<em>ndarray</em>) – Constraint loadings</p></li>
-<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values</p></li>
+<li><p><strong>A</strong> (<em>ndarray</em>) -- Constraint loadings</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) -- Constraint values</p></li>
 </ul>
 </p>
 </dd>
@@ -277,20 +277,20 @@ values for the shape parameter</p>
 <dt id="arch.univariate.StudentsT.loglikelihood">
 <code class="sig-name descname">loglikelihood</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">resids</em>, <em class="sig-param">sigma2</em>, <em class="sig-param">individual=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT.loglikelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT.loglikelihood" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the log-likelihood of assuming residuals are have a
-standardized (to have unit variance) Student’s t distribution,
+standardized (to have unit variance) Student's t distribution,
 conditional on the variance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>ndarray</em>) – Shape parameter of the t distribution</p></li>
-<li><p><strong>resids</strong> (<em>ndarray</em>) – The residuals to use in the log-likelihood calculation</p></li>
-<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Conditional variances of resids</p></li>
-<li><p><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
+<li><p><strong>parameters</strong> (<em>ndarray</em>) -- Shape parameter of the t distribution</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- The residuals to use in the log-likelihood calculation</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) -- Conditional variances of resids</p></li>
+<li><p><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) -- Flag indicating whether to return the vector of individual log
 likelihoods (True) or the sum (False)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>ll</strong> – The log-likelihood</p>
+<dd class="field-even"><p><strong>ll</strong> -- The log-likelihood</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
@@ -312,10 +312,10 @@ likelihoods (True) or the sum (False)</p></li>
 <dd><p>Simulates i.i.d. draws from the distribution</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>parameters</strong> (<em>ndarray</em>) – Distribution parameters</p>
+<dd class="field-odd"><p><strong>parameters</strong> (<em>ndarray</em>) -- Distribution parameters</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>simulator</strong> – Callable that take a single output size argument and returns i.i.d.
+<dd class="field-even"><p><strong>simulator</strong> -- Callable that take a single output size argument and returns i.i.d.
 draws from the distribution</p>
 </dd>
 <dt class="field-odd">Return type</dt>
@@ -329,11 +329,11 @@ draws from the distribution</p>
 <code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">std_resid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#StudentsT.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.StudentsT.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>std_resid</strong> (<em>ndarray</em>) – Estimated standardized residuals to use in computing starting
+<dd class="field-odd"><p><strong>std_resid</strong> (<em>ndarray</em>) -- Estimated standardized residuals to use in computing starting
 values for the shape parameter</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>sv</strong> – Array containing starting valuer for shape parameter</p>
+<dd class="field-even"><p><strong>sv</strong> -- Array containing starting valuer for shape parameter</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -348,17 +348,17 @@ produce a moment-based estimator for the starting values.</p>
 
 </div>
 <div class="section" id="skew-student-s-t">
-<h2>Skew Student’s t<a class="headerlink" href="#skew-student-s-t" title="Permalink to this headline">¶</a></h2>
+<h2>Skew Student's t<a class="headerlink" href="#skew-student-s-t" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arch.univariate.SkewStudent">
 <em class="property">class </em><code class="sig-prename descclassname">arch.univariate.</code><code class="sig-name descname">SkewStudent</code><span class="sig-paren">(</span><em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Standardized Skewed Student’s <a class="footnote-reference brackets" href="#id2" id="id1">1</a> distribution for use with ARCH models</p>
+<dd><p>Standardized Skewed Student's <a class="footnote-reference brackets" href="#id2" id="id1">1</a> distribution for use with ARCH models</p>
 <p class="rubric">Notes</p>
-<p>The Standardized Skewed Student’s distribution takes two parameters,
+<p>The Standardized Skewed Student's distribution takes two parameters,
 <span class="math notranslate nohighlight">\(\eta\)</span> and <span class="math notranslate nohighlight">\(\lambda\)</span>. <span class="math notranslate nohighlight">\(\eta\)</span> controls the tail shape
-and is similar to the shape parameter in a Standardized Student’s t.
+and is similar to the shape parameter in a Standardized Student's t.
 <span class="math notranslate nohighlight">\(\lambda\)</span> controls the skewness. When <span class="math notranslate nohighlight">\(\lambda=0\)</span> the
-distribution is identical to a standardized Student’s t.</p>
+distribution is identical to a standardized Student's t.</p>
 <p class="rubric">References</p>
 <dl class="footnote brackets">
 <dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
@@ -372,10 +372,10 @@ distribution is identical to a standardized Student’s t.</p>
 <code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Residuals to use when computing the bounds</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Residuals to use when computing the bounds</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>bounds</strong> – List containing a single tuple with (lower, upper) bounds</p>
+<dd class="field-even"><p><strong>bounds</strong> -- List containing a single tuple with (lower, upper) bounds</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></p>
@@ -389,8 +389,8 @@ distribution is identical to a standardized Student’s t.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>A</strong> (<em>ndarray</em>) – Constraint loadings</p></li>
-<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values</p></li>
+<li><p><strong>A</strong> (<em>ndarray</em>) -- Constraint loadings</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) -- Constraint values</p></li>
 </ul>
 </p>
 </dd>
@@ -403,20 +403,20 @@ distribution is identical to a standardized Student’s t.</p>
 <dt id="arch.univariate.SkewStudent.loglikelihood">
 <code class="sig-name descname">loglikelihood</code><span class="sig-paren">(</span><em class="sig-param">parameters</em>, <em class="sig-param">resids</em>, <em class="sig-param">sigma2</em>, <em class="sig-param">individual=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent.loglikelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent.loglikelihood" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the log-likelihood of assuming residuals are have a
-standardized (to have unit variance) Skew Student’s t distribution,
+standardized (to have unit variance) Skew Student's t distribution,
 conditional on the variance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>ndarray</em>) – Shape parameter of the skew-t distribution</p></li>
-<li><p><strong>resids</strong> (<em>ndarray</em>) – The residuals to use in the log-likelihood calculation</p></li>
-<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Conditional variances of resids</p></li>
-<li><p><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
+<li><p><strong>parameters</strong> (<em>ndarray</em>) -- Shape parameter of the skew-t distribution</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- The residuals to use in the log-likelihood calculation</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) -- Conditional variances of resids</p></li>
+<li><p><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) -- Flag indicating whether to return the vector of individual log
 likelihoods (True) or the sum (False)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>ll</strong> – The log-likelihood</p>
+<dd class="field-even"><p><strong>ll</strong> -- The log-likelihood</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
@@ -446,10 +446,10 @@ The constants <span class="math notranslate nohighlight">\(a\)</span>, <span cla
 <dd><p>Simulates i.i.d. draws from the distribution</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>parameters</strong> (<em>ndarray</em>) – Distribution parameters</p>
+<dd class="field-odd"><p><strong>parameters</strong> (<em>ndarray</em>) -- Distribution parameters</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>simulator</strong> – Callable that take a single output size argument and returns i.i.d.
+<dd class="field-even"><p><strong>simulator</strong> -- Callable that take a single output size argument and returns i.i.d.
 draws from the distribution</p>
 </dd>
 <dt class="field-odd">Return type</dt>
@@ -463,11 +463,11 @@ draws from the distribution</p>
 <code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">std_resid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#SkewStudent.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.SkewStudent.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>std_resid</strong> (<em>ndarray</em>) – Estimated standardized residuals to use in computing starting
+<dd class="field-odd"><p><strong>std_resid</strong> (<em>ndarray</em>) -- Estimated standardized residuals to use in computing starting
 values for the shape parameter</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>sv</strong> – Array containing starting valuer for shape parameter</p>
+<dd class="field-even"><p><strong>sv</strong> -- Array containing starting valuer for shape parameter</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -492,10 +492,10 @@ produce a moment-based estimator for the starting values.</p>
 <code class="sig-name descname">bounds</code><span class="sig-paren">(</span><em class="sig-param">resids</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#GeneralizedError.bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GeneralizedError.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) – Residuals to use when computing the bounds</p>
+<dd class="field-odd"><p><strong>resids</strong> (<em>ndarray</em>) -- Residuals to use when computing the bounds</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>bounds</strong> – List containing a single tuple with (lower, upper) bounds</p>
+<dd class="field-even"><p><strong>bounds</strong> -- List containing a single tuple with (lower, upper) bounds</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></p>
@@ -509,8 +509,8 @@ produce a moment-based estimator for the starting values.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>A</strong> (<em>ndarray</em>) – Constraint loadings</p></li>
-<li><p><strong>b</strong> (<em>ndarray</em>) – Constraint values</p></li>
+<li><p><strong>A</strong> (<em>ndarray</em>) -- Constraint loadings</p></li>
+<li><p><strong>b</strong> (<em>ndarray</em>) -- Constraint values</p></li>
 </ul>
 </p>
 </dd>
@@ -527,15 +527,15 @@ Generalized Error Distribution, conditional on the variance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>ndarray</em>) – Shape parameter of the GED distribution</p></li>
-<li><p><strong>resids</strong> (<em>ndarray</em>) – The residuals to use in the log-likelihood calculation</p></li>
-<li><p><strong>sigma2</strong> (<em>ndarray</em>) – Conditional variances of resids</p></li>
-<li><p><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to return the vector of individual log
+<li><p><strong>parameters</strong> (<em>ndarray</em>) -- Shape parameter of the GED distribution</p></li>
+<li><p><strong>resids</strong> (<em>ndarray</em>) -- The residuals to use in the log-likelihood calculation</p></li>
+<li><p><strong>sigma2</strong> (<em>ndarray</em>) -- Conditional variances of resids</p></li>
+<li><p><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) -- Flag indicating whether to return the vector of individual log
 likelihoods (True) or the sum (False)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>ll</strong> – The log-likelihood</p>
+<dd class="field-even"><p><strong>ll</strong> -- The log-likelihood</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
@@ -559,10 +559,10 @@ likelihoods (True) or the sum (False)</p></li>
 <dd><p>Simulates i.i.d. draws from the distribution</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>parameters</strong> (<em>ndarray</em>) – Distribution parameters</p>
+<dd class="field-odd"><p><strong>parameters</strong> (<em>ndarray</em>) -- Distribution parameters</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>simulator</strong> – Callable that take a single output size argument and returns i.i.d.
+<dd class="field-even"><p><strong>simulator</strong> -- Callable that take a single output size argument and returns i.i.d.
 draws from the distribution</p>
 </dd>
 <dt class="field-odd">Return type</dt>
@@ -576,11 +576,11 @@ draws from the distribution</p>
 <code class="sig-name descname">starting_values</code><span class="sig-paren">(</span><em class="sig-param">std_resid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arch/univariate/distribution.html#GeneralizedError.starting_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch.univariate.GeneralizedError.starting_values" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>std_resid</strong> (<em>ndarray</em>) – Estimated standardized residuals to use in computing starting
+<dd class="field-odd"><p><strong>std_resid</strong> (<em>ndarray</em>) -- Estimated standardized residuals to use in computing starting
 values for the shape parameter</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>sv</strong> – Array containing starting valuer for shape parameter</p>
+<dd class="field-even"><p><strong>sv</strong> -- Array containing starting valuer for shape parameter</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -639,7 +639,7 @@ methods.</p>
         <li class="right" >
           <a href="univariate_using_fixed_variance.html" title="Using the Fixed Variance process"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

@@ -428,7 +428,7 @@
    "metadata": {},
    "source": [
     "### Fixing Parameters\n",
-    "In some circumstances, fixed rather than estimated parameters might be of interest.  A model-result-like class can be generated using the `fix()` method.  The class returend is identical to the usual model result class except that information about inference (standard errors, t-stats, etc) is not available. \n",
+    "In some circumstances, fixed rather than estimated parameters might be of interest.  A model-result-like class can be generated using the `fix()` method.  The class returned is identical to the usual model result class except that information about inference (standard errors, t-stats, etc) is not available. \n",
     "\n",
     "In the example, I fix the parameters to a symmetric version of the previously estimated model."
    ]
@@ -813,7 +813,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "The next example uses West Texas Intermediate Crude data from FRED.  Theee models are fit using alternative distributional assumptions.  The results are printed, where we can see that the normal has a much lower log-likelihood than either the Standard Student's T or the Standardized Skew Student's T -- however, these two are fairly close.  The closeness of the T and the Skew T indicate that returns are not heavily skewed."
+    "The next example uses West Texas Intermediate Crude data from FRED.  Three models are fit using alternative distributional assumptions.  The results are printed, where we can see that the normal has a much lower log-likelihood than either the Standard Student's T or the Standardized Skew Student's T -- however, these two are fairly close.  The closeness of the T and the Skew T indicate that returns are not heavily skewed."
    ]
   },
   {

@@ -14,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Volatility Forecasting &#8212; arch 4.8.1+25.g6cca064 documentation</title>
+    <title>Volatility Forecasting &#8212; arch 4.8.1+27.gd2d3454 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -26,7 +26,7 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Volatilty Scenarios" href="univariate_volatility_scenarios.html" />
+    <link rel="next" title="Volatility Scenarios" href="univariate_volatility_scenarios.html" />
     <link rel="prev" title="Forecasting" href="forecasting.html" />
   
   
@@ -45,12 +45,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="univariate_volatility_scenarios.html" title="Volatilty Scenarios"
+          <a href="univariate_volatility_scenarios.html" title="Volatility Scenarios"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="forecasting.html" title="Forecasting"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.8.1 (+25)</a>
+    ../index.html" class="text-logo">arch 4.8.1 (+27)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -428,7 +428,7 @@ Optimization terminated successfully.    (Exit mode 0)
 <li><p><code class="docutils literal notranslate"><span class="pre">simulations</span></code> - An object that contains detailed information about the simulations used to generate forecasts. Only used if the forecast <code class="docutils literal notranslate"><span class="pre">method</span></code> is set to <code class="docutils literal notranslate"><span class="pre">'simulation'</span></code> or <code class="docutils literal notranslate"><span class="pre">'bootstrap'</span></code>. If using <code class="docutils literal notranslate"><span class="pre">'analytical'</span></code> (the default), this is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 <p>The three main outputs are all returned in <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>s with columns of the form <code class="docutils literal notranslate"><span class="pre">h.#</span></code> where <code class="docutils literal notranslate"><span class="pre">#</span></code> is the number of steps ahead. That is, <code class="docutils literal notranslate"><span class="pre">h.1</span></code> corresponds to one-step ahead forecasts while <code class="docutils literal notranslate"><span class="pre">h.10</span></code> corresponds to 10-steps ahead.</p>
-<p>The default forecast only produces 1-step ahear forecasts.</p>
+<p>The default forecast only produces 1-step ahead forecasts.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
@@ -491,7 +491,7 @@ Date
 <h2>Alternative Forecast Generation Schemes<a class="headerlink" href="#Alternative-Forecast-Generation-Schemes" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Fixed-Window-Forecasting">
 <h3>Fixed Window Forecasting<a class="headerlink" href="#Fixed-Window-Forecasting" title="Permalink to this headline">¶</a></h3>
-<p>Fixed-windows forecasting uses data up to a specified date to generate all forecasts after that date. This cna be implemented by passing the entire data in when initializing the model and then using <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> when calling <code class="docutils literal notranslate"><span class="pre">fit</span></code>. <code class="docutils literal notranslate"><span class="pre">forecast()</span></code> will, by default, produce forecasts after this final date.</p>
+<p>Fixed-windows forecasting uses data up to a specified date to generate all forecasts after that date. This can be implemented by passing the entire data in when initializing the model and then using <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> when calling <code class="docutils literal notranslate"><span class="pre">fit</span></code>. <code class="docutils literal notranslate"><span class="pre">forecast()</span></code> will, by default, produce forecasts after this final date.</p>
 <p><strong>Note</strong> <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> follow Python sequence rules so that the actual date in <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> is not in the sample.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
@@ -582,7 +582,7 @@ Date
 </div>
 <div class="section" id="Recursive-Forecast-Generation">
 <h3>Recursive Forecast Generation<a class="headerlink" href="#Recursive-Forecast-Generation" title="Permalink to this headline">¶</a></h3>
-<p>Recursive is similar to rolling except that the initial observation doesn’t change. This can be easily implemented by dropping the <code class="docutils literal notranslate"><span class="pre">first_obs</span></code> input.</p>
+<p>Recursive is similar to rolling except that the initial observation does not change. This can be easily implemented by dropping the <code class="docutils literal notranslate"><span class="pre">first_obs</span></code> input.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
@@ -958,7 +958,7 @@ dtype: float64
       </div>
     
       <div class="pull-right">
-        <a class="btn btn-default" href="univariate_volatility_scenarios.html" title="next chapter (use the right arrow)">Volatilty Scenarios</a>
+        <a class="btn btn-default" href="univariate_volatility_scenarios.html" title="next chapter (use the right arrow)">Volatility Scenarios</a>
       </div>
     </div>
     <div class="clearer"></div>
@@ -976,12 +976,12 @@ dtype: float64
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="univariate_volatility_scenarios.html" title="Volatilty Scenarios"
+          <a href="univariate_volatility_scenarios.html" title="Volatility Scenarios"
              >next</a> |</li>
         <li class="right" >
           <a href="forecasting.html" title="Forecasting"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>

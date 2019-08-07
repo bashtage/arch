@@ -77,7 +77,7 @@ Semiparametric Bootstrap (Alternative Method)
 
 Since semiparametric bootstraps are effectively bootstrapping residuals, an
 alternative method can be used to conduct a semiparametric bootstrap. This
-requires passing both the data and the estimated residuals when intializing
+requires passing both the data and the estimated residuals when initializing
 the bootstrap.
 
 First, the function used must be account for this structure.

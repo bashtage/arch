@@ -130,7 +130,7 @@
     "\n",
     "The three main outputs are all returned in `DataFrame`s with columns of the form `h.#` where `#` is the number of steps ahead.  That is, `h.1` corresponds to one-step ahead forecasts while `h.10` corresponds to 10-steps ahead.\n",
     "\n",
-    "The default forecast only produces 1-step ahear forecasts."
+    "The default forecast only produces 1-step ahead forecasts."
    ]
   },
   {
@@ -215,7 +215,7 @@
    "source": [
     "### Fixed Window Forecasting\n",
     "\n",
-    "Fixed-windows forecasting uses data up to a specified date to generate all forecasts after that date. This cna be implemented by passing the entire data in when initializing the model and then using ``last_obs`` when calling ``fit``.  ``forecast()`` will, by default, produce forecasts after this final date.\n",
+    "Fixed-windows forecasting uses data up to a specified date to generate all forecasts after that date. This can be implemented by passing the entire data in when initializing the model and then using ``last_obs`` when calling ``fit``.  ``forecast()`` will, by default, produce forecasts after this final date.\n",
     "\n",
     "**Note** ``last_obs`` follow Python sequence rules so that the actual date in ``last_obs`` is not in the sample."
    ]
@@ -317,7 +317,7 @@
    "source": [
     "### Recursive Forecast Generation\n",
     "\n",
-    "Recursive is similar to rolling except that the initial observation doesn't change.  This can be easily implemented by dropping the ``first_obs`` input."
+    "Recursive is similar to rolling except that the initial observation does not change.  This can be easily implemented by dropping the ``first_obs`` input."
    ]
   },
   {

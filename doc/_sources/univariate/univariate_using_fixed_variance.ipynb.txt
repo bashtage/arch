@@ -222,7 +222,7 @@
     "The `FixedVariance` requires that the variance is provided when initializing the object.  The variance provided should have the same shape as the original data.  Since the variance estimated from the GJR-GARCH model is missing the first 22 observations due to the HAR lags, we simply fill these with 1.  These values will not be used to estimate the model, and so the value is not important. \n",
     "\n",
     "The summary shows that there is a single parameter, ``scale``, which is close to 1. The mean parameters\n",
-    "have changed which reflects the GLS-like weighting that this re-estimaion imposes."
+    "have changed which reflects the GLS-like weighting that this re-estimation imposes."
    ]
   },
   {
@@ -349,7 +349,7 @@
    "metadata": {},
    "source": [
     "## Direct Estimation\n",
-    "This model can be directly estimated.  The results are provided for comparisson to the previous \n",
+    "This model can be directly estimated.  The results are provided for comparison to the previous \n",
     "``FixedVariance`` estimates of the mean parameters."
    ]
   },

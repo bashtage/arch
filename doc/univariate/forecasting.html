@@ -14,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Forecasting &#8212; arch 4.8.1+25.g6cca064 documentation</title>
+    <title>Forecasting &#8212; arch 4.8.1+27.gd2d3454 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="univariate_volatility_modeling.html" title="ARCH Modeling"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" accesskey="U">Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
@@ -61,7 +61,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">arch 4.8.1 (+25)</a>
+    ../index.html" class="text-logo">arch 4.8.1 (+27)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -139,9 +139,9 @@ the residual, such as GARCH or HARCH.</p></li>
 <li><p>Simulation: simulation-based forecasts are always available for any
 horizon, although they are only useful for horizons larger than 1 since
 the first out-of-sample forecast from an ARCH-type model is always fixed.
-Simulation-based forecasts make use fo the structure of an ARCH-type model
+Simulation-based forecasts make use of the structure of an ARCH-type model
 to forward simulate using the assumed distribution of residuals, e.g., a
-Normal or Student’s t.</p></li>
+Normal or Student's t.</p></li>
 <li><p>Bootstrap: bootstrap-based forecasts are similar to simulation based
 forecasts except that they make use of the standardized residuals
 from the actual data used in the estimation rather than assuming a
@@ -196,7 +196,7 @@ recursively compute forecasts.</p>
 <h2>Simulation Forecasts<a class="headerlink" href="#simulation-forecasts" title="Permalink to this headline">¶</a></h2>
 <p>Simulation-based forecasts use the model random number generator to simulate
 draws of the standardized residuals, <span class="math notranslate nohighlight">\(e_{t+h}\)</span>.  These are used to
-generate a pre-specified number of paths fof the variances which are then
+generate a pre-specified number of paths of the variances which are then
 averaged to produce the forecasts.  In models like GARCH which evolve in the
 squares of the residuals, there are few advantages to simulation-based
 forecasting. These methods are more valuable when producing multi-step
@@ -242,22 +242,22 @@ is attached to a model fit result.`</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">params</span></code> - The model parameters used to forecast the mean and variance.
 If not specified, the parameters estimated during the call to <code class="docutils literal notranslate"><span class="pre">fit</span></code>
 the produced the result are used.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">horizon</span></code> - A positve integer value indicating the maximum horizon to
+<li><p><code class="docutils literal notranslate"><span class="pre">horizon</span></code> - A positive integer value indicating the maximum horizon to
 produce forecasts.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">start</span></code> - A positive integer or, if the input to the mode is a DataFrame,
 a date (string, datetime, datetime64 or Timestamp). Forecasts are produced
 from <code class="docutils literal notranslate"><span class="pre">start</span></code> until the end of the sample.  If not provided, <code class="docutils literal notranslate"><span class="pre">start</span></code> is
 set to the length of the input data minus 1 so that only 1 forecast is
 produced.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">align</span></code> - One of ‘origin’ (default) or ‘target’ that describes how the
+<li><p><code class="docutils literal notranslate"><span class="pre">align</span></code> - One of 'origin' (default) or 'target' that describes how the
 forecasts aligned in the output. Origin aligns forecasts to the last
 observation used in producing the forecast, while target aligns forecasts
 to the observation index that is being forecast.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">method</span></code> - One of ‘analytic’ (default), ‘simulation’ or ‘bootstrap’ that
+<li><p><code class="docutils literal notranslate"><span class="pre">method</span></code> - One of 'analytic' (default), 'simulation' or 'bootstrap' that
 describes the method used to produce the forecasts.  Not all methods are
 available for all horizons.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">simulations</span></code> - A non-negative integer indicating the number of
-simulation to use when <code class="docutils literal notranslate"><span class="pre">method</span></code> is ‘simulation’ or ‘bootstrap’</p></li>
+simulation to use when <code class="docutils literal notranslate"><span class="pre">method</span></code> is 'simulation' or 'bootstrap'</p></li>
 </ul>
 </div>
 <div class="section" id="understanding-forecast-output">
@@ -289,7 +289,7 @@ This will differ from <code class="docutils literal notranslate"><span class="pr
 </pre></div>
 </div>
 <p>The values in the columns <code class="docutils literal notranslate"><span class="pre">h.1</span></code> are one-step ahead forecast, while values in
-<code class="docutils literal notranslate"><span class="pre">h.2</span></code>, …, <code class="docutils literal notranslate"><span class="pre">h.5</span></code> are 2, …, 5-observation ahead forecasts.  The output
+<code class="docutils literal notranslate"><span class="pre">h.2</span></code>, ..., <code class="docutils literal notranslate"><span class="pre">h.5</span></code> are 2, ..., 5-observation ahead forecasts.  The output
 is aligned so that the Date column is the final data used to generate the
 forecast, so that <code class="docutils literal notranslate"><span class="pre">h.1</span></code> in row <code class="docutils literal notranslate"><span class="pre">2013-12-31</span></code> is the one-step ahead forecast
 made using data <strong>up to and including</strong> December 31, 2013.</p>
@@ -323,15 +323,15 @@ that are not forecast are <code class="docutils literal notranslate"><span class
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>index</strong> (<em>{list</em><em>, </em><em>ndarray}</em>) – </p></li>
-<li><p><strong>mean</strong> (<em>ndarray</em>) – </p></li>
-<li><p><strong>variance</strong> (<em>ndarray</em>) – </p></li>
-<li><p><strong>residual_variance</strong> (<em>ndarray</em>) – </p></li>
-<li><p><strong>simulated_paths</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>simulated_variances</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>simulated_residual_variances</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>simulated_residuals</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>align</strong> (<em>{'origin'</em><em>, </em><em>'target'}</em>) – </p></li>
+<li><p><strong>index</strong> (<em>{list</em><em>, </em><em>ndarray}</em>) -- </p></li>
+<li><p><strong>mean</strong> (<em>ndarray</em>) -- </p></li>
+<li><p><strong>variance</strong> (<em>ndarray</em>) -- </p></li>
+<li><p><strong>residual_variance</strong> (<em>ndarray</em>) -- </p></li>
+<li><p><strong>simulated_paths</strong> (<em>ndarray</em><em>, </em><em>optional</em>) -- </p></li>
+<li><p><strong>simulated_variances</strong> (<em>ndarray</em><em>, </em><em>optional</em>) -- </p></li>
+<li><p><strong>simulated_residual_variances</strong> (<em>ndarray</em><em>, </em><em>optional</em>) -- </p></li>
+<li><p><strong>simulated_residuals</strong> (<em>ndarray</em><em>, </em><em>optional</em>) -- </p></li>
+<li><p><strong>align</strong> (<em>{'origin'</em><em>, </em><em>'target'}</em>) -- </p></li>
 </ul>
 </dd>
 </dl>
@@ -377,10 +377,10 @@ that are not forecast are <code class="docutils literal notranslate"><span class
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>values</strong> – </p></li>
-<li><p><strong>residuals</strong> – </p></li>
-<li><p><strong>variances</strong> – </p></li>
-<li><p><strong>residual_variances</strong> – </p></li>
+<li><p><strong>values</strong> -- </p></li>
+<li><p><strong>residuals</strong> -- </p></li>
+<li><p><strong>variances</strong> -- </p></li>
+<li><p><strong>residual_variances</strong> -- </p></li>
 </ul>
 </dd>
 </dl>
@@ -466,7 +466,7 @@ that are not forecast are <code class="docutils literal notranslate"><span class
         <li class="right" >
           <a href="univariate_volatility_modeling.html" title="ARCH Modeling"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+25.g6cca064 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">arch 4.8.1+27.gd2d3454 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="univariate.html" >Univariate Volatility Models</a> &#187;</li> 
       </ul>
     </div>
