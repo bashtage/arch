@@ -1215,7 +1215,7 @@ class ZivotAndrews(UnitRootTest):
     significant run time reduction but also slightly more pessimistic test
     statistics than the original Zivot-Andrews method,
 
-    No attempt has been made to characterize the size/power tradeoff.
+    No attempt has been made to characterize the size/power trade-off.
 
     References
     ----------

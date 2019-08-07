@@ -23,7 +23,7 @@ Setup
 =====
 
 All examples will construct confidence intervals for the Sharpe ratio of the
-S&P 500, which is the ratio of the assumalized mean to the annualized standard
+S&P 500, which is the ratio of the annualized mean to the annualized standard
 deviation.  The parameters will be the annualized mean, the annualized standard
 deviation and the Sharpe ratio.
 
@@ -139,7 +139,7 @@ computed element-by-element.
 Percentile (``percentile``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The percentile method directly constructs condifence intervals from the emprical
+The percentile method directly constructs confidence intervals from the empirical
 CDF of the bootstrap parameter estimates, :math:`\hat{\theta}_b^\star`.
 The confidence interval is then defined.
 
@@ -161,7 +161,7 @@ distribution.
 Asymptotic Normal Approximation (``norm``, ``cov`` or ``var``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The asymptotic normal approximation method estimates the covairance of
+The asymptotic normal approximation method estimates the covariance of
 the parameters and then combines this with the usual quantiles from a normal
 distribution.  The confidence interval is then
 

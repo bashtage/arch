@@ -1,6 +1,6 @@
 """
 Pure Python implementations of the core recursions in the models. Only used for
-testing and if it isn't possible to install the Cython version using
+testing and if it is not possible to install the Cython version using
 python setup.py install --no-binary
 """
 from __future__ import absolute_import, division

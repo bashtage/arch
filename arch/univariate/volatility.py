@@ -1655,7 +1655,7 @@ class EWMAVariance(VolatilityProcess):
         \sigma_t^{2}=\lambda\sigma_{t-1}^2 + (1-\lambda)\epsilon^2_{t-1}
 
     When lam is provided, this model has no parameters since the smoothing
-    parameter is treated as fixed. Sel lam to ``None`` to jointly estimate this
+    parameter is treated as fixed. Set lam to ``None`` to jointly estimate this
     parameter when fitting the model.
     """
 

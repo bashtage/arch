@@ -75,6 +75,16 @@ extensions = [
     'nbsphinx'
 ]
 
+try:
+    import sphinxcontrib.spelling  # noqa: F401
+except ImportError as err:  # noqa: F841
+    pass
+else:
+    extensions.append('sphinxcontrib.spelling')
+
+spelling_word_list_filename = ['spelling_wordlist.txt', 'names_wordlist.txt']
+spelling_ignore_pypi_package_names = True
+
 suppress_warnings = ['ref.citation']
 
 # Add any paths that contain templates here, relative to this directory.
@@ -243,7 +253,7 @@ intersphinx_mapping = {
     'statsmodels': ('http://www.statsmodels.org/dev/', None),
     'matplotlib': ('https://matplotlib.org', None),
     'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
-    'python': ('https://docs.python.org/', None),
+    'python': ('https://docs.python.org/3/', None),
     'numpy': ('https://docs.scipy.org/doc/numpy', None),
     'np': ('https://docs.scipy.org/doc/numpy', None),
     'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),

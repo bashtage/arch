@@ -25,8 +25,8 @@ from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
 from arch.utility.array import AbstractDocStringInheritor, ensure1d
 from arch.utility.exceptions import (ConvergenceWarning, StartingValueWarning,
-                                     convergence_warning,
-                                     starting_value_warning)
+                                     DataScaleWarning, convergence_warning,
+                                     data_scale_warning, starting_value_warning)
 from arch.utility.testing import WaldTestStatistic
 from arch.vendor.cached_property import cached_property
 
@@ -145,7 +145,7 @@ class ARCHModel(object):
     """
 
     def __init__(self, y=None, volatility=None, distribution=None,
-                 hold_back=None):
+                 hold_back=None, rescale=None):
 
         # Set on model fit
         self._fit_indices = None
@@ -162,6 +162,9 @@ class ARCHModel(object):
 
         self.hold_back = hold_back
         self._hold_back = 0 if hold_back is None else hold_back
+
+        self.rescale = rescale
+        self.scale = 1.0
 
         self._volatility = None
         self._distribution = None
@@ -239,6 +242,26 @@ class ARCHModel(object):
         if not isinstance(value, Distribution):
             raise ValueError("Must subclass Distribution")
         self._distribution = value
+
+    def _check_scale(self, resids):
+        check = self.rescale in (None, True)
+        if not check:
+            return
+        orig_scale = scale = resids.var()
+        rescale = 1.0
+        while not 1.0 <= scale < 1000.0:
+            if scale < 1.0:
+                rescale *= 10
+            else:
+                rescale /= 10
+            scale = orig_scale * rescale ** 2
+        if rescale == 1.0:
+            return
+        if self.rescale is None:
+            warnings.warn(data_scale_warning.format(orig_scale, rescale),
+                          DataScaleWarning)
+            return
+        self.scale = rescale
 
     def _r2(self, params):
         """
@@ -450,7 +473,7 @@ class ARCHModel(object):
         backcast : float, optional
             Value to use as backcast. Should be measure :math:`\sigma^2_0`
             since model-specific non-linear transformations are applied to
-            value before computing the variance recusions.
+            value before computing the variance recursions.
 
         Returns
         -------
@@ -471,13 +494,21 @@ class ARCHModel(object):
         v, d = self.volatility, self.distribution
         offsets = np.array((self.num_params, v.num_params, d.num_params))
         total_params = sum(offsets)
+
         # Closed form is applicable when model has no parameters
         # Or when distribution is normal and constant variance
-
         has_closed_form = v.closed_form and d.num_params == 0 and isinstance(v, ConstantVariance)
+
         self._adjust_sample(first_obs, last_obs)
 
         resids = self.resids(self.starting_values())
+        self._check_scale(resids)
+        if self.scale != 1.0:
+            # Scale changed, rescale data and reset model
+            self._y = self.scale * np.asarray(self._y_original)
+            self._adjust_sample(first_obs, last_obs)
+            resids = self.resids(self.starting_values())
+
         if backcast is None:
             backcast = v.backcast(resids)
         else:
@@ -1090,7 +1121,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         fig = figure()
 
         ax = fig.add_subplot(2, 1, 1)
-        ax.plot(self._index, self.resid / self.conditional_volatility)
+        ax.plot(self._index.values, self.resid / self.conditional_volatility)
         ax.set_title('Standardized Residuals')
         ax.axes.xaxis.set_ticklabels([])
         _set_tight_x(ax, self._index)
@@ -1109,7 +1140,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         else:
             title = 'Conditional Volatility'
 
-        ax.plot(self._index, vol)
+        ax.plot(self._index.values, vol)
         _set_tight_x(ax, self._index)
         ax.set_title(title)
 
@@ -1400,6 +1431,16 @@ class ARCHModelResult(ARCHModelFixedResult):
         self._r2 = r2
         self.cov_type = cov_type
         self._optim_output = optim_output
+
+    @cached_property
+    def scale(self):
+        """
+        The scale applied to the original data before estimating the model.
+
+        If scale=1.0, the the data have not been rescaled.  Otherwise, the
+        model parameters have been estimated on scale * y.
+        """
+        return self.model.scale
 
     def conf_int(self, alpha=0.05):
         """

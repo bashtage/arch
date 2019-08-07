@@ -913,7 +913,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
     appropriate when the inputs are independent. This structure allows
     bootstrapping statistics that depend on samples with unequal length, as
     is common in some experiments. If data have cross-sectional dependence, so
-    that observation ``i`` is related accross all inputs, this bootstrap is
+    that observation ``i`` is related across all inputs, this bootstrap is
     inappropriate.
 
     Supports numpy arrays and pandas Series and DataFrames.  Data returned has
