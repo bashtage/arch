@@ -18,27 +18,27 @@ class TestForecasting(TestCase):
     def setup_class(cls):
         cls.rng = RandomState(12345)
         am = arch_model(None, mean='Constant', vol='Constant')
-        data = am.simulate(np.array([0.0, 1.0]), 1000)
+        data = am.simulate(np.array([0.0, 10.0]), 1000)
         data.index = pd.date_range('2000-01-01', periods=data.index.shape[0])
         cls.zero_mean = data.data
 
         am = arch_model(None, mean='AR', vol='Constant', lags=[1])
-        data = am.simulate(np.array([1.0, 0.9, 0.1]), 1000)
+        data = am.simulate(np.array([1.0, 0.9, 2]), 1000)
         data.index = pd.date_range('2000-01-01', periods=data.index.shape[0])
         cls.ar1 = data.data
 
         am = arch_model(None, mean='AR', vol='Constant', lags=[1, 2])
-        data = am.simulate(np.array([1.0, 1.9, -0.95, 0.1]), 1000)
+        data = am.simulate(np.array([1.0, 1.9, -0.95, 2]), 1000)
         data.index = pd.date_range('2000-01-01', periods=data.index.shape[0])
         cls.ar2 = data.data
 
         am = arch_model(None, mean='HAR', vol='Constant', lags=[1, 5, 22])
-        data = am.simulate(np.array([1.0, 0.4, 0.3, 0.2, 0.1]), 1000)
+        data = am.simulate(np.array([1.0, 0.4, 0.3, 0.2, 2]), 1000)
         data.index = pd.date_range('2000-01-01', periods=data.index.shape[0])
         cls.har3 = data.data
 
         am = arch_model(None, mean='AR', vol='GARCH', lags=[1, 2], p=1, q=1)
-        data = am.simulate(np.array([1.0, 1.9, -0.95, 0.1, 0.1, 0.88]), 1000)
+        data = am.simulate(np.array([1.0, 1.9, -0.95, 0.05, 0.1, 0.88]), 1000)
         data.index = pd.date_range('2000-01-01', periods=data.index.shape[0])
         cls.ar2_garch = data.data
 
@@ -513,7 +513,7 @@ class TestForecasting(TestCase):
         assert_allclose(res_holdback.params, res.params, rtol=1e-4, atol=1e-4)
 
     def test_forecast_exogenous_regressors(self):
-        y = self.rng.randn(1000, 1)
+        y = 10 * self.rng.randn(1000, 1)
         x = self.rng.randn(1000, 2)
         am = HARX(y=y, x=x, lags=[1, 2])
         res = am.fit()

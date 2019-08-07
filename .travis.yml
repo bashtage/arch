@@ -118,6 +118,7 @@ script:
     if [[ "$DOCBUILD" = true ]]; then
       python setup.py install
       cd doc
+      make spelling
       make html
       cd ..
       if [[ "$TRAVIS_BRANCH" = "master" || ! -z "$TRAVIS_TAG" ]]; then

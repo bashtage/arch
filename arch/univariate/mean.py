@@ -118,6 +118,11 @@ class HARX(ARCHModel):
         Volatility process to use in the model
     distribution : Distribution, optional
         Error distribution to use in the model
+    rescale : bool, optional
+        Flag indicating whether to automatically rescale data if the scale of the
+        data is likely to produce convergence issues when estimating model parameters.
+        If False, the model is estimated on the data without transformation.  If True,
+        than y is rescaled and the new scale is reported in the estimation results.
 
     Examples
     --------
@@ -147,10 +152,11 @@ class HARX(ARCHModel):
 
     def __init__(self, y=None, x=None, lags=None, constant=True,
                  use_rotated=False, hold_back=None, volatility=None,
-                 distribution=None):
+                 distribution=None, rescale=None):
         super(HARX, self).__init__(y, hold_back=hold_back,
                                    volatility=volatility,
-                                   distribution=distribution)
+                                   distribution=distribution,
+                                   rescale=rescale)
         self._x = x
         self._x_names = None
         self._x_index = None
@@ -703,6 +709,11 @@ class ConstantMean(HARX):
         Volatility process to use in the model
     distribution : Distribution, optional
         Error distribution to use in the model
+    rescale : bool, optional
+        Flag indicating whether to automatically rescale data if the scale of the
+        data is likely to produce convergence issues when estimating model parameters.
+        If False, the model is estimated on the data without transformation.  If True,
+        than y is rescaled and the new scale is reported in the estimation results.
 
     Examples
     --------
@@ -722,10 +733,11 @@ class ConstantMean(HARX):
     """
 
     def __init__(self, y=None, hold_back=None,
-                 volatility=None, distribution=None):
+                 volatility=None, distribution=None, rescale=None):
         super(ConstantMean, self).__init__(y, hold_back=hold_back,
                                            volatility=volatility,
-                                           distribution=distribution)
+                                           distribution=distribution,
+                                           rescale=rescale)
         self.name = 'Constant Mean'
 
     def parameter_names(self):
@@ -820,6 +832,11 @@ class ZeroMean(HARX):
         Volatility process to use in the model
     distribution : Distribution, optional
         Error distribution to use in the model
+    rescale : bool, optional
+        Flag indicating whether to automatically rescale data if the scale of the
+        data is likely to produce convergence issues when estimating model parameters.
+        If False, the model is estimated on the data without transformation.  If True,
+        than y is rescaled and the new scale is reported in the estimation results.
 
     Examples
     --------
@@ -839,14 +856,15 @@ class ZeroMean(HARX):
 
     """
 
-    def __init__(self, y=None, hold_back=None,
-                 volatility=None, distribution=None):
+    def __init__(self, y=None, hold_back=None, volatility=None, distribution=None,
+                 rescale=None):
         super(ZeroMean, self).__init__(y,
                                        x=None,
                                        constant=False,
                                        hold_back=hold_back,
                                        volatility=volatility,
-                                       distribution=distribution)
+                                       distribution=distribution,
+                                       rescale=rescale)
         self.name = 'Zero Mean'
 
     def parameter_names(self):
@@ -946,6 +964,11 @@ class ARX(HARX):
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
         lag lengths to estimate on the common sample.
+    rescale : bool, optional
+        Flag indicating whether to automatically rescale data if the scale of the
+        data is likely to produce convergence issues when estimating model parameters.
+        If False, the model is estimated on the data without transformation.  If True,
+        than y is rescaled and the new scale is reported in the estimation results.
 
     Examples
     --------
@@ -972,7 +995,8 @@ class ARX(HARX):
     """
 
     def __init__(self, y=None, x=None, lags=None, constant=True,
-                 hold_back=None, volatility=None, distribution=None):
+                 hold_back=None, volatility=None, distribution=None,
+                 rescale=None):
         # Convert lags to 2-d format
 
         if lags is not None:
@@ -992,7 +1016,7 @@ class ARX(HARX):
                     raise ValueError('lags does not follow a supported format')
         super(ARX, self).__init__(y, x, lags, constant, False,
                                   hold_back, volatility=volatility,
-                                  distribution=distribution)
+                                  distribution=distribution, rescale=rescale)
         self.name = 'AR'
         if self._x is not None:
             self.name += '-X'
@@ -1043,6 +1067,11 @@ class LS(HARX):
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
         lag lengths to estimate on the common sample.
+    rescale : bool, optional
+        Flag indicating whether to automatically rescale data if the scale of the
+        data is likely to produce convergence issues when estimating model parameters.
+        If False, the model is estimated on the data without transformation.  If True,
+        than y is rescaled and the new scale is reported in the estimation results.
 
     Examples
     --------
@@ -1063,9 +1092,11 @@ class LS(HARX):
 
     """
 
-    def __init__(self, y=None, x=None, constant=True, hold_back=None):
+    def __init__(self, y=None, x=None, constant=True, hold_back=None,
+                 rescale=None):
         # Convert lags to 2-d format
-        super(LS, self).__init__(y, x, None, constant, False, hold_back)
+        super(LS, self).__init__(y, x, None, constant, False, hold_back,
+                                 rescale=rescale)
         self.name = 'Least Squares'
 
     def _model_description(self, include_lags=False):
@@ -1073,7 +1104,7 @@ class LS(HARX):
 
 
 def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
-               power=2.0, dist='Normal', hold_back=None):
+               power=2.0, dist='Normal', hold_back=None, rescale=None):
     """
     Convenience function to simplify initialization of ARCH models
 
@@ -1162,19 +1193,19 @@ def arch_model(y, x=None, mean='Constant', lags=0, vol='Garch', p=1, o=0, q=1,
         raise ValueError('Unknown model type in dist')
 
     if mean == 'zero':
-        am = ZeroMean(y, hold_back=hold_back)
+        am = ZeroMean(y, hold_back=hold_back, rescale=rescale)
     elif mean == 'constant':
-        am = ConstantMean(y, hold_back=hold_back)
+        am = ConstantMean(y, hold_back=hold_back, rescale=rescale)
     elif mean == 'harx':
-        am = HARX(y, x, lags, hold_back=hold_back)
+        am = HARX(y, x, lags, hold_back=hold_back, rescale=rescale)
     elif mean == 'har':
-        am = HARX(y, None, lags, hold_back=hold_back)
+        am = HARX(y, None, lags, hold_back=hold_back, rescale=rescale)
     elif mean == 'arx':
-        am = ARX(y, x, lags, hold_back=hold_back)
+        am = ARX(y, x, lags, hold_back=hold_back, rescale=rescale)
     elif mean == 'ar':
-        am = ARX(y, None, lags, hold_back=hold_back)
+        am = ARX(y, None, lags, hold_back=hold_back, rescale=rescale)
     else:
-        am = LS(y, x, hold_back=hold_back)
+        am = LS(y, x, hold_back=hold_back, rescale=rescale)
 
     if vol == 'constant':
         v = ConstantVariance()

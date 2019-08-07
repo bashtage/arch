@@ -1,5 +1,14 @@
 Changes since 4.8.1
 ===================
+- Added a parameter `rescale` to :func:`~arch.univariate.mean.arch_model`
+  that allows the estimator to rescale data if it may help parameter
+  estimation. If `rescale=True`, then the data will be rescaled by a power
+  of 10 (e.g., 10, 100, or 1000) to produce a series with a residual
+  variance between 1 and 1000. The model is then estimated on the rescaled
+  data. The scale is reported :func:`~arch.univariate.base.ARCHModelResult.scale`.
+  If `rescale=None`, a warning is produced if the data appear to be poorly
+  scaled, but no change of scale is applied. If `rescale=False`, no scale
+  change is applied and no warning is issued.
 - Fixed a bug when using the BCA bootstrap method where the leave-one-out
   jackknife used the wrong centering variable (:issue:`288`).
 - Added :func:`~arch.univariate.base.ARCHModelResult.optimization_result` to

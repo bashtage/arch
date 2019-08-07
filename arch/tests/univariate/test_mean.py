@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division
 
-from arch.compat.python import StringIO, iteritems, range
+from arch.compat.python import StringIO, iteritems, range, PY3
 
 import sys
 from unittest import TestCase
@@ -28,6 +28,8 @@ from arch.univariate.volatility import (ARCH, EGARCH, FIGARCH, GARCH, HARCH,
                                         ConstantVariance, EWMAVariance,
                                         FixedVariance, MIDASHyperbolic,
                                         RiskMetrics2006)
+from arch.utility.exceptions import ConvergenceWarning, DataScaleWarning
+
 
 try:
     import arch.univariate.recursions as rec
@@ -830,20 +832,17 @@ class TestMeanModel(TestCase):
                       0.96489515, 0.93250153, 1.34509807, 1.80951607,
                       1.66313783, 1.38610821, 1.26381761])
         am = arch_model(y, mean='ARX', lags=10, p=5, q=0)
-        with warnings.catch_warnings(record=True) as w:
+
+        warning = ConvergenceWarning if not PY3 else None
+        with pytest.warns(warning):
             am.fit(disp=DISPLAY)
-            if len(w) == 0:
-                pytest.xfail("No warning raised, might be small "
-                             "issue on Python 2.7/Windows")
-            assert_equal(len(w), 1)
 
-        with warnings.catch_warnings(record=True) as w:
-            am.fit(show_warning=False, disp=DISPLAY)
-            assert_equal(len(w), 0)
-
-        with warnings.catch_warnings(record=True) as w:
+        with pytest.warns(warning):
             am.fit(show_warning=True, disp=DISPLAY)
-            assert_equal(len(w), 1)
+
+        warning = DataScaleWarning if not PY3 else None
+        with pytest.warns(warning):
+            am.fit(show_warning=False, disp=DISPLAY)
 
     def test_first_after_last(self):
         am = arch_model(self.y_series)
@@ -1030,3 +1029,30 @@ def test_arch_lm(simulated_data):
     assert 'Standardized' in wald.alternative
     assert_almost_equal(wald.pval, 1 - stats.chi2(df).cdf(wald.stat))
     assert 'H0: Standardized' in wald.__repr__()
+
+
+def test_autoscale():
+    rs = np.random.RandomState(34254321)
+    dist = Normal(random_state=rs)
+    am = arch_model(None)
+    am.distribution = dist
+    data = am.simulate([0, .0001, .05, .94], nobs=1000)
+    am = arch_model(data.data)
+    with pytest.warns(DataScaleWarning):
+        res = am.fit(disp=DISPLAY)
+    assert_almost_equal(res.scale, 1.0)
+
+    am = arch_model(data.data, rescale=True)
+    res_auto = am.fit(disp=DISPLAY)
+    assert_almost_equal(res_auto.scale, 100.0)
+
+    am = arch_model(100 * data.data)
+    res_manual = am.fit(disp=DISPLAY)
+    assert_series_equal(res_auto.params, res_manual.params)
+
+    res_no = arch_model(data.data, rescale=False).fit(disp=DISPLAY)
+    assert res_no.scale == 1.0
+
+    am = arch_model(10000 * data.data, rescale=True)
+    res_big = am.fit(disp=DISPLAY)
+    assert_almost_equal(res_big.scale, .01)
