@@ -1745,7 +1745,9 @@ def auto_bandwidth(y, kernel="ba"):
     sig = (n+1)*[0]
 
     for i in range(n+1):
-        sig[i] = sum(y[i:].dot(y[:len(y)-i]))
+        a = list(y[i:])
+        b = list(y[:len(y) - i])
+        sig[i] = sum([i * j for (i, j) in zip(a, b)])
 
     sigma_m1 = sig[1:len(sig)]  # sigma without the 1st element
     s0 = sig[0]+2*sum(sigma_m1)
