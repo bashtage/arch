@@ -1767,8 +1767,8 @@ def auto_bandwidth(y, kernel="ba"):
         q = 2
     t_power = 1/(2*q+1)
 
-    if kernel == "ba":       
-        gamma = 1.1447 * (((s1 / s0)** 2)**t_power)
+    if kernel == "ba":
+        gamma = 1.1447 * (((s1 / s0) ** 2) ** t_power)
     elif kernel == "pa":
         gamma = 2.6614 * (((s2 / s0) ** 2) ** t_power)
     elif kernel == "qs":
