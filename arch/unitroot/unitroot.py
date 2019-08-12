@@ -1741,7 +1741,16 @@ def auto_bandwidth(y, kernel="ba"):
     if y.ndim != 1 or y.shape[0] < 2:
         raise ValueError('Data must be of dimension 1 and contain more than one observation')
 
-    n = int(4*((len(y)/100)**(2/9)))
+    if kernel == "ba":
+        n_power = 2 / 9
+    elif kernel == "pa":
+        n_power = 4 / 25
+    elif kernel == "qs":
+        n_power = 2 / 25
+    else:
+        raise ValueError('Unknown kernel')
+
+    n = int(4 * ((len(y) / 100)**n_power))
     sig = (n+1)*[0]
 
     for i in range(n+1):
