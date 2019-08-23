@@ -23,7 +23,7 @@ from statsmodels.tsa.stattools import _autolag, lagmat
 from arch.unitroot import (ADF, DFGLS, KPSS, PhillipsPerron, VarianceRatio,
                            ZivotAndrews)
 from arch.unitroot.critical_values.dickey_fuller import tau_2010
-from arch.unitroot.unitroot import _autolag_ols, mackinnoncrit, mackinnonp
+from arch.unitroot.unitroot import _autolag_ols, mackinnoncrit, mackinnonp, auto_bandwidth
 
 DECIMAL_5 = 5
 DECIMAL_4 = 4
