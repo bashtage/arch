@@ -1750,16 +1750,16 @@ def auto_bandwidth(y, kernel="ba"):
     else:
         raise ValueError('Unknown kernel')
 
-    n = int(4 * ((len(y) / 100)**n_power))
-    sig = (n+1)*[0]
+    n = int(4 * ((len(y) / 100) ** n_power))
+    sig = (n + 1) * [0]
 
-    for i in range(n+1):
+    for i in range(n + sigma_m11):
         a = list(y[i:])
         b = list(y[:len(y) - i])
         sig[i] = sum([i * j for (i, j) in zip(a, b)])
 
     sigma_m1 = sig[1:len(sig)]  # sigma without the 1st element
-    s0 = sig[0]+2*sum(sigma_m1)
+    s0 = sig[0] + 2 * sum(sigma_m1)
 
     q = 0
     gamma = 0
@@ -1767,16 +1767,16 @@ def auto_bandwidth(y, kernel="ba"):
     if kernel == "ba":
         s1 = 0
         for j in range(len(sigma_m1)):
-            s1 += (j+1)*sigma_m1[j]
+            s1 += (j + 1) * sigma_m1[j]
         s1 *= 2
         q = 1
     elif kernel in ["pa", "qs"]:
         s2 = 0
         for j in range(len(sigma_m1)):
-            s2 += ((j+1)**2)*sigma_m1[j]
+            s2 += ((j + 1) ** 2) * sigma_m1[j]
         s2 *= 2
         q = 2
-    t_power = 1/(2*q+1)
+    t_power = 1 / (2 * q + 1)
 
     if kernel == "ba":
         gamma = 1.1447 * (((s1 / s0) ** 2) ** t_power)
