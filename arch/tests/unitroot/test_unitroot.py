@@ -12,7 +12,7 @@ import warnings
 import numpy as np
 from numpy import ceil, diff, log, polyval
 from numpy.random import RandomState
-from numpy.testing import assert_almost_equal, assert_equal
+from numpy.testing import assert_almost_equal, assert_equal, assert_allclose
 import pandas as pd
 import pytest
 import scipy.stats as stats
