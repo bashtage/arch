@@ -1753,7 +1753,7 @@ def auto_bandwidth(y, kernel="ba"):
     n = int(4 * ((len(y) / 100) ** n_power))
     sig = (n + 1) * [0]
 
-    for i in range(n + sigma_m11):
+    for i in range(n + 1):
         a = list(y[i:])
         b = list(y[:len(y) - i])
         sig[i] = sum([i * j for (i, j) in zip(a, b)])
