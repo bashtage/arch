@@ -39,6 +39,7 @@ ZIVOT_ANDREWS_DATA = pd.read_csv(os.path.join(DATA_PATH, 'zivot-andrews.csv'), i
 REAL_TIME_SERIES = [8, 9, 2, 4, 8, 9, 9, 4, 4, 9, 7, 1, 1, 9, 4, 9, 3]
 TRUE_BW_FROM_R = 3.033886
 
+
 class TestUnitRoot(object):
     @classmethod
     def setup_class(cls):
@@ -510,6 +511,7 @@ def test_zivot_andrews_error():
     y = ZIVOT_ANDREWS_DATA[series_name].dropna()
     with pytest.raises(ValueError):
         ZivotAndrews(y, trim=0.5)
+
 
 def test_bw_selection():
     bw = round(auto_bandwidth(REAL_TIME_SERIES, kernel="ba"), 7)
