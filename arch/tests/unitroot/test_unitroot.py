@@ -37,7 +37,9 @@ ZIVOT_ANDREWS_DATA = pd.read_csv(os.path.join(DATA_PATH, 'zivot-andrews.csv'), i
 
 # Time series to test the autobandwidth method against its implementation under R
 REAL_TIME_SERIES = [8, 9, 2, 4, 8, 9, 9, 4, 4, 9, 7, 1, 1, 9, 4, 9, 3]
-TRUE_BW_FROM_R = 3.033886
+TRUE_BW_FROM_R_BA = 3.033886
+TRUE_BW_FROM_R_PA = 7.75328
+TRUE_BW_FROM_R_QS = 3.851586
 
 
 class TestUnitRoot(object):
@@ -514,6 +516,14 @@ def test_zivot_andrews_error():
 
 
 def test_bw_selection():
-    bw = round(auto_bandwidth(REAL_TIME_SERIES, kernel="ba"), 7)
+    bw_ba = round(auto_bandwidth(REAL_TIME_SERIES, kernel="ba"), 7)
     TRUE_BW_FROM_R = 3.033886
-    assert_allclose(bw, TRUE_BW_FROM_R)
+    assert_allclose(bw_ba, TRUE_BW_FROM_R)
+    
+    bw_pa = round(auto_bandwidth(REAL_TIME_SERIES, kernel="pa"), 6)
+    TRUE_BW_FROM_R = 7.75328
+    assert_allclose(bw_pa, TRUE_BW_FROM_R)
+
+    bw_qs = round(auto_bandwidth(REAL_TIME_SERIES, kernel="qs"), 6)
+    TRUE_BW_FROM_R = 3.851586
+    assert_allclose(bw_qs, TRUE_BW_FROM_R)
