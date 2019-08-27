@@ -529,7 +529,7 @@ def test_bw_selection():
     assert_allclose(bw_qs, TRUE_BW_FROM_R)
 
     with pytest.raises(ValueError):
-        bw_err = auto_bandwidth(REAL_TIME_SERIES, kernel="err")
+        auto_bandwidth(REAL_TIME_SERIES, kernel="err")
 
     with pytest.raises(ValueError):
-        bw_err = auto_bandwidth([1], kernel="qs")
+        auto_bandwidth([1], kernel="qs")
