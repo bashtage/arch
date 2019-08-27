@@ -26,7 +26,7 @@ function :py:meth:`~arch.arch_model`
 .. code-block:: python
 
     import datetime as dt
-    
+
     import pandas_datareader.data as web
 
     from arch import arch_model
@@ -85,7 +85,7 @@ yields
 
 ::
 
-                         Constant Mean - GARCH Model Results                      
+                         Constant Mean - GARCH Model Results
     ==============================================================================
     Dep. Variable:              Adj Close   R-squared:                      -0.001
     Mean Model:             Constant Mean   Adj. R-squared:                 -0.001
@@ -95,12 +95,12 @@ yields
                                             No. Observations:                 3520
     Date:                Fri, Dec 02 2016   Df Residuals:                     3516
     Time:                        22:22:28   Df Model:                            4
-                                      Mean Model                                  
+                                      Mean Model
     ==============================================================================
                      coef    std err          t      P>|t|        95.0% Conf. Int.
     ------------------------------------------------------------------------------
     mu             0.0531  1.487e-02      3.569  3.581e-04   [2.392e-02,8.220e-02]
-                                   Volatility Model                               
+                                   Volatility Model
     ==============================================================================
                      coef    std err          t      P>|t|        95.0% Conf. Int.
     ------------------------------------------------------------------------------
