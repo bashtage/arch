@@ -530,3 +530,6 @@ def test_bw_selection():
 
     with pytest.raises(ValueError):
         bw_err = auto_bandwidth(REAL_TIME_SERIES, kernel="err")
+
+    with pytest.raises(ValueError):
+        bw_err = auto_bandwidth([1], kernel="qs")
