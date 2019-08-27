@@ -519,7 +519,7 @@ def test_bw_selection():
     bw_ba = round(auto_bandwidth(REAL_TIME_SERIES, kernel="ba"), 7)
     TRUE_BW_FROM_R = 3.033886
     assert_allclose(bw_ba, TRUE_BW_FROM_R)
-    
+
     bw_pa = round(auto_bandwidth(REAL_TIME_SERIES, kernel="pa"), 6)
     TRUE_BW_FROM_R = 7.75328
     assert_allclose(bw_pa, TRUE_BW_FROM_R)
