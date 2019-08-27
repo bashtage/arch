@@ -1784,8 +1784,6 @@ def auto_bandwidth(y, kernel="ba"):
         gamma = 2.6614 * (((s2 / s0) ** 2) ** t_power)
     elif kernel == "qs":
         gamma = 1.3221 * (((s2 / s0) ** 2) ** t_power)
-    else:
-        raise ValueError('Unknown kernel')
 
     bandwidth = gamma * power(len(y), t_power)
 
