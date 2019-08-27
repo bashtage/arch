@@ -6,6 +6,6 @@ cython>=0.24
 numba>=0.32
 pytest
 statsmodels>=0.8
-guzzle_sphinx_theme
+sphinx_material
 nbsphinx
 cached_property

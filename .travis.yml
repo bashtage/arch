@@ -83,7 +83,7 @@ before_install:
   - |
     if [[ "$DOCBUILD" == true ]]; then
       conda install sphinx ipython numpydoc jupyter seaborn
-      pip install doctr nbsphinx guzzle_sphinx_theme -q
+      pip install doctr nbsphinx sphinx_material -q
       sudo apt-get install -y enchant
       pip install sphinxcontrib-spelling
     fi
