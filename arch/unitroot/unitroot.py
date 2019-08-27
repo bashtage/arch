@@ -1770,7 +1770,7 @@ def auto_bandwidth(y, kernel="ba"):
             s1 += (j + 1) * sigma_m1[j]
         s1 *= 2
         q = 1
-    elif kernel in ["pa", "qs"]:
+    else:
         s2 = 0
         for j in range(len(sigma_m1)):
             s2 += ((j + 1) ** 2) * sigma_m1[j]
