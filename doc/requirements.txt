@@ -10,6 +10,6 @@ sphinx>=1.5
 seaborn
 numpydoc
 nbsphinx
-guzzle_sphinx_theme
+sphinx_material
 jupyter
 cached_property

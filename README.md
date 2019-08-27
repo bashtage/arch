@@ -241,7 +241,7 @@ The development requirements are:
 * Cython (0.24+, if not using --no-binary)
 * py.test (For tests)
 * sphinx (to build docs)
-* guzzle_sphinx_theme (to build docs)
+* sphinx_material (to build docs)
 * jupyter, notebook and nbsphinx (to build docs)
 
 ### Installation Notes:
