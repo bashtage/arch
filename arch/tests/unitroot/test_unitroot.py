@@ -517,19 +517,16 @@ def test_zivot_andrews_error():
 
 def test_bw_selection():
     bw_ba = round(auto_bandwidth(REAL_TIME_SERIES, kernel="ba"), 7)
-    TRUE_BW_FROM_R = 3.033886
-    assert_allclose(bw_ba, TRUE_BW_FROM_R)
+    assert_allclose(bw_ba, TRUE_BW_FROM_R_BA)
 
     bw_pa = round(auto_bandwidth(REAL_TIME_SERIES, kernel="pa"), 6)
-    TRUE_BW_FROM_R = 7.75328
-    assert_allclose(bw_pa, TRUE_BW_FROM_R)
+    assert_allclose(bw_pa, TRUE_BW_FROM_R_PA)
 
     bw_qs = round(auto_bandwidth(REAL_TIME_SERIES, kernel="qs"), 6)
-    TRUE_BW_FROM_R = 3.851586
-    assert_allclose(bw_qs, TRUE_BW_FROM_R)
+    assert_allclose(bw_qs, TRUE_BW_FROM_R_QS)
 
     with pytest.raises(ValueError):
         auto_bandwidth(REAL_TIME_SERIES, kernel="err")
 
     with pytest.raises(ValueError):
-        auto_bandwidth([1], kernel="qs")
+        auto_bandwidth([1])
