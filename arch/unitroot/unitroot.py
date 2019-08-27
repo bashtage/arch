@@ -4,7 +4,7 @@ from arch.compat.python import add_metaclass, lmap, long, range
 
 import warnings
 
-from numpy import (abs, amin, arange, argwhere, array, ceil, cumsum, diag,
+from numpy import (abs, amin, arange, argwhere, array, asarray, ceil, cumsum, diag,
                    diff, empty, float64, full, hstack, inf, int32, int64,
                    interp, log, nan, ones, pi, polyval, power, sort, sqrt,
                    squeeze, sum)
@@ -1714,3 +1714,77 @@ def kpss_crit(stat, trend='c'):
     crit_value = interp(cv, y[::-1], x[::-1])
 
     return pvalue, crit_value
+
+
+def auto_bandwidth(y, kernel="ba"):
+    """
+    Automatic bandwidth selection of Andrews (1991) and of Newey and West (1994)
+
+    Parameters
+    ----------
+    y : {ndarray, Series}
+    Data on which to apply the bandwidth selction
+
+    kernel : {'ba', 'pa', 'qs'}
+    The kernel function to use for selecting the bandwidth
+      - "ba": Bartlett kernel (default value)
+      - "pa": Parzen kernel
+      - "qs": Quadratic Spectral kernel
+
+    Returns
+    -------
+    bandwidth : float
+        The Bandwidth
+    """
+
+    y = asarray(y)
+    if y.ndim != 1 or y.shape[0] < 2:
+        raise ValueError('Data must be of dimension 1 and contain more than one observation')
+
+    if kernel == "ba":
+        n_power = 2 / 9
+    elif kernel == "pa":
+        n_power = 4 / 25
+    elif kernel == "qs":
+        n_power = 2 / 25
+    else:
+        raise ValueError('Unknown kernel')
+
+    n = int(4 * ((len(y) / 100) ** n_power))
+    sig = (n + 1) * [0]
+
+    for i in range(n + 1):
+        a = list(y[i:])
+        b = list(y[:len(y) - i])
+        sig[i] = sum([i * j for (i, j) in zip(a, b)])
+
+    sigma_m1 = sig[1:len(sig)]  # sigma without the 1st element
+    s0 = sig[0] + 2 * sum(sigma_m1)
+
+    q = 0
+    gamma = 0
+
+    if kernel == "ba":
+        s1 = 0
+        for j in range(len(sigma_m1)):
+            s1 += (j + 1) * sigma_m1[j]
+        s1 *= 2
+        q = 1
+    else:
+        s2 = 0
+        for j in range(len(sigma_m1)):
+            s2 += ((j + 1) ** 2) * sigma_m1[j]
+        s2 *= 2
+        q = 2
+    t_power = 1 / (2 * q + 1)
+
+    if kernel == "ba":
+        gamma = 1.1447 * (((s1 / s0) ** 2) ** t_power)
+    elif kernel == "pa":
+        gamma = 2.6614 * (((s2 / s0) ** 2) ** t_power)
+    elif kernel == "qs":
+        gamma = 1.3221 * (((s2 / s0) ** 2) ** t_power)
+
+    bandwidth = gamma * power(len(y), t_power)
+
+    return bandwidth

@@ -12,7 +12,7 @@ import warnings
 import numpy as np
 from numpy import ceil, diff, log, polyval
 from numpy.random import RandomState
-from numpy.testing import assert_almost_equal, assert_equal
+from numpy.testing import assert_almost_equal, assert_equal, assert_allclose
 import pandas as pd
 import pytest
 import scipy.stats as stats
@@ -23,7 +23,7 @@ from statsmodels.tsa.stattools import _autolag, lagmat
 from arch.unitroot import (ADF, DFGLS, KPSS, PhillipsPerron, VarianceRatio,
                            ZivotAndrews)
 from arch.unitroot.critical_values.dickey_fuller import tau_2010
-from arch.unitroot.unitroot import _autolag_ols, mackinnoncrit, mackinnonp
+from arch.unitroot.unitroot import _autolag_ols, mackinnoncrit, mackinnonp, auto_bandwidth
 
 DECIMAL_5 = 5
 DECIMAL_4 = 4
@@ -34,6 +34,12 @@ DECIMAL_1 = 1
 BASE_PATH = os.path.split(os.path.abspath(__file__))[0]
 DATA_PATH = os.path.join(BASE_PATH, 'data')
 ZIVOT_ANDREWS_DATA = pd.read_csv(os.path.join(DATA_PATH, 'zivot-andrews.csv'), index_col=0)
+
+# Time series to test the autobandwidth method against its implementation under R
+REAL_TIME_SERIES = [8, 9, 2, 4, 8, 9, 9, 4, 4, 9, 7, 1, 1, 9, 4, 9, 3]
+TRUE_BW_FROM_R_BA = 3.033886
+TRUE_BW_FROM_R_PA = 7.75328
+TRUE_BW_FROM_R_QS = 3.851586
 
 
 class TestUnitRoot(object):
@@ -507,3 +513,20 @@ def test_zivot_andrews_error():
     y = ZIVOT_ANDREWS_DATA[series_name].dropna()
     with pytest.raises(ValueError):
         ZivotAndrews(y, trim=0.5)
+
+
+def test_bw_selection():
+    bw_ba = round(auto_bandwidth(REAL_TIME_SERIES, kernel="ba"), 7)
+    assert_allclose(bw_ba, TRUE_BW_FROM_R_BA)
+
+    bw_pa = round(auto_bandwidth(REAL_TIME_SERIES, kernel="pa"), 6)
+    assert_allclose(bw_pa, TRUE_BW_FROM_R_PA)
+
+    bw_qs = round(auto_bandwidth(REAL_TIME_SERIES, kernel="qs"), 6)
+    assert_allclose(bw_qs, TRUE_BW_FROM_R_QS)
+
+    with pytest.raises(ValueError):
+        auto_bandwidth(REAL_TIME_SERIES, kernel="err")
+
+    with pytest.raises(ValueError):
+        auto_bandwidth([1])
