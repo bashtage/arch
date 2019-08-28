@@ -1,7 +1,8 @@
+.. image:: images/color-logo.svg
+   :width: 25%
+
 ARCH
 ----
-
-.. image:: images/hero.svg
 
 The ARCH toolbox currently contains routines for
 
@@ -25,16 +26,16 @@ routines relevant for the analysis of financial data.
 
 Citation
 ========
-This package should be cited using Zenodo. For example, for the 4.6 release,
+This package should be cited using Zenodo. For example, for the 4.8.1 release,
 
-.. [*] Kevin Sheppard. (2018, December 13). bashtage/arch: Release 4.7.0 (Version 4.7.0).
-   Zenodo. https://doi.org/10.5281/zenodo.2240590
+.. [*] Kevin Sheppard. (2019, March 28). bashtage/arch: Release 4.8.1 (Version 4.8.1).
+   Zenodo. http://doi.org/10.5281/zenodo.2613877
 
 .. image:: https://zenodo.org/badge/23468876.svg
    :target: https://zenodo.org/badge/latestdoi/23468876
 
-Indices and tables
-==================
+Index
+=====
 
 * :ref:`genindex`
 * :ref:`modindex`
