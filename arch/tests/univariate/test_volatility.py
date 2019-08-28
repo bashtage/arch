@@ -1,5 +1,3 @@
-from arch.compat.python import PY3, range
-
 import warnings
 
 import numpy as np
@@ -608,7 +606,6 @@ class TestVolatiltyProcesses(object):
         with pytest.raises(ValueError):
             RiskMetrics2006(rho=0.5)
 
-    @pytest.mark.skipif(not PY3, reason='Repeated warnings are incorrectly processed by pytest')
     def test_warnings_nonstationary(self):
         garch = GARCH()
         parameters = np.array([0.1, 0.2, 0.8, 4.0])
@@ -617,7 +614,6 @@ class TestVolatiltyProcesses(object):
         with pytest.warns(InitialValueWarning):
             garch.simulate(parameters, 1000, studt.simulate([4.0]))
 
-    @pytest.mark.skipif(not PY3, reason='Repeated warnings are incorrectly processed by pytest')
     def test_warnings_nonstationary_garch(self):
         garch = GARCH()
         parameters = np.array([0.1, 0.2, 0.8, 4.0, 0.5])
@@ -625,7 +621,6 @@ class TestVolatiltyProcesses(object):
         with pytest.warns(InitialValueWarning):
             garch.simulate(parameters, 1000, skewstud.simulate([4.0, 0.5]))
 
-    @pytest.mark.skipif(not PY3, reason='Repeated warnings are incorrectly processed by pytest')
     def test_warnings_nonstationary_harch(self):
         studt = StudentsT()
         harch = HARCH(lags=[1, 5, 22])

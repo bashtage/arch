@@ -1,7 +1,5 @@
 from __future__ import absolute_import, division
 
-from arch.compat.python import add_metaclass, iteritems
-
 from collections import OrderedDict
 
 import numpy as np
@@ -18,7 +16,7 @@ def _info_to_str(model, info, is_repr=False, is_html=False):
     if is_html:
         model = '<strong>' + model + '</strong>'
     _str = model + '('
-    for k, v in iteritems(info):
+    for k, v in info.items():
         if k.lower() != 'id' or is_repr:
             if is_html:
                 k = '<strong>' + k + '</strong>'
@@ -435,8 +433,7 @@ class StepM(MultipleComparison):
         return self._superior_models
 
 
-@add_metaclass(DocStringInheritor)
-class SPA(MultipleComparison):
+class SPA(MultipleComparison, metaclass=DocStringInheritor):
     """
     Implementation of the Test of Superior Predictive Ability (SPA),
     which is also known as the Reality Check or Bootstrap Data Snooper.

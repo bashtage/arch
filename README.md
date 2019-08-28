@@ -34,12 +34,9 @@ to improve performance)
 * [Bootstrapping](#bootstrap)
 * [Multiple Comparison Tests](#multiple-comparison)
 
-### Python 2.7 Support
+### Python 3
 
-Version 4.8 is the final version that officially supports or is tested on 
-Python 2.7,  and is the final version that has Python 2.7 wheels. It is 
-time to move to Python 3.5+, and to enjoy the substantial improvement 
-available in recent Python releases.
+``arch`` is Python 3 only. Version 4.8 is the final version that supported Python 2.7. 
 
 ## Documentation
 

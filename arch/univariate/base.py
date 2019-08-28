@@ -3,8 +3,6 @@ Core classes for ARCH models
 """
 from __future__ import absolute_import, division
 
-from arch.compat.python import add_metaclass, range
-
 from abc import abstractmethod
 from copy import deepcopy
 import datetime as dt
@@ -24,9 +22,10 @@ from statsmodels.tsa.tsatools import lagmat
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
 from arch.utility.array import AbstractDocStringInheritor, ensure1d
-from arch.utility.exceptions import (ConvergenceWarning, StartingValueWarning,
-                                     DataScaleWarning, convergence_warning,
-                                     data_scale_warning, starting_value_warning)
+from arch.utility.exceptions import (ConvergenceWarning, DataScaleWarning,
+                                     StartingValueWarning, convergence_warning,
+                                     data_scale_warning,
+                                     starting_value_warning)
 from arch.utility.testing import WaldTestStatistic
 from arch.vendor.cached_property import cached_property
 
@@ -133,8 +132,7 @@ def implicit_constant(x):
     return rank == x.shape[1]
 
 
-@add_metaclass(AbstractDocStringInheritor)
-class ARCHModel(object):
+class ARCHModel(object, metaclass=AbstractDocStringInheritor):
     """
     Abstract base class for mean models in ARCH processes.  Specifies the
     conditional mean process.
@@ -292,7 +290,6 @@ class ARCHModel(object):
 
         params = np.empty(0)
         param_cov = np.empty((0, 0))
-        cov_type = cov_type
         first_obs, last_obs = self._fit_indices
         resids = np.full_like(self._y, np.nan)
         resids[first_obs:last_obs] = y

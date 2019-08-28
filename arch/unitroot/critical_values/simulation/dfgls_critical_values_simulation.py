@@ -5,8 +5,6 @@ best when joblib is installed.
 """
 from __future__ import absolute_import, division, print_function
 
-from arch.compat.python import range
-
 import datetime
 
 import numpy as np

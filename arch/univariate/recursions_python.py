@@ -6,7 +6,6 @@ python setup.py install --no-binary
 from __future__ import absolute_import, division
 
 from arch.compat.numba import jit
-from arch.compat.python import range
 
 import numpy as np
 

@@ -1,12 +1,12 @@
 import warnings
 
-import arch.data.sp500
 import matplotlib.font_manager
+from matplotlib.pyplot import figure
 import numpy as np
 import seaborn as sns
-from matplotlib.pyplot import figure
 
 from arch import arch_model
+import arch.data.sp500
 
 warnings.simplefilter('ignore')
 sns.set_style('whitegrid')

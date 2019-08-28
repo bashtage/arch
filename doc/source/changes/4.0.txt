@@ -1,5 +1,9 @@
 Changes since 4.8.1
 ===================
+- Removed support for Python 2.7.
+- Added :func:`~arch.unitroot.auto_bandwidth` to compute optimized bandwidth
+  for a number of common kernel covariance estimators (:issue:`303`). This code
+  was written by Michael Rabba.
 - Added a parameter `rescale` to :func:`~arch.univariate.mean.arch_model`
   that allows the estimator to rescale data if it may help parameter
   estimation. If `rescale=True`, then the data will be rescaled by a power

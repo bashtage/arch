@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with matplotlib (https://matplotlib.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="226.20625pt"
+   version="1.1"
+   viewBox="0 0 832.56879 226.20625"
+   width="832.56879pt"
+   id="svg923"
+   sodipodi:docname="color-logo.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+  <metadata
+     id="metadata927">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2560"
+     inkscape:window-height="1377"
+     id="namedview925"
+     showgrid="false"
+     fit-margin-bottom="0"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     inkscape:zoom="0.63836029"
+     inkscape:cx="25.408545"
+     inkscape:cy="-219.27913"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg923" />
+  <defs
+     id="defs874"
+     style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round">
+    <style
+       type="text/css"
+       id="style872">
+*{stroke-linecap:butt;stroke-linejoin:round;white-space:pre;}
+  </style>
+  </defs>
+  <g
+     id="figure_1"
+     style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round"
+     transform="translate(-10,-10)">
+    <g
+       id="axes_1"
+       style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round">
+      <g
+         id="patch_1"
+         style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round">
+        <path
+           d="M 10,234.08 H 439.8519 V 10 H 10 Z"
+           style="white-space:pre;fill:none;stroke-linecap:butt;stroke-linejoin:round"
+           id="path876"
+           inkscape:connector-curvature="0" />
+      </g>
+      <g
+         id="patch_2"
+         style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round">
+        <path
+           clip-path="url(#p3c9926285e)"
+           d="M 29.538723,234.08 H 81.817066 V 211.672 H 29.538723 Z"
+           style="white-space:pre;fill:#4878d0;stroke-linecap:butt;stroke-linejoin:round"
+           id="path879"
+           inkscape:connector-curvature="0" />
+      </g>
+      <g
+         id="patch_3"
+         style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round">
+        <path
+           clip-path="url(#p3c9926285e)"
+           d="M 97.237945,234.08 H 149.51629 V 183.03956 H 97.237945 Z"
+           style="white-space:pre;fill:#ee854a;stroke-linecap:butt;stroke-linejoin:round"
+           id="path882"
+           inkscape:connector-curvature="0" />
+      </g>
+      <g
+         id="patch_4"
+         style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round">
+        <path
+           clip-path="url(#p3c9926285e)"
+           d="m 164.93717,234.08 h 52.27834 V 80.958667 h -52.27834 z"
+           style="white-space:pre;fill:#6acc64;stroke-linecap:butt;stroke-linejoin:round"
+           id="path885"
+           inkscape:connector-curvature="0" />
+      </g>
+      <g
+         id="patch_5"
+         style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round">
+        <path
+           clip-path="url(#p3c9926285e)"
+           d="m 232.63639,234.08 h 52.27834 V 8.755111 h -52.27834 z"
+           style="white-space:pre;fill:#d65f5f;stroke-linecap:butt;stroke-linejoin:round"
+           id="path888"
+           inkscape:connector-curvature="0" />
+      </g>
+      <g
+         id="patch_6"
+         style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round">
+        <path
+           clip-path="url(#p3c9926285e)"
+           d="m 300.33561,234.08 h 52.27834 V 133.244 h -52.27834 z"
+           style="white-space:pre;fill:#956cb4;stroke-linecap:butt;stroke-linejoin:round"
+           id="path891"
+           inkscape:connector-curvature="0" />
+      </g>
+      <g
+         id="patch_7"
+         style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round">
+        <path
+           clip-path="url(#p3c9926285e)"
+           d="m 368.03483,234.08 h 52.27835 v -26.14267 h -52.27835 z"
+           style="white-space:pre;fill:#8c613c;stroke-linecap:butt;stroke-linejoin:round"
+           id="path894"
+           inkscape:connector-curvature="0" />
+      </g>
+      <g
+         id="matplotlib.axis_1"
+         style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round" />
+      <g
+         id="matplotlib.axis_2"
+         style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round" />
+      <g
+         id="text_1"
+         style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round">
+        <!-- arch -->
+        <defs
+           id="defs903">
+          <path
+             d="m 39.453125,0 q -0.78125,1.5625 -1.265625,5.5625 -6.296875,-6.546875 -15.046875,-6.546875 -7.8125,0 -12.8125,4.421875 -5,4.421875 -5,11.21875 0,8.25 6.265625,12.8125 6.28125,4.5625 17.65625,4.5625 h 8.78125 v 4.15625 q 0,4.734375 -2.828125,7.53125 -2.828125,2.8125 -8.34375,2.8125 -4.84375,0 -8.109375,-2.4375 -3.265625,-2.4375 -3.265625,-5.90625 h -9.09375 q 0,3.953125 2.8125,7.640625 2.8125,3.6875 7.609375,5.828125 4.8125,2.15625 10.578125,2.15625 9.140625,0 14.3125,-4.578125 5.171875,-4.5625 5.375,-12.5625 v -24.3125 q 0,-7.28125 1.84375,-11.578125 V 0 Z M 24.46875,6.890625 q 4.25,0 8.046875,2.1875 3.8125,2.203125 5.515625,5.71875 v 10.84375 h -7.078125 q -16.59375,0 -16.59375,-9.71875 0,-4.25 2.828125,-6.640625 2.828125,-2.390625 7.28125,-2.390625 z"
+             id="Roboto-Regular-97"
+             inkscape:connector-curvature="0"
+             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round" />
+          <path
+             d="M 32.375,44.734375 Q 30.328125,45.0625 27.9375,45.0625 19.046875,45.0625 15.875,37.5 V 0 H 6.84375 V 52.828125 H 15.625 l 0.140625,-6.09375 Q 20.21875,53.8125 28.375,53.8125 q 2.625,0 4,-0.6875 z"
+             id="Roboto-Regular-114"
+             inkscape:connector-curvature="0"
+             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round" />
+          <path
+             d="m 28.03125,6.390625 q 4.828125,0 8.4375,2.921875 3.625,2.9375 4.015625,7.34375 H 49.03125 Q 48.78125,12.109375 45.890625,8 q -2.875,-4.09375 -7.6875,-6.546875 -4.796875,-2.4375 -10.171875,-2.4375 -10.796875,0 -17.171875,7.203125 Q 4.5,13.421875 4.5,25.921875 V 27.4375 q 0,7.71875 2.828125,13.71875 2.828125,6.015625 8.125,9.328125 5.296875,3.328125 12.53125,3.328125 8.875,0 14.765625,-5.328125 5.890625,-5.3125 6.28125,-13.8125 h -8.546875 q -0.390625,5.125 -3.890625,8.421875 -3.484375,3.296875 -8.609375,3.296875 -6.890625,0 -10.671875,-4.96875 Q 13.53125,36.46875 13.53125,27.09375 v -1.703125 q 0,-9.125 3.75,-14.0625 3.765625,-4.9375 10.75,-4.9375 z"
+             id="Roboto-Regular-99"
+             inkscape:connector-curvature="0"
+             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round" />
+          <path
+             d="m 15.875,46.4375 q 6,7.375 15.625,7.375 16.75,0 16.890625,-18.90625 V 0 h -9.03125 v 34.96875 q -0.04687,5.703125 -2.609375,8.4375 -2.5625,2.734375 -7.984375,2.734375 -4.40625,0 -7.734375,-2.34375 -3.3125,-2.34375 -5.15625,-6.15625 V 0 H 6.84375 V 75 H 15.875 Z"
+             id="Roboto-Regular-104"
+             inkscape:connector-curvature="0"
+             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round" />
+        </defs>
+        <g
+           style="white-space:pre;fill:#757575;stroke-linecap:butt;stroke-linejoin:round"
+           transform="matrix(2.16,0,0,-2.16,434.4005,234.08)"
+           id="g913">
+          <use
+             xlink:href="#Roboto-Regular-97"
+             id="use905"
+             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             x="54.394531"
+             xlink:href="#Roboto-Regular-114"
+             id="use907"
+             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             x="88.232422"
+             xlink:href="#Roboto-Regular-99"
+             id="use909"
+             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             x="140.57617"
+             xlink:href="#Roboto-Regular-104"
+             id="use911"
+             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round"
+             y="0"
+             width="100%"
+             height="100%" />
+        </g>
+      </g>
+    </g>
+  </g>
+  <defs
+     id="defs921">
+    <clipPath
+       id="p3c9926285e"
+       style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         height="224.08"
+         width="429.8519"
+         x="10"
+         y="10"
+         id="rect918"
+         style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+  </defs>
+</svg>

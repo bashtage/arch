@@ -1,7 +1,5 @@
 from __future__ import absolute_import, division
 
-from arch.compat.python import add_metaclass, iteritems, itervalues, range
-
 import copy
 
 import numpy as np
@@ -80,7 +78,7 @@ def _loo_jackknife(func, nobs, args, kwargs):
             else:
                 args_copy.append(arg[items])
         kwargs_copy = {}
-        for k, v in iteritems(kwargs):
+        for k, v in kwargs.items():
             if isinstance(v, (pd.Series, pd.DataFrame)):
                 kwargs_copy[k] = v.iloc[items]
             else:
@@ -115,8 +113,7 @@ def _add_extra_kwargs(kwargs, extra_kwargs=None):
         return dict(list(kwargs.items()) + list(extra_kwargs.items()))
 
 
-@add_metaclass(DocStringInheritor)
-class IIDBootstrap(object):
+class IIDBootstrap(object, metaclass=DocStringInheritor):
     """
     Bootstrap using uniform resampling
 
@@ -199,7 +196,7 @@ class IIDBootstrap(object):
             self._num_items = len(kwargs[key])
 
         all_args = list(args)
-        all_args.extend([v for v in itervalues(kwargs)])
+        all_args.extend([v for v in kwargs.values()])
         if self._common_size_required:
             for arg in all_args:
                 if len(arg) != self._num_items:
@@ -218,7 +215,7 @@ class IIDBootstrap(object):
         self._studentized_results = None
         self._last_func = None
         self._name = 'IID Bootstrap'
-        for key, value in iteritems(kwargs):
+        for key, value in kwargs.items():
             attr = getattr(self, key, None)
             if attr is None:
                 self.__setattr__(key, value)
@@ -869,7 +866,7 @@ class IIDBootstrap(object):
             else:
                 pos_data.append(values[indices])
         named_data = {}
-        for key, values in iteritems(self._kwargs):
+        for key, values in self._kwargs.items():
             if isinstance(values, (pd.Series, pd.DataFrame)):
                 named_data[key] = values.iloc[indices]
             else:
@@ -1023,7 +1020,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
             else:
                 pos_data.append(values[pos_indices[i]])
         named_data = {}
-        for key, values in iteritems(self._kwargs):
+        for key, values in self._kwargs.items():
             if isinstance(values, (pd.Series, pd.DataFrame)):
                 named_data[key] = values.iloc[kw_indices[key]]
             else:

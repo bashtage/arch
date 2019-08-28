@@ -61,11 +61,11 @@ class build_ext(_build_ext):
         _build_ext.build_extensions(self)
 
 
-SETUP_REQUIREMENTS = {'numpy': '1.13'}
+SETUP_REQUIREMENTS = {'numpy': '1.14', 'cython': '0.29'}
 INSTALL_REQUIREMENTS = SETUP_REQUIREMENTS.copy()
-INSTALL_REQUIREMENTS.update({'scipy': '0.19',
-                             'pandas': '0.20',
-                             'statsmodels': '0.8',
+INSTALL_REQUIREMENTS.update({'scipy': '1.0',
+                             'pandas': '0.22',
+                             'statsmodels': '0.9',
                              'cached_property': '1.5.1'})
 
 cmdclass['build_ext'] = build_ext
@@ -175,7 +175,6 @@ def run_setup(binary=True):
               'Development Status :: 5 - Production/Stable',
               'Intended Audience :: End Users/Desktop',
               'Intended Audience :: Financial and Insurance Industry',
-              'Programming Language :: Python :: 2.7',
               'Programming Language :: Python :: 3.5',
               'Programming Language :: Python :: 3.6',
               'Programming Language :: Python :: 3.7',
@@ -191,6 +190,7 @@ def run_setup(binary=True):
                             for key in INSTALL_REQUIREMENTS],
           setup_requires=[key + '>=' + SETUP_REQUIREMENTS[key]
                           for key in SETUP_REQUIREMENTS],
+          python_requires='>=3.5',
           )
 
 

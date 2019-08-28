@@ -5,8 +5,6 @@ Distributions to use in ARCH models.  All distributions must inherit from
 """
 from __future__ import absolute_import, division
 
-from arch.compat.python import add_metaclass
-
 from abc import abstractmethod
 
 from numpy import (abs, array, asarray, empty, exp, isscalar, log, ones_like,
@@ -21,8 +19,7 @@ __all__ = ['Distribution', 'Normal', 'StudentsT', 'SkewStudent',
            'GeneralizedError']
 
 
-@add_metaclass(AbstractDocStringInheritor)
-class Distribution(object):
+class Distribution(object, metaclass=AbstractDocStringInheritor):
     """
     Template for subclassing only
     """

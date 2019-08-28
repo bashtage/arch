@@ -2,7 +2,6 @@
 # TODO: Test for trend='ctt'
 from __future__ import division, print_function
 
-from arch.compat.python import iteritems
 from arch.compat.statsmodels import dataset_loader
 
 from collections import namedtuple
@@ -12,7 +11,7 @@ import warnings
 import numpy as np
 from numpy import ceil, diff, log, polyval
 from numpy.random import RandomState
-from numpy.testing import assert_almost_equal, assert_equal, assert_allclose
+from numpy.testing import assert_allclose, assert_almost_equal, assert_equal
 import pandas as pd
 import pytest
 import scipy.stats as stats
@@ -23,7 +22,8 @@ from statsmodels.tsa.stattools import _autolag, lagmat
 from arch.unitroot import (ADF, DFGLS, KPSS, PhillipsPerron, VarianceRatio,
                            ZivotAndrews)
 from arch.unitroot.critical_values.dickey_fuller import tau_2010
-from arch.unitroot.unitroot import _autolag_ols, mackinnoncrit, mackinnonp, auto_bandwidth
+from arch.unitroot.unitroot import (_autolag_ols, auto_bandwidth,
+                                    mackinnoncrit, mackinnonp)
 
 DECIMAL_5 = 5
 DECIMAL_4 = 4
@@ -96,7 +96,7 @@ class TestUnitRoot(object):
         adf_cv = adf.critical_values
         temp = polyval(tau_2010['c'][0, :, ::-1].T, 1. / adf.nobs)
         cv = {'1%': temp[0], '5%': temp[1], '10%': temp[2]}
-        for k, v in iteritems(cv):
+        for k, v in cv.items():
             assert_almost_equal(v, adf_cv[k])
 
     def test_adf_auto_t_stat(self):
