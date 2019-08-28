@@ -1,3 +1,5 @@
+.. _distributions:
+
 Distributions
 =============
 A distribution is the final component of an ARCH Model.

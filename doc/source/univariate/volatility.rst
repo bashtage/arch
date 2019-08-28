@@ -1,3 +1,5 @@
+.. _volatility-processes:
+
 Volatility Processes
 ====================
 A volatility process is added to a mean model to capture time-varying
