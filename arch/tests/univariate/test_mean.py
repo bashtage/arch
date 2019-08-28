@@ -1,7 +1,6 @@
 from __future__ import absolute_import, division
 
-from arch.compat.python import StringIO, iteritems, range, PY3
-
+from io import StringIO
 import sys
 from unittest import TestCase
 import warnings
@@ -29,7 +28,6 @@ from arch.univariate.volatility import (ARCH, EGARCH, FIGARCH, GARCH, HARCH,
                                         FixedVariance, MIDASHyperbolic,
                                         RiskMetrics2006)
 from arch.utility.exceptions import ConvergenceWarning, DataScaleWarning
-
 
 try:
     import arch.univariate.recursions as rec
@@ -677,7 +675,7 @@ class TestMeanModel(TestCase):
               'harch': HARCH,
               'arch': ARCH}
         cm = ConstantMean(self.y)
-        for name, process in iteritems(vp):
+        for name, process in vp.items():
             cm.volatility = process()
             cm.fit(update_freq=0, disp=DISPLAY)
             for p in [1, 2, 3]:
@@ -833,15 +831,13 @@ class TestMeanModel(TestCase):
                       1.66313783, 1.38610821, 1.26381761])
         am = arch_model(y, mean='ARX', lags=10, p=5, q=0)
 
-        warning = ConvergenceWarning if not PY3 else None
-        with pytest.warns(warning):
+        with pytest.warns(ConvergenceWarning):
             am.fit(disp=DISPLAY)
 
-        with pytest.warns(warning):
+        with pytest.warns(ConvergenceWarning):
             am.fit(show_warning=True, disp=DISPLAY)
 
-        warning = DataScaleWarning if not PY3 else None
-        with pytest.warns(warning):
+        with pytest.warns(DataScaleWarning):
             am.fit(show_warning=False, disp=DISPLAY)
 
     def test_first_after_last(self):

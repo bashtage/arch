@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division
 
-from arch.compat.python import add_metaclass, lmap, long, range
+from arch.compat.python import lmap
 
 import warnings
 
@@ -476,7 +476,7 @@ class UnitRootTest(object):
 
     @lags.setter
     def lags(self, value):
-        types = (int, long, int32, int64)
+        types = (int, int32, int64)
         if value is not None and not isinstance(value, types) or \
                 (isinstance(value, types) and value < 0):
             raise ValueError('lags must be a non-negative integer or None')
@@ -506,8 +506,7 @@ class UnitRootTest(object):
             self._trend = value
 
 
-@add_metaclass(DocStringInheritor)
-class ADF(UnitRootTest):
+class ADF(UnitRootTest, metaclass=DocStringInheritor):
     """
     Augmented Dickey-Fuller unit root test
 
@@ -663,8 +662,7 @@ class ADF(UnitRootTest):
         self._max_lags = value
 
 
-@add_metaclass(DocStringInheritor)
-class DFGLS(UnitRootTest):
+class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
     """
     Elliott, Rothenberg and Stock's GLS version of the Dickey-Fuller test
 
@@ -833,8 +831,7 @@ class DFGLS(UnitRootTest):
         self._max_lags = value
 
 
-@add_metaclass(DocStringInheritor)
-class PhillipsPerron(UnitRootTest):
+class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
     """
     Phillips-Perron unit root test
 
@@ -1010,8 +1007,7 @@ class PhillipsPerron(UnitRootTest):
         self._test_type = value
 
 
-@add_metaclass(DocStringInheritor)
-class KPSS(UnitRootTest):
+class KPSS(UnitRootTest, metaclass=DocStringInheritor):
     """
     Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test
 
@@ -1155,8 +1151,7 @@ class KPSS(UnitRootTest):
         self._lags = autolags
 
 
-@add_metaclass(DocStringInheritor)
-class ZivotAndrews(UnitRootTest):
+class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
     """
     Zivot-Andrews structural-break unit-root test
 
@@ -1342,8 +1337,7 @@ class ZivotAndrews(UnitRootTest):
         self._critical_values = {"1%": crit_value[0], "5%": crit_value[1], "10%": crit_value[2]}
 
 
-@add_metaclass(DocStringInheritor)
-class VarianceRatio(UnitRootTest):
+class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
     """
     Variance Ratio test of a random walk.
 

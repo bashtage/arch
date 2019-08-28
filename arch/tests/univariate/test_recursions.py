@@ -1,5 +1,3 @@
-from arch.compat.python import range
-
 import os
 import timeit
 
@@ -90,7 +88,6 @@ class TestRecursions(object):
 import numpy as np
 import arch.univariate.recursions as rec
 import arch.univariate.recursions_python as recpy
-from arch.compat.python import range
 
 nobs = 10000
 resids = np.random.standard_normal(nobs)

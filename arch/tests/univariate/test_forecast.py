@@ -102,9 +102,9 @@ class TestForecasting(TestCase):
         assert_frame_equal(fcast.residual_variance,
                            alt_fcast.residual_variance)
 
-        assert np.all(np.isnan(fcast.mean[:-1]))
-        assert np.all(np.isnan(fcast.variance[:-1]))
-        assert np.all(np.isnan(fcast.residual_variance[:-1]))
+        assert np.all(np.asarray(np.isnan(fcast.mean[:-1])))
+        assert np.all(np.asarray(np.isnan(fcast.variance[:-1])))
+        assert np.all(np.asarray(np.isnan(fcast.residual_variance[:-1])))
 
         params = np.asarray(res.params)
         assert np.all(0.0 == fcast.mean.iloc[-1])
@@ -116,11 +116,11 @@ class TestForecasting(TestCase):
         res = am.fit(last_obs=500)
         params = np.asarray(res.params)
         fcast = res.forecast(horizon=3)
-        assert np.all(np.isnan(fcast.mean[:499]))
-        assert np.all(np.isnan(fcast.variance[:499]))
-        assert np.all(np.isnan(fcast.residual_variance[:499]))
+        assert np.all(np.asarray(np.isnan(fcast.mean[:499])))
+        assert np.all(np.asarray(np.isnan(fcast.variance[:499])))
+        assert np.all(np.asarray(np.isnan(fcast.residual_variance[:499])))
 
-        assert np.all(0.0 == fcast.mean[499:])
+        assert np.all(np.asarray(0.0 == fcast.mean[499:]))
         assert_allclose(fcast.variance.iloc[499:],
                         np.ones((501, 3)) * params[0])
         assert_allclose(fcast.residual_variance.iloc[499:],
@@ -158,14 +158,14 @@ class TestForecasting(TestCase):
             var = fcast.variance.iloc[1:, i]
             assert_allclose(var, scale * params[2] * np.ones_like(var))
 
-        assert np.all(fcast.residual_variance[1:] == params[2])
+        assert np.all(np.asarray(fcast.residual_variance[1:] == params[2]))
 
         fcast = res.forecast(horizon=5)
         params = np.asarray(res.params)
-        assert np.all(np.isnan(fcast.mean[:-1]))
-        assert np.all(np.isnan(fcast.variance[:-1]))
-        assert np.all(np.isnan(fcast.residual_variance[:-1]))
-        assert np.all(fcast.residual_variance.iloc[-1] == params[-1])
+        assert np.all(np.asarray(np.isnan(fcast.mean[:-1])))
+        assert np.all(np.asarray(np.isnan(fcast.variance[:-1])))
+        assert np.all(np.asarray(np.isnan(fcast.residual_variance[:-1])))
+        assert np.all(np.asarray(fcast.residual_variance.iloc[-1] == params[-1]))
         means = np.zeros(5)
         means[0] = params[0] + params[1] * self.ar1.iloc[-1]
         for i in range(1, 5):
@@ -177,13 +177,14 @@ class TestForecasting(TestCase):
         res = am.fit()
         fcast = res.forecast(horizon=5)
 
-        assert np.all(np.isnan(fcast.mean[:-1]))
-        assert np.all(np.isnan(fcast.variance[:-1]))
-        assert np.all(np.isnan(fcast.residual_variance[:-1]))
+        assert np.all(np.asarray(np.isnan(fcast.mean[:-1])))
+        assert np.all(np.asarray(np.isnan(fcast.variance[:-1])))
+        assert np.all(np.asarray(np.isnan(fcast.residual_variance[:-1])))
         params = np.asarray(res.params)
         assert_allclose(params[0] * np.ones(5), fcast.mean.iloc[-1])
         assert_allclose(params[1] * np.ones(5), fcast.variance.iloc[-1])
-        assert_allclose(params[1] * np.ones(5), fcast.residual_variance.iloc[-1])
+        assert_allclose(params[1] * np.ones(5),
+                        fcast.residual_variance.iloc[-1])
 
         assert fcast.mean.shape == (self.zero_mean.shape[0], 5)
         assert fcast.variance.shape == (self.zero_mean.shape[0], 5)
@@ -203,7 +204,7 @@ class TestForecasting(TestCase):
                           params[2] * expected[i - 2]
 
         expected = expected[2:]
-        assert np.all(np.isnan(fcast.mean.iloc[:-1]))
+        assert np.all(np.asarray(np.isnan(fcast.mean.iloc[:-1])))
         assert_allclose(fcast.mean.iloc[-1], expected)
 
         expected = np.zeros(5)
@@ -238,7 +239,7 @@ class TestForecasting(TestCase):
         assert_allclose(fcast.residual_variance.values, expected)
 
         with pytest.raises(ValueError):
-            fcast = res.forecast(horizon=5, start=0)
+            res.forecast(horizon=5, start=0)
 
     def test_har_forecast(self):
         am = arch_model(self.har3, mean='HAR', vol='Constant', lags=[1, 5, 22])
@@ -357,7 +358,8 @@ class TestForecasting(TestCase):
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
         rng = am.distribution.simulate([])
-        vfcast = vol.forecast(params[2:], resids, backcast, var_bounds, start=0,
+        vfcast = vol.forecast(params[2:], resids, backcast, var_bounds,
+                              start=0,
                               method='simulation', rng=rng, horizon=5)
         const, ar = params[0], params[1]
         means = np.zeros((t, 5))
@@ -390,7 +392,8 @@ class TestForecasting(TestCase):
         repeat = res.forecast(horizon=5, start=900, method='bootstrap',
                               random_state=rs)
         assert_frame_equal(forecast.mean, repeat.mean, check_less_precise=True)
-        assert_frame_equal(forecast.variance, repeat.variance, check_less_precise=True)
+        assert_frame_equal(forecast.variance, repeat.variance,
+                           check_less_precise=True)
 
     def test_ar2_garch11(self):
         pass
@@ -408,41 +411,41 @@ class TestForecasting(TestCase):
         assert_allclose(res.params, res3.params)
 
         forecast = res.forecast(horizon=3)
-        assert np.all(np.isnan(forecast.mean.iloc[:-1]))
-        assert np.all(np.isfinite(forecast.mean.iloc[-1]))
-        assert np.all(np.isnan(forecast.variance.iloc[:-1]))
-        assert np.all(np.isfinite(forecast.variance.iloc[-1]))
+        assert np.all(np.asarray(np.isnan(forecast.mean.iloc[:-1])))
+        assert np.all(np.asarray(np.isfinite(forecast.mean.iloc[-1])))
+        assert np.all(np.asarray(np.isnan(forecast.variance.iloc[:-1])))
+        assert np.all(np.asarray(np.isfinite(forecast.variance.iloc[-1])))
 
         forecast = res.forecast(horizon=3, start=y.index[100])
-        assert np.all(np.isnan(forecast.mean.iloc[:100]))
-        assert np.all(np.isfinite(forecast.mean.iloc[100:]))
-        assert np.all(np.isnan(forecast.variance.iloc[:100]))
-        assert np.all(np.isfinite(forecast.variance.iloc[100:]))
+        assert np.all(np.asarray(np.isnan(forecast.mean.iloc[:100])))
+        assert np.all(np.asarray(np.isfinite(forecast.mean.iloc[100:])))
+        assert np.all(np.asarray(np.isnan(forecast.variance.iloc[:100])))
+        assert np.all(np.asarray(np.isfinite(forecast.variance.iloc[100:])))
 
         forecast = res.forecast(horizon=3, start=100)
-        assert np.all(np.isnan(forecast.mean.iloc[:100]))
-        assert np.all(np.isfinite(forecast.mean.iloc[100:]))
-        assert np.all(np.isnan(forecast.variance.iloc[:100]))
-        assert np.all(np.isfinite(forecast.variance.iloc[100:]))
+        assert np.all(np.asarray(np.isnan(forecast.mean.iloc[:100])))
+        assert np.all(np.asarray(np.isfinite(forecast.mean.iloc[100:])))
+        assert np.all(np.asarray(np.isnan(forecast.variance.iloc[:100])))
+        assert np.all(np.asarray(np.isfinite(forecast.variance.iloc[100:])))
 
         with pytest.raises(ValueError):
             res.forecast(horizon=3, start=y.index[98])
 
         res = mod.fit(disp='off')
         forecast = res.forecast(horizon=3)
-        assert np.all(np.isnan(forecast.mean.iloc[:-1]))
-        assert np.all(np.isfinite(forecast.mean.iloc[-1]))
-        assert np.all(np.isnan(forecast.variance.iloc[:-1]))
-        assert np.all(np.isfinite(forecast.variance.iloc[-1]))
+        assert np.all(np.asarray(np.isnan(forecast.mean.iloc[:-1])))
+        assert np.all(np.asarray(np.isfinite(forecast.mean.iloc[-1])))
+        assert np.all(np.asarray(np.isnan(forecast.variance.iloc[:-1])))
+        assert np.all(np.asarray(np.isfinite(forecast.variance.iloc[-1])))
 
         forecast = res.forecast(horizon=3, start=y.index[100])
-        assert np.all(np.isnan(forecast.mean.iloc[:100]))
-        assert np.all(np.isfinite(forecast.mean.iloc[100:]))
-        assert np.all(np.isnan(forecast.variance.iloc[:100]))
-        assert np.all(np.isfinite(forecast.variance.iloc[100:]))
+        assert np.all(np.asarray(np.isnan(forecast.mean.iloc[:100])))
+        assert np.all(np.asarray(np.isfinite(forecast.mean.iloc[100:])))
+        assert np.all(np.asarray(np.isnan(forecast.variance.iloc[:100])))
+        assert np.all(np.asarray(np.isfinite(forecast.variance.iloc[100:])))
         forecast = res.forecast(horizon=3, start=0)
-        assert np.all(np.isfinite(forecast.mean))
-        assert np.all(np.isfinite(forecast.variance))
+        assert np.all(np.asarray(np.isfinite(forecast.mean)))
+        assert np.all(np.asarray(np.isfinite(forecast.variance)))
 
         mod = arch_model(y, mean='AR', lags=[1, 2])
         res = mod.fit(disp='off')
@@ -450,10 +453,10 @@ class TestForecasting(TestCase):
             res.forecast(horizon=3, start=0)
 
         forecast = res.forecast(horizon=3, start=1)
-        assert np.all(np.isnan(forecast.mean.iloc[0]))
-        assert np.all(np.isfinite(forecast.mean.iloc[1:]))
-        assert np.all(np.isnan(forecast.variance.iloc[0]))
-        assert np.all(np.isfinite(forecast.variance.iloc[2:]))
+        assert np.all(np.asarray(np.isnan(forecast.mean.iloc[0])))
+        assert np.all(np.asarray(np.isfinite(forecast.mean.iloc[1:])))
+        assert np.all(np.asarray(np.isnan(forecast.variance.iloc[0])))
+        assert np.all(np.asarray(np.isfinite(forecast.variance.iloc[2:])))
 
     def test_last_obs(self):
         y = self.ar2_garch
@@ -468,7 +471,8 @@ class TestForecasting(TestCase):
     def test_first_last_obs(self):
         y = self.ar2_garch
         mod = arch_model(y)
-        res = mod.fit(disp='off', first_obs=y.index[100], last_obs=y.index[900])
+        res = mod.fit(disp='off', first_obs=y.index[100],
+                      last_obs=y.index[900])
         res_2 = mod.fit(disp='off', first_obs=100, last_obs=900)
         assert_allclose(res.params, res_2.params)
         mod = arch_model(y.iloc[100:900])
@@ -495,8 +499,10 @@ class TestForecasting(TestCase):
         mod = arch_model(y, hold_back=20)
         res_holdback_last_obs = mod.fit(disp='off', last_obs=800)
         mod = arch_model(y)
-        res_first_obs_last_obs = mod.fit(disp='off', first_obs=20, last_obs=800)
-        assert_allclose(res_holdback_last_obs.params, res_first_obs_last_obs.params)
+        res_first_obs_last_obs = mod.fit(disp='off', first_obs=20,
+                                         last_obs=800)
+        assert_allclose(res_holdback_last_obs.params,
+                        res_first_obs_last_obs.params)
         mod = arch_model(y[20:800])
         res_direct = mod.fit(disp='off')
         assert_allclose(res_direct.params, res_first_obs_last_obs.params)

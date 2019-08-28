@@ -4,8 +4,6 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 """
 from __future__ import absolute_import, division
 
-from arch.compat.python import iteritems, range
-
 from collections import OrderedDict
 import copy
 
@@ -227,7 +225,7 @@ class HARX(ARCHModel):
     def __str__(self):
         descr = self._model_description()
         descr_str = self.name + '('
-        for key, val in iteritems(descr):
+        for key, val in descr.items():
             if val:
                 if key:
                     descr_str += key + ': ' + val + ', '
@@ -245,7 +243,7 @@ class HARX(ARCHModel):
         """HTML representation for IPython Notebook"""
         descr = self._model_description()
         html = '<strong>' + self.name + '</strong>('
-        for key, val in iteritems(descr):
+        for key, val in descr.items():
             html += '<strong>' + key + ': </strong>' + val + ',\n'
         html += '<strong>ID: </strong> ' + hex(id(self)) + ')'
         return html

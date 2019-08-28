@@ -4,7 +4,6 @@ Utility functions that do not explicitly relate to Volatility modeling
 from __future__ import absolute_import, division, print_function
 
 from arch.compat.pandas import is_datetime64_any_dtype
-from arch.compat.python import long
 
 from abc import ABCMeta
 import datetime as dt
@@ -201,8 +200,7 @@ def cutoff_to_index(cutoff, index, default):
     int_index = default
     if isinstance(cutoff, (str, dt.datetime, np.datetime64, Timestamp)):
         int_index = date_to_index(cutoff, index)
-    elif isinstance(cutoff, (int, long)) or issubclass(cutoff.__class__,
-                                                       np.integer):
+    elif isinstance(cutoff, int) or issubclass(cutoff.__class__, np.integer):
         int_index = cutoff
 
     return int_index
@@ -224,7 +222,7 @@ def find_index(s, index):
     loc : int
         Integer location of index value
     """
-    if isinstance(index, (int, long, np.int, np.int64)):
+    if isinstance(index, (int, np.int, np.int64)):
         return index
     date_index = to_datetime(index, errors='coerce')
 

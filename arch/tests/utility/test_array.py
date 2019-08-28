@@ -1,5 +1,3 @@
-from arch.compat.python import add_metaclass, long
-
 import datetime as dt
 import os
 from unittest import TestCase
@@ -115,8 +113,7 @@ class TestUtils(TestCase):
         assert implicit_constant(x)
 
     def test_docstring_inheritor(self):
-        @add_metaclass(DocStringInheritor)
-        class A(object):
+        class A(object, metaclass=DocStringInheritor):
             """
             Docstring
             """
@@ -225,7 +222,7 @@ class TestUtils(TestCase):
         y = Series(np.arange(3000.0), index=dr)
         date_index = y.index
         assert cutoff_to_index(1000, date_index, 0) == 1000
-        assert cutoff_to_index(long(1000), date_index, 0) == 1000
+        assert cutoff_to_index(int(1000), date_index, 0) == 1000
         assert cutoff_to_index(np.int16(1000), date_index, 0) == 1000
         assert cutoff_to_index(np.int64(1000), date_index, 0) == 1000
         assert cutoff_to_index(date_index[1000], date_index, 0) == 1000

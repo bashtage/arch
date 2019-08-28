@@ -1,5 +1,6 @@
 import datetime
 
+import matplotlib.font_manager
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas_datareader as pdr
@@ -50,3 +51,25 @@ sns.despine(left=True, bottom=True)
 fig.tight_layout(pad=1.0)
 
 fig.savefig('logo.svg', transparent=True, bbox_inches=0)
+
+
+prop = matplotlib.font_manager.FontProperties('Roboto')
+prop.set_size(216)
+fig = plt.figure(frameon=False, figsize=(12, 4))
+ax = fig.add_subplot('111')
+rwidth = np.diff(bins).mean() * 0.22
+_, _, patches = ax.hist(rets, bins=bins, rwidth=rwidth,
+                        align='mid')
+for i, patch in enumerate(patches):
+    patch.set_facecolor(colors[i])
+ax.set_xticks([])
+ax.set_yticks([])
+text = ax.text(11, 0, 'arch')
+text.set_fontproperties(prop)
+text.set_fontsize(216)
+text.set_color('#757575')
+ax.set_ylim(0, 180)
+sns.despine(left=True, bottom=True)
+fig.tight_layout(pad=1.0)
+fig.savefig('color-logo.png', transparent=True)
+fig.savefig('color-logo.svg', transparent=True)

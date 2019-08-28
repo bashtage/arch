@@ -5,8 +5,6 @@ same inputs.
 """
 from __future__ import absolute_import, division
 
-from arch.compat.python import add_metaclass, range
-
 from abc import abstractmethod
 import itertools
 from warnings import warn
@@ -133,8 +131,7 @@ class VarianceForecast(object):
         return self._shocks
 
 
-@add_metaclass(AbstractDocStringInheritor)
-class VolatilityProcess(object):
+class VolatilityProcess(object, metaclass=AbstractDocStringInheritor):
     """
     Abstract base class for ARCH models.  Allows the conditional mean model to be specified
     separately from the conditional variance, even though parameters are estimated jointly.

@@ -12,7 +12,7 @@ scale well with 128 or more engines.
 """
 from __future__ import absolute_import, division, print_function
 
-from arch.compat.python import lmap, range
+from arch.compat.python import lmap
 
 import datetime
 import time
