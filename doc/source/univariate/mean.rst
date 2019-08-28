@@ -1,3 +1,5 @@
+.. _mean-models:
+
 Mean Models
 ===========
 All ARCH models start by specifying a mean model.

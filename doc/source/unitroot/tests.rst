@@ -1,7 +1,9 @@
 The Unit Root Tests
 ===================
 
-.. module::arch.unitroot
+.. module:: arch.unitroot
+   :synopsis: Unit root tests
+
 .. py:currentmodule:: arch.unitroot
 
 
@@ -44,3 +46,8 @@ KPSS Testing
 
 .. autoclass:: KPSS
    :members: summary
+
+Automatic Bandwidth Selection
+-----------------------------
+
+.. autofunction:: auto_bandwidth

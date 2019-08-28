@@ -1,6 +1,7 @@
 .idea/
-*.pyd
-*.c
+arch/**/*.pyd
+arch/**/*.so
+arch/bootstrap/*.c
 arch.egg-info/
 build/
 dist
@@ -8,4 +9,9 @@ dist
 .cache/
 doc/**/*.ipynb
 .pytest_cache
-__pycache__
+__pycache__/
+**/__pycache__/
+**/.ipynb_checkpoints/
+**/.hypothesis/
+dist/
+doc/build/

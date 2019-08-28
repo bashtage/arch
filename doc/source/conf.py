@@ -6,13 +6,11 @@
 # full list see the documentation:
 # http://www.sphinx-doc.org/en/master/config
 
-# -- Path setup --------------------------------------------------------------
-from distutils.version import LooseVersion
 import glob
 import os
 import shutil
-
-import sphinx_material
+# -- Path setup --------------------------------------------------------------
+from distutils.version import LooseVersion
 
 import arch
 
@@ -46,10 +44,9 @@ ver = LooseVersion(arch.__version__).version
 if "+" in ver:
     loc = ver.index("+")
     version = ".".join(map(str, ver[:loc]))
-    version += " (+{0})".format(ver[loc+1])
+    version += " (+{0})".format(ver[loc + 1])
 # The full version, including alpha/beta/rc tags.
 release = arch.__version__
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -116,7 +113,6 @@ exclude_patterns = []
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "colorful"  # "sphinx"
 
-
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -145,9 +141,9 @@ if not on_rtd:  # only import and set the theme if we"re building docs locally
         'globaltoc_depth': 2,
         'globaltoc_collapse': True,
         'globaltoc_includehidden': True,
-        'theme_color':'#4caf50',
-        'color_primary': 'green',
-        'color_accent': 'green',
+        'theme_color': '#4caf50',
+        'color_primary': 'blue ',
+        'color_accent': 'indigo',
         'html_minify': True,
         'css_minify': True,
         'master_doc': False
@@ -189,7 +185,6 @@ html_domain_indices = True
 # Output file base name for HTML help builder.
 htmlhelp_basename = "arch"
 
-
 # -- Options for LaTeX output ------------------------------------------------
 
 latex_elements = {
@@ -218,7 +213,6 @@ latex_documents = [
      "Kevin Sheppard", "manual"),
 ]
 
-
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
@@ -227,7 +221,6 @@ man_pages = [
     (master_doc, "arch", "arch Documentation",
      [author], 1)
 ]
-
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -239,7 +232,6 @@ texinfo_documents = [
      author, "arch", "ARCH models in Python",
      "Finance/Econometrics"),
 ]
-
 
 # -- Options for Epub output -------------------------------------------------
 
@@ -257,7 +249,6 @@ epub_title = project
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ["search.html"]
-
 
 # -- Extension configuration -------------------------------------------------
 

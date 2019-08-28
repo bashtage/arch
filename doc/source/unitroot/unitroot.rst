@@ -13,7 +13,7 @@ This module contains a number of routines:
 * KPSS (:py:class:`~arch.unitroot.KPSS`)
 * Zivot-Andrews (:py:class:`~arch.unitroot.ZivotAndrews`)
 * Variance Ratio (:py:class:`~arch.unitroot.VarianceRatio`)
-
+* Automatic Bandwidth Selection (:py:func:`arch.unitroot.auto_bandwidth`)
 
 The first four all start with the null of a unit root and have an alternative
 of a stationary process. The final test, KPSS, has a null of a stationary

@@ -5,6 +5,12 @@ import numpy as np
 import pandas_datareader as pdr
 import seaborn as sns
 
+colors = sns.color_palette('muted')
+sns.palplot(colors)
+plt.show()
+
+NBINS = 7
+
 plt.rcParams['figure.figsize'] = (10, 10)
 
 start = datetime.datetime(1980, 1, 1)
@@ -14,12 +20,15 @@ price = data['Adj Close']
 rets = 100 * price.resample('M').last().pct_change()
 
 l, u = rets.quantile([.01, .99])
-bins = np.linspace(l, u, 11)
+bins = np.linspace(l, u, NBINS)
 fig = plt.figure(frameon=False)
 fig.set_size_inches(8, 8)
 ax = fig.add_subplot('111')
-rwidth = np.diff(bins).mean() * 0.333
-ax.hist(rets, bins=bins, rwidth=rwidth, align='mid', color='#4caf50ff')
+rwidth = np.diff(bins).mean() * 0.22
+_, _, patches = ax.hist(rets, bins=bins, rwidth=rwidth,
+                        align='mid')  # '#2196f3')
+for i, patch in enumerate(patches):
+    patch.set_facecolor(colors[i])
 ax.set_xticks([])
 ax.set_yticks([])
 ax.set_ylabel('')
@@ -32,7 +41,7 @@ fig.savefig('favicon.png', transparent=True)
 fig = plt.figure(frameon=False)
 fig.set_size_inches(8, 8)
 ax = fig.add_subplot('111')
-rwidth = np.diff(bins).mean() * 0.333
+rwidth = np.diff(bins).mean() * 0.22
 ax.hist(rets, bins=bins, rwidth=rwidth, align='mid', color='#ffffff')
 ax.set_xticks([])
 ax.set_yticks([])
