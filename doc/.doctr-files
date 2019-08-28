@@ -1,5 +1,6 @@
 doc/_images/bootstrap_bootstrap_examples_15_0.png
 doc/_images/bootstrap_histogram.png
+doc/_images/hero.svg
 doc/_images/multiple-comparison_multiple-comparison_examples_17_0.png
 doc/_images/multiple-comparison_multiple-comparison_examples_22_0.png
 doc/_images/multiple-comparison_multiple-comparison_examples_26_0.png
@@ -77,6 +78,12 @@ doc/_static/fonts/specimen/MaterialIcons-Regular.ttf
 doc/_static/fonts/specimen/MaterialIcons-Regular.woff
 doc/_static/fonts/specimen/MaterialIcons-Regular.woff2
 doc/_static/guzzle.css
+doc/_static/images/android-chrome-192x192.png
+doc/_static/images/android-chrome-512x512.png
+doc/_static/images/apple-touch-icon.png
+doc/_static/images/browserconfig.xml
+doc/_static/images/favicon-16x16.png
+doc/_static/images/favicon-32x32.png
 doc/_static/images/favicon.png
 doc/_static/images/icons/bitbucket.1b09e088.svg
 doc/_static/images/icons/bitbucket.svg
@@ -84,6 +91,9 @@ doc/_static/images/icons/github.f0b8504a.svg
 doc/_static/images/icons/github.svg
 doc/_static/images/icons/gitlab.6dd19c00.svg
 doc/_static/images/icons/gitlab.svg
+doc/_static/images/mstile-150x150.png
+doc/_static/images/safari-pinned-tab.svg
+doc/_static/images/site.webmanifest
 doc/_static/javascripts/application.js
 doc/_static/javascripts/lunr/lunr.da.js
 doc/_static/javascripts/lunr/lunr.de.js

@@ -2,6 +2,7 @@ Bootstrapping
 -------------
 
 .. module:: arch.bootstrap
+   :synopsis: Bootstrap methods for simulation and parameter inference
 .. py:module::arch.bootstrap
 
 The bootstrap module provides both high- and low-level interfaces for

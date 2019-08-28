@@ -1,7 +1,9 @@
 Module Reference
 ----------------
 
-.. module::arch.bootstrap
+.. module:: arch.bootstrap.multiple_comparison
+   :synopsis: Multiple comparison procedures
+
 .. py:currentmodule:: arch.bootstrap
 
 Test of Superior Predictive Ability (SPA), Reality Check

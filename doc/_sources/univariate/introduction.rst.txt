@@ -15,12 +15,11 @@ as
 
 A complete ARCH model is divided into three components:
 
+* a :ref:`mean model<mean-models>`, e.g., a constant mean or an :class:`~arch.univariate.mean.ARX`;
+* a :ref:`volatility process<volatility-processes>`, e.g., a :class:`~arch.univariate.volatility.GARCH` or an :class:`~arch.univariate.volatility.EGARCH` process; and
+* a :ref:`distribution<distributions>` for the standardized residuals.
 
-..
-.. Theoretical Background <background>
-..
-
-However, the simplest method to construct this model is to use the constructor
+In most applications, the simplest method to construct this model is to use the constructor
 function :py:meth:`~arch.arch_model`
 
 .. code-block:: python
@@ -112,8 +111,8 @@ yields
     Covariance estimator: robust
 
 
-Core Model Constructor
-======================
+Model Constructor
+=================
 While models can be carefully specified using the individual components, most common specifications can be specified
 using a simple model constructor.
 

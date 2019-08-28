@@ -1,5 +1,8 @@
 ARCH
 ----
+
+.. image:: images/hero.svg
+
 The ARCH toolbox currently contains routines for
 
 - Univariate volatility models
@@ -10,11 +13,9 @@ The ARCH toolbox currently contains routines for
 Future plans are to continue to expand this toolbox to include additional
 routines relevant for the analysis of financial data.
 
-Contents
-========
-
 .. toctree::
     :maxdepth: 2
+    :hidden:
 
     Univariate Volatility Models <univariate/univariate>
     Bootstrapping <bootstrap/bootstrap>
@@ -37,5 +38,5 @@ Indices and tables
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
+
 
