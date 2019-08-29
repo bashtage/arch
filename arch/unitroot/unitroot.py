@@ -1721,9 +1721,9 @@ def auto_bandwidth(y, kernel='ba'):
     kernel : str
         The kernel function to use for selecting the bandwidth
 
-          - 'ba', 'bartlett', 'nw': Bartlett kernel (default)
-          - 'pa', 'parzen', 'gallant': Parzen kernel
-          - 'qs', 'andrews':  Quadratic Spectral kernel
+        - 'ba', 'bartlett', 'nw': Bartlett kernel (default)
+        - 'pa', 'parzen', 'gallant': Parzen kernel
+        - 'qs', 'andrews':  Quadratic Spectral kernel
 
     Returns
     -------
