@@ -68,7 +68,7 @@ doc/_sources/univariate/univariate_volatility_scenarios.ipynb.txt
 doc/_sources/univariate/utility.rst.txt
 doc/_sources/univariate/volatility.rst.txt
 doc/_static/basic.css
-doc/_static/css/overrides.css
+doc/_static/bw-logo.svg
 doc/_static/doctools.js
 doc/_static/documentation_options.js
 doc/_static/favicon.ico
@@ -122,7 +122,6 @@ doc/_static/jquery-3.2.1.js
 doc/_static/jquery.js
 doc/_static/jquery.min.map
 doc/_static/language_data.js
-doc/_static/logo.svg
 doc/_static/material.css
 doc/_static/minus.png
 doc/_static/plus.png

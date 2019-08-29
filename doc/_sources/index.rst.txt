@@ -1,5 +1,5 @@
 .. image:: images/color-logo.svg
-   :width: 25%
+   :width: 33.3%
    :alt: arch logo
 
 ARCH
