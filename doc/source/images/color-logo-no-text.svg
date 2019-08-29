@@ -5,12 +5,11 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    id="svg923"
-   width="852.56879pt"
-   viewBox="0 0 852.56879 246.20625"
+   width="429.8519pt"
+   viewBox="0 0 429.8519 244.08"
    version="1.1"
-   height="246.20625pt">
+   height="244.08pt">
   <metadata
      id="metadata927">
     <rdf:RDF>
@@ -133,40 +132,7 @@
         <g
            id="g913"
            transform="matrix(2.16,0,0,-2.16,434.4005,234.08)"
-           style="white-space:pre;fill:#757575;stroke-linecap:butt;stroke-linejoin:round">
-          <use
-             height="100%"
-             width="100%"
-             y="0"
-             x="0"
-             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round"
-             id="use905"
-             xlink:href="#Roboto-Regular-97" />
-          <use
-             height="100%"
-             width="100%"
-             y="0"
-             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round"
-             id="use907"
-             xlink:href="#Roboto-Regular-114"
-             x="54.394531" />
-          <use
-             height="100%"
-             width="100%"
-             y="0"
-             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round"
-             id="use909"
-             xlink:href="#Roboto-Regular-99"
-             x="88.232422" />
-          <use
-             height="100%"
-             width="100%"
-             y="0"
-             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round"
-             id="use911"
-             xlink:href="#Roboto-Regular-104"
-             x="140.57617" />
-        </g>
+           style="white-space:pre;fill:#757575;stroke-linecap:butt;stroke-linejoin:round" />
       </g>
     </g>
   </g>

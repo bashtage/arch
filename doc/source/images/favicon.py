@@ -7,8 +7,6 @@ import pandas_datareader as pdr
 import seaborn as sns
 
 colors = sns.color_palette('muted')
-sns.palplot(colors)
-plt.show()
 
 NBINS = 7
 

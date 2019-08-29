@@ -141,7 +141,7 @@ if not on_rtd:  # only import and set the theme if we"re building docs locally
         'globaltoc_depth': 2,
         'globaltoc_collapse': True,
         'globaltoc_includehidden': True,
-        'theme_color': '#4caf50',
+        'theme_color': '#2196f3',
         'color_primary': 'blue ',
         'color_accent': 'indigo',
         'html_minify': True,
@@ -150,7 +150,7 @@ if not on_rtd:  # only import and set the theme if we"re building docs locally
     }
 
 html_favicon = 'images/favicon.ico'
-html_logo = 'images/logo.svg'
+html_logo = 'images/bw-logo.svg'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.

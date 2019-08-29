@@ -5,12 +5,11 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    id="svg923"
-   width="852.56879pt"
-   viewBox="0 0 852.56879 246.20625"
+   width="429.8519pt"
+   viewBox="0 0 429.8519 244.08"
    version="1.1"
-   height="246.20625pt">
+   height="244.08pt">
   <metadata
      id="metadata927">
     <rdf:RDF>
@@ -52,7 +51,7 @@
          id="patch_2">
         <path
            id="path879"
-           style="white-space:pre;fill:#4878d0;stroke-linecap:butt;stroke-linejoin:round"
+           style="white-space:pre;fill:#ffffff;stroke-linecap:butt;stroke-linejoin:round;fill-opacity:1"
            d="M 29.538723,234.08 H 81.817066 V 211.672 H 29.538723 Z"
            clip-path="url(#p4996303e50)" />
       </g>
@@ -61,7 +60,7 @@
          id="patch_3">
         <path
            id="path882"
-           style="white-space:pre;fill:#ee854a;stroke-linecap:butt;stroke-linejoin:round"
+           style="white-space:pre;fill:#ffffff;stroke-linecap:butt;stroke-linejoin:round;fill-opacity:1"
            d="M 97.237945,234.08 H 149.51629 V 184.28444 H 97.237945 Z"
            clip-path="url(#p4996303e50)" />
       </g>
@@ -70,7 +69,7 @@
          id="patch_4">
         <path
            id="path885"
-           style="white-space:pre;fill:#6acc64;stroke-linecap:butt;stroke-linejoin:round"
+           style="white-space:pre;fill:#ffffff;stroke-linecap:butt;stroke-linejoin:round;fill-opacity:1"
            d="m 164.93717,234.08 h 52.27834 V 79.713778 h -52.27834 z"
            clip-path="url(#p4996303e50)" />
       </g>
@@ -79,7 +78,7 @@
          id="patch_5">
         <path
            id="path888"
-           style="white-space:pre;fill:#d65f5f;stroke-linecap:butt;stroke-linejoin:round"
+           style="white-space:pre;fill:#ffffff;stroke-linecap:butt;stroke-linejoin:round;fill-opacity:1"
            d="m 232.63639,234.08 h 52.27834 V 8.755111 h -52.27834 z"
            clip-path="url(#p4996303e50)" />
       </g>
@@ -88,7 +87,7 @@
          id="patch_6">
         <path
            id="path891"
-           style="white-space:pre;fill:#956cb4;stroke-linecap:butt;stroke-linejoin:round"
+           style="white-space:pre;fill:#ffffff;stroke-linecap:butt;stroke-linejoin:round;fill-opacity:1"
            d="m 300.33561,234.08 h 52.27834 V 133.244 h -52.27834 z"
            clip-path="url(#p4996303e50)" />
       </g>
@@ -97,7 +96,7 @@
          id="patch_7">
         <path
            id="path894"
-           style="white-space:pre;fill:#8c613c;stroke-linecap:butt;stroke-linejoin:round"
+           style="white-space:pre;fill:#ffffff;stroke-linecap:butt;stroke-linejoin:round;fill-opacity:1"
            d="m 368.03483,234.08 h 52.27835 v -26.14267 h -52.27835 z"
            clip-path="url(#p4996303e50)" />
       </g>
@@ -133,40 +132,7 @@
         <g
            id="g913"
            transform="matrix(2.16,0,0,-2.16,434.4005,234.08)"
-           style="white-space:pre;fill:#757575;stroke-linecap:butt;stroke-linejoin:round">
-          <use
-             height="100%"
-             width="100%"
-             y="0"
-             x="0"
-             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round"
-             id="use905"
-             xlink:href="#Roboto-Regular-97" />
-          <use
-             height="100%"
-             width="100%"
-             y="0"
-             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round"
-             id="use907"
-             xlink:href="#Roboto-Regular-114"
-             x="54.394531" />
-          <use
-             height="100%"
-             width="100%"
-             y="0"
-             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round"
-             id="use909"
-             xlink:href="#Roboto-Regular-99"
-             x="88.232422" />
-          <use
-             height="100%"
-             width="100%"
-             y="0"
-             style="white-space:pre;stroke-linecap:butt;stroke-linejoin:round"
-             id="use911"
-             xlink:href="#Roboto-Regular-104"
-             x="140.57617" />
-        </g>
+           style="white-space:pre;fill:#757575;stroke-linecap:butt;stroke-linejoin:round" />
       </g>
     </g>
   </g>
