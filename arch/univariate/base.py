@@ -27,7 +27,7 @@ from arch.utility.exceptions import (ConvergenceWarning, DataScaleWarning,
                                      data_scale_warning,
                                      starting_value_warning)
 from arch.utility.testing import WaldTestStatistic
-from arch.vendor.cached_property import cached_property
+from property_cached import cached_property
 
 __all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel', 'ARCHModelForecast', 'constraint']
 
@@ -664,13 +664,13 @@ class ARCHModel(object, metaclass=AbstractDocStringInheritor):
         elif params.shape[0] > 1:
             return params[:-1]
 
-    @abstractmethod
     @cached_property
+    @abstractmethod
     def num_params(self):
         """
         Number of parameters in the model
         """
-        pass
+        return 0
 
     @abstractmethod
     def simulate(self, params, nobs, burn=500, initial_value=None, x=None,
