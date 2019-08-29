@@ -8,6 +8,8 @@ from arch.compat.pandas import is_datetime64_any_dtype
 from abc import ABCMeta
 import datetime as dt
 
+from property_cached import cached_property
+
 import numpy as np
 from pandas import (DataFrame, DatetimeIndex, NaT, Series, Timestamp,
                     to_datetime)
@@ -110,8 +112,14 @@ class DocStringInheritor(type):
                     doc = getattr(getattr(mro_cls, attr), '__doc__')
                     if doc:
                         if isinstance(attribute, property):
-                            clsdict[attr] = property(attribute.fget, attribute.fset,
-                                                     attribute.fdel, doc)
+
+                            if isinstance(attribute, cached_property):
+                                attribute.func.__doc__ = doc
+                                clsdict[attr] = cached_property(attribute.func)
+                            else:
+                                clsdict[attr] = property(attribute.fget,
+                                                         attribute.fset,
+                                                         attribute.fdel, doc)
                         else:
                             attribute.__doc__ = doc
                         break

@@ -12,4 +12,4 @@ numpydoc
 nbsphinx
 sphinx_material
 jupyter
-cached_property
+property_cached

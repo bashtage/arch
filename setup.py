@@ -66,7 +66,7 @@ INSTALL_REQUIREMENTS = SETUP_REQUIREMENTS.copy()
 INSTALL_REQUIREMENTS.update({'scipy': '1.0',
                              'pandas': '0.22',
                              'statsmodels': '0.9',
-                             'cached_property': '1.5.1'})
+                             'property_cached': '1.6.2'})
 
 cmdclass['build_ext'] = build_ext
 

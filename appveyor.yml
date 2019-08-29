@@ -25,7 +25,7 @@ build_script:
   - cmd: conda update conda --quiet
   - cmd: conda install numpy cython pytest pandas scipy patsy statsmodels matplotlib numba nbconvert nbformat pip pyyaml setuptools pyqt pyparsing --quiet
   - cmd: python -m pip install --upgrade pip
-  - cmd: pip install pytest-xdist cached_property
+  - cmd: pip install pytest-xdist property_cached
   - cmd: python setup.py develop
 
 test_script:

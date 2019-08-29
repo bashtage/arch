@@ -8,4 +8,4 @@ pytest
 statsmodels>=0.9
 sphinx_material
 nbsphinx
-cached_property
+property_cached

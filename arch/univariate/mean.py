@@ -19,7 +19,7 @@ from arch.univariate.distribution import (GeneralizedError, Normal,
 from arch.univariate.volatility import (ARCH, EGARCH, FIGARCH, GARCH, HARCH,
                                         ConstantVariance)
 from arch.utility.array import cutoff_to_index, ensure1d, parse_dataframe
-from arch.vendor.cached_property import cached_property
+from property_cached import cached_property
 
 __all__ = ['HARX', 'ConstantMean', 'ZeroMean', 'ARX', 'arch_model', 'LS']
 
