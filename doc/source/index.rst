@@ -2,15 +2,15 @@
    :width: 33.3%
    :alt: arch logo
 
-ARCH
-----
+Introduction
+============
 
-The ARCH toolbox currently contains routines for
+The ARCH toolbox contains routines for:
 
-- Univariate volatility models
-- Bootstrapping
-- Multiple comparison procedures
-- Unit root tests
+- Univariate volatility models;
+- Bootstrapping;
+- Multiple comparison procedures; and
+- Unit root tests.
 
 Future plans are to continue to expand this toolbox to include additional
 routines relevant for the analysis of financial data.

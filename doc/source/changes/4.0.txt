@@ -1,5 +1,5 @@
-Changes since 4.8.1
-===================
+Release 4.9
+===========
 - Removed support for Python 2.7.
 - Added :func:`~arch.unitroot.auto_bandwidth` to compute optimized bandwidth
   for a number of common kernel covariance estimators (:issue:`303`). This code
