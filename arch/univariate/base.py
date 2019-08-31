@@ -27,7 +27,7 @@ from arch.utility.exceptions import (ConvergenceWarning, DataScaleWarning,
                                      data_scale_warning,
                                      starting_value_warning)
 from arch.utility.testing import WaldTestStatistic
-from property_cached import cached_property
+from arch.vendor import cached_property
 
 __all__ = ['implicit_constant', 'ARCHModelResult', 'ARCHModel', 'ARCHModelForecast', 'constraint']
 

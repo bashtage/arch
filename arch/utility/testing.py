@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 from scipy.stats import chi2
 
-from property_cached import cached_property
+from arch.vendor import cached_property
 
 __all__ = ['WaldTestStatistic']
 

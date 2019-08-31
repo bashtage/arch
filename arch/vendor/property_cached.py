@@ -33,8 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import functools
 import sys
 import threading
-import weakref
 from time import time
+import weakref
 
 try:
     import asyncio

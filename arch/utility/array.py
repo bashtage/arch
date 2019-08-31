@@ -8,11 +8,11 @@ from arch.compat.pandas import is_datetime64_any_dtype
 from abc import ABCMeta
 import datetime as dt
 
-from property_cached import cached_property
-
 import numpy as np
 from pandas import (DataFrame, DatetimeIndex, NaT, Series, Timestamp,
                     to_datetime)
+
+from arch.vendor import cached_property
 
 __all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor',
            'date_to_index', 'cutoff_to_index', 'ensure2d', 'AbstractDocStringInheritor']
