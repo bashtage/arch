@@ -1,4 +1,6 @@
-# ARCH
+[![arch](https://bashtage.github.io/arch/doc/_static/images/color-logo-256.png)](https://github.com/bashtage/arch)
+
+# arch
 
 Autoregressive Conditional Heteroskedasticity (ARCH) and other tools for
 financial econometrics, written in Python (with Cython and/or Numba used

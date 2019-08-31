@@ -1,4 +1,6 @@
-ARCH
+|arch|
+
+arch
 ====
 
 Autoregressive Conditional Heteroskedasticity (ARCH) and other tools for
@@ -280,6 +282,8 @@ Installation Notes:
 2. Setup does not verify these requirements. Please ensure these are
    installed.
 
+.. |arch| image:: https://bashtage.github.io/arch/doc/_static/images/color-logo-256.png
+   :target: https://github.com/bashtage/arch
 .. |Travis Build Status| image:: https://travis-ci.org/bashtage/arch.svg?branch=master
    :target: https://travis-ci.org/bashtage/arch
 .. |Appveyor Build Status| image:: https://ci.appveyor.com/api/projects/status/nmt02u7jwcgx7i2x?svg=true
