@@ -1,5 +1,7 @@
-Changes since 3.0
-=================
+=========
+Version 3
+=========
+
 - Added forecast code for mean forecasting
 - Added volatility hedgehog plot
 - Added ``fix`` to arch models which allows for user specified parameters

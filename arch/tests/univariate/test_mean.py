@@ -44,12 +44,12 @@ except ImportError:
 DISPLAY = 'off'
 
 
-@pytest.fixture(scope='module')
-def simulated_data():
+@pytest.fixture(scope='module', params=[True, False])
+def simulated_data(request):
     rs = np.random.RandomState(1)
     zm = ZeroMean(volatility=GARCH(), distribution=Normal(rs))
     sim_data = zm.simulate(np.array([0.1, 0.1, 0.88]), 1000)
-    return sim_data.data
+    return np.asarray(sim_data.data) if request.param else sim_data.data
 
 
 class TestMeanModel(TestCase):
@@ -1005,7 +1005,7 @@ def test_arch_lm(simulated_data):
     assert 'H0: Standardized' not in wald.__repr__()
     assert 'heteroskedastic' in wald.__repr__()
 
-    resids2 = res.resid ** 2
+    resids2 = pd.Series(res.resid ** 2)
     data = [resids2.shift(i) for i in range(df + 1)]
     data = pd.concat(data, 1).dropna()
     lhs = data.iloc[:, 0]
