@@ -1,3 +1,12 @@
+=========
+Version 4
+=========
+
+Changes Since 4.9
+=================
+- Fixed a bug in arch_lm_test that assumed that the model data is contained in
+  a pandas Series. (:issue:`313`).
+
 Release 4.9
 ===========
 - Removed support for Python 2.7.

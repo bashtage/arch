@@ -1340,7 +1340,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         resids = self.resid
         nobs = resids.shape[0]
         if standardized:
-            resids = resids / self.conditional_volatility.values
+            resids = resids / np.asarray(self.conditional_volatility)
         resid2 = resids ** 2
         lags = int(np.ceil(12. * np.power(nobs / 100., 1 / 4.))) if lags is None else lags
         lags = max(min(resids.shape[0] // 2 - 1, lags), 1)

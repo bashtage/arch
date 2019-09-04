@@ -1,10 +1,14 @@
-Changes since 2.1
-=================
+=========
+Version 2
+=========
+
+Version 2.2
+===========
 - Added multiple comparison procedures
 - Typographical and other small changes
 
-Changes since 2.0
-=================
+Version 2.1
+===========
 - Add unit root tests:
   * Augmented Dickey-Fuller
   * Dickey-Fuller GLS
