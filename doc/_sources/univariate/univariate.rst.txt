@@ -6,7 +6,7 @@ methods (see :ref:`mean-models`) to specify models. All models can be used to pr
 either analytically (when tractable) or using simulation-based methods (Monte Carlo or
 residual Bootstrap).
 
-.. py:module::arch.univariate
+.. module::arch.univariate
 
 .. toctree::
     :maxdepth: 1

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.GeneralizedError.bounds
+=======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: GeneralizedError.bounds

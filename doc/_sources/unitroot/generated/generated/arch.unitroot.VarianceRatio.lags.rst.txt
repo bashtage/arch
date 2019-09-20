@@ -1,0 +1,6 @@
+arch.unitroot.VarianceRatio.lags
+================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: VarianceRatio.lags

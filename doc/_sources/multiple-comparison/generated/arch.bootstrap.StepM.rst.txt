@@ -1,0 +1,32 @@
+arch.bootstrap.StepM
+====================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoclass:: StepM
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~StepM.compute
+      ~StepM.reset
+      ~StepM.seed
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~StepM.superior_models
+   
+   
+   

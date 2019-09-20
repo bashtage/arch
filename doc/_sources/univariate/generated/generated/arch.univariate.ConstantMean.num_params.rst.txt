@@ -1,0 +1,6 @@
+arch.univariate.ConstantMean.num\_params
+========================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ConstantMean.num_params

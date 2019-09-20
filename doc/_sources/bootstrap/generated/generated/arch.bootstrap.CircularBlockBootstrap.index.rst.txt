@@ -1,0 +1,6 @@
+arch.bootstrap.CircularBlockBootstrap.index
+===========================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: CircularBlockBootstrap.index

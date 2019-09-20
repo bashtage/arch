@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.StudentsT.ppf
+=============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: StudentsT.ppf

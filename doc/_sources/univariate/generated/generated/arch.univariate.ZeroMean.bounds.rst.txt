@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ZeroMean.bounds
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ZeroMean.bounds

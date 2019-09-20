@@ -1,0 +1,6 @@
+arch.unitroot.PhillipsPerron.critical\_values
+=============================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: PhillipsPerron.critical_values

@@ -1,0 +1,6 @@
+arch.unitroot.ZivotAndrews.lags
+===============================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ZivotAndrews.lags

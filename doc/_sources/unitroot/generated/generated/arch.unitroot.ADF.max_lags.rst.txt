@@ -1,0 +1,6 @@
+arch.unitroot.ADF.max\_lags
+===========================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ADF.max_lags

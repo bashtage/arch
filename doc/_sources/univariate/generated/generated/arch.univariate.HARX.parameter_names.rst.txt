@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.HARX.parameter\_names
+=====================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: HARX.parameter_names

@@ -1,0 +1,40 @@
+arch.unitroot.PhillipsPerron
+============================
+
+.. currentmodule:: arch.unitroot
+
+.. autoclass:: PhillipsPerron
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~PhillipsPerron.summary
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~PhillipsPerron.alternative_hypothesis
+      ~PhillipsPerron.critical_values
+      ~PhillipsPerron.lags
+      ~PhillipsPerron.nobs
+      ~PhillipsPerron.null_hypothesis
+      ~PhillipsPerron.pvalue
+      ~PhillipsPerron.stat
+      ~PhillipsPerron.test_type
+      ~PhillipsPerron.trend
+      ~PhillipsPerron.valid_trends
+      ~PhillipsPerron.y
+   
+   
+   

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.IIDBootstrap.var
+===============================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: IIDBootstrap.var

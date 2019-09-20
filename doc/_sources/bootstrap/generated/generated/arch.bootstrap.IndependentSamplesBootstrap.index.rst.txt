@@ -1,0 +1,6 @@
+arch.bootstrap.IndependentSamplesBootstrap.index
+================================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: IndependentSamplesBootstrap.index

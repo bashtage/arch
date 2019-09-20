@@ -1,0 +1,6 @@
+arch.unitroot.KPSS.lags
+=======================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: KPSS.lags

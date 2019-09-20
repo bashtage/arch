@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.SPA.better\_models
+=================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: SPA.better_models

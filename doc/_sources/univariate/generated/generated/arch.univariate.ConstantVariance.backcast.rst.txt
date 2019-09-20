@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ConstantVariance.backcast
+=========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ConstantVariance.backcast

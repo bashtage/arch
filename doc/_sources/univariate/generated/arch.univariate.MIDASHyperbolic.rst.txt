@@ -1,0 +1,40 @@
+arch.univariate.MIDASHyperbolic
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: MIDASHyperbolic
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~MIDASHyperbolic.backcast
+      ~MIDASHyperbolic.backcast_transform
+      ~MIDASHyperbolic.bounds
+      ~MIDASHyperbolic.compute_variance
+      ~MIDASHyperbolic.constraints
+      ~MIDASHyperbolic.forecast
+      ~MIDASHyperbolic.parameter_names
+      ~MIDASHyperbolic.simulate
+      ~MIDASHyperbolic.starting_values
+      ~MIDASHyperbolic.variance_bounds
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~MIDASHyperbolic.start
+      ~MIDASHyperbolic.stop
+   
+   
+   

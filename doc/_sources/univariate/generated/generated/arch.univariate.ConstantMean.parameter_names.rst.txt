@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ConstantMean.parameter\_names
+=============================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ConstantMean.parameter_names

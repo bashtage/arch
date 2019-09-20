@@ -1,0 +1,6 @@
+arch.univariate.ZeroMean.num\_params
+====================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ZeroMean.num_params

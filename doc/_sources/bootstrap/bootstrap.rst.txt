@@ -3,7 +3,7 @@ Bootstrapping
 
 .. module:: arch.bootstrap
    :synopsis: Bootstrap methods for simulation and parameter inference
-.. py:module::arch.bootstrap
+.. currentmodule::arch.bootstrap
 
 The bootstrap module provides both high- and low-level interfaces for
 bootstrapping data contained in NumPy arrays or pandas Series or DataFrames.

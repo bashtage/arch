@@ -1,0 +1,6 @@
+arch.unitroot.DFGLS.valid\_trends
+=================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: DFGLS.valid_trends

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.EGARCH.backcast
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: EGARCH.backcast

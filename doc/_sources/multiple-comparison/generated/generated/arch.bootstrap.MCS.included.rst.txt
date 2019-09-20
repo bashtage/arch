@@ -1,0 +1,6 @@
+arch.bootstrap.MCS.included
+===========================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: MCS.included

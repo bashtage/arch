@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ConstantMean.bounds
+===================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ConstantMean.bounds

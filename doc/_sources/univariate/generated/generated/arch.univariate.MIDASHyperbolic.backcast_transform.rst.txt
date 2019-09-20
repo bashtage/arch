@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.MIDASHyperbolic.backcast\_transform
+===================================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: MIDASHyperbolic.backcast_transform

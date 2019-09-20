@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.SkewStudent.ppf
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: SkewStudent.ppf

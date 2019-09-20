@@ -1,0 +1,6 @@
+arch.unitroot.KPSS.pvalue
+=========================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: KPSS.pvalue

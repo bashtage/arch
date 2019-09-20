@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.GeneralizedError.simulate
+=========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: GeneralizedError.simulate

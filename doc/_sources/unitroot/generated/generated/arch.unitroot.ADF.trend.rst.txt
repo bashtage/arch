@@ -1,0 +1,6 @@
+arch.unitroot.ADF.trend
+=======================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ADF.trend

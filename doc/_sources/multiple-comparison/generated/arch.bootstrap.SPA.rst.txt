@@ -1,0 +1,35 @@
+arch.bootstrap.SPA
+==================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoclass:: SPA
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~SPA.better_models
+      ~SPA.compute
+      ~SPA.critical_values
+      ~SPA.reset
+      ~SPA.seed
+      ~SPA.subset
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~SPA.pvalues
+   
+   
+   

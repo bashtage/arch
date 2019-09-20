@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.StudentsT.cdf
+=============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: StudentsT.cdf

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.IIDBootstrap.conf\_int
+=====================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: IIDBootstrap.conf_int

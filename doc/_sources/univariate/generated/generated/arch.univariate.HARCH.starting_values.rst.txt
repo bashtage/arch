@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.HARCH.starting\_values
+======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: HARCH.starting_values

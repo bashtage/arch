@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.LS.forecast
+===========================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: LS.forecast

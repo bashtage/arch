@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ConstantMean.fit
+================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ConstantMean.fit

@@ -1,0 +1,6 @@
+arch.univariate.StudentsT.random\_state
+=======================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: StudentsT.random_state

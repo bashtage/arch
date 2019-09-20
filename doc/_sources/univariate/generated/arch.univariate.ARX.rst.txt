@@ -1,0 +1,43 @@
+arch.univariate.ARX
+===================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: ARX
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ARX.bounds
+      ~ARX.compute_param_cov
+      ~ARX.constraints
+      ~ARX.fit
+      ~ARX.fix
+      ~ARX.forecast
+      ~ARX.parameter_names
+      ~ARX.resids
+      ~ARX.simulate
+      ~ARX.starting_values
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ARX.distribution
+      ~ARX.num_params
+      ~ARX.volatility
+      ~ARX.x
+      ~ARX.y
+   
+   
+   

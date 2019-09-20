@@ -1,0 +1,6 @@
+arch.univariate.FIGARCH.start
+=============================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FIGARCH.start

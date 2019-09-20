@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.StationaryBootstrap.set\_state
+=============================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: StationaryBootstrap.set_state

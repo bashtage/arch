@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.Normal.ppf
+==========================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: Normal.ppf

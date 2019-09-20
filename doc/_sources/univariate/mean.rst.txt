@@ -4,38 +4,23 @@ Mean Models
 ===========
 All ARCH models start by specifying a mean model.
 
-.. module:: arch.univariate.mean
-.. py:currentmodule:: arch.univariate
+.. module:: arch.univariate
+   :noindex:
 
-No Mean
-~~~~~~~
-.. autoclass:: ZeroMean
-   :members: resids, simulate, fit,  fix, forecast
+.. currentmodule:: arch.univariate
 
-Constant Mean
-~~~~~~~~~~~~~
-.. autoclass:: ConstantMean
-   :members: resids, simulate, fit, forecast
+.. autosummary::
+   :toctree: generated/
 
-Autoregressions
-~~~~~~~~~~~~~~~
-.. autoclass:: ARX
-   :members: resids, simulate, fit, fix, forecast
-
-Heterogeneous Autoregressions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: HARX
-   :members: resids, simulate, fit, fix, forecast
-
-Least Squares
-~~~~~~~~~~~~~
-.. autoclass:: LS
-   :members: resids, simulate, fit, fix
-
+   ZeroMean
+   ConstantMean
+   ARX
+   HARX
+   LS
 
 Writing New Mean Models
-~~~~~~~~~~~~~~~~~~~~~~~
-.. py:currentmodule:: arch.univariate.base
+-----------------------
+.. currentmodule:: arch.univariate.base
 
 All mean models must inherit from :class:ARCHModel and provide all public
 methods. There are two optional private methods that should be provided if

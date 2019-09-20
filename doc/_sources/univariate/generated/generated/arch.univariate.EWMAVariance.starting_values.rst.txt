@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.EWMAVariance.starting\_values
+=============================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: EWMAVariance.starting_values

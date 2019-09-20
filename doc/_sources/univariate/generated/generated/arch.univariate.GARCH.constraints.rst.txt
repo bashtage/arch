@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.GARCH.constraints
+=================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: GARCH.constraints

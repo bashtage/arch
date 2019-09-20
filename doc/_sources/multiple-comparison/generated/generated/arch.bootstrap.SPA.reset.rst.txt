@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.SPA.reset
+========================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: SPA.reset

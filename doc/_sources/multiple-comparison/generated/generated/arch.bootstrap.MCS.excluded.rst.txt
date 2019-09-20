@@ -1,0 +1,6 @@
+arch.bootstrap.MCS.excluded
+===========================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: MCS.excluded

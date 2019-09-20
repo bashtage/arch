@@ -1,0 +1,6 @@
+arch.univariate.LS.volatility
+=============================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: LS.volatility

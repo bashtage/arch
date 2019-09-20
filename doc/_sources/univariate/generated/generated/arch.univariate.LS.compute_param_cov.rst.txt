@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.LS.compute\_param\_cov
+======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: LS.compute_param_cov

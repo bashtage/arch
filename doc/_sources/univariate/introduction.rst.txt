@@ -20,7 +20,7 @@ A complete ARCH model is divided into three components:
 * a :ref:`distribution<distributions>` for the standardized residuals.
 
 In most applications, the simplest method to construct this model is to use the constructor
-function :py:meth:`~arch.arch_model`
+function :meth:`~arch.arch_model`
 
 .. code-block:: python
 
@@ -116,20 +116,20 @@ Model Constructor
 While models can be carefully specified using the individual components, most common specifications can be specified
 using a simple model constructor.
 
-.. py:currentmodule:: arch
+.. currentmodule:: arch
 .. autofunction:: arch_model
 
 
 Model Results
 =============
-All model return the same object, a results class (:py:class:`ARCHModelResult`)
+All model return the same object, a results class (:class:`ARCHModelResult`)
 
-.. py:currentmodule:: arch.univariate.base
+.. currentmodule:: arch.univariate.base
 .. autoclass:: ARCHModelResult
    :members: summary, forecast, conf_int, plot, hedgehog_plot, arch_lm_test
 
-When using the ``fix`` method, a (:py:class:`ARCHModelFixedResult`) is produced
-that lacks some properties of a (:py:class:`ARCHModelResult`) that are not
+When using the ``fix`` method, a (:class:`ARCHModelFixedResult`) is produced
+that lacks some properties of a (:class:`ARCHModelResult`) that are not
 relevant when parameters are not estimated.
 
 .. autoclass:: ARCHModelFixedResult

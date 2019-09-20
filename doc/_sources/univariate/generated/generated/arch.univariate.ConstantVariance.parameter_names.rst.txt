@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ConstantVariance.parameter\_names
+=================================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ConstantVariance.parameter_names

@@ -1,0 +1,6 @@
+arch.unitroot.ZivotAndrews.y
+============================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ZivotAndrews.y

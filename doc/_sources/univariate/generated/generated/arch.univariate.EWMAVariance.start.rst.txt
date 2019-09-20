@@ -1,0 +1,6 @@
+arch.univariate.EWMAVariance.start
+==================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: EWMAVariance.start

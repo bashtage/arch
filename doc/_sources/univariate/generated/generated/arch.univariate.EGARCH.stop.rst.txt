@@ -1,0 +1,6 @@
+arch.univariate.EGARCH.stop
+===========================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: EGARCH.stop

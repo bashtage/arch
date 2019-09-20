@@ -1,0 +1,6 @@
+arch.univariate.EWMAVariance.stop
+=================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: EWMAVariance.stop

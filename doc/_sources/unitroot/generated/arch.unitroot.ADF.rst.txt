@@ -1,0 +1,41 @@
+arch.unitroot.ADF
+=================
+
+.. currentmodule:: arch.unitroot
+
+.. autoclass:: ADF
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ADF.summary
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ADF.alternative_hypothesis
+      ~ADF.critical_values
+      ~ADF.lags
+      ~ADF.max_lags
+      ~ADF.nobs
+      ~ADF.null_hypothesis
+      ~ADF.pvalue
+      ~ADF.regression
+      ~ADF.stat
+      ~ADF.trend
+      ~ADF.valid_trends
+      ~ADF.y
+   
+   
+   

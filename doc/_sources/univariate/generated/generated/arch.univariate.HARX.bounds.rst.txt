@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.HARX.bounds
+===========================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: HARX.bounds

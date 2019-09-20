@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.StationaryBootstrap.cov
+======================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: StationaryBootstrap.cov

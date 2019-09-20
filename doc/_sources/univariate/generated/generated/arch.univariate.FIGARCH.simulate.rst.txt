@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FIGARCH.simulate
+================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FIGARCH.simulate

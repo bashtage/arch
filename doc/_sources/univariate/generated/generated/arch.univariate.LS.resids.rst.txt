@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.LS.resids
+=========================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: LS.resids

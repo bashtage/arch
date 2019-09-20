@@ -4,7 +4,7 @@ Module Reference
 .. module:: arch.bootstrap.multiple_comparison
    :synopsis: Multiple comparison procedures
 
-.. py:currentmodule:: arch.bootstrap
+.. currentmodule:: arch.bootstrap
 
 Test of Superior Predictive Ability (SPA), Reality Check
 ========================================================
@@ -28,10 +28,14 @@ from the benchmark model.  The alternative is
 This procedure accounts for dependence between the losses and the fact that
 there are potentially alternative models being considered.
 
-**Note**: Also callable using :py:class:`~arch.bootstrap.RealityCheck`
+**Note**: Also callable using :class:`~arch.bootstrap.RealityCheck`
 
-.. autoclass:: SPA
-   :members: compute, pvalues, critical_values
+
+.. autosummary::
+   :toctree: generated/
+
+   ~arch.bootstrap.SPA
+
 
 Stepwise Multiple Testing (StepM)
 =================================
@@ -39,12 +43,14 @@ Stepwise Multiple Testing (StepM)
 The Stepwise Multiple Testing procedure (Romano & Wolf (2005)) is closely
 related to the SPA, except that it returns a set of models that are superior
 to the benchmark model, rather than the p-value from the null.  They are
-so closely related that :py:class:`~arch.bootstrap.StepM` is essentially
-a wrapper around :py:class:`~arch.bootstrap.SPA` with some small modifications
+so closely related that :class:`~arch.bootstrap.StepM` is essentially
+a wrapper around :class:`~arch.bootstrap.SPA` with some small modifications
 to allow multiple calls.
 
-.. autoclass:: StepM
-   :members: compute, superior_models
+.. autosummary::
+   :toctree: generated/
+
+   ~arch.bootstrap.StepM
 
 Model Confidence Set (MCS)
 ==========================
@@ -56,5 +62,7 @@ controlling the probability that a model that is worse than the best model is
 in the model confidence set.  Like the other MCPs, it controls the
 Familywise Error Rate rather than the usual test size.
 
-.. autoclass:: MCS
-   :members: compute
+.. autosummary::
+   :toctree: generated/
+
+   ~arch.bootstrap.MCS

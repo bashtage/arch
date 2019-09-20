@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ZeroMean.fix
+============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ZeroMean.fix

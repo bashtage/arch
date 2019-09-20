@@ -1,0 +1,6 @@
+arch.unitroot.PhillipsPerron.test\_type
+=======================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: PhillipsPerron.test_type

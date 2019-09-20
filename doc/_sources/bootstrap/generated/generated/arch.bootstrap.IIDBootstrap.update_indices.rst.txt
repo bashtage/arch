@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.IIDBootstrap.update\_indices
+===========================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: IIDBootstrap.update_indices

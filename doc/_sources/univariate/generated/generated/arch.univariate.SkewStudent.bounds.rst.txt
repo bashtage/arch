@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.SkewStudent.bounds
+==================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: SkewStudent.bounds

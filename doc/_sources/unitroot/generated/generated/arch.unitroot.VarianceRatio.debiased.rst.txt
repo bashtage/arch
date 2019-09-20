@@ -1,0 +1,6 @@
+arch.unitroot.VarianceRatio.debiased
+====================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: VarianceRatio.debiased

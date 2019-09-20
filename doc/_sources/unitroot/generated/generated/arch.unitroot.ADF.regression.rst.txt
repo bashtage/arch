@@ -1,0 +1,6 @@
+arch.unitroot.ADF.regression
+============================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ADF.regression

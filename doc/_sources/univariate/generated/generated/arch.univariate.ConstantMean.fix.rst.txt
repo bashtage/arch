@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ConstantMean.fix
+================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ConstantMean.fix

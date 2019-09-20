@@ -1,0 +1,6 @@
+arch.unitroot.VarianceRatio.alternative\_hypothesis
+===================================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: VarianceRatio.alternative_hypothesis

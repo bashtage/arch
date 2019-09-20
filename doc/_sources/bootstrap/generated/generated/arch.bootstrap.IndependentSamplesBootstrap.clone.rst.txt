@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.IndependentSamplesBootstrap.clone
+================================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: IndependentSamplesBootstrap.clone

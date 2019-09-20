@@ -1,0 +1,6 @@
+arch.unitroot.KPSS.valid\_trends
+================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: KPSS.valid_trends

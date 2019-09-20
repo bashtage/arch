@@ -1,0 +1,6 @@
+arch.univariate.ARCH.start
+==========================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ARCH.start

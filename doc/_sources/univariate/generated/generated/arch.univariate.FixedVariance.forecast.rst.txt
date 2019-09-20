@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FixedVariance.forecast
+======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FixedVariance.forecast

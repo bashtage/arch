@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.MCS.reset
+========================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: MCS.reset

@@ -1,0 +1,6 @@
+arch.unitroot.VarianceRatio.overlap
+===================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: VarianceRatio.overlap

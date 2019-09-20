@@ -1,0 +1,6 @@
+arch.unitroot.ADF.y
+===================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ADF.y

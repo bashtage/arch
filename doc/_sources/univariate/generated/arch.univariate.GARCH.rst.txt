@@ -1,0 +1,40 @@
+arch.univariate.GARCH
+=====================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: GARCH
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~GARCH.backcast
+      ~GARCH.backcast_transform
+      ~GARCH.bounds
+      ~GARCH.compute_variance
+      ~GARCH.constraints
+      ~GARCH.forecast
+      ~GARCH.parameter_names
+      ~GARCH.simulate
+      ~GARCH.starting_values
+      ~GARCH.variance_bounds
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~GARCH.start
+      ~GARCH.stop
+   
+   
+   

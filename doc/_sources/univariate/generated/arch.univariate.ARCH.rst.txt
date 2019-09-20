@@ -1,0 +1,40 @@
+arch.univariate.ARCH
+====================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: ARCH
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ARCH.backcast
+      ~ARCH.backcast_transform
+      ~ARCH.bounds
+      ~ARCH.compute_variance
+      ~ARCH.constraints
+      ~ARCH.forecast
+      ~ARCH.parameter_names
+      ~ARCH.simulate
+      ~ARCH.starting_values
+      ~ARCH.variance_bounds
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ARCH.start
+      ~ARCH.stop
+   
+   
+   

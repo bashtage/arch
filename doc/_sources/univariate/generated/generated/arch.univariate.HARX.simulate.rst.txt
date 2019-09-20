@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.HARX.simulate
+=============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: HARX.simulate

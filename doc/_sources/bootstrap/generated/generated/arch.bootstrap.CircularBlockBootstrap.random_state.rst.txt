@@ -1,0 +1,6 @@
+arch.bootstrap.CircularBlockBootstrap.random\_state
+===================================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: CircularBlockBootstrap.random_state

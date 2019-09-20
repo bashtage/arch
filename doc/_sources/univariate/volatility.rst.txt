@@ -5,82 +5,48 @@ Volatility Processes
 A volatility process is added to a mean model to capture time-varying
 volatility.
 
-.. module:: arch.univariate.volatility
-.. py:currentmodule:: arch.univariate
+.. module:: arch.univariate
+   :noindex:
 
-Constant Variance
------------------
+.. currentmodule:: arch.univariate
 
-.. autoclass:: ConstantVariance
-   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
+.. autosummary::
+   :toctree: generated/
 
-GARCH
------
-
-.. autoclass:: GARCH
-   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
-
-Fractionally Integrated (FI) GARCH
-----------------------------------
-
-.. autoclass:: FIGARCH
-   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
-
-EGARCH
-------
-
-.. autoclass:: EGARCH
-   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
-
-HARCH
------
-
-.. autoclass:: HARCH
-   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
-
-MIDAS Hyperbolic
-----------------
-
-.. autoclass:: MIDASHyperbolic
-   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
-
-ARCH
-----
-
-.. autoclass:: ARCH
-   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
+   ConstantVariance
+   GARCH
+   FIGARCH
+   EGARCH
+   HARCH
+   MIDASHyperbolic
+   ARCH
 
 Parameterless Variance Processes
 --------------------------------
 Some volatility processes use fixed parameters and so have no parameters that
 are estimable.
 
-EWMA Variance
--------------
+.. autosummary::
+   :toctree: generated/
 
-.. autoclass:: EWMAVariance
-   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
-   :show-inheritance:
-
-RiskMetrics (2006)
-------------------
-
-.. autoclass:: RiskMetrics2006
-   :members: starting_values, backcast, compute_variance, bounds, constraints, simulate
-   :show-inheritance:
+   EWMAVariance
+   RiskMetrics2006
 
 FixedVariance
 -------------
 The ``FixedVariance`` class is a special-purpose volatility process that allows
 the so-called zig-zag algorithm to be used.  See the example for usage.
 
-.. autoclass:: FixedVariance
-    :show-inheritance:
+.. autosummary::
+   :toctree: generated/
+
+   FixedVariance
 
 Writing New Volatility Processes
 --------------------------------
 All volatility processes must inherit from :class:VolatilityProcess and provide
 all public methods.
 
-.. py:currentmodule:: arch.univariate.volatility
+.. currentmodule:: arch.univariate.volatility
+
 .. autoclass:: VolatilityProcess

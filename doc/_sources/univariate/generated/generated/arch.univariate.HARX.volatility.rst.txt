@@ -1,0 +1,6 @@
+arch.univariate.HARX.volatility
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: HARX.volatility

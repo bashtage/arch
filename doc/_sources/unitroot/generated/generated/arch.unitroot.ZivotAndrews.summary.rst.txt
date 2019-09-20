@@ -1,0 +1,8 @@
+:orphan:
+
+arch.unitroot.ZivotAndrews.summary
+==================================
+
+.. currentmodule:: arch.unitroot
+
+.. automethod:: ZivotAndrews.summary
