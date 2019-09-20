@@ -90,6 +90,7 @@ class MCS(MultipleComparison):
     Methods
     -------
     compute
+        Compute the set ofmodels in the confidence set.
 
     References
     ----------

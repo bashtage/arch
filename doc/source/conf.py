@@ -174,7 +174,8 @@ if not on_rtd:
 # html_sidebars = {}
 if not on_rtd:
     html_sidebars = {
-        "**": ["logo-text.html", "globaltoc.html", "searchbox.html"]
+        "**": ["logo-text.html", "globaltoc.html", "searchbox.html",
+               "localtoc.html"]
     }
 
 # If false, no module index is generated.
@@ -267,3 +268,10 @@ intersphinx_mapping = {
 }
 
 extlinks = {"issue": ("https://github.com/bashtage/arch/issues/%s", "GH")}
+
+napoleon_use_admonition_for_examples = True
+napoleon_use_admonition_for_notes = False
+napoleon_use_admonition_for_references = True
+
+autosummary_generate = True
+autoclass_content = 'class'

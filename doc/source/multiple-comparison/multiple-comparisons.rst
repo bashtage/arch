@@ -6,7 +6,7 @@ These are designed to allow multiple models to be compared while controlling
 a the `Familywise Error Rate <https://www.google.com/search?q=familywise+error+rate>`_,
 which is similar to the size of a test.
 
-.. py:module::arch.bootstrap
+.. module::arch.bootstrap
 
 .. toctree::
     :maxdepth: 1

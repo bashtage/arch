@@ -147,7 +147,7 @@ data available at time :math:`t` are used to simulate the paths.
 
 Forecasting Options
 ~~~~~~~~~~~~~~~~~~~
-The :py:meth:`~arch.univariate.base.ARCHModelResult.forecast`  method
+The :meth:`~arch.univariate.base.ARCHModelResult.forecast`  method
 is attached to a model fit result.`
 
 * ``params`` - The model parameters used to forecast the mean and variance.
@@ -173,8 +173,8 @@ is attached to a model fit result.`
 
 Understanding Forecast Output
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Any call to :py:meth:`~arch.univariate.base.ARCHModelResult.forecast` returns a
-:py:class:`~arch.univariate.base.ARCHModelForecast` object with has 3 core
+Any call to :meth:`~arch.univariate.base.ARCHModelResult.forecast` returns a
+:class:`~arch.univariate.base.ARCHModelForecast` object with has 3 core
 attributes and 1 which may be useful when using simulation- or bootstrap-based
 forecasts.
 
@@ -237,7 +237,7 @@ that are not forecast are ``nan`` filled.
 
 Output Classes
 ~~~~~~~~~~~~~~
-.. py:currentmodule:: arch.univariate.base
+.. currentmodule:: arch.univariate.base
 
 .. autoclass:: ARCHModelForecast
 

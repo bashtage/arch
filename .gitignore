@@ -15,3 +15,5 @@ __pycache__/
 **/.hypothesis/
 dist/
 doc/build/
+doc/source/**/generated/
+arch/univariate/recursions.c
