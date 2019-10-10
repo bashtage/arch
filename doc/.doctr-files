@@ -541,7 +541,7 @@ doc/_static/javascripts/lunr/lunr.tr.js
 doc/_static/javascripts/lunr/tinyseg.js
 doc/_static/javascripts/lunr/wordcut.js
 doc/_static/javascripts/modernizr.js
-doc/_static/jquery-3.2.1.js
+doc/_static/jquery-3.4.1.js
 doc/_static/jquery.js
 doc/_static/jquery.min.map
 doc/_static/language_data.js
