@@ -19,6 +19,8 @@ cdef extern from 'float.h':
 
 cdef double LNSIGMA_MAX = log(DBL_MAX)
 
+np.import_array()
+
 cdef inline bounds_check(double* sigma2, double* var_bounds):
     if sigma2[0] < var_bounds[0]:
         sigma2[0] = var_bounds[0]

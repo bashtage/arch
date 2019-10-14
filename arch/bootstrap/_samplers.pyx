@@ -6,6 +6,8 @@ import numpy as np
 cimport numpy as np
 cimport cython
 
+np.import_array()
+
 def stationary_bootstrap_sample(np.int64_t[:] indices,
                                 double[:] u,
                                 double p):
