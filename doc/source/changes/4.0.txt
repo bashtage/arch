@@ -2,10 +2,12 @@
 Version 4
 =========
 
-Changes Since 4.9
-=================
+Release 4.10
+============
 - Fixed a bug in arch_lm_test that assumed that the model data is contained in
   a pandas Series. (:issue:`313`).
+- Fixed a bug that can affect use in certain environments that reload modules
+  (:issue:`317`).
 
 Release 4.9
 ===========
