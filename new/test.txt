@@ -1,0 +1,41 @@
+y = y.reset_index(drop = True)
+bics = []
+n_obs, k = x.shape
+dta = pd.DataFrame(np.diff(a = x, n = 1, axis = 0))
+for lag in range(2, int(np.ceil(n_obs ** (1/3) / 2) + 2)):
+    
+    df1 = pd.DataFrame(ts.lagmat(dta, lag+1 , trim = 'backward'))
+    cols = dict(zip(list(df1.columns)[::-1][0:k][::-1], list(x.columns)))
+    df1 = df1.rename(columns = cols)
+    
+    df2 = pd.DataFrame(ts.lagmat(dta, lag , trim = 'forward'))
+
+    lags_leads = pd.concat([df1, df2], axis = 1, join = 'outer')
+    lags_leads = lags_leads.drop(list(range(0, lag))).reset_index(drop = True)
+    lags_leads = lags_leads.drop(list(range(len(lags_leads) - lag, len(lags_leads)))).reset_index(drop = True)
+    
+    data_y = y.drop(list(range(0, lag))).reset_index(drop = True)
+    data_y = data_y.drop(list(range(len(data_y) - lag - 1, len(data_y)))).reset_index(drop = True)
+
+    bics.append([sm.OLS(data_y, lags_leads).fit().bic, lag])
+
+max_val = max(bics, key=lambda item: item[0])
+max_val = max_val[1]
+
+df1 = pd.DataFrame(ts.lagmat(dta, max_val+1 , trim = 'backward'))
+cols = dict(zip(list(df1.columns)[::-1][0:k][::-1], list(x.columns)))
+df1 = df1.rename(columns = cols)
+
+df2 = pd.DataFrame(ts.lagmat(dta, max_val , trim = 'forward'))
+
+lags_leads = pd.concat([df1, df2], axis = 1, join = 'outer')
+lags_leads = lags_leads.drop(list(range(0, max_val))).reset_index(drop = True)
+lags_leads = lags_leads.drop(list(range(len(lags_leads) - max_val, len(lags_leads)))).reset_index(drop = True)
+
+data_y = y.drop(list(range(0, max_val))).reset_index(drop = True)
+data_y = data_y.drop(list(range(len(data_y) - max_val - 1, len(data_y)))).reset_index(drop = True)
+
+model = sm.OLS(data_y, lags_leads).fit()
+
+print(max_val)
+print(model.params[list(x.columns)])
