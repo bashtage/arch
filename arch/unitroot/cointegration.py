@@ -8,12 +8,11 @@ of multiple time series eliminate common stochastic trends.
 
 """
 
-
-from statsmodels.tsa.stattools import coint
 from statsmodels.regression.linear_model import OLS
-from statsmodels.tsa.tsatools import add_trend, lagmat
-from statsmodels.tools.validation import string_like, array_like
+from arch.utility.timeseries import add_trend
+from statsmodels.tsa.tsatools import lagmat
 from statsmodels.tools.data import _is_using_pandas
+from arch.unitroot import ADF, DFGLS, PhillipsPerron
 import pandas as pd
 import numpy as np
 
@@ -21,14 +20,15 @@ import numpy as np
 class Cointegration(object):
     """
     Class to test and estimate cointegration coefficents
-    
+
     Cointegration:
     engle_granger_coef
     dynamic_coefs
     """
     def engle_granger_coef(self, y0, y1, trend='c',
-                           method='aeg', maxlag=None,
-                           autolag='aic', normalize=True, debug=True):
+                           max_lags=None, autolag='AIC',
+                           method='ADF',
+                           normalize=True, check=True):
         """
         Engle-Granger Cointegration Coefficient Calculations.
 
@@ -50,24 +50,18 @@ class Cointegration(object):
             * 'c' : constant.
             * 'ct' : constant and linear trend.
             * also available quadratic trend 'ctt', and no constant 'nc'.
-
-        method : {'aeg'}
-            Only 'aeg' (augmented Engle-Granger) is available.
         maxlag : None or int
             Argument for `adfuller`, largest or given number of lags.
+        method: string
+            Determines what method is used to check for a stationary process
+            The available are DFGLS, PhillipsPerron, ADF.
         autolag : str
-            Argument for `adfuller`, lag selection criterion.
-
-            * If None, then maxlag lags are used without lag search.
             * If 'AIC' (default) or 'BIC', then the number of lags is chosen
             to minimize the corresponding information criterion.
-            * 't-stat' based choice of maxlag.  Starts with maxlag and drops a
-            lag until the t-statistic on the last lag length is significant
-            using a 5%-sized test.
         normalize: boolean, optional
             As there are infinite scalar combinations that will produce the
             factor, this normalizes the first entry to be 1.
-        debug: boolean, optional
+        check: boolean, optional
             Checks if the series has a possible cointegration factor using the
             Engle-Granger Cointegration Test
 
@@ -94,13 +88,6 @@ class Cointegration(object):
         .. [3] Hamilton, J. D. (1994). Time series analysis
         (Vol. 2, pp. 690-696). Princeton, NJ: Princeton university press.
         """
-        if debug:
-            coint_t, pvalue, crit_value = coint(y0, y1, trend,
-                                                method, maxlag, autolag)
-            if pvalue >= .10:
-                print('The null hypothesis cannot be rejected')
-
-        trend = string_like(trend, 'trend', options=('c', 'nc', 'ct', 'ctt'))
         nobs, k_vars = y1.shape
 
         y1 = add_trend(y1, trend=trend, prepend=False)
@@ -108,13 +95,33 @@ class Cointegration(object):
         eg_model = OLS(y0, y1).fit()
         coefs = eg_model.params[0: k_vars]
 
+        if check:
+            if method == 'DFGLS':
+                unit_root = DFGLS(
+                                eg_model.resid,
+                                trend=trend,
+                                max_lags=max_lags,
+                                method=method)
+            elif method == 'PhillipsPerron':
+                unit_root = PhillipsPerron(eg_model.resid, trend=trend)
+            else:
+                unit_root = ADF(eg_model.resid,
+                                trend=trend,
+                                max_lags=max_lags,
+                                method=method)
+
+            if unit_root.pvalue > .1:
+                print('The null hypothesis cannot be rejected')
+
         if normalize:
             coefs = coefs / coefs[0]
 
         return coefs
 
-    def dynamic_coefs(self, y0, y1, n_lags=None, trend='c',
-                       normalize=True, reverse=False):
+    def dynamic_coefs(
+                    self, y0, y1, n_lags=None,
+                    trend='c', auto_lag='bic',
+                    normalize=True, reverse=False):
         """
         Dynamic Cointegration Coefficient Calculation.
 
@@ -192,12 +199,11 @@ class Cointegration(object):
         .. [2] Hamilton, J. D. (1994). Time series analysis
         (Vol. 2, pp. 690-696). Princeton, NJ: Princeton university press.
         """
-        self.bics = []
+        self.ic = []
         self.max_val = []
         self.model = ''
         self.coefs = []
 
-        trend = string_like(trend, 'trend', options=('c', 'nc', 'ct', 'ctt'))
         y1 = add_trend(y1, trend=trend, prepend=True)
         y1 = y1.reset_index(drop=True)
         if reverse:
@@ -212,10 +218,17 @@ class Cointegration(object):
             columns = [f'Var_{x}' for x in range(k)]
             y0, y1 = pd.DataFrame(y0), pd.DataFrame(y1)
 
-        if n_lags is None:
+        # If none or interval, search for it using BIC or AIC
+        if n_lags is None or len(n_lags) == 2:
+            if len(n_lags) == 2:
+                start, end = int(n_lags[0]), int(n_lags[1]) + 1
+            elif n_lags is None:
+                start = 2
+                end = int(np.ceil(n_obs ** (1 / 3) / 2) + 2)
+
             n_obs, k = y1.shape
             dta = pd.DataFrame(np.diff(a=y1, n=1, axis=0))
-            for lag in range(2, int(np.ceil(n_obs ** (1 / 3) / 2) + 2)):
+            for lag in range(start, end):
 
                 df1 = pd.DataFrame(lagmat(dta, lag + 1, trim='backward'))
                 cols = dict(zip(list(df1.columns)[::-1][0:k][::-1], columns))
@@ -236,38 +249,12 @@ class Cointegration(object):
                     list(range(len(data_y) - lag - 1, len(data_y))))
                 data_y = data_y.reset_index(drop=True)
 
-                self.bics.append([OLS(data_y, lags_leads).fit().bic, lag])
+                if auto_lag == 'aic':
+                    self.ic.append([OLS(data_y, lags_leads).fit().aic, lag])
+                elif auto_lag == 'bic':
+                    self.ic.append([OLS(data_y, lags_leads).fit().bic, lag])
 
-            self.max_val = max(self.bics, key=lambda item: item[0])
-            self.max_val = self.max_val[1]
-
-        elif len(n_lags) == 2:
-            start, end = int(n_lags[0]), int(n_lags[1])
-            n_obs, k = y1.shape
-            dta = pd.DataFrame(np.diff(a=y1, n=1, axis=0))
-
-            for lag in range(start, end + 1):
-                df1 = pd.DataFrame(lagmat(dta, lag + 1, trim='backward'))
-                cols = dict(zip(list(df1.columns)[::-1][0:k][::-1], columns))
-                df1 = df1.rename(columns=cols)
-
-                df2 = pd.DataFrame(lagmat(dta, lag, trim='forward'))
-
-                lags_leads = pd.concat([df1, df2], axis=1, join='outer')
-                lags_leads = lags_leads.drop(list(range(0, lag)))
-                lags_leads = lags_leads.reset_index(drop=True)
-                lags_leads = lags_leads.drop(
-                    list(range(len(lags_leads) - lag, len(lags_leads))))
-                lags_leads = lags_leads.reset_index(drop=True)
-
-                data_y = y0.drop(list(range(0, lag))).reset_index(drop=True)
-                data_y = data_y.drop(
-                    list(range(len(data_y) - lag - 1, len(data_y))))
-                data_y = data_y.reset_index(drop=True)
-
-                self.bics.append([OLS(data_y, lags_leads).fit().bic, lag])
-
-            self.max_val = max(self.bics, key=lambda item: item[0])
+            self.max_val = max(self.ic, key=lambda item: item[0])
             self.max_val = self.max_val[1]
 
         elif len(n_lags) == 1:
