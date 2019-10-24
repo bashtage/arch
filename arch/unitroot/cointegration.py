@@ -261,7 +261,9 @@ class Cointegration(object):
             self.max_val = int(n_lags)
 
         else:
-            raise('Make sure your lags are in one of the required forms.')
+            raise SyntaxError(
+                            'Make sure your lags are\
+                            in one of the required forms.')
 
         dta = pd.DataFrame(np.diff(a=y1, n=1, axis=0))
         # Create a matrix of the lags, this also retains the original matrix,
