@@ -215,7 +215,7 @@ class Cointegration(object):
         else:
             # Need to check if NumPy, because I can only support those two
             n_obs, k = y1.shape
-            columns = [f'Var_{x}' for x in range(k)]
+            columns = ['Var_{}'.format(x) for x in range(k)]
             y0, y1 = pd.DataFrame(y0), pd.DataFrame(y1)
 
         # If none or interval, search for it using BIC or AIC
