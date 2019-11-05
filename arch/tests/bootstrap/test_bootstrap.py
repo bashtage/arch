@@ -18,6 +18,7 @@ from arch.bootstrap._samplers_python import \
     stationary_bootstrap_sample_python  # noqa
 from arch.bootstrap._samplers_python import stationary_bootstrap_sample
 from arch.bootstrap.base import _loo_jackknife
+from arch.utility.exceptions import StudentizationError
 
 try:
     from arch.bootstrap._samplers import stationary_bootstrap_sample as \
@@ -841,3 +842,12 @@ def test_unequal_reset():
     bs.reset(use_seed=True)
     state = bs.get_state()
     assert_equal(state[1], orig_state[1])
+
+
+def test_studentization_error():
+    def f(x):
+        return np.array([x.mean(), 3])
+    x = np.random.standard_normal(100)
+    bs = IIDBootstrap(x)
+    with pytest.raises(StudentizationError):
+        bs.conf_int(f, 100, method='studentized')

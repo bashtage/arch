@@ -56,3 +56,16 @@ rescaling is {1:0.4g} * y.
 This warning can be disabled by either rescaling y before initializing the
 model or by setting rescale=False.
 """
+
+
+class StudentizationError(RuntimeError):
+    pass
+
+
+studentization_error = """
+The estimated covariance computed in the studentication is numerically 0.
+This might occur if your statistic has no variation. It is not possible to
+apply the studentized bootstrap if any of the variances the values returned
+by func have not variability when resampled. The estimated covariance
+is:\n\n {cov}
+"""

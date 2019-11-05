@@ -2,6 +2,12 @@
 Version 4
 =========
 
+Since 4.10
+==========
+- Added a check that the covariance is non-zero when using "studentized" confidence intervals.
+  If the function bootstrapped produces statistics with 0 variance, it is not possible to
+  studentized (:issue:`322`).
+
 Release 4.10
 ============
 - Fixed a bug in arch_lm_test that assumed that the model data is contained in
