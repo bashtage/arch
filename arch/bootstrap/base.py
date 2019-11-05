@@ -8,6 +8,7 @@ import pandas as pd
 import scipy.stats as stats
 
 from arch.utility.array import DocStringInheritor
+from arch.utility.exceptions import StudentizationError, studentization_error
 
 __all__ = ['IIDBootstrap', 'StationaryBootstrap', 'CircularBlockBootstrap',
            'MovingBlockBootstrap', 'IndependentSamplesBootstrap']
@@ -651,6 +652,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
     def _construct_bootstrap_estimates(self, func, reps, extra_kwargs=None,
                                        std_err_func=None, studentize_reps=0,
                                        sampling='nonparametric'):
+        eps = np.finfo(np.double).eps
         # Private, more complicated version of apply
         self._last_func = func
         semi = parametric = False
@@ -691,7 +693,10 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
                 cov = nested_bs.cov(func, studentize_reps,
                                     extra_kwargs=extra_kwargs)
                 std_err = np.sqrt(np.diag(cov))
-                studentized_results[count] = (results[count] - base) / std_err
+                err = results[count] - base
+                if np.any(std_err <= (eps * np.abs(err))):
+                    raise StudentizationError(studentization_error.format(cov=cov))
+                studentized_results[count] = err / std_err
             count += 1
 
         self._base = np.asarray(base)
