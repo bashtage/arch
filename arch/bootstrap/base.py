@@ -8,7 +8,8 @@ import pandas as pd
 import scipy.stats as stats
 
 from arch.utility.array import DocStringInheritor
-from arch.utility.exceptions import StudentizationError, studentization_error
+from arch.utility.exceptions import StudentizationError, studentization_error,\
+    arg_type_error, kwarg_type_error
 
 __all__ = ['IIDBootstrap', 'StationaryBootstrap', 'CircularBlockBootstrap',
            'MovingBlockBootstrap', 'IndependentSamplesBootstrap']
@@ -181,21 +182,23 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
     arch.bootstrap.IndependentSamplesBootstrap
     """
 
+    _name = 'IID Bootstrap'
     _common_size_required = True
 
     def __init__(self, *args, **kwargs):
         self._random_state = None
-        self._args = args
+        self._args = list(args)
         self._kwargs = kwargs
         random_state = self._kwargs.pop('random_state', None)
         self.random_state = random_state if random_state is not None else RandomState()
         self._initial_state = self._random_state.get_state()
+
+        self._check_data()
         if args:
             self._num_items = len(args[0])
         elif kwargs:
             key = list(kwargs.keys())[0]
             self._num_items = len(kwargs[key])
-
         all_args = list(args)
         all_args.extend([v for v in kwargs.values()])
         if self._common_size_required:
@@ -209,13 +212,12 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         self._seed = None
         self.pos_data = args
         self.kw_data = kwargs
-        self.data = (args, kwargs)
+        self.data = (self.pos_data, self.kw_data)
 
         self._base = None
         self._results = None
         self._studentized_results = None
         self._last_func = None
-        self._name = 'IID Bootstrap'
         for key, value in kwargs.items():
             attr = getattr(self, key, None)
             if attr is None:
@@ -559,6 +561,16 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
             lower.fill(-1 * np.inf)
 
         return np.vstack((lower, upper))
+
+    def _check_data(self):
+        supported = (np.ndarray, pd.DataFrame, pd.Series)
+        for i, arg in enumerate(self._args):
+            if not isinstance(arg, supported):
+                raise TypeError(arg_type_error.format(i=i, arg_type=type(arg)))
+        for key in self._kwargs:
+            if not isinstance(self._kwargs[key], supported):
+                arg_type = type(self._kwargs[key])
+                raise TypeError(kwarg_type_error.format(key=key, arg_type=arg_type))
 
     def _bca_bias(self):
         p = (self._results < self._base).mean(axis=0)
@@ -959,10 +971,11 @@ class IndependentSamplesBootstrap(IIDBootstrap):
     """
 
     _common_size_required = False
+    _name = 'Heterogeneous IID Bootstrap'
 
     def __init__(self, *args, **kwargs):
         super(IndependentSamplesBootstrap, self).__init__(*args, **kwargs)
-        self._name = 'Heterogeneous IID Bootstrap'
+
         self._num_args = len(args)
         self._num_arg_items = [len(arg) for arg in args]
         self._num_kw_items = {key: len(kwargs[key]) for key in self._kwargs}
@@ -1102,12 +1115,12 @@ class CircularBlockBootstrap(IIDBootstrap):
     >>> rs = RandomState(1234)
     >>> bs = CircularBlockBootstrap(17, x, y=y, z=z, random_state=rs)
     """
+    _name = 'Circular Block Bootstrap'
 
     def __init__(self, block_size, *args, **kwargs):
         super(CircularBlockBootstrap, self).__init__(*args, **kwargs)
         self.block_size = block_size
         self._parameters = [block_size]
-        self._name = 'Circular Block Bootstrap'
 
     def __str__(self):
         txt = self._name
@@ -1205,12 +1218,11 @@ class StationaryBootstrap(CircularBlockBootstrap):
     >>> rs = RandomState(1234)
     >>> bs = StationaryBootstrap(12, x, y=y, z=z, random_state=rs)
     """
+    _name = 'Stationary Bootstrap'
 
     def __init__(self, block_size, *args, **kwargs):
         super(StationaryBootstrap, self).__init__(block_size, *args, **kwargs)
-        self._name = 'Stationary Bootstrap'
         self._p = 1.0 / block_size
-        self._name = 'Stationary Bootstrap'
 
     def update_indices(self):
         indices = self.random_state.randint(self._num_items,
@@ -1284,10 +1296,10 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     >>> rs = RandomState(1234)
     >>> bs = MovingBlockBootstrap(7, x, y=y, z=z, random_state=rs)
     """
+    _name = 'Moving Block Bootstrap'
 
     def __init__(self, block_size, *args, **kwargs):
         super(MovingBlockBootstrap, self).__init__(block_size, *args, **kwargs)
-        self._name = 'Moving Block Bootstrap'
 
     def update_indices(self):
         num_blocks = self._num_items // self.block_size

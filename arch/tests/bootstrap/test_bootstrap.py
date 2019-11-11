@@ -851,3 +851,13 @@ def test_studentization_error():
     bs = IIDBootstrap(x)
     with pytest.raises(StudentizationError):
         bs.conf_int(f, 100, method='studentized')
+
+
+def test_list_input():
+    # GH 315
+    with pytest.raises(TypeError, match="Positional input 0 "):
+        vals = np.random.standard_normal(25).tolist()
+        IIDBootstrap(vals)
+    with pytest.raises(TypeError, match="Input `data` "):
+        vals = np.random.standard_normal(25).tolist()
+        IIDBootstrap(data=vals)

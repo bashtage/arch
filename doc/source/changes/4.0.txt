@@ -4,6 +4,7 @@ Version 4
 
 Since 4.10
 ==========
+- Error if inputs are not ndarrays, DataFrames or Series (:issue:`315`).
 - Added a check that the covariance is non-zero when using "studentized" confidence intervals.
   If the function bootstrapped produces statistics with 0 variance, it is not possible to
   studentized (:issue:`322`).
