@@ -58,6 +58,17 @@ model or by setting rescale=False.
 """
 
 
+arg_type_error = """\
+Only NumPy arrays and pandas DataFrames and Series are supported in positional
+arguments. Positional input {i} has type {arg_type}.
+"""
+
+kwarg_type_error = """\
+Only NumPy arrays and pandas DataFrames and Series are supported in keyword
+arguments. Input `{key}` has type {arg_type}.
+"""
+
+
 class StudentizationError(RuntimeError):
     pass
 
