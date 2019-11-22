@@ -417,11 +417,11 @@ class StudentsT(Distribution):
 
 class SkewStudent(Distribution):
     r"""
-    Standardized Skewed Student's [1]_ distribution for use with ARCH models
+    Standardized Skewed Student's distribution for use with ARCH models
 
     Notes
     -----
-    The Standardized Skewed Student's distribution takes two parameters,
+    The Standardized Skewed Student's distribution ([1]_) takes two parameters,
     :math:`\eta` and :math:`\lambda`. :math:`\eta` controls the tail shape
     and is similar to the shape parameter in a Standardized Student's t.
     :math:`\lambda` controls the skewness. When :math:`\lambda=0` the

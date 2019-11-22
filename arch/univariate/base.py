@@ -1414,6 +1414,8 @@ class ARCHModelResult(ARCHModelFixedResult):
 
     def conf_int(self, alpha=0.05):
         """
+        Parameter confidence intervals
+
         Parameters
         ----------
         alpha : float, optional
@@ -1575,10 +1577,12 @@ WARNING: The optimizer did not indicate successful convergence. The message was
 
     @cached_property
     def fit_start(self):
+        """Start of sample used to estimate parameters"""
         return self._fit_indices[0]
 
     @cached_property
     def fit_stop(self):
+        """End of sample used to estimate parameters"""
         return self._fit_indices[1]
 
     @cached_property
