@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelResult.std\_err
+=============================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelResult.std_err

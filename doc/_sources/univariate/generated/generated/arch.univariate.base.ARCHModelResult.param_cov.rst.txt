@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelResult.param\_cov
+===============================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelResult.param_cov

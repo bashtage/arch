@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelFixedResult.nobs
+==============================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelFixedResult.nobs

@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelResult.pvalues
+============================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelResult.pvalues

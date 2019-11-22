@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelFixedResult.bic
+=============================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelFixedResult.bic

@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelResult.std\_resid
+===============================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelResult.std_resid

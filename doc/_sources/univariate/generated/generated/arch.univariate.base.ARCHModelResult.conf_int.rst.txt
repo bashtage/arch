@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.base.ARCHModelResult.conf\_int
+==============================================
+
+.. currentmodule:: arch.univariate.base
+
+.. automethod:: ARCHModelResult.conf_int

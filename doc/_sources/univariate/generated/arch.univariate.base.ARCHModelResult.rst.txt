@@ -1,0 +1,54 @@
+arch.univariate.base.ARCHModelResult
+====================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoclass:: ARCHModelResult
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ARCHModelResult.arch_lm_test
+      ~ARCHModelResult.conf_int
+      ~ARCHModelResult.forecast
+      ~ARCHModelResult.hedgehog_plot
+      ~ARCHModelResult.plot
+      ~ARCHModelResult.summary
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ARCHModelResult.aic
+      ~ARCHModelResult.bic
+      ~ARCHModelResult.conditional_volatility
+      ~ARCHModelResult.convergence_flag
+      ~ARCHModelResult.fit_start
+      ~ARCHModelResult.fit_stop
+      ~ARCHModelResult.loglikelihood
+      ~ARCHModelResult.nobs
+      ~ARCHModelResult.num_params
+      ~ARCHModelResult.optimization_result
+      ~ARCHModelResult.param_cov
+      ~ARCHModelResult.params
+      ~ARCHModelResult.pvalues
+      ~ARCHModelResult.resid
+      ~ARCHModelResult.rsquared
+      ~ARCHModelResult.rsquared_adj
+      ~ARCHModelResult.scale
+      ~ARCHModelResult.std_err
+      ~ARCHModelResult.std_resid
+      ~ARCHModelResult.tvalues
+   
+   
+   

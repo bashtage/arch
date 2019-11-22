@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelResult.fit\_stop
+==============================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelResult.fit_stop

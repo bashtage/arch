@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.base.ARCHModelFixedResult.arch\_lm\_test
+========================================================
+
+.. currentmodule:: arch.univariate.base
+
+.. automethod:: ARCHModelFixedResult.arch_lm_test

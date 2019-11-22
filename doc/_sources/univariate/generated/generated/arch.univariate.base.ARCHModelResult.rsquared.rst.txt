@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelResult.rsquared
+=============================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelResult.rsquared

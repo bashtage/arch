@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelResult.params
+===========================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelResult.params

@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelResult.scale
+==========================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelResult.scale
