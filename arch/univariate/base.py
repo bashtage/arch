@@ -860,20 +860,6 @@ class ARCHModelFixedResult(_SummaryRepr):
         Whether the original input was pandas
     model : ARCHModel
         The model object used to estimate the parameters
-
-    Methods
-    -------
-    summary
-        Produce a summary of the results
-    plot
-        Produce a plot of the volatility and standardized residuals
-    forecast
-        Construct forecasts from a model
-
-    Attributes
-    ----------
-    model : ARCHModel
-        Model instance used to produce the fit
     """
 
     def __init__(self, params, resid, volatility, dep_var, names,
@@ -881,7 +867,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         self._params = params
         self._resid = resid
         self._is_pandas = is_pandas
-        self.model = model
+        self._model = model
         self._datetime = dt.datetime.now()
         self._dep_var = dep_var
         self._dep_name = dep_var.name
@@ -994,6 +980,13 @@ class ARCHModelFixedResult(_SummaryRepr):
                       'Std. errors not available when the model is not estimated, ']
         smry.add_extra_txt(extra_text)
         return smry
+
+    @cached_property
+    def model(self):
+        """
+        Model instance used to produce the fit
+        """
+        return self._model
 
     @cached_property
     def loglikelihood(self):
@@ -1395,22 +1388,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         slice notation `fit_start:fit_stop`
     model : ARCHModel
         The model object used to estimate the parameters
-
-    Methods
-    -------
-    summary
-        Produce a summary of the results
-    plot
-        Produce a plot of the volatility and standardized residuals
-    conf_int
-        Confidence intervals
-
-    Attributes
-    ----------
-    model : ARCHModel
-        Model instance used to produce the fit
     """
-
     def __init__(self, params, param_cov, r2, resid, volatility, cov_type,
                  dep_var, names, loglikelihood, is_pandas, optim_output,
                  fit_start, fit_stop, model):
