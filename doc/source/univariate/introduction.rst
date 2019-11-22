@@ -118,19 +118,3 @@ using a simple model constructor.
 
 .. currentmodule:: arch
 .. autofunction:: arch_model
-
-
-Model Results
-=============
-All model return the same object, a results class (:class:`ARCHModelResult`)
-
-.. currentmodule:: arch.univariate.base
-.. autoclass:: ARCHModelResult
-   :members: summary, forecast, conf_int, plot, hedgehog_plot, arch_lm_test
-
-When using the ``fix`` method, a (:class:`ARCHModelFixedResult`) is produced
-that lacks some properties of a (:class:`ARCHModelResult`) that are not
-relevant when parameters are not estimated.
-
-.. autoclass:: ARCHModelFixedResult
-   :members: summary, forecast, plot, hedgehog_plot, arch_lm_test
