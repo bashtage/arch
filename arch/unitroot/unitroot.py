@@ -1092,7 +1092,6 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
     def __init__(self, y, lags=None, trend='c'):
         valid_trends = ('c', 'ct')
         if lags is None:
-            import warnings
             warnings.warn('Lag selection has changed to use a data-dependent method. To use the '
                           'old method that only depends on time, set lags=-1', DeprecationWarning)
         self._legacy_lag_selection = False
