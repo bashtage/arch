@@ -36,6 +36,7 @@ arch.univariate.base.ARCHModelResult
       ~ARCHModelResult.fit_start
       ~ARCHModelResult.fit_stop
       ~ARCHModelResult.loglikelihood
+      ~ARCHModelResult.model
       ~ARCHModelResult.nobs
       ~ARCHModelResult.num_params
       ~ARCHModelResult.optimization_result

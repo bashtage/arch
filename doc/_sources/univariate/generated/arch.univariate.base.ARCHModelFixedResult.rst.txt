@@ -32,6 +32,7 @@ arch.univariate.base.ARCHModelFixedResult
       ~ARCHModelFixedResult.bic
       ~ARCHModelFixedResult.conditional_volatility
       ~ARCHModelFixedResult.loglikelihood
+      ~ARCHModelFixedResult.model
       ~ARCHModelFixedResult.nobs
       ~ARCHModelFixedResult.num_params
       ~ARCHModelFixedResult.params

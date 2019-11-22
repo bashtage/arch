@@ -489,6 +489,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelFixedR
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.forecast.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.hedgehog_plot.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.loglikelihood.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.model.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.nobs.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.num_params.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.params.rst.txt
@@ -507,6 +508,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelResult
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelResult.forecast.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelResult.hedgehog_plot.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelResult.loglikelihood.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelResult.model.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelResult.nobs.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelResult.num_params.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModelResult.optimization_result.rst.txt
@@ -538,7 +540,11 @@ doc/_static/doctools.js
 doc/_static/documentation_options.js
 doc/_static/favicon.ico
 doc/_static/file.png
+doc/_static/fonts/font-awesome.css
 doc/_static/fonts/material-icons.css
+doc/_static/fonts/specimen/FontAwesome.ttf
+doc/_static/fonts/specimen/FontAwesome.woff
+doc/_static/fonts/specimen/FontAwesome.woff2
 doc/_static/fonts/specimen/MaterialIcons-Regular.ttf
 doc/_static/fonts/specimen/MaterialIcons-Regular.woff
 doc/_static/fonts/specimen/MaterialIcons-Regular.woff2
@@ -1058,6 +1064,7 @@ doc/univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.con
 doc/univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.forecast.html
 doc/univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.hedgehog_plot.html
 doc/univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.loglikelihood.html
+doc/univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.model.html
 doc/univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.nobs.html
 doc/univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.num_params.html
 doc/univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.params.html
@@ -1076,6 +1083,7 @@ doc/univariate/generated/generated/arch.univariate.base.ARCHModelResult.fit_stop
 doc/univariate/generated/generated/arch.univariate.base.ARCHModelResult.forecast.html
 doc/univariate/generated/generated/arch.univariate.base.ARCHModelResult.hedgehog_plot.html
 doc/univariate/generated/generated/arch.univariate.base.ARCHModelResult.loglikelihood.html
+doc/univariate/generated/generated/arch.univariate.base.ARCHModelResult.model.html
 doc/univariate/generated/generated/arch.univariate.base.ARCHModelResult.nobs.html
 doc/univariate/generated/generated/arch.univariate.base.ARCHModelResult.num_params.html
 doc/univariate/generated/generated/arch.univariate.base.ARCHModelResult.optimization_result.html
