@@ -400,6 +400,9 @@ class TestMeanModel(TestCase):
         res = ar.fit(disp=DISPLAY)
         assert isinstance(res.resid, pd.Series)
         assert isinstance(res.conditional_volatility, pd.Series)
+        std_resid = res.resid / res.conditional_volatility
+        std_resid.name = "std_resid"
+        assert_series_equal(res.std_resid, std_resid)
         # Smoke bootstrap
         summ = ar.fit(disp=DISPLAY).summary()
         assert 'Constant Variance' in str(summ)

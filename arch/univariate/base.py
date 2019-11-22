@@ -872,12 +872,6 @@ class ARCHModelFixedResult(_SummaryRepr):
 
     Attributes
     ----------
-    loglikelihood : float
-        Value of the log-likelihood
-    params : Series
-        Estimated parameters
-    resid : {ndarray, Series}
-        nobs element array containing model residuals
     model : ARCHModel
         Model instance used to produce the fit
     """
@@ -1068,6 +1062,15 @@ class ARCHModelFixedResult(_SummaryRepr):
             return pd.Series(self._resid, name='resid', index=self._index)
         else:
             return self._resid
+
+    @cached_property
+    def std_resid(self):
+        """
+        Residuals standardized by conditional volatility
+        """
+        std_res = self.resid / self.conditional_volatility
+        std_res.name = "std_resid"
+        return std_res
 
     def plot(self, annualize=None, scale=None):
         """
@@ -1404,14 +1407,6 @@ class ARCHModelResult(ARCHModelFixedResult):
 
     Attributes
     ----------
-    loglikelihood : float
-        Value of the log-likelihood
-    params : Series
-        Estimated parameters
-    param_cov : DataFrame
-        Estimated variance-covariance of the parameters
-    resid : {ndarray, Series}
-        nobs element array containing model residuals
     model : ARCHModel
         Model instance used to produce the fit
     """
