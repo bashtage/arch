@@ -1,6 +1,3 @@
-import sys
-sys.path.append('/home/euclid/utils/arch')
-
 from arch.univariate.distribution import SkewStudent, Normal, StudentsT, \
     GeneralizedError
 from numpy import power, inf
