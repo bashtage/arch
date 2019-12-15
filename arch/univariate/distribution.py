@@ -7,10 +7,10 @@ from __future__ import absolute_import, division
 
 from abc import abstractmethod
 
-from numpy import (abs, array, asarray, empty, exp, isscalar, log, ones_like,
+from numpy import (abs, array, asarray, empty, exp, isscalar, log, power, ones_like,
                    pi, sign, sqrt, sum)
 from numpy.random import RandomState
-from scipy.special import gamma, gammaln
+from scipy.special import beta, comb, factorial2, gamma, gammaln
 import scipy.stats as stats
 
 from arch.utility.array import AbstractDocStringInheritor
@@ -142,6 +142,21 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         -----
         Returns the loglikelihood where resids are the "data",
         and parameters and sigma2 are inputs.
+        """
+        pass
+
+    @abstractmethod
+    def moment(self, h):
+        """
+        Parameters
+        ----------
+        h : int
+            Order of moment to calculate
+
+        Returns
+        -------
+        moment : float
+            Moment of order h if it exists
         """
         pass
 
@@ -301,6 +316,8 @@ class Normal(Distribution):
         pits = asarray(pits)
         return stats.norm.ppf(pits)
 
+    def moment(self, h, parameters=None):
+        return stats.norm.moment(h)
 
 class StudentsT(Distribution):
     """
@@ -414,6 +431,11 @@ class StudentsT(Distribution):
         var = nu / (nu - 2)
         return stats.t(nu, scale=1.0 / sqrt(var)).ppf(pits)
 
+    def moment(self, h, parameters=None):
+        parameters = self._check_constraints(parameters)
+        nu = parameters[0]
+        var = nu / (nu - 2)
+        return stats.t.moment(h, nu, scale=power(var, -0.5))
 
 class SkewStudent(Distribution):
     r"""
@@ -652,6 +674,36 @@ class SkewStudent(Distribution):
             icdf = icdf[0]
         return icdf
 
+    def moment(self, h, parameters=None):
+        parameters = self._check_constraints(parameters)
+        eta, lam = parameters
+        q = 0.5*eta
+
+        if eta <= h or h <= 0:
+            msg = '\n'.join([
+                '\nhth moment defined iff eta>h>0 i.e. q>h/2',
+                'h={:d}, eta={:.3f}, q={:.3f}'.format(h, eta, q)])
+            raise ValueError(msg)
+
+        v_squared_inv = q*(
+            (3*power(lam,2.)+1)*power(2*q-2,-1.) - \
+            (4*power(lam,2.)/pi)*power(gamma(q-0.5)/gamma(q),2.))
+        v = power(v_squared_inv, -0.5)
+
+        def moment_term(h, r):
+            h, r = float(h), float(r)
+            val = comb(h,r) * \
+                (power(1+lam, r+1) + power(-1, r)*power(1-lam,r+1)) * \
+                power(-lam, h-r) * \
+                power(v,h) * power(q, 0.5*h) * power(2, h-r-1) * \
+                beta(0.5*r + 0.5, q-0.5*r) * \
+                power(beta(1, q-0.5), h-r) * \
+                power(beta(0.5, q), r-h-1)
+            return val
+
+        moment = sum([moment_term(h,r) for r in range(h+1)])
+
+        return moment
 
 class GeneralizedError(Distribution):
     """
@@ -769,3 +821,9 @@ class GeneralizedError(Distribution):
         nu = parameters[0]
         var = stats.gennorm(nu).var()
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).cdf(resids)
+
+    def moment(self, h, parameters=None):
+        parameters = self._check_constraints(parameters)
+        nu = parameters[0]
+        var = stats.gennorm(nu).var()
+        return stats.gennorm.moment(h, nu, scale=power(var, -0.5))
