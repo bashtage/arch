@@ -1,4 +1,5 @@
-import pytest
+import sys
+sys.path.append('/home/euclid/utils/arch')
 
 from arch.univariate.distribution import SkewStudent, Normal, StudentsT, \
     GeneralizedError
@@ -16,6 +17,7 @@ DISTRIBUTIONS = [
     (StudentsT(), [6]),
     (Normal(), None)]
 
+
 def test_moments():
     ''' Ensure that moment formula agrees with:
         integral [0, inf]  h * x^(h-1) * (sf(x) + (-1^h)*cdf(x)) dx
@@ -29,11 +31,12 @@ def test_moments():
         epsrel = 1e-4
         verbose = True
 
-        # factor of 1e-10 is hackey way to get stable quaderature for higher moments
+        def f(x, h):
+            # factor of 1e-10 is hackey way to get stable quaderature for higher moments
+            return h * (1e-10)*power(x, h-1) * (1 - s.cdf(x, params) + power(-1,h)*s.cdf(-x, params))
+
         for h in range(1, max_h+1):
-            f = lambda x: h * (1e-10)*power(x, h-1) * \
-                (1 - s.cdf(x, params) + power(-1,h)*s.cdf(-x, params))
-            integral = quad(f, 0, inf, limit=10000, epsabs=1e-6, epsrel=1e-6)
+            integral = quad(f, 0, inf, limit=10000, epsabs=1e-6, epsrel=1e-6, args=h)
 
             m_hat, error = integral
             m_hat *= 1e10
@@ -43,15 +46,14 @@ def test_moments():
             rel_err = abs(m_hat-m_act)/abs(m_act+1e-15)
             all_good = True
             if abs_err<epsabs and (rel_err < epsrel or m_act < 1e-15) and verbose:
-                print('{:} Moment {:d} PASSED, m_act={:.4f}, m_hat={:.4f}'.format(s.name,
-                    h, m_act, m_hat))
+                print('{:} Moment {:d} PASSED, m_act={:.4f}, m_hat={:.4f}'.format(s.name, h, m_act, m_hat))
             else:
                 if verbose:
-                    print('{:} Moment {:d} FAILED, m_act={:.4f}, m_hat={:.4f}'.format(s.name,
-                        h, m_act, m_hat))
+                    print('{:} Moment {:d} FAILED, m_act={:.4f}, m_hat={:.4f}'.format(s.name, h, m_act, m_hat))
                 all_good = False
 
-        assert all_good == True, '{:},{:},{:}'.format(s,params,all_good)
+        assert all_good == True, '{:}, {:}, {:}'.format(s, params, all_good)
+
 
 if __name__ == '__main__':
     test_moments()
