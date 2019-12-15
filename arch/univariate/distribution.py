@@ -10,7 +10,7 @@ from abc import abstractmethod
 from numpy import (abs, array, asarray, empty, exp, isscalar, log, power, ones_like,
                    pi, sign, sqrt, sum)
 from numpy.random import RandomState
-from scipy.special import beta, comb, factorial2, gamma, gammaln
+from scipy.special import beta, comb, gamma, gammaln
 import scipy.stats as stats
 
 from arch.utility.array import AbstractDocStringInheritor
