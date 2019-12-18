@@ -7,8 +7,8 @@ from __future__ import absolute_import, division
 
 from abc import abstractmethod
 
-from numpy import (abs, array, asarray, empty, exp, isscalar, log, ones_like,
-                   pi, sign, sqrt, sum)
+from numpy import (abs, array, asarray, empty, exp, isscalar, log, nan,
+                   ones_like, pi, sign, sqrt, sum)
 from numpy.random import RandomState
 from scipy.special import comb, gamma, gammainc, gammaincc, gammaln
 import scipy.stats as stats
@@ -510,7 +510,7 @@ class StudentsT(Distribution):
             Management Science Vol. 19 No. 3
         """
         if h < 0 or h >= nu:
-            return np.nan
+            return nan
         elif h == 0:
             moment = stats.t.cdf(z, nu)
         elif h == 1:
@@ -766,7 +766,7 @@ class SkewStudent(Distribution):
         eta, lam = parameters
 
         if h < 0 or h >= eta:
-            return np.nan
+            return nan
 
         a = self.__const_a(parameters)
         b = self.__const_b(parameters)
@@ -793,7 +793,7 @@ class SkewStudent(Distribution):
         eta, lam = parameters
 
         if h < 0 or h >= eta:
-            return np.nan
+            return nan
 
         a = self.__const_a(parameters)
         b = self.__const_b(parameters)

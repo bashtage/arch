@@ -2,7 +2,7 @@ import scipy.stats as stats
 from arch.univariate.distribution import (SkewStudent, Normal, StudentsT,
                                           GeneralizedError)
 from itertools import product
-from numpy import arange, exp, inf, log, pi, power, sqrt
+from numpy import arange, exp, inf, log, pi, sqrt
 from scipy.integrate import quad
 from scipy.special import gammaln
 
