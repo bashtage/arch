@@ -8,7 +8,7 @@ from abc import abstractmethod
 from numpy import (abs, array, asarray, empty, exp, isscalar, log, ones_like,
                    pi, sign, sqrt, sum)
 from numpy.random import RandomState
-from scipy.special import gamma, gammaln
+from scipy.special import comb, gamma, gammainc, gammaincc, gammaln
 import scipy.stats as stats
 
 from arch.utility.array import AbstractDocStringInheritor
@@ -215,6 +215,57 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         """
         pass
 
+    @abstractmethod
+    def moment(self, h, parameters=None):
+        """
+        Moment
+
+        Parameters
+        ----------
+        h : int
+            Order of moment to calculate
+        parameters : ndarray
+            Distribution parameters. Use ''None'' for parameterless
+            distributions.
+
+        Returns
+        -------
+        moment : float
+            Calculated moment
+        """
+        pass
+
+    @abstractmethod
+    def partial_moment(self, h, z=0, parameters=None):
+        """
+        Order h partial moment from -inf to z
+
+        Parameters
+        ----------
+        h : int
+            Order of moment
+        z : float
+            Upper bound of partial moment integral
+        parameters : ndarray
+            Distribution parameters.  Use ''None'' for parameterless
+            distributions.
+
+        Returns
+        -------
+        moment : float
+            Partial moment
+
+        Notes
+        -----
+        The h order partial moment to z is
+
+        .. math::
+
+            \int_{-\infty}^{z}x^{h}f(x)dx
+
+        """
+        pass
+
     def __str__(self):
         return self._description()
 
@@ -298,6 +349,26 @@ class Normal(Distribution):
         self._check_constraints(parameters)
         pits = asarray(pits)
         return stats.norm.ppf(pits)
+
+    def moment(self, h, parameters=None):
+        return stats.norm.moment(h)
+
+    def partial_moment(self, h, z=0, parameters=None):
+        """
+        References
+        ----------
+        [1] Winkler et al. (1972) "The Determination of Partial Moments"
+            Management Science Vol. 19 No. 3
+        """
+        if h < 0:
+            raise ValueError('Partial moment not defined for h<0.')
+        elif h==0:
+            return stats.norm.cdf(z)
+        elif h==1:
+            return -stats.norm.pdf(z)
+        else:
+            return ( -(z**(h-1)) * stats.norm.pdf(z) +
+                (h-1) * self.partial_moment(h-2, z, parameters) )
 
 
 class StudentsT(Distribution):
@@ -411,6 +482,44 @@ class StudentsT(Distribution):
         nu = parameters[0]
         var = nu / (nu - 2)
         return stats.t(nu, scale=1.0 / sqrt(var)).ppf(pits)
+
+    def moment(self, h, parameters=None):
+        parameters = self._check_constraints(parameters)
+        nu = parameters[0]
+        var = nu / (nu - 2)
+        return stats.t.moment(h, nu, scale=1. / sqrt(var))
+
+    def partial_moment(self, h, z=0, parameters=None):
+        parameters = self._check_constraints(parameters)
+        nu = parameters[0]
+        var = nu / (nu - 2)
+        scale = 1. / sqrt(var)
+        moment = (scale**h) * self._ord_t_partial_moment(h, z/scale, nu)
+        return moment
+
+    @staticmethod
+    def _ord_t_partial_moment(h, z, nu):
+        """
+        Partial moments for ordinary parameterization of Students t df=nu
+
+        References
+        ----------
+        [1] Winkler et al. (1972) "The Determination of Partial Moments"
+            Management Science Vol. 19 No. 3
+        """
+        if h < 0 or h >= nu:
+            return np.nan
+        elif h==0:
+            moment = stats.t.cdf(z, nu)
+        elif h==1:
+            C = gamma(0.5*(nu+1)) / (sqrt(nu*pi) * gamma(0.5*nu))
+            e = 0.5*(nu+1)
+            moment = (0.5 * (C * nu) / (1-e) ) * ((1 + (z**2)/nu)**(1-e))
+        else:
+            t1 = (z**(h-1)) * (nu + z**2) * stats.t.pdf(z, nu)
+            t2 = (h-1) * nu * StudentsT._ord_t_partial_moment(h-2, z, nu)
+            moment = (1/(h-nu)) * (t1 - t2)
+        return moment
 
 
 class SkewStudent(Distribution):
@@ -650,6 +759,64 @@ class SkewStudent(Distribution):
             icdf = icdf[0]
         return icdf
 
+    def moment(self, h, parameters=None):
+        parameters = self._check_constraints(parameters)
+        eta, lam = parameters
+
+        if h < 0 or h >= eta:
+            return np.nan
+
+        a = self.__const_a(parameters)
+        b = self.__const_b(parameters)
+
+        loc = -a/b
+        lscale = sqrt(1 - 2/eta) * (1 - lam) / b
+        rscale = sqrt(1 - 2/eta) * (1 + lam) / b
+
+        moment = 0.
+        for k in range(h+1): # binomial expansion around loc
+            # 0->inf right partial moment for ordinary t(eta)
+            r_pmom = 0.5 * (gamma(0.5*(k+1)) * gamma(0.5*(eta-k)) *
+                eta**(0.5*k)) / (sqrt(pi) * gamma(0.5*eta))
+            l_pmom = ((-1)**k) * r_pmom
+
+            lhs = (1-lam) * (lscale**k) * (loc**(h-k)) * l_pmom
+            rhs = (1+lam) * (rscale**k) * (loc**(h-k)) * r_pmom
+            moment += comb(h, k) * (lhs + rhs)
+
+        return moment
+
+    def partial_moment(self, h, z=0, parameters=None):
+        parameters = self._check_constraints(parameters)
+        eta, lam = parameters
+
+        if h < 0 or h >= eta:
+            return np.nan
+
+        a = self.__const_a(parameters)
+        b = self.__const_b(parameters)
+
+        loc = -a/b
+        lscale = sqrt(1 - 2/eta) * (1 - lam) / b
+        rscale = sqrt(1 - 2/eta) * (1 + lam) / b
+
+        moment = 0.
+        for k in range(h+1): # binomial expansion around loc
+            lbound = min(z, loc)
+            lhs = ((1-lam) * (loc**(h-k)) * (lscale**k) *
+                StudentsT._ord_t_partial_moment(k, z=(lbound-loc)/lscale, nu=eta))
+
+            if z > loc:
+                rhs = (1+lam) * (loc**(h-k)) * (rscale**k) * (
+                    StudentsT._ord_t_partial_moment(k, z=(z-loc)/rscale, nu=eta) -
+                    StudentsT._ord_t_partial_moment(k, z=0., nu=eta))
+            else:
+                rhs = 0.
+
+            moment += comb(h, k) * (lhs + rhs)
+
+        return moment
+
 
 class GeneralizedError(Distribution):
     """
@@ -767,3 +934,55 @@ class GeneralizedError(Distribution):
         nu = parameters[0]
         var = stats.gennorm(nu).var()
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).cdf(resids)
+
+    def moment(self, h, parameters=None):
+        parameters = self._check_constraints(parameters)
+        nu = parameters[0]
+        var = stats.gennorm(nu).var()
+        return stats.gennorm.moment(h, nu, scale=1. / sqrt(var))
+
+    def partial_moment(self, h, z=0, parameters=None):
+        parameters = self._check_constraints(parameters)
+        nu = parameters[0]
+        scale = 1. / sqrt(stats.gennorm(nu).var())
+        moment = (scale**h) * self._ord_gennorm_partial_moment(h, z/scale, nu)
+        return moment
+
+    @staticmethod
+    def _ord_gennorm_partial_moment(h, z, beta):
+        """
+        Partial moment for ordinary generalized normal parameterization.
+
+        Parameters
+        ----------
+        h : int
+            Order of moment
+        z : float
+            Upper bound of partial moment
+        beta : float
+            Parameter of generalized Normal
+
+        Notes
+        -----
+        The standard parameterization follows:
+
+        .. math::
+
+        f(x)=\frac{\beta}{2\Gamma(\beta^{-1})}\text{exp}\left(-|x|^{\beta}\right)
+
+        """
+        w = 0.5 * beta / gamma((1/beta))
+
+        # integral over (-inf, min(z,0))
+        lz = abs(min(z,0))**beta
+        lterm = ( w * ((-1)**h) * (1/beta) * gamma((h+1)/beta) *
+            gammaincc((h+1)/beta, lz) )
+
+        # rhs
+        rz = max(0,z)**beta
+        rterm = ( w * (1/beta) * gamma((h+1)/beta) *
+            gammainc((h+1)/beta, rz) )
+
+        moment = lterm + rterm
+
+        return moment
