@@ -239,7 +239,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
 
     @abstractmethod
     def partial_moment(self, h, z=0, parameters=None):
-        """
+        r"""
         Order h partial moment from -inf to z
 
         Parameters
@@ -364,13 +364,13 @@ class Normal(Distribution):
         """
         if h < 0:
             raise ValueError('Partial moment not defined for h<0.')
-        elif h==0:
+        elif h == 0:
             return stats.norm.cdf(z)
-        elif h==1:
+        elif h == 1:
             return -stats.norm.pdf(z)
         else:
-            return ( -(z**(h-1)) * stats.norm.pdf(z) +
-                (h-1) * self.partial_moment(h-2, z, parameters) )
+            return (-(z**(h-1)) * stats.norm.pdf(z) +
+                    (h-1) * self.partial_moment(h-2, z, parameters))
 
 
 class StudentsT(Distribution):
@@ -511,12 +511,12 @@ class StudentsT(Distribution):
         """
         if h < 0 or h >= nu:
             return np.nan
-        elif h==0:
+        elif h == 0:
             moment = stats.t.cdf(z, nu)
-        elif h==1:
+        elif h == 1:
             C = gamma(0.5*(nu+1)) / (sqrt(nu*pi) * gamma(0.5*nu))
             e = 0.5*(nu+1)
-            moment = (0.5 * (C * nu) / (1-e) ) * ((1 + (z**2)/nu)**(1-e))
+            moment = (0.5 * (C * nu) / (1-e)) * ((1 + (z**2)/nu)**(1-e))
         else:
             t1 = (z**(h-1)) * (nu + z**2) * stats.t.pdf(z, nu)
             t2 = (h-1) * nu * StudentsT._ord_t_partial_moment(h-2, z, nu)
@@ -776,10 +776,10 @@ class SkewStudent(Distribution):
         rscale = sqrt(1 - 2/eta) * (1 + lam) / b
 
         moment = 0.
-        for k in range(h+1): # binomial expansion around loc
+        for k in range(h+1):  # binomial expansion around loc
             # 0->inf right partial moment for ordinary t(eta)
             r_pmom = 0.5 * (gamma(0.5*(k+1)) * gamma(0.5*(eta-k)) *
-                eta**(0.5*k)) / (sqrt(pi) * gamma(0.5*eta))
+                            eta**(0.5*k)) / (sqrt(pi) * gamma(0.5*eta))
             l_pmom = ((-1)**k) * r_pmom
 
             lhs = (1-lam) * (lscale**k) * (loc**(h-k)) * l_pmom
@@ -803,10 +803,10 @@ class SkewStudent(Distribution):
         rscale = sqrt(1 - 2/eta) * (1 + lam) / b
 
         moment = 0.
-        for k in range(h+1): # binomial expansion around loc
+        for k in range(h+1):  # binomial expansion around loc
             lbound = min(z, loc)
-            lhs = ((1-lam) * (loc**(h-k)) * (lscale**k) *
-                StudentsT._ord_t_partial_moment(k, z=(lbound-loc)/lscale, nu=eta))
+            lhs = (1-lam) * (loc**(h-k)) * (lscale**k) * \
+                StudentsT._ord_t_partial_moment(k, z=(lbound-loc)/lscale, nu=eta)
 
             if z > loc:
                 rhs = (1+lam) * (loc**(h-k)) * (rscale**k) * (
@@ -952,7 +952,7 @@ class GeneralizedError(Distribution):
 
     @staticmethod
     def _ord_gennorm_partial_moment(h, z, beta):
-        """
+        r"""
         Partial moment for ordinary generalized normal parameterization.
 
         Parameters
@@ -976,14 +976,14 @@ class GeneralizedError(Distribution):
         w = 0.5 * beta / gamma((1/beta))
 
         # integral over (-inf, min(z,0))
-        lz = abs(min(z,0))**beta
-        lterm = ( w * ((-1)**h) * (1/beta) * gamma((h+1)/beta) *
-            gammaincc((h+1)/beta, lz) )
+        lz = abs(min(z, 0))**beta
+        lterm = (w * ((-1)**h) * (1/beta) * gamma((h+1)/beta) *
+                 gammaincc((h+1)/beta, lz))
 
         # rhs
-        rz = max(0,z)**beta
-        rterm = ( w * (1/beta) * gamma((h+1)/beta) *
-            gammainc((h+1)/beta, rz) )
+        rz = max(0, z)**beta
+        rterm = (w * (1/beta) * gamma((h+1)/beta) *
+                 gammainc((h+1)/beta, rz))
 
         moment = lterm + rterm
 
