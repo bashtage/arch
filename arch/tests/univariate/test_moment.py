@@ -1,7 +1,6 @@
-import sys
-sys.path.append('/home/euclid/utils/arch/arch/univariate')
 import scipy.stats as stats
-from distribution import SkewStudent, Normal, StudentsT, GeneralizedError
+from arch.univariate.distribution import (SkewStudent, Normal, StudentsT,
+                                          GeneralizedError)
 from itertools import product
 from numpy import arange, exp, inf, log, pi, power, sqrt
 from scipy.integrate import quad
@@ -37,6 +36,8 @@ class MomentTests(object):
 
         all_passed = True
         msg = []
+        msg_template = '{:},{:} Moment h={:d} {:}, m_formula={:.4f},' + \
+                       ' m_integral={:.4f}'
         for h in range(1, 6):
             m_integral = quad(f, -inf, inf, args=h)[0]
             m_formula = s.moment(h, params)
@@ -50,14 +51,16 @@ class MomentTests(object):
                 abs_err = abs(1. - m_formula)
                 rel_err = abs_err
 
-            if abs_err<eps_abs and (rel_err < eps_rel or abs(m_formula) < 1e-8):
+            if abs_err < eps_abs and (rel_err < eps_rel or
+                                      abs(m_formula) < 1e-8):
                 cycle_status = 'PASSED'
             else:
                 cycle_status = 'FAILED'
                 all_passed = False
 
-            msg.append('{:},{:} Moment h={:d} {:}, m_formula={:.4f}, m_integral={:.4f}'.format(
-                s.name, params, h, cycle_status, round(m_formula,4), round(m_integral,4)))
+            msg.append(msg_template.format(s.name, params, h, cycle_status,
+                                           round(m_formula, 4),
+                                           round(m_integral, 4)))
 
         return '\n'.join(msg), all_passed
 
@@ -75,55 +78,61 @@ class MomentTests(object):
 
         all_passed = True
         msg = []
-        for h, z in product(range(1,6), arange(-5,6)):
+        msg_template = '{:},{:} Partial Moment {:d} (-inf,{:}) {:},' + \
+                       ' m_formula={:.4f}, m_integral={:.4f}'
+        for h, z in product(range(1, 6), arange(-5, 6)):
 
-                if isinstance(s, SkewStudent):
-                    eta, lam = params
-                    c = gammaln((eta + 1) / 2) - gammaln(eta / 2) - log(pi * (eta - 2)) / 2
-                    a = 4 * lam * exp(c) * (eta - 2) / (eta - 1)
-                    b = (1 + 3 * lam ** 2 - a ** 2) ** .5
-                    loc = -a/b
-                    if z < loc:
-                        m_integral = quad(f, -inf, z, args=h)[0]
-                    else:
-                        m_integral = quad(f, -inf, loc-1e-6, args=h)[0] + \
-                            quad(f, loc+1e-6, z, args=h)[0]
-
-                elif isinstance(s, Normal):
-                    m_integral = stats.norm.expect(lambda x: x**h, lb=-inf, ub=z)
-
-                elif isinstance(s, StudentsT):
-                    m_integral = stats.t.expect(lambda x: x**h, args=(params[0],), 
-                        lb=-inf, ub=z, scale=sqrt((params[0]-2)/params[0]))
-
-                else: # Generalized Normal
-                    if z <= 0:
-                        m_integral = quad(f, -inf, z, args=h)[0]
-
-                    else:
-                        m_integral = quad(f, -inf, 0, args=h)[0] + \
-                            quad(f, 0, z, args=h)[0]
-                
-                m_formula = s.partial_moment(h, z, params)
-
-                abs_err = abs(m_formula - m_integral)
-                rel_err = abs_err / (m_formula + 1e-15)
-
-                if abs_err<eps_abs and (rel_err < eps_rel or abs(m_formula) < 1e-8):
-                    cycle_status = 'PASSED'
+            if isinstance(s, SkewStudent):
+                eta, lam = params
+                c = (gammaln((eta + 1) / 2) - gammaln(eta / 2) -
+                     log(pi * (eta - 2)) / 2)
+                a = 4 * lam * exp(c) * (eta - 2) / (eta - 1)
+                b = (1 + 3 * lam ** 2 - a ** 2) ** .5
+                loc = -a/b
+                if z < loc:
+                    m_integral = quad(f, -inf, z, args=h)[0]
                 else:
-                    cycle_status = 'FAILED'
-                    all_passed = False
+                    m_integral = quad(f, -inf, loc-1e-6, args=h)[0] + \
+                        quad(f, loc+1e-6, z, args=h)[0]
 
-                msg.append('{:},{:} Partial Moment {:d} (-inf,{:}) {:}, m_formula={:.4f}, m_integral={:.4f}'.format(
-                    s.name, params, h, z, cycle_status, round(m_formula,4), round(m_integral,4)))
+            elif isinstance(s, Normal):
+                m_integral = stats.norm.expect(lambda x: x**h, lb=-inf, ub=z)
+
+            elif isinstance(s, StudentsT):
+                scale = sqrt((params[0]-2)/params[0])
+                m_integral = stats.t.expect(lambda x: x**h, args=(params[0],),
+                                            lb=-inf, ub=z, scale=scale)
+
+            else:  # Generalized Normal
+                if z <= 0:
+                    m_integral = quad(f, -inf, z, args=h)[0]
+
+                else:
+                    m_integral = quad(f, -inf, 0, args=h)[0] + \
+                        quad(f, 0, z, args=h)[0]
+
+            m_formula = s.partial_moment(h, z, params)
+
+            abs_err = abs(m_formula - m_integral)
+            rel_err = abs_err / (m_formula + 1e-15)
+
+            if abs_err < eps_abs and (rel_err < eps_rel or
+                                      abs(m_formula) < 1e-8):
+                cycle_status = 'PASSED'
+            else:
+                cycle_status = 'FAILED'
+                all_passed = False
+
+            msg.append(msg_template.format(s.name, params, h, z, cycle_status,
+                                           round(m_formula, 4),
+                                           round(m_integral, 4)))
 
         return '\n'.join(msg), all_passed
 
 
 def test_moments(verbose=True):
     moment_failures = []
-    partial_moment_failures = []
+    ptl_moment_failures = []
     all_good = True
     for d in DISTRIBUTIONS:
         mom_msg, mom_good = MomentTests.test_moments(*d)
@@ -135,7 +144,7 @@ def test_moments(verbose=True):
             all_good = False
 
         if not pmom_good:
-            partial_moment_failures.append('{:},{:} Partial Moment FAILED'.format(
+            ptl_moment_failures.append('{:},{:} Partial Moment FAILED'.format(
                 d[0].name, d[1]))
             all_good = False
 
@@ -151,9 +160,10 @@ def test_moments(verbose=True):
     else:
         print(60*'')
         print('\n'.join(moment_failures))
-        print('\n'.join(partial_moment_failures))
+        print('\n'.join(ptl_moment_failures))
 
     assert all_good
+
 
 if __name__ == '__main__':
 
