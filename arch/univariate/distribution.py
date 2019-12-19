@@ -225,8 +225,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         n : int
             Order of moment
         parameters : ndarray, optional
-            Distribution parameters. Use ''None'' for parameterless
-            distributions.
+            Distribution parameters. Use None for parameterless distributions.
 
         Returns
         -------
@@ -247,8 +246,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         z : float, optional
             Upper bound for partial moment integral
         parameters : ndarray, optional
-            Distribution parameters.  Use ''None'' for parameterless
-            distributions.
+            Distribution parameters.  Use None for parameterless distributions.
 
         Returns
         -------
