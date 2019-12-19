@@ -1,8 +1,6 @@
 """
 Utility functions that do not explicitly relate to Volatility modeling
 """
-from __future__ import absolute_import, division, print_function
-
 from arch.compat.pandas import is_datetime64_any_dtype
 
 from abc import ABCMeta

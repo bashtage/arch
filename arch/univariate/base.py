@@ -1,8 +1,6 @@
 """
 Core classes for ARCH models
 """
-from __future__ import absolute_import, division
-
 from abc import abstractmethod
 from copy import deepcopy
 import datetime as dt

@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division
-
 from io import StringIO
 import sys
 from unittest import TestCase

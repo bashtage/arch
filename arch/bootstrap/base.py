@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division
-
 import copy
 
 import numpy as np
@@ -8,8 +6,8 @@ import pandas as pd
 import scipy.stats as stats
 
 from arch.utility.array import DocStringInheritor
-from arch.utility.exceptions import StudentizationError, studentization_error,\
-    arg_type_error, kwarg_type_error
+from arch.utility.exceptions import (StudentizationError, arg_type_error,
+                                     kwarg_type_error, studentization_error)
 
 __all__ = ['IIDBootstrap', 'StationaryBootstrap', 'CircularBlockBootstrap',
            'MovingBlockBootstrap', 'IndependentSamplesBootstrap']
