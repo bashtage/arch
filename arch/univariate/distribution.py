@@ -355,6 +355,9 @@ class Normal(Distribution):
         return stats.norm.ppf(pits)
 
     def moment(self, n, parameters=None):
+        if n < 0:
+            return nan
+
         return stats.norm.moment(n)
 
     def partial_moment(self, n, z=0, parameters=None):
@@ -482,6 +485,9 @@ class StudentsT(Distribution):
         return stats.t(nu, scale=1.0 / sqrt(var)).ppf(pits)
 
     def moment(self, n, parameters=None):
+        if n < 0:
+            return nan
+
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = nu / (nu - 2)
@@ -948,6 +954,9 @@ class GeneralizedError(Distribution):
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).cdf(resids)
 
     def moment(self, n, parameters=None):
+        if n < 0:
+            return nan
+
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = stats.gennorm(nu).var()
@@ -987,6 +996,9 @@ class GeneralizedError(Distribution):
 
         f(x)=\frac{\beta}{2\Gamma(\beta^{-1})}\text{exp}\left(-|x|^{\beta}\right)
         """
+        if n < 0:
+            return nan
+
         w = 0.5 * beta / gamma((1/beta))
 
         # integral over (-inf, min(z,0))

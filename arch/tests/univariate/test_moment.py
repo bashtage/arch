@@ -1,8 +1,8 @@
 import pytest
 from arch.univariate.distribution import (SkewStudent, Normal, StudentsT,
                                           GeneralizedError)
-from numpy import exp, inf, log, pi
-from numpy.testing import assert_almost_equal
+from numpy import exp, inf, log, nan, pi
+from numpy.testing import assert_equal, assert_almost_equal
 from scipy.integrate import quad
 from scipy.special import gammaln
 
@@ -22,7 +22,7 @@ DISTRIBUTIONS = [
 def test_moment(dist, params):
     """
     Ensures that Distribtion.moment and .partial_moment agree
-    with numeric integrals for order n=1,...,5 and z=+/-1,...,+/-5
+    with numeric integrals for order n=0,...,5 and z=+/-1,...,+/-5
 
     Parameters
     ----------
@@ -32,10 +32,13 @@ def test_moment(dist, params):
         List of parameters
     """
 
+    assert_equal(dist.moment(-1, params), nan)
+
+    # verify moments that exist
     def f(x, n):
         return (x**n) * exp(dist.loglikelihood(params, x, 1, True))
 
-    for n in range(1, 6):  # moments 1-5
+    for n in range(6):  # moments 0-5
 
         # complete moments
         m_quad = quad(f, -inf, inf, args=n)[0]
