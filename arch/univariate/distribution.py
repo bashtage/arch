@@ -359,7 +359,7 @@ class Normal(Distribution):
 
     def partial_moment(self, n, z=0, parameters=None):
         if n < 0:
-            return np.nan
+            return nan
         elif n == 0:
             return stats.norm.cdf(z)
         elif n == 1:
@@ -818,7 +818,6 @@ class SkewStudent(Distribution):
             lhs = (1-lam) * (loc**(n-k)) * (lscale**k) * \
                 StudentsT._ord_t_partial_moment(k, z=(lbound-loc)/lscale, nu=eta)
 
-            rbound = max(z, 0.)
             if z > loc:
                 rhs = (1+lam) * (loc**(n-k)) * (rscale**k) * (
                     StudentsT._ord_t_partial_moment(k, z=(z-loc)/rscale, nu=eta) -
