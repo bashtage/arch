@@ -33,6 +33,7 @@ def test_moment(dist, params):
     """
 
     assert_equal(dist.moment(-1, params), nan)
+    assert_equal(dist.partial_moment(-1, 0., params), nan)
 
     # verify moments that exist
     def f(x, n):
