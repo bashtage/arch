@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from arch.univariate import recursions_python
 from arch.univariate.distribution import (Distribution, GeneralizedError,
                                           Normal, SkewStudent, StudentsT)

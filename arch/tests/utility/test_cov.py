@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division
-
 from arch.compat.statsmodels import dataset_loader
 
 from unittest import TestCase

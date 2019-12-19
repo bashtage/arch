@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division
-
 import numpy as np
 from numpy import linspace
 from numpy.random import RandomState

@@ -7,8 +7,6 @@ on the local machine.  This can be started using a command similar to
 
 Remote clusters can be used by modifying the call to Client.
 """
-from __future__ import absolute_import, division, print_function
-
 import datetime
 
 from numpy import array, nan, percentile, savez

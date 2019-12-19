@@ -3,8 +3,6 @@
 Distributions to use in ARCH models.  All distributions must inherit from
 :class:`Distribution` and provide the same methods with the same inputs.
 """
-from __future__ import absolute_import, division
-
 from abc import abstractmethod
 
 from numpy import (abs, array, asarray, empty, exp, isscalar, log, ones_like,

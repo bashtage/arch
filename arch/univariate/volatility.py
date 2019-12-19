@@ -3,8 +3,6 @@ Volatility processes for ARCH model estimation.  All volatility processes must
 inherit from :class:`VolatilityProcess` and provide the same methods with the
 same inputs.
 """
-from __future__ import absolute_import, division
-
 from abc import abstractmethod
 import itertools
 from warnings import warn

@@ -2,8 +2,6 @@
 Mean models to use with ARCH processes.  All mean models must inherit from
 :class:`ARCHModel` and provide the same methods with the same inputs.
 """
-from __future__ import absolute_import, division
-
 from collections import OrderedDict
 import copy
 

@@ -1,5 +1,3 @@
-from __future__ import division
-
 from unittest import TestCase
 
 import numpy as np

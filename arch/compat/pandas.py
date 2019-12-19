@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 try:
     from pandas.api.types import is_datetime64_any_dtype
 except ImportError:

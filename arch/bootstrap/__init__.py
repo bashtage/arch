@@ -1,8 +1,6 @@
 """
 Tools for implementing statistical bootstraps
 """
-from __future__ import absolute_import
-
 from arch.bootstrap import _samplers_python
 from arch.bootstrap.base import (CircularBlockBootstrap, IIDBootstrap,
                                  IndependentSamplesBootstrap,
