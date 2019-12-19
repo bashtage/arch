@@ -1,9 +1,7 @@
 import pytest
-import scipy.stats as stats
 from arch.univariate.distribution import (SkewStudent, Normal, StudentsT,
                                           GeneralizedError)
-from itertools import product
-from numpy import arange, exp, inf, log, pi, sqrt
+from numpy import exp, inf, log, pi
 from numpy.testing import assert_almost_equal
 from scipy.integrate import quad
 from scipy.special import gammaln
