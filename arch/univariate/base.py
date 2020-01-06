@@ -245,7 +245,7 @@ class ARCHModel(object, metaclass=AbstractDocStringInheritor):
             return
         orig_scale = scale = resids.var()
         rescale = 1.0
-        while not 1.0 <= scale < 1000.0:
+        while not 1.0 <= scale < 1000.0 and scale > 0:
             if scale < 1.0:
                 rescale *= 10
             else:
