@@ -126,8 +126,6 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
     Attributes
     ----------
-    index : ndarray
-        The current index of the bootstrap
     data : tuple
         Two-element tuple with the pos_data in the first position and kw_data
         in the second (pos_data, kw_data)
@@ -135,8 +133,6 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         Tuple containing the positional arguments (in the order entered)
     kw_data : dict
         Dictionary containing the keyword arguments
-    random_state : RandomState
-        RandomState instance used by bootstrap
 
     Notes
     -----
@@ -242,7 +238,19 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
     @property
     def random_state(self):
-        """Set or get the instance random state"""
+        """
+        Set or get the instance random state
+
+        Parameters
+        ----------
+        random_state : RandomState
+            RandomState instance used by bootstrap
+
+        Returns
+        -------
+        RandomState
+            RandomState instance used by bootstrap
+        """
         return self._random_state
 
     @random_state.setter
@@ -254,7 +262,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
     @property
     def index(self):
         """
-        Returns the current index of the bootstrap
+        The current index of the bootstrap
         """
         return self._index
 
@@ -278,7 +286,6 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         state : RandomState state vector
             Array containing the state
         """
-
         return self.random_state.set_state(state)
 
     def seed(self, value):
@@ -907,8 +914,6 @@ class IndependentSamplesBootstrap(IIDBootstrap):
 
     Attributes
     ----------
-    index : ndarray
-        The current index of the bootstrap
     data : tuple
         Two-element tuple with the pos_data in the first position and kw_data
         in the second (pos_data, kw_data)
@@ -916,8 +921,6 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         Tuple containing the positional arguments (in the order entered)
     kw_data : dict
         Dictionary containing the keyword arguments
-    random_state : RandomState
-        RandomState instance used by bootstrap
 
     Notes
     -----
@@ -1064,8 +1067,6 @@ class CircularBlockBootstrap(IIDBootstrap):
 
     Attributes
     ----------
-    index : ndarray
-        The current index of the bootstrap
     data : tuple
         Two-element tuple with the pos_data in the first position and kw_data
         in the second (pos_data, kw_data)
@@ -1073,8 +1074,6 @@ class CircularBlockBootstrap(IIDBootstrap):
         Tuple containing the positional arguments (in the order entered)
     kw_data : dict
         Dictionary containing the keyword arguments
-    random_state : RandomState
-        RandomState instance used by bootstrap
 
     Notes
     -----
@@ -1167,8 +1166,6 @@ class StationaryBootstrap(CircularBlockBootstrap):
 
     Attributes
     ----------
-    index : ndarray
-        The current index of the bootstrap
     data : tuple
         Two-element tuple with the pos_data in the first position and kw_data
         in the second (pos_data, kw_data)
@@ -1176,8 +1173,6 @@ class StationaryBootstrap(CircularBlockBootstrap):
         Tuple containing the positional arguments (in the order entered)
     kw_data : dict
         Dictionary containing the keyword arguments
-    random_state : RandomState
-        RandomState instance used by bootstrap
 
     Notes
     -----
@@ -1245,8 +1240,6 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
 
     Attributes
     ----------
-    index : ndarray
-        The current index of the bootstrap
     data : tuple
         Two-element tuple with the pos_data in the first position and kw_data
         in the second (pos_data, kw_data)
@@ -1254,8 +1247,6 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
         Tuple containing the positional arguments (in the order entered)
     kw_data : dict
         Dictionary containing the keyword arguments
-    random_state : RandomState
-        RandomState instance used by bootstrap
 
     Notes
     -----

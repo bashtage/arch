@@ -1625,7 +1625,7 @@ WARNING: The optimizer did not indicate successful convergence. The message was
     @property
     def optimization_result(self):
         """
-        Information about the covergence of theloglikelihood optimization
+        Information about the covergence of the loglikelihood optimization
 
         Returns
         -------
