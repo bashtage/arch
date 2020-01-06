@@ -4,6 +4,7 @@ Version 4
 
 Since 4.11
 ==========
+- Dropped support for Pyhont 3.5 inline with NEP 29 (:issue:`334`).
 - Added methods to compute moment and lower partial moments for standardized residuals. See,
   for example, :func:`~arch.univariate.SkewStudent.moment` and
   :func:`~arch.univariate.SkewStudent.partial_moment` (:issue:`329`).

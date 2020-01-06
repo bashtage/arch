@@ -1,11 +1,11 @@
 numpy>=1.14
 scipy>=1
-pandas>=0.21
+pandas>=0.23
 matplotlib>=2
 cython>=0.29
-numba>=0.32
+numba>=0.35
 pytest
 statsmodels>=0.9
 sphinx_material
 nbsphinx
-property_cached
+property_cached>=1.6.3
