@@ -49,7 +49,7 @@ class MultipleComparison(object):
 
     def seed(self, value):
         """
-        Seeds the bootstrap's random number generator
+        Seed the bootstrap's random number generator
 
         Parameters
         ----------
@@ -84,11 +84,6 @@ class MCS(MultipleComparison):
         'stationary' or 'sb': Stationary bootstrap (Default)
         'circular' or 'cbb': Circular block bootstrap
         'moving block' or 'mbb': Moving block bootstrap
-
-    Methods
-    -------
-    compute
-        Compute the set ofmodels in the confidence set.
 
     References
     ----------
@@ -156,7 +151,7 @@ class MCS(MultipleComparison):
 
     def compute(self):
         """
-        Computes the model confidence set
+        Compute the set of models in the confidence set.
         """
         if self.method.lower() == 'r':
             self._compute_r()
@@ -339,11 +334,6 @@ class StepM(MultipleComparison):
         studentization.  Default is False.  Note that this can be slow since
         the procedure requires k extra bootstraps.
 
-    Methods
-    -------
-    compute
-        Compute the set of superior models.
-
     References
     ----------
     Romano, J. P., & Wolf, M. (2005). "Stepwise multiple testing as formalized
@@ -388,7 +378,7 @@ class StepM(MultipleComparison):
 
     def compute(self):
         """
-        Computes the set of superior models
+        Compute the set of superior models.
         """
         # 1. Run SPA
         self.spa.compute()
@@ -461,19 +451,6 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         studentization.  Default is False.  Note that this can be slow since
         the procedure requires k extra bootstraps.
 
-    Methods
-    -------
-    compute
-        Compute the bootstrap pvalue.  Must be called before accessing the
-        pvalue
-    seed
-        Pass seed to bootstrap implementation
-    reset
-        Reset the bootstrap to its initial state
-    better_models
-        Produce a list of column indices or names (if models is a DataFrame)
-        that are rejected given a test size
-
     References
     ----------
     White, H. (2000). "A reality check for data snooping." Econometrica 68,
@@ -535,7 +512,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
 
     def reset(self):
         """
-        Reset the bootstrap to it's initial state.
+        Reset the bootstrap to its initial state.
         """
         super(SPA, self).reset()
         self._pvalues = None
@@ -555,8 +532,11 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
 
     def compute(self):
         """
-        Compute the bootstrap p-value
+        Compute the bootstrap pvalue.
 
+        Notes
+        -----
+        Must be called before accessing the pvalue.
         """
         # Plan
         # 1. Compute variances

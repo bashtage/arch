@@ -237,7 +237,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
     @abstractmethod
     def partial_moment(self, n, z=0, parameters=None):
         r"""
-        Order n partial moment from -inf to z
+        Order n lower partial moment from -inf to z
 
         Parameters
         ----------
@@ -260,11 +260,13 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
 
         Notes
         -----
-        The order n partial moment to z is
+        The order n lower partial moment to z is
 
         .. math::
 
             \int_{-\infty}^{z}x^{n}f(x)dx
+
+        See [1]_ for more details.
         """
         pass
 
@@ -501,7 +503,7 @@ class StudentsT(Distribution):
 
     @staticmethod
     def _ord_t_partial_moment(n, z, nu):
-        """
+        r"""
         Partial moments for ordinary parameterization of Students t df=nu
 
         Parameters
@@ -522,6 +524,16 @@ class StudentsT(Distribution):
         ----------
         .. [1] Winkler et al. (1972) "The Determination of Partial Moments"
                *Management Science* Vol. 19 No. 3
+
+        Notes
+        -----
+        The order n lower partial moment to z is
+
+        .. math::
+
+            \int_{-\infty}^{z}x^{n}f(x)dx
+
+        See [1]_ for more details.
         """
         if n < 0 or n >= nu:
             return nan

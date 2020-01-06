@@ -537,20 +537,6 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
         to be used in very long time series. If None, use automatic selection
         of algorithm.
 
-    Attributes
-    ----------
-    stat
-    pvalue
-    critical_values
-    null_hypothesis
-    alternative_hypothesis
-    summary
-    regression
-    valid_trends
-    y
-    trend
-    lags
-
     Notes
     -----
     The null hypothesis of the Augmented Dickey-Fuller is that there is a unit
@@ -683,20 +669,6 @@ class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
         'AIC' - Select the minimum of the Akaike IC
         'BIC' - Select the minimum of the Schwarz/Bayesian IC
         't-stat' - Select the minimum of the Schwarz/Bayesian IC
-
-    Attributes
-    ----------
-    stat
-    pvalue
-    critical_values
-    null_hypothesis
-    alternative_hypothesis
-    summary
-    regression
-    valid_trends
-    y
-    trend
-    lags
 
     Notes
     -----
@@ -850,20 +822,6 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
         The test to use when computing the test statistic. 'tau' is based on
         the t-stat and 'rho' uses a test based on nobs times the re-centered
         regression coefficient
-
-    Attributes
-    ----------
-    stat
-    pvalue
-    critical_values
-    test_type
-    null_hypothesis
-    alternative_hypothesis
-    summary
-    valid_trends
-    y
-    trend
-    lags
 
     Notes
     -----
@@ -1025,19 +983,6 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
             'c' - Include a constant (Default)
             'ct' - Include a constant and linear time trend
 
-    Attributes
-    ----------
-    stat
-    pvalue
-    critical_values
-    null_hypothesis
-    alternative_hypothesis
-    summary
-    valid_trends
-    y
-    trend
-    lags
-
     Notes
     -----
     The null hypothesis of the KPSS test is that the series is weakly
@@ -1179,20 +1124,6 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
         'AIC' - Select the minimum of the Akaike IC
         'BIC' - Select the minimum of the Schwarz/Bayesian IC
         't-stat' - Select the minimum of the Schwarz/Bayesian IC
-
-    Attributes
-    ----------
-    stat
-    pvalue
-    critical_values
-    null_hypothesis
-    alternative_hypothesis
-    summary
-    regression
-    valid_trends
-    y
-    trend
-    lags
 
     Notes
     -----
@@ -1359,22 +1290,6 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
     debiased : bool, optional
         Indicates whether to use a debiased version of the test. Default is
         True. Only applicable if overlap is True.
-
-    Attributes
-    ----------
-    stat
-    pvalue
-    critical_values
-    null_hypothesis
-    alternative_hypothesis
-    summary
-    valid_trends
-    y
-    trend
-    lags
-    overlap
-    robust
-    debiased
 
     Notes
     -----
