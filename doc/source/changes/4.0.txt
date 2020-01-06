@@ -2,6 +2,10 @@
 Version 4
 =========
 
+Since 4.11
+==========
+Fixed a bug that produced an OverflowError when a time series has no variance (:issue:`331`).
+
 Release 4.11
 ============
 - Added :func:`~arch.univariate.base.ARCHModelResult.std_resid` (:issue:`326`).

@@ -1053,3 +1053,9 @@ def test_autoscale():
     am = arch_model(10000 * data.data, rescale=True)
     res_big = am.fit(disp=DISPLAY)
     assert_almost_equal(res_big.scale, .01)
+
+
+def test_no_variance():
+    mod = arch_model(np.ones(100))
+    with pytest.warns(ConvergenceWarning):
+        mod.fit(disp=DISPLAY)
