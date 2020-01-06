@@ -17,7 +17,9 @@ arch.univariate.StudentsT
       ~StudentsT.cdf
       ~StudentsT.constraints
       ~StudentsT.loglikelihood
+      ~StudentsT.moment
       ~StudentsT.parameter_names
+      ~StudentsT.partial_moment
       ~StudentsT.ppf
       ~StudentsT.simulate
       ~StudentsT.starting_values

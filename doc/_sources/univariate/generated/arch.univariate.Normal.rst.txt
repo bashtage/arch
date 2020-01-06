@@ -17,7 +17,9 @@ arch.univariate.Normal
       ~Normal.cdf
       ~Normal.constraints
       ~Normal.loglikelihood
+      ~Normal.moment
       ~Normal.parameter_names
+      ~Normal.partial_moment
       ~Normal.ppf
       ~Normal.simulate
       ~Normal.starting_values

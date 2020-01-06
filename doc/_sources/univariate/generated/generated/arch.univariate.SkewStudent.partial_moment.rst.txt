@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.SkewStudent.partial\_moment
+===========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: SkewStudent.partial_moment

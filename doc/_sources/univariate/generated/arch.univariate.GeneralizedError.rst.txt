@@ -17,7 +17,9 @@ arch.univariate.GeneralizedError
       ~GeneralizedError.cdf
       ~GeneralizedError.constraints
       ~GeneralizedError.loglikelihood
+      ~GeneralizedError.moment
       ~GeneralizedError.parameter_names
+      ~GeneralizedError.partial_moment
       ~GeneralizedError.ppf
       ~GeneralizedError.simulate
       ~GeneralizedError.starting_values

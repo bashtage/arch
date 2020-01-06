@@ -369,7 +369,9 @@ doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.bou
 doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.cdf.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.loglikelihood.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.moment.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.parameter_names.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.partial_moment.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.ppf.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.random_state.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.simulate.rst.txt
@@ -432,7 +434,9 @@ doc/_sources/univariate/generated/generated/arch.univariate.Normal.bounds.rst.tx
 doc/_sources/univariate/generated/generated/arch.univariate.Normal.cdf.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.Normal.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.Normal.loglikelihood.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.Normal.moment.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.Normal.parameter_names.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.Normal.partial_moment.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.Normal.ppf.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.Normal.random_state.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.Normal.simulate.rst.txt
@@ -453,7 +457,9 @@ doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.bounds.r
 doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.cdf.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.loglikelihood.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.moment.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.parameter_names.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.partial_moment.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.ppf.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.random_state.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.simulate.rst.txt
@@ -462,7 +468,9 @@ doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.bounds.rst
 doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.cdf.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.loglikelihood.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.moment.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.parameter_names.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.partial_moment.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.ppf.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.random_state.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.simulate.rst.txt
@@ -945,7 +953,9 @@ doc/univariate/generated/generated/arch.univariate.GeneralizedError.bounds.html
 doc/univariate/generated/generated/arch.univariate.GeneralizedError.cdf.html
 doc/univariate/generated/generated/arch.univariate.GeneralizedError.constraints.html
 doc/univariate/generated/generated/arch.univariate.GeneralizedError.loglikelihood.html
+doc/univariate/generated/generated/arch.univariate.GeneralizedError.moment.html
 doc/univariate/generated/generated/arch.univariate.GeneralizedError.parameter_names.html
+doc/univariate/generated/generated/arch.univariate.GeneralizedError.partial_moment.html
 doc/univariate/generated/generated/arch.univariate.GeneralizedError.ppf.html
 doc/univariate/generated/generated/arch.univariate.GeneralizedError.random_state.html
 doc/univariate/generated/generated/arch.univariate.GeneralizedError.simulate.html
@@ -1008,7 +1018,9 @@ doc/univariate/generated/generated/arch.univariate.Normal.bounds.html
 doc/univariate/generated/generated/arch.univariate.Normal.cdf.html
 doc/univariate/generated/generated/arch.univariate.Normal.constraints.html
 doc/univariate/generated/generated/arch.univariate.Normal.loglikelihood.html
+doc/univariate/generated/generated/arch.univariate.Normal.moment.html
 doc/univariate/generated/generated/arch.univariate.Normal.parameter_names.html
+doc/univariate/generated/generated/arch.univariate.Normal.partial_moment.html
 doc/univariate/generated/generated/arch.univariate.Normal.ppf.html
 doc/univariate/generated/generated/arch.univariate.Normal.random_state.html
 doc/univariate/generated/generated/arch.univariate.Normal.simulate.html
@@ -1029,7 +1041,9 @@ doc/univariate/generated/generated/arch.univariate.SkewStudent.bounds.html
 doc/univariate/generated/generated/arch.univariate.SkewStudent.cdf.html
 doc/univariate/generated/generated/arch.univariate.SkewStudent.constraints.html
 doc/univariate/generated/generated/arch.univariate.SkewStudent.loglikelihood.html
+doc/univariate/generated/generated/arch.univariate.SkewStudent.moment.html
 doc/univariate/generated/generated/arch.univariate.SkewStudent.parameter_names.html
+doc/univariate/generated/generated/arch.univariate.SkewStudent.partial_moment.html
 doc/univariate/generated/generated/arch.univariate.SkewStudent.ppf.html
 doc/univariate/generated/generated/arch.univariate.SkewStudent.random_state.html
 doc/univariate/generated/generated/arch.univariate.SkewStudent.simulate.html
@@ -1038,7 +1052,9 @@ doc/univariate/generated/generated/arch.univariate.StudentsT.bounds.html
 doc/univariate/generated/generated/arch.univariate.StudentsT.cdf.html
 doc/univariate/generated/generated/arch.univariate.StudentsT.constraints.html
 doc/univariate/generated/generated/arch.univariate.StudentsT.loglikelihood.html
+doc/univariate/generated/generated/arch.univariate.StudentsT.moment.html
 doc/univariate/generated/generated/arch.univariate.StudentsT.parameter_names.html
+doc/univariate/generated/generated/arch.univariate.StudentsT.partial_moment.html
 doc/univariate/generated/generated/arch.univariate.StudentsT.ppf.html
 doc/univariate/generated/generated/arch.univariate.StudentsT.random_state.html
 doc/univariate/generated/generated/arch.univariate.StudentsT.simulate.html

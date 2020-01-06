@@ -17,7 +17,9 @@ arch.univariate.SkewStudent
       ~SkewStudent.cdf
       ~SkewStudent.constraints
       ~SkewStudent.loglikelihood
+      ~SkewStudent.moment
       ~SkewStudent.parameter_names
+      ~SkewStudent.partial_moment
       ~SkewStudent.ppf
       ~SkewStudent.simulate
       ~SkewStudent.starting_values
