@@ -173,9 +173,9 @@ def run_setup(binary=True):
               'Development Status :: 5 - Production/Stable',
               'Intended Audience :: End Users/Desktop',
               'Intended Audience :: Financial and Insurance Industry',
-              'Programming Language :: Python :: 3.5',
               'Programming Language :: Python :: 3.6',
               'Programming Language :: Python :: 3.7',
+              'Programming Language :: Python :: 3.8',
               'License :: OSI Approved',
               'Operating System :: MacOS :: MacOS X',
               'Operating System :: Microsoft :: Windows',
@@ -188,7 +188,7 @@ def run_setup(binary=True):
                             for key in INSTALL_REQUIREMENTS],
           setup_requires=[key + '>=' + SETUP_REQUIREMENTS[key]
                           for key in SETUP_REQUIREMENTS],
-          python_requires='>=3.5',
+          python_requires='>=3.6',
           )
 
 

@@ -197,13 +197,13 @@ Requirements
 These requirements reflect the testing environment. It is possible that
 arch will work with older versions.
 
--  Python (3.5+)
--  NumPy (1.13+)
--  SciPy (0.19+)
--  Pandas (0.21+)
--  statsmodels (0.8+)
+-  Python (3.6+)
+-  NumPy (1.14+)
+-  SciPy (1+)
+-  Pandas (0.23+)
+-  statsmodels (0.9+)
 -  matplotlib (2.0+), optional
--  cached-property (1.5.1+), optional
+-  property-cached (1.6.3+), optional
 
 Optional Requirements
 ~~~~~~~~~~~~~~~~~~~~~
@@ -258,9 +258,9 @@ Windows
 ~~~~~~~
 
 Building extension using the community edition of Visual Studio is well
-supported for Python 3.5+. Building on other combinations of
-Python/Windows is more difficult and is not necessary when Numba is
-installed since just-in-time compiled code (Numba) runs as fast as
+supported for Python 3.6+. Building on other combinations of
+Python/Windows is more difficult and is not necessary when numba is
+installed since just-in-time compiled code (numba) runs as fast as
 ahead-of-time compiled extensions.
 
 Developing
@@ -268,8 +268,8 @@ Developing
 
 The development requirements are:
 
--  Cython (0.24+, if not using --no-binary)
--  py.test (For tests)
+-  Cython (0.29+, if not using --no-binary)
+-  pytest (For tests)
 -  sphinx (to build docs)
 -  sphinx_material (to build docs)
 -  jupyter, notebook and nbsphinx (to build docs)
