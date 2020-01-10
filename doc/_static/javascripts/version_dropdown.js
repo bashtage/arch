@@ -5,7 +5,7 @@ function add_version_dropdown(json_loc, target_loc, text) {
     var button = document.createElement("button");
     button.className = "dropdownbutton";
     var content = document.createElement("div");
-    content.className = "dropdown-content";
+    content.className = "dropdown-content md-hero";
     dropdown.appendChild(button);
     dropdown.appendChild(content);
     $.getJSON(json_loc, function(versions) {
