@@ -2,17 +2,29 @@ import warnings
 
 import numpy as np
 from numpy.random import RandomState
-from numpy.testing import (assert_allclose, assert_almost_equal,
-                           assert_array_equal, assert_equal)
+from numpy.testing import (
+    assert_allclose,
+    assert_almost_equal,
+    assert_array_equal,
+    assert_equal,
+)
 import pytest
 from scipy.special import gamma, gammaln
 
 from arch.univariate import recursions_python as recpy
 from arch.univariate.distribution import Normal, SkewStudent, StudentsT
-from arch.univariate.volatility import (ARCH, EGARCH, FIGARCH, GARCH, HARCH,
-                                        ConstantVariance, EWMAVariance,
-                                        FixedVariance, MIDASHyperbolic,
-                                        RiskMetrics2006)
+from arch.univariate.volatility import (
+    ARCH,
+    EGARCH,
+    FIGARCH,
+    GARCH,
+    HARCH,
+    ConstantVariance,
+    EWMAVariance,
+    FixedVariance,
+    MIDASHyperbolic,
+    RiskMetrics2006,
+)
 from arch.utility.exceptions import InitialValueWarning
 
 try:
@@ -20,7 +32,7 @@ try:
 except ImportError:
     rec = recpy
 
-pytestmark = pytest.mark.filterwarnings('ignore::arch.compat.numba.PerformanceWarning')
+pytestmark = pytest.mark.filterwarnings("ignore::arch.compat.numba.PerformanceWarning")
 
 
 class TestVolatiltyProcesses(object):
@@ -45,18 +57,25 @@ class TestVolatiltyProcesses(object):
         assert_equal(bounds[2], (0.0, 1.0))
         backcast = garch.backcast(self.resids)
         w = 0.94 ** np.arange(75)
-        assert_almost_equal(backcast,
-                            np.sum((self.resids[:75] ** 2) * (w / w.sum())))
+        assert_almost_equal(backcast, np.sum((self.resids[:75] ** 2) * (w / w.sum())))
         var_bounds = garch.variance_bounds(self.resids)
-        parameters = np.array([.1, .1, .8])
-        garch.compute_variance(parameters, self.resids, self.sigma2,
-                               backcast, var_bounds)
+        parameters = np.array([0.1, 0.1, 0.8])
+        garch.compute_variance(
+            parameters, self.resids, self.sigma2, backcast, var_bounds
+        )
         cond_var_direct = np.zeros_like(self.sigma2)
-        rec.garch_recursion(parameters,
-                            self.resids ** 2.0,
-                            np.sign(self.resids),
-                            cond_var_direct,
-                            1, 0, 1, self.T, backcast, var_bounds)
+        rec.garch_recursion(
+            parameters,
+            self.resids ** 2.0,
+            np.sign(self.resids),
+            cond_var_direct,
+            1,
+            0,
+            1,
+            self.T,
+            backcast,
+            var_bounds,
+        )
         assert_allclose(self.sigma2, cond_var_direct)
 
         a, b = garch.constraints()
@@ -86,14 +105,14 @@ class TestVolatiltyProcesses(object):
         assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
 
         names = garch.parameter_names()
-        names_target = ['omega', 'alpha[1]', 'beta[1]']
+        names_target = ["omega", "alpha[1]", "beta[1]"]
         assert_equal(names, names_target)
 
         assert isinstance(garch.__str__(), str)
         txt = garch.__repr__()
         assert str(hex(id(garch))) in txt
 
-        assert_equal(garch.name, 'GARCH')
+        assert_equal(garch.name, "GARCH")
         assert_equal(garch.num_params, 3)
         assert_equal(garch.power, 2.0)
         assert_equal(garch.p, 1)
@@ -103,7 +122,7 @@ class TestVolatiltyProcesses(object):
     def test_garch_power(self):
         garch = GARCH(power=1.0)
         assert_equal(garch.num_params, 3)
-        assert_equal(garch.name, 'AVGARCH')
+        assert_equal(garch.name, "AVGARCH")
         assert_equal(garch.power, 1.0)
 
         sv = garch.starting_values(self.resids)
@@ -116,18 +135,25 @@ class TestVolatiltyProcesses(object):
         var_bounds = garch.variance_bounds(self.resids)
         backcast = garch.backcast(self.resids)
         w = 0.94 ** np.arange(75)
-        assert_almost_equal(backcast,
-                            np.sum(np.abs(self.resids[:75]) * (w / w.sum())))
+        assert_almost_equal(backcast, np.sum(np.abs(self.resids[:75]) * (w / w.sum())))
 
-        parameters = np.array([.1, .1, .8])
-        garch.compute_variance(parameters, self.resids, self.sigma2, backcast,
-                               var_bounds)
+        parameters = np.array([0.1, 0.1, 0.8])
+        garch.compute_variance(
+            parameters, self.resids, self.sigma2, backcast, var_bounds
+        )
         cond_var_direct = np.zeros_like(self.sigma2)
-        rec.garch_recursion(parameters,
-                            np.abs(self.resids),
-                            np.sign(self.resids),
-                            cond_var_direct,
-                            1, 0, 1, self.T, backcast, var_bounds)
+        rec.garch_recursion(
+            parameters,
+            np.abs(self.resids),
+            np.sign(self.resids),
+            cond_var_direct,
+            1,
+            0,
+            1,
+            self.T,
+            backcast,
+            var_bounds,
+        )
         cond_var_direct **= 2.0  # Square since recursion does not apply power
         assert_allclose(self.sigma2, cond_var_direct)
 
@@ -169,16 +195,17 @@ class TestVolatiltyProcesses(object):
 
         backcast = arch.backcast(self.resids)
         w = 0.94 ** np.arange(75)
-        assert_almost_equal(backcast,
-                            np.sum((self.resids[:75] ** 2) * (w / w.sum())))
+        assert_almost_equal(backcast, np.sum((self.resids[:75] ** 2) * (w / w.sum())))
 
         parameters = np.array([0.5, 0.7])
         var_bounds = arch.variance_bounds(self.resids)
-        arch.compute_variance(parameters, self.resids, self.sigma2, backcast,
-                              var_bounds)
+        arch.compute_variance(
+            parameters, self.resids, self.sigma2, backcast, var_bounds
+        )
         cond_var_direct = np.zeros_like(self.sigma2)
-        rec.arch_recursion(parameters, self.resids, cond_var_direct, 1,
-                           self.T, backcast, var_bounds)
+        rec.arch_recursion(
+            parameters, self.resids, cond_var_direct, 1, self.T, backcast, var_bounds
+        )
         assert_allclose(self.sigma2, cond_var_direct)
 
         a, b = arch.constraints()
@@ -206,10 +233,10 @@ class TestVolatiltyProcesses(object):
         assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
 
         names = arch.parameter_names()
-        names_target = ['omega', 'alpha[1]']
+        names_target = ["omega", "alpha[1]"]
         assert_equal(names, names_target)
 
-        assert_equal(arch.name, 'ARCH')
+        assert_equal(arch.name, "ARCH")
         assert_equal(arch.num_params, 2)
         assert_equal(arch.p, 1)
         assert isinstance(arch.__str__(), str)
@@ -227,10 +254,12 @@ class TestVolatiltyProcesses(object):
         sigma2_arch = np.zeros_like(self.sigma2)
         sigma2_harch = np.zeros_like(self.sigma2)
         var_bounds = arch.variance_bounds(self.resids)
-        arch.compute_variance(parameters, self.resids, sigma2_arch, backcast,
-                              var_bounds)
-        harch.compute_variance(parameters, self.resids, sigma2_harch, backcast,
-                               var_bounds)
+        arch.compute_variance(
+            parameters, self.resids, sigma2_arch, backcast, var_bounds
+        )
+        harch.compute_variance(
+            parameters, self.resids, sigma2_harch, backcast, var_bounds
+        )
         assert_allclose(sigma2_arch, sigma2_harch)
 
         a, b = arch.constraints()
@@ -255,26 +284,22 @@ class TestVolatiltyProcesses(object):
         var_bounds = harch.variance_bounds(self.resids)
         backcast = harch.backcast(self.resids)
         w = 0.94 ** np.arange(75)
-        assert_almost_equal(backcast,
-                            np.sum((self.resids[:75] ** 2) * (w / w.sum())))
+        assert_almost_equal(backcast, np.sum((self.resids[:75] ** 2) * (w / w.sum())))
 
-        parameters = np.array([.1, .4, .3, .2])
+        parameters = np.array([0.1, 0.4, 0.3, 0.2])
 
         var_bounds = harch.variance_bounds(self.resids)
-        harch.compute_variance(parameters, self.resids, self.sigma2,
-                               backcast, var_bounds)
+        harch.compute_variance(
+            parameters, self.resids, self.sigma2, backcast, var_bounds
+        )
         cond_var_direct = np.zeros_like(self.sigma2)
         lags = np.array([1, 5, 22], dtype=np.int32)
-        rec.harch_recursion(parameters,
-                            self.resids,
-                            cond_var_direct,
-                            lags,
-                            self.T,
-                            backcast,
-                            var_bounds)
+        rec.harch_recursion(
+            parameters, self.resids, cond_var_direct, lags, self.T, backcast, var_bounds
+        )
 
         names = harch.parameter_names()
-        names_target = ['omega', 'alpha[1]', 'alpha[5]', 'alpha[22]']
+        names_target = ["omega", "alpha[1]", "alpha[5]", "alpha[22]"]
         assert_equal(names, names_target)
 
         assert_allclose(self.sigma2, cond_var_direct)
@@ -300,13 +325,13 @@ class TestVolatiltyProcesses(object):
                 if t == 1:
                     lagged[0] = data[0] ** 2.0
                 elif t < 22:
-                    lagged[:t] = data[t - 1::-1] ** 2.0
+                    lagged[:t] = data[t - 1 :: -1] ** 2.0
                 else:
-                    lagged = data[t - 1:t - 22:-1] ** 2.0
+                    lagged = data[t - 1 : t - 22 : -1] ** 2.0
 
             shock1 = data[t - 1] ** 2.0 if t > 0 else backcast
             if t >= 5:
-                shock5 = np.mean(data[t - 5:t] ** 2.0)
+                shock5 = np.mean(data[t - 5 : t] ** 2.0)
             else:
                 shock5 = 0.0
                 for i in range(5):
@@ -314,14 +339,18 @@ class TestVolatiltyProcesses(object):
                 shock5 = shock5 / 5.0
 
             if t >= 22:
-                shock22 = np.mean(data[t - 22:t] ** 2.0)
+                shock22 = np.mean(data[t - 22 : t] ** 2.0)
             else:
                 shock22 = 0.0
                 for i in range(22):
                     shock22 += data[t - i - 1] if t - i - 1 >= 0 else backcast
                 shock22 = shock22 / 22.0
 
-            sigma2[t] += parameters[1] * shock1 + parameters[2] * shock5 + parameters[3] * shock22
+            sigma2[t] += (
+                parameters[1] * shock1
+                + parameters[2] * shock5
+                + parameters[3] * shock22
+            )
 
             data[t] = e[t] * np.sqrt(sigma2[t])
         data = data[500:]
@@ -329,7 +358,7 @@ class TestVolatiltyProcesses(object):
         assert_almost_equal(data - sim_data[0] + 1.0, np.ones_like(data))
         assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
 
-        assert_equal(harch.name, 'HARCH')
+        assert_equal(harch.name, "HARCH")
         assert_equal(harch.lags, [1, 5, 22])
         assert_equal(harch.num_params, 4)
         assert isinstance(harch.__str__(), str)
@@ -344,8 +373,7 @@ class TestVolatiltyProcesses(object):
 
         bounds = cv.bounds(self.resids)
         mean_square = np.mean(self.resids ** 2.0)
-        assert_almost_equal(bounds[0],
-                            (self.resid_var / 100000.0, 10.0 * mean_square))
+        assert_almost_equal(bounds[0], (self.resid_var / 100000.0, 10.0 * mean_square))
 
         backcast = cv.backcast(self.resids)
         var_bounds = cv.variance_bounds(self.resids)
@@ -353,10 +381,8 @@ class TestVolatiltyProcesses(object):
 
         parameters = np.array([self.resid_var])
 
-        cv.compute_variance(parameters, self.resids, self.sigma2, backcast,
-                            var_bounds)
-        assert_allclose(np.ones_like(self.sigma2) * self.resid_var,
-                        self.sigma2)
+        cv.compute_variance(parameters, self.resids, self.sigma2, backcast, var_bounds)
+        assert_allclose(np.ones_like(self.sigma2) * self.resid_var, self.sigma2)
 
         a, b = cv.constraints()
         a_target = np.eye(1)
@@ -378,14 +404,14 @@ class TestVolatiltyProcesses(object):
         sigma2 = sigma2[500:]
 
         names = cv.parameter_names()
-        names_target = ['sigma2']
+        names_target = ["sigma2"]
         assert_equal(names, names_target)
 
         assert_almost_equal(data - sim_data[0] + 1.0, np.ones_like(data))
         assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
 
         assert_equal(cv.num_params, 1)
-        assert_equal(cv.name, 'Constant Variance')
+        assert_equal(cv.name, "Constant Variance")
         assert isinstance(cv.__str__(), str)
         txt = cv.__repr__()
         assert str(hex(id(cv))) in txt
@@ -402,20 +428,28 @@ class TestVolatiltyProcesses(object):
         assert_equal(bounds[2], (0.0, 1.0))
         var_bounds = garch.variance_bounds(self.resids)
         backcast = garch.backcast(self.resids)
-        parameters = np.array([.1, .1, .8])
+        parameters = np.array([0.1, 0.1, 0.8])
 
         names = garch.parameter_names()
-        names_target = ['omega', 'gamma[1]', 'beta[1]']
+        names_target = ["omega", "gamma[1]", "beta[1]"]
         assert_equal(names, names_target)
 
-        garch.compute_variance(parameters, self.resids, self.sigma2,
-                               backcast, var_bounds)
+        garch.compute_variance(
+            parameters, self.resids, self.sigma2, backcast, var_bounds
+        )
         cond_var_direct = np.zeros_like(self.sigma2)
-        rec.garch_recursion(parameters,
-                            self.resids ** 2.0,
-                            np.sign(self.resids),
-                            cond_var_direct,
-                            0, 1, 1, self.T, backcast, var_bounds)
+        rec.garch_recursion(
+            parameters,
+            self.resids ** 2.0,
+            np.sign(self.resids),
+            cond_var_direct,
+            0,
+            1,
+            1,
+            self.T,
+            backcast,
+            var_bounds,
+        )
         assert_allclose(self.sigma2, cond_var_direct)
 
         a, b = garch.constraints()
@@ -434,8 +468,11 @@ class TestVolatiltyProcesses(object):
         data = np.zeros(self.T + 500)
         for t in range(self.T + 500):
             sigma2[t] = parameters[0]
-            shock = 0.5 * initial_value if t == 0 else \
-                data[t - 1] ** 2.0 * (data[t - 1] < 0)
+            shock = (
+                0.5 * initial_value
+                if t == 0
+                else data[t - 1] ** 2.0 * (data[t - 1] < 0)
+            )
             sigma2[t] += parameters[1] * shock
             lagged_value = initial_value if t == 0 else sigma2[t - 1]
             sigma2[t] += parameters[2] * lagged_value
@@ -449,7 +486,7 @@ class TestVolatiltyProcesses(object):
         assert_equal(garch.o, 1)
         assert_equal(garch.q, 1)
         assert_equal(garch.num_params, 3)
-        assert_equal(garch.name, 'GJR-GARCH')
+        assert_equal(garch.name, "GJR-GARCH")
 
     def test_garch_no_lagged_vol(self):
         garch = GARCH(p=1, o=1, q=0)
@@ -462,17 +499,25 @@ class TestVolatiltyProcesses(object):
         assert_equal(bounds[2], (-1.0, 2.0))
 
         backcast = garch.backcast(self.resids)
-        parameters = np.array([.5, .25, .5])
+        parameters = np.array([0.5, 0.25, 0.5])
         var_bounds = garch.variance_bounds(self.resids)
 
-        garch.compute_variance(parameters, self.resids, self.sigma2,
-                               backcast, var_bounds)
+        garch.compute_variance(
+            parameters, self.resids, self.sigma2, backcast, var_bounds
+        )
         cond_var_direct = np.zeros_like(self.sigma2)
-        rec.garch_recursion(parameters,
-                            self.resids ** 2.0,
-                            np.sign(self.resids),
-                            cond_var_direct,
-                            1, 1, 0, self.T, backcast, var_bounds)
+        rec.garch_recursion(
+            parameters,
+            self.resids ** 2.0,
+            np.sign(self.resids),
+            cond_var_direct,
+            1,
+            1,
+            0,
+            self.T,
+            backcast,
+            var_bounds,
+        )
         assert_allclose(self.sigma2, cond_var_direct)
 
         a, b = garch.constraints()
@@ -494,8 +539,11 @@ class TestVolatiltyProcesses(object):
             sigma2[t] = parameters[0]
             shock = initial_value if t == 0 else data[t - 1] ** 2.0
             sigma2[t] += parameters[1] * shock
-            shock = 0.5 * initial_value if t == 0 else \
-                (data[t - 1] ** 2.0) * (data[t - 1] < 0)
+            shock = (
+                0.5 * initial_value
+                if t == 0
+                else (data[t - 1] ** 2.0) * (data[t - 1] < 0)
+            )
             sigma2[t] += parameters[2] * shock
             data[t] = e[t] * np.sqrt(sigma2[t])
         data = data[500:]
@@ -507,7 +555,7 @@ class TestVolatiltyProcesses(object):
         assert_equal(garch.o, 1)
         assert_equal(garch.q, 0)
         assert_equal(garch.num_params, 3)
-        assert_equal(garch.name, 'GJR-GARCH')
+        assert_equal(garch.name, "GJR-GARCH")
 
     def test_arch_multiple_lags(self):
         arch = ARCH(p=5)
@@ -522,16 +570,17 @@ class TestVolatiltyProcesses(object):
         var_bounds = arch.variance_bounds(self.resids)
         backcast = arch.backcast(self.resids)
         parameters = np.array([0.25, 0.17, 0.16, 0.15, 0.14, 0.13])
-        arch.compute_variance(parameters, self.resids, self.sigma2, backcast,
-                              var_bounds)
+        arch.compute_variance(
+            parameters, self.resids, self.sigma2, backcast, var_bounds
+        )
         cond_var_direct = np.zeros_like(self.sigma2)
-        rec.arch_recursion(parameters, self.resids, cond_var_direct, 5,
-                           self.T, backcast, var_bounds)
+        rec.arch_recursion(
+            parameters, self.resids, cond_var_direct, 5, self.T, backcast, var_bounds
+        )
         assert_allclose(self.sigma2, cond_var_direct)
 
         a, b = arch.constraints()
-        a_target = np.vstack((np.eye(6),
-                              np.array([[0, -1.0, -1.0, -1.0, -1.0, -1.0]])))
+        a_target = np.vstack((np.eye(6), np.array([[0, -1.0, -1.0, -1.0, -1.0, -1.0]])))
         b_target = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0])
         assert_array_equal(a, a_target)
         assert_array_equal(b, b_target)
@@ -558,26 +607,33 @@ class TestVolatiltyProcesses(object):
         assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
 
         names = arch.parameter_names()
-        names_target = ['omega']
-        names_target.extend(['alpha[' + str(i + 1) + ']' for i in range(5)])
+        names_target = ["omega"]
+        names_target.extend(["alpha[" + str(i + 1) + "]" for i in range(5)])
         assert_equal(names, names_target)
 
         assert_equal(arch.num_params, 6)
-        assert_equal(arch.name, 'ARCH')
+        assert_equal(arch.name, "ARCH")
 
     def test_harch_scalar(self):
         harch = HARCH(lags=2)
         assert_equal(harch.num_params, 3)
-        assert_equal(harch.name, 'HARCH')
+        assert_equal(harch.name, "HARCH")
 
     def test_garch_many_lags(self):
         garch = GARCH(p=1, o=2, q=3)
         assert_equal(garch.num_params, 7)
-        assert_equal(garch.name, 'GJR-GARCH')
+        assert_equal(garch.name, "GJR-GARCH")
 
         names = garch.parameter_names()
-        names_target = ['omega', 'alpha[1]', 'gamma[1]', 'gamma[2]',
-                        'beta[1]', 'beta[2]', 'beta[3]']
+        names_target = [
+            "omega",
+            "alpha[1]",
+            "gamma[1]",
+            "gamma[2]",
+            "beta[1]",
+            "beta[2]",
+            "beta[3]",
+        ]
         assert_equal(names, names_target)
 
     def test_errors(self):
@@ -610,7 +666,7 @@ class TestVolatiltyProcesses(object):
         garch = GARCH()
         parameters = np.array([0.1, 0.2, 0.8, 4.0])
         studt = StudentsT()
-        warnings.simplefilter('always', UserWarning)
+        warnings.simplefilter("always", UserWarning)
         with pytest.warns(InitialValueWarning):
             garch.simulate(parameters, 1000, studt.simulate([4.0]))
 
@@ -630,24 +686,24 @@ class TestVolatiltyProcesses(object):
 
     def test_model_names(self):
         garch = GARCH(2, 0, 0)
-        assert_equal(garch.name, 'ARCH')
+        assert_equal(garch.name, "ARCH")
         garch = GARCH(2, 0, 2)
-        assert_equal(garch.name, 'GARCH')
+        assert_equal(garch.name, "GARCH")
         garch = GARCH(2, 2, 2)
-        assert_equal(garch.name, 'GJR-GARCH')
+        assert_equal(garch.name, "GJR-GARCH")
         garch = GARCH(1, 0, 0, power=1.0)
-        assert_equal(garch.name, 'AVARCH')
+        assert_equal(garch.name, "AVARCH")
         garch = GARCH(1, 0, 1, power=1.0)
-        assert_equal(garch.name, 'AVGARCH')
+        assert_equal(garch.name, "AVGARCH")
         garch = GARCH(1, 1, 1, power=1.0)
-        assert_equal(garch.name, 'TARCH/ZARCH')
+        assert_equal(garch.name, "TARCH/ZARCH")
         garch = GARCH(3, 0, 0, power=1.5)
-        assert_equal(garch.name, 'Power ARCH (power: 1.5)')
-        assert 'Power' in garch.__str__()
+        assert_equal(garch.name, "Power ARCH (power: 1.5)")
+        assert "Power" in garch.__str__()
         garch = GARCH(1, 2, 1, power=1.5)
-        assert_equal(garch.name, 'Asym. Power GARCH (power: 1.5)')
+        assert_equal(garch.name, "Asym. Power GARCH (power: 1.5)")
         garch = GARCH(2, 0, 2, power=1.5)
-        assert_equal(garch.name, 'Power GARCH (power: 1.5)')
+        assert_equal(garch.name, "Power GARCH (power: 1.5)")
 
     def test_ewma(self):
         ewma = EWMAVariance()
@@ -665,18 +721,25 @@ class TestVolatiltyProcesses(object):
         names_target = []
         assert_equal(names, names_target)
 
-        ewma.compute_variance(parameters, self.resids, self.sigma2,
-                              backcast, var_bounds)
+        ewma.compute_variance(
+            parameters, self.resids, self.sigma2, backcast, var_bounds
+        )
         cond_var_direct = np.zeros_like(self.sigma2)
         parameters = np.array([0.0, 0.06, 0.94])
-        rec.garch_recursion(parameters,
-                            self.resids ** 2.0,
-                            np.sign(self.resids),
-                            cond_var_direct,
-                            1, 0, 1, self.T, backcast, var_bounds)
+        rec.garch_recursion(
+            parameters,
+            self.resids ** 2.0,
+            np.sign(self.resids),
+            cond_var_direct,
+            1,
+            0,
+            1,
+            self.T,
+            backcast,
+            var_bounds,
+        )
 
-        assert_allclose(self.sigma2 / cond_var_direct,
-                        np.ones_like(self.sigma2))
+        assert_allclose(self.sigma2 / cond_var_direct, np.ones_like(self.sigma2))
 
         a, b = ewma.constraints()
         a_target = np.empty((0, 0))
@@ -705,7 +768,7 @@ class TestVolatiltyProcesses(object):
         assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
 
         assert_equal(ewma.num_params, 0)
-        assert_equal(ewma.name, 'EWMA/RiskMetrics')
+        assert_equal(ewma.name, "EWMA/RiskMetrics")
         assert isinstance(ewma.__str__(), str)
         txt = ewma.__repr__()
         assert str(hex(id(ewma))) in txt
@@ -725,26 +788,34 @@ class TestVolatiltyProcesses(object):
 
         backcast = ewma.backcast(self.resids)
         w = 0.94 ** np.arange(75)
-        assert_almost_equal(backcast,
-                            np.sum((self.resids[:75] ** 2) * (w / w.sum())))
+        assert_almost_equal(backcast, np.sum((self.resids[:75] ** 2) * (w / w.sum())))
 
         parameters = np.array([0.9234])
 
         var_bounds = ewma.variance_bounds(self.resids)
-        ewma.compute_variance(parameters, self.resids, self.sigma2, backcast, var_bounds)
+        ewma.compute_variance(
+            parameters, self.resids, self.sigma2, backcast, var_bounds
+        )
         cond_var_direct = np.zeros_like(self.sigma2)
         cond_var_direct[0] = backcast
         parameters = np.array([0, 1 - parameters[0], parameters[0]])
-        rec.garch_recursion(parameters,
-                            self.resids ** 2.0,
-                            np.sign(self.resids),
-                            cond_var_direct,
-                            1, 0, 1, self.T, backcast, var_bounds)
+        rec.garch_recursion(
+            parameters,
+            self.resids ** 2.0,
+            np.sign(self.resids),
+            cond_var_direct,
+            1,
+            0,
+            1,
+            self.T,
+            backcast,
+            var_bounds,
+        )
         assert_allclose(self.sigma2, cond_var_direct)
         assert_allclose(self.sigma2 / cond_var_direct, np.ones_like(self.sigma2))
 
         names = ewma.parameter_names()
-        names_target = ['lam']
+        names_target = ["lam"]
         assert_equal(names, names_target)
 
         a, b = ewma.constraints()
@@ -754,7 +825,7 @@ class TestVolatiltyProcesses(object):
         assert_array_equal(b, b_target)
 
         assert_equal(ewma.num_params, 1)
-        assert_equal(ewma.name, 'EWMA/RiskMetrics')
+        assert_equal(ewma.name, "EWMA/RiskMetrics")
         assert isinstance(ewma.__str__(), str)
         txt = ewma.__repr__()
         assert str(hex(id(ewma))) in txt
@@ -799,8 +870,9 @@ class TestVolatiltyProcesses(object):
         assert_equal(names, names_target)
 
         # TODO: Test variance fit by RM06
-        rm06.compute_variance(parameters, self.resids, self.sigma2,
-                              backcast, var_bounds)
+        rm06.compute_variance(
+            parameters, self.resids, self.sigma2, backcast, var_bounds
+        )
 
         a, b = rm06.constraints()
         a_target = np.empty((0, 0))
@@ -820,7 +892,7 @@ class TestVolatiltyProcesses(object):
         assert isinstance(sim_data[1], np.ndarray)
 
         assert_equal(rm06.num_params, 0)
-        assert_equal(rm06.name, 'RiskMetrics2006')
+        assert_equal(rm06.name, "RiskMetrics2006")
 
     def test_egarch(self):
         egarch = EGARCH(p=1, o=1, q=1)
@@ -843,16 +915,28 @@ class TestVolatiltyProcesses(object):
         assert_almost_equal(backcast, np.log(backcast_test))
 
         var_bounds = egarch.variance_bounds(self.resids)
-        parameters = np.array([.1, .1, -.1, .95])
-        egarch.compute_variance(parameters, self.resids, self.sigma2, backcast,
-                                var_bounds)
+        parameters = np.array([0.1, 0.1, -0.1, 0.95])
+        egarch.compute_variance(
+            parameters, self.resids, self.sigma2, backcast, var_bounds
+        )
         cond_var_direct = np.zeros_like(self.sigma2)
         lnsigma2 = np.empty(self.T)
         std_resids = np.empty(self.T)
         abs_std_resids = np.empty(self.T)
-        rec.egarch_recursion(parameters, self.resids, cond_var_direct, 1, 1, 1,
-                             self.T, backcast, var_bounds, lnsigma2,
-                             std_resids, abs_std_resids)
+        rec.egarch_recursion(
+            parameters,
+            self.resids,
+            cond_var_direct,
+            1,
+            1,
+            1,
+            self.T,
+            backcast,
+            var_bounds,
+            lnsigma2,
+            std_resids,
+            abs_std_resids,
+        )
         assert_allclose(self.sigma2, cond_var_direct)
 
         a, b = egarch.constraints()
@@ -891,9 +975,9 @@ class TestVolatiltyProcesses(object):
         assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
 
         names = egarch.parameter_names()
-        names_target = ['omega', 'alpha[1]', 'gamma[1]', 'beta[1]']
+        names_target = ["omega", "alpha[1]", "gamma[1]", "beta[1]"]
         assert_equal(names, names_target)
-        assert_equal(egarch.name, 'EGARCH')
+        assert_equal(egarch.name, "EGARCH")
         assert_equal(egarch.num_params, 4)
 
         assert_equal(egarch.p, 1)
@@ -907,7 +991,7 @@ class TestVolatiltyProcesses(object):
             EGARCH(p=0, o=0, q=1)
         with pytest.raises(ValueError):
             EGARCH(p=1, o=1, q=-1)
-        parameters = np.array([.1, .1, -.1, 1.05])
+        parameters = np.array([0.1, 0.1, -0.1, 1.05])
         with pytest.warns(InitialValueWarning):
             egarch.simulate(parameters, self.T, rng.simulate([]))
 
@@ -923,16 +1007,28 @@ class TestVolatiltyProcesses(object):
         assert_almost_equal(backcast, np.log(backcast_test))
 
         var_bounds = egarch.variance_bounds(self.resids)
-        parameters = np.array([.1, .4])
-        egarch.compute_variance(parameters, self.resids, self.sigma2, backcast,
-                                var_bounds)
+        parameters = np.array([0.1, 0.4])
+        egarch.compute_variance(
+            parameters, self.resids, self.sigma2, backcast, var_bounds
+        )
         cond_var_direct = np.zeros_like(self.sigma2)
         lnsigma2 = np.empty(self.T)
         std_resids = np.empty(self.T)
         abs_std_resids = np.empty(self.T)
-        rec.egarch_recursion(parameters, self.resids, cond_var_direct, 1, 0, 0,
-                             self.T, backcast, var_bounds, lnsigma2,
-                             std_resids, abs_std_resids)
+        rec.egarch_recursion(
+            parameters,
+            self.resids,
+            cond_var_direct,
+            1,
+            0,
+            0,
+            self.T,
+            backcast,
+            var_bounds,
+            lnsigma2,
+            std_resids,
+            abs_std_resids,
+        )
         assert_allclose(self.sigma2, cond_var_direct)
 
         state = self.rng.get_state()
@@ -979,8 +1075,8 @@ class TestVolatiltyProcesses(object):
         assert_allclose(sv, (resids / np.sqrt(variance)).var())
         assert var_bounds.shape == (resids.shape[0], 2)
         assert fv.num_params == 1
-        assert fv.parameter_names() == ['scale']
-        assert fv.name == 'Fixed Variance'
+        assert fv.parameter_names() == ["scale"]
+        assert fv.name == "Fixed Variance"
         assert_equal(cons[0], np.ones((1, 1)))
         assert_equal(cons[1], np.zeros(1))
         assert_equal(bounds[0][0], sv[0] / 100000.0)
@@ -1004,7 +1100,7 @@ class TestVolatiltyProcesses(object):
         assert_allclose(sv, np.empty(0))
         assert fv.num_params == 0
         assert fv.parameter_names() == []
-        assert fv.name == 'Fixed Variance (Unit Scale)'
+        assert fv.name == "Fixed Variance (Unit Scale)"
         assert_equal(cons[0], np.empty((0, 0)))
         assert_equal(cons[1], np.empty((0)))
         assert bounds == []
@@ -1035,8 +1131,10 @@ class TestVolatiltyProcesses(object):
         w = 0.94 ** np.arange(75)
         assert_almost_equal(backcast, np.sum((self.resids[:75] ** 2) * (w / w.sum())))
         var_bounds = midas.variance_bounds(self.resids)
-        parameters = np.array([.1, .9, .4])
-        midas.compute_variance(parameters, self.resids, self.sigma2, backcast, var_bounds)
+        parameters = np.array([0.1, 0.9, 0.4])
+        midas.compute_variance(
+            parameters, self.resids, self.sigma2, backcast, var_bounds
+        )
         cond_var_direct = np.zeros_like(self.sigma2)
         weights = midas._weights(parameters)
         theta = parameters[-1]
@@ -1047,8 +1145,15 @@ class TestVolatiltyProcesses(object):
         resids = self.resids
         direct_params = parameters.copy()
         direct_params[-1] = 0.0  # gamma, strip theta
-        recpy.midas_recursion_python(direct_params, weights, resids, cond_var_direct, self.T,
-                                     backcast, var_bounds)
+        recpy.midas_recursion_python(
+            direct_params,
+            weights,
+            resids,
+            cond_var_direct,
+            self.T,
+            backcast,
+            var_bounds,
+        )
         assert_allclose(self.sigma2, cond_var_direct)
 
         a, b = midas.constraints()
@@ -1084,19 +1189,19 @@ class TestVolatiltyProcesses(object):
         assert_almost_equal(data / sim_data[0], np.ones_like(data))
 
         names = midas.parameter_names()
-        names_target = ['omega', 'alpha', 'theta']
+        names_target = ["omega", "alpha", "theta"]
         assert_equal(names, names_target)
 
         assert isinstance(midas.__str__(), str)
         txt = midas.__repr__()
         assert str(hex(id(midas))) in txt
 
-        assert_equal(midas.name, 'MIDAS Hyperbolic')
+        assert_equal(midas.name, "MIDAS Hyperbolic")
         assert_equal(midas.num_params, 3)
         assert_equal(midas.m, 22)
 
         with pytest.warns(InitialValueWarning):
-            parameters = np.array([.1, 1.1, .4])
+            parameters = np.array([0.1, 1.1, 0.4])
             midas.simulate(parameters, self.T, rng.simulate([]))
 
     def test_midas_asymmetric(self):
@@ -1114,8 +1219,10 @@ class TestVolatiltyProcesses(object):
         w = 0.94 ** np.arange(75)
         assert_almost_equal(backcast, np.sum((self.resids[:75] ** 2) * (w / w.sum())))
         var_bounds = midas.variance_bounds(self.resids)
-        parameters = np.array([.1, .3, 1.2, .4])
-        midas.compute_variance(parameters, self.resids, self.sigma2, backcast, var_bounds)
+        parameters = np.array([0.1, 0.3, 1.2, 0.4])
+        midas.compute_variance(
+            parameters, self.resids, self.sigma2, backcast, var_bounds
+        )
         cond_var_direct = np.zeros_like(self.sigma2)
         weights = midas._weights(parameters)
         wlen = len(weights)
@@ -1127,8 +1234,15 @@ class TestVolatiltyProcesses(object):
         assert_allclose(direct_weights, weights)
         resids = self.resids
         direct_params = parameters[:3].copy()
-        recpy.midas_recursion_python(direct_params, weights, resids, cond_var_direct, self.T,
-                                     backcast, var_bounds)
+        recpy.midas_recursion_python(
+            direct_params,
+            weights,
+            resids,
+            cond_var_direct,
+            self.T,
+            backcast,
+            var_bounds,
+        )
         assert_allclose(self.sigma2, cond_var_direct)
 
         a, b = midas.constraints()
@@ -1172,19 +1286,19 @@ class TestVolatiltyProcesses(object):
         assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
 
         names = midas.parameter_names()
-        names_target = ['omega', 'alpha', 'gamma', 'theta']
+        names_target = ["omega", "alpha", "gamma", "theta"]
         assert_equal(names, names_target)
 
         assert isinstance(midas.__str__(), str)
         txt = midas.__repr__()
         assert str(hex(id(midas))) in txt
 
-        assert_equal(midas.name, 'MIDAS Hyperbolic')
+        assert_equal(midas.name, "MIDAS Hyperbolic")
         assert_equal(midas.num_params, 4)
         assert_equal(midas.m, 33)
 
         with pytest.warns(InitialValueWarning):
-            parameters = np.array([.1, .3, 1.6, .4])
+            parameters = np.array([0.1, 0.3, 1.6, 0.4])
             midas.simulate(parameters, self.T, rng.simulate([]))
 
     def test_figarch(self):
@@ -1205,15 +1319,26 @@ class TestVolatiltyProcesses(object):
         w = 0.94 ** np.arange(75)
         assert_almost_equal(backcast, np.sum((self.resids[:75] ** 2) * (w / w.sum())))
         var_bounds = figarch.variance_bounds(self.resids)
-        parameters = np.array([1, .2, .4, .2])
-        figarch.compute_variance(parameters, self.resids, self.sigma2, backcast, var_bounds)
+        parameters = np.array([1, 0.2, 0.4, 0.2])
+        figarch.compute_variance(
+            parameters, self.resids, self.sigma2, backcast, var_bounds
+        )
 
         cond_var_direct = np.zeros_like(self.sigma2)
         fresids = self.resids ** 2
         p = q = 1
         nobs = self.resids.shape[0]
-        recpy.figarch_recursion_python(parameters, fresids, cond_var_direct, p, q,
-                                       nobs, trunc_lag, backcast, var_bounds)
+        recpy.figarch_recursion_python(
+            parameters,
+            fresids,
+            cond_var_direct,
+            p,
+            q,
+            nobs,
+            trunc_lag,
+            backcast,
+            var_bounds,
+        )
         assert_allclose(self.sigma2, cond_var_direct)
 
         a, b = figarch.constraints()
@@ -1248,26 +1373,26 @@ class TestVolatiltyProcesses(object):
         data[:trunc_lag] = np.sqrt(sigma2[:trunc_lag]) * e[:trunc_lag]
 
         for t in range(trunc_lag, trunc_lag + self.T + 500):
-            sigma2[t] = omega_tilde + lam_rev.dot((data[t - trunc_lag:t] ** 2))
+            sigma2[t] = omega_tilde + lam_rev.dot((data[t - trunc_lag : t] ** 2))
             data[t] = e[t] * np.sqrt(sigma2[t])
-        data = data[trunc_lag + 500:]
-        sigma2 = sigma2[trunc_lag + 500:]
+        data = data[trunc_lag + 500 :]
+        sigma2 = sigma2[trunc_lag + 500 :]
         assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
         assert_almost_equal(data / sim_data[0], np.ones_like(data))
 
         names = figarch.parameter_names()
-        names_target = ['omega', 'phi', 'd', 'beta']
+        names_target = ["omega", "phi", "d", "beta"]
         assert_equal(names, names_target)
 
         assert isinstance(figarch.__str__(), str)
         txt = figarch.__repr__()
         assert str(hex(id(figarch))) in txt
 
-        assert_equal(figarch.name, 'FIGARCH')
+        assert_equal(figarch.name, "FIGARCH")
         assert_equal(figarch.num_params, 4)
         assert_equal(figarch.truncation, trunc_lag)
 
-        params = np.array([.1, .2, .4, 1.1])
+        params = np.array([0.1, 0.2, 0.4, 1.1])
         with pytest.warns(InitialValueWarning):
             figarch.simulate(params, 1000, rng.simulate([]))
 
@@ -1347,7 +1472,7 @@ class TestVolatiltyProcesses(object):
         with pytest.raises(ValueError):
             FIGARCH(truncation=-1)
         with pytest.raises(ValueError):
-            FIGARCH(truncation='apple')
+            FIGARCH(truncation="apple")
         with pytest.raises(ValueError):
             FIGARCH(p=2)
         with pytest.raises(ValueError):
@@ -1359,21 +1484,21 @@ class TestVolatiltyProcesses(object):
 
     def test_figarch_edge_cases(self):
         figarch = FIGARCH(power=0.5)
-        assert 'power' in str(figarch)
+        assert "power" in str(figarch)
         figarch = FIGARCH()
-        assert 'power' not in str(figarch)
+        assert "power" not in str(figarch)
 
-    @pytest.mark.parametrize('p', [0, 1])
-    @pytest.mark.parametrize('q', [0, 1])
-    @pytest.mark.parametrize('power', [0.5, 1.0, 2.0])
+    @pytest.mark.parametrize("p", [0, 1])
+    @pytest.mark.parametrize("q", [0, 1])
+    @pytest.mark.parametrize("power", [0.5, 1.0, 2.0])
     def test_figarch_str(self, p, q, power):
         figarch = FIGARCH(p=p, q=q, power=power)
         s = str(figarch).lower()
-        assert 'arch' in s
-        assert 'q: {0}'.format(q) in s
-        assert 'p: {0}'.format(p) in s
+        assert "arch" in s
+        assert "q: {0}".format(q) in s
+        assert "p: {0}".format(p) in s
         if power not in (1.0, 2.0):
-            assert 'power: {0:0.1f}'.format(power) in s
+            assert "power: {0:0.1f}".format(power) in s
 
 
 def test_figarch_weights():

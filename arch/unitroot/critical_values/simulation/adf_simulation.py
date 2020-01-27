@@ -13,11 +13,11 @@ def adf_simulation(n, trend, b, rng=None):
 
     nobs = n - 1
     z = None
-    if trend == 'c':
+    if trend == "c":
         z = ones((nobs, 1))
-    elif trend == 'ct':
+    elif trend == "ct":
         z = vstack((ones(nobs), arange(1, nobs + 1))).T
-    elif trend == 'ctt':
+    elif trend == "ctt":
         tau = arange(1, nobs + 1)
         z = vstack((ones(nobs), tau, tau ** 2.0)).T
 

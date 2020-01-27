@@ -2,23 +2,54 @@ import numpy as np
 from scipy.stats import norm
 from statsmodels.regression.linear_model import OLS, WLS
 
-trends = ('c', 'ct')
+trends = ("c", "ct")
 critical_values = (1.0, 5.0, 10.0)
 dfgls_cv_approx = {}
 for t in trends:
     print(t)
-    data = np.load('dfgls_' + t + '.npz')
-    percentiles = data['percentiles']
-    trend = data['trend']
-    results = data['results']
+    data = np.load("dfgls_" + t + ".npz")
+    percentiles = data["percentiles"]
+    trend = data["trend"]
+    results = data["results"]
     # T = data['T']
     data.close()
 
     # Remove later
     T = np.array(
-        (20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120, 140, 160,
-         180, 200, 250, 300, 350, 400, 450, 500, 600, 700, 800, 900,
-         1000, 1200, 1400, 2000))
+        (
+            20,
+            25,
+            30,
+            35,
+            40,
+            45,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100,
+            120,
+            140,
+            160,
+            180,
+            200,
+            250,
+            300,
+            350,
+            400,
+            450,
+            500,
+            600,
+            700,
+            800,
+            900,
+            1000,
+            1200,
+            1400,
+            2000,
+        )
+    )
     T = T[::-1]
 
     # For percentiles 1, 5 and 10, regress on a constant, and powers of 1/T
@@ -43,16 +74,16 @@ for t in trends:
 
     dfgls_cv_approx[t] = np.array(out)
 
-trends = ('c', 'ct')
+trends = ("c", "ct")
 dfgls_large_p = {}
 dfgls_small_p = {}
 dfgls_tau_star = {}
 dfgls_tau_max = {}
 dfgls_tau_min = {}
 for t in trends:
-    data = np.load('dfgls_' + t + '.npz')
-    percentiles = data['percentiles']
-    results = data['results']  # Remove later
+    data = np.load("dfgls_" + t + ".npz")
+    percentiles = data["percentiles"]
+    results = data["results"]  # Remove later
     # LHS is norm cdf inv of percentiles
     lhs = norm().ppf(percentiles / 100.0)
     lhs_large = lhs
@@ -101,16 +132,16 @@ for t in trends:
     # Compute tau min
     dfgls_tau_min[t] = -params[1] / (2 * params[2])
 
-print('from numpy import array')
-print('')
-print('dfgls_cv_approx = ' + str(dfgls_cv_approx))
-print('')
-print('dfgls_tau_max = ' + str(dfgls_tau_max))
-print('')
-print('dfgls_tau_min = ' + str(dfgls_tau_min))
-print('')
-print('dfgls_tau_star = ' + str(dfgls_tau_star))
-print('')
-print('dfgls_large_p = ' + str(dfgls_large_p))
-print('')
-print('dfgls_small_p = ' + str(dfgls_small_p))
+print("from numpy import array")
+print("")
+print("dfgls_cv_approx = " + str(dfgls_cv_approx))
+print("")
+print("dfgls_tau_max = " + str(dfgls_tau_max))
+print("")
+print("dfgls_tau_min = " + str(dfgls_tau_min))
+print("")
+print("dfgls_tau_star = " + str(dfgls_tau_star))
+print("")
+print("dfgls_large_p = " + str(dfgls_large_p))
+print("")
+print("dfgls_small_p = " + str(dfgls_small_p))

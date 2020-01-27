@@ -10,4 +10,4 @@ def load():
     data : DataFrame
         Data set containing OHLC, adjusted close and the trading volume.
     """
-    return load_file(__file__, 'nasdaq.csv.gz')
+    return load_file(__file__, "nasdaq.csv.gz")

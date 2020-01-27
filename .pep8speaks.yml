@@ -1,0 +1,11 @@
+scanner:
+    diff_only: False
+    linter: flake8  # Other option is flake8
+
+pycodestyle:  # Same as scanner.linter value. Other option is flake8
+    max-line-length: 99  # Default is 79 in PEP 8
+    ignore:  # Errors and warnings to ignore
+        - E203  # Whitespace before ':'
+        - W503  # Line break occurred before a binary operator (W503)
+
+no_blank_comment: False  # If True, no comment is made on PR without any errors.

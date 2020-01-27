@@ -1,16 +1,27 @@
 import copy
+from typing import Any, Callable, Dict, Generator, List, Optional, Tuple, Union
 
 import numpy as np
 from numpy.random import RandomState
 import pandas as pd
 import scipy.stats as stats
 
+from arch.typing import ArrayLike, NDArray
 from arch.utility.array import DocStringInheritor
-from arch.utility.exceptions import (StudentizationError, arg_type_error,
-                                     kwarg_type_error, studentization_error)
+from arch.utility.exceptions import (
+    StudentizationError,
+    arg_type_error,
+    kwarg_type_error,
+    studentization_error,
+)
 
-__all__ = ['IIDBootstrap', 'StationaryBootstrap', 'CircularBlockBootstrap',
-           'MovingBlockBootstrap', 'IndependentSamplesBootstrap']
+__all__ = [
+    "IIDBootstrap",
+    "StationaryBootstrap",
+    "CircularBlockBootstrap",
+    "MovingBlockBootstrap",
+    "IndependentSamplesBootstrap",
+]
 
 try:
     from arch.bootstrap._samplers import stationary_bootstrap_sample
@@ -18,7 +29,7 @@ except ImportError:  # pragma: no cover
     from arch.bootstrap._samplers_python import stationary_bootstrap_sample
 
 
-def _get_acceleration(jk_params):
+def _get_acceleration(jk_params: NDArray) -> float:
     """
     Estimates the BCa acceleration parameter using jackknife estimates
     of theta.
@@ -31,23 +42,24 @@ def _get_acceleration(jk_params):
 
     Returns
     -------
-    a : float
+    float
         Value of the acceleration parameter "a" used in the BCa bootstrap.
     """
     u = jk_params.mean() - jk_params
-    numer = np.sum(u**3, 0)
-    denom = 6 * (np.sum(u**2, 0)**(3.0 / 2.0))
+    numer = np.sum(u ** 3, 0)
+    denom = 6 * (np.sum(u ** 2, 0) ** (3.0 / 2.0))
     small = denom < (np.abs(numer) * np.finfo(np.float64).eps)
     if small.any():
-        message = 'Jackknife variance estimate {jk_var} is ' \
-                    'too small to use BCa'
+        message = "Jackknife variance estimate {jk_var} is " "too small to use BCa"
         raise RuntimeError(message.format(jk_var=denom))
     a = numer / denom
     a = np.atleast_1d(a)
     return a[:, None]
 
 
-def _loo_jackknife(func, nobs, args, kwargs):
+def _loo_jackknife(
+    func: Callable[..., NDArray], nobs: int, args: List[ArrayLike], kwargs: ArrayLike,
+) -> NDArray:
     """
     Leave one out jackknife estimation
 
@@ -64,13 +76,13 @@ def _loo_jackknife(func, nobs, args, kwargs):
 
     Returns
     -------
-    results : ndarray
+    ndarray
         Array containing the jackknife results where row i corresponds to
         leaving observation i out of the sample
     """
     results = []
     for i in range(nobs):
-        items = np.r_[0:i, i + 1:nobs]
+        items = np.r_[0:i, i + 1 : nobs]
         args_copy = []
         for arg in args:
             if isinstance(arg, (pd.Series, pd.DataFrame)):
@@ -87,7 +99,9 @@ def _loo_jackknife(func, nobs, args, kwargs):
     return np.array(results)
 
 
-def _add_extra_kwargs(kwargs, extra_kwargs=None):
+def _add_extra_kwargs(
+    kwargs: Dict[str, Any], extra_kwargs: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
     """
     Safely add additional keyword arguments to an existing dictionary
 
@@ -100,7 +114,7 @@ def _add_extra_kwargs(kwargs, extra_kwargs=None):
 
     Returns
     -------
-    augmented_kwargs : dict
+    dict
         Keyword dictionary with added keyword arguments
 
     Notes
@@ -176,14 +190,14 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
     arch.bootstrap.IndependentSamplesBootstrap
     """
 
-    _name = 'IID Bootstrap'
+    _name = "IID Bootstrap"
     _common_size_required = True
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: ArrayLike, **kwargs: ArrayLike) -> None:
         self._random_state = None
         self._args = list(args)
         self._kwargs = kwargs
-        random_state = self._kwargs.pop('random_state', None)
+        random_state = self._kwargs.pop("random_state", None)
         self.random_state = random_state if random_state is not None else RandomState()
         self._initial_state = self._random_state.get_state()
 
@@ -198,8 +212,9 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         if self._common_size_required:
             for arg in all_args:
                 if len(arg) != self._num_items:
-                    raise ValueError("All inputs must have the same number of "
-                                     "elements in axis 0")
+                    raise ValueError(
+                        "All inputs must have the same number of " "elements in axis 0"
+                    )
         self._index = np.arange(self._num_items)
 
         self._parameters = []
@@ -217,27 +232,26 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
             if attr is None:
                 self.__setattr__(key, value)
             else:
-                raise ValueError(key + ' is a reserved name')
+                raise ValueError(key + " is a reserved name")
 
-    def __str__(self):
+    def __str__(self) -> str:
         txt = self._name
-        txt += '(no. pos. inputs: ' + str(len(self.pos_data))
-        txt += ', no. keyword inputs: ' + str(len(self.kw_data)) + ')'
+        txt += "(no. pos. inputs: " + str(len(self.pos_data))
+        txt += ", no. keyword inputs: " + str(len(self.kw_data)) + ")"
         return txt
 
-    def __repr__(self):
-        return self.__str__()[:-1] + ', ID: ' + hex(id(self)) + ')'
+    def __repr__(self) -> str:
+        return self.__str__()[:-1] + ", ID: " + hex(id(self)) + ")"
 
-    def _repr_html(self):
-        html = '<strong>' + self._name + '</strong>('
-        html += '<strong>no. pos. inputs</strong>: ' + str(len(self.pos_data))
-        html += ', <strong>no. keyword inputs</strong>: ' + \
-                str(len(self.kw_data))
-        html += ', <strong>ID</strong>: ' + hex(id(self)) + ')'
+    def _repr_html(self) -> str:
+        html = "<strong>" + self._name + "</strong>("
+        html += "<strong>no. pos. inputs</strong>: " + str(len(self.pos_data))
+        html += ", <strong>no. keyword inputs</strong>: " + str(len(self.kw_data))
+        html += ", <strong>ID</strong>: " + hex(id(self)) + ")"
         return html
 
     @property
-    def random_state(self):
+    def random_state(self) -> np.random.RandomState:
         """
         Set or get the instance random state
 
@@ -254,9 +268,9 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         return self._random_state
 
     @random_state.setter
-    def random_state(self, value):
+    def random_state(self, value: np.random.RandomState) -> None:
         if not isinstance(value, RandomState):
-            raise TypeError('Value being set must be a RandomState')
+            raise TypeError("Value being set must be a RandomState")
         self._random_state = value
 
     @property
@@ -266,42 +280,41 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         """
         return self._index
 
-    def get_state(self):
+    def get_state(self) -> Union[Dict[str, Any], Tuple[Any, ...]]:
         """
         Gets the state of the bootstrap's random number generator
 
         Returns
         -------
-        state : RandomState state vector
-            Array containing the state
+        {dict, tuple}
+            Dictionary or tuple containing the state.
         """
         return self.random_state.get_state()
 
-    def set_state(self, state):
+    def set_state(self, state: Union[Dict[str, Any], Tuple[Any, ...]]) -> None:
         """
         Sets the state of the bootstrap's random number generator
 
         Parameters
         ----------
-        state : RandomState state vector
-            Array containing the state
+        state : {dict, tuple}
+            Dictionary or tuple containing the state.
         """
-        return self.random_state.set_state(state)
+        self.random_state.set_state(state)
 
-    def seed(self, value):
+    def seed(self, value: Union[int, List[int], NDArray]) -> None:
         """
         Seeds the bootstrap's random number generator
 
         Parameters
         ----------
-        value : int
-            Integer to use as the seed
+        value : {int, List[int], ndarray}
+            Value to use as the seed.
         """
         self._seed = value
         self.random_state.seed(value)
-        return None
 
-    def reset(self, use_seed=True):
+    def reset(self, use_seed: bool = True) -> None:
         """
         Resets the bootstrap to either its initial state or the last seed.
 
@@ -317,9 +330,10 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         self.random_state.set_state(self._initial_state)
         if use_seed and self._seed is not None:
             self.seed(self._seed)
-        return None
 
-    def bootstrap(self, reps):
+    def bootstrap(
+        self, reps: int
+    ) -> Generator[Tuple[Tuple[ArrayLike, ...], Dict[str, ArrayLike]], None, None]:
         """
         Iterator for use when bootstrapping
 
@@ -330,7 +344,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
         Returns
         -------
-        gen : generator
+        generator
             Generator to iterate over in bootstrap calculations
 
         Example
@@ -360,9 +374,19 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
             self._index = self.update_indices()
             yield self._resample()
 
-    def conf_int(self, func, reps=1000, method='basic', size=0.95, tail='two',
-                 extra_kwargs=None, reuse=False, sampling='nonparametric',
-                 std_err_func=None, studentize_reps=1000):
+    def conf_int(
+        self,
+        func,
+        reps=1000,
+        method="basic",
+        size=0.95,
+        tail="two",
+        extra_kwargs=None,
+        reuse=False,
+        sampling="nonparametric",
+        std_err_func=None,
+        studentize_reps=1000,
+    ):
         """
         Parameters
         ----------
@@ -402,7 +426,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
         Returns
         -------
-        intervals : 2-d array
+        ndarray
             Computed confidence interval.  Row 0 contains the lower bounds, and
             row 1 contains the upper bounds.  Each column corresponds to a
             parameter. When tail is 'lower', all upper bounds are inf.
@@ -456,82 +480,101 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
           to 'bc' method
 
         """
-        studentized = 'studentized'
+        studentized = "studentized"
         if not 0.0 < size < 1.0:
-            raise ValueError('size must be strictly between 0 and 1')
+            raise ValueError("size must be strictly between 0 and 1")
         tail = tail.lower()
-        if tail not in ('two', 'lower', 'upper'):
-            raise ValueError('tail must be one of two-sided, lower or upper')
+        if tail not in ("two", "lower", "upper"):
+            raise ValueError("tail must be one of two-sided, lower or upper")
         studentize_reps = studentize_reps if method == studentized else 0
 
         _reuse = False
         if reuse:
             # check conditions for reuse
-            _reuse = (self._results is not None and
-                      len(self._results) == reps and
-                      method != studentized and
-                      self._last_func is func)
+            _reuse = (
+                self._results is not None
+                and len(self._results) == reps
+                and method != studentized
+                and self._last_func is func
+            )
 
         if not _reuse:
             if reuse:
                 import warnings
 
-                warn = 'The conditions to reuse the previous bootstrap has ' \
-                       'not been satisfied. A new bootstrap will be used.'
+                warn = (
+                    "The conditions to reuse the previous bootstrap has "
+                    "not been satisfied. A new bootstrap will be used."
+                )
                 warnings.warn(warn, RuntimeWarning)
-            self._construct_bootstrap_estimates(func, reps, extra_kwargs,
-                                                std_err_func=std_err_func,
-                                                studentize_reps=studentize_reps,  # noqa
-                                                sampling=sampling)
+            self._construct_bootstrap_estimates(
+                func,
+                reps,
+                extra_kwargs,
+                std_err_func=std_err_func,
+                studentize_reps=studentize_reps,  # noqa
+                sampling=sampling,
+            )
 
         base, results = self._base, self._results
         studentized_results = self._studentized_results
 
         std_err = []
-        if method in ('norm', 'var', 'cov', studentized):
+        if method in ("norm", "var", "cov", studentized):
             errors = results - results.mean(axis=0)
             std_err = np.sqrt(np.diag(errors.T.dot(errors) / reps))
 
-        if tail == 'two':
+        if tail == "two":
             alpha = (1.0 - size) / 2
         else:
-            alpha = (1.0 - size)
+            alpha = 1.0 - size
 
         percentiles = [alpha, 1.0 - alpha]
         norm_quantiles = stats.norm.ppf(percentiles)
 
-        if method in ('norm', 'var', 'cov'):
+        if method in ("norm", "var", "cov"):
             lower = base + norm_quantiles[0] * std_err
             upper = base + norm_quantiles[1] * std_err
 
-        elif method in ('percentile', 'basic', studentized,
-                        'debiased', 'bc', 'bias-corrected', 'bca'):
+        elif method in (
+            "percentile",
+            "basic",
+            studentized,
+            "debiased",
+            "bc",
+            "bias-corrected",
+            "bca",
+        ):
             values = results
             if method == studentized:
                 # studentized uses studentized parameter estimates
                 values = studentized_results
 
-            if method in ('debiased', 'bc', 'bias-corrected', 'bca'):
+            if method in ("debiased", "bc", "bias-corrected", "bca"):
                 # bias corrected uses modified percentiles, but is
                 # otherwise identical to the percentile method
                 b = self._bca_bias()
-                if method == 'bca':
-                    lens = [len(arg) for arg in self._args] + \
-                           [len(kwarg) for kwarg in self._kwargs.values()]
+                if method == "bca":
+                    lens = [len(arg) for arg in self._args] + [
+                        len(kwarg) for kwarg in self._kwargs.values()
+                    ]
                     if min(lens) != max(lens):
-                        raise ValueError('BCa cannot be applied to statistics '
-                                         'computed from datasets with '
-                                         'different lengths')
+                        raise ValueError(
+                            "BCa cannot be applied to statistics "
+                            "computed from datasets with "
+                            "different lengths"
+                        )
                     a = self._bca_acceleration(func)
                 else:
                     a = 0.0
-                percentiles = stats.norm.cdf(b + (b + norm_quantiles) /
-                                             (1.0 - a * (b + norm_quantiles)))
+                percentiles = stats.norm.cdf(
+                    b + (b + norm_quantiles) / (1.0 - a * (b + norm_quantiles))
+                )
                 percentiles = list(100 * percentiles)
             else:
                 percentiles = [100 * p for p in percentiles]  # Rescale
 
-            if method not in ('bc', 'debiased', 'bias-corrected', 'bca'):
+            if method not in ("bc", "debiased", "bias-corrected", "bca"):
                 ci = np.asarray(np.percentile(values, percentiles, axis=0))
                 lower = ci[0, :]
                 upper = ci[1, :]
@@ -540,13 +583,14 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
                 lower = np.zeros(k)
                 upper = np.zeros(k)
                 for i in range(k):
-                    lower[i], upper[i] = np.percentile(values[:, i],
-                                                       list(percentiles[i]))
+                    lower[i], upper[i] = np.percentile(
+                        values[:, i], list(percentiles[i])
+                    )
 
             # Basic and studentized use the lower empirical quantile to
             # compute upper and vice versa.  Bias corrected and percentile use
             # upper to estimate the upper, and lower to estimate the lower
-            if method == 'basic':
+            if method == "basic":
                 lower_copy = lower + 0.0
                 lower = 2.0 * base - upper
                 upper = 2.0 * base - lower_copy
@@ -556,12 +600,12 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
                 upper = base - lower_copy * std_err
 
         else:
-            raise ValueError('Unknown method')
+            raise ValueError("Unknown method")
 
-        if tail == 'lower':
+        if tail == "lower":
             upper = np.zeros_like(base)
             upper.fill(np.inf)
-        elif tail == 'upper':
+        elif tail == "upper":
             lower = np.zeros_like(base)
             lower.fill(-1 * np.inf)
 
@@ -626,7 +670,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
         Returns
         -------
-        results : ndarray
+        ndarray
             reps by nparam array of computed function values where each row
             corresponds to a bootstrap iteration
 
@@ -666,22 +710,30 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
             count += 1
         return results
 
-    def _construct_bootstrap_estimates(self, func, reps, extra_kwargs=None,
-                                       std_err_func=None, studentize_reps=0,
-                                       sampling='nonparametric'):
+    def _construct_bootstrap_estimates(
+        self,
+        func,
+        reps,
+        extra_kwargs=None,
+        std_err_func=None,
+        studentize_reps=0,
+        sampling="nonparametric",
+    ):
         eps = np.finfo(np.double).eps
         # Private, more complicated version of apply
         self._last_func = func
         semi = parametric = False
-        if sampling == 'parametric':
+        if sampling == "parametric":
             parametric = True
-        elif sampling == 'semiparametric':
+        elif sampling == "semiparametric":
             semi = True
 
         if extra_kwargs is not None:
             if any(k in self._kwargs for k in extra_kwargs):
-                raise ValueError('extra_kwargs contains keys used for variable'
-                                 ' names in the bootstrap')
+                raise ValueError(
+                    "extra_kwargs contains keys used for variable"
+                    " names in the bootstrap"
+                )
         kwargs = _add_extra_kwargs(self._kwargs, extra_kwargs)
         base = func(*self._args, **kwargs)
 
@@ -693,10 +745,10 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         for pos_data, kw_data in self.bootstrap(reps):
             kwargs = _add_extra_kwargs(kw_data, extra_kwargs)
             if parametric:
-                kwargs['state'] = self.random_state
-                kwargs['params'] = base
+                kwargs["state"] = self.random_state
+                kwargs["params"] = base
             elif semi:
-                kwargs['params'] = base
+                kwargs["params"] = base
             results[count] = func(*pos_data, **kwargs)
             if std_err_func is not None:
                 std_err = std_err_func(results[count], *pos_data, **kwargs)
@@ -707,8 +759,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
                 # Set the seed to ensure reproducibility
                 seed = self.random_state.randint(2 ** 31 - 1)
                 nested_bs.seed(seed)
-                cov = nested_bs.cov(func, studentize_reps,
-                                    extra_kwargs=extra_kwargs)
+                cov = nested_bs.cov(func, studentize_reps, extra_kwargs=extra_kwargs)
                 std_err = np.sqrt(np.diag(cov))
                 err = results[count] - base
                 if np.any(std_err <= (eps * np.abs(err))):
@@ -740,7 +791,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
         Returns
         -------
-        cov: ndarray
+        ndarray
             Bootstrap covariance estimator
 
         Notes
@@ -814,7 +865,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
         Returns
         -------
-        var : ndarray
+        ndarray
             Bootstrap variance estimator
 
         Notes
@@ -873,8 +924,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         Update indices for the next iteration of the bootstrap.  This must
         be overridden when creating new bootstraps.
         """
-        return self._random_state.randint(self._num_items,
-                                          size=self._num_items)
+        return self._random_state.randint(self._num_items, size=self._num_items)
 
     def _resample(self):
         """
@@ -972,10 +1022,10 @@ class IndependentSamplesBootstrap(IIDBootstrap):
     """
 
     _common_size_required = False
-    _name = 'Heterogeneous IID Bootstrap'
+    _name = "Heterogeneous IID Bootstrap"
 
     def __init__(self, *args, **kwargs):
-        super(IndependentSamplesBootstrap, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self._num_args = len(args)
         self._num_arg_items = [len(arg) for arg in args]
@@ -987,10 +1037,14 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         be overridden when creating new bootstraps.
         """
         randint = self._random_state.randint
-        pos_indices = [randint(self._num_arg_items[i], size=self._num_arg_items[i])
-                       for i in range(self._num_args)]
-        kw_indices = {key: randint(self._num_kw_items[key], size=self._num_kw_items[key])
-                      for key in self._kwargs}
+        pos_indices = [
+            randint(self._num_arg_items[i], size=self._num_arg_items[i])
+            for i in range(self._num_args)
+        ]
+        kw_indices = {
+            key: randint(self._num_kw_items[key], size=self._num_kw_items[key])
+            for key in self._kwargs
+        }
         return pos_indices, kw_indices
 
     @property
@@ -1000,7 +1054,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
 
         Returns
         -------
-        index : tuple[list[ndarray], dict[str, ndarray]]
+        tuple[list[ndarray], dict[str, ndarray]]
             2-element tuple containing a list and a dictionary. The list
             contains indices for each of the positional arguments.  The
             dictionary contains the indices of keyword arguments.
@@ -1112,28 +1166,27 @@ class CircularBlockBootstrap(IIDBootstrap):
     >>> rs = RandomState(1234)
     >>> bs = CircularBlockBootstrap(17, x, y=y, z=z, random_state=rs)
     """
-    _name = 'Circular Block Bootstrap'
+
+    _name = "Circular Block Bootstrap"
 
     def __init__(self, block_size, *args, **kwargs):
-        super(CircularBlockBootstrap, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.block_size = block_size
         self._parameters = [block_size]
 
-    def __str__(self):
+    def __str__(self) -> str:
         txt = self._name
-        txt += '(block size: ' + str(self.block_size)
-        txt += ', no. pos. inputs: ' + str(len(self.pos_data))
-        txt += ', no. keyword inputs: ' + str(len(self.kw_data)) + ')'
+        txt += "(block size: " + str(self.block_size)
+        txt += ", no. pos. inputs: " + str(len(self.pos_data))
+        txt += ", no. keyword inputs: " + str(len(self.kw_data)) + ")"
         return txt
 
     def _repr_html(self):
-        html = '<strong>' + self._name + '</strong>('
-        html += '<strong>block size</strong>: ' + str(self.block_size)
-        html += ', <strong>no. pos. inputs</strong>: ' + \
-                str(len(self.pos_data))
-        html += ', <strong>no. keyword inputs</strong>: ' + \
-                str(len(self.kw_data))
-        html += ', <strong>ID</strong>: ' + hex(id(self)) + ')'
+        html = "<strong>" + self._name + "</strong>("
+        html += "<strong>block size</strong>: " + str(self.block_size)
+        html += ", <strong>no. pos. inputs</strong>: " + str(len(self.pos_data))
+        html += ", <strong>no. keyword inputs</strong>: " + str(len(self.kw_data))
+        html += ", <strong>ID</strong>: " + hex(id(self)) + ")"
         return html
 
     def update_indices(self):
@@ -1146,7 +1199,7 @@ class CircularBlockBootstrap(IIDBootstrap):
         indices %= self._num_items
 
         if indices.shape[0] > self._num_items:
-            return indices[:self._num_items]
+            return indices[: self._num_items]
         else:
             return indices
 
@@ -1211,15 +1264,15 @@ class StationaryBootstrap(CircularBlockBootstrap):
     >>> rs = RandomState(1234)
     >>> bs = StationaryBootstrap(12, x, y=y, z=z, random_state=rs)
     """
-    _name = 'Stationary Bootstrap'
+
+    _name = "Stationary Bootstrap"
 
     def __init__(self, block_size, *args, **kwargs):
-        super(StationaryBootstrap, self).__init__(block_size, *args, **kwargs)
+        super().__init__(block_size, *args, **kwargs)
         self._p = 1.0 / block_size
 
     def update_indices(self):
-        indices = self.random_state.randint(self._num_items,
-                                            size=self._num_items)
+        indices = self.random_state.randint(self._num_items, size=self._num_items)
         indices = indices.astype(np.int64)
         u = self.random_state.random_sample(self._num_items)
         return stationary_bootstrap_sample(indices, u, self._p)
@@ -1285,10 +1338,11 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     >>> rs = RandomState(1234)
     >>> bs = MovingBlockBootstrap(7, x, y=y, z=z, random_state=rs)
     """
-    _name = 'Moving Block Bootstrap'
+
+    _name = "Moving Block Bootstrap"
 
     def __init__(self, block_size, *args, **kwargs):
-        super(MovingBlockBootstrap, self).__init__(block_size, *args, **kwargs)
+        super().__init__(block_size, *args, **kwargs)
 
     def update_indices(self):
         num_blocks = self._num_items // self.block_size
@@ -1300,15 +1354,14 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
         indices = indices.flatten()
 
         if indices.shape[0] > self._num_items:
-            return indices[:self._num_items]
+            return indices[: self._num_items]
         else:
             return indices
 
 
 class MOONBootstrap(IIDBootstrap):  # pragma: no cover
-
     def __init__(self, block_size, *args, **kwargs):  # pragma: no cover
-        super(MOONBootstrap, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.block_size = block_size
 
     def update_indices(self):  # pragma: no cover

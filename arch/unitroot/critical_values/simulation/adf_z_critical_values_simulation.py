@@ -59,17 +59,48 @@ def wrapper(n, trend, b, seed=0):
 
 
 # Push variables and functions to all engines
-dview.execute('import numpy as np')
-dview['MAX_MEMORY_SIZE'] = MAX_MEMORY_SIZE
-dview['wrapper'] = wrapper
-dview['adf_simulation'] = adf_simulation
+dview.execute("import numpy as np")
+dview["MAX_MEMORY_SIZE"] = MAX_MEMORY_SIZE
+dview["wrapper"] = wrapper
+dview["adf_simulation"] = adf_simulation
 lview = rc.load_balanced_view()
 
-trends = ('nc', 'c', 'ct', 'ctt')
+trends = ("nc", "c", "ct", "ctt")
 T = array(
-    (20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120, 140, 160,
-     180, 200, 250, 300, 350, 400, 450, 500, 600, 700, 800, 900,
-     1000, 1200, 1400, 2000))
+    (
+        20,
+        25,
+        30,
+        35,
+        40,
+        45,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100,
+        120,
+        140,
+        160,
+        180,
+        200,
+        250,
+        300,
+        350,
+        400,
+        450,
+        500,
+        600,
+        700,
+        800,
+        900,
+        1000,
+        1200,
+        1400,
+        2000,
+    )
+)
 T = T[::-1]
 m = T.shape[0]
 percentiles = list(arange(0.5, 100.0, 0.5))
@@ -78,26 +109,22 @@ seeds = rng.random_integers(0, 2 ** 31 - 2, size=EX_NUM)
 
 for tr in trends:
     results = zeros((len(percentiles), len(T), EX_NUM)) * nan
-    filename = 'adf_z_' + tr + '.npz'
+    filename = "adf_z_" + tr + ".npz"
 
     for i in range(EX_NUM):
         print("Experiment Number {0} for Trend {1}".format(i + 1, tr))
         # Non parallel version
         # out = lmap(wrapper, T, [tr] * m, [EX_SIZE] * m, [seeds[i]] * m))
         now = datetime.datetime.now()
-        out = lview.map_sync(wrapper,
-                             T,
-                             [tr] * m, [EX_SIZE] * m,
-                             [seeds[i]] * m)
+        out = lview.map_sync(wrapper, T, [tr] * m, [EX_SIZE] * m, [seeds[i]] * m)
         # Prevent unnecessary results from accumulating
-        lview.purge_results('all')
+        lview.purge_results("all")
         rc.purge_everything()
         print(datetime.datetime.now() - now)
         quantiles = lmap(lambda x: percentile(x, percentiles), out)
         results[:, :, i] = array(quantiles).T
 
         if i % 50 == 0:
-            savez(filename, trend=tr, results=results,
-                  percentiles=percentiles, T=T)
+            savez(filename, trend=tr, results=results, percentiles=percentiles, T=T)
 
     savez(filename, trend=tr, results=results, percentiles=percentiles, T=T)

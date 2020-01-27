@@ -9,25 +9,29 @@ from pandas.util.testing import assert_frame_equal, assert_series_equal
 import pytest
 import scipy.stats as stats
 
-from arch.bootstrap import (CircularBlockBootstrap, IIDBootstrap,
-                            IndependentSamplesBootstrap, MovingBlockBootstrap,
-                            StationaryBootstrap)
-from arch.bootstrap._samplers_python import \
-    stationary_bootstrap_sample_python  # noqa
+from arch.bootstrap import (
+    CircularBlockBootstrap,
+    IIDBootstrap,
+    IndependentSamplesBootstrap,
+    MovingBlockBootstrap,
+    StationaryBootstrap,
+)
 from arch.bootstrap._samplers_python import stationary_bootstrap_sample
+from arch.bootstrap._samplers_python import stationary_bootstrap_sample_python  # noqa
 from arch.bootstrap.base import _loo_jackknife
 from arch.utility.exceptions import StudentizationError
 
 try:
-    from arch.bootstrap._samplers import stationary_bootstrap_sample as \
-        stationary_bootstrap_sample_cython
+    from arch.bootstrap._samplers import (
+        stationary_bootstrap_sample as stationary_bootstrap_sample_cython,
+    )
+
     HAS_EXTENSION = True
 except ImportError:
     HAS_EXTENSION = False
 
 
 class TestBootstrap(TestCase):
-
     @staticmethod
     def func(y, axis=0):
         return y.mean(axis=axis)
@@ -61,10 +65,10 @@ class TestBootstrap(TestCase):
         for data, kwdata in bs.bootstrap(10):
             index = bs.index
             assert_equal(len(data), 0)
-            assert_equal(y[index], kwdata['y'])
+            assert_equal(y[index], kwdata["y"])
             assert_equal(y[index], bs.y)
         # Ensure no changes to original data
-        assert_equal(bs._kwargs['y'], y)
+        assert_equal(bs._kwargs["y"], y)
 
         bs = IIDBootstrap(x, y, z)
         bs.seed(23456)
@@ -83,8 +87,8 @@ class TestBootstrap(TestCase):
             assert_equal(len(data), 1)
             assert_equal(len(kwdata.keys()), 2)
             assert_equal(x[index], data[0])
-            assert_equal(y[index], kwdata['y'])
-            assert_equal(z[index], kwdata['z'])
+            assert_equal(y[index], kwdata["y"])
+            assert_equal(z[index], kwdata["z"])
             assert_equal(y[index], bs.y)
             assert_equal(z[index], bs.z)
 
@@ -104,10 +108,10 @@ class TestBootstrap(TestCase):
         for data, kwdata in bs.bootstrap(10):
             index = bs.index
             assert_equal(len(data), 0)
-            assert_series_equal(y.iloc[index], kwdata['y'])
+            assert_series_equal(y.iloc[index], kwdata["y"])
             assert_series_equal(y.iloc[index], bs.y)
         # Ensure no changes to original data
-        assert_series_equal(bs._kwargs['y'], y)
+        assert_series_equal(bs._kwargs["y"], y)
 
         bs = IIDBootstrap(x, y, z)
         bs.seed(23456)
@@ -126,8 +130,8 @@ class TestBootstrap(TestCase):
             assert_equal(len(data), 1)
             assert_equal(len(kwdata.keys()), 2)
             assert_frame_equal(x.iloc[index], data[0])
-            assert_series_equal(y.iloc[index], kwdata['y'])
-            assert_frame_equal(z.iloc[index], kwdata['z'])
+            assert_series_equal(y.iloc[index], kwdata["y"])
+            assert_frame_equal(z.iloc[index], kwdata["z"])
             assert_series_equal(y.iloc[index], bs.y)
             assert_frame_equal(z.iloc[index], bs.z)
 
@@ -139,10 +143,10 @@ class TestBootstrap(TestCase):
             index = bs.index
             assert_equal(len(data), 1)
             assert_equal(len(kwdata.keys()), 2)
-            assert_frame_equal(x.iloc[index], kwdata['x'])
+            assert_frame_equal(x.iloc[index], kwdata["x"])
             assert_frame_equal(x.iloc[index], bs.x)
             assert_series_equal(y.iloc[index], data[0])
-            assert_equal(z[index], kwdata['z'])
+            assert_equal(z[index], kwdata["z"])
             assert_equal(z[index], bs.z)
 
     def test_state(self):
@@ -182,9 +186,9 @@ class TestBootstrap(TestCase):
         bs = IIDBootstrap(y)
 
         with pytest.raises(ValueError):
-            bs.conf_int(self.func, method='unknown')
+            bs.conf_int(self.func, method="unknown")
         with pytest.raises(ValueError):
-            bs.conf_int(self.func, tail='dragon')
+            bs.conf_int(self.func, tail="dragon")
         with pytest.raises(ValueError):
             bs.conf_int(self.func, size=95)
 
@@ -234,13 +238,15 @@ class TestBootstrap(TestCase):
         num_bootstrap = 200
         bs = IIDBootstrap(self.x)
 
-        ci = bs.conf_int(self.func, reps=num_bootstrap, size=0.90, method='basic')
+        ci = bs.conf_int(self.func, reps=num_bootstrap, size=0.90, method="basic")
         bs.reset()
-        ci_u = bs.conf_int(self.func, tail='upper', reps=num_bootstrap, size=0.95,
-                           method='basic')
+        ci_u = bs.conf_int(
+            self.func, tail="upper", reps=num_bootstrap, size=0.95, method="basic"
+        )
         bs.reset()
-        ci_l = bs.conf_int(self.func, tail='lower', reps=num_bootstrap, size=0.95,
-                           method='basic')
+        ci_l = bs.conf_int(
+            self.func, tail="lower", reps=num_bootstrap, size=0.95, method="basic"
+        )
         bs.reset()
         results = np.zeros((num_bootstrap, 2))
         count = 0
@@ -265,14 +271,15 @@ class TestBootstrap(TestCase):
         num_bootstrap = 200
         bs = IIDBootstrap(self.x)
 
-        ci = bs.conf_int(self.func, reps=num_bootstrap, size=0.90,
-                         method='percentile')
+        ci = bs.conf_int(self.func, reps=num_bootstrap, size=0.90, method="percentile")
         bs.reset()
-        ci_u = bs.conf_int(self.func, tail='upper', reps=num_bootstrap, size=0.95,
-                           method='percentile')
+        ci_u = bs.conf_int(
+            self.func, tail="upper", reps=num_bootstrap, size=0.95, method="percentile"
+        )
         bs.reset()
-        ci_l = bs.conf_int(self.func, tail='lower', reps=num_bootstrap, size=0.95,
-                           method='percentile')
+        ci_l = bs.conf_int(
+            self.func, tail="lower", reps=num_bootstrap, size=0.95, method="percentile"
+        )
         bs.reset()
         results = np.zeros((num_bootstrap, 2))
         count = 0
@@ -297,14 +304,15 @@ class TestBootstrap(TestCase):
         num_bootstrap = 200
         bs = IIDBootstrap(self.x)
 
-        ci = bs.conf_int(self.func, reps=num_bootstrap, size=0.90,
-                         method='norm')
+        ci = bs.conf_int(self.func, reps=num_bootstrap, size=0.90, method="norm")
         bs.reset()
-        ci_u = bs.conf_int(self.func, tail='upper', reps=num_bootstrap, size=0.95,
-                           method='var')
+        ci_u = bs.conf_int(
+            self.func, tail="upper", reps=num_bootstrap, size=0.95, method="var"
+        )
         bs.reset()
-        ci_l = bs.conf_int(self.func, tail='lower', reps=num_bootstrap, size=0.95,
-                           method='cov')
+        ci_l = bs.conf_int(
+            self.func, tail="lower", reps=num_bootstrap, size=0.95, method="cov"
+        )
         bs.reset()
         cov = bs.cov(self.func, reps=num_bootstrap)
         mu = self.func(self.x)
@@ -334,7 +342,7 @@ class TestBootstrap(TestCase):
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always", RuntimeWarning)
             warnings.simplefilter("always")
-            bs.conf_int(self.func, tail='lower', reps=num_bootstrap // 2, reuse=True)
+            bs.conf_int(self.func, tail="lower", reps=num_bootstrap // 2, reuse=True)
             assert_equal(len(w), 1)
 
     def test_studentized(self):
@@ -347,8 +355,12 @@ class TestBootstrap(TestCase):
             var = (errors ** 2.0).mean(axis=0)
             return np.sqrt(var / y.shape[0])
 
-        ci = bs.conf_int(self.func, reps=num_bootstrap, method='studentized',
-                         std_err_func=std_err_func)
+        ci = bs.conf_int(
+            self.func,
+            reps=num_bootstrap,
+            method="studentized",
+            std_err_func=std_err_func,
+        )
         bs.reset()
         base = self.func(self.x)
         results = np.zeros((num_bootstrap, 2))
@@ -367,14 +379,17 @@ class TestBootstrap(TestCase):
         ci_direct = np.zeros((2, 2))
         for i in range(2):
             ci_direct[0, i] = base[i] - std_err[i] * np.percentile(
-                stud_results[:, i], 97.5)
+                stud_results[:, i], 97.5
+            )
             ci_direct[1, i] = base[i] - std_err[i] * np.percentile(
-                stud_results[:, i], 2.5)
+                stud_results[:, i], 2.5
+            )
         assert_allclose(ci, ci_direct)
 
         bs.reset()
-        ci = bs.conf_int(self.func, reps=num_bootstrap, method='studentized',
-                         studentize_reps=50)
+        ci = bs.conf_int(
+            self.func, reps=num_bootstrap, method="studentized", studentize_reps=50
+        )
 
         bs.reset()
         base = self.func(self.x)
@@ -399,15 +414,22 @@ class TestBootstrap(TestCase):
         ci_direct = np.zeros((2, 2))
         for i in range(2):
             ci_direct[0, i] = base[i] - std_err[i] * np.percentile(
-                stud_results[:, i], 97.5)
+                stud_results[:, i], 97.5
+            )
             ci_direct[1, i] = base[i] - std_err[i] * np.percentile(
-                stud_results[:, i], 2.5)
+                stud_results[:, i], 2.5
+            )
         assert_allclose(ci, ci_direct)
 
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
-            bs.conf_int(self.func, reps=num_bootstrap, method='studentized',
-                        std_err_func=std_err_func, reuse=True)
+            bs.conf_int(
+                self.func,
+                reps=num_bootstrap,
+                method="studentized",
+                std_err_func=std_err_func,
+                reuse=True,
+            )
             assert_equal(len(w), 1)
 
     def test_conf_int_bias_corrected(self):
@@ -415,9 +437,9 @@ class TestBootstrap(TestCase):
         bs = IIDBootstrap(self.x)
         bs.seed(23456)
 
-        ci = bs.conf_int(self.func, reps=num_bootstrap, method='bc')
+        ci = bs.conf_int(self.func, reps=num_bootstrap, method="bc")
         bs.reset()
-        ci_db = bs.conf_int(self.func, reps=num_bootstrap, method='debiased')
+        ci_db = bs.conf_int(self.func, reps=num_bootstrap, method="debiased")
         assert_equal(ci, ci_db)
         base, results = bs._base, bs._results
         p = np.zeros(2)
@@ -439,9 +461,11 @@ class TestBootstrap(TestCase):
         bs = IIDBootstrap(self.y)
         bs.seed(23456)
 
-        ci = bs.conf_int(np.mean, reps=num_bootstrap, method='bca')
-        msg = 'conf_int(method=\'bca\') scalar input regression. Ensure ' \
-              'output is at least 1D with numpy.atleast_1d().'
+        ci = bs.conf_int(np.mean, reps=num_bootstrap, method="bca")
+        msg = (
+            "conf_int(method='bca') scalar input regression. Ensure "
+            "output is at least 1D with numpy.atleast_1d()."
+        )
         assert ci.shape == (2, 1), msg
 
     def test_conf_int_parametric(self):
@@ -465,7 +489,7 @@ class TestBootstrap(TestCase):
         bs = IIDBootstrap(self.x)
         bs.seed(23456)
 
-        ci = bs.conf_int(func=param_func, reps=reps, sampling='parametric')
+        ci = bs.conf_int(func=param_func, reps=reps, sampling="parametric")
         assert len(ci) == 2
         assert np.all(ci[0] < ci[1])
         bs.reset()
@@ -473,13 +497,12 @@ class TestBootstrap(TestCase):
         count = 0
         mu = self.x.mean(0)
         for pos, _ in bs.bootstrap(100):
-            results[count] = param_func(*pos, params=mu,
-                                        state=bs.random_state)
+            results[count] = param_func(*pos, params=mu, state=bs.random_state)
             count += 1
         assert_equal(bs._results, results)
 
         bs.reset()
-        ci = bs.conf_int(func=semi_func, reps=100, sampling='semi')
+        ci = bs.conf_int(func=semi_func, reps=100, sampling="semi")
         assert len(ci) == 2
         assert np.all(ci[0] < ci[1])
         bs.reset()
@@ -491,7 +514,7 @@ class TestBootstrap(TestCase):
         assert_allclose(bs._results, results)
 
     def test_extra_kwargs(self):
-        extra_kwargs = {'axis': 0}
+        extra_kwargs = {"axis": 0}
         bs = IIDBootstrap(self.x)
         bs.seed(23456)
         num_bootstrap = 100
@@ -515,7 +538,7 @@ class TestBootstrap(TestCase):
                 y = x[:-1]
             else:
                 temp = list(x[:i])
-                temp.extend(list(x[i + 1:]))
+                temp.extend(list(x[i + 1 :]))
                 y = np.array(temp)
             direct_results[i] = self.func(y)
         assert_allclose(direct_results, results)
@@ -535,7 +558,7 @@ class TestBootstrap(TestCase):
                 z = y[:-1]
             else:
                 temp = list(y[:i])
-                temp.extend(list(y[i + 1:]))
+                temp.extend(list(y[i + 1 :]))
                 z = np.array(temp)
             direct_results[i] = self.func(z)
         assert_allclose(direct_results, results)
@@ -560,8 +583,7 @@ class TestBootstrap(TestCase):
 
         rng_seed_obs = 42
         rs = np.random.RandomState(rng_seed_obs)
-        observations = rs.multivariate_normal(mean=[8, 4], cov=np.identity(2),
-                                              size=20)
+        observations = rs.multivariate_normal(mean=[8, 4], cov=np.identity(2), size=20)
         B = 2000
         rng_seed = 123
         rs = np.random.RandomState(rng_seed)
@@ -573,10 +595,7 @@ class TestBootstrap(TestCase):
             return sample[1] / sample[0]
 
         arch_ci = arch_bs.conf_int(
-            func=func,
-            reps=B,
-            size=confidence_interval_size,
-            method='bca',
+            func=func, reps=B, size=confidence_interval_size, method="bca",
         )
 
         # # callable from R
@@ -608,7 +627,7 @@ class TestBootstrap(TestCase):
         bs = IIDBootstrap(self.x)
         bs.seed(23456)
 
-        ci_direct = bs.conf_int(self.func, reps=num_bootstrap, method='bca')
+        ci_direct = bs.conf_int(self.func, reps=num_bootstrap, method="bca")
         bs.reset()
         base, results = bs._base, bs._results
         p = np.zeros(2)
@@ -670,63 +689,79 @@ class TestBootstrap(TestCase):
 
     def test_str(self):
         bs = IIDBootstrap(self.y_series)
-        expected = 'IID Bootstrap(no. pos. inputs: 1, no. keyword inputs: 0)'
+        expected = "IID Bootstrap(no. pos. inputs: 1, no. keyword inputs: 0)"
         assert_equal(str(bs), expected)
-        expected = expected[:-1] + ', ID: ' + hex(id(bs)) + ')'
+        expected = expected[:-1] + ", ID: " + hex(id(bs)) + ")"
         assert_equal(bs.__repr__(), expected)
-        expected = '<strong>IID Bootstrap</strong>(' + \
-                   '<strong>no. pos. inputs</strong>: 1, ' + \
-                   '<strong>no. keyword inputs</strong>: 0, ' + \
-                   '<strong>ID</strong>: ' + hex(id(bs)) + ')'
+        expected = (
+            "<strong>IID Bootstrap</strong>("
+            + "<strong>no. pos. inputs</strong>: 1, "
+            + "<strong>no. keyword inputs</strong>: 0, "
+            + "<strong>ID</strong>: "
+            + hex(id(bs))
+            + ")"
+        )
         assert_equal(bs._repr_html(), expected)
 
         bs = StationaryBootstrap(10, self.y_series, self.x_df)
-        expected = 'Stationary Bootstrap(block size: 10, no. pos. ' \
-                   'inputs: 2, no. keyword inputs: 0)'
+        expected = (
+            "Stationary Bootstrap(block size: 10, no. pos. "
+            "inputs: 2, no. keyword inputs: 0)"
+        )
         assert_equal(str(bs), expected)
-        expected = expected[:-1] + ', ID: ' + hex(id(bs)) + ')'
+        expected = expected[:-1] + ", ID: " + hex(id(bs)) + ")"
         assert_equal(bs.__repr__(), expected)
 
-        bs = CircularBlockBootstrap(block_size=20, y=self.y_series,
-                                    x=self.x_df)
-        expected = 'Circular Block Bootstrap(block size: 20, no. pos. ' \
-                   'inputs: 0, no. keyword inputs: 2)'
+        bs = CircularBlockBootstrap(block_size=20, y=self.y_series, x=self.x_df)
+        expected = (
+            "Circular Block Bootstrap(block size: 20, no. pos. "
+            "inputs: 0, no. keyword inputs: 2)"
+        )
         assert_equal(str(bs), expected)
-        expected = expected[:-1] + ', ID: ' + hex(id(bs)) + ')'
+        expected = expected[:-1] + ", ID: " + hex(id(bs)) + ")"
         assert_equal(bs.__repr__(), expected)
-        expected = '<strong>Circular Block Bootstrap</strong>' + \
-                   '(<strong>block size</strong>: 20, ' \
-                   + '<strong>no. pos. inputs</strong>: 0, ' + \
-                   '<strong>no. keyword inputs</strong>: 2,' + \
-                   ' <strong>ID</strong>: ' + hex(id(bs)) + ')'
+        expected = (
+            "<strong>Circular Block Bootstrap</strong>"
+            + "(<strong>block size</strong>: 20, "
+            + "<strong>no. pos. inputs</strong>: 0, "
+            + "<strong>no. keyword inputs</strong>: 2,"
+            + " <strong>ID</strong>: "
+            + hex(id(bs))
+            + ")"
+        )
         assert_equal(bs._repr_html(), expected)
 
-        bs = MovingBlockBootstrap(block_size=20, y=self.y_series,
-                                  x=self.x_df)
-        expected = 'Moving Block Bootstrap(block size: 20, no. pos. ' \
-                   'inputs: 0, no. keyword inputs: 2)'
+        bs = MovingBlockBootstrap(block_size=20, y=self.y_series, x=self.x_df)
+        expected = (
+            "Moving Block Bootstrap(block size: 20, no. pos. "
+            "inputs: 0, no. keyword inputs: 2)"
+        )
         assert_equal(str(bs), expected)
-        expected = expected[:-1] + ', ID: ' + hex(id(bs)) + ')'
+        expected = expected[:-1] + ", ID: " + hex(id(bs)) + ")"
         assert_equal(bs.__repr__(), expected)
-        expected = '<strong>Moving Block Bootstrap</strong>' + \
-                   '(<strong>block size</strong>: 20, ' \
-                   + '<strong>no. pos. inputs</strong>: 0, ' + \
-                   '<strong>no. keyword inputs</strong>: 2,' + \
-                   ' <strong>ID</strong>: ' + hex(id(bs)) + ')'
+        expected = (
+            "<strong>Moving Block Bootstrap</strong>"
+            + "(<strong>block size</strong>: 20, "
+            + "<strong>no. pos. inputs</strong>: 0, "
+            + "<strong>no. keyword inputs</strong>: 2,"
+            + " <strong>ID</strong>: "
+            + hex(id(bs))
+            + ")"
+        )
         assert_equal(bs._repr_html(), expected)
 
     def test_uneven_sampling(self):
         bs = MovingBlockBootstrap(block_size=31, y=self.y_series, x=self.x_df)
         for _, kw in bs.bootstrap(10):
-            assert kw['y'].shape == self.y_series.shape
-            assert kw['x'].shape == self.x_df.shape
+            assert kw["y"].shape == self.y_series.shape
+            assert kw["x"].shape == self.x_df.shape
         bs = CircularBlockBootstrap(block_size=31, y=self.y_series, x=self.x_df)
         for _, kw in bs.bootstrap(10):
-            assert kw['y'].shape == self.y_series.shape
-            assert kw['x'].shape == self.x_df.shape
+            assert kw["y"].shape == self.y_series.shape
+            assert kw["x"].shape == self.x_df.shape
 
-    @pytest.mark.skipif(not HAS_EXTENSION, reason='Extension not built.')
-    @pytest.mark.filterwarnings('ignore::arch.compat.numba.PerformanceWarning')
+    @pytest.mark.skipif(not HAS_EXTENSION, reason="Extension not built.")
+    @pytest.mark.filterwarnings("ignore::arch.compat.numba.PerformanceWarning")
     def test_samplers(self):
         """
         Test all three implementations are identical
@@ -790,8 +825,8 @@ def test_unequal_bs():
     variance = bs.var(mean_diff)
     assert variance > 0
 
-    with pytest.raises(ValueError, match='BCa cannot be applied'):
-        bs.conf_int(mean_diff, method='bca')
+    with pytest.raises(ValueError, match="BCa cannot be applied"):
+        bs.conf_int(mean_diff, method="bca")
 
 
 def test_unequal_bs_kwargs():
@@ -845,10 +880,11 @@ def test_unequal_reset():
 def test_studentization_error():
     def f(x):
         return np.array([x.mean(), 3])
+
     x = np.random.standard_normal(100)
     bs = IIDBootstrap(x)
     with pytest.raises(StudentizationError):
-        bs.conf_int(f, 100, method='studentized')
+        bs.conf_int(f, 100, method="studentized")
 
 
 def test_list_input():

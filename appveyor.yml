@@ -26,7 +26,7 @@ build_script:
   - cmd: conda install numpy cython pytest pandas scipy patsy statsmodels matplotlib numba nbconvert nbformat pip pyyaml setuptools pyqt pyparsing --quiet
   - cmd: python -m pip install --upgrade pip
   - cmd: pip install pytest-xdist!=1.30 property_cached
-  - cmd: python setup.py develop
+  - cmd: pip install -e .
 
 test_script:
-  - cmd: py.test -n 2 arch -m "(not slow)" --durations=25
+  - cmd: pytest -n 2 arch -m "(not slow)" --durations=25

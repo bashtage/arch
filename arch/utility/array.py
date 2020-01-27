@@ -7,13 +7,19 @@ from abc import ABCMeta
 import datetime as dt
 
 import numpy as np
-from pandas import (DataFrame, DatetimeIndex, NaT, Series, Timestamp,
-                    to_datetime)
+from pandas import DataFrame, DatetimeIndex, NaT, Series, Timestamp, to_datetime
 
 from arch.vendor import cached_property
 
-__all__ = ['ensure1d', 'parse_dataframe', 'DocStringInheritor',
-           'date_to_index', 'cutoff_to_index', 'ensure2d', 'AbstractDocStringInheritor']
+__all__ = [
+    "ensure1d",
+    "parse_dataframe",
+    "DocStringInheritor",
+    "date_to_index",
+    "cutoff_to_index",
+    "ensure2d",
+    "AbstractDocStringInheritor",
+]
 
 deprecation_doc = """
 {func} has been moved.  Please use {new_location}.{func}.
@@ -31,7 +37,7 @@ def ensure1d(x, name, series=False):
 
     if isinstance(x, DataFrame):
         if x.shape[1] != 1:
-            raise ValueError(name + ' must be squeezable to 1 dimension')
+            raise ValueError(name + " must be squeezable to 1 dimension")
         else:
             x = Series(x.iloc[:, 0], x.index)
             if not isinstance(x.name, str):
@@ -48,7 +54,7 @@ def ensure1d(x, name, series=False):
     elif x.ndim != 1:
         x = np.squeeze(x)
         if x.ndim != 1:
-            raise ValueError(name + ' must be squeezable to 1 dimension')
+            raise ValueError(name + " must be squeezable to 1 dimension")
 
     if series:
         return Series(x, name=name)
@@ -69,9 +75,9 @@ def ensure2d(x, name):
         elif x.ndim == 2:
             return x
         else:
-            raise ValueError('Variable ' + name + 'must be 2d or reshapable to 2d')
+            raise ValueError("Variable " + name + "must be 2d or reshapable to 2d")
     else:
-        raise TypeError('Variable ' + name + 'must be a Series, DataFrame or ndarray.')
+        raise TypeError("Variable " + name + "must be a Series, DataFrame or ndarray.")
 
 
 def parse_dataframe(x, name):
@@ -95,19 +101,21 @@ class DocStringInheritor(type):
     """
 
     def __new__(mcs, name, bases, clsdict):
-        if not ('__doc__' in clsdict and clsdict['__doc__']):
-            for mro_cls in (mro_cls for base in bases for mro_cls in
-                            base.mro()):
+        if not ("__doc__" in clsdict and clsdict["__doc__"]):
+            for mro_cls in (mro_cls for base in bases for mro_cls in base.mro()):
                 doc = mro_cls.__doc__
                 if doc:
-                    clsdict['__doc__'] = doc
+                    clsdict["__doc__"] = doc
                     break
         for attr, attribute in clsdict.items():
             if not attribute.__doc__:
-                for mro_cls in (mro_cls for base in bases for mro_cls in
-                                base.mro()
-                                if hasattr(mro_cls, attr)):
-                    doc = getattr(getattr(mro_cls, attr), '__doc__')
+                for mro_cls in (
+                    mro_cls
+                    for base in bases
+                    for mro_cls in base.mro()
+                    if hasattr(mro_cls, attr)
+                ):
+                    doc = getattr(getattr(mro_cls, attr), "__doc__")
                     if doc:
                         if isinstance(attribute, property):
 
@@ -115,16 +123,18 @@ class DocStringInheritor(type):
                                 attribute.func.__doc__ = doc
                                 clsdict[attr] = cached_property(attribute.func)
                             else:
-                                clsdict[attr] = property(attribute.fget,
-                                                         attribute.fset,
-                                                         attribute.fdel, doc)
+                                clsdict[attr] = property(
+                                    attribute.fget, attribute.fset, attribute.fdel, doc
+                                )
                         else:
                             attribute.__doc__ = doc
                         break
         return type.__new__(mcs, name, bases, clsdict)
 
 
-AbstractDocStringInheritor = type("AbstractDocStringInheritor", (ABCMeta, DocStringInheritor), {})
+AbstractDocStringInheritor = type(
+    "AbstractDocStringInheritor", (ABCMeta, DocStringInheritor), {}
+)
 
 
 def date_to_index(date, date_index):
@@ -148,28 +158,28 @@ def date_to_index(date, date_index):
     Assumes dates are increasing and unique.
     """
     if not is_datetime64_any_dtype(date_index):
-        raise ValueError('date_index must be a datetime64 array')
+        raise ValueError("date_index must be a datetime64 array")
 
     if not np.all((np.diff(date_index.values).astype(dtype=np.int64)) > 0):
-        raise ValueError('date_index is not monotonic and unique')
+        raise ValueError("date_index is not monotonic and unique")
     if not isinstance(date, (dt.datetime, np.datetime64, str)):
         raise ValueError("date must be a datetime, datetime64 or string")
     elif isinstance(date, Timestamp):
         if date_index.tzinfo is not None:
-            date = date.tz_convert('GMT').tz_localize(None)
+            date = date.tz_convert("GMT").tz_localize(None)
         date = date.to_datetime64()
     elif isinstance(date, dt.datetime):
         date = np.datetime64(date)
     elif isinstance(date, str):
         orig_date = date
         try:
-            date = np.datetime64(to_datetime(date, errors='coerce'))
+            date = np.datetime64(to_datetime(date, errors="coerce"))
         except (ValueError, TypeError):
-            raise ValueError('date:' + orig_date + ' cannot be parsed to a date.')
+            raise ValueError("date:" + orig_date + " cannot be parsed to a date.")
 
     if isinstance(date_index, DatetimeIndex):
         if date_index.tzinfo is not None:
-            date_index = date_index.tz_convert('GMT').tz_localize(None)
+            date_index = date_index.tz_convert("GMT").tz_localize(None)
 
     date_index = np.asarray(date_index)
 
@@ -230,11 +240,11 @@ def find_index(s, index):
     """
     if isinstance(index, (int, np.int, np.int64)):
         return index
-    date_index = to_datetime(index, errors='coerce')
+    date_index = to_datetime(index, errors="coerce")
 
     if date_index is NaT:
-        raise ValueError(index + ' cannot be converted to datetime')
+        raise ValueError(index + " cannot be converted to datetime")
     loc = np.argwhere(s.index == date_index).squeeze()
     if loc.size == 0:
-        raise ValueError('index not found')
+        raise ValueError("index not found")
     return loc

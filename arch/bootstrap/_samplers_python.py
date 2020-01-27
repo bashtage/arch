@@ -1,7 +1,11 @@
 from arch.compat.numba import jit
 
+from arch.typing import NDArray
 
-def stationary_bootstrap_sample_python(indices, u, p):
+
+def stationary_bootstrap_sample_python(
+    indices: NDArray, u: NDArray, p: float
+) -> NDArray:
     """
     Parameters
     -------

@@ -59,12 +59,12 @@ class build_ext(_build_ext):
         _build_ext.build_extensions(self)
 
 
-SETUP_REQUIREMENTS = {'numpy': '1.14', 'cython': '0.29'}
+SETUP_REQUIREMENTS = {'numpy': '1.14', 'cython': '0.29.14'}
 INSTALL_REQUIREMENTS = SETUP_REQUIREMENTS.copy()
-INSTALL_REQUIREMENTS.update({'scipy': '1.0',
-                             'pandas': '0.22',
+INSTALL_REQUIREMENTS.update({'scipy': '1.0.1',
+                             'pandas': '0.23',
                              'statsmodels': '0.9',
-                             'property_cached': '1.6.2'})
+                             'property_cached': '1.6.3'})
 
 cmdclass['build_ext'] = build_ext
 
