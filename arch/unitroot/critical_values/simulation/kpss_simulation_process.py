@@ -7,11 +7,11 @@ sio = StringIO()
 sio.write("from numpy import asarray\n\n")
 sio.write("kpss_critical_values = {}\n")
 
-c = pd.read_hdf('kpss_critical_values.h5', 'c')
-ct = pd.read_hdf('kpss_critical_values.h5', 'ct')
+c = pd.read_hdf("kpss_critical_values.h5", "c")
+ct = pd.read_hdf("kpss_critical_values.h5", "ct")
 
-data = {'c': c, 'ct': ct}
-for k in ('c', 'ct'):
+data = {"c": c, "ct": ct}
+for k in ("c", "ct"):
     v = data[k]
     n = v.shape[0]
     selected = np.zeros((n, 1), dtype=np.bool)
@@ -38,19 +38,18 @@ for k in ('c', 'ct'):
     critical_values = list(np.squeeze(v[selected].values))
     # Fix for first CV
     critical_values[0] = 0.0
-    sio.write(k + ' = (')
+    sio.write(k + " = (")
     count = 0
     for c, q in zip(critical_values, quantiles):
-        sio.write(
-            '(' + '{0:0.3f}'.format(q) + ', ' + '{0:0.4f}'.format(c) + ')')
+        sio.write("(" + "{0:0.3f}".format(q) + ", " + "{0:0.4f}".format(c) + ")")
         count += 1
         if count % 4 == 0:
-            sio.write(',\n    ' + ' ' * len(k))
+            sio.write(",\n    " + " " * len(k))
         else:
-            sio.write(', ')
+            sio.write(", ")
     sio.write(")\n")
     sio.write("kpss_critical_values['" + k + "'] = ")
-    sio.write('asarray(' + k + ')')
+    sio.write("asarray(" + k + ")")
     sio.write("\n")
 
 sio.seek(0)

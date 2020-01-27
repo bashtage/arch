@@ -10,9 +10,15 @@ import pytest
 
 from arch import doc
 from arch.univariate.base import implicit_constant
-from arch.utility.array import (DocStringInheritor, cutoff_to_index,
-                                date_to_index, ensure1d, ensure2d, find_index,
-                                parse_dataframe)
+from arch.utility.array import (
+    DocStringInheritor,
+    cutoff_to_index,
+    date_to_index,
+    ensure1d,
+    ensure2d,
+    find_index,
+    parse_dataframe,
+)
 
 
 class TestUtils(TestCase):
@@ -21,84 +27,84 @@ class TestUtils(TestCase):
         cls.rng = RandomState(12345)
 
     def test_ensure1d(self):
-        out = ensure1d(1.0, 'y')
+        out = ensure1d(1.0, "y")
         assert_equal(out, np.array([1.0]))
-        out = ensure1d(np.arange(5.0), 'y')
+        out = ensure1d(np.arange(5.0), "y")
         assert_equal(out, np.arange(5.0))
-        out = ensure1d(np.arange(5.0)[:, None], 'y')
+        out = ensure1d(np.arange(5.0)[:, None], "y")
         assert_equal(out, np.arange(5.0))
         in_array = np.reshape(np.arange(16.0), (4, 4))
         with pytest.raises(ValueError):
-            ensure1d(in_array, 'y')
+            ensure1d(in_array, "y")
 
         y = Series(np.arange(5.0))
-        ys = ensure1d(y, 'y')
+        ys = ensure1d(y, "y")
         assert isinstance(ys, np.ndarray)
-        ys = ensure1d(y, 'y', True)
+        ys = ensure1d(y, "y", True)
         assert isinstance(ys, Series)
         y = DataFrame(y)
-        ys = ensure1d(y, 'y')
+        ys = ensure1d(y, "y")
         assert isinstance(ys, np.ndarray)
-        ys = ensure1d(y, 'y', True)
+        ys = ensure1d(y, "y", True)
         assert isinstance(ys, Series)
         y.columns = [1]
-        ys = ensure1d(y, 'y', True)
+        ys = ensure1d(y, "y", True)
         assert isinstance(ys, Series)
-        assert ys.name == '1'
-        y = Series(np.arange(5.0), name='series')
-        ys = ensure1d(y, 'y')
+        assert ys.name == "1"
+        y = Series(np.arange(5.0), name="series")
+        ys = ensure1d(y, "y")
         assert isinstance(ys, np.ndarray)
-        ys = ensure1d(y, 'y', True)
+        ys = ensure1d(y, "y", True)
         assert isinstance(ys, Series)
         y = DataFrame(y)
-        ys = ensure1d(y, 'y')
+        ys = ensure1d(y, "y")
         assert isinstance(ys, np.ndarray)
-        ys = ensure1d(y, 'y', True)
+        ys = ensure1d(y, "y", True)
         assert isinstance(ys, Series)
         ys.name = 1
         ys = ensure1d(ys, None, True)
         assert isinstance(ys, Series)
-        assert ys.name == '1'
+        assert ys.name == "1"
         y = DataFrame(np.reshape(np.arange(10), (5, 2)))
         with pytest.raises(ValueError):
-            ensure1d(y, 'y')
+            ensure1d(y, "y")
 
     def test_ensure2d(self):
-        s = Series([1, 2, 3], name='x')
-        df = ensure2d(s, 'x')
+        s = Series([1, 2, 3], name="x")
+        df = ensure2d(s, "x")
         assert isinstance(df, DataFrame)
 
-        df2 = ensure2d(df, 'x')
+        df2 = ensure2d(df, "x")
         assert df is df2
 
-        npa = ensure2d(s.values, 'x')
+        npa = ensure2d(s.values, "x")
         assert isinstance(npa, np.ndarray)
         assert npa.ndim == 2
 
-        npa = ensure2d(np.array(1.0), 'x')
+        npa = ensure2d(np.array(1.0), "x")
         assert isinstance(npa, np.ndarray)
         assert npa.ndim == 2
 
         with pytest.raises(ValueError):
-            ensure2d(np.array([[[1]]]), 'x')
+            ensure2d(np.array([[[1]]]), "x")
         with pytest.raises(TypeError):
-            ensure2d([1], 'x')
+            ensure2d([1], "x")
 
     def test_parse_dataframe(self):
-        s = Series(np.arange(10.0), name='variable')
-        out = parse_dataframe(s, 'y')
+        s = Series(np.arange(10.0), name="variable")
+        out = parse_dataframe(s, "y")
         assert_equal(out[1], np.arange(10.0))
-        assert_equal(out[0], ['variable'])
+        assert_equal(out[0], ["variable"])
         df = DataFrame(s)
-        out = parse_dataframe(df, 'y')
+        out = parse_dataframe(df, "y")
         assert_equal(out[1], np.arange(10.0))
-        assert_equal(out[0], ['variable'])
-        out = parse_dataframe(np.arange(10.0), 'y')
+        assert_equal(out[0], ["variable"])
+        out = parse_dataframe(np.arange(10.0), "y")
         assert_equal(out[1], np.arange(10.0))
-        assert_equal(out[0], ['y'])
+        assert_equal(out[0], ["y"])
 
-        out = parse_dataframe(None, 'name')
-        assert out[0] == ['name']
+        out = parse_dataframe(None, "name")
+        assert out[0] == ["name"]
         assert isinstance(out[1], np.ndarray)
         assert out[1].shape == (0,)
 
@@ -117,6 +123,7 @@ class TestUtils(TestCase):
             """
             Docstring
             """
+
             pass
 
         class B(A):
@@ -125,7 +132,7 @@ class TestUtils(TestCase):
         assert_equal(B.__doc__, A.__doc__)
 
     def test_date_to_index(self):
-        dr = date_range('20000101', periods=3000, freq='W')
+        dr = date_range("20000101", periods=3000, freq="W")
         y = Series(np.arange(3000.0), index=dr)
         date_index = y.index
 
@@ -134,11 +141,11 @@ class TestUtils(TestCase):
         index = date_to_index(date_index[-1], date_index)
         assert_equal(index, date_index.shape[0] - 1)
 
-        index = date_to_index('2009-08-02', date_index)
+        index = date_to_index("2009-08-02", date_index)
         assert_equal(index, 500)
-        index = date_to_index('2009-08-04', date_index)
+        index = date_to_index("2009-08-04", date_index)
         assert_equal(index, 501)
-        index = date_to_index('2009-08-01', date_index)
+        index = date_to_index("2009-08-01", date_index)
         assert_equal(index, 500)
         index = date_to_index(dt.datetime(2009, 8, 1), date_index)
         assert_equal(index, 500)
@@ -149,7 +156,7 @@ class TestUtils(TestCase):
         num_index = z.index
         with pytest.raises(ValueError):
             date_to_index(dt.datetime(2009, 8, 1), num_index)
-        idx = date_range('1999-12-31', periods=3)
+        idx = date_range("1999-12-31", periods=3)
 
         df = DataFrame([1, 2, 3], index=idx[::-1])
         with pytest.raises(ValueError):
@@ -160,21 +167,21 @@ class TestUtils(TestCase):
             date_to_index(idx[0], df.index)
 
         with pytest.raises(ValueError):
-            date_to_index('NaT', idx)
+            date_to_index("NaT", idx)
 
         #  check whether this also works for a localized datetimeindex
-        date_index = date_range('20000101', periods=3000, freq='W', tz='Europe/Berlin')
+        date_index = date_range("20000101", periods=3000, freq="W", tz="Europe/Berlin")
         index = date_to_index(date_index[0], date_index)
         assert_equal(index, 0)
 
     def test_date_to_index_timestamp(self):
-        dr = date_range('20000101', periods=3000, freq='W')
+        dr = date_range("20000101", periods=3000, freq="W")
         y = Series(np.arange(3000.0), index=dr)
         date_index = y.index
         date = y.index[1000]
         date_pydt = date.to_pydatetime()
         date_npdt = date.to_datetime64()
-        date_str = date_pydt.strftime('%Y-%m-%d')
+        date_str = date_pydt.strftime("%Y-%m-%d")
 
         index = date_to_index(date, date_index)
         index_pydt = date_to_index(date_pydt, date_index)
@@ -186,14 +193,14 @@ class TestUtils(TestCase):
         assert_equal(index, index_str)
 
     def test_(self):
-        dr = date_range('20000101', periods=3000, freq='W')
+        dr = date_range("20000101", periods=3000, freq="W")
         y = Series(np.arange(3000.0), index=dr)
         date_index = y.index
 
-        date = date_index[1000] + Timedelta(1, 'D')
+        date = date_index[1000] + Timedelta(1, "D")
         date_pydt = date.to_pydatetime()
         date_npdt = date.to_datetime64()
-        date_str = date_pydt.strftime('%Y-%m-%d')
+        date_str = date_pydt.strftime("%Y-%m-%d")
         index = date_to_index(date, date_index)
         index_pydt = date_to_index(date_pydt, date_index)
         index_npdt = date_to_index(date_npdt, date_index)
@@ -203,13 +210,13 @@ class TestUtils(TestCase):
         assert_equal(index, index_pydt)
         assert_equal(index, index_str)
 
-        date = date_index[0] - Timedelta(1, 'D')
+        date = date_index[0] - Timedelta(1, "D")
         index = date_to_index(date, date_index)
         assert_equal(index, 0)
 
         date_pydt = date.to_pydatetime()
         date_npdt = date.to_datetime64()
-        date_str = date_pydt.strftime('%Y-%m-%d')
+        date_str = date_pydt.strftime("%Y-%m-%d")
         index_pydt = date_to_index(date_pydt, date_index)
         index_npdt = date_to_index(date_npdt, date_index)
         index_str = date_to_index(date_str, date_index)
@@ -218,7 +225,7 @@ class TestUtils(TestCase):
         assert_equal(index, index_str)
 
     def test_cutoff_to_index(self):
-        dr = date_range('20000101', periods=3000, freq='W')
+        dr = date_range("20000101", periods=3000, freq="W")
         y = Series(np.arange(3000.0), index=dr)
         date_index = y.index
         assert cutoff_to_index(1000, date_index, 0) == 1000
@@ -229,10 +236,10 @@ class TestUtils(TestCase):
         assert cutoff_to_index(None, date_index, 1000) == 1000
 
     def test_find_index(self):
-        index = date_range('2000-01-01', periods=5000)
-        series = Series(np.arange(len(index)), index=index, name='test')
+        index = date_range("2000-01-01", periods=5000)
+        series = Series(np.arange(len(index)), index=index, name="test")
         df = DataFrame(series)
-        assert_equal(find_index(series, '2000-01-01'), 0)
+        assert_equal(find_index(series, "2000-01-01"), 0)
         assert_equal(find_index(series, series.index[0]), 0)
         assert_equal(find_index(series, series.index[3000]), 3000)
         assert_equal(find_index(series, series.index[3000].to_pydatetime()), 3000)
@@ -240,26 +247,26 @@ class TestUtils(TestCase):
         found_loc = find_index(series, npy_date)
         assert_equal(found_loc, 3000)
         with pytest.raises(ValueError):
-            find_index(series, 'bad-date')
+            find_index(series, "bad-date")
         with pytest.raises(ValueError):
-            find_index(series, '1900-01-01')
+            find_index(series, "1900-01-01")
 
-        assert_equal(find_index(df, '2000-01-01'), 0)
+        assert_equal(find_index(df, "2000-01-01"), 0)
         assert_equal(find_index(df, df.index[0]), 0)
         assert_equal(find_index(df, df.index[3000]), 3000)
         assert_equal(find_index(df, df.index[3000].to_pydatetime()), 3000)
         found_loc = find_index(df, np.datetime64(df.index[3000].to_pydatetime()))
         assert_equal(found_loc, 3000)
         with pytest.raises(ValueError):
-            find_index(df, 'bad-date')
+            find_index(df, "bad-date")
         with pytest.raises(ValueError):
-            find_index(df, '1900-01-01')
+            find_index(df, "1900-01-01")
 
         idx = find_index(df, 1)
         assert idx == 1
 
 
-@pytest.mark.skipif(os.name != 'nt', reason='XVFB is broken on travis')
+@pytest.mark.skipif(os.name != "nt", reason="XVFB is broken on travis")
 class TestDoc(TestCase):
     def test_doc(self):
         doc()

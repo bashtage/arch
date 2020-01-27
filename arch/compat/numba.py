@@ -5,15 +5,16 @@ class PerformanceWarning(UserWarning):
     pass
 
 
-performance_warning = '''
+performance_warning = """
 numba is not available, and this function is being executed without JIT
 compilation. Either install numba or reinstalling after installing Cython
-is strongly recommended.'''
+is strongly recommended."""
 
 try:
     from numba import jit
 
     try:
+
         def f(x, y):
             return x + y
 
@@ -23,12 +24,15 @@ try:
     except KeyError:
         jit = functools.partial(jit, nopython=True)
 except ImportError:
+
     def jit(func, *args, **kwargs):
         def wrapper(*args, **kwargs):
             import warnings
+
             warnings.warn(performance_warning, PerformanceWarning)
             return func(*args, **kwargs)
 
         return wrapper
 
-__all__ = ['jit', 'PerformanceWarning']
+
+__all__ = ["jit", "PerformanceWarning"]

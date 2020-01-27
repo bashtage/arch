@@ -10,10 +10,18 @@ from arch.univariate import arch_model
 from arch.univariate.distribution import Normal, StudentsT
 from arch.univariate.mean import ConstantMean
 from arch.univariate.recursions import figarch_weights
-from arch.univariate.volatility import (EGARCH, FIGARCH, GARCH, HARCH,
-                                        BootstrapRng, ConstantVariance,
-                                        EWMAVariance, FixedVariance,
-                                        MIDASHyperbolic, RiskMetrics2006)
+from arch.univariate.volatility import (
+    EGARCH,
+    FIGARCH,
+    GARCH,
+    HARCH,
+    BootstrapRng,
+    ConstantVariance,
+    EWMAVariance,
+    FixedVariance,
+    MIDASHyperbolic,
+    RiskMetrics2006,
+)
 
 try:
     from arch.univariate.recursions import garch_recursion
@@ -51,7 +59,9 @@ class PreservedState(object):
 preserved_state = PreservedState
 
 
-def _simple_direct_gjrgarch_forecaster(resids, params, p, o, q, backcast, var_bounds, horizon):
+def _simple_direct_gjrgarch_forecaster(
+    resids, params, p, o, q, backcast, var_bounds, horizon
+):
     """
     Simple GARCH forecasting for use when testing model-based forecasts
 
@@ -75,8 +85,18 @@ def _simple_direct_gjrgarch_forecaster(resids, params, p, o, q, backcast, var_bo
     t = resids.shape[0]
     _resids = resids
     _sigma2 = np.empty(t)
-    garch_recursion(params, resids ** 2.0, np.sign(resids), _sigma2,
-                    p, o, q, t, backcast, var_bounds)
+    garch_recursion(
+        params,
+        resids ** 2.0,
+        np.sign(resids),
+        _sigma2,
+        p,
+        o,
+        q,
+        t,
+        backcast,
+        var_bounds,
+    )
     resids = np.empty((t, m + horizon))
     asymresids = resids.copy()
     sigma2 = np.empty((t, m + horizon))
@@ -86,9 +106,11 @@ def _simple_direct_gjrgarch_forecaster(resids, params, p, o, q, backcast, var_bo
     sigma2[:, :m] = backcast
 
     for i in range(m):
-        resids[m - 1 - i:, i] = _resids[:(t - (m - 1) + i)]
-        asymresids[m - 1 - i:, i] = _resids[:(t - (m - 1) + i)] * (_resids[:(t - (m - 1) + i)] < 0)
-        sigma2[m - 1 - i:, i] = _sigma2[:(t - (m - 1) + i)]
+        resids[m - 1 - i :, i] = _resids[: (t - (m - 1) + i)]
+        asymresids[m - 1 - i :, i] = _resids[: (t - (m - 1) + i)] * (
+            _resids[: (t - (m - 1) + i)] < 0
+        )
+        sigma2[m - 1 - i :, i] = _sigma2[: (t - (m - 1) + i)]
 
     for i in range(m, m + horizon):
         sigma2[:, i] = params[0]
@@ -142,7 +164,9 @@ class TestVarianceForecasts(TestCase):
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
 
-        forecast = vol.forecast(params, self.resid, backcast, var_bounds, start=100, horizon=3)
+        forecast = vol.forecast(
+            params, self.resid, backcast, var_bounds, start=100, horizon=3
+        )
         assert forecast.forecasts.shape == (1000, 3)
         assert np.all(np.isnan(forecast.forecasts[:100]))
         assert np.all(forecast.forecasts[100:] == params[0])
@@ -150,8 +174,16 @@ class TestVarianceForecasts(TestCase):
         assert forecast.shocks is None
 
         with pytest.raises(ValueError):
-            vol.forecast(params, self.resid, backcast, var_bounds, horizon=5,
-                         method='bootstrap', start=0, simulations=2000)
+            vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=5,
+                method="bootstrap",
+                start=0,
+                simulations=2000,
+            )
 
     def test_arch_1_forecast(self):
         t = self.t
@@ -187,7 +219,9 @@ class TestVarianceForecasts(TestCase):
         expected.shape = (1000, 1)
         assert_allclose(forecast.forecasts, expected)
 
-        forecast = vol.forecast(params, self.resid, backcast, var_bounds, start=0, horizon=3)
+        forecast = vol.forecast(
+            params, self.resid, backcast, var_bounds, start=0, horizon=3
+        )
         assert forecast.forecasts.shape == (1000, 3)
         assert np.all(np.isfinite(forecast.forecasts))
         assert forecast.forecast_paths is None
@@ -198,7 +232,9 @@ class TestVarianceForecasts(TestCase):
             expected[:, i] = params[0] + params[1] * expected[:, i - 1]
         assert_allclose(forecast.forecasts, expected)
 
-        forecast = vol.forecast(params, self.resid, backcast, var_bounds, start=100, horizon=3)
+        forecast = vol.forecast(
+            params, self.resid, backcast, var_bounds, start=100, horizon=3
+        )
         expected[:100] = np.nan
         assert_allclose(forecast.forecasts, expected)
 
@@ -211,21 +247,35 @@ class TestVarianceForecasts(TestCase):
         var_bounds = vol.variance_bounds(self.resid)
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=1, method='simulation', rng=rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=1,
+                method="simulation",
+                rng=rng,
+            )
         assert forecast.forecasts.shape == (1000, 1)
         assert forecast.forecast_paths.shape == (1000, 1000, 1)
         assert forecast.shocks.shape == (1000, 1000, 1)
         assert np.all(np.isnan(forecast.forecasts[:-1]))
         assert np.all(np.isnan(forecast.forecast_paths[:-1]))
-        expected = (params[0] + params[1] * self.resid[-1] ** 2.0)
+        expected = params[0] + params[1] * self.resid[-1] ** 2.0
         assert_allclose(forecast.forecasts[-1], expected)
         assert_allclose(forecast.forecast_paths[-1], expected * np.ones((1000, 1)))
         assert_allclose(forecast.shocks[-1], np.sqrt(expected) * rng((1000, 1)))
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=5, method='simulation', rng=rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=5,
+                method="simulation",
+                rng=rng,
+            )
 
         paths = np.zeros((1000, 5))
         paths[:, 0] = expected
@@ -247,9 +297,17 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecast.shocks[-1], shocks)
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=5, start=100, method='simulation',
-                                    simulations=2000, rng=rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=5,
+                start=100,
+                method="simulation",
+                simulations=2000,
+                rng=rng,
+            )
 
         paths = np.zeros((1000, 2000, 5))
         paths.fill(np.nan)
@@ -274,9 +332,15 @@ class TestVarianceForecasts(TestCase):
         var_bounds = vol.variance_bounds(self.resid)
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast,
-                                    var_bounds, horizon=5, method='bootstrap',
-                                    random_state=self.rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=5,
+                method="bootstrap",
+                random_state=self.rng,
+            )
         sigma2 = np.zeros(1000)
         sigma2[0] = params[0] + params[1] * backcast
         for i in range(1, 1000):
@@ -304,9 +368,17 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecast.shocks[-1], shocks)
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=5, method='bootstrap', start=333,
-                                    simulations=2000, random_state=self.rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=5,
+                method="bootstrap",
+                start=333,
+                simulations=2000,
+                random_state=self.rng,
+            )
 
         paths = np.zeros((1000, 2000, 5))
         paths.fill(np.nan)
@@ -331,10 +403,12 @@ class TestVarianceForecasts(TestCase):
         params = np.array([10.0, 0.4, 0.3])
         backcast = vol.backcast(self.resid)
         var_bounds = vol.variance_bounds(self.resid)
-        forecast = vol.forecast(params, self.resid, backcast, var_bounds, horizon=10,
-                                start=0)
-        expected = _simple_direct_gjrgarch_forecaster(self.resid, params, 2, 0, 0,
-                                                      backcast, var_bounds, 10)
+        forecast = vol.forecast(
+            params, self.resid, backcast, var_bounds, horizon=10, start=0
+        )
+        expected = _simple_direct_gjrgarch_forecaster(
+            self.resid, params, 2, 0, 0, backcast, var_bounds, 10
+        )
         assert_allclose(forecast.forecasts, expected)
 
         assert forecast.forecast_paths is None
@@ -345,10 +419,12 @@ class TestVarianceForecasts(TestCase):
         params = np.array([10.0, 0.1, 0.85])
         backcast = vol.backcast(self.resid)
         var_bounds = vol.variance_bounds(self.resid)
-        forecast = vol.forecast(params, self.resid, backcast, var_bounds, horizon=10,
-                                start=0)
-        expected = _simple_direct_gjrgarch_forecaster(self.resid, params, 1, 0, 1,
-                                                      backcast, var_bounds, 10)
+        forecast = vol.forecast(
+            params, self.resid, backcast, var_bounds, horizon=10, start=0
+        )
+        expected = _simple_direct_gjrgarch_forecaster(
+            self.resid, params, 1, 0, 1, backcast, var_bounds, 10
+        )
         assert_allclose(forecast.forecasts, expected)
 
         assert forecast.forecast_paths is None
@@ -359,10 +435,12 @@ class TestVarianceForecasts(TestCase):
         params = np.array([10.0, 0.05, 0.1, 0.85])
         backcast = vol.backcast(self.resid)
         var_bounds = vol.variance_bounds(self.resid)
-        forecast = vol.forecast(params, self.resid, backcast, var_bounds, horizon=10,
-                                start=0)
-        expected = _simple_direct_gjrgarch_forecaster(self.resid, params, 1, 1, 1,
-                                                      backcast, var_bounds, 10)
+        forecast = vol.forecast(
+            params, self.resid, backcast, var_bounds, horizon=10, start=0
+        )
+        expected = _simple_direct_gjrgarch_forecaster(
+            self.resid, params, 1, 1, 1, backcast, var_bounds, 10
+        )
         assert_allclose(forecast.forecasts, expected)
 
         assert forecast.forecast_paths is None
@@ -373,10 +451,12 @@ class TestVarianceForecasts(TestCase):
         params = np.array([10.0, 0.05, 0.1, 0.85])
         backcast = vol.backcast(self.resid)
         var_bounds = vol.variance_bounds(self.resid)
-        forecast = vol.forecast(params, self.resid, backcast, var_bounds, horizon=10,
-                                start=0)
-        expected = _simple_direct_gjrgarch_forecaster(self.resid, params, 2, 0, 1,
-                                                      backcast, var_bounds, 10)
+        forecast = vol.forecast(
+            params, self.resid, backcast, var_bounds, horizon=10, start=0
+        )
+        expected = _simple_direct_gjrgarch_forecaster(
+            self.resid, params, 2, 0, 1, backcast, var_bounds, 10
+        )
         assert_allclose(forecast.forecasts, expected)
 
         assert forecast.forecast_paths is None
@@ -387,10 +467,12 @@ class TestVarianceForecasts(TestCase):
         params = np.array([10.0, 0.1, 0.55, 0.3])
         backcast = vol.backcast(self.resid)
         var_bounds = vol.variance_bounds(self.resid)
-        forecast = vol.forecast(params, self.resid, backcast, var_bounds, horizon=10,
-                                start=0)
-        expected = _simple_direct_gjrgarch_forecaster(self.resid, params, 1, 0, 2,
-                                                      backcast, var_bounds, 10)
+        forecast = vol.forecast(
+            params, self.resid, backcast, var_bounds, horizon=10, start=0
+        )
+        expected = _simple_direct_gjrgarch_forecaster(
+            self.resid, params, 1, 0, 2, backcast, var_bounds, 10
+        )
         assert_allclose(forecast.forecasts, expected)
 
         assert forecast.forecast_paths is None
@@ -401,10 +483,12 @@ class TestVarianceForecasts(TestCase):
         params = np.array([10.0, 0.1, 0.05, 0.4, 0.3])
         backcast = vol.backcast(self.resid)
         var_bounds = vol.variance_bounds(self.resid)
-        forecast = vol.forecast(params, self.resid, backcast, var_bounds, horizon=10,
-                                start=0)
-        expected = _simple_direct_gjrgarch_forecaster(self.resid, params, 2, 0, 2,
-                                                      backcast, var_bounds, 10)
+        forecast = vol.forecast(
+            params, self.resid, backcast, var_bounds, horizon=10, start=0
+        )
+        expected = _simple_direct_gjrgarch_forecaster(
+            self.resid, params, 2, 0, 2, backcast, var_bounds, 10
+        )
         assert_allclose(forecast.forecasts, expected)
 
         assert forecast.forecast_paths is None
@@ -415,15 +499,17 @@ class TestVarianceForecasts(TestCase):
         params = np.array([10.0, 0.4, 0.3, 0.2])
         backcast = vol.backcast(self.resid)
         var_bounds = vol.variance_bounds(self.resid)
-        forecast = vol.forecast(params, self.resid, backcast, var_bounds, horizon=10,
-                                start=0)
+        forecast = vol.forecast(
+            params, self.resid, backcast, var_bounds, horizon=10, start=0
+        )
         trans_params = np.zeros(23)
         trans_params[0] = params[0]
         trans_params[1:2] += params[1]
         trans_params[1:6] += params[2] / 5
         trans_params[1:23] += params[3] / 22
-        expected = _simple_direct_gjrgarch_forecaster(self.resid, trans_params, 22, 0, 0,
-                                                      backcast, var_bounds, 10)
+        expected = _simple_direct_gjrgarch_forecaster(
+            self.resid, trans_params, 22, 0, 0, backcast, var_bounds, 10
+        )
         assert_allclose(forecast.forecasts, expected)
 
         assert forecast.forecast_paths is None
@@ -436,7 +522,9 @@ class TestVarianceForecasts(TestCase):
         backcast = vol.backcast(self.resid)
         var_bounds = vol.variance_bounds(self.resid, power=1.0)
 
-        forecast = vol.forecast(params, self.resid, backcast, var_bounds, horizon=1, start=0)
+        forecast = vol.forecast(
+            params, self.resid, backcast, var_bounds, horizon=1, start=0
+        )
         sigma = np.zeros((t + 1, 1))
         sigma[0] = params[0] + (params[1] + 0.5 * params[2] + params[3]) * backcast
 
@@ -467,10 +555,19 @@ class TestVarianceForecasts(TestCase):
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids, power=1.0)
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=10, start=0, rng=rng, method='simulation')
-        one_step = vol.forecast(params, self.resid, backcast, var_bounds, horizon=1,
-                                start=0)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=0,
+                rng=rng,
+                method="simulation",
+            )
+        one_step = vol.forecast(
+            params, self.resid, backcast, var_bounds, horizon=1, start=0
+        )
 
         paths = np.zeros((1000, 10))
         shocks = np.zeros((1000, 10))
@@ -482,10 +579,12 @@ class TestVarianceForecasts(TestCase):
             for i in range(1, 10):
                 abs_err = np.abs(shocks[:, i - 1])
                 err_neg = shocks[:, i - 1] < 0
-                sqrt_path = (params[0] +
-                             params[1] * abs_err +
-                             params[2] * abs_err * err_neg +
-                             params[3] * sqrt_path)
+                sqrt_path = (
+                    params[0]
+                    + params[1] * abs_err
+                    + params[2] * abs_err * err_neg
+                    + params[3] * sqrt_path
+                )
                 paths[:, i] = sqrt_path ** 2
                 shocks[:, i] = sqrt_path * std_shocks[:, i]
             assert_allclose(paths.mean(0), forecast.forecasts[j])
@@ -504,14 +603,23 @@ class TestVarianceForecasts(TestCase):
         sigma2 = np.zeros(t)
         vol.compute_variance(params, resids, sigma2, backcast, var_bounds)
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=10, start=100, rng=rng, method='bootstrap',
-                                    random_state=self.rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=100,
+                rng=rng,
+                method="bootstrap",
+                random_state=self.rng,
+            )
 
         std_resids = resids / np.sqrt(sigma2)
 
-        one_step = vol.forecast(params, self.resid, backcast, var_bounds, horizon=1,
-                                start=100)
+        one_step = vol.forecast(
+            params, self.resid, backcast, var_bounds, horizon=1, start=100
+        )
         paths = np.zeros((1000, 10))
         shocks = np.zeros((1000, 10))
         for j in range(100, t):
@@ -525,10 +633,12 @@ class TestVarianceForecasts(TestCase):
             for i in range(1, 10):
                 abs_err = np.abs(shocks[:, i - 1])
                 err_neg = shocks[:, i - 1] < 0
-                sqrt_path = (params[0] +
-                             params[1] * abs_err +
-                             params[2] * abs_err * err_neg +
-                             params[3] * sqrt_path)
+                sqrt_path = (
+                    params[0]
+                    + params[1] * abs_err
+                    + params[2] * abs_err * err_neg
+                    + params[3] * sqrt_path
+                )
                 paths[:, i] = sqrt_path ** 2
                 shocks[:, i] = sqrt_path * std_shocks[:, i]
             assert_allclose(paths.mean(0), forecast.forecasts[j])
@@ -536,10 +646,19 @@ class TestVarianceForecasts(TestCase):
             assert_allclose(shocks, forecast.shocks[j])
 
         with pytest.raises(ValueError):
-            vol.forecast(params, self.resid, backcast, var_bounds, horizon=2, start=20,
-                         rng=rng, method='bootstrap', random_state=self.rng)
+            vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=2,
+                start=20,
+                rng=rng,
+                method="bootstrap",
+                random_state=self.rng,
+            )
         with pytest.raises(ValueError):
-            vol.forecast(params, self.resid, backcast, var_bounds, method='unknown')
+            vol.forecast(params, self.resid, backcast, var_bounds, method="unknown")
 
     def test_harch_forecast_simulation(self):
         t = self.t
@@ -551,13 +670,21 @@ class TestVarianceForecasts(TestCase):
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, resids, backcast, var_bounds,
-                                    horizon=10, start=0, rng=rng, method='simulation')
+            forecast = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=0,
+                rng=rng,
+                method="simulation",
+            )
 
         resids2 = np.zeros((t, 22 + 10))
         resids2.fill(backcast)
         for i in range(22):
-            resids2[21 - i:, i] = resids[:(t - 21 + i)] ** 2.0
+            resids2[21 - i :, i] = resids[: (t - 21 + i)] ** 2.0
         paths = np.zeros((t, 1000, 10))
         shocks = np.zeros((t, 1000, 10))
         const = 3.0
@@ -568,9 +695,9 @@ class TestVarianceForecasts(TestCase):
         for i in range(t):
             std_shocks = rng((1000, 10))
             temp = np.empty((1000, 32))
-            temp[:, :22] = resids2[i:i + 1, :22]
+            temp[:, :22] = resids2[i : i + 1, :22]
             for j in range(10):
-                paths[i, :, j] = const + temp[:, j:22 + j].dot(arch[::-1])
+                paths[i, :, j] = const + temp[:, j : 22 + j].dot(arch[::-1])
                 shocks[i, :, j] = std_shocks[:, j] * np.sqrt(paths[i, :, j])
                 temp[:, 22 + j] = shocks[i, :, j] ** 2.0
 
@@ -592,15 +719,23 @@ class TestVarianceForecasts(TestCase):
         sigma2 = np.empty_like(resids)
         vol.compute_variance(params, resids, sigma2, backcast, var_bounds)
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=10, start=100, rng=rng, method='bootstrap',
-                                    random_state=self.rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=100,
+                rng=rng,
+                method="bootstrap",
+                random_state=self.rng,
+            )
 
         std_resid = resids / np.sqrt(sigma2)
         resids2 = np.zeros((t, 22 + 10))
         resids2.fill(backcast)
         for i in range(22):
-            resids2[21 - i:, i] = resids[:(t - 21 + i)] ** 2.0
+            resids2[21 - i :, i] = resids[: (t - 21 + i)] ** 2.0
         paths = np.zeros((t, 1000, 10))
         paths.fill(np.nan)
         shocks = np.zeros((t, 1000, 10))
@@ -612,13 +747,13 @@ class TestVarianceForecasts(TestCase):
         arch[:22] += 0.2 / 22
         for i in range(100, t):
             locs = self.rng.random_sample((1000, 10))
-            locs *= (i + 1)
+            locs *= i + 1
             int_locs = np.floor(locs).astype(np.int64)
             std_shocks = std_resid[int_locs]
             temp = np.empty((1000, 32))
-            temp[:, :22] = resids2[i:i + 1, :22]
+            temp[:, :22] = resids2[i : i + 1, :22]
             for j in range(10):
-                paths[i, :, j] = const + temp[:, j:22 + j].dot(arch[::-1])
+                paths[i, :, j] = const + temp[:, j : 22 + j].dot(arch[::-1])
                 shocks[i, :, j] = std_shocks[:, j] * np.sqrt(paths[i, :, j])
                 temp[:, 22 + j] = shocks[i, :, j] ** 2.0
 
@@ -638,7 +773,9 @@ class TestVarianceForecasts(TestCase):
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
 
-        forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=0)
+        forecast = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=1, start=0
+        )
 
         _resids = np.array(resids.tolist() + [0])
         _sigma2 = np.empty_like(_resids)
@@ -659,8 +796,16 @@ class TestVarianceForecasts(TestCase):
         assert forecast.shocks is None
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=5, start=0,
-                                    method='simulation', rng=rng)
+            forecast = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=5,
+                start=0,
+                method="simulation",
+                rng=rng,
+            )
         paths = np.empty((t, 1000, 5))
         shocks = np.empty((t, 1000, 5))
         sqrt2pi = np.sqrt(2 / np.pi)
@@ -668,10 +813,12 @@ class TestVarianceForecasts(TestCase):
             std_shocks = rng((1000, 5))
             paths[i, :, 0] = np.log(one_step[i])
             for j in range(1, 5):
-                paths[i, :, j] = params[0] + \
-                                 params[1] * (np.abs(std_shocks[:, j - 1]) - sqrt2pi) + \
-                                 params[2] * std_shocks[:, j - 1] + \
-                                 params[3] * paths[i, :, j - 1]
+                paths[i, :, j] = (
+                    params[0]
+                    + params[1] * (np.abs(std_shocks[:, j - 1]) - sqrt2pi)
+                    + params[2] * std_shocks[:, j - 1]
+                    + params[3] * paths[i, :, j - 1]
+                )
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -679,8 +826,16 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecast.shocks, shocks)
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=5,
-                                    start=100, method='bootstrap', random_state=self.rng)
+            forecast = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=5,
+                start=100,
+                method="bootstrap",
+                random_state=self.rng,
+            )
 
         std_resids = resids / np.sqrt(sigma2)
         paths = np.empty((t, 1000, 5))
@@ -694,10 +849,12 @@ class TestVarianceForecasts(TestCase):
             std_shocks = std_resids[int_locs]
             paths[i, :, 0] = np.log(one_step[i])
             for j in range(1, 5):
-                paths[i, :, j] = params[0] + \
-                                 params[1] * (np.abs(std_shocks[:, j - 1]) - sqrt2pi) + \
-                                 params[2] * std_shocks[:, j - 1] + \
-                                 params[3] * paths[i, :, j - 1]
+                paths[i, :, j] = (
+                    params[0]
+                    + params[1] * (np.abs(std_shocks[:, j - 1]) - sqrt2pi)
+                    + params[2] * std_shocks[:, j - 1]
+                    + params[3] * paths[i, :, j - 1]
+                )
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -716,7 +873,9 @@ class TestVarianceForecasts(TestCase):
         resids = self.resid
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
-        forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=0)
+        forecast = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=1, start=0
+        )
 
         _resids = np.array(resids.tolist() + [0])
         _sigma2 = np.empty_like(_resids)
@@ -737,8 +896,16 @@ class TestVarianceForecasts(TestCase):
         assert forecast.shocks is None
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=5, start=0,
-                                    method='simulation', rng=rng)
+            forecast = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=5,
+                start=0,
+                method="simulation",
+                rng=rng,
+            )
         paths = np.empty((t, 1000, 5))
         shocks = np.empty((t, 1000, 5))
         sqrt2pi = np.sqrt(2 / np.pi)
@@ -746,8 +913,11 @@ class TestVarianceForecasts(TestCase):
             std_shocks = rng((1000, 5))
             paths[i, :, 0] = np.log(one_step[i])
             for j in range(1, 5):
-                paths[i, :, j] = params[0] + params[1] * (np.abs(std_shocks[:, j - 1]) - sqrt2pi) \
-                                 + params[2] * paths[i, :, j - 1]
+                paths[i, :, j] = (
+                    params[0]
+                    + params[1] * (np.abs(std_shocks[:, j - 1]) - sqrt2pi)
+                    + params[2] * paths[i, :, j - 1]
+                )
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -755,8 +925,16 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecast.shocks, shocks)
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=5,
-                                    start=100, method='bootstrap', random_state=self.rng)
+            forecast = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=5,
+                start=100,
+                method="bootstrap",
+                random_state=self.rng,
+            )
 
         std_resids = resids / np.sqrt(sigma2)
         paths = np.empty((t, 1000, 5))
@@ -770,8 +948,11 @@ class TestVarianceForecasts(TestCase):
             std_shocks = std_resids[int_locs]
             paths[i, :, 0] = np.log(one_step[i])
             for j in range(1, 5):
-                paths[i, :, j] = params[0] + params[1] * (np.abs(std_shocks[:, j - 1]) - sqrt2pi) \
-                                 + params[2] * paths[i, :, j - 1]
+                paths[i, :, j] = (
+                    params[0]
+                    + params[1] * (np.abs(std_shocks[:, j - 1]) - sqrt2pi)
+                    + params[2] * paths[i, :, j - 1]
+                )
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -788,7 +969,9 @@ class TestVarianceForecasts(TestCase):
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
 
-        forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=0)
+        forecast = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=1, start=0
+        )
 
         _resids = np.array(resids.tolist() + [0])
         _sigma2 = np.empty_like(_resids)
@@ -808,8 +991,16 @@ class TestVarianceForecasts(TestCase):
         assert forecast.shocks is None
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=7, start=433,
-                                    method='simulation', rng=rng)
+            forecast = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=7,
+                start=433,
+                method="simulation",
+                rng=rng,
+            )
 
         sigma2 = np.empty_like(self.resid)
         vol.compute_variance(params, resids, sigma2, backcast, var_bounds)
@@ -830,11 +1021,13 @@ class TestVarianceForecasts(TestCase):
                 else:
                     lag_2_sym = np.abs(std_resids[i]) - sqrt2pi
 
-                paths[i, :, j] = (params[0] +
-                                  params[1] * lag_1_sym +
-                                  params[2] * lag_2_sym +
-                                  params[3] * std_shocks[:, j - 1] +
-                                  params[4] * paths[i, :, j - 1])
+                paths[i, :, j] = (
+                    params[0]
+                    + params[1] * lag_1_sym
+                    + params[2] * lag_2_sym
+                    + params[3] * std_shocks[:, j - 1]
+                    + params[4] * paths[i, :, j - 1]
+                )
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -842,8 +1035,17 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecast.shocks, shocks)
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=3, start=731,
-                                    method='bootstrap', simulations=1111, random_state=self.rng)
+            forecast = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=3,
+                start=731,
+                method="bootstrap",
+                simulations=1111,
+                random_state=self.rng,
+            )
         paths = np.empty((t, 1111, 3))
         paths.fill(np.nan)
         shocks = np.empty((t, 1111, 3))
@@ -862,11 +1064,13 @@ class TestVarianceForecasts(TestCase):
                 else:
                     lag_2_sym = np.abs(std_resids[i]) - sqrt2pi
 
-                paths[i, :, j] = (params[0] +
-                                  params[1] * lag_1_sym +
-                                  params[2] * lag_2_sym +
-                                  params[3] * std_shocks[:, j - 1] +
-                                  params[4] * paths[i, :, j - 1])
+                paths[i, :, j] = (
+                    params[0]
+                    + params[1] * lag_1_sym
+                    + params[2] * lag_2_sym
+                    + params[3] * std_shocks[:, j - 1]
+                    + params[4] * paths[i, :, j - 1]
+                )
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -883,7 +1087,9 @@ class TestVarianceForecasts(TestCase):
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
 
-        forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=0)
+        forecast = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=1, start=0
+        )
 
         _resids = np.array(resids.tolist() + [0])
         _sigma2 = np.empty_like(_resids)
@@ -903,8 +1109,16 @@ class TestVarianceForecasts(TestCase):
         assert forecast.shocks is None
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=7, start=433,
-                                    method='simulation', rng=rng)
+            forecast = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=7,
+                start=433,
+                method="simulation",
+                rng=rng,
+            )
 
         sigma2 = np.empty_like(self.resid)
         vol.compute_variance(params, resids, sigma2, backcast, var_bounds)
@@ -928,12 +1142,14 @@ class TestVarianceForecasts(TestCase):
                     lag_2_sym = np.abs(std_resids[i]) - sqrt2pi
                     lag_2_path = np.log(sigma2[i])
 
-                paths[i, :, j] = (params[0] +
-                                  params[1] * lag_1_sym +
-                                  params[2] * lag_2_sym +
-                                  params[3] * std_shocks[:, j - 1] +
-                                  params[4] * lag_1_path +
-                                  params[5] * lag_2_path)
+                paths[i, :, j] = (
+                    params[0]
+                    + params[1] * lag_1_sym
+                    + params[2] * lag_2_sym
+                    + params[3] * std_shocks[:, j - 1]
+                    + params[4] * lag_1_path
+                    + params[5] * lag_2_path
+                )
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -941,8 +1157,17 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecast.shocks, shocks)
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=3, start=731,
-                                    method='bootstrap', simulations=1111, random_state=self.rng)
+            forecast = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=3,
+                start=731,
+                method="bootstrap",
+                simulations=1111,
+                random_state=self.rng,
+            )
         paths = np.empty((t, 1111, 3))
         paths.fill(np.nan)
         shocks = np.empty((t, 1111, 3))
@@ -964,12 +1189,14 @@ class TestVarianceForecasts(TestCase):
                     lag_2_sym = np.abs(std_resids[i]) - sqrt2pi
                     lag_2_path = np.log(sigma2[i])
 
-                paths[i, :, j] = (params[0] +
-                                  params[1] * lag_1_sym +
-                                  params[2] * lag_2_sym +
-                                  params[3] * std_shocks[:, j - 1] +
-                                  params[4] * lag_1_path +
-                                  params[5] * lag_2_path)
+                paths[i, :, j] = (
+                    params[0]
+                    + params[1] * lag_1_sym
+                    + params[2] * lag_2_sym
+                    + params[3] * std_shocks[:, j - 1]
+                    + params[4] * lag_1_path
+                    + params[5] * lag_2_path
+                )
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -986,8 +1213,15 @@ class TestVarianceForecasts(TestCase):
         var_bounds = vol.variance_bounds(self.resid)
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=1, method='simulation', rng=rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=1,
+                method="simulation",
+                rng=rng,
+            )
         assert forecast.forecasts.shape == (1000, 1)
         assert forecast.forecast_paths.shape == (1000, 1000, 1)
         assert forecast.shocks.shape == (1000, 1000, 1)
@@ -999,8 +1233,15 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecast.shocks[-1], np.sqrt(params[0]) * rng((1000, 1)))
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=5, method='simulation', rng=rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=5,
+                method="simulation",
+                rng=rng,
+            )
         assert forecast.forecasts.shape == (1000, 5)
         assert forecast.forecast_paths.shape == (1000, 1000, 5)
         assert forecast.shocks.shape == (1000, 1000, 5)
@@ -1011,9 +1252,17 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecast.shocks[-1], np.sqrt(params[0]) * rng((1000, 5)))
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=5, start=100, method='simulation',
-                                    simulations=2000, rng=rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=5,
+                start=100,
+                method="simulation",
+                simulations=2000,
+                rng=rng,
+            )
         assert forecast.forecasts.shape == (1000, 5)
         assert forecast.forecast_paths.shape == (1000, 2000, 5)
         assert forecast.shocks.shape == (1000, 2000, 5)
@@ -1034,8 +1283,15 @@ class TestVarianceForecasts(TestCase):
         var_bounds = vol.variance_bounds(self.resid)
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=5, method='bootstrap', random_state=self.rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=5,
+                method="bootstrap",
+                random_state=self.rng,
+            )
         assert forecast.forecasts.shape == (1000, 5)
         assert forecast.forecast_paths.shape == (1000, 1000, 5)
         assert forecast.shocks.shape == (1000, 1000, 5)
@@ -1048,9 +1304,17 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecast.shocks[-1], self.resid[index])
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=5, method='bootstrap', start=100,
-                                    simulations=2000, random_state=self.rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=5,
+                method="bootstrap",
+                start=100,
+                simulations=2000,
+                random_state=self.rng,
+            )
         assert forecast.forecasts.shape == (1000, 5)
         assert forecast.forecast_paths.shape == (1000, 2000, 5)
         assert forecast.shocks.shape == (1000, 2000, 5)
@@ -1075,8 +1339,15 @@ class TestVarianceForecasts(TestCase):
         backcast = vol.backcast(self.resid)
         var_bounds = vol.variance_bounds(self.resid)
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=10, method='simulation', rng=rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=10,
+                method="simulation",
+                rng=rng,
+            )
         assert forecast.forecasts.shape == (t, 10)
         assert forecast.forecast_paths.shape == (t, 1000, 10)
         assert forecast.shocks.shape == (t, 1000, 10)
@@ -1084,8 +1355,9 @@ class TestVarianceForecasts(TestCase):
         assert np.all(np.isnan(forecast.forecasts[:-1]))
         assert np.all(np.isnan(forecast.shocks[:-1]))
         std_shocks = rng((1000, 10))
-        one_step = vol.forecast(params, self.resid, backcast, var_bounds,
-                                horizon=1, start=0)
+        one_step = vol.forecast(
+            params, self.resid, backcast, var_bounds, horizon=1, start=0
+        )
         paths = np.zeros((1000, 10))
         shocks = np.zeros((1000, 10))
         paths[:, 0] = one_step.forecasts[-1]
@@ -1101,9 +1373,16 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecast.shocks[-1], shocks)
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=10, method='simulation',
-                                    simulations=2000, rng=rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=10,
+                method="simulation",
+                simulations=2000,
+                rng=rng,
+            )
         assert np.all(np.isnan(forecast.forecast_paths[:-1]))
         assert np.all(np.isnan(forecast.forecasts[:-1]))
         assert np.all(np.isnan(forecast.shocks[:-1]))
@@ -1126,9 +1405,16 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecast.shocks[-1], shocks)
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=3, method='simulation', start=0,
-                                    rng=rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=3,
+                method="simulation",
+                start=0,
+                rng=rng,
+            )
         paths = np.zeros((1000, 3))
         shocks = np.zeros((1000, 3))
         for j in range(t):
@@ -1152,9 +1438,16 @@ class TestVarianceForecasts(TestCase):
         backcast = vol.backcast(self.resid)
         var_bounds = vol.variance_bounds(self.resid)
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=10, method='bootstrap', start=100,
-                                    random_state=self.rng)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=10,
+                method="bootstrap",
+                start=100,
+                random_state=self.rng,
+            )
 
         paths = np.empty((t, 1000, 10))
         paths.fill(np.nan)
@@ -1169,14 +1462,18 @@ class TestVarianceForecasts(TestCase):
         one_step = _sigma2[1:]
         omega, alpha, beta = params
         for i in range(100, t):
-            locs = np.floor((i + 1) * self.rng.random_sample((1000, 10))).astype(np.int64)
+            locs = np.floor((i + 1) * self.rng.random_sample((1000, 10))).astype(
+                np.int64
+            )
             std_shocks = std_resid[locs]
             paths[i, :, 0] = one_step[i]
             shocks[i, :, 0] = np.sqrt(paths[i, :, 0]) * std_shocks[:, 0]
             for j in range(1, 10):
-                paths[i, :, j] = omega + \
-                                 alpha * shocks[i, :, j - 1] ** 2.0 + \
-                                 beta * paths[i, :, j - 1]
+                paths[i, :, j] = (
+                    omega
+                    + alpha * shocks[i, :, j - 1] ** 2.0
+                    + beta * paths[i, :, j - 1]
+                )
                 shocks[i, :, j] = np.sqrt(paths[i, :, j]) * std_shocks[:, j]
 
         assert_allclose(forecast.forecasts, paths.mean(1))
@@ -1184,8 +1481,16 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(shocks, forecast.shocks)
 
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds, horizon=10,
-                                    method='bootstrap', simulations=2000, start=100)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=10,
+                method="bootstrap",
+                simulations=2000,
+                start=100,
+            )
 
         assert forecast.forecasts.shape == (t, 10)
         assert forecast.forecast_paths.shape == (t, 2000, 10)
@@ -1202,20 +1507,33 @@ class TestVarianceForecasts(TestCase):
         rng = dist.simulate([])
         backcast = vol.backcast(self.resid)
         var_bounds = vol.variance_bounds(self.resid)
-        one_step = vol.forecast(params, self.resid, backcast, var_bounds,
-                                horizon=1, start=0)
+        one_step = vol.forecast(
+            params, self.resid, backcast, var_bounds, horizon=1, start=0
+        )
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, self.resid, backcast, var_bounds,
-                                    horizon=3, method='simulation', start=0,
-                                    rng=rng, simulations=100)
+            forecast = vol.forecast(
+                params,
+                self.resid,
+                backcast,
+                var_bounds,
+                horizon=3,
+                method="simulation",
+                start=0,
+                rng=rng,
+                simulations=100,
+            )
         paths = np.zeros((100, 3))
         shocks = np.zeros((100, 3))
 
         resids = self.resid
-        sigma2_0 = params[0] + (np.sum(params[1:]) - 0.5 * np.sum(params[3:5])) * backcast
+        sigma2_0 = (
+            params[0] + (np.sum(params[1:]) - 0.5 * np.sum(params[3:5])) * backcast
+        )
         _sigma2 = np.concatenate([[backcast], [sigma2_0], one_step.forecasts[:-1, 0]])
         _resids = np.concatenate([[np.sqrt(backcast)], resids])
-        _asymresids = np.concatenate(([[np.sqrt(0.5 * backcast)], resids * (resids < 0)]))
+        _asymresids = np.concatenate(
+            ([[np.sqrt(0.5 * backcast)], resids * (resids < 0)])
+        )
 
         for t in range(resids.shape[0]):
             std_shocks = rng((100, 3))
@@ -1226,9 +1544,15 @@ class TestVarianceForecasts(TestCase):
             a1, a2 = _asymresids[tau - 1], _asymresids[tau - 2]
             s21, s22 = _sigma2[tau - 1], _sigma2[tau - 2]
 
-            fcast = (params[0] + params[1] * r1 ** 2 + params[2] * r2 ** 2 +
-                     params[3] * a1 ** 2 + params[4] * a2 ** 2 +
-                     params[5] * s21 + params[6] * s22)
+            fcast = (
+                params[0]
+                + params[1] * r1 ** 2
+                + params[2] * r2 ** 2
+                + params[3] * a1 ** 2
+                + params[4] * a2 ** 2
+                + params[5] * s21
+                + params[6] * s22
+            )
             paths[:, j] = fcast
             shocks[:, j] = std_shocks[:, j] * np.sqrt(fcast)
 
@@ -1236,19 +1560,34 @@ class TestVarianceForecasts(TestCase):
             r1, r2 = shocks[:, 0], _resids[tau - 1]
             a1, a2 = shocks[:, 0] * (shocks[:, 0] < 0), _asymresids[tau - 1]
             s21, s22 = paths[:, 0], _sigma2[tau - 1]
-            fcast = (params[0] + params[1] * r1 ** 2 + params[2] * r2 ** 2 +
-                     params[3] * a1 ** 2 + params[4] * a2 ** 2 +
-                     params[5] * s21 + params[6] * s22)
+            fcast = (
+                params[0]
+                + params[1] * r1 ** 2
+                + params[2] * r2 ** 2
+                + params[3] * a1 ** 2
+                + params[4] * a2 ** 2
+                + params[5] * s21
+                + params[6] * s22
+            )
             paths[:, j] = fcast
             shocks[:, j] = std_shocks[:, j] * np.sqrt(fcast)
 
             j = 2
             r1, r2 = shocks[:, 1], shocks[:, 0]
-            a1, a2 = shocks[:, 1] * (shocks[:, 1] < 0), shocks[:, 0] * (shocks[:, 0] < 0)
+            a1, a2 = (
+                shocks[:, 1] * (shocks[:, 1] < 0),
+                shocks[:, 0] * (shocks[:, 0] < 0),
+            )
             s21, s22 = paths[:, 1], paths[:, 0]
-            fcast = (params[0] + params[1] * r1 ** 2 + params[2] * r2 ** 2 +
-                     params[3] * a1 ** 2 + params[4] * a2 ** 2 +
-                     params[5] * s21 + params[6] * s22)
+            fcast = (
+                params[0]
+                + params[1] * r1 ** 2
+                + params[2] * r2 ** 2
+                + params[3] * a1 ** 2
+                + params[4] * a2 ** 2
+                + params[5] * s21
+                + params[6] * s22
+            )
             paths[:, j] = fcast
             shocks[:, j] = std_shocks[:, j] * np.sqrt(fcast)
 
@@ -1265,7 +1604,9 @@ class TestVarianceForecasts(TestCase):
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
 
-        forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0)
+        forecast = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=10, start=0
+        )
 
         expected = np.zeros((t + 1))
         expected[0] = backcast
@@ -1275,13 +1616,16 @@ class TestVarianceForecasts(TestCase):
         for i in range(10):
             assert_allclose(forecast.forecasts[:, i], expected[1:])
 
-        alt_forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=500)
+        alt_forecast = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=10, start=500
+        )
         _compare_truncated_forecasts(forecast, alt_forecast, 500)
 
         vol_estim = EWMAVariance(lam=None)
         param_estim = np.array([0.94])
-        forecast_estim = vol_estim.forecast(param_estim, resids, backcast, var_bounds,
-                                            horizon=10, start=0)
+        forecast_estim = vol_estim.forecast(
+            param_estim, resids, backcast, var_bounds, horizon=10, start=0
+        )
         for i in range(10):
             assert_allclose(forecast.forecasts[:, i], forecast_estim.forecasts[:, i])
 
@@ -1295,15 +1639,30 @@ class TestVarianceForecasts(TestCase):
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
         with preserved_state(self.rng):
-            forecasts = vol.forecast(params, resids, backcast, var_bounds, horizon=10,
-                                     start=0, method='simulation', rng=rng)
+            forecasts = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=0,
+                method="simulation",
+                rng=rng,
+            )
 
         vol_estim = EWMAVariance(lam=None)
         param_estim = np.array([0.94])
         with preserved_state(self.rng):
-            forecasts_estim = vol_estim.forecast(param_estim, resids, backcast, var_bounds,
-                                                 horizon=10, start=0, method='simulation',
-                                                 rng=rng)
+            forecasts_estim = vol_estim.forecast(
+                param_estim,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=0,
+                method="simulation",
+                rng=rng,
+            )
 
         one_step = np.empty(t + 1)
         one_step[0] = backcast
@@ -1317,8 +1676,10 @@ class TestVarianceForecasts(TestCase):
             paths[i, :, 0] = one_step[i]
             shocks[i, :, 0] = np.sqrt(paths[i, :, 0]) * std_shocks[:, 0]
             for j in range(1, 10):
-                paths[i, :, j] = vol.lam * paths[i, :, j - 1] + \
-                                 (1 - vol.lam) * shocks[i, :, j - 1] ** 2
+                paths[i, :, j] = (
+                    vol.lam * paths[i, :, j - 1]
+                    + (1 - vol.lam) * shocks[i, :, j - 1] ** 2
+                )
                 shocks[i, :, j] = np.sqrt(paths[i, :, j]) * std_shocks[:, j]
 
         assert_allclose(forecasts.forecasts, paths.mean(1))
@@ -1329,8 +1690,16 @@ class TestVarianceForecasts(TestCase):
         assert_allclose(forecasts_estim.forecast_paths, paths)
         assert_allclose(forecasts_estim.shocks, shocks)
 
-        forecasts = vol.forecast(params, resids, backcast, var_bounds, horizon=10,
-                                 start=252, method='simulation', rng=rng)
+        forecasts = vol.forecast(
+            params,
+            resids,
+            backcast,
+            var_bounds,
+            horizon=10,
+            start=252,
+            method="simulation",
+            rng=rng,
+        )
 
         assert np.all(np.isnan(forecasts.forecasts[:252]))
         assert np.all(np.isnan(forecasts.forecast_paths[:252]))
@@ -1350,9 +1719,17 @@ class TestVarianceForecasts(TestCase):
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
         with preserved_state(self.rng):
-            forecasts = vol.forecast(params, resids, backcast, var_bounds, horizon=10,
-                                     start=131, method='bootstrap', rng=rng,
-                                     random_state=self.rng)
+            forecasts = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=131,
+                method="bootstrap",
+                rng=rng,
+                random_state=self.rng,
+            )
 
         sigma2 = np.empty_like(self.resid)
         vol.compute_variance(params, resids, sigma2, backcast, var_bounds)
@@ -1374,17 +1751,27 @@ class TestVarianceForecasts(TestCase):
             paths[i, :, 0] = one_step[i]
             shocks[i, :, 0] = np.sqrt(paths[i, :, 0]) * std_shocks[:, 0]
             for j in range(1, 10):
-                paths[i, :, j] = vol.lam * paths[i, :, j - 1] + \
-                                 (1 - vol.lam) * shocks[i, :, j - 1] ** 2
+                paths[i, :, j] = (
+                    vol.lam * paths[i, :, j - 1]
+                    + (1 - vol.lam) * shocks[i, :, j - 1] ** 2
+                )
                 shocks[i, :, j] = np.sqrt(paths[i, :, j]) * std_shocks[:, j]
 
         assert_allclose(forecasts.forecasts, paths.mean(1))
         assert_allclose(forecasts.forecast_paths, paths)
         assert_allclose(forecasts.shocks, shocks)
 
-        forecasts = vol.forecast(params, resids, backcast, var_bounds, horizon=10,
-                                 start=252, method='simulation', rng=rng,
-                                 random_state=self.rng)
+        forecasts = vol.forecast(
+            params,
+            resids,
+            backcast,
+            var_bounds,
+            horizon=10,
+            start=252,
+            method="simulation",
+            rng=rng,
+            random_state=self.rng,
+        )
 
         assert np.all(np.isnan(forecasts.forecasts[:252]))
         assert np.all(np.isnan(forecasts.forecast_paths[:252]))
@@ -1400,7 +1787,9 @@ class TestVarianceForecasts(TestCase):
         resids = self.resid
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
-        forecasts = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0)
+        forecasts = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=10, start=0
+        )
         _resids = np.array(resids.tolist() + [0])
         _sigma2 = np.empty_like(_resids)
         _var_bounds = np.array(var_bounds.tolist() + [[0, np.inf]])
@@ -1411,7 +1800,9 @@ class TestVarianceForecasts(TestCase):
         for i in range(10):
             assert_allclose(forecasts.forecasts[:, i], one_step, rtol=1e-4)
 
-        alt_forecasts = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=500)
+        alt_forecasts = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=10, start=500
+        )
         _compare_truncated_forecasts(forecasts, alt_forecasts, 500)
 
     def test_rm2006_simulation_smoke(self):
@@ -1423,8 +1814,16 @@ class TestVarianceForecasts(TestCase):
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
         with preserved_state(self.rng):
-            vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0,
-                         method='simulation', rng=rng)
+            vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=0,
+                method="simulation",
+                rng=rng,
+            )
 
     def test_rm2006_bootstrap_smoke(self):
         vol = RiskMetrics2006()
@@ -1433,20 +1832,30 @@ class TestVarianceForecasts(TestCase):
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
         with preserved_state(self.rng):
-            vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=100,
-                         method='bootstrap')
+            vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=100,
+                method="bootstrap",
+            )
 
     def test_midas_analytical(self):
         vol = MIDASHyperbolic()
         resids = self.resid
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
-        params = np.array([.1, .9, .4])
-        forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0)
+        params = np.array([0.1, 0.9, 0.4])
+        forecast = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=10, start=0
+        )
         weights = vol._weights(params)
         arch_params = np.r_[params[0], params[1] * weights]
-        expected = _simple_direct_gjrgarch_forecaster(resids, arch_params, 22, 0, 0,
-                                                      backcast, var_bounds, 10)
+        expected = _simple_direct_gjrgarch_forecaster(
+            resids, arch_params, 22, 0, 0, backcast, var_bounds, 10
+        )
         assert_allclose(forecast.forecasts, expected)
 
     def test_midas_asym_analytical(self):
@@ -1454,12 +1863,15 @@ class TestVarianceForecasts(TestCase):
         resids = self.resid
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
-        params = np.array([.1, .3, 1.0, .4])
-        forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0)
+        params = np.array([0.1, 0.3, 1.0, 0.4])
+        forecast = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=10, start=0
+        )
         weights = vol._weights(params)
         arch_params = np.r_[params[0], params[1] * weights, params[2] * weights]
-        expected = _simple_direct_gjrgarch_forecaster(resids, arch_params, 22, 22, 0,
-                                                      backcast, var_bounds, 10)
+        expected = _simple_direct_gjrgarch_forecaster(
+            resids, arch_params, 22, 22, 0, backcast, var_bounds, 10
+        )
         assert_allclose(forecast.forecasts, expected)
 
     def test_midas_simulation(self):
@@ -1469,17 +1881,33 @@ class TestVarianceForecasts(TestCase):
         resids = self.resid
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
-        params = np.array([.1, .9, .4])
+        params = np.array([0.1, 0.9, 0.4])
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0,
-                                    method='simulation', rng=rng)
+            forecast = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=0,
+                method="simulation",
+                rng=rng,
+            )
 
         weights = vol._weights(params)
         arch = GARCH(p=22, o=0, q=0)
         arch_params = np.r_[params[0], params[1] * weights]
         with preserved_state(self.rng):
-            arch_forecast = arch.forecast(arch_params, resids, backcast, var_bounds, horizon=10,
-                                          start=0, method='simulation', rng=rng)
+            arch_forecast = arch.forecast(
+                arch_params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=0,
+                method="simulation",
+                rng=rng,
+            )
 
         assert_allclose(forecast.forecasts, arch_forecast.forecasts)
         assert_allclose(forecast.forecast_paths, arch_forecast.forecast_paths)
@@ -1490,20 +1918,27 @@ class TestVarianceForecasts(TestCase):
         resids = self.resid
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
-        params = np.array([.1, .2, .4, .2])
-        forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0)
+        params = np.array([0.1, 0.2, 0.4, 0.2])
+        forecast = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=10, start=0
+        )
         lam = figarch_weights(params[1:], 1, 1, vol.truncation)
         arch_params = np.r_[params[0] / (1 - params[-1]), lam]
-        expected = _simple_direct_gjrgarch_forecaster(resids, arch_params, 50, 0, 0,
-                                                      backcast, var_bounds, 10)
+        expected = _simple_direct_gjrgarch_forecaster(
+            resids, arch_params, 50, 0, 0, backcast, var_bounds, 10
+        )
         assert_allclose(forecast.forecasts, expected)
 
-        forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=1, start=0)
+        forecast = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=1, start=0
+        )
         assert forecast.forecasts.shape[1] == 1
 
         vol = FIGARCH(truncation=50, power=1.0)
         with pytest.raises(ValueError):
-            vol.forecast(params, resids, backcast, var_bounds, horizon=2, method='analytic')
+            vol.forecast(
+                params, resids, backcast, var_bounds, horizon=2, method="analytic"
+            )
 
     def test_figarch_simulation(self):
         dist = Normal(self.rng)
@@ -1512,17 +1947,33 @@ class TestVarianceForecasts(TestCase):
         resids = self.resid
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
-        params = np.array([.1, .2, .4, .2])
+        params = np.array([0.1, 0.2, 0.4, 0.2])
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0,
-                                    method='simulation', rng=rng)
+            forecast = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=0,
+                method="simulation",
+                rng=rng,
+            )
 
         lam = figarch_weights(params[1:], 1, 1, vol.truncation)
         arch = GARCH(p=vol.truncation, o=0, q=0)
         arch_params = np.r_[params[0] / (1 - params[-1]), lam]
         with preserved_state(self.rng):
-            arch_forecast = arch.forecast(arch_params, resids, backcast, var_bounds, horizon=10,
-                                          start=0, method='simulation', rng=rng)
+            arch_forecast = arch.forecast(
+                arch_params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=0,
+                method="simulation",
+                rng=rng,
+            )
 
         assert_allclose(forecast.forecasts, arch_forecast.forecasts)
         assert_allclose(forecast.forecast_paths, arch_forecast.forecast_paths)
@@ -1535,17 +1986,33 @@ class TestVarianceForecasts(TestCase):
         resids = self.resid
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
-        params = np.array([.1, .3, 1.0, .4])
+        params = np.array([0.1, 0.3, 1.0, 0.4])
         with preserved_state(self.rng):
-            forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=0,
-                                    method='simulation', rng=rng)
+            forecast = vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=0,
+                method="simulation",
+                rng=rng,
+            )
 
         weights = vol._weights(params)
         arch = GARCH(p=22, o=22, q=0)
         arch_params = np.r_[params[0], params[1] * weights, params[2] * weights]
         with preserved_state(self.rng):
-            arch_forecast = arch.forecast(arch_params, resids, backcast, var_bounds, horizon=10,
-                                          start=0, method='simulation', rng=rng)
+            arch_forecast = arch.forecast(
+                arch_params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=0,
+                method="simulation",
+                rng=rng,
+            )
 
         assert_allclose(forecast.forecasts, arch_forecast.forecasts)
         assert_allclose(forecast.forecast_paths, arch_forecast.forecast_paths)
@@ -1557,9 +2024,16 @@ class TestVarianceForecasts(TestCase):
         resids = self.resid
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
-        params = np.array([.1, .9, .4])
-        vol.forecast(params, resids, backcast, var_bounds, horizon=10, start=100,
-                     method='bootstrap')
+        params = np.array([0.1, 0.9, 0.4])
+        vol.forecast(
+            params,
+            resids,
+            backcast,
+            var_bounds,
+            horizon=10,
+            start=100,
+            method="bootstrap",
+        )
 
     def test_fixed_variance(self):
         parameters = np.array([1.0])
@@ -1582,14 +2056,24 @@ class TestVarianceForecasts(TestCase):
 
         dist = Normal(self.rng)
         rng = dist.simulate([])
-        forecasts = vol.forecast(parameters, resids, backcast, var_bounds, 333, horizon=4,
-                                 method='simulation', simulations=100, rng=rng)
+        forecasts = vol.forecast(
+            parameters,
+            resids,
+            backcast,
+            var_bounds,
+            333,
+            horizon=4,
+            method="simulation",
+            simulations=100,
+            rng=rng,
+        )
         assert np.all(np.isnan(forecasts.forecasts))
         assert np.all(np.isnan(forecasts.forecast_paths))
         assert np.all(np.isnan(forecasts.shocks))
 
-        forecasts = vol.forecast(parameters, resids, backcast, var_bounds, 100, 2, 'bootstrap',
-                                 500)
+        forecasts = vol.forecast(
+            parameters, resids, backcast, var_bounds, 100, 2, "bootstrap", 500
+        )
         assert np.all(np.isnan(forecasts.forecasts))
         assert np.all(np.isnan(forecasts.forecast_paths))
         assert np.all(np.isnan(forecasts.shocks))
@@ -1646,21 +2130,24 @@ class TestBootstrapRng(TestCase):
 
 
 def test_external_rng():
-    arch_mod = arch_model(None, mean='Constant', vol='GARCH', p=1, q=1)
+    arch_mod = arch_model(None, mean="Constant", vol="GARCH", p=1, q=1)
     data = arch_mod.simulate(np.array([0.1, 0.1, 0.1, 0.88]), 1000)
-    data.index = pd.date_range('2000-01-01', periods=data.index.shape[0])
+    data.index = pd.date_range("2000-01-01", periods=data.index.shape[0])
 
     rand_state = np.random.RandomState(1)
     state = rand_state.get_state()
     volatility = GARCH(1, 0, 1)
     distribution = Normal(rand_state)
     mod = ConstantMean(data.data, volatility=volatility, distribution=distribution)
-    res = mod.fit(disp='off')
+    res = mod.fit(disp="off")
 
     rand_state.set_state(state)
-    fcast_1 = res.forecast(res.params, horizon=5, method='simulation', start=900, simulations=250)
+    fcast_1 = res.forecast(
+        res.params, horizon=5, method="simulation", start=900, simulations=250
+    )
     rand_state.set_state(state)
     rng = rand_state.standard_normal
-    fcast_2 = res.forecast(res.params, horizon=5, method='simulation', start=900,
-                           simulations=250, rng=rng)
+    fcast_2 = res.forecast(
+        res.params, horizon=5, method="simulation", start=900, simulations=250, rng=rng
+    )
     assert_allclose(fcast_1.residual_variance, fcast_2.residual_variance)

@@ -2,10 +2,36 @@ from arch.compat.python import lmap
 
 import warnings
 
-from numpy import (abs, amin, arange, argwhere, array, asarray, ceil, cumsum,
-                   diag, diff, empty, float64, full, hstack, inf, int32, int64,
-                   interp, log, nan, ones, pi, polyval, power, sort, sqrt,
-                   squeeze, sum)
+from numpy import (
+    abs,
+    amin,
+    arange,
+    argwhere,
+    array,
+    asarray,
+    ceil,
+    cumsum,
+    diag,
+    diff,
+    empty,
+    float64,
+    full,
+    hstack,
+    inf,
+    int32,
+    int64,
+    interp,
+    log,
+    nan,
+    ones,
+    pi,
+    polyval,
+    power,
+    sort,
+    sqrt,
+    squeeze,
+    sum,
+)
 from numpy.linalg import inv, matrix_rank, pinv, qr, solve
 from pandas import DataFrame
 from scipy.stats import norm
@@ -14,18 +40,28 @@ from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import OLS
 from statsmodels.tsa.tsatools import lagmat
 
-from arch.unitroot.critical_values.dfgls import (dfgls_cv_approx,
-                                                 dfgls_large_p, dfgls_small_p,
-                                                 dfgls_tau_max, dfgls_tau_min,
-                                                 dfgls_tau_star)
-from arch.unitroot.critical_values.dickey_fuller import (adf_z_cv_approx,
-                                                         adf_z_large_p,
-                                                         adf_z_max, adf_z_min,
-                                                         adf_z_small_p,
-                                                         adf_z_star, tau_2010,
-                                                         tau_large_p, tau_max,
-                                                         tau_min, tau_small_p,
-                                                         tau_star)
+from arch.unitroot.critical_values.dfgls import (
+    dfgls_cv_approx,
+    dfgls_large_p,
+    dfgls_small_p,
+    dfgls_tau_max,
+    dfgls_tau_min,
+    dfgls_tau_star,
+)
+from arch.unitroot.critical_values.dickey_fuller import (
+    adf_z_cv_approx,
+    adf_z_large_p,
+    adf_z_max,
+    adf_z_min,
+    adf_z_small_p,
+    adf_z_star,
+    tau_2010,
+    tau_large_p,
+    tau_max,
+    tau_min,
+    tau_small_p,
+    tau_star,
+)
 from arch.unitroot.critical_values.kpss import kpss_critical_values
 from arch.unitroot.critical_values.zivot_andrews import za_critical_values
 from arch.utility import cov_nw
@@ -33,16 +69,27 @@ from arch.utility.array import DocStringInheritor, ensure1d, ensure2d
 from arch.utility.exceptions import InvalidLengthWarning, invalid_length_doc
 from arch.utility.timeseries import add_trend
 
-__all__ = ['ADF', 'DFGLS', 'PhillipsPerron', 'KPSS', 'VarianceRatio',
-           'kpss_crit', 'mackinnoncrit', 'mackinnonp', 'ZivotAndrews']
+__all__ = [
+    "ADF",
+    "DFGLS",
+    "PhillipsPerron",
+    "KPSS",
+    "VarianceRatio",
+    "kpss_crit",
+    "mackinnoncrit",
+    "mackinnonp",
+    "ZivotAndrews",
+]
 
-TREND_MAP = {None: 'nc', 0: 'c', 1: 'ct', 2: 'ctt'}
+TREND_MAP = {None: "nc", 0: "c", 1: "ct", 2: "ctt"}
 
-TREND_DESCRIPTION = {'nc': 'No Trend',
-                     'c': 'Constant',
-                     'ct': 'Constant and Linear Time Trend',
-                     'ctt': 'Constant, Linear and Quadratic Time Trends',
-                     't': 'Linear Time Trend (No Constant)'}
+TREND_DESCRIPTION = {
+    "nc": "No Trend",
+    "c": "Constant",
+    "ct": "Constant and Linear Time Trend",
+    "ctt": "Constant, Linear and Quadratic Time Trends",
+    "t": "Linear Time Trend (No Constant)",
+}
 
 
 def _select_best_ic(method, nobs, sigma2, tstat):
@@ -70,19 +117,19 @@ def _select_best_ic(method, nobs, sigma2, tstat):
     """
     llf = -nobs / 2.0 * (log(2 * pi) + log(sigma2) + 1)
     maxlag = len(sigma2) - 1
-    if method == 'aic':
+    if method == "aic":
         crit = -2 * llf + 2 * arange(float(maxlag + 1))
         icbest, lag = min(zip(crit, arange(maxlag + 1)))
-    elif method == 'bic':
+    elif method == "bic":
         crit = -2 * llf + log(nobs) * arange(float(maxlag + 1))
         icbest, lag = min(zip(crit, arange(maxlag + 1)))
-    elif method == 't-stat':
+    elif method == "t-stat":
         stop = 1.6448536269514722
         large_tstat = abs(tstat) >= stop
         lag = int(squeeze(max(argwhere(large_tstat))))
         icbest = float(tstat[lag])
     else:
-        raise ValueError('Unknown method')
+        raise ValueError("Unknown method")
 
     return icbest, lag
 
@@ -121,18 +168,18 @@ def _autolag_ols_low_memory(y, maxlag, trend, method):
     level = level / sqrt(level.dot(level))
     trendx = []
     nobs = lhs.shape[0]
-    if trend == 'nc':
+    if trend == "nc":
         trendx = empty((nobs, 0))
     else:
-        if 'tt' in trend:
+        if "tt" in trend:
             tt = arange(1, nobs + 1, dtype=float64)[:, None] ** 2
-            tt *= (sqrt(5) / float(nobs) ** (5 / 2))
+            tt *= sqrt(5) / float(nobs) ** (5 / 2)
             trendx.append(tt)
-        if 't' in trend:
+        if "t" in trend:
             t = arange(1, nobs + 1, dtype=float64)[:, None]
-            t *= (sqrt(3) / float(nobs) ** (3 / 2))
+            t *= sqrt(3) / float(nobs) ** (3 / 2)
             trendx.append(t)
-        if trend.startswith('c'):
+        if trend.startswith("c"):
             trendx.append(ones((nobs, 1)) / sqrt(nobs))
         trendx = hstack(trendx)
     rhs = hstack([level[:, None], trendx])
@@ -142,13 +189,13 @@ def _autolag_ols_low_memory(y, maxlag, trend, method):
     xpy[:m] = rhs.T.dot(lhs)
     xpx[:m, :m] = rhs.T.dot(rhs)
     for i in range(maxlag):
-        x1 = deltay[maxlag - i - 1:-(1 + i)]
+        x1 = deltay[maxlag - i - 1 : -(1 + i)]
         block = rhs.T.dot(x1)
         xpx[m + i, :m] = block
         xpx[:m, m + i] = block
         xpy[m + i] = x1.dot(lhs)
         for j in range(i, maxlag):
-            x2 = deltay[maxlag - j - 1:-(1 + j)]
+            x2 = deltay[maxlag - j - 1 : -(1 + j)]
             x1px2 = x1.dot(x2)
             xpx[m + i, m + j] = x1px2
             xpx[m + j, m + i] = x1px2
@@ -161,7 +208,7 @@ def _autolag_ols_low_memory(y, maxlag, trend, method):
         xpx_sub = xpx[:i, :i]
         b = solve(xpx_sub, xpy[:i])
         sigma2[i - m] = (ypy - b.T.dot(xpx_sub).dot(b)) / nobs
-        if method == 't-stat':
+        if method == "t-stat":
             xpxi = inv(xpx_sub)
             stderr = sqrt(sigma2[i - m] * xpxi[-1, -1])
             tstat[i - m] = b[-1] / stderr
@@ -218,7 +265,7 @@ def _autolag_ols(endog, exog, startlag, maxlag, method):
     for i in range(startlag, startlag + effective_max_lag + 1):
         b = solve(r[:i, :i], qpy[:i])
         sigma2[i - startlag] = (ypy - b.T.dot(xpx[:i, :i]).dot(b)) / nobs
-        if method == 't-stat' and i > startlag:
+        if method == "t-stat" and i > startlag:
             xpxi = inv(xpx[:i, :i])
             stderr = sqrt(sigma2[i - startlag] * xpxi[-1, -1])
             tstat[i - startlag] = b[-1] / stderr
@@ -261,22 +308,22 @@ def _df_select_lags(y, trend, max_lags, method, low_memory=False):
     # This is the absolute maximum number of lags possible,
     # only needed to very short time series.
     max_max_lags = nobs // 2 - 1
-    if trend != 'nc':
+    if trend != "nc":
         max_max_lags -= len(trend)
     if max_lags is None:
-        max_lags = int(ceil(12. * power(nobs / 100., 1 / 4.)))
+        max_lags = int(ceil(12.0 * power(nobs / 100.0, 1 / 4.0)))
         max_lags = max(min(max_lags, max_max_lags), 0)
     if low_memory:
         out = _autolag_ols_low_memory(y, max_lags, trend, method)
         return out
 
     delta_y = diff(y)
-    rhs = lagmat(delta_y[:, None], max_lags, trim='both', original='in')
+    rhs = lagmat(delta_y[:, None], max_lags, trim="both", original="in")
     nobs = rhs.shape[0]
-    rhs[:, 0] = y[-nobs - 1:-1]  # replace 0 with level of y
+    rhs[:, 0] = y[-nobs - 1 : -1]  # replace 0 with level of y
     lhs = delta_y[-nobs:]
 
-    if trend != 'nc':
+    if trend != "nc":
         full_rhs = add_trend(rhs, trend, prepend=True)
     else:
         full_rhs = rhs
@@ -288,8 +335,8 @@ def _df_select_lags(y, trend, max_lags, method, low_memory=False):
 
 def _add_column_names(rhs, lags):
     """Return a DataFrame with named columns"""
-    lag_names = ['Diff.L{0}'.format(i) for i in range(1, lags + 1)]
-    return DataFrame(rhs, columns=['Level.L1'] + lag_names)
+    lag_names = ["Diff.L{0}".format(i) for i in range(1, lags + 1)]
+    return DataFrame(rhs, columns=["Level.L1"] + lag_names)
 
 
 def _estimate_df_regression(y, trend, lags):
@@ -316,14 +363,14 @@ def _estimate_df_regression(y, trend, lags):
     """
     delta_y = diff(y)
 
-    rhs = lagmat(delta_y[:, None], lags, trim='both', original='in')
+    rhs = lagmat(delta_y[:, None], lags, trim="both", original="in")
     nobs = rhs.shape[0]
     lhs = rhs[:, 0].copy()  # lag-0 values are lhs, Is copy() necessary?
-    rhs[:, 0] = y[-nobs - 1:-1]  # replace lag 0 with level of y
+    rhs[:, 0] = y[-nobs - 1 : -1]  # replace lag 0 with level of y
     rhs = _add_column_names(rhs, lags)
 
-    if trend != 'nc':
-        rhs = add_trend(rhs.iloc[:, :lags + 1], trend)
+    if trend != "nc":
+        rhs = add_trend(rhs.iloc[:, : lags + 1], trend)
 
     return OLS(lhs, rhs).fit()
 
@@ -332,20 +379,20 @@ class UnitRootTest(object):
     """Base class to be used for inheritance in unit root bootstrap"""
 
     def __init__(self, y, lags, trend, valid_trends):
-        self._y = ensure1d(y, 'y')
+        self._y = ensure1d(y, "y")
         self._delta_y = diff(y)
         self._nobs = self._y.shape[0]
         self._lags = None
         self.lags = lags
         self._valid_trends = valid_trends
-        self._trend = ''
+        self._trend = ""
         self.trend = trend
         self._stat = None
         self._critical_values = None
         self._pvalue = None
         self.trend = trend
-        self._null_hypothesis = 'The process contains a unit root.'
-        self._alternative_hypothesis = 'The process is weakly stationary.'
+        self._null_hypothesis = "The process contains a unit root."
+        self._alternative_hypothesis = "The process is weakly stationary."
         self._test_name = None
         self._title = None
         self._summary_text = None
@@ -428,34 +475,44 @@ class UnitRootTest(object):
     def summary(self):
         """Summary of test, containing statistic, p-value and critical values
         """
-        table_data = [('Test Statistic', '{0:0.3f}'.format(self.stat)),
-                      ('P-value', '{0:0.3f}'.format(self.pvalue)),
-                      ('Lags', '{0:d}'.format(self.lags))]
+        table_data = [
+            ("Test Statistic", "{0:0.3f}".format(self.stat)),
+            ("P-value", "{0:0.3f}".format(self.pvalue)),
+            ("Lags", "{0:d}".format(self.lags)),
+        ]
         title = self._title
 
         if not title:
             title = self._test_name + " Results"
-        table = SimpleTable(table_data, stubs=None, title=title, colwidths=18,
-                            datatypes=[0, 1], data_aligns=("l", "r"))
+        table = SimpleTable(
+            table_data,
+            stubs=None,
+            title=title,
+            colwidths=18,
+            datatypes=[0, 1],
+            data_aligns=("l", "r"),
+        )
 
         smry = Summary()
         smry.tables.append(table)
 
-        cv_string = 'Critical Values: '
+        cv_string = "Critical Values: "
         cv = self._critical_values.keys()
-        cv_numeric = array(lmap(lambda x: float(x.split('%')[0]), cv))
+        cv_numeric = array(lmap(lambda x: float(x.split("%")[0]), cv))
         cv_numeric = sort(cv_numeric)
         for val in cv_numeric:
-            p = str(int(val)) + '%'
-            cv_string += '{0:0.2f}'.format(self._critical_values[p])
-            cv_string += ' (' + p + ')'
+            p = str(int(val)) + "%"
+            cv_string += "{0:0.2f}".format(self._critical_values[p])
+            cv_string += " (" + p + ")"
             if val != cv_numeric[-1]:
-                cv_string += ', '
+                cv_string += ", "
 
-        extra_text = ['Trend: ' + TREND_DESCRIPTION[self._trend],
-                      cv_string,
-                      'Null Hypothesis: ' + self.null_hypothesis,
-                      'Alternative Hypothesis: ' + self.alternative_hypothesis]
+        extra_text = [
+            "Trend: " + TREND_DESCRIPTION[self._trend],
+            cv_string,
+            "Null Hypothesis: " + self.null_hypothesis,
+            "Alternative Hypothesis: " + self.alternative_hypothesis,
+        ]
 
         smry.add_extra_txt(extra_text)
         if self._summary_text:
@@ -475,9 +532,12 @@ class UnitRootTest(object):
     @lags.setter
     def lags(self, value):
         types = (int, int32, int64)
-        if value is not None and not isinstance(value, types) or \
-                (isinstance(value, types) and value < 0):
-            raise ValueError('lags must be a non-negative integer or None')
+        if (
+            value is not None
+            and not isinstance(value, types)
+            or (isinstance(value, types) and value < 0)
+        ):
+            raise ValueError("lags must be a non-negative integer or None")
         if self._lags != value:
             self._reset()
         self._lags = value
@@ -498,7 +558,7 @@ class UnitRootTest(object):
     @trend.setter
     def trend(self, value):
         if value not in self.valid_trends:
-            raise ValueError('trend not understood')
+            raise ValueError("trend not understood")
         if self._trend != value:
             self._reset()
             self._trend = value
@@ -588,13 +648,14 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
        https://ideas.repec.org/p/qed/wpaper/1227.html
     """
 
-    def __init__(self, y, lags=None, trend='c',
-                 max_lags=None, method='AIC', low_memory=None):
-        valid_trends = ('nc', 'c', 'ct', 'ctt')
+    def __init__(
+        self, y, lags=None, trend="c", max_lags=None, method="AIC", low_memory=None
+    ):
+        valid_trends = ("nc", "c", "ct", "ctt")
         super(ADF, self).__init__(y, lags, trend, valid_trends)
         self._max_lags = max_lags
         self._method = method
-        self._test_name = 'Augmented Dickey-Fuller'
+        self._test_name = "Augmented Dickey-Fuller"
         self._regression = None
         self._summary_text = None
         self._low_memory = low_memory
@@ -602,9 +663,13 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
             self._low_memory = True if self.y.shape[0] > 1e5 else False
 
     def _select_lag(self):
-        ic_best, best_lag = _df_select_lags(self._y, self._trend,
-                                            self._max_lags, self._method,
-                                            low_memory=self._low_memory)
+        ic_best, best_lag = _df_select_lags(
+            self._y,
+            self._trend,
+            self._max_lags,
+            self._method,
+            low_memory=self._low_memory,
+        )
         self._ic_best = ic_best
         self._lags = best_lag
 
@@ -616,14 +681,15 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
         self._regression = resols
         self._stat = stat = resols.tvalues[0]
         self._nobs = int(resols.nobs)
-        self._pvalue = mackinnonp(stat, regression=trend,
-                                  num_unit_roots=1)
-        critical_values = mackinnoncrit(num_unit_roots=1,
-                                        regression=trend,
-                                        nobs=resols.nobs)
-        self._critical_values = {"1%": critical_values[0],
-                                 "5%": critical_values[1],
-                                 "10%": critical_values[2]}
+        self._pvalue = mackinnonp(stat, regression=trend, num_unit_roots=1)
+        critical_values = mackinnoncrit(
+            num_unit_roots=1, regression=trend, nobs=resols.nobs
+        )
+        self._critical_values = {
+            "1%": critical_values[0],
+            "5%": critical_values[1],
+            "10%": critical_values[2],
+        }
 
     @property
     def regression(self):
@@ -709,9 +775,10 @@ class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
            bootstrap for an autoregressive unit root. Econometrica 64: 813-836
     """
 
-    def __init__(self, y, lags=None, trend='c',
-                 max_lags=None, method='AIC', low_memory=None):
-        valid_trends = ('c', 'ct')
+    def __init__(
+        self, y, lags=None, trend="c", max_lags=None, method="AIC", low_memory=None
+    ):
+        valid_trends = ("c", "ct")
         super(DFGLS, self).__init__(y, lags, trend, valid_trends)
         self._max_lags = max_lags
         self._method = method
@@ -719,8 +786,8 @@ class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
         self._low_memory = low_memory
         if low_memory is None:
             self._low_memory = True if self.y.shape[0] >= 1e5 else False
-        self._test_name = 'Dickey-Fuller GLS'
-        if trend == 'c':
+        self._test_name = "Dickey-Fuller GLS"
+        if trend == "c":
             self._c = -7.0
         else:
             self._c = -13.5
@@ -745,37 +812,36 @@ class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
         # 2. determine lag length, if needed
         if self._lags is None:
             max_lags, method = self._max_lags, self._method
-            icbest, bestlag = _df_select_lags(y_detrended, 'nc', max_lags, method,
-                                              low_memory=self._low_memory)
+            icbest, bestlag = _df_select_lags(
+                y_detrended, "nc", max_lags, method, low_memory=self._low_memory
+            )
             self._lags = bestlag
 
         # 3. Run Regression
         lags = self._lags
 
-        resols = _estimate_df_regression(y_detrended,
-                                         lags=lags,
-                                         trend='nc')
+        resols = _estimate_df_regression(y_detrended, lags=lags, trend="nc")
         self._regression = resols
         self._nobs = int(resols.nobs)
         self._stat = resols.tvalues[0]
-        self._pvalue = mackinnonp(self._stat,
-                                  regression=trend,
-                                  dist_type='DFGLS')
-        critical_values = mackinnoncrit(regression=trend,
-                                        nobs=self._nobs,
-                                        dist_type='DFGLS')
-        self._critical_values = {"1%": critical_values[0],
-                                 "5%": critical_values[1],
-                                 "10%": critical_values[2]}
+        self._pvalue = mackinnonp(self._stat, regression=trend, dist_type="DFGLS")
+        critical_values = mackinnoncrit(
+            regression=trend, nobs=self._nobs, dist_type="DFGLS"
+        )
+        self._critical_values = {
+            "1%": critical_values[0],
+            "5%": critical_values[1],
+            "10%": critical_values[2],
+        }
 
     @UnitRootTest.trend.setter
     def trend(self, value):
         if value not in self.valid_trends:
-            raise ValueError('trend not understood')
+            raise ValueError("trend not understood")
         if self._trend != value:
             self._reset()
             self._trend = value
-        if value == 'c':
+        if value == "c":
             self._c = -7.0
         else:
             self._c = -13.5
@@ -886,13 +952,13 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
            https://ideas.repec.org/p/qed/wpaper/1227.html
     """
 
-    def __init__(self, y, lags=None, trend='c', test_type='tau'):
-        valid_trends = ('nc', 'c', 'ct')
+    def __init__(self, y, lags=None, trend="c", test_type="tau"):
+        valid_trends = ("nc", "c", "ct")
         super(PhillipsPerron, self).__init__(y, lags, trend, valid_trends)
         self._test_type = test_type
         self._stat_rho = None
         self._stat_tau = None
-        self._test_name = 'Phillips-Perron Test'
+        self._test_name = "Phillips-Perron Test"
         self._lags = lags
 
     def _compute_statistic(self):
@@ -902,13 +968,13 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
         nobs = y.shape[0]
 
         if self._lags is None:
-            self._lags = int(ceil(12. * power(nobs / 100., 1 / 4.)))
+            self._lags = int(ceil(12.0 * power(nobs / 100.0, 1 / 4.0)))
         lags = self._lags
 
         rhs = y[:-1, None]
         rhs = _add_column_names(rhs, 0)
         lhs = y[1:, None]
-        if trend != 'nc':
+        if trend != "nc":
             rhs = add_trend(rhs, trend)
 
         resols = OLS(lhs, rhs).fit()
@@ -924,30 +990,30 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
         sigma2 = sigma ** 2.0
         rho = resols.params[0]
         # 3. Compute statistics
-        self._stat_tau = sqrt(gamma0 / lam2) * ((rho - 1) / sigma) \
-            - 0.5 * ((lam2 - gamma0) / lam) * (n * sigma / s)
-        self._stat_rho = n * (rho - 1) \
-            - 0.5 * (n ** 2.0 * sigma2 / s2) * (lam2 - gamma0)
+        self._stat_tau = sqrt(gamma0 / lam2) * ((rho - 1) / sigma) - 0.5 * (
+            (lam2 - gamma0) / lam
+        ) * (n * sigma / s)
+        self._stat_rho = n * (rho - 1) - 0.5 * (n ** 2.0 * sigma2 / s2) * (
+            lam2 - gamma0
+        )
 
         self._nobs = int(resols.nobs)
-        if self._test_type == 'rho':
+        if self._test_type == "rho":
             self._stat = self._stat_rho
-            dist_type = 'ADF-z'
+            dist_type = "ADF-z"
         else:
             self._stat = self._stat_tau
-            dist_type = 'ADF-t'
+            dist_type = "ADF-t"
 
-        self._pvalue = mackinnonp(self._stat,
-                                  regression=trend,
-                                  dist_type=dist_type)
-        critical_values = mackinnoncrit(regression=trend,
-                                        nobs=n,
-                                        dist_type=dist_type)
-        self._critical_values = {"1%": critical_values[0],
-                                 "5%": critical_values[1],
-                                 "10%": critical_values[2]}
+        self._pvalue = mackinnonp(self._stat, regression=trend, dist_type=dist_type)
+        critical_values = mackinnoncrit(regression=trend, nobs=n, dist_type=dist_type)
+        self._critical_values = {
+            "1%": critical_values[0],
+            "5%": critical_values[1],
+            "10%": critical_values[2],
+        }
 
-        self._title = self._test_name + ' (Z-' + self._test_type + ')'
+        self._title = self._test_name + " (Z-" + self._test_type + ")"
 
     @property
     def test_type(self):
@@ -957,8 +1023,8 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
 
     @test_type.setter
     def test_type(self, value):
-        if value not in ('rho', 'tau'):
-            raise ValueError('stat must be either ''rho'' or ''tau''.')
+        if value not in ("rho", "tau"):
+            raise ValueError("stat must be either " "rho" " or " "tau" ".")
         self._reset()
         self._test_type = value
 
@@ -1032,19 +1098,22 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
            147-159.
     """
 
-    def __init__(self, y, lags=None, trend='c'):
-        valid_trends = ('c', 'ct')
+    def __init__(self, y, lags=None, trend="c"):
+        valid_trends = ("c", "ct")
         if lags is None:
-            warnings.warn('Lag selection has changed to use a data-dependent method. To use the '
-                          'old method that only depends on time, set lags=-1', DeprecationWarning)
+            warnings.warn(
+                "Lag selection has changed to use a data-dependent method. To use the "
+                "old method that only depends on time, set lags=-1",
+                DeprecationWarning,
+            )
         self._legacy_lag_selection = False
         if lags == -1:
             self._legacy_lag_selection = True
             lags = None
         super(KPSS, self).__init__(y, lags, trend, valid_trends)
-        self._test_name = 'KPSS Stationarity Test'
-        self._null_hypothesis = 'The process is weakly stationary.'
-        self._alternative_hypothesis = 'The process contains a unit root.'
+        self._test_name = "KPSS Stationarity Test"
+        self._null_hypothesis = "The process is weakly stationary."
+        self._alternative_hypothesis = "The process contains a unit root."
         self._resids = None
 
     def _compute_statistic(self):
@@ -1056,7 +1125,7 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
         self._resids = u = res.resid
         if self._lags is None:
             if self._legacy_lag_selection:
-                self._lags = int(ceil(12. * power(nobs / 100., 1 / 4.)))
+                self._lags = int(ceil(12.0 * power(nobs / 100.0, 1 / 4.0)))
             else:
                 self._autolag()
         lam = cov_nw(u, self._lags, demean=False)
@@ -1064,9 +1133,11 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
         self._stat = 1 / (nobs ** 2.0) * sum(s ** 2.0) / lam
         self._nobs = u.shape[0]
         self._pvalue, critical_values = kpss_crit(self._stat, trend)
-        self._critical_values = {"1%": critical_values[0],
-                                 "5%": critical_values[1],
-                                 "10%": critical_values[2]}
+        self._critical_values = {
+            "1%": critical_values[0],
+            "5%": critical_values[1],
+            "10%": critical_values[2],
+        }
 
     def _autolag(self):
         """
@@ -1078,16 +1149,16 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
         Written by Jim Varanelli
         """
         resids = self._resids
-        covlags = int(power(self._nobs, 2. / 9.))
-        s0 = sum(resids**2) / self._nobs
+        covlags = int(power(self._nobs, 2.0 / 9.0))
+        s0 = sum(resids ** 2) / self._nobs
         s1 = 0
         for i in range(1, covlags + 1):
-            resids_prod = resids[i:].dot(resids[:self._nobs - i])
+            resids_prod = resids[i:].dot(resids[: self._nobs - i])
             resids_prod /= self._nobs / 2
             s0 += resids_prod
             s1 += i * resids_prod
         s_hat = s1 / s0
-        pwr = 1. / 3.
+        pwr = 1.0 / 3.0
         gamma_hat = 1.1447 * power(s_hat * s_hat, pwr)
         autolags = amin([self._nobs, int(gamma_hat * power(self._nobs, pwr))])
         self._lags = autolags
@@ -1154,17 +1225,20 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
            crash, the oil-price shock, and the unit-root hypothesis. Journal of
            Business & Economic Studies, 10: 251-270.
     """
-    def __init__(self, y, lags=None, trend='c', trim=0.15, max_lags=None, method='AIC'):
-        super(ZivotAndrews, self).__init__(y, lags, trend, ('c', 't', 'ct'))
-        if not isinstance(trim, float) or trim < 0 or trim > (1. / 3.):
-            raise ValueError('trim must be a float in range [0, 0.333]')
+
+    def __init__(self, y, lags=None, trend="c", trim=0.15, max_lags=None, method="AIC"):
+        super(ZivotAndrews, self).__init__(y, lags, trend, ("c", "t", "ct"))
+        if not isinstance(trim, float) or trim < 0 or trim > (1.0 / 3.0):
+            raise ValueError("trim must be a float in range [0, 0.333]")
         self._trim = trim
         self._max_lags = max_lags
         self._method = method
-        self._test_name = 'Zivot-Andrews'
+        self._test_name = "Zivot-Andrews"
         self._all_stats = full(self._y.shape[0], nan)
-        self._null_hypothesis = 'The process contains a unit root with a single structural break.'
-        self._alternative_hypothesis = 'The process is trend and break stationary.'
+        self._null_hypothesis = (
+            "The process contains a unit root with a single structural break."
+        )
+        self._alternative_hypothesis = "The process is trend and break stationary."
 
     @staticmethod
     def _quick_ols(endog, exog):
@@ -1187,19 +1261,19 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
         trend = self._trend
 
         y = self._y
-        y = ensure2d(y, 'y')
+        y = ensure2d(y, "y")
         nobs = y.shape[0]
 
         if self._lags is not None:
             baselags = self._lags
         else:
-            adf = ADF(self._y, max_lags=self._max_lags, trend='ct', method=self._method)
+            adf = ADF(self._y, max_lags=self._max_lags, trend="ct", method=self._method)
             self._lags = baselags = adf.lags
 
         trimcnt = int(nobs * trim)
         start_period = trimcnt
         end_period = nobs - trimcnt
-        if trend == 'ct':
+        if trend == "ct":
             basecols = 5
         else:
             basecols = 4
@@ -1213,8 +1287,10 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
         c_const = 1 / sqrt(nobs)  # Normalize
         exog[:, 0] = c_const
         # lagged y and dy
-        exog[:, basecols - 1] = y[baselags:(nobs - 1), 0]
-        exog[:, basecols:] = lagmat(dy, baselags, trim='none')[baselags:exog.shape[0] + baselags]
+        exog[:, basecols - 1] = y[baselags : (nobs - 1), 0]
+        exog[:, basecols:] = lagmat(dy, baselags, trim="none")[
+            baselags : exog.shape[0] + baselags
+        ]
         # better time trend: t_const @ t_const = 1 for large nobs
         t_const = arange(1.0, nobs + 2)
         t_const *= sqrt(3) / nobs ** (3 / 2)
@@ -1222,27 +1298,31 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
         stats = full(end_period + 1, inf)
         for bp in range(start_period + 1, end_period + 1):
             # update intercept dummy / trend / trend dummy
-            cutoff = (bp - (baselags + 1))
-            if trend != 't':
+            cutoff = bp - (baselags + 1)
+            if trend != "t":
                 exog[:cutoff, 1] = 0
                 exog[cutoff:, 1] = c_const
-                exog[:, 2] = t_const[(baselags + 2):(nobs + 1)]
-                if trend == 'ct':
+                exog[:, 2] = t_const[(baselags + 2) : (nobs + 1)]
+                if trend == "ct":
                     exog[:cutoff, 3] = 0
-                    exog[cutoff:, 3] = t_const[1:(nobs - bp + 1)]
+                    exog[cutoff:, 3] = t_const[1 : (nobs - bp + 1)]
             else:
-                exog[:, 1] = t_const[(baselags + 2):(nobs + 1)]
-                exog[:(cutoff-1), 2] = 0
-                exog[(cutoff-1):, 2] = t_const[0:(nobs - bp + 1)]
+                exog[:, 1] = t_const[(baselags + 2) : (nobs + 1)]
+                exog[: (cutoff - 1), 2] = 0
+                exog[(cutoff - 1) :, 2] = t_const[0 : (nobs - bp + 1)]
             # check exog rank on first iteration
             if bp == start_period + 1:
                 rank = matrix_rank(exog)
                 if rank < exog.shape[1]:
-                    raise ValueError('ZA: auxiliary exog matrix is not full rank.\n cols '
-                                     '{0}. rank = {1}'.format(exog.shape[1], rank))
+                    raise ValueError(
+                        "ZA: auxiliary exog matrix is not full rank.\n cols "
+                        "{0}. rank = {1}".format(exog.shape[1], rank)
+                    )
             stats[bp] = self._quick_ols(dy[baselags:], exog)[basecols - 1]
         # return best seen
-        self._all_stats[start_period+1:end_period+1] = stats[start_period+1:end_period+1]
+        self._all_stats[start_period + 1 : end_period + 1] = stats[
+            start_period + 1 : end_period + 1
+        ]
         self._stat = amin(stats)
         self._cv_interpolate()
 
@@ -1262,7 +1342,11 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
         self._pvalue = interp(self.stat, x, y) / 100.0
         cv = [1.0, 5.0, 10.0]
         crit_value = interp(cv, y, x)
-        self._critical_values = {"1%": crit_value[0], "5%": crit_value[1], "10%": crit_value[2]}
+        self._critical_values = {
+            "1%": crit_value[0],
+            "5%": crit_value[1],
+            "10%": crit_value[2],
+        }
 
 
 class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
@@ -1316,25 +1400,24 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
        Press.
     """
 
-    def __init__(self, y, lags=2, trend='c', debiased=True,
-                 robust=True, overlap=True):
+    def __init__(self, y, lags=2, trend="c", debiased=True, robust=True, overlap=True):
         if lags < 2:
-            raise ValueError('lags must be an integer larger than 2')
-        valid_trends = ('nc', 'c')
+            raise ValueError("lags must be an integer larger than 2")
+        valid_trends = ("nc", "c")
         super(VarianceRatio, self).__init__(y, lags, trend, valid_trends)
-        self._test_name = 'Variance-Ratio Test'
-        self._null_hypothesis = 'The process is a random walk.'
-        self._alternative_hypothesis = 'The process is not a random walk.'
+        self._test_name = "Variance-Ratio Test"
+        self._null_hypothesis = "The process is a random walk."
+        self._alternative_hypothesis = "The process is not a random walk."
         self._robust = robust
         self._debiased = debiased
         self._overlap = overlap
         self._vr = None
         self._stat_variance = None
-        quantiles = array([.01, .05, .1, .9, .95, .99])
+        quantiles = array([0.01, 0.05, 0.1, 0.9, 0.95, 0.99])
         self._critical_values = {}
-        self._summary_text = ''
+        self._summary_text = ""
         for q, cv in zip(quantiles, norm.ppf(quantiles)):
-            self._critical_values[str(int(100 * q)) + '%'] = cv
+            self._critical_values[str(int(100 * q)) + "%"] = cv
 
     @property
     def vr(self):
@@ -1385,13 +1468,13 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
             if nq % q != 0:
                 extra = nq % q
                 y = y[:-extra]
-                warnings.warn(invalid_length_doc.format(var='y',
-                                                        block=q,
-                                                        drop=extra),
-                              InvalidLengthWarning)
+                warnings.warn(
+                    invalid_length_doc.format(var="y", block=q, drop=extra),
+                    InvalidLengthWarning,
+                )
 
         nobs = y.shape[0]
-        if trend == 'nc':
+        if trend == "nc":
             mu = 0
         else:
             mu = (y[-1] - y[0]) / (nobs - 1)
@@ -1403,18 +1486,17 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
         if not overlap:
             delta_y_q = y[q::q] - y[0:-q:q]
             sigma2_q = sum((delta_y_q - q * mu) ** 2.0) / nq
-            self._summary_text = ['Computed with non-overlapping blocks']
+            self._summary_text = ["Computed with non-overlapping blocks"]
         else:
             delta_y_q = y[q:] - y[:-q]
             sigma2_q = sum((delta_y_q - q * mu) ** 2.0) / (nq * q)
-            self._summary_text = ['Computed with overlapping blocks']
+            self._summary_text = ["Computed with overlapping blocks"]
 
         if debiased and overlap:
             sigma2_1 *= nq / (nq - 1)
             m = q * (nq - q + 1) * (1 - (q / nq))
             sigma2_q *= (nq * q) / m
-            self._summary_text = ['Computed with overlapping blocks '
-                                  '(de-biased)']
+            self._summary_text = ["Computed with overlapping blocks " "(de-biased)"]
 
         if not overlap:
             self._stat_variance = 2.0 * (q - 1)
@@ -1435,7 +1517,7 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
         self._pvalue = 2 - 2 * norm.cdf(abs(self._stat))
 
 
-def mackinnonp(stat, regression="c", num_unit_roots=1, dist_type='ADF-t'):
+def mackinnonp(stat, regression="c", num_unit_roots=1, dist_type="ADF-t"):
     """
     Returns MacKinnon's approximate p-value for test stat.
 
@@ -1474,29 +1556,31 @@ def mackinnonp(stat, regression="c", num_unit_roots=1, dist_type='ADF-t'):
     the methodology of MacKinnon (1994).
     """
     dist_type = dist_type.lower()
-    if num_unit_roots > 1 and dist_type.lower() != 'adf-t':
-        raise ValueError('Cointegration results (num_unit_roots > 1) are' +
-                         'only available for ADF-t values')
-    if dist_type == 'adf-t':
+    if num_unit_roots > 1 and dist_type.lower() != "adf-t":
+        raise ValueError(
+            "Cointegration results (num_unit_roots > 1) are"
+            + "only available for ADF-t values"
+        )
+    if dist_type == "adf-t":
         maxstat = tau_max[regression][num_unit_roots - 1]
         minstat = tau_min[regression][num_unit_roots - 1]
         starstat = tau_star[regression][num_unit_roots - 1]
         small_p = tau_small_p[regression][num_unit_roots - 1]
         large_p = tau_large_p[regression][num_unit_roots - 1]
-    elif dist_type == 'adf-z':
+    elif dist_type == "adf-z":
         maxstat = adf_z_max[regression]
         minstat = adf_z_min[regression]
         starstat = adf_z_star[regression]
         small_p = adf_z_small_p[regression]
         large_p = adf_z_large_p[regression]
-    elif dist_type == 'dfgls':
+    elif dist_type == "dfgls":
         maxstat = dfgls_tau_max[regression]
         minstat = dfgls_tau_min[regression]
         starstat = dfgls_tau_star[regression]
         small_p = dfgls_small_p[regression]
         large_p = dfgls_large_p[regression]
     else:
-        raise ValueError('Unknown test type {0}'.format(dist_type))
+        raise ValueError("Unknown test type {0}".format(dist_type))
 
     if stat > maxstat:
         return 1.0
@@ -1504,15 +1588,14 @@ def mackinnonp(stat, regression="c", num_unit_roots=1, dist_type='ADF-t'):
         return 0.0
     if stat <= starstat:
         poly_coef = small_p
-        if dist_type == 'adf-z':
+        if dist_type == "adf-z":
             stat = log(abs(stat))  # Transform stat for small p ADF-z
     else:
         poly_coef = large_p
     return norm.cdf(polyval(poly_coef[::-1], stat))
 
 
-def mackinnoncrit(num_unit_roots=1, regression='c', nobs=inf,
-                  dist_type='ADF-t'):
+def mackinnoncrit(num_unit_roots=1, regression="c", nobs=inf, dist_type="ADF-t"):
     """
     Returns the critical values for cointegrating and the ADF test.
 
@@ -1560,33 +1643,32 @@ def mackinnoncrit(num_unit_roots=1, regression='c', nobs=inf,
         https://ideas.repec.org/p/qed/wpaper/1227.html
     """
     dist_type = dist_type.lower()
-    valid_regression = ['c', 'ct', 'nc', 'ctt']
-    if dist_type == 'dfgls':
-        valid_regression = ['c', 'ct']
+    valid_regression = ["c", "ct", "nc", "ctt"]
+    if dist_type == "dfgls":
+        valid_regression = ["c", "ct"]
     if regression not in valid_regression:
-        raise ValueError(
-            "regression keyword {0} not understood".format(regression))
+        raise ValueError("regression keyword {0} not understood".format(regression))
 
-    if dist_type == 'adf-t':
+    if dist_type == "adf-t":
         asymptotic_cv = tau_2010[regression][num_unit_roots - 1, :, 0]
         poly_coef = tau_2010[regression][num_unit_roots - 1, :, :].T
-    elif dist_type == 'adf-z':
+    elif dist_type == "adf-z":
         poly_coef = adf_z_cv_approx[regression].T
         asymptotic_cv = adf_z_cv_approx[regression][:, 0]
-    elif dist_type == 'dfgls':
+    elif dist_type == "dfgls":
         poly_coef = dfgls_cv_approx[regression].T
         asymptotic_cv = dfgls_cv_approx[regression][:, 0]
     else:
-        raise ValueError('Unknown test type {0}'.format(dist_type))
+        raise ValueError("Unknown test type {0}".format(dist_type))
 
     if nobs is inf:
         return asymptotic_cv
     else:
         # Flip so that highest power to lowest power
-        return polyval(poly_coef[::-1], 1. / nobs)
+        return polyval(poly_coef[::-1], 1.0 / nobs)
 
 
-def kpss_crit(stat, trend='c'):
+def kpss_crit(stat, trend="c"):
     """
     Linear interpolation for KPSS p-values and critical values
 
@@ -1622,7 +1704,7 @@ def kpss_crit(stat, trend='c'):
     return pvalue, crit_value
 
 
-def auto_bandwidth(y, kernel='ba'):
+def auto_bandwidth(y, kernel="ba"):
     """
     Automatic bandwidth selection of Andrews (1991) and Newey & West (1994).
 
@@ -1646,33 +1728,34 @@ def auto_bandwidth(y, kernel='ba'):
     y = asarray(y)
     if y.ndim != 1 or y.shape[0] < 2:
         raise ValueError(
-            'Data must be of dimension 1 and contain more than one observation')
+            "Data must be of dimension 1 and contain more than one observation"
+        )
 
     kernel = kernel.lower()
-    if kernel in ('ba', 'bartlett', 'nw'):
-        kernel = 'ba'
+    if kernel in ("ba", "bartlett", "nw"):
+        kernel = "ba"
         n_power = 2 / 9
-    elif kernel in ('pa', 'parzen', 'gallant'):
-        kernel = 'pa'
+    elif kernel in ("pa", "parzen", "gallant"):
+        kernel = "pa"
         n_power = 4 / 25
-    elif kernel in ('qs', 'andrews'):
-        kernel = 'qs'
+    elif kernel in ("qs", "andrews"):
+        kernel = "qs"
         n_power = 2 / 25
     else:
-        raise ValueError('Unknown kernel')
+        raise ValueError("Unknown kernel")
 
     n = int(4 * ((len(y) / 100) ** n_power))
     sig = (n + 1) * [0]
 
     for i in range(n + 1):
         a = list(y[i:])
-        b = list(y[:len(y) - i])
+        b = list(y[: len(y) - i])
         sig[i] = sum([i * j for (i, j) in zip(a, b)])
 
-    sigma_m1 = sig[1:len(sig)]  # sigma without the 1st element
+    sigma_m1 = sig[1 : len(sig)]  # sigma without the 1st element
     s0 = sig[0] + 2 * sum(sigma_m1)
 
-    if kernel == 'ba':
+    if kernel == "ba":
         s1 = 0
         for j in range(len(sigma_m1)):
             s1 += (j + 1) * sigma_m1[j]
@@ -1687,7 +1770,7 @@ def auto_bandwidth(y, kernel='ba'):
         s2 *= 2
         q = 2
         t_power = 1 / (2 * q + 1)
-        if kernel == 'pa':
+        if kernel == "pa":
             gamma = 2.6614 * (((s2 / s0) ** 2) ** t_power)
         else:  # kernel == 'qs':
             gamma = 1.3221 * (((s2 / s0) ** 2) ** t_power)

@@ -10,4 +10,4 @@ def load():
     data : DataFrame
         Data set containing historical VIX
     """
-    return load_file(__file__, 'vix.csv.gz')
+    return load_file(__file__, "vix.csv.gz")

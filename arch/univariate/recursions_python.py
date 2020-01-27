@@ -7,10 +7,17 @@ from arch.compat.numba import jit
 
 import numpy as np
 
-__all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion', 'egarch_recursion',
-           'midas_recursion', 'figarch_weights', 'figarch_recursion']
+__all__ = [
+    "harch_recursion",
+    "arch_recursion",
+    "garch_recursion",
+    "egarch_recursion",
+    "midas_recursion",
+    "figarch_weights",
+    "figarch_recursion",
+]
 
-LNSIGMA_MAX = np.log(np.finfo(np.double).max) - .1
+LNSIGMA_MAX = np.log(np.finfo(np.double).max) - 0.1
 
 
 def bounds_check_python(sigma2, var_bounds):
@@ -27,8 +34,9 @@ def bounds_check_python(sigma2, var_bounds):
 bounds_check = jit(bounds_check_python, nopython=True)
 
 
-def harch_recursion_python(parameters, resids, sigma2, lags, nobs, backcast,
-                           var_bounds):
+def harch_recursion_python(
+    parameters, resids, sigma2, lags, nobs, backcast, var_bounds
+):
     """
     Parameters
     ----------
@@ -67,8 +75,7 @@ def harch_recursion_python(parameters, resids, sigma2, lags, nobs, backcast,
 harch_recursion = jit(harch_recursion_python, nopython=True)
 
 
-def arch_recursion_python(parameters, resids, sigma2, p, nobs, backcast,
-                          var_bounds):
+def arch_recursion_python(parameters, resids, sigma2, p, nobs, backcast, var_bounds):
     """
     Parameters
     ----------
@@ -104,8 +111,9 @@ def arch_recursion_python(parameters, resids, sigma2, p, nobs, backcast,
 arch_recursion = jit(arch_recursion_python, nopython=True)
 
 
-def garch_recursion_python(parameters, fresids, sresids, sigma2, p, o, q, nobs,
-                           backcast, var_bounds):
+def garch_recursion_python(
+    parameters, fresids, sresids, sigma2, p, o, q, nobs, backcast, var_bounds
+):
     """
     Compute variance recursion for GARCH and related models
 
@@ -149,8 +157,9 @@ def garch_recursion_python(parameters, fresids, sresids, sigma2, p, o, q, nobs,
             if (t - 1 - j) < 0:
                 sigma2[t] += parameters[loc] * 0.5 * backcast
             else:
-                sigma2[t] += parameters[loc] \
-                             * fresids[t - 1 - j] * (sresids[t - 1 - j] < 0)
+                sigma2[t] += (
+                    parameters[loc] * fresids[t - 1 - j] * (sresids[t - 1 - j] < 0)
+                )
             loc += 1
         for j in range(q):
             if (t - 1 - j) < 0:
@@ -166,9 +175,20 @@ def garch_recursion_python(parameters, fresids, sresids, sigma2, p, o, q, nobs,
 garch_recursion = jit(garch_recursion_python, nopython=True)
 
 
-def egarch_recursion_python(parameters, resids, sigma2, p, o, q, nobs,
-                            backcast, var_bounds, lnsigma2, std_resids,
-                            abs_std_resids):
+def egarch_recursion_python(
+    parameters,
+    resids,
+    sigma2,
+    p,
+    o,
+    q,
+    nobs,
+    backcast,
+    var_bounds,
+    lnsigma2,
+    std_resids,
+    abs_std_resids,
+):
     """
     Compute variance recursion for EGARCH models
 
@@ -208,8 +228,9 @@ def egarch_recursion_python(parameters, resids, sigma2, p, o, q, nobs,
         loc += 1
         for j in range(p):
             if (t - 1 - j) >= 0:
-                lnsigma2[t] += parameters[loc] * \
-                               (abs_std_resids[t - 1 - j] - norm_const)
+                lnsigma2[t] += parameters[loc] * (
+                    abs_std_resids[t - 1 - j] - norm_const
+                )
             loc += 1
         for j in range(o):
             if (t - 1 - j) >= 0:
@@ -239,7 +260,9 @@ def egarch_recursion_python(parameters, resids, sigma2, p, o, q, nobs,
 egarch_recursion = jit(egarch_recursion_python, nopython=True)
 
 
-def midas_recursion_python(parameters, weights, resids, sigma2, nobs, backcast, var_bounds):
+def midas_recursion_python(
+    parameters, weights, resids, sigma2, nobs, backcast, var_bounds
+):
     """
     Parameters
     ----------
@@ -277,7 +300,9 @@ def midas_recursion_python(parameters, weights, resids, sigma2, nobs, backcast, 
         sigma2[t] = omega
         for i in range(m):
             if (t - i - 1) >= 0:
-                sigma2[t] += (aw[i] + gw[i] * (resids[t - i - 1] < 0)) * resids2[t - i - 1]
+                sigma2[t] += (aw[i] + gw[i] * (resids[t - i - 1] < 0)) * resids2[
+                    t - i - 1
+                ]
             else:
                 sigma2[t] += (aw[i] + 0.5 * gw[i]) * backcast
         if sigma2[t] < var_bounds[t, 0]:
@@ -333,8 +358,9 @@ def figarch_weights_python(parameters, p, q, truncation):
 figarch_weights = jit(figarch_weights_python, nopython=True)
 
 
-def figarch_recursion_python(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backcast,
-                             var_bounds):
+def figarch_recursion_python(
+    parameters, fresids, sigma2, p, q, nobs, trunc_lag, backcast, var_bounds
+):
     """
     Parameters
     ----------
@@ -369,7 +395,7 @@ def figarch_recursion_python(parameters, fresids, sigma2, p, q, nobs, trunc_lag,
 
     omega = parameters[0]
     beta = parameters[1 + p + q] if q else 0.0
-    omega_tilde = omega / (1-beta)
+    omega_tilde = omega / (1 - beta)
     lam = figarch_weights(parameters[1:], p, q, trunc_lag)
     for t in range(nobs):
         bc_weight = 0.0

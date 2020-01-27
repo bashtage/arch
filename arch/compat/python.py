@@ -3,10 +3,14 @@
 import sys
 
 if sys.version_info[0] == 3:
+
     def lmap(*args, **kwargs):
         return list(map(*args, **kwargs))
+
+
 else:
     import __builtin__ as builtins
+
     lmap = builtins.map
 
-__all__ = ['lmap']
+__all__ = ["lmap"]

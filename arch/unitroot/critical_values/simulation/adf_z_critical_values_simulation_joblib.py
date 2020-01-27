@@ -54,25 +54,54 @@ def wrapper(n, trend, b, seed=0):
     return res
 
 
-if __name__ == '__main__':
-    trends = ('nc', 'c', 'ct', 'ctt')
+if __name__ == "__main__":
+    trends = ("nc", "c", "ct", "ctt")
     T = array(
-        (20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120, 140, 160,
-         180, 200, 250, 300, 350, 400, 450, 500, 600, 700, 800, 900,
-         1000, 1200, 1400, 2000))
+        (
+            20,
+            25,
+            30,
+            35,
+            40,
+            45,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100,
+            120,
+            140,
+            160,
+            180,
+            200,
+            250,
+            300,
+            350,
+            400,
+            450,
+            500,
+            600,
+            700,
+            800,
+            900,
+            1000,
+            1200,
+            1400,
+            2000,
+        )
+    )
     T = T[::-1]
     m = T.shape[0]
     percentiles = list(arange(0.5, 100.0, 0.5))
     rng = RandomState(0)
     seeds = rng.random_integers(0, 2 ** 31 - 2, size=EX_NUM)
 
-    parallel, p_func, n_jobs = parallel_func(wrapper,
-                                             n_jobs=NUM_JOBS,
-                                             verbose=2)
+    parallel, p_func, n_jobs = parallel_func(wrapper, n_jobs=NUM_JOBS, verbose=2)
     parallel.pre_dispatch = NUM_JOBS
     for tr in trends:
         results = zeros((len(percentiles), len(T), EX_NUM)) * nan
-        filename = 'adf_z_' + tr + '.npz'
+        filename = "adf_z_" + tr + ".npz"
 
         for i in range(EX_NUM):
             print("Experiment Number {0} for Trend {1}".format(i + 1, tr))
@@ -83,11 +112,9 @@ if __name__ == '__main__':
             quantiles = map(lambda x: percentile(x, percentiles), out)
             results[:, :, i] = array(quantiles).T
             elapsed = datetime.datetime.now() - now
-            print('Elapsed time {0} seconds'.format(elapsed))
+            print("Elapsed time {0} seconds".format(elapsed))
 
             if i % 50 == 0:
-                savez(filename, trend=tr, results=results,
-                      percentiles=percentiles, T=T)
+                savez(filename, trend=tr, results=results, percentiles=percentiles, T=T)
 
-        savez(filename, trend=tr, results=results,
-              percentiles=percentiles, T=T)
+        savez(filename, trend=tr, results=results, percentiles=percentiles, T=T)

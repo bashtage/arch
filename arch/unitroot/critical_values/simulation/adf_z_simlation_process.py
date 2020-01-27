@@ -1,23 +1,54 @@
 import numpy as np
 from statsmodels.regression.linear_model import OLS
 
-trends = ('nc', 'c', 'ct', 'ctt')
+trends = ("nc", "c", "ct", "ctt")
 critical_values = (1.0, 5.0, 10.0)
 adf_z_cv_approx = {}
 for t in trends:
     print(t)
-    data = np.load('adf_z_' + t + '.npz')
-    percentiles = data['percentiles']
-    trend = data['trend']
-    results = data['results']
+    data = np.load("adf_z_" + t + ".npz")
+    percentiles = data["percentiles"]
+    trend = data["trend"]
+    results = data["results"]
     # T = data['T']
     data.close()
 
     # Remove later
     T = np.array(
-        (20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120, 140, 160,
-         180, 200, 250, 300, 350, 400, 450, 500, 600, 700, 800, 900,
-         1000, 1200, 1400, 2000))
+        (
+            20,
+            25,
+            30,
+            35,
+            40,
+            45,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100,
+            120,
+            140,
+            160,
+            180,
+            200,
+            250,
+            300,
+            350,
+            400,
+            450,
+            500,
+            600,
+            700,
+            800,
+            900,
+            1000,
+            1200,
+            1400,
+            2000,
+        )
+    )
     T = T[::-1]
 
     # For percentiles 1, 5 and 10, regress on a constant, and powers of 1/T
@@ -43,6 +74,6 @@ for t in trends:
 
     adf_z_cv_approx[t] = np.array(out)
 
-print('from numpy import array')
-print('')
-print('adf_z_cv_approx = ' + str(adf_z_cv_approx))
+print("from numpy import array")
+print("")
+print("adf_z_cv_approx = " + str(adf_z_cv_approx))

@@ -14,4 +14,4 @@ def load():
     -----
     From the FRED database
     """
-    return load_file(__file__, 'core-cpi.csv.gz')
+    return load_file(__file__, "core-cpi.csv.gz")

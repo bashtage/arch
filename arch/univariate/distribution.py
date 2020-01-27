@@ -5,16 +5,28 @@ Distributions to use in ARCH models.  All distributions must inherit from
 """
 from abc import abstractmethod
 
-from numpy import (abs, array, asarray, empty, exp, isscalar, log, nan,
-                   ones_like, pi, sign, sqrt, sum)
+from numpy import (
+    abs,
+    array,
+    asarray,
+    empty,
+    exp,
+    isscalar,
+    log,
+    nan,
+    ones_like,
+    pi,
+    sign,
+    sqrt,
+    sum,
+)
 from numpy.random import RandomState
 from scipy.special import comb, gamma, gammainc, gammaincc, gammaln
 import scipy.stats as stats
 
 from arch.utility.array import AbstractDocStringInheritor
 
-__all__ = ['Distribution', 'Normal', 'StudentsT', 'SkewStudent',
-           'GeneralizedError']
+__all__ = ["Distribution", "Normal", "StudentsT", "SkewStudent", "GeneralizedError"]
 
 
 class Distribution(object, metaclass=AbstractDocStringInheritor):
@@ -30,20 +42,22 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         if random_state is None:
             self._random_state = RandomState()
         if not isinstance(self._random_state, RandomState):
-            raise TypeError('random_state must by a NumPy RandomState instance')
+            raise TypeError("random_state must by a NumPy RandomState instance")
 
     def _check_constraints(self, params):
         bounds = self.bounds(None)
         nparams = 0 if params is None else len(params)
         if nparams != len(bounds):
-            raise ValueError('parameters must have {0} elements'.format(len(bounds)))
+            raise ValueError("parameters must have {0} elements".format(len(bounds)))
         if len(bounds) == 0:
             return
         params = asarray(params)
         for p, n, b in zip(params, self.name, bounds):
             if not (b[0] <= p <= b[1]):
-                raise ValueError('{0} does not satisfy the bounds requirement '
-                                 'of ({1}, {2})'.format(n, *b))
+                raise ValueError(
+                    "{0} does not satisfy the bounds requirement "
+                    "of ({1}, {2})".format(n, *b)
+                )
         return params
 
     @property
@@ -274,10 +288,10 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         return self._description()
 
     def __repr__(self):
-        return self.__str__() + ', id: ' + hex(id(self)) + ''
+        return self.__str__() + ", id: " + hex(id(self)) + ""
 
     def _description(self):
-        return self.name + ' distribution'
+        return self.name + " distribution"
 
 
 class Normal(Distribution):
@@ -286,8 +300,8 @@ class Normal(Distribution):
     """
 
     def __init__(self, random_state=None):
-        super(Normal, self).__init__('Normal', random_state=random_state)
-        self.name = 'Normal'
+        super(Normal, self).__init__("Normal", random_state=random_state)
+        self.name = "Normal"
 
     def constraints(self):
         return empty(0), empty(0)
@@ -368,8 +382,9 @@ class Normal(Distribution):
         elif n == 1:
             return -stats.norm.pdf(z)
         else:
-            return (-(z**(n-1)) * stats.norm.pdf(z) +
-                    (n-1) * self.partial_moment(n-2, z, parameters))
+            return -(z ** (n - 1)) * stats.norm.pdf(z) + (n - 1) * self.partial_moment(
+                n - 2, z, parameters
+            )
 
 
 class StudentsT(Distribution):
@@ -378,8 +393,9 @@ class StudentsT(Distribution):
     """
 
     def __init__(self, random_state=None):
-        super(StudentsT, self).__init__('Standardized Student\'s t',
-                                        random_state=random_state)
+        super(StudentsT, self).__init__(
+            "Standardized Student's t", random_state=random_state
+        )
         self.num_params = 1
 
     def constraints(self):
@@ -426,8 +442,7 @@ class StudentsT(Distribution):
         nu = parameters[0]
         lls = gammaln((nu + 1) / 2) - gammaln(nu / 2) - log(pi * (nu - 2)) / 2
         lls -= 0.5 * (log(sigma2))
-        lls -= ((nu + 1) / 2) * \
-               (log(1 + (resids ** 2.0) / (sigma2 * (nu - 2))))
+        lls -= ((nu + 1) / 2) * (log(1 + (resids ** 2.0) / (sigma2 * (nu - 2))))
 
         if individual:
             return lls
@@ -464,12 +479,12 @@ class StudentsT(Distribution):
     def simulate(self, parameters):
         parameters = asarray(parameters)[None]
         if parameters[0] <= 2.0:
-            raise ValueError('The shape parameter must be larger than 2')
+            raise ValueError("The shape parameter must be larger than 2")
         self._parameters = parameters
         return self._simulator
 
     def parameter_names(self):
-        return ['nu']
+        return ["nu"]
 
     def cdf(self, resids, parameters=None):
         parameters = self._check_constraints(parameters)
@@ -491,14 +506,14 @@ class StudentsT(Distribution):
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = nu / (nu - 2)
-        return stats.t.moment(n, nu, scale=1. / sqrt(var))
+        return stats.t.moment(n, nu, scale=1.0 / sqrt(var))
 
     def partial_moment(self, n, z=0, parameters=None):
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = nu / (nu - 2)
-        scale = 1. / sqrt(var)
-        moment = (scale**n) * self._ord_t_partial_moment(n, z/scale, nu)
+        scale = 1.0 / sqrt(var)
+        moment = (scale ** n) * self._ord_t_partial_moment(n, z / scale, nu)
         return moment
 
     @staticmethod
@@ -540,13 +555,13 @@ class StudentsT(Distribution):
         elif n == 0:
             moment = stats.t.cdf(z, nu)
         elif n == 1:
-            C = gamma(0.5*(nu+1)) / (sqrt(nu*pi) * gamma(0.5*nu))
-            e = 0.5*(nu+1)
-            moment = (0.5 * (C * nu) / (1-e)) * ((1 + (z**2)/nu)**(1-e))
+            C = gamma(0.5 * (nu + 1)) / (sqrt(nu * pi) * gamma(0.5 * nu))
+            e = 0.5 * (nu + 1)
+            moment = (0.5 * (C * nu) / (1 - e)) * ((1 + (z ** 2) / nu) ** (1 - e))
         else:
-            t1 = (z**(n-1)) * (nu + z**2) * stats.t.pdf(z, nu)
-            t2 = (n-1) * nu * StudentsT._ord_t_partial_moment(n-2, z, nu)
-            moment = (1/(n-nu)) * (t1 - t2)
+            t1 = (z ** (n - 1)) * (nu + z ** 2) * stats.t.pdf(z, nu)
+            t2 = (n - 1) * nu * StudentsT._ord_t_partial_moment(n - 2, z, nu)
+            moment = (1 / (n - nu)) * (t1 - t2)
         return moment
 
 
@@ -571,13 +586,13 @@ class SkewStudent(Distribution):
     """
 
     def __init__(self, random_state=None):
-        super(SkewStudent, self).__init__('Standardized Skew Student\'s t',
-                                          random_state=random_state)
+        super(SkewStudent, self).__init__(
+            "Standardized Skew Student's t", random_state=random_state
+        )
         self.num_params = 2
 
     def constraints(self):
-        return array([[1, 0], [-1, 0], [0, 1], [0, -1]]), \
-               array([2.05, -300.0, -1, -1])
+        return array([[1, 0], [-1, 0], [0, 1], [0, -1]]), array([2.05, -300.0, -1, -1])
 
     def bounds(self, resids):
         return [(2.05, 300.0), (-1, 1)]
@@ -634,12 +649,13 @@ class SkewStudent(Distribution):
         const_a = self.__const_a(parameters)
         const_b = self.__const_b(parameters)
 
-        resids = resids / sigma2 ** .5
+        resids = resids / sigma2 ** 0.5
         lls = log(const_b) + const_c - log(sigma2) / 2
         if abs(lam) >= 1.0:
             lam = sign(lam) * (1.0 - 1e-6)
-        llf_resid = ((const_b * resids + const_a) /
-                     (1 + sign(resids + const_a / const_b) * lam)) ** 2
+        llf_resid = (
+            (const_b * resids + const_a) / (1 + sign(resids + const_a / const_b) * lam)
+        ) ** 2
         lls -= (eta + 1) / 2 * log(1 + llf_resid / (eta - 2))
 
         if individual:
@@ -667,7 +683,7 @@ class SkewStudent(Distribution):
         """
         k = stats.kurtosis(std_resid, fisher=False)
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
-        return array([sv, 0.])
+        return array([sv, 0.0])
 
     def _simulator(self, size):
         # No need to normalize since it is already done in parameterization
@@ -676,15 +692,16 @@ class SkewStudent(Distribution):
     def simulate(self, parameters):
         parameters = asarray(parameters)[None]
         if parameters[0, 0] <= 2.0:
-            raise ValueError('The shape parameter must be larger than 2')
+            raise ValueError("The shape parameter must be larger than 2")
         if abs(parameters[0, 1]) > 1.0:
-            raise ValueError('The skew parameter must be ' +
-                             'smaller than 1 in absolute value')
+            raise ValueError(
+                "The skew parameter must be smaller than 1 in absolute value"
+            )
         self._parameters = parameters
         return self._simulator
 
     def parameter_names(self):
-        return ['nu', 'lambda']
+        return ["nu", "lambda"]
 
     def __const_a(self, parameters):
         """Compute a constant.
@@ -719,7 +736,7 @@ class SkewStudent(Distribution):
         """
         lam = parameters[1]
         a = self.__const_a(parameters)
-        return (1 + 3 * lam ** 2 - a ** 2) ** .5
+        return (1 + 3 * lam ** 2 - a ** 2) ** 0.5
 
     @staticmethod
     def __const_c(parameters):
@@ -774,13 +791,11 @@ class SkewStudent(Distribution):
         cond = pits < (1 - lam) / 2
 
         icdf1 = stats.t.ppf(pits[cond] / (1 - lam), eta)
-        icdf2 = stats.t.ppf(.5 + (pits[~cond] - (1 - lam) / 2) / (1 + lam), eta)
+        icdf2 = stats.t.ppf(0.5 + (pits[~cond] - (1 - lam) / 2) / (1 + lam), eta)
         icdf = -999.99 * ones_like(pits)
         icdf[cond] = icdf1
         icdf[~cond] = icdf2
-        icdf = (icdf *
-                (1 + sign(pits - (1 - lam) / 2) * lam) * (1 - 2 / eta) ** .5 -
-                a)
+        icdf = icdf * (1 + sign(pits - (1 - lam) / 2) * lam) * (1 - 2 / eta) ** 0.5 - a
         icdf = icdf / b
 
         if scalar:
@@ -797,19 +812,22 @@ class SkewStudent(Distribution):
         a = self.__const_a(parameters)
         b = self.__const_b(parameters)
 
-        loc = -a/b
-        lscale = sqrt(1 - 2/eta) * (1 - lam) / b
-        rscale = sqrt(1 - 2/eta) * (1 + lam) / b
+        loc = -a / b
+        lscale = sqrt(1 - 2 / eta) * (1 - lam) / b
+        rscale = sqrt(1 - 2 / eta) * (1 + lam) / b
 
-        moment = 0.
-        for k in range(n+1):  # binomial expansion around loc
+        moment = 0.0
+        for k in range(n + 1):  # binomial expansion around loc
             # 0->inf right partial moment for ordinary t(eta)
-            r_pmom = 0.5 * (gamma(0.5*(k+1)) * gamma(0.5*(eta-k)) *
-                            eta**(0.5*k)) / (sqrt(pi) * gamma(0.5*eta))
-            l_pmom = ((-1)**k) * r_pmom
+            r_pmom = (
+                0.5
+                * (gamma(0.5 * (k + 1)) * gamma(0.5 * (eta - k)) * eta ** (0.5 * k))
+                / (sqrt(pi) * gamma(0.5 * eta))
+            )
+            l_pmom = ((-1) ** k) * r_pmom
 
-            lhs = (1-lam) * (lscale**k) * (loc**(n-k)) * l_pmom
-            rhs = (1+lam) * (rscale**k) * (loc**(n-k)) * r_pmom
+            lhs = (1 - lam) * (lscale ** k) * (loc ** (n - k)) * l_pmom
+            rhs = (1 + lam) * (rscale ** k) * (loc ** (n - k)) * r_pmom
             moment += comb(n, k) * (lhs + rhs)
 
         return moment
@@ -824,22 +842,32 @@ class SkewStudent(Distribution):
         a = self.__const_a(parameters)
         b = self.__const_b(parameters)
 
-        loc = -a/b
-        lscale = sqrt(1 - 2/eta) * (1 - lam) / b
-        rscale = sqrt(1 - 2/eta) * (1 + lam) / b
+        loc = -a / b
+        lscale = sqrt(1 - 2 / eta) * (1 - lam) / b
+        rscale = sqrt(1 - 2 / eta) * (1 + lam) / b
 
-        moment = 0.
-        for k in range(n+1):  # binomial expansion around loc
+        moment = 0.0
+        for k in range(n + 1):  # binomial expansion around loc
             lbound = min(z, loc)
-            lhs = (1-lam) * (loc**(n-k)) * (lscale**k) * \
-                StudentsT._ord_t_partial_moment(k, z=(lbound-loc)/lscale, nu=eta)
+            lhs = (
+                (1 - lam)
+                * (loc ** (n - k))
+                * (lscale ** k)
+                * StudentsT._ord_t_partial_moment(k, z=(lbound - loc) / lscale, nu=eta)
+            )
 
             if z > loc:
-                rhs = (1+lam) * (loc**(n-k)) * (rscale**k) * (
-                    StudentsT._ord_t_partial_moment(k, z=(z-loc)/rscale, nu=eta) -
-                    StudentsT._ord_t_partial_moment(k, z=0., nu=eta))
+                rhs = (
+                    (1 + lam)
+                    * (loc ** (n - k))
+                    * (rscale ** k)
+                    * (
+                        StudentsT._ord_t_partial_moment(k, z=(z - loc) / rscale, nu=eta)
+                        - StudentsT._ord_t_partial_moment(k, z=0.0, nu=eta)
+                    )
+                )
             else:
-                rhs = 0.
+                rhs = 0.0
 
             moment += comb(n, k) * (lhs + rhs)
 
@@ -852,8 +880,9 @@ class GeneralizedError(Distribution):
     """
 
     def __init__(self, random_state=None):
-        super(GeneralizedError, self).__init__('Generalized Error Distribution',
-                                               random_state=random_state)
+        super(GeneralizedError, self).__init__(
+            "Generalized Error Distribution", random_state=random_state
+        )
         self.num_params = 1
 
     def constraints(self):
@@ -943,12 +972,12 @@ class GeneralizedError(Distribution):
     def simulate(self, parameters):
         parameters = asarray(parameters)[None]
         if parameters[0] <= 1.0:
-            raise ValueError('The shape parameter must be larger than 1')
+            raise ValueError("The shape parameter must be larger than 1")
         self._parameters = parameters
         return self._simulator
 
     def parameter_names(self):
-        return ['nu']
+        return ["nu"]
 
     def ppf(self, pits, parameters=None):
         parameters = self._check_constraints(parameters)
@@ -970,13 +999,13 @@ class GeneralizedError(Distribution):
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = stats.gennorm(nu).var()
-        return stats.gennorm.moment(n, nu, scale=1. / sqrt(var))
+        return stats.gennorm.moment(n, nu, scale=1.0 / sqrt(var))
 
     def partial_moment(self, n, z=0, parameters=None):
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
-        scale = 1. / sqrt(stats.gennorm(nu).var())
-        moment = (scale**n) * self._ord_gennorm_partial_moment(n, z/scale, nu)
+        scale = 1.0 / sqrt(stats.gennorm(nu).var())
+        moment = (scale ** n) * self._ord_gennorm_partial_moment(n, z / scale, nu)
         return moment
 
     @staticmethod
@@ -1009,17 +1038,21 @@ class GeneralizedError(Distribution):
         if n < 0:
             return nan
 
-        w = 0.5 * beta / gamma((1/beta))
+        w = 0.5 * beta / gamma((1 / beta))
 
         # integral over (-inf, min(z,0))
-        lz = abs(min(z, 0))**beta
-        lterm = (w * ((-1)**n) * (1/beta) * gamma((n+1)/beta) *
-                 gammaincc((n+1)/beta, lz))
+        lz = abs(min(z, 0)) ** beta
+        lterm = (
+            w
+            * ((-1) ** n)
+            * (1 / beta)
+            * gamma((n + 1) / beta)
+            * gammaincc((n + 1) / beta, lz)
+        )
 
         # remaining integral
-        rz = max(0, z)**beta
-        rterm = (w * (1/beta) * gamma((n+1)/beta) *
-                 gammainc((n+1)/beta, rz))
+        rz = max(0, z) ** beta
+        rterm = w * (1 / beta) * gamma((n + 1) / beta) * gammainc((n + 1) / beta, rz)
 
         moment = lterm + rterm
 

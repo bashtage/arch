@@ -16,4 +16,4 @@ def load():
     Provided by Ken French,
     http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html
     """
-    return load_file(__file__, 'frenchdata.csv.gz')
+    return load_file(__file__, "frenchdata.csv.gz")
