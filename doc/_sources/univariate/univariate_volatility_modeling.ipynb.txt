@@ -554,7 +554,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "The first choice is the mean model.  For many liquid financial assets, a constant mean (or even zero) is adequate.  For other series, such as inflation, a more complicated model may be required.  These examples make use of Core CPI downloaded from the [Federal Reserve Economic Data](http://research.stlouisfed.org/fred2/) site."
+    "The first choice is the mean model.  For many liquid financial assets, a constant mean (or even zero) is adequate.  For other series, such as inflation, a more complicated model may be required.  These examples make use of Core CPI downloaded from the [Federal Reserve Economic Data](https://fred.stlouisfed.org/) site."
    ]
   },
   {
