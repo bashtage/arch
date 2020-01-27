@@ -1,10 +1,12 @@
 import copy
+from typing import Any, Callable, Dict, Generator, List, Optional, Tuple, Union
 
 import numpy as np
 from numpy.random import RandomState
 import pandas as pd
 import scipy.stats as stats
 
+from arch.typing import ArrayLike, NDArray
 from arch.utility.array import DocStringInheritor
 from arch.utility.exceptions import (
     StudentizationError,
@@ -27,7 +29,7 @@ except ImportError:  # pragma: no cover
     from arch.bootstrap._samplers_python import stationary_bootstrap_sample
 
 
-def _get_acceleration(jk_params):
+def _get_acceleration(jk_params: NDArray) -> float:
     """
     Estimates the BCa acceleration parameter using jackknife estimates
     of theta.
@@ -40,7 +42,7 @@ def _get_acceleration(jk_params):
 
     Returns
     -------
-    a : float
+    float
         Value of the acceleration parameter "a" used in the BCa bootstrap.
     """
     u = jk_params.mean() - jk_params
@@ -55,7 +57,12 @@ def _get_acceleration(jk_params):
     return a[:, None]
 
 
-def _loo_jackknife(func, nobs, args, kwargs):
+def _loo_jackknife(
+    func: Callable[..., NDArray],
+    nobs: int,
+    args: List[ArrayLike],
+    kwargs: ArrayLike,
+) -> NDArray:
     """
     Leave one out jackknife estimation
 
@@ -72,7 +79,7 @@ def _loo_jackknife(func, nobs, args, kwargs):
 
     Returns
     -------
-    results : ndarray
+    ndarray
         Array containing the jackknife results where row i corresponds to
         leaving observation i out of the sample
     """
@@ -95,7 +102,9 @@ def _loo_jackknife(func, nobs, args, kwargs):
     return np.array(results)
 
 
-def _add_extra_kwargs(kwargs, extra_kwargs=None):
+def _add_extra_kwargs(
+    kwargs: Dict[str, Any], extra_kwargs: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
     """
     Safely add additional keyword arguments to an existing dictionary
 
@@ -108,7 +117,7 @@ def _add_extra_kwargs(kwargs, extra_kwargs=None):
 
     Returns
     -------
-    augmented_kwargs : dict
+    dict
         Keyword dictionary with added keyword arguments
 
     Notes
@@ -187,7 +196,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
     _name = "IID Bootstrap"
     _common_size_required = True
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: ArrayLike, **kwargs: ArrayLike) -> None:
         self._random_state = None
         self._args = list(args)
         self._kwargs = kwargs
@@ -228,16 +237,16 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
             else:
                 raise ValueError(key + " is a reserved name")
 
-    def __str__(self):
+    def __str__(self) -> str:
         txt = self._name
         txt += "(no. pos. inputs: " + str(len(self.pos_data))
         txt += ", no. keyword inputs: " + str(len(self.kw_data)) + ")"
         return txt
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()[:-1] + ", ID: " + hex(id(self)) + ")"
 
-    def _repr_html(self):
+    def _repr_html(self) -> str:
         html = "<strong>" + self._name + "</strong>("
         html += "<strong>no. pos. inputs</strong>: " + str(len(self.pos_data))
         html += ", <strong>no. keyword inputs</strong>: " + str(len(self.kw_data))
@@ -245,7 +254,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         return html
 
     @property
-    def random_state(self):
+    def random_state(self) -> np.random.RandomState:
         """
         Set or get the instance random state
 
@@ -262,7 +271,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         return self._random_state
 
     @random_state.setter
-    def random_state(self, value):
+    def random_state(self, value: np.random.RandomState) -> None:
         if not isinstance(value, RandomState):
             raise TypeError("Value being set must be a RandomState")
         self._random_state = value
@@ -274,42 +283,41 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         """
         return self._index
 
-    def get_state(self):
+    def get_state(self) -> Union[Dict[str, Any], Tuple[Any, ...]]:
         """
         Gets the state of the bootstrap's random number generator
 
         Returns
         -------
-        state : RandomState state vector
-            Array containing the state
+        {dict, tuple}
+            Dictionary or tuple containing the state.
         """
         return self.random_state.get_state()
 
-    def set_state(self, state):
+    def set_state(self, state: Union[Dict[str, Any], Tuple[Any, ...]]) -> None:
         """
         Sets the state of the bootstrap's random number generator
 
         Parameters
         ----------
-        state : RandomState state vector
-            Array containing the state
+        state : {dict, tuple}
+            Dictionary or tuple containing the state.
         """
-        return self.random_state.set_state(state)
+        self.random_state.set_state(state)
 
-    def seed(self, value):
+    def seed(self, value: Union[int, List[int], NDArray]) -> None:
         """
         Seeds the bootstrap's random number generator
 
         Parameters
         ----------
-        value : int
-            Integer to use as the seed
+        value : {int, List[int], ndarray}
+            Value to use as the seed.
         """
         self._seed = value
         self.random_state.seed(value)
-        return None
 
-    def reset(self, use_seed=True):
+    def reset(self, use_seed: bool = True) -> None:
         """
         Resets the bootstrap to either its initial state or the last seed.
 
@@ -325,9 +333,10 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         self.random_state.set_state(self._initial_state)
         if use_seed and self._seed is not None:
             self.seed(self._seed)
-        return None
 
-    def bootstrap(self, reps):
+    def bootstrap(
+        self, reps: int
+    ) -> Generator[Tuple[Tuple[ArrayLike, ...], Dict[str, ArrayLike]], None, None]:
         """
         Iterator for use when bootstrapping
 
@@ -338,7 +347,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
         Returns
         -------
-        gen : generator
+        generator
             Generator to iterate over in bootstrap calculations
 
         Example
@@ -420,7 +429,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
         Returns
         -------
-        intervals : 2-d array
+        ndarray
             Computed confidence interval.  Row 0 contains the lower bounds, and
             row 1 contains the upper bounds.  Each column corresponds to a
             parameter. When tail is 'lower', all upper bounds are inf.
@@ -664,7 +673,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
         Returns
         -------
-        results : ndarray
+        ndarray
             reps by nparam array of computed function values where each row
             corresponds to a bootstrap iteration
 
@@ -785,7 +794,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
         Returns
         -------
-        cov: ndarray
+        ndarray
             Bootstrap covariance estimator
 
         Notes
@@ -859,7 +868,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
         Returns
         -------
-        var : ndarray
+        ndarray
             Bootstrap variance estimator
 
         Notes
@@ -1048,7 +1057,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
 
         Returns
         -------
-        index : tuple[list[ndarray], dict[str, ndarray]]
+        tuple[list[ndarray], dict[str, ndarray]]
             2-element tuple containing a list and a dictionary. The list
             contains indices for each of the positional arguments.  The
             dictionary contains the indices of keyword arguments.

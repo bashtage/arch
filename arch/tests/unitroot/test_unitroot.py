@@ -484,7 +484,7 @@ def test_kpss_data_dependent_lags(data, trend, lags):
 
 za_test_result = namedtuple(
     "za_test_result",
-    ["stat", "pvalue", "lags", "trend", "max_lags", "method", "actual_lags",],
+    ["stat", "pvalue", "lags", "trend", "max_lags", "method", "actual_lags", ],
 )
 
 series = {

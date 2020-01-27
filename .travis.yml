@@ -82,7 +82,7 @@ before_install:
   - echo conda create --yes --quiet -n arch-test ${PKGS}
   - conda create --yes --quiet -n arch-test ${PKGS}
   - source activate arch-test
-  - pip install property_cached flake8 pytest pytest-xdist!=1.30 pytest-cov "coverage<5" coveralls codecov nbformat nbconvert!=5.4 jupyter_client ipython jupyter -q
+  - pip install property_cached flake8 pytest pytest-xdist!=1.30 pytest-cov "coverage<5" codacy-coverage coveralls codecov nbformat nbconvert!=5.4 jupyter_client ipython jupyter -q
   - if [[ "$STATSMODELS_MASTER" == true ]]; then sh ./ci/statsmodels-master.sh; fi;
   - |
     if [[ "$DOCBUILD" == true ]]; then
@@ -95,12 +95,12 @@ before_install:
   - conda list
   - export PYTHONHASHSEED=0
   - export MKL_NUM_THREADS=1
-  - if [[ "$COVERAGE" == true ]]; then export COVERAGE_OPTS="--cov-config .coveragerc --cov=arch"; fi
+  - if [[ "$COVERAGE" == true ]]; then export COVERAGE_OPTS="--cov-config .coveragerc --cov=arch --cov-report xml:coverage.xml --cov-report term"; fi
 
 install:
   - |
     if [[ "$COVERAGE" == true ]]; then
-      python setup.py develop
+      pip install -e .
     else
       pip install .
     fi
@@ -132,4 +132,9 @@ script:
   - flake8 arch
 
 after_success:
-  - if [[ "$COVERAGE" = true ]]; then codecov; coveralls --rcfile="$SRCDIR"/.coveragerc; fi
+  - |
+    if [[ "$COVERAGE" = true ]]; then
+      codecov
+      coveralls --rcfile="$SRCDIR"/.coveragerc
+      python-codacy-coverage -r coverage.xml
+    fi
