@@ -6,11 +6,11 @@ import sys
 
 from arch.tests.univariate.test_recursions import TestRecursions
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         import numba  # noqa: F401
     except ImportError:
-        print('numba not available -- skipping performance tests')
+        print("numba not available -- skipping performance tests")
         sys.exit(0)
 
     t = TestRecursions()

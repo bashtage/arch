@@ -71,7 +71,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "IPython.sphinxext.ipython_console_highlighting",
     "IPython.sphinxext.ipython_directive",
-    "nbsphinx"
+    "nbsphinx",
 ]
 
 try:
@@ -133,24 +133,24 @@ if not on_rtd:  # only import and set the theme if we"re building docs locally
 
     # sphinx_material theme options (see theme.conf for more information)
     html_theme_options = {
-        'base_url': 'http://bashtage.github.io/arch/',
-        'repo_url': 'https://github.com/bashtage/arch/',
-        'repo_name': 'ARCH',
+        "base_url": "http://bashtage.github.io/arch/",
+        "repo_url": "https://github.com/bashtage/arch/",
+        "repo_name": "ARCH",
         # Set the name of the project to appear in the sidebar
-        "nav_title": project + u" " + version,
-        'globaltoc_depth': 2,
-        'globaltoc_collapse': True,
-        'globaltoc_includehidden': True,
-        'theme_color': '#2196f3',
-        'color_primary': 'blue ',
-        'color_accent': 'indigo',
-        'html_minify': True,
-        'css_minify': True,
-        'master_doc': False
+        "nav_title": project + " " + version,
+        "globaltoc_depth": 2,
+        "globaltoc_collapse": True,
+        "globaltoc_includehidden": True,
+        "theme_color": "#2196f3",
+        "color_primary": "blue ",
+        "color_accent": "indigo",
+        "html_minify": True,
+        "css_minify": True,
+        "master_doc": False,
     }
 
-html_favicon = 'images/favicon.ico'
-html_logo = 'images/bw-logo.svg'
+html_favicon = "images/favicon.ico"
+html_logo = "images/bw-logo.svg"
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
@@ -174,8 +174,7 @@ if not on_rtd:
 # html_sidebars = {}
 if not on_rtd:
     html_sidebars = {
-        "**": ["logo-text.html", "globaltoc.html", "searchbox.html",
-               "localtoc.html"]
+        "**": ["logo-text.html", "globaltoc.html", "searchbox.html", "localtoc.html"]
     }
 
 # If false, no module index is generated.
@@ -192,15 +191,12 @@ latex_elements = {
     # The paper size ("letterpaper" or "a4paper").
     #
     # "papersize": "letterpaper",
-
     # The font size ("10pt", "11pt" or "12pt").
     #
     # "pointsize": "10pt",
-
     # Additional stuff for the LaTeX preamble.
     #
     # "preamble": '',
-
     # Latex figure (float) alignment
     #
     # "figure_align": "htbp",
@@ -210,18 +206,14 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "arch.tex", "arch Documentation",
-     "Kevin Sheppard", "manual"),
+    (master_doc, "arch.tex", "arch Documentation", "Kevin Sheppard", "manual"),
 ]
 
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, "arch", "arch Documentation",
-     [author], 1)
-]
+man_pages = [(master_doc, "arch", "arch Documentation", [author], 1)]
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -229,9 +221,15 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, "arch", "arch Documentation",
-     author, "arch", "ARCH models in Python",
-     "Finance/Econometrics"),
+    (
+        master_doc,
+        "arch",
+        "arch Documentation",
+        author,
+        "arch",
+        "ARCH models in Python",
+        "Finance/Econometrics",
+    ),
 ]
 
 # -- Options for Epub output -------------------------------------------------
@@ -274,4 +272,4 @@ napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = True
 
 autosummary_generate = True
-autoclass_content = 'class'
+autoclass_content = "class"
