@@ -35,10 +35,10 @@ class MultipleComparison(object):
         self._info = OrderedDict()
         self.bootstrap = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         return _info_to_str(self._model, self._info, False)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return _info_to_str(self._model, self._info, True)
 
     def _repr_html_(self):

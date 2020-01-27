@@ -175,10 +175,10 @@ class VolatilityProcess(object, metaclass=AbstractDocStringInheritor):
         self._start = 0
         self._stop = -1
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__() + ", id: " + hex(id(self))
 
     @property
@@ -839,7 +839,7 @@ class GARCH(VolatilityProcess):
             )
         self.name = self._name()
 
-    def __str__(self):
+    def __str__(self) -> str:
         descr = self.name
 
         if self.power != 1.0 and self.power != 2.0:
@@ -1254,7 +1254,7 @@ class HARCH(VolatilityProcess):
         self.num_params = self._num_lags + 1
         self.name = "HARCH"
 
-    def __str__(self):
+    def __str__(self) -> str:
         descr = self.name + "(lags: "
         descr += ", ".join([str(l) for l in self.lags])
         descr += ")"
@@ -1456,7 +1456,7 @@ class MIDASHyperbolic(VolatilityProcess):
         self.num_params = 3 + self._asym
         self.name = "MIDAS Hyperbolic"
 
-    def __str__(self):
+    def __str__(self) -> str:
         descr = self.name
         descr += "(lags: {0}, asym: {1}".format(self.m, self._asym)
 
@@ -1784,7 +1784,7 @@ class EWMAVariance(VolatilityProcess):
             raise ValueError("lam must be strictly between 0 and 1")
         self.name = "EWMA/RiskMetrics"
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self._estimate_lam:
             descr = self.name + "(lam: Estimated)"
         else:
@@ -1936,7 +1936,7 @@ class RiskMetrics2006(VolatilityProcess):
             raise ValueError("rho must be a positive number larger than 1")
         self.name = "RiskMetrics2006"
 
-    def __str__(self):
+    def __str__(self) -> str:
         descr = self.name
         descr += "(tau0: {0:d}, tau1: {1:d}, kmax: {2:d}, " "rho: {3:0.3f}".format(
             self.tau0, self.tau1, self.kmax, self.rho
@@ -2185,7 +2185,7 @@ class EGARCH(VolatilityProcess):
         self.name = "EGARCH" if q > 0 else "EARCH"
         self._arrays = None  # Helpers for fitting variance
 
-    def __str__(self):
+    def __str__(self) -> str:
         descr = self.name + "("
         for k, v in (("p", self.p), ("o", self.o), ("q", self.q)):
             if v > 0:
@@ -2590,7 +2590,7 @@ class FIGARCH(VolatilityProcess):
         """Truncation lag for the ARCH-infinity approximation"""
         return self._truncation
 
-    def __str__(self):
+    def __str__(self) -> str:
         descr = self.name
 
         if self.power != 1.0 and self.power != 2.0:

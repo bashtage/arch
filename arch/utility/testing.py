@@ -58,7 +58,7 @@ class WaldTestStatistic(object):
     def alternative(self):
         return self._alternative
 
-    def __str__(self):
+    def __str__(self) -> str:
         name = "" if not self._name else self._name + "\n"
         msg = (
             "{name}H0: {null}\n{name}H1: {alternative}\nStatistic: {stat:0.4f}\n"
@@ -73,7 +73,7 @@ class WaldTestStatistic(object):
             dist=self.dist_name,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             self.__str__()
             + "\n"

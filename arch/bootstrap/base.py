@@ -1177,7 +1177,7 @@ class CircularBlockBootstrap(IIDBootstrap):
         self.block_size = block_size
         self._parameters = [block_size]
 
-    def __str__(self):
+    def __str__(self) -> str:
         txt = self._name
         txt += "(block size: " + str(self.block_size)
         txt += ", no. pos. inputs: " + str(len(self.pos_data))

@@ -397,10 +397,10 @@ class UnitRootTest(object):
         self._title = None
         self._summary_text = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.summary().__str__()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(type(self)) + '\n"""\n' + self.__str__() + '\n"""'
 
     def _repr_html_(self):

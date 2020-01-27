@@ -284,10 +284,10 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         """
         pass
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self._description()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__() + ", id: " + hex(id(self)) + ""
 
     def _description(self):

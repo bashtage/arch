@@ -251,7 +251,7 @@ class HARX(ARCHModel):
         od["distribution"] = self.distribution.__str__()
         return od
 
-    def __str__(self):
+    def __str__(self) -> str:
         descr = self._model_description()
         descr_str = self.name + "("
         for key, val in descr.items():
@@ -263,7 +263,7 @@ class HARX(ARCHModel):
 
         return descr_str
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         txt = self.__str__()
         txt.replace("\n", "")
         return txt + ", id: " + hex(id(self))

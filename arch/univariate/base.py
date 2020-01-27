@@ -908,13 +908,13 @@ class _SummaryRepr(object):
     def summary(self):
         raise NotImplementedError("Subclasses must implement")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         out = self.__str__() + "\n"
         out += self.__class__.__name__
         out += ", id: {0}".format(hex(id(self)))
         return out
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.summary().as_text()
 
 
