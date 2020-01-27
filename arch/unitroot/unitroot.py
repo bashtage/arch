@@ -585,7 +585,7 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
 
     .. [*] MacKinnon, J.G. 2010. "Critical Values for Cointegration Tests."
        Queen's University, Dept of Economics, Working Papers.  Available at
-       http://ideas.repec.org/p/qed/wpaper/1227.html
+       https://ideas.repec.org/p/qed/wpaper/1227.html
     """
 
     def __init__(self, y, lags=None, trend='c',
@@ -883,7 +883,7 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
 
     .. [*] MacKinnon, J.G. 2010. "Critical Values for Cointegration Tests."
            Queen's University, Dept of Economics, Working Papers.  Available at
-           http://ideas.repec.org/p/qed/wpaper/1227.html
+           https://ideas.repec.org/p/qed/wpaper/1227.html
     """
 
     def __init__(self, y, lags=None, trend='c', test_type='tau'):
@@ -1557,7 +1557,7 @@ def mackinnoncrit(num_unit_roots=1, regression='c', nobs=inf,
         Statistics, 12.2, 167-76.
     MacKinnon, J.G. 2010.  "Critical Values for Cointegration Tests."
         Queen's University, Dept of Economics Working Papers 1227.
-        http://ideas.repec.org/p/qed/wpaper/1227.html
+        https://ideas.repec.org/p/qed/wpaper/1227.html
     """
     dist_type = dist_type.lower()
     valid_regression = ['c', 'ct', 'nc', 'ctt']

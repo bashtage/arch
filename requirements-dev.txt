@@ -1,0 +1,24 @@
+# Performance
+cython>=0.29.14
+numba>=0.35
+
+# Graphics
+matplotlib>=2
+seaborn
+
+# Tests
+pytest>=5
+
+# formatting
+black==19.10b0
+isort
+flake8
+
+# Documentation
+ipython>=6
+sphinx>=1.8
+sphinx_material
+nbsphinx
+jupyter
+notebook
+numpydoc>=0.9.2

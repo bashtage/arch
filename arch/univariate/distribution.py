@@ -566,7 +566,7 @@ class SkewStudent(Distribution):
     ----------
     .. [1] Hansen, B. E. (1994). Autoregressive conditional density estimation.
        *International Economic Review*, 35(3), 705–730.
-       <http://www.ssc.wisc.edu/~bhansen/papers/ier_94.pdf>
+       <https://www.ssc.wisc.edu/~bhansen/papers/ier_94.pdf>
 
     """
 

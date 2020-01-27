@@ -30,10 +30,10 @@ Citation
 This package should be cited using Zenodo. For example, for the 4.8.1 release,
 
 .. [*] Kevin Sheppard. (2019, March 28). bashtage/arch: Release 4.8.1 (Version 4.8.1).
-   Zenodo. http://doi.org/10.5281/zenodo.2613877
+   Zenodo. https://zenodo.org/record/2613877
 
-.. image:: https://zenodo.org/badge/23468876.svg
-   :target: https://zenodo.org/badge/latestdoi/23468876
+.. image:: https://zenodo.org/badge/doi/10.5281/zenodo.3551028.svg
+   :target: https://doi.org/10.5281/zenodo.3551028
 
 Index
 =====

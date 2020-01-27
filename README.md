@@ -27,7 +27,7 @@ to improve performance)
 [![codebeat badge](https://codebeat.co/badges/18a78c15-d74b-4820-b56d-72f7e4087532)](https://codebeat.co/projects/github-com-bashtage-arch-master)
 
 ###### Citation
-[![DOI](https://zenodo.org/badge/23468876.svg)](https://zenodo.org/badge/latestdoi/23468876)
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.3551028.svg)](https://doi.org/10.5281/zenodo.3551028)
 
 ## Module Contents
 
@@ -174,7 +174,7 @@ that arch will work with older versions.
 
 * Python (3.6+)
 * NumPy (1.14+)
-* SciPy (1+)
+* SciPy (1.0.1+)
 * Pandas (0.23+)
 * statsmodels (0.9+)
 * matplotlib (2.0+), optional
