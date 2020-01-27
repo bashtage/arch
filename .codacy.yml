@@ -1,0 +1,3 @@
+exclude_paths:
+  - 'versioneer.py'
+  - 'arch/_version.py'
