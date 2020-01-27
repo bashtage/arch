@@ -174,7 +174,7 @@ class HARX(ARCHModel):
         distribution=None,
         rescale=None,
     ):
-        super(HARX, self).__init__(
+        super().__init__(
             y,
             hold_back=hold_back,
             volatility=volatility,
@@ -805,7 +805,7 @@ class ConstantMean(HARX):
     def __init__(
         self, y=None, hold_back=None, volatility=None, distribution=None, rescale=None
     ):
-        super(ConstantMean, self).__init__(
+        super().__init__(
             y,
             hold_back=hold_back,
             volatility=volatility,
@@ -822,7 +822,7 @@ class ConstantMean(HARX):
         return 1
 
     def _model_description(self, include_lags=False):
-        return super(ConstantMean, self)._model_description(include_lags)
+        return super()._model_description(include_lags)
 
     def simulate(
         self, params, nobs, burn=500, initial_value=None, x=None, initial_value_vol=None
@@ -934,7 +934,7 @@ class ZeroMean(HARX):
     def __init__(
         self, y=None, hold_back=None, volatility=None, distribution=None, rescale=None
     ):
-        super(ZeroMean, self).__init__(
+        super().__init__(
             y,
             x=None,
             constant=False,
@@ -953,7 +953,7 @@ class ZeroMean(HARX):
         return 0
 
     def _model_description(self, include_lags=False):
-        return super(ZeroMean, self)._model_description(include_lags)
+        return super()._model_description(include_lags)
 
     def simulate(
         self, params, nobs, burn=500, initial_value=None, x=None, initial_value_vol=None
@@ -1101,7 +1101,7 @@ class ARX(HARX):
                     lags[0, :] -= 1
                 else:
                     raise ValueError("lags does not follow a supported format")
-        super(ARX, self).__init__(
+        super().__init__(
             y,
             x,
             lags,
@@ -1189,13 +1189,11 @@ class LS(HARX):
 
     def __init__(self, y=None, x=None, constant=True, hold_back=None, rescale=None):
         # Convert lags to 2-d format
-        super(LS, self).__init__(
-            y, x, None, constant, False, hold_back, rescale=rescale
-        )
+        super().__init__(y, x, None, constant, False, hold_back, rescale=rescale)
         self.name = "Least Squares"
 
     def _model_description(self, include_lags=False):
-        return super(LS, self)._model_description(include_lags)
+        return super()._model_description(include_lags)
 
 
 def arch_model(

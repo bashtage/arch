@@ -58,10 +58,7 @@ def _get_acceleration(jk_params: NDArray) -> float:
 
 
 def _loo_jackknife(
-    func: Callable[..., NDArray],
-    nobs: int,
-    args: List[ArrayLike],
-    kwargs: ArrayLike,
+    func: Callable[..., NDArray], nobs: int, args: List[ArrayLike], kwargs: ArrayLike,
 ) -> NDArray:
     """
     Leave one out jackknife estimation
@@ -1028,7 +1025,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
     _name = "Heterogeneous IID Bootstrap"
 
     def __init__(self, *args, **kwargs):
-        super(IndependentSamplesBootstrap, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self._num_args = len(args)
         self._num_arg_items = [len(arg) for arg in args]
@@ -1173,7 +1170,7 @@ class CircularBlockBootstrap(IIDBootstrap):
     _name = "Circular Block Bootstrap"
 
     def __init__(self, block_size, *args, **kwargs):
-        super(CircularBlockBootstrap, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.block_size = block_size
         self._parameters = [block_size]
 
@@ -1271,7 +1268,7 @@ class StationaryBootstrap(CircularBlockBootstrap):
     _name = "Stationary Bootstrap"
 
     def __init__(self, block_size, *args, **kwargs):
-        super(StationaryBootstrap, self).__init__(block_size, *args, **kwargs)
+        super().__init__(block_size, *args, **kwargs)
         self._p = 1.0 / block_size
 
     def update_indices(self):
@@ -1345,7 +1342,7 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     _name = "Moving Block Bootstrap"
 
     def __init__(self, block_size, *args, **kwargs):
-        super(MovingBlockBootstrap, self).__init__(block_size, *args, **kwargs)
+        super().__init__(block_size, *args, **kwargs)
 
     def update_indices(self):
         num_blocks = self._num_items // self.block_size
@@ -1364,7 +1361,7 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
 
 class MOONBootstrap(IIDBootstrap):  # pragma: no cover
     def __init__(self, block_size, *args, **kwargs):  # pragma: no cover
-        super(MOONBootstrap, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.block_size = block_size
 
     def update_indices(self):  # pragma: no cover

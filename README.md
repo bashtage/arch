@@ -23,7 +23,7 @@ to improve performance)
 ###### Code Inspections
 [![Code Quality: Python](https://img.shields.io/lgtm/grade/python/g/bashtage/arch.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bashtage/arch/context:python)
 [![Total Alerts](https://img.shields.io/lgtm/alerts/g/bashtage/arch.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bashtage/arch/alerts)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/cea43b588e0f4f2a9d8ba37cf63f8210)](https://www.codacy.com/app/bashtage/arch?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bashtage/arch&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/93f6fd90209842bf97fd20fda8db70ef)](https://www.codacy.com/manual/bashtage/arch?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bashtage/arch&amp;utm_campaign=Badge_Grade)
 [![codebeat badge](https://codebeat.co/badges/18a78c15-d74b-4820-b56d-72f7e4087532)](https://codebeat.co/projects/github-com-bashtage-arch-master)
 
 ###### Citation

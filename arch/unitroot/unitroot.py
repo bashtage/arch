@@ -652,7 +652,7 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
         self, y, lags=None, trend="c", max_lags=None, method="AIC", low_memory=None
     ):
         valid_trends = ("nc", "c", "ct", "ctt")
-        super(ADF, self).__init__(y, lags, trend, valid_trends)
+        super().__init__(y, lags, trend, valid_trends)
         self._max_lags = max_lags
         self._method = method
         self._test_name = "Augmented Dickey-Fuller"
@@ -779,7 +779,7 @@ class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
         self, y, lags=None, trend="c", max_lags=None, method="AIC", low_memory=None
     ):
         valid_trends = ("c", "ct")
-        super(DFGLS, self).__init__(y, lags, trend, valid_trends)
+        super().__init__(y, lags, trend, valid_trends)
         self._max_lags = max_lags
         self._method = method
         self._regression = None
@@ -954,7 +954,7 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
 
     def __init__(self, y, lags=None, trend="c", test_type="tau"):
         valid_trends = ("nc", "c", "ct")
-        super(PhillipsPerron, self).__init__(y, lags, trend, valid_trends)
+        super().__init__(y, lags, trend, valid_trends)
         self._test_type = test_type
         self._stat_rho = None
         self._stat_tau = None
@@ -1110,7 +1110,7 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
         if lags == -1:
             self._legacy_lag_selection = True
             lags = None
-        super(KPSS, self).__init__(y, lags, trend, valid_trends)
+        super().__init__(y, lags, trend, valid_trends)
         self._test_name = "KPSS Stationarity Test"
         self._null_hypothesis = "The process is weakly stationary."
         self._alternative_hypothesis = "The process contains a unit root."
@@ -1227,7 +1227,7 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
     """
 
     def __init__(self, y, lags=None, trend="c", trim=0.15, max_lags=None, method="AIC"):
-        super(ZivotAndrews, self).__init__(y, lags, trend, ("c", "t", "ct"))
+        super().__init__(y, lags, trend, ("c", "t", "ct"))
         if not isinstance(trim, float) or trim < 0 or trim > (1.0 / 3.0):
             raise ValueError("trim must be a float in range [0, 0.333]")
         self._trim = trim
@@ -1404,7 +1404,7 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
         if lags < 2:
             raise ValueError("lags must be an integer larger than 2")
         valid_trends = ("nc", "c")
-        super(VarianceRatio, self).__init__(y, lags, trend, valid_trends)
+        super().__init__(y, lags, trend, valid_trends)
         self._test_name = "Variance-Ratio Test"
         self._null_hypothesis = "The process is a random walk."
         self._alternative_hypothesis = "The process is not a random walk."

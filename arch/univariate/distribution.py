@@ -300,8 +300,7 @@ class Normal(Distribution):
     """
 
     def __init__(self, random_state=None):
-        super(Normal, self).__init__("Normal", random_state=random_state)
-        self.name = "Normal"
+        super().__init__("Normal", random_state=random_state)
 
     def constraints(self):
         return empty(0), empty(0)
@@ -393,7 +392,7 @@ class StudentsT(Distribution):
     """
 
     def __init__(self, random_state=None):
-        super(StudentsT, self).__init__(
+        super().__init__(
             "Standardized Student's t", random_state=random_state
         )
         self.num_params = 1
@@ -586,7 +585,7 @@ class SkewStudent(Distribution):
     """
 
     def __init__(self, random_state=None):
-        super(SkewStudent, self).__init__(
+        super().__init__(
             "Standardized Skew Student's t", random_state=random_state
         )
         self.num_params = 2
@@ -880,7 +879,7 @@ class GeneralizedError(Distribution):
     """
 
     def __init__(self, random_state=None):
-        super(GeneralizedError, self).__init__(
+        super().__init__(
             "Generalized Error Distribution", random_state=random_state
         )
         self.num_params = 1

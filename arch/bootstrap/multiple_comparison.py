@@ -103,7 +103,7 @@ class MCS(MultipleComparison):
         method="R",
         bootstrap="stationary",
     ):
-        super(MCS, self).__init__()
+        super().__init__()
         self.losses = ensure2d(losses, "losses")
         self._losses_arr = np.asarray(self.losses)
         if self._losses_arr.shape[1] < 2:
@@ -514,7 +514,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         studentize=True,
         nested=False,
     ):
-        super(SPA, self).__init__()
+        super().__init__()
         self.benchmark = ensure2d(benchmark, "benchmark")
         self.models = ensure2d(models, "models")
         self.reps = reps

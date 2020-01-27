@@ -2,8 +2,8 @@
 # TODO: Test for trend='ctt'
 from arch.compat.statsmodels import dataset_loader
 
-from collections import namedtuple
 import os
+from typing import NamedTuple, Optional
 import warnings
 
 import numpy as np
@@ -261,7 +261,7 @@ class TestUnitRoot(object):
         assert vr.stat != orig_stat
 
     def test_variance_ratio_no_constant(self):
-        y = self.rng.randn(100)
+        y = self.rng.standard_normal(100)
         vr = VarianceRatio(y, trend="nc", debiased=False)
         dy = np.diff(y)
         mu = 0.0
@@ -290,7 +290,7 @@ class TestAutolagOLS(object):
         cls.rng = RandomState(12345)
         t = 1100
         y = np.zeros(t)
-        e = cls.rng.randn(t)
+        e = cls.rng.standard_normal(t)
         y[:2] = e[:2]
         for i in range(3, t):
             y[i] = 1.5 * y[i - 1] - 0.8 * y[i - 2] + 0.2 * y[i - 3] + e[i]
@@ -385,7 +385,7 @@ class TestAutolagOLS(object):
 @pytest.mark.parametrize("trend", ["nc", "c", "ct", "ctt"])
 def test_trends_low_memory(trend):
     rnd = np.random.RandomState(12345)
-    y = np.cumsum(rnd.randn(250))
+    y = np.cumsum(rnd.standard_normal(250))
     adf = ADF(y, trend=trend, max_lags=16)
     adf2 = ADF(y, trend=trend, low_memory=True, max_lags=16)
     assert adf.lags == adf2.lags
@@ -398,7 +398,7 @@ def test_trends_low_memory(trend):
 @pytest.mark.parametrize("trend", ["nc", "c", "ct", "ctt"])
 def test_representations(trend):
     rnd = np.random.RandomState(12345)
-    y = np.cumsum(rnd.randn(250))
+    y = np.cumsum(rnd.standard_normal(250))
     adf = ADF(y, trend=trend, max_lags=16)
     check = "Constant"
     if trend == "nc":
@@ -411,17 +411,17 @@ def test_representations(trend):
 
 def test_unknown_method():
     rnd = np.random.RandomState(12345)
-    y = np.cumsum(rnd.randn(250))
+    y = np.cumsum(rnd.standard_normal(250))
     with pytest.raises(ValueError):
         ADF(y, method="unknown").stat
 
 
 def test_auto_low_memory():
     rnd = np.random.RandomState(12345)
-    y = np.cumsum(rnd.randn(250))
+    y = np.cumsum(rnd.standard_normal(250))
     adf = ADF(y, trend="ct")
     assert adf._low_memory is False
-    y = np.cumsum(rnd.randn(1000000))
+    y = np.cumsum(rnd.standard_normal(1000000))
     adf = ADF(y, trend="ct")
     assert adf._low_memory is True
 
@@ -482,13 +482,18 @@ def test_kpss_data_dependent_lags(data, trend, lags):
     assert_equal(kpss.lags, lags)
 
 
-za_test_result = namedtuple(
-    "za_test_result",
-    ["stat", "pvalue", "lags", "trend", "max_lags", "method", "actual_lags", ],
-)
+class ZATestResult(NamedTuple):
+    stat: float
+    pvalue: float
+    lags: Optional[int]
+    trend: str
+    max_lags: Optional[int]
+    method: Optional[str]
+    actual_lags: int
+
 
 series = {
-    "REAL_GNP": za_test_result(
+    "REAL_GNP": ZATestResult(
         stat=-5.57615,
         pvalue=0.00312,
         lags=8,
@@ -497,7 +502,7 @@ series = {
         method=None,
         actual_lags=8,
     ),
-    "GNP_DEFLATOR": za_test_result(
+    "GNP_DEFLATOR": ZATestResult(
         stat=-4.12155,
         pvalue=0.28024,
         lags=None,
@@ -506,7 +511,7 @@ series = {
         method="t-stat",
         actual_lags=5,
     ),
-    "STOCK_PRICES": za_test_result(
+    "STOCK_PRICES": ZATestResult(
         stat=-5.60689,
         pvalue=0.00894,
         lags=None,
@@ -515,7 +520,7 @@ series = {
         method="t-stat",
         actual_lags=1,
     ),
-    "REAL_GNP_QTR": za_test_result(
+    "REAL_GNP_QTR": ZATestResult(
         stat=-3.02761,
         pvalue=0.63993,
         lags=None,
@@ -524,7 +529,7 @@ series = {
         method="t-stat",
         actual_lags=12,
     ),
-    "RAND10000": za_test_result(
+    "RAND10000": ZATestResult(
         stat=-3.48223,
         pvalue=0.69111,
         lags=None,

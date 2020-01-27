@@ -698,7 +698,7 @@ class ConstantVariance(VolatilityProcess):
     """
 
     def __init__(self):
-        super(ConstantVariance, self).__init__()
+        super().__init__()
         self.num_params = 1
         self.name = "Constant Variance"
         self.closed_form = True
@@ -720,7 +720,7 @@ class ConstantVariance(VolatilityProcess):
         return np.ones((1, 1)), np.zeros(1)
 
     def backcast_transform(self, backcast):
-        backcast = super(ConstantVariance, self).backcast_transform(backcast)
+        backcast = super().backcast_transform(backcast)
         return backcast
 
     def backcast(self, resids):
@@ -823,7 +823,7 @@ class GARCH(VolatilityProcess):
     """
 
     def __init__(self, p=1, o=0, q=1, power=2.0):
-        super(GARCH, self).__init__()
+        super().__init__()
         self.p = int(p)
         self.o = int(o)
         self.q = int(q)
@@ -855,7 +855,7 @@ class GARCH(VolatilityProcess):
         return descr
 
     def variance_bounds(self, resids, power=2.0):
-        return super(GARCH, self).variance_bounds(resids, self.power)
+        return super().variance_bounds(resids, self.power)
 
     def _name(self):
         p, o, q, power = self.p, self.o, self.q, self.power  # noqa: F841
@@ -935,7 +935,7 @@ class GARCH(VolatilityProcess):
         return sigma2
 
     def backcast_transform(self, backcast):
-        backcast = super(GARCH, self).backcast_transform(backcast)
+        backcast = super().backcast_transform(backcast)
         return np.sqrt(backcast) ** self.power
 
     def backcast(self, resids):
@@ -1245,7 +1245,7 @@ class HARCH(VolatilityProcess):
     """
 
     def __init__(self, lags=1):
-        super(HARCH, self).__init__()
+        super().__init__()
         if np.isscalar(lags):
             lags = np.arange(1, lags + 1)
         lags = ensure1d(lags, "lags")
@@ -1450,7 +1450,7 @@ class MIDASHyperbolic(VolatilityProcess):
     """
 
     def __init__(self, m=22, asym=False):
-        super(MIDASHyperbolic, self).__init__()
+        super().__init__()
         self.m = m
         self._asym = bool(asym)
         self.num_params = 3 + self._asym
@@ -1720,7 +1720,7 @@ class ARCH(GARCH):
     """
 
     def __init__(self, p=1):
-        super(ARCH, self).__init__(p, 0, 0, 2.0)
+        super().__init__(p, 0, 0, 2.0)
         self.num_params = p + 1
 
     def starting_values(self, resids):
@@ -1776,7 +1776,7 @@ class EWMAVariance(VolatilityProcess):
     """
 
     def __init__(self, lam=0.94):
-        super(EWMAVariance, self).__init__()
+        super().__init__()
         self.lam = lam
         self._estimate_lam = lam is None
         self.num_params = 1 if self._estimate_lam else 0
@@ -1919,7 +1919,7 @@ class RiskMetrics2006(VolatilityProcess):
     """
 
     def __init__(self, tau0=1560, tau1=4, kmax=14, rho=1.4142135623730951):
-        super(RiskMetrics2006, self).__init__()
+        super().__init__()
         self.tau0 = tau0
         self.tau1 = tau1
         self.kmax = kmax
@@ -1994,7 +1994,7 @@ class RiskMetrics2006(VolatilityProcess):
         return backcast
 
     def backcast_transform(self, backcast):
-        backcast = super(RiskMetrics2006, self).backcast_transform(backcast)
+        backcast = super().backcast_transform(backcast)
         mus = self._ewma_smoothing_parameters()
         backcast = np.asarray(backcast)
         if backcast.ndim == 0:
@@ -2173,7 +2173,7 @@ class EGARCH(VolatilityProcess):
     """
 
     def __init__(self, p=1, o=0, q=1):
-        super(EGARCH, self).__init__()
+        super().__init__()
         self.p = int(p)
         self.o = int(o)
         self.q = int(q)
@@ -2194,7 +2194,7 @@ class EGARCH(VolatilityProcess):
         return descr
 
     def variance_bounds(self, resids, power=2.0):
-        return super(EGARCH, self).variance_bounds(resids, 2.0)
+        return super().variance_bounds(resids, 2.0)
 
     def bounds(self, resids):
         v = np.mean(resids ** 2.0)
@@ -2244,11 +2244,11 @@ class EGARCH(VolatilityProcess):
         return sigma2
 
     def backcast_transform(self, backcast):
-        backcast = super(EGARCH, self).backcast_transform(backcast)
+        backcast = super().backcast_transform(backcast)
         return np.log(backcast)
 
     def backcast(self, resids):
-        return np.log(super(EGARCH, self).backcast(resids))
+        return np.log(super().backcast(resids))
 
     def simulate(self, parameters, nobs, rng, burn=500, initial_value=None):
         p, o, q = self.p, self.o, self.q
@@ -2423,7 +2423,7 @@ class FixedVariance(VolatilityProcess):
     """
 
     def __init__(self, variance, unit_scale=False):
-        super(FixedVariance, self).__init__()
+        super().__init__()
         self.num_params = 0 if unit_scale else 1
         self._unit_scale = unit_scale
         self.name = "Fixed Variance"
@@ -2569,7 +2569,7 @@ class FIGARCH(VolatilityProcess):
     """
 
     def __init__(self, p=1, q=1, power=2.0, truncation=1000):
-        super(FIGARCH, self).__init__()
+        super().__init__()
         self.p = int(p)
         self.q = int(q)
         self.power = power
@@ -2604,7 +2604,7 @@ class FIGARCH(VolatilityProcess):
         return descr
 
     def variance_bounds(self, resids, power=2.0):
-        return super(FIGARCH, self).variance_bounds(resids, self.power)
+        return super().variance_bounds(resids, self.power)
 
     def _name(self):
         q, power = self.q, self.power
@@ -2680,7 +2680,7 @@ class FIGARCH(VolatilityProcess):
         return sigma2
 
     def backcast_transform(self, backcast):
-        backcast = super(FIGARCH, self).backcast_transform(backcast)
+        backcast = super().backcast_transform(backcast)
         return np.sqrt(backcast) ** self.power
 
     def backcast(self, resids):

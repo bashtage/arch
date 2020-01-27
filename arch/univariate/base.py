@@ -1523,7 +1523,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         fit_stop,
         model,
     ):
-        super(ARCHModelResult, self).__init__(
+        super().__init__(
             params, resid, volatility, dep_var, names, loglikelihood, is_pandas, model
         )
 
