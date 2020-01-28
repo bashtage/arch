@@ -1,5 +1,4 @@
 import datetime as dt
-from unittest import TestCase
 
 import numpy as np
 from numpy.random import RandomState
@@ -13,7 +12,7 @@ from arch.univariate import HARX, arch_model
 from arch.univariate.mean import _ar_forecast, _ar_to_impulse
 
 
-class TestForecasting(TestCase):
+class TestForecasting(object):
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)

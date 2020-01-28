@@ -1,5 +1,3 @@
-from unittest import TestCase
-
 import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_array_almost_equal, assert_array_equal, assert_equal
@@ -10,7 +8,7 @@ import pytest
 from arch.utility.timeseries import ColumnNameConflict, add_trend
 
 
-class TestAddTrend(TestCase):
+class TestAddTrend(object):
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)

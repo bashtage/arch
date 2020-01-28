@@ -1,6 +1,6 @@
+from distutils.version import LooseVersion
 from io import StringIO
 import sys
-from unittest import TestCase
 import warnings
 
 import numpy as np
@@ -9,6 +9,7 @@ from numpy.testing import assert_almost_equal, assert_array_almost_equal, assert
 import pandas as pd
 from pandas.testing import assert_frame_equal, assert_series_equal
 import pytest
+import scipy
 from scipy import stats
 from scipy.optimize import OptimizeResult
 import statsmodels.regression.linear_model as smlm
@@ -57,6 +58,7 @@ except ImportError:
     HAS_MATPLOTLIB = False
 
 DISPLAY = "off"
+SP_LT_14 = LooseVersion(scipy.__version__) < LooseVersion("1.4")
 
 
 @pytest.fixture(scope="module", params=[True, False])
@@ -67,7 +69,7 @@ def simulated_data(request):
     return np.asarray(sim_data.data) if request.param else sim_data.data
 
 
-class TestMeanModel(TestCase):
+class TestMeanModel(object):
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(1234)
@@ -888,10 +890,11 @@ class TestMeanModel(TestCase):
         )
         am = arch_model(y, mean="ARX", lags=10, p=5, q=0)
 
-        with pytest.warns(ConvergenceWarning):
+        warning = ConvergenceWarning if SP_LT_14 else None
+        with pytest.warns(warning):
             am.fit(disp=DISPLAY)
 
-        with pytest.warns(ConvergenceWarning):
+        with pytest.warns(warning):
             am.fit(show_warning=True, disp=DISPLAY)
 
         with pytest.warns(DataScaleWarning):

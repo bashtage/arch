@@ -1,5 +1,3 @@
-from unittest import TestCase
-
 import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_allclose
@@ -132,7 +130,7 @@ def _simple_direct_gjrgarch_forecaster(
     return sigma2[:, m:]
 
 
-class TestVarianceForecasts(TestCase):
+class TestVarianceForecasts(object):
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)
@@ -2079,7 +2077,7 @@ class TestVarianceForecasts(TestCase):
         assert np.all(np.isnan(forecasts.shocks))
 
 
-class TestBootstrapRng(TestCase):
+class TestBootstrapRng(object):
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)

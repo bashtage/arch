@@ -1,7 +1,5 @@
 from arch.compat.statsmodels import dataset_loader
 
-from unittest import TestCase
-
 from numpy import diff, log
 from numpy.random import RandomState
 from numpy.testing import assert_almost_equal
@@ -11,7 +9,7 @@ from statsmodels.datasets import macrodata
 from arch.utility import cov_nw
 
 
-class TestVarNW(TestCase):
+class TestVarNW(object):
     @classmethod
     def setup_class(cls):
 

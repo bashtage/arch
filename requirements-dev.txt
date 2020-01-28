@@ -8,6 +8,7 @@ seaborn
 
 # Tests
 pytest>=5
+pytest-xdist
 
 # formatting
 black==19.10b0
