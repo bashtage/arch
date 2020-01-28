@@ -5,7 +5,7 @@ import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_allclose, assert_equal
 import pandas as pd
-from pandas.util.testing import assert_frame_equal, assert_series_equal
+from pandas.testing import assert_frame_equal, assert_series_equal
 import pytest
 import scipy.stats as stats
 

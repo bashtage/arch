@@ -1,5 +1,3 @@
-from arch.compat.python import lmap
-
 import warnings
 
 from numpy import (
@@ -378,7 +376,7 @@ def _estimate_df_regression(y, trend, lags):
 class UnitRootTest(object):
     """Base class to be used for inheritance in unit root bootstrap"""
 
-    def __init__(self, y, lags, trend, valid_trends):
+    def __init__(self, y, lags, trend, valid_trends) -> None:
         self._y = ensure1d(y, "y")
         self._delta_y = diff(y)
         self._nobs = self._y.shape[0]
@@ -408,19 +406,19 @@ class UnitRootTest(object):
         """
         return self.summary().as_html()
 
-    def _compute_statistic(self):
+    def _compute_statistic(self) -> None:
         """This is the core routine that computes the test statistic, computes
         the p-value and constructs the critical values.
         """
         raise NotImplementedError("Subclass must implement")
 
-    def _reset(self):
+    def _reset(self) -> None:
         """Resets the unit root test so that it will be recomputed
         """
         self._stat = None
         assert self._stat is None
 
-    def _compute_if_needed(self):
+    def _compute_if_needed(self) -> None:
         """Checks whether the statistic needs to be computed, and computed if
         needed
         """
@@ -498,7 +496,7 @@ class UnitRootTest(object):
 
         cv_string = "Critical Values: "
         cv = self._critical_values.keys()
-        cv_numeric = array(lmap(lambda x: float(x.split("%")[0]), cv))
+        cv_numeric = array([float(x.split("%")[0]) for x in cv])
         cv_numeric = sort(cv_numeric)
         for val in cv_numeric:
             p = str(int(val)) + "%"
@@ -650,7 +648,7 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
 
     def __init__(
         self, y, lags=None, trend="c", max_lags=None, method="AIC", low_memory=None
-    ):
+    ) -> None:
         valid_trends = ("nc", "c", "ct", "ctt")
         super().__init__(y, lags, trend, valid_trends)
         self._max_lags = max_lags
@@ -662,7 +660,7 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
         if low_memory is None:
             self._low_memory = True if self.y.shape[0] > 1e5 else False
 
-    def _select_lag(self):
+    def _select_lag(self) -> None:
         ic_best, best_lag = _df_select_lags(
             self._y,
             self._trend,
@@ -673,7 +671,7 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
         self._ic_best = ic_best
         self._lags = best_lag
 
-    def _compute_statistic(self):
+    def _compute_statistic(self) -> None:
         if self._lags is None:
             self._select_lag()
         y, trend, lags = self._y, self._trend, self._lags
@@ -777,7 +775,7 @@ class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
 
     def __init__(
         self, y, lags=None, trend="c", max_lags=None, method="AIC", low_memory=None
-    ):
+    ) -> None:
         valid_trends = ("c", "ct")
         super().__init__(y, lags, trend, valid_trends)
         self._max_lags = max_lags
@@ -792,7 +790,7 @@ class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
         else:
             self._c = -13.5
 
-    def _compute_statistic(self):
+    def _compute_statistic(self) -> None:
         """Core routine to estimate DF-GLS test statistic"""
         # 1. GLS detrend
         trend, c = self._trend, self._c
@@ -952,7 +950,7 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
            https://ideas.repec.org/p/qed/wpaper/1227.html
     """
 
-    def __init__(self, y, lags=None, trend="c", test_type="tau"):
+    def __init__(self, y, lags=None, trend="c", test_type="tau") -> None:
         valid_trends = ("nc", "c", "ct")
         super().__init__(y, lags, trend, valid_trends)
         self._test_type = test_type
@@ -961,7 +959,7 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
         self._test_name = "Phillips-Perron Test"
         self._lags = lags
 
-    def _compute_statistic(self):
+    def _compute_statistic(self) -> None:
         """Core routine to estimate PP test statistics"""
         # 1. Estimate Regression
         y, trend = self._y, self._trend
@@ -1098,7 +1096,7 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
            147-159.
     """
 
-    def __init__(self, y, lags=None, trend="c"):
+    def __init__(self, y, lags=None, trend="c") -> None:
         valid_trends = ("c", "ct")
         if lags is None:
             warnings.warn(
@@ -1116,7 +1114,7 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
         self._alternative_hypothesis = "The process contains a unit root."
         self._resids = None
 
-    def _compute_statistic(self):
+    def _compute_statistic(self) -> None:
         # 1. Estimate model with trend
         nobs, y, trend = self._nobs, self._y, self._trend
         z = add_trend(nobs=nobs, trend=trend)
@@ -1139,7 +1137,7 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
             "10%": critical_values[2],
         }
 
-    def _autolag(self):
+    def _autolag(self) -> None:
         """
         Computes the number of lags for covariance matrix estimation in KPSS
         test using method of Hobijn et al (1998). See also Andrews (1991),
@@ -1226,7 +1224,9 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
            Business & Economic Studies, 10: 251-270.
     """
 
-    def __init__(self, y, lags=None, trend="c", trim=0.15, max_lags=None, method="AIC"):
+    def __init__(
+        self, y, lags=None, trend="c", trim=0.15, max_lags=None, method="AIC"
+    ) -> None:
         super().__init__(y, lags, trend, ("c", "t", "ct"))
         if not isinstance(trim, float) or trim < 0 or trim > (1.0 / 3.0):
             raise ValueError("trim must be a float in range [0, 0.333]")
@@ -1253,7 +1253,7 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
         sigma2 = e.T.dot(e) / (nobs - k_exog)
         return b / sqrt(diag(sigma2 * xpxi))
 
-    def _compute_statistic(self):
+    def _compute_statistic(self) -> None:
         """This is the core routine that computes the test statistic, computes
         the p-value and constructs the critical values.
         """
@@ -1326,7 +1326,7 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
         self._stat = amin(stats)
         self._cv_interpolate()
 
-    def _cv_interpolate(self):
+    def _cv_interpolate(self) -> None:
         """
         Linear interpolation for Zivot-Andrews p-values and critical values
 
@@ -1400,7 +1400,9 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
        Press.
     """
 
-    def __init__(self, y, lags=2, trend="c", debiased=True, robust=True, overlap=True):
+    def __init__(
+        self, y, lags=2, trend="c", debiased=True, robust=True, overlap=True
+    ) -> None:
         if lags < 2:
             raise ValueError("lags must be an integer larger than 2")
         valid_trends = ("nc", "c")
@@ -1458,7 +1460,7 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
         self._reset()
         self._debiased = bool(value)
 
-    def _compute_statistic(self):
+    def _compute_statistic(self) -> None:
         overlap, debiased, robust = self._overlap, self._debiased, self._robust
         y, nobs, q, trend = self._y, self._nobs, self._lags, self._trend
 

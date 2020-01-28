@@ -1,4 +1,5 @@
 import functools
+from typing import Any, Callable
 
 
 class PerformanceWarning(UserWarning):
@@ -15,7 +16,7 @@ try:
 
     try:
 
-        def f(x, y):
+        def f(x: float, y: float) -> float:
             return x + y
 
         fjit = jit(f, nopython=True, fastmath=True)
@@ -25,8 +26,8 @@ try:
         jit = functools.partial(jit, nopython=True)
 except ImportError:
 
-    def jit(func, *args, **kwargs):
-        def wrapper(*args, **kwargs):
+    def jit(func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: Any, **kwargs: Any) -> Callable[..., Any]:
             import warnings
 
             warnings.warn(performance_warning, PerformanceWarning)

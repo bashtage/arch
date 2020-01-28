@@ -6,7 +6,7 @@ __version__ = get_versions()["version"]
 del get_versions
 
 
-def doc():
+def doc() -> None:
     import webbrowser
 
     webbrowser.open("http://arch.readthedocs.org/en/latest/")

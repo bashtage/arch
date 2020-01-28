@@ -1,11 +1,10 @@
 from unittest import TestCase
-import warnings
 
 import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_array_almost_equal, assert_array_equal, assert_equal
 import pandas as pd
-from pandas.util.testing import assert_frame_equal, assert_produces_warning
+from pandas.testing import assert_frame_equal
 import pytest
 
 from arch.utility.timeseries import ColumnNameConflict, add_trend
@@ -40,12 +39,10 @@ class TestAddTrend(TestCase):
 
     def test_add_trend_duplicate_name(self):
         x = pd.DataFrame(np.zeros((10, 1)), columns=["trend"])
-        with warnings.catch_warnings(record=True) as w:
-            assert_produces_warning(add_trend(x, trend="ct"), ColumnNameConflict)
+        with pytest.warns(ColumnNameConflict):
+            add_trend(x, trend="ct")
             y = add_trend(x, trend="ct")
-            # should produce a single warning
 
-        assert len(w) > 0
         assert "const" in y.columns
         assert "trend_0" in y.columns
 

@@ -7,7 +7,7 @@ import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_almost_equal, assert_array_almost_equal, assert_equal
 import pandas as pd
-from pandas.util.testing import assert_frame_equal, assert_series_equal
+from pandas.testing import assert_frame_equal, assert_series_equal
 import pytest
 from scipy import stats
 from scipy.optimize import OptimizeResult
@@ -36,10 +36,18 @@ from arch.univariate.volatility import (
 )
 from arch.utility.exceptions import ConvergenceWarning, DataScaleWarning
 
+USE_CYTHON = False
 try:
-    import arch.univariate.recursions as rec
+    import arch.univariate.recursions
+
+    USE_CYTHON = True
 except ImportError:
-    import arch.univariate.recursions_python as rec  # noqa
+    import arch.univariate.recursions_python  # noqa
+
+if USE_CYTHON:
+    rec = arch.univariate.recursions
+else:
+    rec = arch.univariate.recursions_python
 
 try:
     import matplotlib.pyplot  # noqa
@@ -1112,9 +1120,9 @@ def test_autoscale():
 
     am = arch_model(data.data, rescale=True)
     res_auto = am.fit(disp=DISPLAY)
-    assert_almost_equal(res_auto.scale, 100.0)
+    assert_almost_equal(res_auto.scale, 10.0)
 
-    am = arch_model(100 * data.data)
+    am = arch_model(10 * data.data)
     res_manual = am.fit(disp=DISPLAY)
     assert_series_equal(res_auto.params, res_manual.params)
 
@@ -1123,7 +1131,7 @@ def test_autoscale():
 
     am = arch_model(10000 * data.data, rescale=True)
     res_big = am.fit(disp=DISPLAY)
-    assert_almost_equal(res_big.scale, 0.01)
+    assert_almost_equal(res_big.scale, 0.1)
 
 
 def test_no_variance():

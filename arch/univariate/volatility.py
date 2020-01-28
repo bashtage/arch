@@ -72,7 +72,7 @@ class BootstrapRng(object):
         NumPy RandomState instance
     """
 
-    def __init__(self, std_resid, start, random_state=None):
+    def __init__(self, std_resid, start, random_state=None) -> None:
         if start <= 0 or start > std_resid.shape[0]:
             raise ValueError("start must be > 0 and <= len(std_resid).")
 
@@ -142,7 +142,7 @@ class VarianceForecast(object):
     _forecasts = None
     _forecast_paths = None
 
-    def __init__(self, forecasts, forecast_paths=None, shocks=None):
+    def __init__(self, forecasts, forecast_paths=None, shocks=None) -> None:
         self._forecasts = forecasts
         self._forecast_paths = forecast_paths
         self._shocks = shocks
@@ -166,7 +166,7 @@ class VolatilityProcess(object, metaclass=AbstractDocStringInheritor):
     separately from the conditional variance, even though parameters are estimated jointly.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.num_params = 0
         self.name = ""
         self.closed_form = False
@@ -514,7 +514,7 @@ class VolatilityProcess(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def constraints(self):
+    def constraints(self) -> None:
         """
         Construct parameter constraints arrays for parameter estimation
 
@@ -676,7 +676,7 @@ class VolatilityProcess(object, metaclass=AbstractDocStringInheritor):
         return self._normal.loglikelihood([], resids, sigma2)
 
     @abstractmethod
-    def parameter_names(self):
+    def parameter_names(self) -> None:
         """
         Names of model parameters
 
@@ -697,7 +697,7 @@ class ConstantVariance(VolatilityProcess):
     Model has the same variance in all periods
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.num_params = 1
         self.name = "Constant Variance"
@@ -822,7 +822,7 @@ class GARCH(VolatilityProcess):
         I\left[\epsilon_{t-j}<0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}
     """
 
-    def __init__(self, p=1, o=0, q=1, power=2.0):
+    def __init__(self, p=1, o=0, q=1, power=2.0) -> None:
         super().__init__()
         self.p = int(p)
         self.o = int(o)
@@ -1244,7 +1244,7 @@ class HARCH(VolatilityProcess):
     ARCH process have been restricted.
     """
 
-    def __init__(self, lags=1):
+    def __init__(self, lags=1) -> None:
         super().__init__()
         if np.isscalar(lags):
             lags = np.arange(1, lags + 1)
@@ -1449,7 +1449,7 @@ class MIDASHyperbolic(VolatilityProcess):
     .. [*] Sheppard, Kevin. "Direct volatility modeling". Manuscript. (2018).
     """
 
-    def __init__(self, m=22, asym=False):
+    def __init__(self, m=22, asym=False) -> None:
         super().__init__()
         self.m = m
         self._asym = bool(asym)
@@ -1719,7 +1719,7 @@ class ARCH(GARCH):
 
     """
 
-    def __init__(self, p=1):
+    def __init__(self, p=1) -> None:
         super().__init__(p, 0, 0, 2.0)
         self.num_params = p + 1
 
@@ -1775,7 +1775,7 @@ class EWMAVariance(VolatilityProcess):
     parameter when fitting the model.
     """
 
-    def __init__(self, lam=0.94):
+    def __init__(self, lam=0.94) -> None:
         super().__init__()
         self.lam = lam
         self._estimate_lam = lam is None
@@ -1918,7 +1918,7 @@ class RiskMetrics2006(VolatilityProcess):
     This model has no parameters since the smoothing parameter is fixed.
     """
 
-    def __init__(self, tau0=1560, tau1=4, kmax=14, rho=1.4142135623730951):
+    def __init__(self, tau0=1560, tau1=4, kmax=14, rho=1.4142135623730951) -> None:
         super().__init__()
         self.tau0 = tau0
         self.tau1 = tau1
@@ -2172,7 +2172,7 @@ class EGARCH(VolatilityProcess):
     where :math:`e_{t}=\epsilon_{t}/\sigma_{t}`.
     """
 
-    def __init__(self, p=1, o=0, q=1):
+    def __init__(self, p=1, o=0, q=1) -> None:
         super().__init__()
         self.p = int(p)
         self.o = int(o)
@@ -2422,7 +2422,7 @@ class FixedVariance(VolatilityProcess):
     estimation.
     """
 
-    def __init__(self, variance, unit_scale=False):
+    def __init__(self, variance, unit_scale=False) -> None:
         super().__init__()
         self.num_params = 0 if unit_scale else 1
         self._unit_scale = unit_scale
@@ -2568,7 +2568,7 @@ class FIGARCH(VolatilityProcess):
     ``p`` is the power.
     """
 
-    def __init__(self, p=1, q=1, power=2.0, truncation=1000):
+    def __init__(self, p=1, q=1, power=2.0, truncation=1000) -> None:
         super().__init__()
         self.p = int(p)
         self.q = int(q)

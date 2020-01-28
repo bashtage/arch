@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from typing import Dict, Optional
 
 from scipy.stats import chi2
 
@@ -25,7 +25,14 @@ class WaldTestStatistic(object):
         Name of test
     """
 
-    def __init__(self, stat, df, null, alternative, name=None):
+    def __init__(
+        self,
+        stat: float,
+        df: int,
+        null: str,
+        alternative: str,
+        name: Optional[str] = None,
+    ) -> None:
         self._stat = stat
         self._null = null
         self._alternative = alternative
@@ -35,27 +42,27 @@ class WaldTestStatistic(object):
         self.dist_name = "chi2({0})".format(df)
 
     @property
-    def stat(self):
+    def stat(self) -> float:
         """Test statistic"""
         return self._stat
 
     @cached_property
-    def pval(self):
+    def pval(self) -> float:
         """P-value of test statistic"""
         return 1 - self.dist.cdf(self.stat)
 
     @cached_property
-    def critical_values(self):
+    def critical_values(self) -> Dict[str, float]:
         """Critical values test for common test sizes"""
-        return OrderedDict(zip(["10%", "5%", "1%"], self.dist.ppf([0.9, 0.95, 0.99])))
+        return dict(zip(["10%", "5%", "1%"], self.dist.ppf([0.9, 0.95, 0.99])))
 
     @property
-    def null(self):
+    def null(self) -> str:
         """Null hypothesis"""
         return self._null
 
     @property
-    def alternative(self):
+    def alternative(self) -> str:
         return self._alternative
 
     def __str__(self) -> str:

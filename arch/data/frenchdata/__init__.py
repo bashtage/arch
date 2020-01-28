@@ -1,7 +1,10 @@
+from pandas import DataFrame
+
 from arch.data.utility import load_file
 
 
-def load():
+def load() -> DataFrame:
+
     """
     Load the Fama-French factor data used in the examples
 

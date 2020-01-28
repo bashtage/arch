@@ -1,4 +1,11 @@
-def cov_nw(y, lags=0, demean=True, axis=0, ddof=0):
+from numpy import asarray
+
+from arch.typing import NDArray
+
+
+def cov_nw(
+    y: NDArray, lags: int = 0, demean: bool = True, axis: int = 0, ddof: int = 0
+) -> NDArray:
     """
     Computes Newey-West covariance for 1-d and 2-d arrays
 
@@ -20,9 +27,8 @@ def cov_nw(y, lags=0, demean=True, axis=0, ddof=0):
 
     Returns
     -------
-    cov : ndarray
+    ndarray
         The estimated covariance
-
     """
     z = y
     is_1d = False
@@ -30,7 +36,7 @@ def cov_nw(y, lags=0, demean=True, axis=0, ddof=0):
         raise ValueError("axis must be less than the dimension of y")
     if z.ndim == 1:
         is_1d = True
-        z = z[:, None]
+        z = asarray(z)[:, None]
     if axis == 1:
         z = z.T
     n = z.shape[0]

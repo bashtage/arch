@@ -153,7 +153,7 @@ class ARCHModel(object, metaclass=AbstractDocStringInheritor):
 
     def __init__(
         self, y=None, volatility=None, distribution=None, hold_back=None, rescale=None
-    ):
+    ) -> None:
 
         # Set on model fit
         self._fit_indices = None
@@ -257,7 +257,7 @@ class ARCHModel(object, metaclass=AbstractDocStringInheritor):
             return
         orig_scale = scale = resids.var()
         rescale = 1.0
-        while not 1.0 <= scale < 1000.0 and scale > 0:
+        while not 0.1 <= scale < 10000.0 and scale > 0:
             if scale < 1.0:
                 rescale *= 10
             else:
@@ -704,7 +704,7 @@ class ARCHModel(object, metaclass=AbstractDocStringInheritor):
         )
 
     @abstractmethod
-    def parameter_names(self):
+    def parameter_names(self) -> None:
         """List of parameters names
 
         Returns
@@ -905,7 +905,7 @@ class ARCHModel(object, metaclass=AbstractDocStringInheritor):
 class _SummaryRepr(object):
     """Base class for returning summary as repr and str"""
 
-    def summary(self):
+    def summary(self) -> None:
         raise NotImplementedError("Subclasses must implement")
 
     def __repr__(self) -> str:
@@ -945,7 +945,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
     def __init__(
         self, params, resid, volatility, dep_var, names, loglikelihood, is_pandas, model
-    ):
+    ) -> None:
         self._params = params
         self._resid = resid
         self._is_pandas = is_pandas
@@ -1522,7 +1522,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         fit_start,
         fit_stop,
         model,
-    ):
+    ) -> None:
         super().__init__(
             params, resid, volatility, dep_var, names, loglikelihood, is_pandas, model
         )
@@ -1827,7 +1827,7 @@ class ARCHModelForecastSimulation(object):
         Simulated variance of the residuals
     """
 
-    def __init__(self, values, residuals, variances, residual_variances):
+    def __init__(self, values, residuals, variances, residual_variances) -> None:
         self._values = values
         self._residuals = residuals
         self._variances = variances
@@ -1887,7 +1887,7 @@ class ARCHModelForecast(object):
         simulated_residual_variances=None,
         simulated_residuals=None,
         align="origin",
-    ):
+    ) -> None:
         mean = _format_forecasts(mean, index)
         variance = _format_forecasts(variance, index)
         residual_variance = _format_forecasts(residual_variance, index)
