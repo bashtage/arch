@@ -616,6 +616,7 @@ doc/_static/underscore.js
 doc/bootstrap/background.html
 doc/bootstrap/bootstrap.html
 doc/bootstrap/bootstrap_examples.html
+doc/bootstrap/bootstrap_examples.ipynb
 doc/bootstrap/confidence-intervals.html
 doc/bootstrap/generated/arch.bootstrap.CircularBlockBootstrap.html
 doc/bootstrap/generated/arch.bootstrap.IIDBootstrap.html
@@ -718,6 +719,7 @@ doc/multiple-comparison/generated/generated/arch.bootstrap.StepM.seed.html
 doc/multiple-comparison/generated/generated/arch.bootstrap.StepM.superior_models.html
 doc/multiple-comparison/multiple-comparison-reference.html
 doc/multiple-comparison/multiple-comparison_examples.html
+doc/multiple-comparison/multiple-comparison_examples.ipynb
 doc/multiple-comparison/multiple-comparisons.html
 doc/objects.inv
 doc/py-modindex.html
@@ -810,6 +812,7 @@ doc/unitroot/introduction.html
 doc/unitroot/tests.html
 doc/unitroot/unitroot.html
 doc/unitroot/unitroot_examples.html
+doc/unitroot/unitroot_examples.ipynb
 doc/univariate/background.html
 doc/univariate/distribution.html
 doc/univariate/forecasting.html
@@ -1121,8 +1124,12 @@ doc/univariate/mean.html
 doc/univariate/results.html
 doc/univariate/univariate.html
 doc/univariate/univariate_using_fixed_variance.html
+doc/univariate/univariate_using_fixed_variance.ipynb
 doc/univariate/univariate_volatility_forecasting.html
+doc/univariate/univariate_volatility_forecasting.ipynb
 doc/univariate/univariate_volatility_modeling.html
+doc/univariate/univariate_volatility_modeling.ipynb
 doc/univariate/univariate_volatility_scenarios.html
+doc/univariate/univariate_volatility_scenarios.ipynb
 doc/univariate/utility.html
 doc/univariate/volatility.html
