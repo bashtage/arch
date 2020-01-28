@@ -30,6 +30,7 @@ matrix:
       - NUMPY=1.18
       - MATPLOTLIB=3
       - USE_NUMBA=false
+      - PYTEST_PATTERN="(slow or not slow)"
   - python: 3.7
     env:
       - PYTHON=3.7
@@ -40,6 +41,7 @@ matrix:
     env:
       - PYTHON=3.6
       - NUMBA=0.35
+      - PYTEST_PATTERN="(slow or not slow)"
   - python: 3.6
     env:
       - PYTHON=3.6
@@ -68,6 +70,7 @@ matrix:
       - DOCBUILD=true
       - MATPLOTLIB=3
       - NUMPY=1.17
+      - PYTEST_PATTERN="(slow or not slow)"
 
 before_install:
   - git fetch --tags
