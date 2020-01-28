@@ -8,7 +8,7 @@ services:
 
 env:
   global:
-    - COVERAGE=false
+    - COVERAGE=true
     - USE_NUMBA=true
     - USE_PIP=false
     - STATSMODELS_MASTER=false
@@ -26,8 +26,9 @@ matrix:
   include:
   - python: 3.8
     env:
-      - NUMPY=1.18
       - USE_PIP=true
+      - NUMPY=1.18
+      - MATPLOTLIB=3
       - USE_NUMBA=false
   - python: 3.7
     env:
