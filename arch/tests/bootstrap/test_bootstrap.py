@@ -1,4 +1,4 @@
-from unittest import TestCase
+from typing import Callable, NamedTuple, Union
 import warnings
 
 import numpy as np
@@ -31,753 +31,781 @@ except ImportError:
     HAS_EXTENSION = False
 
 
-class TestBootstrap(TestCase):
-    @staticmethod
+class BSData(NamedTuple):
+    rng: RandomState
+    x: np.ndarray
+    y: np.ndarray
+    z: np.ndarray
+
+    x_df: pd.DataFrame
+    y_series: pd.Series
+    z_df: pd.DataFrame
+
+    func: Callable[[np.ndarray, int], Union[float, np.ndarray]]
+
+
+@pytest.fixture(scope="function")
+def bs_setup():
+    rng = RandomState(1234)
+    y = rng.standard_normal(1000)
+    x = rng.standard_normal((1000, 2))
+    z = rng.standard_normal((1000, 1))
+
+    y_series = pd.Series(y)
+    x_df = pd.DataFrame(x)
+    z_df = pd.DataFrame(z)
+
     def func(y, axis=0):
         return y.mean(axis=axis)
 
-    @classmethod
-    def setup_class(cls):
+    return BSData(rng, x, y, z, x_df, y_series, z_df, func)
+
+
+def test_numpy(bs_setup):
+    x, y, z = bs_setup.x, bs_setup.y, bs_setup.z
+    bs = IIDBootstrap(y)
+    bs.seed(23456)
+    for data, kwdata in bs.bootstrap(10):
+        index = bs.index
+        assert_equal(len(kwdata.keys()), 0)
+        assert_equal(y[index], data[0])
+    # Ensure no changes to original data
+    assert_equal(bs._args[0], y)
+
+    bs = IIDBootstrap(y=y)
+    bs.seed(23456)
+    for data, kwdata in bs.bootstrap(10):
+        index = bs.index
+        assert_equal(len(data), 0)
+        assert_equal(y[index], kwdata["y"])
+        assert_equal(y[index], bs.y)
+    # Ensure no changes to original data
+    assert_equal(bs._kwargs["y"], y)
+
+    bs = IIDBootstrap(x, y, z)
+    bs.seed(23456)
+    for data, kwdata in bs.bootstrap(10):
+        index = bs.index
+        assert_equal(len(data), 3)
+        assert_equal(len(kwdata.keys()), 0)
+        assert_equal(x[index], data[0])
+        assert_equal(y[index], data[1])
+        assert_equal(z[index], data[2])
+
+    bs = IIDBootstrap(x, y=y, z=z)
+    bs.seed(23456)
+    for data, kwdata in bs.bootstrap(10):
+        index = bs.index
+        assert_equal(len(data), 1)
+        assert_equal(len(kwdata.keys()), 2)
+        assert_equal(x[index], data[0])
+        assert_equal(y[index], kwdata["y"])
+        assert_equal(z[index], kwdata["z"])
+        assert_equal(y[index], bs.y)
+        assert_equal(z[index], bs.z)
+
+
+def test_pandas(bs_setup):
+    x, y, z = bs_setup.x_df, bs_setup.y_series, bs_setup.z_df
+    bs = IIDBootstrap(y)
+    bs.seed(23456)
+    for data, kwdata in bs.bootstrap(10):
+        index = bs.index
+        assert_equal(len(kwdata.keys()), 0)
+        assert_series_equal(y.iloc[index], data[0])
+    # Ensure no changes to original data
+    assert_series_equal(bs._args[0], y)
+
+    bs = IIDBootstrap(y=y)
+    bs.seed(23456)
+    for data, kwdata in bs.bootstrap(10):
+        index = bs.index
+        assert_equal(len(data), 0)
+        assert_series_equal(y.iloc[index], kwdata["y"])
+        assert_series_equal(y.iloc[index], bs.y)
+    # Ensure no changes to original data
+    assert_series_equal(bs._kwargs["y"], y)
+
+    bs = IIDBootstrap(x, y, z)
+    bs.seed(23456)
+    for data, kwdata in bs.bootstrap(10):
+        index = bs.index
+        assert_equal(len(data), 3)
+        assert_equal(len(kwdata.keys()), 0)
+        assert_frame_equal(x.iloc[index], data[0])
+        assert_series_equal(y.iloc[index], data[1])
+        assert_frame_equal(z.iloc[index], data[2])
+
+    bs = IIDBootstrap(x, y=y, z=z)
+    bs.seed(23456)
+    for data, kwdata in bs.bootstrap(10):
+        index = bs.index
+        assert_equal(len(data), 1)
+        assert_equal(len(kwdata.keys()), 2)
+        assert_frame_equal(x.iloc[index], data[0])
+        assert_series_equal(y.iloc[index], kwdata["y"])
+        assert_frame_equal(z.iloc[index], kwdata["z"])
+        assert_series_equal(y.iloc[index], bs.y)
+        assert_frame_equal(z.iloc[index], bs.z)
+
+
+def test_mixed_types(bs_setup):
+    x, y, z = bs_setup.x_df, bs_setup.y_series, bs_setup.z
+    bs = IIDBootstrap(y, x=x, z=z)
+    bs.seed(23456)
+    for data, kwdata in bs.bootstrap(10):
+        index = bs.index
+        assert_equal(len(data), 1)
+        assert_equal(len(kwdata.keys()), 2)
+        assert_frame_equal(x.iloc[index], kwdata["x"])
+        assert_frame_equal(x.iloc[index], bs.x)
+        assert_series_equal(y.iloc[index], data[0])
+        assert_equal(z[index], kwdata["z"])
+        assert_equal(z[index], bs.z)
+
+
+def test_errors(bs_setup):
+    x = np.arange(10)
+    y = np.arange(100)
+    with pytest.raises(ValueError):
+        IIDBootstrap(x, y)
+    with pytest.raises(ValueError):
+        IIDBootstrap(index=x)
+    bs = IIDBootstrap(y)
+
+    with pytest.raises(ValueError):
+        bs.conf_int(bs_setup.func, method="unknown")
+    with pytest.raises(ValueError):
+        bs.conf_int(bs_setup.func, tail="dragon")
+    with pytest.raises(ValueError):
+        bs.conf_int(bs_setup.func, size=95)
+
+
+def test_cov(bs_setup):
+    bs = IIDBootstrap(bs_setup.x)
+    num_bootstrap = 10
+    cov = bs.cov(func=bs_setup.func, reps=num_bootstrap, recenter=False)
+    bs.reset()
+
+    results = np.zeros((num_bootstrap, 2))
+    count = 0
+    for data, _ in bs.bootstrap(num_bootstrap):
+        results[count] = data[0].mean(axis=0)
+        count += 1
+    errors = results - bs_setup.x.mean(axis=0)
+    direct_cov = errors.T.dot(errors) / num_bootstrap
+    assert_allclose(cov, direct_cov)
+
+    bs.reset()
+    cov = bs.cov(func=bs_setup.func, recenter=True, reps=num_bootstrap)
+    errors = results - results.mean(axis=0)
+    direct_cov = errors.T.dot(errors) / num_bootstrap
+    assert_allclose(cov, direct_cov)
+
+    bs = IIDBootstrap(bs_setup.x_df)
+    cov = bs.cov(func=bs_setup.func, reps=num_bootstrap, recenter=False)
+    bs.reset()
+    var = bs.var(func=bs_setup.func, reps=num_bootstrap, recenter=False)
+    bs.reset()
+    results = np.zeros((num_bootstrap, 2))
+    count = 0
+    for data, _ in bs.bootstrap(num_bootstrap):
+        results[count] = data[0].mean(axis=0)
+        count += 1
+    errors = results - bs_setup.x.mean(axis=0)
+    direct_cov = errors.T.dot(errors) / num_bootstrap
+    assert_allclose(cov, direct_cov)
+    assert_allclose(var, np.diag(direct_cov))
+
+    bs.reset()
+    cov = bs.cov(func=bs_setup.func, recenter=True, reps=num_bootstrap)
+    errors = results - results.mean(axis=0)
+    direct_cov = errors.T.dot(errors) / num_bootstrap
+    assert_allclose(cov, direct_cov)
+
+
+def test_conf_int_basic(bs_setup):
+    num_bootstrap = 200
+    bs = IIDBootstrap(bs_setup.x)
+
+    ci = bs.conf_int(bs_setup.func, reps=num_bootstrap, size=0.90, method="basic")
+    bs.reset()
+    ci_u = bs.conf_int(
+        bs_setup.func, tail="upper", reps=num_bootstrap, size=0.95, method="basic"
+    )
+    bs.reset()
+    ci_l = bs.conf_int(
+        bs_setup.func, tail="lower", reps=num_bootstrap, size=0.95, method="basic"
+    )
+    bs.reset()
+    results = np.zeros((num_bootstrap, 2))
+    count = 0
+    for pos, _ in bs.bootstrap(num_bootstrap):
+        results[count] = bs_setup.func(*pos)
+        count += 1
+    mu = bs_setup.func(bs_setup.x)
+    upper = mu + (mu - np.percentile(results, 5, axis=0))
+    lower = mu + (mu - np.percentile(results, 95, axis=0))
+
+    assert_allclose(lower, ci[0, :])
+    assert_allclose(upper, ci[1, :])
+
+    assert_allclose(ci[1, :], ci_u[1, :])
+    assert_allclose(ci[0, :], ci_l[0, :])
+    inf = np.empty_like(ci_l[0, :])
+    inf.fill(np.inf)
+    assert_equal(inf, ci_l[1, :])
+    assert_equal(-1 * inf, ci_u[0, :])
+
+
+def test_conf_int_percentile(bs_setup):
+    num_bootstrap = 200
+    bs = IIDBootstrap(bs_setup.x)
+
+    ci = bs.conf_int(bs_setup.func, reps=num_bootstrap, size=0.90, method="percentile")
+    bs.reset()
+    ci_u = bs.conf_int(
+        bs_setup.func, tail="upper", reps=num_bootstrap, size=0.95, method="percentile",
+    )
+    bs.reset()
+    ci_l = bs.conf_int(
+        bs_setup.func, tail="lower", reps=num_bootstrap, size=0.95, method="percentile",
+    )
+    bs.reset()
+    results = np.zeros((num_bootstrap, 2))
+    count = 0
+    for pos, _ in bs.bootstrap(num_bootstrap):
+        results[count] = bs_setup.func(*pos)
+        count += 1
+
+    upper = np.percentile(results, 95, axis=0)
+    lower = np.percentile(results, 5, axis=0)
+
+    assert_allclose(lower, ci[0, :])
+    assert_allclose(upper, ci[1, :])
+
+    assert_allclose(ci[1, :], ci_u[1, :])
+    assert_allclose(ci[0, :], ci_l[0, :])
+    inf = np.empty_like(ci_l[0, :])
+    inf.fill(np.inf)
+    assert_equal(inf, ci_l[1, :])
+    assert_equal(-1 * inf, ci_u[0, :])
+
+
+def test_conf_int_norm(bs_setup):
+    num_bootstrap = 200
+    bs = IIDBootstrap(bs_setup.x)
+
+    ci = bs.conf_int(bs_setup.func, reps=num_bootstrap, size=0.90, method="norm")
+    bs.reset()
+    ci_u = bs.conf_int(
+        bs_setup.func, tail="upper", reps=num_bootstrap, size=0.95, method="var"
+    )
+    bs.reset()
+    ci_l = bs.conf_int(
+        bs_setup.func, tail="lower", reps=num_bootstrap, size=0.95, method="cov"
+    )
+    bs.reset()
+    cov = bs.cov(bs_setup.func, reps=num_bootstrap)
+    mu = bs_setup.func(bs_setup.x)
+    std_err = np.sqrt(np.diag(cov))
+    upper = mu + stats.norm.ppf(0.95) * std_err
+    lower = mu + stats.norm.ppf(0.05) * std_err
+    assert_allclose(lower, ci[0, :])
+    assert_allclose(upper, ci[1, :])
+
+    assert_allclose(ci[1, :], ci_u[1, :])
+    assert_allclose(ci[0, :], ci_l[0, :])
+    inf = np.empty_like(ci_l[0, :])
+    inf.fill(np.inf)
+    assert_equal(inf, ci_l[1, :])
+    assert_equal(-1 * inf, ci_u[0, :])
+
+
+def test_reuse(bs_setup):
+    num_bootstrap = 100
+    bs = IIDBootstrap(bs_setup.x)
+
+    ci = bs.conf_int(bs_setup.func, reps=num_bootstrap)
+    old_results = bs._results.copy()
+    ci_reuse = bs.conf_int(bs_setup.func, reps=num_bootstrap, reuse=True)
+    results = bs._results
+    assert_equal(results, old_results)
+    assert_equal(ci, ci_reuse)
+    with warnings.catch_warnings(record=True) as w:
         warnings.simplefilter("always", RuntimeWarning)
+        warnings.simplefilter("always")
+        bs.conf_int(bs_setup.func, tail="lower", reps=num_bootstrap // 2, reuse=True)
+        assert_equal(len(w), 1)
 
-        cls.rng = RandomState(1234)
-        cls.y = cls.rng.randn(1000)
-        cls.x = cls.rng.randn(1000, 2)
-        cls.z = cls.rng.randn(1000, 1)
 
-        cls.y_series = pd.Series(cls.y)
-        cls.z_df = pd.DataFrame(cls.z)
-        cls.x_df = pd.DataFrame(cls.x)
+def test_studentized(bs_setup):
+    num_bootstrap = 20
+    bs = IIDBootstrap(bs_setup.x)
+    bs.seed(23456)
 
-    def test_numpy(self):
-        x, y, z = self.x, self.y, self.z
-        bs = IIDBootstrap(y)
-        bs.seed(23456)
-        for data, kwdata in bs.bootstrap(10):
-            index = bs.index
-            assert_equal(len(kwdata.keys()), 0)
-            assert_equal(y[index], data[0])
-        # Ensure no changes to original data
-        assert_equal(bs._args[0], y)
+    def std_err_func(mu, y):
+        errors = y - mu
+        var = (errors ** 2.0).mean(axis=0)
+        return np.sqrt(var / y.shape[0])
 
-        bs = IIDBootstrap(y=y)
-        bs.seed(23456)
-        for data, kwdata in bs.bootstrap(10):
-            index = bs.index
-            assert_equal(len(data), 0)
-            assert_equal(y[index], kwdata["y"])
-            assert_equal(y[index], bs.y)
-        # Ensure no changes to original data
-        assert_equal(bs._kwargs["y"], y)
+    ci = bs.conf_int(
+        bs_setup.func,
+        reps=num_bootstrap,
+        method="studentized",
+        std_err_func=std_err_func,
+    )
+    bs.reset()
+    base = bs_setup.func(bs_setup.x)
+    results = np.zeros((num_bootstrap, 2))
+    stud_results = np.zeros((num_bootstrap, 2))
+    count = 0
+    for pos, _ in bs.bootstrap(reps=num_bootstrap):
+        results[count] = bs_setup.func(*pos)
+        std_err = std_err_func(results[count], *pos)
+        stud_results[count] = (results[count] - base) / std_err
+        count += 1
 
-        bs = IIDBootstrap(x, y, z)
-        bs.seed(23456)
-        for data, kwdata in bs.bootstrap(10):
-            index = bs.index
-            assert_equal(len(data), 3)
-            assert_equal(len(kwdata.keys()), 0)
-            assert_equal(x[index], data[0])
-            assert_equal(y[index], data[1])
-            assert_equal(z[index], data[2])
+    assert_allclose(results, bs._results)
+    assert_allclose(stud_results, bs._studentized_results)
+    errors = results - results.mean(0)
+    std_err = np.sqrt(np.mean(errors ** 2.0, axis=0))
+    ci_direct = np.zeros((2, 2))
+    for i in range(2):
+        ci_direct[0, i] = base[i] - std_err[i] * np.percentile(stud_results[:, i], 97.5)
+        ci_direct[1, i] = base[i] - std_err[i] * np.percentile(stud_results[:, i], 2.5)
+    assert_allclose(ci, ci_direct)
 
-        bs = IIDBootstrap(x, y=y, z=z)
-        bs.seed(23456)
-        for data, kwdata in bs.bootstrap(10):
-            index = bs.index
-            assert_equal(len(data), 1)
-            assert_equal(len(kwdata.keys()), 2)
-            assert_equal(x[index], data[0])
-            assert_equal(y[index], kwdata["y"])
-            assert_equal(z[index], kwdata["z"])
-            assert_equal(y[index], bs.y)
-            assert_equal(z[index], bs.z)
+    bs.reset()
+    ci = bs.conf_int(
+        bs_setup.func, reps=num_bootstrap, method="studentized", studentize_reps=50,
+    )
 
-    def test_pandas(self):
-        x, y, z = self.x_df, self.y_series, self.z_df
-        bs = IIDBootstrap(y)
-        bs.seed(23456)
-        for data, kwdata in bs.bootstrap(10):
-            index = bs.index
-            assert_equal(len(kwdata.keys()), 0)
-            assert_series_equal(y.iloc[index], data[0])
-        # Ensure no changes to original data
-        assert_series_equal(bs._args[0], y)
-
-        bs = IIDBootstrap(y=y)
-        bs.seed(23456)
-        for data, kwdata in bs.bootstrap(10):
-            index = bs.index
-            assert_equal(len(data), 0)
-            assert_series_equal(y.iloc[index], kwdata["y"])
-            assert_series_equal(y.iloc[index], bs.y)
-        # Ensure no changes to original data
-        assert_series_equal(bs._kwargs["y"], y)
-
-        bs = IIDBootstrap(x, y, z)
-        bs.seed(23456)
-        for data, kwdata in bs.bootstrap(10):
-            index = bs.index
-            assert_equal(len(data), 3)
-            assert_equal(len(kwdata.keys()), 0)
-            assert_frame_equal(x.iloc[index], data[0])
-            assert_series_equal(y.iloc[index], data[1])
-            assert_frame_equal(z.iloc[index], data[2])
-
-        bs = IIDBootstrap(x, y=y, z=z)
-        bs.seed(23456)
-        for data, kwdata in bs.bootstrap(10):
-            index = bs.index
-            assert_equal(len(data), 1)
-            assert_equal(len(kwdata.keys()), 2)
-            assert_frame_equal(x.iloc[index], data[0])
-            assert_series_equal(y.iloc[index], kwdata["y"])
-            assert_frame_equal(z.iloc[index], kwdata["z"])
-            assert_series_equal(y.iloc[index], bs.y)
-            assert_frame_equal(z.iloc[index], bs.z)
-
-    def test_mixed_types(self):
-        x, y, z = self.x_df, self.y_series, self.z
-        bs = IIDBootstrap(y, x=x, z=z)
-        bs.seed(23456)
-        for data, kwdata in bs.bootstrap(10):
-            index = bs.index
-            assert_equal(len(data), 1)
-            assert_equal(len(kwdata.keys()), 2)
-            assert_frame_equal(x.iloc[index], kwdata["x"])
-            assert_frame_equal(x.iloc[index], bs.x)
-            assert_series_equal(y.iloc[index], data[0])
-            assert_equal(z[index], kwdata["z"])
-            assert_equal(z[index], bs.z)
-
-    def test_state(self):
-        bs = IIDBootstrap(np.arange(100))
-        bs.seed(23456)
-        state = bs.get_state()
-        for data, _ in bs.bootstrap(10):
-            final = data[0]
-        bs.seed(23456)
-        for data, _ in bs.bootstrap(10):
-            final_seed = data[0]
-        bs.set_state(state)
-        for data, _ in bs.bootstrap(10):
-            final_state = data[0]
-        assert_equal(final, final_seed)
-        assert_equal(final, final_state)
-
-    def test_reset(self):
-        bs = IIDBootstrap(np.arange(100))
-        state = bs.get_state()
-        for data, _ in bs.bootstrap(10):
-            final = data[0]
-        bs.reset()
-        state_reset = bs.get_state()
-        for data, _ in bs.bootstrap(10):
-            final_reset = data[0]
-        assert_equal(final, final_reset)
-        assert_equal(state, state_reset)
-
-    def test_errors(self):
-        x = np.arange(10)
-        y = np.arange(100)
-        with pytest.raises(ValueError):
-            IIDBootstrap(x, y)
-        with pytest.raises(ValueError):
-            IIDBootstrap(index=x)
-        bs = IIDBootstrap(y)
-
-        with pytest.raises(ValueError):
-            bs.conf_int(self.func, method="unknown")
-        with pytest.raises(ValueError):
-            bs.conf_int(self.func, tail="dragon")
-        with pytest.raises(ValueError):
-            bs.conf_int(self.func, size=95)
-
-    def test_cov(self):
-        bs = IIDBootstrap(self.x)
-        num_bootstrap = 10
-        cov = bs.cov(func=self.func, reps=num_bootstrap, recenter=False)
-        bs.reset()
-
-        results = np.zeros((num_bootstrap, 2))
-        count = 0
-        for data, _ in bs.bootstrap(num_bootstrap):
-            results[count] = data[0].mean(axis=0)
-            count += 1
-        errors = results - self.x.mean(axis=0)
-        direct_cov = errors.T.dot(errors) / num_bootstrap
-        assert_allclose(cov, direct_cov)
-
-        bs.reset()
-        cov = bs.cov(func=self.func, recenter=True, reps=num_bootstrap)
-        errors = results - results.mean(axis=0)
-        direct_cov = errors.T.dot(errors) / num_bootstrap
-        assert_allclose(cov, direct_cov)
-
-        bs = IIDBootstrap(self.x_df)
-        cov = bs.cov(func=self.func, reps=num_bootstrap, recenter=False)
-        bs.reset()
-        var = bs.var(func=self.func, reps=num_bootstrap, recenter=False)
-        bs.reset()
-        results = np.zeros((num_bootstrap, 2))
-        count = 0
-        for data, _ in bs.bootstrap(num_bootstrap):
-            results[count] = data[0].mean(axis=0)
-            count += 1
-        errors = results - self.x.mean(axis=0)
-        direct_cov = errors.T.dot(errors) / num_bootstrap
-        assert_allclose(cov, direct_cov)
-        assert_allclose(var, np.diag(direct_cov))
-
-        bs.reset()
-        cov = bs.cov(func=self.func, recenter=True, reps=num_bootstrap)
-        errors = results - results.mean(axis=0)
-        direct_cov = errors.T.dot(errors) / num_bootstrap
-        assert_allclose(cov, direct_cov)
-
-    def test_conf_int_basic(self):
-        num_bootstrap = 200
-        bs = IIDBootstrap(self.x)
-
-        ci = bs.conf_int(self.func, reps=num_bootstrap, size=0.90, method="basic")
-        bs.reset()
-        ci_u = bs.conf_int(
-            self.func, tail="upper", reps=num_bootstrap, size=0.95, method="basic"
-        )
-        bs.reset()
-        ci_l = bs.conf_int(
-            self.func, tail="lower", reps=num_bootstrap, size=0.95, method="basic"
-        )
-        bs.reset()
-        results = np.zeros((num_bootstrap, 2))
-        count = 0
-        for pos, _ in bs.bootstrap(num_bootstrap):
-            results[count] = self.func(*pos)
-            count += 1
-        mu = self.func(self.x)
-        upper = mu + (mu - np.percentile(results, 5, axis=0))
-        lower = mu + (mu - np.percentile(results, 95, axis=0))
-
-        assert_allclose(lower, ci[0, :])
-        assert_allclose(upper, ci[1, :])
-
-        assert_allclose(ci[1, :], ci_u[1, :])
-        assert_allclose(ci[0, :], ci_l[0, :])
-        inf = np.empty_like(ci_l[0, :])
-        inf.fill(np.inf)
-        assert_equal(inf, ci_l[1, :])
-        assert_equal(-1 * inf, ci_u[0, :])
-
-    def test_conf_int_percentile(self):
-        num_bootstrap = 200
-        bs = IIDBootstrap(self.x)
-
-        ci = bs.conf_int(self.func, reps=num_bootstrap, size=0.90, method="percentile")
-        bs.reset()
-        ci_u = bs.conf_int(
-            self.func, tail="upper", reps=num_bootstrap, size=0.95, method="percentile"
-        )
-        bs.reset()
-        ci_l = bs.conf_int(
-            self.func, tail="lower", reps=num_bootstrap, size=0.95, method="percentile"
-        )
-        bs.reset()
-        results = np.zeros((num_bootstrap, 2))
-        count = 0
-        for pos, _ in bs.bootstrap(num_bootstrap):
-            results[count] = self.func(*pos)
-            count += 1
-
-        upper = np.percentile(results, 95, axis=0)
-        lower = np.percentile(results, 5, axis=0)
-
-        assert_allclose(lower, ci[0, :])
-        assert_allclose(upper, ci[1, :])
-
-        assert_allclose(ci[1, :], ci_u[1, :])
-        assert_allclose(ci[0, :], ci_l[0, :])
-        inf = np.empty_like(ci_l[0, :])
-        inf.fill(np.inf)
-        assert_equal(inf, ci_l[1, :])
-        assert_equal(-1 * inf, ci_u[0, :])
-
-    def test_conf_int_norm(self):
-        num_bootstrap = 200
-        bs = IIDBootstrap(self.x)
-
-        ci = bs.conf_int(self.func, reps=num_bootstrap, size=0.90, method="norm")
-        bs.reset()
-        ci_u = bs.conf_int(
-            self.func, tail="upper", reps=num_bootstrap, size=0.95, method="var"
-        )
-        bs.reset()
-        ci_l = bs.conf_int(
-            self.func, tail="lower", reps=num_bootstrap, size=0.95, method="cov"
-        )
-        bs.reset()
-        cov = bs.cov(self.func, reps=num_bootstrap)
-        mu = self.func(self.x)
+    bs.reset()
+    base = bs_setup.func(bs_setup.x)
+    results = np.zeros((num_bootstrap, 2))
+    stud_results = np.zeros((num_bootstrap, 2))
+    count = 0
+    for pos, _ in bs.bootstrap(reps=num_bootstrap):
+        results[count] = bs_setup.func(*pos)
+        inner_bs = IIDBootstrap(*pos)
+        seed = bs.random_state.randint(2 ** 31 - 1)
+        inner_bs.seed(seed)
+        cov = inner_bs.cov(bs_setup.func, reps=50)
         std_err = np.sqrt(np.diag(cov))
-        upper = mu + stats.norm.ppf(0.95) * std_err
-        lower = mu + stats.norm.ppf(0.05) * std_err
-        assert_allclose(lower, ci[0, :])
-        assert_allclose(upper, ci[1, :])
+        stud_results[count] = (results[count] - base) / std_err
+        count += 1
 
-        assert_allclose(ci[1, :], ci_u[1, :])
-        assert_allclose(ci[0, :], ci_l[0, :])
-        inf = np.empty_like(ci_l[0, :])
-        inf.fill(np.inf)
-        assert_equal(inf, ci_l[1, :])
-        assert_equal(-1 * inf, ci_u[0, :])
+    assert_allclose(results, bs._results)
+    assert_allclose(stud_results, bs._studentized_results)
+    errors = results - results.mean(0)
+    std_err = np.sqrt(np.mean(errors ** 2.0, axis=0))
 
-    def test_reuse(self):
-        num_bootstrap = 100
-        bs = IIDBootstrap(self.x)
+    ci_direct = np.zeros((2, 2))
+    for i in range(2):
+        ci_direct[0, i] = base[i] - std_err[i] * np.percentile(stud_results[:, i], 97.5)
+        ci_direct[1, i] = base[i] - std_err[i] * np.percentile(stud_results[:, i], 2.5)
+    assert_allclose(ci, ci_direct)
 
-        ci = bs.conf_int(self.func, reps=num_bootstrap)
-        old_results = bs._results.copy()
-        ci_reuse = bs.conf_int(self.func, reps=num_bootstrap, reuse=True)
-        results = bs._results
-        assert_equal(results, old_results)
-        assert_equal(ci, ci_reuse)
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always", RuntimeWarning)
-            warnings.simplefilter("always")
-            bs.conf_int(self.func, tail="lower", reps=num_bootstrap // 2, reuse=True)
-            assert_equal(len(w), 1)
-
-    def test_studentized(self):
-        num_bootstrap = 20
-        bs = IIDBootstrap(self.x)
-        bs.seed(23456)
-
-        def std_err_func(mu, y):
-            errors = y - mu
-            var = (errors ** 2.0).mean(axis=0)
-            return np.sqrt(var / y.shape[0])
-
-        ci = bs.conf_int(
-            self.func,
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        bs.conf_int(
+            bs_setup.func,
             reps=num_bootstrap,
             method="studentized",
             std_err_func=std_err_func,
+            reuse=True,
         )
-        bs.reset()
-        base = self.func(self.x)
-        results = np.zeros((num_bootstrap, 2))
-        stud_results = np.zeros((num_bootstrap, 2))
-        count = 0
-        for pos, _ in bs.bootstrap(reps=num_bootstrap):
-            results[count] = self.func(*pos)
-            std_err = std_err_func(results[count], *pos)
-            stud_results[count] = (results[count] - base) / std_err
-            count += 1
+        assert_equal(len(w), 1)
 
-        assert_allclose(results, bs._results)
-        assert_allclose(stud_results, bs._studentized_results)
-        errors = results - results.mean(0)
-        std_err = np.sqrt(np.mean(errors ** 2.0, axis=0))
-        ci_direct = np.zeros((2, 2))
-        for i in range(2):
-            ci_direct[0, i] = base[i] - std_err[i] * np.percentile(
-                stud_results[:, i], 97.5
-            )
-            ci_direct[1, i] = base[i] - std_err[i] * np.percentile(
-                stud_results[:, i], 2.5
-            )
-        assert_allclose(ci, ci_direct)
 
-        bs.reset()
-        ci = bs.conf_int(
-            self.func, reps=num_bootstrap, method="studentized", studentize_reps=50
-        )
+def test_conf_int_bias_corrected(bs_setup):
+    num_bootstrap = 20
+    bs = IIDBootstrap(bs_setup.x)
+    bs.seed(23456)
 
-        bs.reset()
-        base = self.func(self.x)
-        results = np.zeros((num_bootstrap, 2))
-        stud_results = np.zeros((num_bootstrap, 2))
-        count = 0
-        for pos, _ in bs.bootstrap(reps=num_bootstrap):
-            results[count] = self.func(*pos)
-            inner_bs = IIDBootstrap(*pos)
-            seed = bs.random_state.randint(2 ** 31 - 1)
-            inner_bs.seed(seed)
-            cov = inner_bs.cov(self.func, reps=50)
-            std_err = np.sqrt(np.diag(cov))
-            stud_results[count] = (results[count] - base) / std_err
-            count += 1
+    ci = bs.conf_int(bs_setup.func, reps=num_bootstrap, method="bc")
+    bs.reset()
+    ci_db = bs.conf_int(bs_setup.func, reps=num_bootstrap, method="debiased")
+    assert_equal(ci, ci_db)
+    base, results = bs._base, bs._results
+    p = np.zeros(2)
+    p[0] = np.mean(results[:, 0] < base[0])
+    p[1] = np.mean(results[:, 1] < base[1])
+    b = stats.norm.ppf(p)
+    q = stats.norm.ppf(np.array([0.025, 0.975]))
+    q = q[:, None]
+    percentiles = 100 * stats.norm.cdf(2 * b + q)
 
-        assert_allclose(results, bs._results)
-        assert_allclose(stud_results, bs._studentized_results)
-        errors = results - results.mean(0)
-        std_err = np.sqrt(np.mean(errors ** 2.0, axis=0))
+    ci = np.zeros((2, 2))
+    for i in range(2):
+        ci[i] = np.percentile(results[:, i], list(percentiles[:, i]))
+    ci = ci.T
+    assert_allclose(ci_db, ci)
 
-        ci_direct = np.zeros((2, 2))
-        for i in range(2):
-            ci_direct[0, i] = base[i] - std_err[i] * np.percentile(
-                stud_results[:, i], 97.5
-            )
-            ci_direct[1, i] = base[i] - std_err[i] * np.percentile(
-                stud_results[:, i], 2.5
-            )
-        assert_allclose(ci, ci_direct)
 
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
-            bs.conf_int(
-                self.func,
-                reps=num_bootstrap,
-                method="studentized",
-                std_err_func=std_err_func,
-                reuse=True,
-            )
-            assert_equal(len(w), 1)
+def test_conf_int_bca_scaler(bs_setup):
+    num_bootstrap = 100
+    bs = IIDBootstrap(bs_setup.y)
+    bs.seed(23456)
 
-    def test_conf_int_bias_corrected(self):
-        num_bootstrap = 20
-        bs = IIDBootstrap(self.x)
-        bs.seed(23456)
+    ci = bs.conf_int(np.mean, reps=num_bootstrap, method="bca")
+    msg = (
+        "conf_int(method='bca') scalar input regression. Ensure "
+        "output is at least 1D with numpy.atleast_1d()."
+    )
+    assert ci.shape == (2, 1), msg
 
-        ci = bs.conf_int(self.func, reps=num_bootstrap, method="bc")
-        bs.reset()
-        ci_db = bs.conf_int(self.func, reps=num_bootstrap, method="debiased")
-        assert_equal(ci, ci_db)
-        base, results = bs._base, bs._results
-        p = np.zeros(2)
-        p[0] = np.mean(results[:, 0] < base[0])
-        p[1] = np.mean(results[:, 1] < base[1])
-        b = stats.norm.ppf(p)
-        q = stats.norm.ppf(np.array([0.025, 0.975]))
-        q = q[:, None]
-        percentiles = 100 * stats.norm.cdf(2 * b + q)
 
-        ci = np.zeros((2, 2))
-        for i in range(2):
-            ci[i] = np.percentile(results[:, i], list(percentiles[:, i]))
-        ci = ci.T
-        assert_allclose(ci_db, ci)
+def test_conf_int_parametric(bs_setup):
+    def param_func(x, params=None, state=None):
+        if state is not None:
+            mu = params
+            e = state.standard_normal(x.shape)
+            return (mu + e).mean(0)
+        else:
+            return x.mean(0)
 
-    def test_conf_int_bca_scaler(self):
-        num_bootstrap = 100
-        bs = IIDBootstrap(self.y)
-        bs.seed(23456)
+    def semi_func(x, params=None):
+        if params is not None:
+            mu = params
+            e = x - mu
+            return (mu + e).mean(0)
+        else:
+            return x.mean(0)
 
-        ci = bs.conf_int(np.mean, reps=num_bootstrap, method="bca")
-        msg = (
-            "conf_int(method='bca') scalar input regression. Ensure "
-            "output is at least 1D with numpy.atleast_1d()."
-        )
-        assert ci.shape == (2, 1), msg
+    reps = 100
+    bs = IIDBootstrap(bs_setup.x)
+    bs.seed(23456)
 
-    def test_conf_int_parametric(self):
-        def param_func(x, params=None, state=None):
-            if state is not None:
-                mu = params
-                e = state.standard_normal(x.shape)
-                return (mu + e).mean(0)
-            else:
-                return x.mean(0)
+    ci = bs.conf_int(func=param_func, reps=reps, sampling="parametric")
+    assert len(ci) == 2
+    assert np.all(ci[0] < ci[1])
+    bs.reset()
+    results = np.zeros((reps, 2))
+    count = 0
+    mu = bs_setup.x.mean(0)
+    for pos, _ in bs.bootstrap(100):
+        results[count] = param_func(*pos, params=mu, state=bs.random_state)
+        count += 1
+    assert_equal(bs._results, results)
 
-        def semi_func(x, params=None):
-            if params is not None:
-                mu = params
-                e = x - mu
-                return (mu + e).mean(0)
-            else:
-                return x.mean(0)
+    bs.reset()
+    ci = bs.conf_int(func=semi_func, reps=100, sampling="semi")
+    assert len(ci) == 2
+    assert np.all(ci[0] < ci[1])
+    bs.reset()
+    results = np.zeros((reps, 2))
+    count = 0
+    for pos, _ in bs.bootstrap(100):
+        results[count] = semi_func(*pos, params=mu)
+        count += 1
+    assert_allclose(bs._results, results)
 
-        reps = 100
-        bs = IIDBootstrap(self.x)
-        bs.seed(23456)
 
-        ci = bs.conf_int(func=param_func, reps=reps, sampling="parametric")
-        assert len(ci) == 2
-        assert np.all(ci[0] < ci[1])
-        bs.reset()
-        results = np.zeros((reps, 2))
-        count = 0
-        mu = self.x.mean(0)
-        for pos, _ in bs.bootstrap(100):
-            results[count] = param_func(*pos, params=mu, state=bs.random_state)
-            count += 1
-        assert_equal(bs._results, results)
+def test_extra_kwargs(bs_setup):
+    extra_kwargs = {"axis": 0}
+    bs = IIDBootstrap(bs_setup.x)
+    bs.seed(23456)
+    num_bootstrap = 100
 
-        bs.reset()
-        ci = bs.conf_int(func=semi_func, reps=100, sampling="semi")
-        assert len(ci) == 2
-        assert np.all(ci[0] < ci[1])
-        bs.reset()
-        results = np.zeros((reps, 2))
-        count = 0
-        for pos, _ in bs.bootstrap(100):
-            results[count] = semi_func(*pos, params=mu)
-            count += 1
-        assert_allclose(bs._results, results)
+    bs.cov(bs_setup.func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
 
-    def test_extra_kwargs(self):
-        extra_kwargs = {"axis": 0}
-        bs = IIDBootstrap(self.x)
-        bs.seed(23456)
-        num_bootstrap = 100
+    bs = IIDBootstrap(axis=bs_setup.x)
+    bs.seed(23456)
+    with pytest.raises(ValueError):
+        bs.cov(bs_setup.func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
 
-        bs.cov(self.func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
 
-        bs = IIDBootstrap(axis=self.x)
-        bs.seed(23456)
-        with pytest.raises(ValueError):
-            bs.cov(self.func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
+def test_jackknife(bs_setup):
+    x = bs_setup.x
+    results = _loo_jackknife(bs_setup.func, len(x), (x,), {})
 
-    def test_jackknife(self):
-        x = self.x
-        results = _loo_jackknife(self.func, len(x), (x,), {})
+    direct_results = np.zeros_like(x)
+    for i in range(len(x)):
+        if i == 0:
+            y = x[1:]
+        elif i == (len(x) - 1):
+            y = x[:-1]
+        else:
+            temp = list(x[:i])
+            temp.extend(list(x[i + 1 :]))
+            y = np.array(temp)
+        direct_results[i] = bs_setup.func(y)
+    assert_allclose(direct_results, results)
 
-        direct_results = np.zeros_like(x)
-        for i in range(len(x)):
-            if i == 0:
-                y = x[1:]
-            elif i == (len(x) - 1):
-                y = x[:-1]
-            else:
-                temp = list(x[:i])
-                temp.extend(list(x[i + 1 :]))
-                y = np.array(temp)
-            direct_results[i] = self.func(y)
-        assert_allclose(direct_results, results)
+    x = bs_setup.x_df
+    results_df = _loo_jackknife(bs_setup.func, len(x), (x,), {})
+    assert_equal(results, results_df)
 
-        x = self.x_df
-        results_df = _loo_jackknife(self.func, len(x), (x,), {})
-        assert_equal(results, results_df)
+    y = bs_setup.y
+    results = _loo_jackknife(bs_setup.func, len(y), (y,), {})
 
-        y = self.y
-        results = _loo_jackknife(self.func, len(y), (y,), {})
+    direct_results = np.zeros_like(y)
+    for i in range(len(y)):
+        if i == 0:
+            z = y[1:]
+        elif i == (len(y) - 1):
+            z = y[:-1]
+        else:
+            temp = list(y[:i])
+            temp.extend(list(y[i + 1 :]))
+            z = np.array(temp)
+        direct_results[i] = bs_setup.func(z)
+    assert_allclose(direct_results, results)
 
-        direct_results = np.zeros_like(y)
-        for i in range(len(y)):
-            if i == 0:
-                z = y[1:]
-            elif i == (len(y) - 1):
-                z = y[:-1]
-            else:
-                temp = list(y[:i])
-                temp.extend(list(y[i + 1 :]))
-                z = np.array(temp)
-            direct_results[i] = self.func(z)
-        assert_allclose(direct_results, results)
+    y = bs_setup.y_series
+    results_series = _loo_jackknife(bs_setup.func, len(y), (y,), {})
+    assert_allclose(results, results_series)
 
-        y = self.y_series
-        results_series = _loo_jackknife(self.func, len(y), (y,), {})
-        assert_allclose(results, results_series)
 
-    def test_bca_against_bcajack(self):
-        # import rpy2.rinterface as ri
-        # import rpy2.robjects as robjects
-        # import rpy2.robjects.numpy2ri
-        # from rpy2.robjects.packages import importr
-        # rpy2.robjects.numpy2ri.activate()
-        # utils = importr('utils')
-        # try:
-        #     bcaboot = importr('bcaboot')
-        # except Exception:
-        #     utils.install_packages('bcaboot',
-        #                            repos='http://cran.us.r-project.org')
-        #     bcaboot = importr('bcaboot')
+def test_bca(bs_setup):
+    num_bootstrap = 20
+    bs = IIDBootstrap(bs_setup.x)
+    bs.seed(23456)
 
-        rng_seed_obs = 42
-        rs = np.random.RandomState(rng_seed_obs)
-        observations = rs.multivariate_normal(mean=[8, 4], cov=np.identity(2), size=20)
-        B = 2000
-        rng_seed = 123
-        rs = np.random.RandomState(rng_seed)
-        arch_bs = IIDBootstrap(observations, random_state=rs)
-        confidence_interval_size = 0.90
+    ci_direct = bs.conf_int(bs_setup.func, reps=num_bootstrap, method="bca")
+    bs.reset()
+    base, results = bs._base, bs._results
+    p = np.zeros(2)
+    p[0] = np.mean(results[:, 0] < base[0])
+    p[1] = np.mean(results[:, 1] < base[1])
+    b = stats.norm.ppf(p)
+    b = b[:, None]
+    q = stats.norm.ppf(np.array([0.025, 0.975]))
 
-        def func(x):
-            sample = x.mean(axis=0)
-            return sample[1] / sample[0]
+    base = bs_setup.func(bs_setup.x)
+    nobs = bs_setup.x.shape[0]
+    jk = _loo_jackknife(bs_setup.func, nobs, [bs_setup.x], {})
+    u = jk.mean() - jk
+    u2 = np.sum(u * u, 0)
+    u3 = np.sum(u * u * u, 0)
+    a = u3 / (6.0 * (u2 ** 1.5))
+    a = a[:, None]
+    percentiles = 100 * stats.norm.cdf(b + (b + q) / (1 - a * (b + q)))
 
-        arch_ci = arch_bs.conf_int(
-            func=func, reps=B, size=confidence_interval_size, method="bca",
-        )
+    ci = np.zeros((2, 2))
+    for i in range(2):
+        ci[i] = np.percentile(results[:, i], list(percentiles[i]))
+    ci = ci.T
+    assert_allclose(ci_direct, ci)
 
-        # # callable from R
-        # @ri.rternalize
-        # def func_r(x):
-        #     x = np.asarray(x)
-        #     _mean = x.mean(axis=0)
-        #     return float(_mean[1] / _mean[0])
-        # output = bcaboot.bcajack(x=observations, B=float(B), func=func_r)
-        a = arch_bs._bca_acceleration(func)
-        b = arch_bs._bca_bias()
-        # bca_lims = np.array(output[1])[:, 0]
-        # # bca confidence intervals for: 0.025, 0.05, 0.1, 0.16, 0.5,
-        #                                 0.84, 0.9, 0.95, 0.975
-        # bcajack_ci_90 = [bca_lims[1], bca_lims[-2]]
-        # bcajack should estimate similar "a" using jackknife on
-        # the same observations
-        assert_allclose(a, -0.0004068984)
-        # bcajack returns b (or z0) = -0.03635412, but based on
-        # different bootstrap samples
-        assert_allclose(b, 0.04764396)
-        # bcajack_ci_90 = [0.42696, 0.53188]
-        arch_ci = list(arch_ci[:, -1])
-        saved_arch_ci_90 = [0.42719805360154717, 0.5336561953393736]
-        assert_allclose(arch_ci, saved_arch_ci_90)
 
-    def test_bca(self):
-        num_bootstrap = 20
-        bs = IIDBootstrap(self.x)
-        bs.seed(23456)
+def test_pandas_integer_index(bs_setup):
+    x = bs_setup.x
+    x_int = bs_setup.x_df.copy()
+    x_int.index = 10 + np.arange(x.shape[0])
+    bs = IIDBootstrap(x, x_int)
+    bs.seed(23456)
+    for pdata, _ in bs.bootstrap(10):
+        assert_equal(pdata[0], pdata[1].values)
 
-        ci_direct = bs.conf_int(self.func, reps=num_bootstrap, method="bca")
-        bs.reset()
-        base, results = bs._base, bs._results
-        p = np.zeros(2)
-        p[0] = np.mean(results[:, 0] < base[0])
-        p[1] = np.mean(results[:, 1] < base[1])
-        b = stats.norm.ppf(p)
-        b = b[:, None]
-        q = stats.norm.ppf(np.array([0.025, 0.975]))
 
-        base = self.func(self.x)
-        nobs = self.x.shape[0]
-        jk = _loo_jackknife(self.func, nobs, [self.x], {})
-        u = jk.mean() - jk
-        u2 = np.sum(u * u, 0)
-        u3 = np.sum(u * u * u, 0)
-        a = u3 / (6.0 * (u2 ** 1.5))
-        a = a[:, None]
-        percentiles = 100 * stats.norm.cdf(b + (b + q) / (1 - a * (b + q)))
+def test_apply(bs_setup):
+    bs = IIDBootstrap(bs_setup.x)
+    bs.seed(23456)
 
-        ci = np.zeros((2, 2))
-        for i in range(2):
-            ci[i] = np.percentile(results[:, i], list(percentiles[i]))
-        ci = ci.T
-        assert_allclose(ci_direct, ci)
+    results = bs.apply(bs_setup.func, 1000)
+    bs.reset(23456)
+    direct_results = []
+    for pos, _ in bs.bootstrap(1000):
+        direct_results.append(bs_setup.func(*pos))
+    direct_results = np.array(direct_results)
+    assert_equal(results, direct_results)
 
-    def test_pandas_integer_index(self):
-        x = self.x
-        x_int = self.x_df.copy()
-        x_int.index = 10 + np.arange(x.shape[0])
-        bs = IIDBootstrap(x, x_int)
-        bs.seed(23456)
-        for pdata, _ in bs.bootstrap(10):
-            assert_equal(pdata[0], pdata[1].values)
 
-    def test_apply(self):
-        bs = IIDBootstrap(self.x)
-        bs.seed(23456)
+def test_apply_series(bs_setup):
+    bs = IIDBootstrap(bs_setup.y_series)
+    bs.seed(23456)
 
-        results = bs.apply(self.func, 1000)
-        bs.reset(23456)
-        direct_results = []
-        for pos, _ in bs.bootstrap(1000):
-            direct_results.append(self.func(*pos))
-        direct_results = np.array(direct_results)
-        assert_equal(results, direct_results)
+    results = bs.apply(bs_setup.func, 1000)
+    bs.reset(23456)
+    direct_results = []
+    for pos, _ in bs.bootstrap(1000):
+        direct_results.append(bs_setup.func(*pos))
+    direct_results = np.array(direct_results)
+    direct_results = direct_results[:, None]
+    assert_equal(results, direct_results)
 
-    def test_apply_series(self):
-        bs = IIDBootstrap(self.y_series)
-        bs.seed(23456)
 
-        results = bs.apply(self.func, 1000)
-        bs.reset(23456)
-        direct_results = []
-        for pos, _ in bs.bootstrap(1000):
-            direct_results.append(self.func(*pos))
-        direct_results = np.array(direct_results)
-        direct_results = direct_results[:, None]
-        assert_equal(results, direct_results)
+def test_str(bs_setup):
+    bs = IIDBootstrap(bs_setup.y_series)
+    expected = "IID Bootstrap(no. pos. inputs: 1, no. keyword inputs: 0)"
+    assert_equal(str(bs), expected)
+    expected = expected[:-1] + ", ID: " + hex(id(bs)) + ")"
+    assert_equal(bs.__repr__(), expected)
+    expected = (
+        "<strong>IID Bootstrap</strong>("
+        + "<strong>no. pos. inputs</strong>: 1, "
+        + "<strong>no. keyword inputs</strong>: 0, "
+        + "<strong>ID</strong>: "
+        + hex(id(bs))
+        + ")"
+    )
+    assert_equal(bs._repr_html(), expected)
 
-    def test_str(self):
-        bs = IIDBootstrap(self.y_series)
-        expected = "IID Bootstrap(no. pos. inputs: 1, no. keyword inputs: 0)"
-        assert_equal(str(bs), expected)
-        expected = expected[:-1] + ", ID: " + hex(id(bs)) + ")"
-        assert_equal(bs.__repr__(), expected)
-        expected = (
-            "<strong>IID Bootstrap</strong>("
-            + "<strong>no. pos. inputs</strong>: 1, "
-            + "<strong>no. keyword inputs</strong>: 0, "
-            + "<strong>ID</strong>: "
-            + hex(id(bs))
-            + ")"
-        )
-        assert_equal(bs._repr_html(), expected)
+    bs = StationaryBootstrap(10, bs_setup.y_series, bs_setup.x_df)
+    expected = (
+        "Stationary Bootstrap(block size: 10, no. pos. "
+        "inputs: 2, no. keyword inputs: 0)"
+    )
+    assert_equal(str(bs), expected)
+    expected = expected[:-1] + ", ID: " + hex(id(bs)) + ")"
+    assert_equal(bs.__repr__(), expected)
 
-        bs = StationaryBootstrap(10, self.y_series, self.x_df)
-        expected = (
-            "Stationary Bootstrap(block size: 10, no. pos. "
-            "inputs: 2, no. keyword inputs: 0)"
-        )
-        assert_equal(str(bs), expected)
-        expected = expected[:-1] + ", ID: " + hex(id(bs)) + ")"
-        assert_equal(bs.__repr__(), expected)
+    bs = CircularBlockBootstrap(block_size=20, y=bs_setup.y_series, x=bs_setup.x_df)
+    expected = (
+        "Circular Block Bootstrap(block size: 20, no. pos. "
+        "inputs: 0, no. keyword inputs: 2)"
+    )
+    assert_equal(str(bs), expected)
+    expected = expected[:-1] + ", ID: " + hex(id(bs)) + ")"
+    assert_equal(bs.__repr__(), expected)
+    expected = (
+        "<strong>Circular Block Bootstrap</strong>"
+        + "(<strong>block size</strong>: 20, "
+        + "<strong>no. pos. inputs</strong>: 0, "
+        + "<strong>no. keyword inputs</strong>: 2,"
+        + " <strong>ID</strong>: "
+        + hex(id(bs))
+        + ")"
+    )
+    assert_equal(bs._repr_html(), expected)
 
-        bs = CircularBlockBootstrap(block_size=20, y=self.y_series, x=self.x_df)
-        expected = (
-            "Circular Block Bootstrap(block size: 20, no. pos. "
-            "inputs: 0, no. keyword inputs: 2)"
-        )
-        assert_equal(str(bs), expected)
-        expected = expected[:-1] + ", ID: " + hex(id(bs)) + ")"
-        assert_equal(bs.__repr__(), expected)
-        expected = (
-            "<strong>Circular Block Bootstrap</strong>"
-            + "(<strong>block size</strong>: 20, "
-            + "<strong>no. pos. inputs</strong>: 0, "
-            + "<strong>no. keyword inputs</strong>: 2,"
-            + " <strong>ID</strong>: "
-            + hex(id(bs))
-            + ")"
-        )
-        assert_equal(bs._repr_html(), expected)
+    bs = MovingBlockBootstrap(block_size=20, y=bs_setup.y_series, x=bs_setup.x_df)
+    expected = (
+        "Moving Block Bootstrap(block size: 20, no. pos. "
+        "inputs: 0, no. keyword inputs: 2)"
+    )
+    assert_equal(str(bs), expected)
+    expected = expected[:-1] + ", ID: " + hex(id(bs)) + ")"
+    assert_equal(bs.__repr__(), expected)
+    expected = (
+        "<strong>Moving Block Bootstrap</strong>"
+        + "(<strong>block size</strong>: 20, "
+        + "<strong>no. pos. inputs</strong>: 0, "
+        + "<strong>no. keyword inputs</strong>: 2,"
+        + " <strong>ID</strong>: "
+        + hex(id(bs))
+        + ")"
+    )
+    assert_equal(bs._repr_html(), expected)
 
-        bs = MovingBlockBootstrap(block_size=20, y=self.y_series, x=self.x_df)
-        expected = (
-            "Moving Block Bootstrap(block size: 20, no. pos. "
-            "inputs: 0, no. keyword inputs: 2)"
-        )
-        assert_equal(str(bs), expected)
-        expected = expected[:-1] + ", ID: " + hex(id(bs)) + ")"
-        assert_equal(bs.__repr__(), expected)
-        expected = (
-            "<strong>Moving Block Bootstrap</strong>"
-            + "(<strong>block size</strong>: 20, "
-            + "<strong>no. pos. inputs</strong>: 0, "
-            + "<strong>no. keyword inputs</strong>: 2,"
-            + " <strong>ID</strong>: "
-            + hex(id(bs))
-            + ")"
-        )
-        assert_equal(bs._repr_html(), expected)
 
-    def test_uneven_sampling(self):
-        bs = MovingBlockBootstrap(block_size=31, y=self.y_series, x=self.x_df)
-        for _, kw in bs.bootstrap(10):
-            assert kw["y"].shape == self.y_series.shape
-            assert kw["x"].shape == self.x_df.shape
-        bs = CircularBlockBootstrap(block_size=31, y=self.y_series, x=self.x_df)
-        for _, kw in bs.bootstrap(10):
-            assert kw["y"].shape == self.y_series.shape
-            assert kw["x"].shape == self.x_df.shape
+def test_uneven_sampling(bs_setup):
+    bs = MovingBlockBootstrap(block_size=31, y=bs_setup.y_series, x=bs_setup.x_df)
+    for _, kw in bs.bootstrap(10):
+        assert kw["y"].shape == bs_setup.y_series.shape
+        assert kw["x"].shape == bs_setup.x_df.shape
+    bs = CircularBlockBootstrap(block_size=31, y=bs_setup.y_series, x=bs_setup.x_df)
+    for _, kw in bs.bootstrap(10):
+        assert kw["y"].shape == bs_setup.y_series.shape
+        assert kw["x"].shape == bs_setup.x_df.shape
 
-    @pytest.mark.skipif(not HAS_EXTENSION, reason="Extension not built.")
-    @pytest.mark.filterwarnings("ignore::arch.compat.numba.PerformanceWarning")
-    def test_samplers(self):
-        """
-        Test all three implementations are identical
-        """
-        indices = np.array(self.rng.randint(0, 1000, 1000), dtype=np.int64)
-        u = self.rng.random_sample(1000)
-        p = 0.1
-        indices_orig = indices.copy()
 
-        numba = stationary_bootstrap_sample(indices, u, p)
-        indices = indices_orig.copy()
-        python = stationary_bootstrap_sample_python(indices, u, p)
-        indices = indices_orig.copy()
-        cython = stationary_bootstrap_sample_cython(indices, u, p)
-        assert_equal(numba, cython)
-        assert_equal(numba, python)
+@pytest.mark.skipif(not HAS_EXTENSION, reason="Extension not built.")
+@pytest.mark.filterwarnings("ignore::arch.compat.numba.PerformanceWarning")
+def test_samplers(bs_setup):
+    """
+    Test all three implementations are identical
+    """
+    indices = np.array(bs_setup.rng.randint(0, 1000, 1000), dtype=np.int64)
+    u = bs_setup.rng.random_sample(1000)
+    p = 0.1
+    indices_orig = indices.copy()
+
+    numba = stationary_bootstrap_sample(indices, u, p)
+    indices = indices_orig.copy()
+    python = stationary_bootstrap_sample_python(indices, u, p)
+    indices = indices_orig.copy()
+    cython = stationary_bootstrap_sample_cython(indices, u, p)
+    assert_equal(numba, cython)
+    assert_equal(numba, python)
+
+
+def test_bca_against_bcajack():
+    # import rpy2.rinterface as ri
+    # import rpy2.robjects as robjects
+    # import rpy2.robjects.numpy2ri
+    # from rpy2.robjects.packages import importr
+    # rpy2.robjects.numpy2ri.activate()
+    # utils = importr('utils')
+    # try:
+    #     bcaboot = importr('bcaboot')
+    # except Exception:
+    #     utils.install_packages('bcaboot',
+    #                            repos='http://cran.us.r-project.org')
+    #     bcaboot = importr('bcaboot')
+
+    rng_seed_obs = 42
+    rs = np.random.RandomState(rng_seed_obs)
+    observations = rs.multivariate_normal(mean=[8, 4], cov=np.identity(2), size=20)
+    B = 2000
+    rng_seed = 123
+    rs = np.random.RandomState(rng_seed)
+    arch_bs = IIDBootstrap(observations, random_state=rs)
+    confidence_interval_size = 0.90
+
+    def func(x):
+        sample = x.mean(axis=0)
+        return sample[1] / sample[0]
+
+    arch_ci = arch_bs.conf_int(
+        func=func, reps=B, size=confidence_interval_size, method="bca",
+    )
+
+    # # callable from R
+    # @ri.rternalize
+    # def func_r(x):
+    #     x = np.asarray(x)
+    #     _mean = x.mean(axis=0)
+    #     return float(_mean[1] / _mean[0])
+    # output = bcaboot.bcajack(x=observations, B=float(B), func=func_r)
+    a = arch_bs._bca_acceleration(func)
+    b = arch_bs._bca_bias()
+    # bca_lims = np.array(output[1])[:, 0]
+    # # bca confidence intervals for: 0.025, 0.05, 0.1, 0.16, 0.5,
+    #                                 0.84, 0.9, 0.95, 0.975
+    # bcajack_ci_90 = [bca_lims[1], bca_lims[-2]]
+    # bcajack should estimate similar "a" using jackknife on
+    # the same observations
+    assert_allclose(a, -0.0004068984)
+    # bcajack returns b (or z0) = -0.03635412, but based on
+    # different bootstrap samples
+    assert_allclose(b, 0.04764396)
+    # bcajack_ci_90 = [0.42696, 0.53188]
+    arch_ci = list(arch_ci[:, -1])
+    saved_arch_ci_90 = [0.42719805360154717, 0.5336561953393736]
+    assert_allclose(arch_ci, saved_arch_ci_90)
+
+
+def test_state():
+    bs = IIDBootstrap(np.arange(100))
+    bs.seed(23456)
+    state = bs.get_state()
+    for data, _ in bs.bootstrap(10):
+        final = data[0]
+    bs.seed(23456)
+    for data, _ in bs.bootstrap(10):
+        final_seed = data[0]
+    bs.set_state(state)
+    for data, _ in bs.bootstrap(10):
+        final_state = data[0]
+    assert_equal(final, final_seed)
+    assert_equal(final, final_state)
+
+
+def test_reset():
+    bs = IIDBootstrap(np.arange(100))
+    state = bs.get_state()
+    for data, _ in bs.bootstrap(10):
+        final = data[0]
+    bs.reset()
+    state_reset = bs.get_state()
+    for data, _ in bs.bootstrap(10):
+        final_reset = data[0]
+    assert_equal(final, final_reset)
+    assert_equal(state, state_reset)
 
 
 def test_pass_random_state():

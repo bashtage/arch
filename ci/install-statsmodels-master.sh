@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 conda remove statsmodels --yes
 export GITDIR=$PWD
 cd ~

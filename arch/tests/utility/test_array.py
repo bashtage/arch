@@ -1,6 +1,5 @@
 import datetime as dt
 import os
-from unittest import TestCase
 
 import numpy as np
 from numpy.random import RandomState
@@ -21,7 +20,7 @@ from arch.utility.array import (
 )
 
 
-class TestUtils(TestCase):
+class TestUtils(object):
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)
@@ -267,6 +266,6 @@ class TestUtils(TestCase):
 
 
 @pytest.mark.skipif(os.name != "nt", reason="XVFB is broken on travis")
-class TestDoc(TestCase):
+class TestDoc(object):
     def test_doc(self):
         doc()

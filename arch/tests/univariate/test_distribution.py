@@ -1,5 +1,3 @@
-from unittest import TestCase
-
 import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_almost_equal, assert_array_equal, assert_equal
@@ -20,7 +18,7 @@ def distribution(request):
     return request.param
 
 
-class TestDistributions(TestCase):
+class TestDistributions(object):
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)

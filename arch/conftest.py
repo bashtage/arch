@@ -1,6 +1,14 @@
 import pytest
 
 
+def pytest_configure(config):
+    # Minimal config to simplify running tests from lm.test()
+    config.addinivalue_line("markers", "slow: mark a test as slow")
+    config.addinivalue_line(
+        "filterwarnings", "ignore:Method .ptp is deprecated:FutureWarning"
+    )
+
+
 def pytest_addoption(parser):
     parser.addoption("--skip-slow", action="store_true", help="skip slow tests")
     parser.addoption("--only-slow", action="store_true", help="run only slow tests")
