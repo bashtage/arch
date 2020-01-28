@@ -616,11 +616,11 @@ class TestMeanModel(object):
             ARX(self.y, x=self.rng.randn(1, 1), lags=-1)
 
         ar = ARX(self.y, lags=1)
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             d = Normal()
             ar.volatility = d
 
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             v = GARCH()
             ar.distribution = v
         x = self.rng.randn(1000, 1)
@@ -631,7 +631,7 @@ class TestMeanModel(object):
         with pytest.raises(ValueError):
             ar.simulate(np.ones(3), 100, initial_value=self.rng.randn(10))
 
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             ar.volatility = ConstantVariance()
             ar.fit(cov_type="unknown")
 

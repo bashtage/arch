@@ -17,5 +17,6 @@ if [[ ${USE_NUMBA} = true ]]; then
 fi;
 
 python -m pip install pip --upgrade
-echo pip install ${PKGS}
-pip install ${PKGS}
+
+echo python -m pip install ${PKGS}
+python -m pip install ${PKGS}
