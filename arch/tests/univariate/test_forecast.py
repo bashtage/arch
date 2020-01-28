@@ -5,7 +5,7 @@ import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_allclose
 import pandas as pd
-from pandas.util.testing import assert_frame_equal
+from pandas.testing import assert_frame_equal
 import pytest
 
 from arch.tests.univariate.test_variance_forecasting import preserved_state

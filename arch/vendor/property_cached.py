@@ -30,22 +30,17 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+import asyncio
 import functools
 import sys
 import threading
 from time import time
 import weakref
 
-try:
-    import asyncio
-except (ImportError, SyntaxError):
-    asyncio = None
-
-
 __author__ = "Martin Larralde"
 __email__ = "martin.larralde@ens-paris-saclay.fr"
 __license__ = "BSD"
-__version__ = "1.6.2"
+__version__ = "1.6.3"
 
 
 class cached_property(property):
@@ -68,7 +63,7 @@ class cached_property(property):
 
         _update_wrapper = functools.update_wrapper
 
-    def __init__(self, func):
+    def __init__(self, func) -> None:
         self.cache = weakref.WeakKeyDictionary()
         self.func = func
         self._update_wrapper(func)
@@ -96,6 +91,7 @@ class cached_property(property):
         del self.cache[obj]
 
     def _wrap_in_coroutine(self, obj):
+        @functools.wraps(obj)
         @asyncio.coroutine
         def wrapper():
             value = self.cache.get(obj, self._sentinel)
@@ -112,7 +108,7 @@ class threaded_cached_property(cached_property):
     might concurrently try to access the property.
     """
 
-    def __init__(self, func):
+    def __init__(self, func) -> None:
         super(threaded_cached_property, self).__init__(func)
         self.lock = threading.RLock()
 
@@ -138,7 +134,7 @@ class cached_property_with_ttl(cached_property):
     the property will last before being timed out.
     """
 
-    def __init__(self, ttl=None):
+    def __init__(self, ttl=None) -> None:
         if callable(ttl):
             func = ttl
             ttl = None
@@ -181,7 +177,7 @@ class threaded_cached_property_with_ttl(
     might concurrently try to access the property.
     """
 
-    def __init__(self, ttl=None):
+    def __init__(self, ttl=None) -> None:
         super(threaded_cached_property_with_ttl, self).__init__(ttl)
         self.lock = threading.RLock()
 

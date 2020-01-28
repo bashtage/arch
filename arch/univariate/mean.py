@@ -2,7 +2,6 @@
 Mean models to use with ARCH processes.  All mean models must inherit from
 :class:`ARCHModel` and provide the same methods with the same inputs.
 """
-from collections import OrderedDict
 import copy
 
 import numpy as np
@@ -173,7 +172,7 @@ class HARX(ARCHModel):
         volatility=None,
         distribution=None,
         rescale=None,
-    ):
+    ) -> None:
         super().__init__(
             y,
             hold_back=hold_back,
@@ -242,8 +241,7 @@ class HARX(ARCHModel):
             lagstr = ", ".join(lagstr)
         xstr = str(self._x.shape[1]) if self._x is not None else "0"
         conststr = "yes" if self.constant else "no"
-        od = OrderedDict()
-        od["constant"] = conststr
+        od = {"constant": conststr}
         if include_lags:
             od["lags"] = lagstr
         od["no. of exog"] = xstr
@@ -423,7 +421,7 @@ class HARX(ARCHModel):
             names.append(var_name + "[" + str(lags[0, i]) + ":" + str(lags[1, i]) + "]")
         return names
 
-    def _check_specification(self):
+    def _check_specification(self) -> None:
         """Checks the specification for obvious errors """
         if self._x is not None:
             if self._x.ndim != 2 or self._x.shape[0] != self._y.shape[0]:
@@ -435,7 +433,7 @@ class HARX(ARCHModel):
             self._x_names, self._x_index = parse_dataframe(self._x, def_names)
             self._x = np.asarray(self._x)
 
-    def _reformat_lags(self):
+    def _reformat_lags(self) -> None:
         """
         Reformat input lags to be a 2 by m array, which simplifies other
         operations.  Output is stored in _lags
@@ -500,7 +498,7 @@ class HARX(ARCHModel):
             ar = np.concatenate((params[:1], ar))
         return ar
 
-    def _init_model(self):
+    def _init_model(self) -> None:
         """Should be called whenever the model is initialized or changed"""
         self._reformat_lags()
         self._check_specification()
@@ -804,7 +802,7 @@ class ConstantMean(HARX):
 
     def __init__(
         self, y=None, hold_back=None, volatility=None, distribution=None, rescale=None
-    ):
+    ) -> None:
         super().__init__(
             y,
             hold_back=hold_back,
@@ -933,7 +931,7 @@ class ZeroMean(HARX):
 
     def __init__(
         self, y=None, hold_back=None, volatility=None, distribution=None, rescale=None
-    ):
+    ) -> None:
         super().__init__(
             y,
             x=None,
@@ -1083,7 +1081,7 @@ class ARX(HARX):
         volatility=None,
         distribution=None,
         rescale=None,
-    ):
+    ) -> None:
         # Convert lags to 2-d format
 
         if lags is not None:
@@ -1126,8 +1124,7 @@ class ARX(HARX):
 
         xstr = str(self._x.shape[1]) if self._x is not None else "0"
         conststr = "yes" if self.constant else "no"
-        od = OrderedDict()
-        od["constant"] = conststr
+        od = {"constant": conststr}
         if include_lags:
             od["lags"] = lagstr
         od["no. of exog"] = xstr
@@ -1187,7 +1184,9 @@ class LS(HARX):
 
     """
 
-    def __init__(self, y=None, x=None, constant=True, hold_back=None, rescale=None):
+    def __init__(
+        self, y=None, x=None, constant=True, hold_back=None, rescale=None
+    ) -> None:
         # Convert lags to 2-d format
         super().__init__(y, x, None, constant, False, hold_back, rescale=rescale)
         self.name = "Least Squares"

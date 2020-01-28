@@ -611,7 +611,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
         return np.vstack((lower, upper))
 
-    def _check_data(self):
+    def _check_data(self) -> None:
         supported = (np.ndarray, pd.DataFrame, pd.Series)
         for i, arg in enumerate(self._args):
             if not isinstance(arg, supported):
@@ -1024,7 +1024,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
     _common_size_required = False
     _name = "Heterogeneous IID Bootstrap"
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
         self._num_args = len(args)
@@ -1169,7 +1169,7 @@ class CircularBlockBootstrap(IIDBootstrap):
 
     _name = "Circular Block Bootstrap"
 
-    def __init__(self, block_size, *args, **kwargs):
+    def __init__(self, block_size, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.block_size = block_size
         self._parameters = [block_size]
@@ -1267,7 +1267,7 @@ class StationaryBootstrap(CircularBlockBootstrap):
 
     _name = "Stationary Bootstrap"
 
-    def __init__(self, block_size, *args, **kwargs):
+    def __init__(self, block_size, *args, **kwargs) -> None:
         super().__init__(block_size, *args, **kwargs)
         self._p = 1.0 / block_size
 
@@ -1341,7 +1341,7 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
 
     _name = "Moving Block Bootstrap"
 
-    def __init__(self, block_size, *args, **kwargs):
+    def __init__(self, block_size, *args, **kwargs) -> None:
         super().__init__(block_size, *args, **kwargs)
 
     def update_indices(self):
@@ -1360,9 +1360,9 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
 
 
 class MOONBootstrap(IIDBootstrap):  # pragma: no cover
-    def __init__(self, block_size, *args, **kwargs):  # pragma: no cover
+    def __init__(self, block_size, *args, **kwargs) -> None:  # pragma: no cover
         super().__init__(*args, **kwargs)
         self.block_size = block_size
 
-    def update_indices(self):  # pragma: no cover
+    def update_indices(self) -> None:  # pragma: no cover
         raise NotImplementedError

@@ -3,7 +3,7 @@ from numpy import linspace
 from numpy.random import RandomState
 from numpy.testing import assert_allclose, assert_equal
 import pandas as pd
-from pandas.util.testing import assert_frame_equal, assert_series_equal
+from pandas.testing import assert_frame_equal, assert_series_equal
 import pytest
 import scipy.stats as stats
 
@@ -150,7 +150,7 @@ class TestSPA(object):
         assert_equal(spa.bootstrap._seed, 23456)
         spa.compute()
         spa.reset()
-        assert_equal(spa._pvalues, None)
+        assert spa._pvalues == {}
         assert_equal(spa.bootstrap.random_state, initial_state)
 
     def test_spa_nested(self):

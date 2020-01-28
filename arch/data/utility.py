@@ -1,19 +1,24 @@
 import os
 
 import pandas as pd
+from pandas import DataFrame
 
 
-def load_file(file_base, filename):
+def load_file(file_base: str, filename: str) -> DataFrame:
     """
+    Load data from a csv.gz file.
+
     Parameters
     ----------
+    file_base : str
+        The director to use as the root.
     filename : str
         Name of csv.gz to load
 
     Returns
     -------
-    data : DataFrame
-        Dataframe containing the loaded data
+    DataFrame
+        Dataframe containing the loaded data.
     """
     curr_dir = os.path.split(os.path.abspath(file_base))[0]
     data = pd.read_csv(os.path.join(curr_dir, filename))

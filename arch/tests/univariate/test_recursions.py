@@ -44,7 +44,7 @@ class Timer(object):
         setup,
         repeat=5,
         number=10,
-    ):
+    ) -> None:
         self.first_code = first
         self.second_code = second
         self.setup = setup

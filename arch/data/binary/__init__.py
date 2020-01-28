@@ -1,7 +1,9 @@
+from pandas import DataFrame
+
 from arch.data.utility import load_file
 
 
-def load():
+def load() -> DataFrame:
     """
     Load the graduate school admissions dataused in the examples
 

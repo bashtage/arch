@@ -29,10 +29,6 @@ with dview.sync_imports():
     from numpy.random import RandomState
 
 
-def lmap(*args):
-    return list(map(*args))
-
-
 def wrapper(n, trend, b, seed=0):
     """
     Wraps and blocks the main simulation so that the maximum amount of memory
@@ -114,14 +110,15 @@ for tr in trends:
     for i in range(EX_NUM):
         print("Experiment Number {0} for Trend {1}".format(i + 1, tr))
         # Non parallel version
-        # out = lmap(wrapper, T, [tr] * m, [EX_SIZE] * m, [seeds[i]] * m))
+        # args = (T, [tr] * m, [EX_SIZE] * m, [seeds[i]] * m)
+        # out = [wrapper(a, b, c, d) for a, b, c, d in args]
         now = datetime.datetime.now()
         out = lview.map_sync(wrapper, T, [tr] * m, [EX_SIZE] * m, [seeds[i]] * m)
         # Prevent unnecessary results from accumulating
         lview.purge_results("all")
         rc.purge_everything()
         print(datetime.datetime.now() - now)
-        quantiles = lmap(lambda x: percentile(x, percentiles), out)
+        quantiles = [percentile(x, percentiles) for x in out]
         results[:, :, i] = array(quantiles).T
 
         if i % 50 == 0:

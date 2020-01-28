@@ -34,7 +34,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
     Template for subclassing only
     """
 
-    def __init__(self, name, random_state=None):
+    def __init__(self, name, random_state=None) -> None:
         self.name = name
         self.num_params = 0
         self._parameters = None
@@ -66,7 +66,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         return self._random_state
 
     @abstractmethod
-    def _simulator(self, size):
+    def _simulator(self, size) -> None:
         """
         Simulate i.i.d. draws from the distribution
 
@@ -87,7 +87,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def simulate(self, parameters):
+    def simulate(self, parameters) -> None:
         """
         Simulates i.i.d. draws from the distribution
 
@@ -105,7 +105,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def constraints(self):
+    def constraints(self) -> None:
         """
         Returns
         -------
@@ -121,7 +121,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def bounds(self, resids):
+    def bounds(self, resids) -> None:
         """
         Parameters
         ----------
@@ -136,7 +136,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def loglikelihood(self, parameters, resids, sigma2, individual=False):
+    def loglikelihood(self, parameters, resids, sigma2, individual=False) -> None:
         """
         Parameters
         ----------
@@ -158,7 +158,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def starting_values(self, std_resid):
+    def starting_values(self, std_resid) -> None:
         """
         Parameters
         ----------
@@ -178,7 +178,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def parameter_names(self):
+    def parameter_names(self) -> None:
         """
         Names of distribution shape parameters
 
@@ -299,7 +299,7 @@ class Normal(Distribution):
     Standard normal distribution for use with ARCH models
     """
 
-    def __init__(self, random_state=None):
+    def __init__(self, random_state=None) -> None:
         super().__init__("Normal", random_state=random_state)
 
     def constraints(self):
@@ -391,7 +391,7 @@ class StudentsT(Distribution):
     Standardized Student's distribution for use with ARCH models
     """
 
-    def __init__(self, random_state=None):
+    def __init__(self, random_state=None) -> None:
         super().__init__(
             "Standardized Student's t", random_state=random_state
         )
@@ -584,7 +584,7 @@ class SkewStudent(Distribution):
 
     """
 
-    def __init__(self, random_state=None):
+    def __init__(self, random_state=None) -> None:
         super().__init__(
             "Standardized Skew Student's t", random_state=random_state
         )
@@ -878,7 +878,7 @@ class GeneralizedError(Distribution):
     Generalized Error distribution for use with ARCH models
     """
 
-    def __init__(self, random_state=None):
+    def __init__(self, random_state=None) -> None:
         super().__init__(
             "Generalized Error Distribution", random_state=random_state
         )

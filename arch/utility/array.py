@@ -5,10 +5,12 @@ from arch.compat.pandas import is_datetime64_any_dtype
 
 from abc import ABCMeta
 import datetime as dt
+from typing import Any, Dict, Hashable, List, Optional, Tuple, Type, Union
 
 import numpy as np
-from pandas import DataFrame, DatetimeIndex, NaT, Series, Timestamp, to_datetime
+from pandas import DataFrame, DatetimeIndex, Index, NaT, Series, Timestamp, to_datetime
 
+from arch.typing import AnyPandas, ArrayLike, DateLike, NDArray
 from arch.vendor import cached_property
 
 __all__ = [
@@ -26,7 +28,9 @@ deprecation_doc = """
 """
 
 
-def ensure1d(x, name, series=False):
+def ensure1d(
+    x: Union[Series, DataFrame, NDArray], name: Hashable, series: bool = False
+) -> Union[NDArray, Series]:
     if isinstance(x, Series):
         if not isinstance(x.name, str):
             x.name = str(x.name)
@@ -37,7 +41,7 @@ def ensure1d(x, name, series=False):
 
     if isinstance(x, DataFrame):
         if x.shape[1] != 1:
-            raise ValueError(name + " must be squeezable to 1 dimension")
+            raise ValueError(f"{name} must be squeezable to 1 dimension")
         else:
             x = Series(x.iloc[:, 0], x.index)
             if not isinstance(x.name, str):
@@ -54,7 +58,7 @@ def ensure1d(x, name, series=False):
     elif x.ndim != 1:
         x = np.squeeze(x)
         if x.ndim != 1:
-            raise ValueError(name + " must be squeezable to 1 dimension")
+            raise ValueError(f"{name} must be squeezable to 1 dimension")
 
     if series:
         return Series(x, name=name)
@@ -62,7 +66,7 @@ def ensure1d(x, name, series=False):
         return np.asarray(x)
 
 
-def ensure2d(x, name):
+def ensure2d(x: ArrayLike, name: str) -> Union[DataFrame, NDArray]:
     if isinstance(x, Series):
         return DataFrame(x)
     elif isinstance(x, DataFrame):
@@ -80,7 +84,11 @@ def ensure2d(x, name):
         raise TypeError("Variable " + name + "must be a Series, DataFrame or ndarray.")
 
 
-def parse_dataframe(x, name):
+def parse_dataframe(
+    x: Optional[AnyPandas], name: Union[str, List[str]]
+) -> Union[
+    Tuple[Index, Index], Tuple[Optional[Hashable], Index], Tuple[List[str], NDArray]
+]:
     if x is None:
         return [name], np.empty(0)
     if isinstance(x, DataFrame):
@@ -100,7 +108,9 @@ class DocStringInheritor(type):
     by Paul McGuire
     """
 
-    def __new__(mcs, name, bases, clsdict):
+    def __new__(
+        mcs, name: str, bases: Tuple[Type, ...], clsdict: Dict[str, Any]
+    ) -> Any:
         if not ("__doc__" in clsdict and clsdict["__doc__"]):
             for mro_cls in (mro_cls for base in bases for mro_cls in base.mro()):
                 doc = mro_cls.__doc__
@@ -117,15 +127,13 @@ class DocStringInheritor(type):
                 ):
                     doc = getattr(getattr(mro_cls, attr), "__doc__")
                     if doc:
-                        if isinstance(attribute, property):
-
-                            if isinstance(attribute, cached_property):
-                                attribute.func.__doc__ = doc
-                                clsdict[attr] = cached_property(attribute.func)
-                            else:
-                                clsdict[attr] = property(
-                                    attribute.fget, attribute.fset, attribute.fdel, doc
-                                )
+                        if isinstance(attribute, cached_property):
+                            attribute.func.__doc__ = doc
+                            clsdict[attr] = cached_property(attribute.func)
+                        elif isinstance(attribute, property):
+                            clsdict[attr] = property(
+                                attribute.fget, attribute.fset, attribute.fdel, doc
+                            )
                         else:
                             attribute.__doc__ = doc
                         break
@@ -137,7 +145,9 @@ AbstractDocStringInheritor = type(
 )
 
 
-def date_to_index(date, date_index):
+def date_to_index(
+    date: Union[str, dt.datetime, np.datetime64, Timestamp], date_index: DatetimeIndex
+) -> int:
     """
     Looks up a date in an array of dates
 
@@ -145,12 +155,12 @@ def date_to_index(date, date_index):
     ----------
     date : string, datetime or datetime64
         Date to use when returning the index
-    date_index : {list, ndarray}
+    date_index : ndarray
         Index data containing datetime64 values
 
     Returns
     -------
-    index : int
+    int
         Index location
 
     Notes
@@ -195,7 +205,9 @@ def date_to_index(date, date_index):
     return loc
 
 
-def cutoff_to_index(cutoff, index, default):
+def cutoff_to_index(
+    cutoff: Optional[Union[int, DateLike]], index: DatetimeIndex, default: int
+) -> int:
     """
     Converts a cutoff to a numerical index
 
@@ -203,26 +215,27 @@ def cutoff_to_index(cutoff, index, default):
     ----------
     cutoff : {None, str, datetime, datetime64, Timestamp)
         The cutoff point to use
-    index : Pandas index
+    index : DatetimeIndex
         Pandas index
     default : int
         The value to return if cutoff is None
 
     Returns
     -------
-    val : int
-        Integer value of
+    int
+        Integer value where
     """
     int_index = default
     if isinstance(cutoff, (str, dt.datetime, np.datetime64, Timestamp)):
         int_index = date_to_index(cutoff, index)
     elif isinstance(cutoff, int) or issubclass(cutoff.__class__, np.integer):
-        int_index = cutoff
+        assert cutoff is not None
+        int_index = int(cutoff)
 
     return int_index
 
 
-def find_index(s, index):
+def find_index(s: AnyPandas, index: DateLike) -> int:
     """
     Returns the numeric index for a string or datetime
 
@@ -235,7 +248,7 @@ def find_index(s, index):
 
     Returns
     -------
-    loc : int
+    int
         Integer location of index value
     """
     if isinstance(index, (int, np.int, np.int64)):
@@ -243,7 +256,7 @@ def find_index(s, index):
     date_index = to_datetime(index, errors="coerce")
 
     if date_index is NaT:
-        raise ValueError(index + " cannot be converted to datetime")
+        raise ValueError(f"{index} cannot be converted to datetime")
     loc = np.argwhere(s.index == date_index).squeeze()
     if loc.size == 0:
         raise ValueError("index not found")

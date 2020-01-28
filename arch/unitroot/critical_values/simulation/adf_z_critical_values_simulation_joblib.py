@@ -25,10 +25,6 @@ EX_SIZE = 200000
 MAX_MEMORY_SIZE = 100
 
 
-def lmap(*args):
-    return list(map(*args))
-
-
 def wrapper(n, trend, b, seed=0):
     """
     Wraps and blocks the main simulation so that the maximum amount of memory
@@ -106,7 +102,8 @@ if __name__ == "__main__":
         for i in range(EX_NUM):
             print("Experiment Number {0} for Trend {1}".format(i + 1, tr))
             # Non parallel version
-            # out = lmap(wrapper, T, [tr] * m, [EX_SIZE] * m, [seeds[i]] * m))
+            # out = [wrapper(a,b,c,d) for a,b,c,d in
+            #        zip(T, [tr] * m, [EX_SIZE] * m, [seeds[i]] * m)]
             now = datetime.datetime.now()
             out = parallel(p_func(t, tr, EX_SIZE, seed=seeds[i]) for t in T)
             quantiles = map(lambda x: percentile(x, percentiles), out)

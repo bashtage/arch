@@ -10,8 +10,6 @@ Remote clusters can be used by modifying the Client initiation.
 This version has been optimized for execution on a large cluster and should
 scale well with 128 or more engines.
 """
-from arch.compat.python import lmap
-
 import datetime
 import time
 
@@ -131,8 +129,8 @@ for tr in trends:
         print("Time series length {0} for Trend {1}".format(t, tr))
         now = datetime.datetime.now()
         # Serial version
-        # out = lmap(wrapper, [t] * EX_NUM, [tr] * EX_NUM,
-        #            [EX_SIZE] * EX_NUM, seeds)
+        # args = ([t] * EX_NUM, [tr] * EX_NUM, [EX_SIZE] * EX_NUM, seeds)
+        # out = [ wrapper(a, b, c, d) for a, b, c, d in zip(*args)]
 
         # Parallel version
         res = lview.map_async(
@@ -152,7 +150,7 @@ for tr in trends:
 
         elapsed = datetime.datetime.now() - now
         print("Total time {0} for T={1}".format(elapsed, t))
-        quantiles = lmap(lambda x: percentile(x, percentiles), out)
+        quantiles = [percentile(x, percentiles) for x in out]
         results[:, i, :] = array(quantiles).T
 
         savez(filename, trend=tr, results=results, percentiles=percentiles, T=T)
