@@ -6,7 +6,7 @@ PKGS="${PKGS} scipy"; if [[ -n ${SCIPY} ]]; then PKGS="${PKGS}=${SCIPY}"; fi;
 PKGS="${PKGS} patsy"; if [[ -n ${PATSY} ]]; then PKGS="${PKGS}=${PATSY}"; fi;
 PKGS="${PKGS} pandas"; if [[ -n ${PANDAS} ]]; then PKGS="${PKGS}=${PANDAS}"; fi;
 PKGS="${PKGS} Cython"; if [[ -n ${CYTHON} ]]; then PKGS="${PKGS}=${CYTHON}"; fi;
-if [[  -n ${MATPLOTLIB} ]]; then
+if [[ -n ${MATPLOTLIB} ]]; then
   PKGS="${PKGS} matplotlib=${MATPLOTLIB} seaborn";
 fi;
 PKGS="${PKGS} statsmodels"; if [[ -n ${STATSMODELS} ]]; then PKGS="${PKGS}=${STATSMODELS}"; fi;
@@ -23,7 +23,7 @@ chmod +x miniconda3.sh
 export PATH=/home/travis/miniconda3/bin:$PATH
 conda config --set always_yes true
 conda update --all --quiet
-echo conda create --yes --quiet -n arch-test "${PKGS}"
-conda create --yes --quiet -n arch-test "${PKGS}"
+echo conda create --yes --quiet -n arch-test ${PKGS}
+conda create --yes --quiet -n arch-test ${PKGS}
 source activate arch-test
 python -m pip install pip --upgrade
