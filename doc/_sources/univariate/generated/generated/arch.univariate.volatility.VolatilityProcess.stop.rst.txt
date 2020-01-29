@@ -1,0 +1,6 @@
+arch.univariate.volatility.VolatilityProcess.stop
+=================================================
+
+.. currentmodule:: arch.univariate.volatility
+
+.. autoproperty:: VolatilityProcess.stop

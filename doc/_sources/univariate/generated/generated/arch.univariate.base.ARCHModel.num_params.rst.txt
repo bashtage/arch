@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModel.num\_params
+==========================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModel.num_params

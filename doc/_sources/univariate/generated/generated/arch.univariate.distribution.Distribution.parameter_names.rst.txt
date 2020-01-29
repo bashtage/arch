@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.distribution.Distribution.parameter\_names
+==========================================================
+
+.. currentmodule:: arch.univariate.distribution
+
+.. automethod:: Distribution.parameter_names

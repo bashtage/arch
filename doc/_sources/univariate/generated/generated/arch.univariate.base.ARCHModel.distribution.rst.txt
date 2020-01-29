@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModel.distribution
+===========================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModel.distribution

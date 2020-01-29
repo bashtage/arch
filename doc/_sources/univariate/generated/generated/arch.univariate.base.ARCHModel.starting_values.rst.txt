@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.base.ARCHModel.starting\_values
+===============================================
+
+.. currentmodule:: arch.univariate.base
+
+.. automethod:: ARCHModel.starting_values

@@ -1,0 +1,42 @@
+arch.univariate.base.ARCHModel
+==============================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoclass:: ARCHModel
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ARCHModel.bounds
+      ~ARCHModel.compute_param_cov
+      ~ARCHModel.constraints
+      ~ARCHModel.fit
+      ~ARCHModel.fix
+      ~ARCHModel.forecast
+      ~ARCHModel.parameter_names
+      ~ARCHModel.resids
+      ~ARCHModel.simulate
+      ~ARCHModel.starting_values
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ARCHModel.distribution
+      ~ARCHModel.num_params
+      ~ARCHModel.volatility
+      ~ARCHModel.y
+   
+   
+   
