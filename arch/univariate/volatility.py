@@ -42,6 +42,7 @@ __all__ = [
     "EWMAVariance",
     "RiskMetrics2006",
     "EGARCH",
+    "FIGARCH",
     "FixedVariance",
     "BootstrapRng",
     "MIDASHyperbolic",
@@ -382,6 +383,11 @@ class VolatilityProcess(object, metaclass=ABCMeta):
 
     def variance_bounds(self, resids, power=2.0):
         """
+        Construct loose bounds for conditional variances.
+
+        These bounds are used in parameter estiamtio to ensure
+        that the log-likelihood does not produce NaN values.
+
         Parameters
         ----------
         resids : ndarray

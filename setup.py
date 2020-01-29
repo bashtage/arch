@@ -94,33 +94,8 @@ class CleanCommand(Command):
 
 cmdclass["clean"] = CleanCommand
 
-try:
-    markdown = os.stat("README.md").st_mtime
-    if os.path.exists("README.rst"):
-        rst = os.stat("README.rst").st_mtime
-    else:
-        rst = markdown - 1
-
-    if rst >= markdown:
-        with open("README.rst", "r") as rst:
-            description = rst.read()
-    else:
-        import pypandoc
-
-        osx_line_ending = "\r"
-        windows_line_ending = "\r\n"
-        linux_line_ending = "\n"
-
-        description = pypandoc.convert_file("README.md", "rst+smart")
-        description = description.replace(windows_line_ending, linux_line_ending)
-        description = description.replace(osx_line_ending, linux_line_ending)
-        with open("README.rst", "w") as rst:
-            rst.write(description)
-except (ImportError, OSError):
-    import warnings
-
-    warnings.warn("Unable to convert README.md to README.rst", UserWarning)
-    description = open("README.md").read()
+with open("README.md", "r") as readme:
+    description = readme.read()
 
 package_data = defaultdict(list)
 filetypes = ["*.csv", "*.csv.gz"]
@@ -167,6 +142,7 @@ def run_setup(binary=True):
         version=versioneer.get_version(),
         description="ARCH for Python",
         long_description=description,
+        long_description_content_type='text/markdown',
         author="Kevin Sheppard",
         author_email="kevin.sheppard@economics.ox.ac.uk",
         url="http://github.com/bashtage/arch",

@@ -26,4 +26,7 @@ All mean models must inherit from :class:ARCHModel and provide all public
 methods. There are two optional private methods that should be provided if
 applicable.
 
-.. autoclass:: ARCHModel
+.. autosummary::
+   :toctree: generated/
+
+   ARCHModel
