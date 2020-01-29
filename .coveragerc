@@ -2,7 +2,6 @@
 [run]
 source = arch
 branch = True
-include = */arch/*
 omit =
     */_version.py
     */compat/*
@@ -34,4 +33,3 @@ omit =
     *recursions.py
     *samplers.py
 ignore_errors = True
-
