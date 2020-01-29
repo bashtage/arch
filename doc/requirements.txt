@@ -14,3 +14,4 @@ nbsphinx
 sphinx_material
 jupyter
 notebook
+sphinx-autodoc-typehints

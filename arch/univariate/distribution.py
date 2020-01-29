@@ -112,6 +112,8 @@ class Distribution(object, metaclass=ABCMeta):
     @abstractmethod
     def constraints(self) -> Tuple[NDArray, NDArray]:
         """
+        Construct arrays to use in constrained optimization.
+
         Returns
         -------
         A : ndarray
@@ -128,6 +130,8 @@ class Distribution(object, metaclass=ABCMeta):
     @abstractmethod
     def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
         """
+        Parameter bounds for use in optimization.
+
         Parameters
         ----------
         resids : ndarray
@@ -149,6 +153,8 @@ class Distribution(object, metaclass=ABCMeta):
         individual: bool = False,
     ) -> Union[float, NDArray]:
         """
+        Loglikelihood evaluation.
+
         Parameters
         ----------
         parameters : ndarray
@@ -171,6 +177,8 @@ class Distribution(object, metaclass=ABCMeta):
     @abstractmethod
     def starting_values(self, std_resid: NDArray) -> NDArray:
         """
+        Construct starting values for use in optimization.
+
         Parameters
         ----------
         std_resid : ndarray
@@ -485,6 +493,8 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
 
     def starting_values(self, std_resid: ArrayLike1D) -> NDArray:
         """
+        Construct starting values for use in optimization.
+
         Parameters
         ----------
         std_resid : ndarray
@@ -712,6 +722,8 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
     def starting_values(self, std_resid: ArrayLike1D) -> NDArray:
         """
+        Construct starting values for use in optimization.
+
         Parameters
         ----------
         std_resid : ndarray
@@ -754,7 +766,8 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         return ["nu", "lambda"]
 
     def __const_a(self, parameters: NDArray) -> float:
-        """Compute a constant.
+        """
+        Compute a constant.
 
         Parameters
         ----------
@@ -772,7 +785,8 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         return 4 * lam * exp(c) * (eta - 2) / (eta - 1)
 
     def __const_b(self, parameters: NDArray) -> float:
-        """Compute b constant.
+        """
+        Compute b constant.
 
         Parameters
         ----------
@@ -790,7 +804,8 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
     @staticmethod
     def __const_c(parameters: NDArray) -> float:
-        """Compute c constant.
+        """
+        Compute c constant.
 
         Parameters
         ----------
@@ -952,7 +967,8 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         sigma2: ArrayLike,
         individual: bool = False,
     ) -> NDArray:
-        r"""Computes the log-likelihood of assuming residuals are have a
+        r"""
+        Computes the log-likelihood of assuming residuals are have a
         Generalized Error Distribution, conditional on the variance.
 
         Parameters
@@ -1003,6 +1019,8 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
 
     def starting_values(self, std_resid: ArrayLike1D) -> NDArray:
         """
+        Construct starting values for use in optimization.
+
         Parameters
         ----------
         std_resid : ndarray

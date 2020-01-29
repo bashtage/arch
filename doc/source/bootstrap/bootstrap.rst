@@ -12,7 +12,7 @@ All bootstraps have the same interfaces and only differ in their name, setup
 parameters and the (internally generated) sampling scheme.
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 1
 
     Examples <bootstrap_examples.ipynb>
     Confidence Interval Construction <confidence-intervals>

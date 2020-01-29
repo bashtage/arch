@@ -4,6 +4,7 @@ Core classes for ARCH models
 from abc import ABCMeta, abstractmethod
 from copy import deepcopy
 import datetime as dt
+from typing import List
 import warnings
 
 import numpy as np
@@ -18,6 +19,7 @@ from statsmodels.tools.numdiff import approx_fprime, approx_hess
 from statsmodels.tools.tools import add_constant
 from statsmodels.tsa.tsatools import lagmat
 
+from arch.typing import NDArray
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
 from arch.utility.array import ensure1d
@@ -38,6 +40,11 @@ __all__ = [
     "ARCHModelForecast",
     "constraint",
 ]
+
+CONVERGENCE_WARNGING = """\
+WARNING: The optimizer did not indicate successful convergence. The message was {msg}.
+See convergence_flag.
+"""
 
 # Callback variables
 _callback_iter, _callback_llf = (0, 0.0)
@@ -150,18 +157,16 @@ class ARCHModel(object, metaclass=ABCMeta):
         self, y=None, volatility=None, distribution=None, hold_back=None, rescale=None
     ) -> None:
 
-        # Set on model fit
-        self._fit_indices = None
-        self._fit_y = None
-
         self._is_pandas = isinstance(y, (pd.DataFrame, pd.Series))
         if y is not None:
             self._y_series = ensure1d(y, "y", series=True)
         else:
             self._y_series = ensure1d(np.empty((0,)), "y", series=True)
-
         self._y = np.asarray(self._y_series)
         self._y_original = y
+
+        self._fit_indices: List[int] = [0, int(self._y.shape[0])]
+        self._fit_y = self._y
 
         self.hold_back = hold_back
         self._hold_back = 0 if hold_back is None else hold_back
@@ -169,20 +174,22 @@ class ARCHModel(object, metaclass=ABCMeta):
         self.rescale = rescale
         self.scale = 1.0
 
-        self._volatility = None
-        self._distribution = None
         self._backcast = None
         self._var_bounds = None
 
-        if volatility is not None:
-            self.volatility = volatility
+        if isinstance(volatility, VolatilityProcess):
+            self._volatility = volatility
+        elif volatility is None:
+            self._volatility = ConstantVariance()
         else:
-            self.volatility = ConstantVariance()
+            raise TypeError("volatility must inherit from VolatilityProcess")
 
-        if distribution is not None:
-            self.distribution = distribution
+        if isinstance(distribution, Distribution):
+            self._distribution = distribution
+        elif distribution is None:
+            self._distribution = Normal()
         else:
-            self.distribution = Normal()
+            raise TypeError("distribution must inherit from Distribution")
 
     def constraints(self):
         """
@@ -699,7 +706,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         )
 
     @abstractmethod
-    def parameter_names(self) -> None:
+    def parameter_names(self) -> List[str]:
         """List of parameters names
 
         Returns
@@ -709,7 +716,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         """
         pass
 
-    def starting_values(self):
+    def starting_values(self) -> NDArray:
         """
         Returns starting values for the mean model, often the same as the
         values returned from fit
@@ -1683,13 +1690,8 @@ class ARCHModelResult(ARCHModelFixedResult):
         extra_text = ["Covariance estimator: " + self.cov_type]
 
         if self.convergence_flag:
-            extra_text.append(
-                """
-WARNING: The optimizer did not indicate successful convergence. The message was
-{string_message}. See convergence_flag.""".format(
-                    string_message=self._optim_output.message
-                )
-            )
+            string_message = self._optim_output.message
+            extra_text.append(CONVERGENCE_WARNGING.format(msg=string_message))
 
         smry.add_extra_txt(extra_text)
         return smry

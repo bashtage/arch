@@ -85,9 +85,11 @@ def ensure2d(x: ArrayLike, name: str) -> Union[DataFrame, NDArray]:
 
 
 def parse_dataframe(
-    x: Optional[AnyPandas], name: Union[str, List[str]]
+    x: Optional[ArrayLike], name: Union[str, List[str]]
 ) -> Union[
-    Tuple[Index, Index], Tuple[Optional[Hashable], Index], Tuple[List[str], NDArray]
+    Tuple[Index, Index],
+    Tuple[List[Optional[Hashable]], Index],
+    Tuple[List[str], NDArray],
 ]:
     if x is None:
         return [name], np.empty(0)

@@ -23,5 +23,8 @@ methods.
 
 .. currentmodule:: arch.univariate.distribution
 
-.. autoclass:: Distribution
+.. autosummary::
+   :toctree: generated/
+
+   Distribution
 

@@ -3,6 +3,7 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 :class:`ARCHModel` and provide the same methods with the same inputs.
 """
 import copy
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 from pandas import DataFrame
@@ -10,6 +11,7 @@ from property_cached import cached_property
 from scipy.optimize import OptimizeResult
 from statsmodels.tsa.tsatools import lagmat
 
+from arch.typing import ArrayLike, ArrayLike1D, DateLike, NDArray
 from arch.univariate.base import (
     ARCHModel,
     ARCHModelForecast,
@@ -17,6 +19,7 @@ from arch.univariate.base import (
     implicit_constant,
 )
 from arch.univariate.distribution import (
+    Distribution,
     GeneralizedError,
     Normal,
     SkewStudent,
@@ -29,6 +32,7 @@ from arch.univariate.volatility import (
     GARCH,
     HARCH,
     ConstantVariance,
+    VolatilityProcess,
 )
 from arch.utility.array import (
     AbstractDocStringInheritor,
@@ -47,14 +51,22 @@ COV_TYPES = {
 }
 
 
-def _forecast_pad(count, forecasts):
+def _forecast_pad(count: int, forecasts: NDArray) -> NDArray:
     shape = list(forecasts.shape)
     shape[0] = count
     fill = np.full(tuple(shape), np.nan)
     return np.concatenate((fill, forecasts))
 
 
-def _ar_forecast(y, horizon, start_index, constant, arp, exogp=None, x=None):
+def _ar_forecast(
+    y: NDArray,
+    horizon: int,
+    start_index: int,
+    constant: float,
+    arp: NDArray,
+    exogp: Optional[NDArray] = None,
+    x: Optional[NDArray] = None,
+) -> NDArray:
     """
     Generate mean forecasts from an AR-X model
 
@@ -82,6 +94,7 @@ def _ar_forecast(y, horizon, start_index, constant, arp, exogp=None, x=None):
     fcasts[:start_index] = np.nan
     fcasts = fcasts[:, p:]
     if x is not None:
+        assert exogp is not None
         exog_comp = np.dot(x, exogp[:, None])
         fcasts[:-1] += exog_comp[1:]
         fcasts[-1] = np.nan
@@ -90,7 +103,7 @@ def _ar_forecast(y, horizon, start_index, constant, arp, exogp=None, x=None):
     return fcasts
 
 
-def _ar_to_impulse(steps, params):
+def _ar_to_impulse(steps: int, params: NDArray) -> NDArray:
     p = params.shape[0]
     impulse = np.zeros(steps)
     impulse[0] = 1
@@ -168,15 +181,15 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def __init__(
         self,
-        y=None,
-        x=None,
-        lags=None,
-        constant=True,
-        use_rotated=False,
-        hold_back=None,
-        volatility=None,
-        distribution=None,
-        rescale=None,
+        y: Optional[ArrayLike] = None,
+        x: Optional[ArrayLike] = None,
+        lags: Optional[Union[int, List[int], NDArray]] = None,
+        constant: bool = True,
+        use_rotated: bool = False,
+        hold_back: Optional[int] = None,
+        volatility: Optional[VolatilityProcess] = None,
+        distribution: Optional[Distribution] = None,
+        rescale: Optional[bool] = None,
     ) -> None:
         super().__init__(
             y,
@@ -186,19 +199,19 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             rescale=rescale,
         )
         self._x = x
-        self._x_names = None
+        self._x_names: List[str] = []
         self._x_index = None
         self.lags = lags
-        self._lags = None
+        self._lags = np.empty(0)
         self.constant = constant
         self.use_rotated = use_rotated
-        self.regressors = None
+        self.regressors = np.empty((0, 0))
 
         self.name = "HAR"
         if self._x is not None:
             self.name += "-X"
         if lags is not None:
-            max_lags = np.max(np.asarray(lags, dtype=np.int32))
+            max_lags = int(np.max(np.asarray(lags, dtype=np.int32)))
         else:
             max_lags = 0
         self._max_lags = max_lags
@@ -217,15 +230,15 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self._init_model()
 
     @property
-    def x(self):
+    def x(self) -> ArrayLike:
         """Gets the value of the exogenous regressors in the model"""
         return self._x
 
-    def parameter_names(self):
+    def parameter_names(self) -> List[str]:
         return self._generate_variable_names()
 
     @staticmethod
-    def _static_gaussian_loglikelihood(resids):
+    def _static_gaussian_loglikelihood(resids: NDArray) -> float:
         nobs = resids.shape[0]
         sigma2 = resids.dot(resids) / nobs
 
@@ -235,15 +248,14 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
         return loglikelihood
 
-    def _model_description(self, include_lags=True):
+    def _model_description(self, include_lags: bool = True) -> Dict[str, str]:
         """Generates the model description for use by __str__ and related
         functions"""
         lagstr = "none"
         if include_lags and self.lags is not None:
-            lagstr = [
-                "[" + str(lag[0]) + ":" + str(lag[1]) + "]" for lag in self._lags.T
-            ]
-            lagstr = ", ".join(lagstr)
+            assert self._lags is not None
+            lagstr_comp = [f"[{lag[0]}:{lag[1]}]" for lag in self._lags.T]
+            lagstr = ", ".join(lagstr_comp)
         xstr = str(self._x.shape[1]) if self._x is not None else "0"
         conststr = "yes" if self.constant else "no"
         od = {"constant": conststr}
@@ -271,7 +283,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         txt.replace("\n", "")
         return txt + ", id: " + hex(id(self))
 
-    def _repr_html_(self):
+    def _repr_html_(self) -> str:
         """HTML representation for IPython Notebook"""
         descr = self._model_description()
         html = "<strong>" + self.name + "</strong>("
@@ -280,22 +292,34 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         html += "<strong>ID: </strong> " + hex(id(self)) + ")"
         return html
 
-    def resids(self, params, y=None, regressors=None):
+    def resids(
+        self,
+        params: NDArray,
+        y: Optional[ArrayLike] = None,
+        regressors: Optional[ArrayLike] = None,
+    ) -> ArrayLike:
         regressors = self._fit_regressors if y is None else regressors
         y = self._fit_y if y is None else y
-
+        assert regressors is not None
         return y - regressors.dot(params)
 
     @cached_property
-    def num_params(self):
+    def num_params(self) -> int:
         """
         Returns the number of parameters
         """
+        assert self.regressors is not None
         return int(self.regressors.shape[1])
 
     def simulate(
-        self, params, nobs, burn=500, initial_value=None, x=None, initial_value_vol=None
-    ):
+        self,
+        params: ArrayLike,
+        nobs: int,
+        burn: int = 500,
+        initial_value: Optional[Union[float, NDArray]] = None,
+        x: Optional[ArrayLike] = None,
+        initial_value_vol: Optional[Union[float, NDArray]] = None,
+    ) -> DataFrame:
         """
         Simulates data from a linear regression, AR or HAR models
 
@@ -356,7 +380,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             k_x = x.shape[1]
             if x.shape[0] != nobs + burn:
                 raise ValueError("x must have nobs + burn rows")
-
+        assert self._lags is not None
         mc = int(self.constant) + self._lags.shape[1] + k_x
         vc = self.volatility.num_params
         dc = self.distribution.num_params
@@ -403,7 +427,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         df = DataFrame(df)
         return df
 
-    def _generate_variable_names(self):
+    def _generate_variable_names(self) -> List[str]:
         """Generates variable names or use in summaries"""
         variable_names = []
         lags = self._lags
@@ -415,7 +439,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             variable_names.extend(self._x_names)
         return variable_names
 
-    def _generate_lag_names(self):
+    def _generate_lag_names(self) -> List[str]:
         """Generates lag names.  Overridden by other models"""
         lags = self._lags
         names = []
@@ -435,7 +459,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                     "the number of elements in y"
                 )
             def_names = ["x" + str(i) for i in range(self._x.shape[1])]
-            self._x_names, self._x_index = parse_dataframe(self._x, def_names)
+            names, self._x_index = parse_dataframe(self._x, def_names)
+            self._x_names = [str(name) for name in names]
             self._x = np.asarray(self._x)
 
     def _reformat_lags(self) -> None:
@@ -492,7 +517,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         else:
             raise ValueError("Incorrect format for lags")
 
-    def _har_to_ar(self, params):
+    def _har_to_ar(self, params: NDArray) -> NDArray:
         if self._max_lags == 0:
             return params
         har = params[int(self.constant) :]
@@ -530,7 +555,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
         self.regressors = np.hstack((reg_constant, reg_lags, reg_x))
 
-    def _r2(self, params):
+    def _r2(self, params: NDArray) -> float:
         y = self._fit_y
         x = self._fit_regressors
         constant = False
@@ -542,7 +567,11 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
         return 1.0 - e.T.dot(e) / y.dot(y)
 
-    def _adjust_sample(self, first_obs, last_obs):
+    def _adjust_sample(
+        self,
+        first_obs: Optional[Union[int, DateLike]],
+        last_obs: Optional[Union[int, DateLike]],
+    ) -> None:
         index = self._y_series.index
         _first_obs_index = cutoff_to_index(first_obs, index, 0)
         _first_obs_index += self._hold_back
@@ -555,7 +584,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self._fit_regressors = reg[_first_obs_index:_last_obs_index]
         self.volatility.start, self.volatility.stop = self._fit_indices
 
-    def _fit_no_arch_normal_errors(self, cov_type="robust"):
+    def _fit_no_arch_normal_errors(self, cov_type: str = "robust") -> ARCHModelResult:
         """
         Estimates model parameters
 
@@ -578,6 +607,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         -----
         See :class:`ARCHModelResult` for details on computed results
         """
+        assert self._fit_y is not None
         nobs = self._fit_y.shape[0]
 
         if nobs < self.num_params:
@@ -662,15 +692,15 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def forecast(
         self,
-        params,
-        horizon=1,
-        start=None,
-        align="origin",
-        method="analytic",
-        simulations=1000,
-        rng=None,
-        random_state=None,
-    ):
+        params: ArrayLike1D,
+        horizon: int = 1,
+        start: Optional[Union[int, DateLike]] = None,
+        align: str = "origin",
+        method: str = "analytic",
+        simulations: int = 1000,
+        rng: Optional[Callable[[Union[int, Tuple[int, ...]]], NDArray]] = None,
+        random_state: Optional[np.random.RandomState] = None,
+    ) -> ARCHModelForecast:
         # Check start
         earliest, default_start = self._fit_indices
         default_start = max(0, default_start - 1)
@@ -806,7 +836,12 @@ class ConstantMean(HARX):
     """
 
     def __init__(
-        self, y=None, hold_back=None, volatility=None, distribution=None, rescale=None
+        self,
+        y: Optional[ArrayLike] = None,
+        hold_back: Optional[int] = None,
+        volatility: Optional[VolatilityProcess] = None,
+        distribution: Optional[Distribution] = None,
+        rescale: Optional[bool] = None,
     ) -> None:
         super().__init__(
             y,
@@ -817,19 +852,25 @@ class ConstantMean(HARX):
         )
         self.name = "Constant Mean"
 
-    def parameter_names(self):
+    def parameter_names(self) -> List[str]:
         return ["mu"]
 
     @cached_property
-    def num_params(self):
+    def num_params(self) -> int:
         return 1
 
-    def _model_description(self, include_lags=False):
+    def _model_description(self, include_lags: bool = False) -> Dict[str, str]:
         return super()._model_description(include_lags)
 
     def simulate(
-        self, params, nobs, burn=500, initial_value=None, x=None, initial_value_vol=None
-    ):
+        self,
+        params: ArrayLike,
+        nobs: int,
+        burn: int = 500,
+        initial_value: Optional[Union[float, NDArray]] = None,
+        x: Optional[ArrayLike] = None,
+        initial_value_vol: Optional[Union[float, NDArray]] = None,
+    ) -> DataFrame:
         """
         Simulated data from a constant mean model
 
@@ -889,7 +930,12 @@ class ConstantMean(HARX):
         df = DataFrame(df)
         return df
 
-    def resids(self, params, y=None, regressors=None):
+    def resids(
+        self,
+        params: NDArray,
+        y: Optional[ArrayLike] = None,
+        regressors: Optional[ArrayLike] = None,
+    ) -> ArrayLike:
         y = self._fit_y if y is None else y
         return y - params
 
@@ -935,7 +981,12 @@ class ZeroMean(HARX):
     """
 
     def __init__(
-        self, y=None, hold_back=None, volatility=None, distribution=None, rescale=None
+        self,
+        y: Optional[ArrayLike] = None,
+        hold_back: Optional[int] = None,
+        volatility: Optional[VolatilityProcess] = None,
+        distribution: Optional[Distribution] = None,
+        rescale: Optional[bool] = None,
     ) -> None:
         super().__init__(
             y,
@@ -948,19 +999,25 @@ class ZeroMean(HARX):
         )
         self.name = "Zero Mean"
 
-    def parameter_names(self):
+    def parameter_names(self) -> List[str]:
         return []
 
     @cached_property
-    def num_params(self):
+    def num_params(self) -> int:
         return 0
 
-    def _model_description(self, include_lags=False):
+    def _model_description(self, include_lags: bool = False) -> Dict[str, str]:
         return super()._model_description(include_lags)
 
     def simulate(
-        self, params, nobs, burn=500, initial_value=None, x=None, initial_value_vol=None
-    ):
+        self,
+        params: ArrayLike,
+        nobs: int,
+        burn: int = 500,
+        initial_value: Optional[Union[float, NDArray]] = None,
+        x: Optional[ArrayLike] = None,
+        initial_value_vol: Optional[Union[float, NDArray]] = None,
+    ) -> DataFrame:
         """
         Simulated data from a zero mean model
 
@@ -993,8 +1050,10 @@ class ZeroMean(HARX):
         Basic data simulation with no mean and constant volatility
 
         >>> from arch.univariate import ZeroMean
+        >>> import numpy as np
         >>> zm = ZeroMean()
-        >>> sim_data = zm.simulate([1.0], 1000)
+        >>> params = np.array([1.0])
+        >>> sim_data = zm.simulate(params, 1000)
 
         Simulating data with a non-trivial volatility process
 
@@ -1021,8 +1080,16 @@ class ZeroMean(HARX):
 
         return df
 
-    def resids(self, params, y=None, regressors=None):
-        return self._fit_y if y is None else y
+    def resids(
+        self,
+        params: NDArray,
+        y: Optional[ArrayLike] = None,
+        regressors: Optional[ArrayLike] = None,
+    ) -> ArrayLike:
+        if y is not None:
+            return y
+        assert self._fit_y is not None
+        return self._fit_y
 
 
 class ARX(HARX):
@@ -1078,14 +1145,14 @@ class ARX(HARX):
 
     def __init__(
         self,
-        y=None,
-        x=None,
-        lags=None,
-        constant=True,
-        hold_back=None,
-        volatility=None,
-        distribution=None,
-        rescale=None,
+        y: Optional[ArrayLike] = None,
+        x: Optional[ArrayLike] = None,
+        lags: Optional[Union[int, List[int], NDArray]] = None,
+        constant: bool = True,
+        hold_back: Optional[int] = None,
+        volatility: Optional[VolatilityProcess] = None,
+        distribution: Optional[Distribution] = None,
+        rescale: Optional[bool] = None,
     ) -> None:
         # Convert lags to 2-d format
 
@@ -1119,13 +1186,14 @@ class ARX(HARX):
         if self._x is not None:
             self.name += "-X"
 
-    def _model_description(self, include_lags=True):
+    def _model_description(self, include_lags: bool = True) -> Dict[str, str]:
         """Generates the model description for use by __str__ and related
         functions"""
         lagstr = "none"
         if include_lags and self.lags is not None:
-            lagstr = [str(lag[1]) for lag in self._lags.T]
-            lagstr = ", ".join(lagstr)
+            assert self._lags is not None
+            lagstr_comp = [str(lag[1]) for lag in self._lags.T]
+            lagstr = ", ".join(lagstr_comp)
 
         xstr = str(self._x.shape[1]) if self._x is not None else "0"
         conststr = "yes" if self.constant else "no"
@@ -1137,7 +1205,7 @@ class ARX(HARX):
         od["distribution"] = self.distribution.__str__()
         return od
 
-    def _generate_lag_names(self):
+    def _generate_lag_names(self) -> List[str]:
         lags = self._lags
         names = []
         var_name = self._y_series.name
@@ -1164,6 +1232,10 @@ class LS(HARX):
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
         lag lengths to estimate on the common sample.
+    volatility : VolatilityProcess, optional
+        Volatility process to use in the model
+    distribution : Distribution, optional
+        Error distribution to use in the model
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
@@ -1188,32 +1260,49 @@ class LS(HARX):
         y_t = \mu + \gamma' x_t + \epsilon_t
 
     """
-
+    # TODO??
     def __init__(
-        self, y=None, x=None, constant=True, hold_back=None, rescale=None
+        self,
+        y: Optional[ArrayLike] = None,
+        x: Optional[ArrayLike] = None,
+        constant: bool = True,
+        hold_back: Optional[int] = None,
+        volatility: Optional[VolatilityProcess] = None,
+        distribution: Optional[Distribution] = None,
+        rescale: Optional[bool] = None,
     ) -> None:
         # Convert lags to 2-d format
-        super().__init__(y, x, None, constant, False, hold_back, rescale=rescale)
+        super().__init__(
+            y,
+            x,
+            None,
+            constant,
+            False,
+            hold_back=hold_back,
+            volatility=volatility,
+            distribution=distribution,
+            rescale=rescale,
+        )
         self.name = "Least Squares"
 
-    def _model_description(self, include_lags=False):
+    def _model_description(self, include_lags: bool = False) -> Dict[str, str]:
         return super()._model_description(include_lags)
 
 
 def arch_model(
-    y,
-    x=None,
-    mean="Constant",
-    lags=0,
-    vol="Garch",
-    p=1,
-    o=0,
-    q=1,
-    power=2.0,
-    dist="Normal",
-    hold_back=None,
-    rescale=None,
-):
+    y: ArrayLike,
+    x: Optional[ArrayLike] = None,
+    mean: str = "Constant",
+    lags: int = 0,
+    vol: str = "Garch",
+    p: Union[int, List[int]] = 1,
+    o: int = 0,
+    q: int = 1,
+    power: float = 2.0,
+    dist: str = "Normal",
+    hold_back: Optional[int] = None,
+    rescale: Optional[bool] = None,
+) -> HARX:
     """
     Convenience function to simplify initialization of ARCH models
 
@@ -1226,7 +1315,7 @@ def arch_model(
         regressors.
     mean : str, optional
         Name of the mean model.  Currently supported options are: 'Constant',
-        'Zero', 'ARX' and  'HARX'
+        'Zero', 'LS', 'AR', 'ARX', 'HAR' and  'HARX'
     lags : int or list (int), optional
         Either a scalar integer value indicating lag length or a list of
         integers specifying lag locations.
@@ -1309,11 +1398,7 @@ def arch_model(
     if dist.lower() not in known_dist:
         raise ValueError("Unknown model type in dist")
 
-    if mean == "zero":
-        am = ZeroMean(y, hold_back=hold_back, rescale=rescale)
-    elif mean == "constant":
-        am = ConstantMean(y, hold_back=hold_back, rescale=rescale)
-    elif mean == "harx":
+    if mean == "harx":
         am = HARX(y, x, lags, hold_back=hold_back, rescale=rescale)
     elif mean == "har":
         am = HARX(y, None, lags, hold_back=hold_back, rescale=rescale)
@@ -1321,11 +1406,15 @@ def arch_model(
         am = ARX(y, x, lags, hold_back=hold_back, rescale=rescale)
     elif mean == "ar":
         am = ARX(y, None, lags, hold_back=hold_back, rescale=rescale)
-    else:
+    elif mean == "ls":
         am = LS(y, x, hold_back=hold_back, rescale=rescale)
+    elif mean == "constant":
+        am = ConstantMean(y, hold_back=hold_back, rescale=rescale)
+    else:  # mean == "zero"
+        am = ZeroMean(y, hold_back=hold_back, rescale=rescale)
 
     if vol == "constant":
-        v = ConstantVariance()
+        v: VolatilityProcess = ConstantVariance()
     elif vol == "arch":
         v = ARCH(p=p)
     elif vol == "figarch":
@@ -1338,7 +1427,7 @@ def arch_model(
         v = HARCH(lags=p)
 
     if dist in ("skewstudent", "skewt"):
-        d = SkewStudent()
+        d: Distribution = SkewStudent()
     elif dist in ("studentst", "t"):
         d = StudentsT()
     elif dist in ("ged", "generalized error"):

@@ -49,4 +49,7 @@ all public methods.
 
 .. currentmodule:: arch.univariate.volatility
 
-.. autoclass:: VolatilityProcess
+.. autosummary::
+   :toctree: generated/
+
+   VolatilityProcess

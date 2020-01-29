@@ -357,8 +357,8 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         generator
             Generator to iterate over in bootstrap calculations
 
-        Example
-        -------
+        Examples
+        --------
         The key steps are problem dependent and so this example shows the use
         as an iterator that does not produce any output
 
@@ -825,8 +825,8 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         computed using the original data in bootstrap replications.  This
         parameter is passed to allow parametric bootstrap simulation.
 
-        Example
-        -------
+        Examples
+        --------
         Bootstrap covariance of the mean
 
         >>> from arch.bootstrap import IIDBootstrap
@@ -906,8 +906,8 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         computed using the original data in bootstrap replications.  This
         parameter is passed to allow parametric bootstrap simulation.
 
-        Example
-        -------
+        Examples
+        --------
         Bootstrap covariance of the mean
 
         >>> from arch.bootstrap import IIDBootstrap
