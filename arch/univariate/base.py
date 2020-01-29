@@ -1,13 +1,14 @@
 """
 Core classes for ARCH models
 """
-from abc import abstractmethod
+from abc import ABCMeta, abstractmethod
 from copy import deepcopy
 import datetime as dt
 import warnings
 
 import numpy as np
 import pandas as pd
+from property_cached import cached_property
 from scipy.optimize import OptimizeResult
 import scipy.stats as stats
 from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
@@ -19,7 +20,7 @@ from statsmodels.tsa.tsatools import lagmat
 
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
-from arch.utility.array import AbstractDocStringInheritor, ensure1d
+from arch.utility.array import ensure1d
 from arch.utility.exceptions import (
     ConvergenceWarning,
     DataScaleWarning,
@@ -29,7 +30,6 @@ from arch.utility.exceptions import (
     starting_value_warning,
 )
 from arch.utility.testing import WaldTestStatistic
-from arch.vendor import cached_property
 
 __all__ = [
     "implicit_constant",
@@ -40,10 +40,7 @@ __all__ = [
 ]
 
 # Callback variables
-_callback_iter, _callback_llf = (
-    0,
-    0.0,
-)
+_callback_iter, _callback_llf = (0, 0.0)
 _callback_func_count, _callback_iter_display = 0, 1
 
 
@@ -66,8 +63,6 @@ def _callback(*args):
     disp = "Iteration: {0:>6},   Func. Count: {1:>6.3g},   Neg. LLF: {2}"
     if _callback_iter % _callback_iter_display == 0:
         print(disp.format(_callback_iter, _callback_func_count, _callback_llf))
-
-    return None
 
 
 def constraint(a, b):
@@ -141,7 +136,7 @@ def implicit_constant(x):
     return rank == x.shape[1]
 
 
-class ARCHModel(object, metaclass=AbstractDocStringInheritor):
+class ARCHModel(object, metaclass=ABCMeta):
     """
     Abstract base class for mean models in ARCH processes.  Specifies the
     conditional mean process.

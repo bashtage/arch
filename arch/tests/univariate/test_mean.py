@@ -441,7 +441,7 @@ class TestMeanModel(object):
     def test_ar_no_lags(self):
         ar = ARX(self.y, lags=0)
         assert ar.lags is None
-        res = ar.fit()
+        res = ar.fit(disp=DISPLAY)
         assert_almost_equal(res.params[0], self.y.mean())
         assert "lags: none" in ar.__str__()
 
@@ -974,13 +974,13 @@ class TestMeanModel(object):
     def test_constant_mean_fixed_variance(self):
         variance = 2 + self.rng.standard_normal(self.y.shape[0]) ** 2.0
         mod = ConstantMean(self.y_series, volatility=FixedVariance(variance))
-        res = mod.fit()
+        res = mod.fit(disp=DISPLAY)
         res.summary()
         assert len(res.params) == 2
         assert "scale" in res.params.index
 
         mod = ARX(self.y_series, lags=[1, 2, 3], volatility=FixedVariance(variance))
-        res = mod.fit()
+        res = mod.fit(disp=DISPLAY)
         assert len(res.params) == 5
         assert "scale" in res.params.index
 
@@ -989,7 +989,7 @@ class TestMeanModel(object):
             lags=[1, 2, 3],
             volatility=FixedVariance(variance, unit_scale=True),
         )
-        res = mod.fit()
+        res = mod.fit(disp=DISPLAY)
         assert len(res.params) == 4
         assert "scale" not in res.params.index
 
@@ -1009,10 +1009,10 @@ class TestMeanModel(object):
     def test_little_or_no_data(self):
         mod = HARX(self.y[:24], lags=[1, 5, 22])
         with pytest.raises(ValueError):
-            mod.fit()
+            mod.fit(disp=DISPLAY)
         mod = HARX(None, lags=[1, 5, 22])
         with pytest.raises(RuntimeError):
-            mod.fit()
+            mod.fit(disp=DISPLAY)
 
     def test_empty_mean(self):
         mod = HARX(
@@ -1023,10 +1023,10 @@ class TestMeanModel(object):
             volatility=ConstantVariance(),
             distribution=Normal(),
         )
-        res = mod.fit()
+        res = mod.fit(disp=DISPLAY)
 
         mod = ZeroMean(self.y, volatility=ConstantVariance(), distribution=Normal())
-        res_z = mod.fit()
+        res_z = mod.fit(disp=DISPLAY)
 
         assert res.num_params == res_z.num_params
         assert_series_equal(res.params, res_z.params)

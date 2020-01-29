@@ -7,28 +7,23 @@ Autoregressive Conditional Heteroskedasticity (ARCH) and other tools for
 financial econometrics, written in Python (with Cython and/or Numba used
 to improve performance)
 
-Continuous Integration
-                      
+**Continuous Integration**
 
 |Travis Build Status| |Appveyor Build Status|
 
-Documentation
-             
+**Online Documentation**
 
 |Documentation Status|
 
-Coverage
-        
+**Coverage**
 
 |Coverage Status| |codecov|
 
-Code Inspections
-                
+**Code Inspections**
 
 |Code Quality: Python| |Total Alerts| |Codacy Badge| |codebeat badge|
 
-Citation
-        
+**Citation**
 
 |DOI|
 
@@ -45,8 +40,6 @@ Python 3
 
 ``arch`` is Python 3 only. Version 4.8 is the final version that
 supported Python 2.7.
-
-.. _documentation-1:
 
 Documentation
 -------------
@@ -108,7 +101,7 @@ for a more complete overview.
 .. code:: python
 
    import datetime as dt
-   import pandas.io.data as web
+   import pandas_datareader.data as web
    st = dt.datetime(1990,1,1)
    en = dt.datetime(2014,1,1)
    data = web.get_data_yahoo('^FTSE', start=st, end=en)
@@ -159,7 +152,8 @@ Statsmodels.
    # Import data
    import datetime as dt
    import pandas as pd
-   import pandas.io.data as web
+   import numpy as np
+   import pandas_datareader.data as web
    start = dt.datetime(1951,1,1)
    end = dt.datetime(2014,1,1)
    sp500 = web.get_data_yahoo('^GSPC', start=start, end=end)
@@ -298,8 +292,8 @@ Installation Notes:
    :target: https://lgtm.com/projects/g/bashtage/arch/context:python
 .. |Total Alerts| image:: https://img.shields.io/lgtm/alerts/g/bashtage/arch.svg?logo=lgtm&logoWidth=18
    :target: https://lgtm.com/projects/g/bashtage/arch/alerts
-.. |Codacy Badge| image:: https://api.codacy.com/project/badge/Grade/cea43b588e0f4f2a9d8ba37cf63f8210
-   :target: https://www.codacy.com/app/bashtage/arch?utm_source=github.com&utm_medium=referral&utm_content=bashtage/arch&utm_campaign=Badge_Grade
+.. |Codacy Badge| image:: https://api.codacy.com/project/badge/Grade/93f6fd90209842bf97fd20fda8db70ef
+   :target: https://www.codacy.com/manual/bashtage/arch?utm_source=github.com&utm_medium=referral&utm_content=bashtage/arch&utm_campaign=Badge_Grade
 .. |codebeat badge| image:: https://codebeat.co/badges/18a78c15-d74b-4820-b56d-72f7e4087532
    :target: https://codebeat.co/projects/github-com-bashtage-arch-master
 .. |DOI| image:: https://zenodo.org/badge/doi/10.5281/zenodo.3551028.svg

@@ -510,9 +510,9 @@ class TestForecasting(object):
     def test_holdback_ar(self):
         y = self.ar2_garch
         mod = arch_model(y, mean="AR", lags=1, hold_back=1)
-        res_holdback = mod.fit()
+        res_holdback = mod.fit(disp="off")
         mod = arch_model(y, mean="AR", lags=1)
-        res = mod.fit()
+        res = mod.fit(disp="off")
         assert_allclose(res_holdback.params, res.params, rtol=1e-4, atol=1e-4)
 
     def test_forecast_exogenous_regressors(self):

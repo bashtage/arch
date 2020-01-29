@@ -3,7 +3,8 @@
 Distributions to use in ARCH models.  All distributions must inherit from
 :class:`Distribution` and provide the same methods with the same inputs.
 """
-from abc import abstractmethod
+from abc import ABCMeta, abstractmethod
+from typing import Callable, List, Optional, Tuple, Union
 
 from numpy import (
     abs,
@@ -24,33 +25,35 @@ from numpy.random import RandomState
 from scipy.special import comb, gamma, gammainc, gammaincc, gammaln
 import scipy.stats as stats
 
+from arch.typing import ArrayLike, ArrayLike1D, NDArray
 from arch.utility.array import AbstractDocStringInheritor
 
 __all__ = ["Distribution", "Normal", "StudentsT", "SkewStudent", "GeneralizedError"]
 
 
-class Distribution(object, metaclass=AbstractDocStringInheritor):
+class Distribution(object, metaclass=ABCMeta):
     """
     Template for subclassing only
     """
 
-    def __init__(self, name, random_state=None) -> None:
+    def __init__(self, name: str, random_state: Optional[RandomState] = None) -> None:
         self.name = name
         self.num_params = 0
-        self._parameters = None
-        self._random_state = random_state
+        self._parameters: Optional[NDArray] = None
         if random_state is None:
             self._random_state = RandomState()
-        if not isinstance(self._random_state, RandomState):
+        elif isinstance(random_state, RandomState):
+            self._random_state = random_state
+        else:  # not isinstance(self._random_state, RandomState):
             raise TypeError("random_state must by a NumPy RandomState instance")
 
-    def _check_constraints(self, params):
+    def _check_constraints(self, params: ArrayLike1D) -> ArrayLike1D:
         bounds = self.bounds(None)
         nparams = 0 if params is None else len(params)
         if nparams != len(bounds):
             raise ValueError("parameters must have {0} elements".format(len(bounds)))
         if len(bounds) == 0:
-            return
+            return params
         params = asarray(params)
         for p, n, b in zip(params, self.name, bounds):
             if not (b[0] <= p <= b[1]):
@@ -61,12 +64,12 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         return params
 
     @property
-    def random_state(self):
+    def random_state(self) -> RandomState:
         """The NumPy RandomState attached to the distribution"""
         return self._random_state
 
     @abstractmethod
-    def _simulator(self, size) -> None:
+    def _simulator(self, size: Union[int, Tuple[int, ...]]) -> NDArray:
         """
         Simulate i.i.d. draws from the distribution
 
@@ -87,7 +90,9 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def simulate(self, parameters) -> None:
+    def simulate(
+        self, parameters: NDArray
+    ) -> Callable[[Union[int, Tuple[int, ...]]], NDArray]:
         """
         Simulates i.i.d. draws from the distribution
 
@@ -105,7 +110,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def constraints(self) -> None:
+    def constraints(self) -> Tuple[NDArray, NDArray]:
         """
         Returns
         -------
@@ -121,7 +126,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def bounds(self, resids) -> None:
+    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
         """
         Parameters
         ----------
@@ -136,7 +141,13 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def loglikelihood(self, parameters, resids, sigma2, individual=False) -> None:
+    def loglikelihood(
+        self,
+        parameters: ArrayLike1D,
+        resids: ArrayLike,
+        sigma2: ArrayLike,
+        individual: bool = False,
+    ) -> Union[float, NDArray]:
         """
         Parameters
         ----------
@@ -158,7 +169,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def starting_values(self, std_resid) -> None:
+    def starting_values(self, std_resid: NDArray) -> NDArray:
         """
         Parameters
         ----------
@@ -178,7 +189,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def parameter_names(self) -> None:
+    def parameter_names(self) -> List[str]:
         """
         Names of distribution shape parameters
 
@@ -190,7 +201,9 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def ppf(self, pits, parameters=None):
+    def ppf(
+        self, pits: ArrayLike1D, parameters: Optional[ArrayLike1D] = None
+    ) -> NDArray:
         """
         Inverse cumulative density function (ICDF)
 
@@ -210,7 +223,9 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def cdf(self, resids, parameters=None):
+    def cdf(
+        self, resids: ArrayLike, parameters: Optional[ArrayLike1D] = None
+    ) -> NDArray:
         """
         Cumulative distribution function
 
@@ -230,7 +245,7 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def moment(self, n, parameters=None):
+    def moment(self, n: int, parameters: Optional[ArrayLike1D] = None) -> float:
         """
         Moment of order n
 
@@ -249,7 +264,9 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
         pass
 
     @abstractmethod
-    def partial_moment(self, n, z=0, parameters=None):
+    def partial_moment(
+        self, n: int, z: float = 0.0, parameters: Optional[ArrayLike1D] = None
+    ) -> float:
         r"""
         Order n lower partial moment from -inf to z
 
@@ -290,25 +307,31 @@ class Distribution(object, metaclass=AbstractDocStringInheritor):
     def __repr__(self) -> str:
         return self.__str__() + ", id: " + hex(id(self)) + ""
 
-    def _description(self):
+    def _description(self) -> str:
         return self.name + " distribution"
 
 
-class Normal(Distribution):
+class Normal(Distribution, metaclass=AbstractDocStringInheritor):
     """
     Standard normal distribution for use with ARCH models
     """
 
-    def __init__(self, random_state=None) -> None:
+    def __init__(self, random_state: Optional[RandomState] = None) -> None:
         super().__init__("Normal", random_state=random_state)
 
-    def constraints(self):
+    def constraints(self) -> Tuple[NDArray, NDArray]:
         return empty(0), empty(0)
 
-    def bounds(self, resids):
-        return tuple([])
+    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+        return []
 
-    def loglikelihood(self, parameters, resids, sigma2, individual=False):
+    def loglikelihood(
+        self,
+        parameters: ArrayLike1D,
+        resids: ArrayLike,
+        sigma2: ArrayLike,
+        individual: bool = False,
+    ) -> Union[float, NDArray]:
         r"""Computes the log-likelihood of assuming residuals are normally
         distributed, conditional on the variance
 
@@ -346,34 +369,42 @@ class Normal(Distribution):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid):
+    def starting_values(self, std_resid: ArrayLike1D) -> NDArray:
         return empty(0)
 
-    def _simulator(self, size):
+    def _simulator(self, size: Union[int, Tuple[int, ...]]) -> NDArray:
         return self._random_state.standard_normal(size)
 
-    def simulate(self, parameters):
+    def simulate(
+        self, parameters: NDArray
+    ) -> Callable[[Union[int, Tuple[int, ...]]], NDArray]:
         return self._simulator
 
-    def parameter_names(self):
+    def parameter_names(self) -> List[str]:
         return []
 
-    def cdf(self, resids, parameters=None):
+    def cdf(
+        self, resids: ArrayLike, parameters: Optional[ArrayLike1D] = None
+    ) -> NDArray:
         self._check_constraints(parameters)
         return stats.norm.cdf(resids)
 
-    def ppf(self, pits, parameters=None):
+    def ppf(
+        self, pits: ArrayLike1D, parameters: Optional[ArrayLike1D] = None
+    ) -> NDArray:
         self._check_constraints(parameters)
         pits = asarray(pits)
         return stats.norm.ppf(pits)
 
-    def moment(self, n, parameters=None):
+    def moment(self, n: int, parameters: Optional[ArrayLike1D] = None) -> float:
         if n < 0:
             return nan
 
         return stats.norm.moment(n)
 
-    def partial_moment(self, n, z=0, parameters=None):
+    def partial_moment(
+        self, n: int, z: float = 0.0, parameters: Optional[ArrayLike1D] = None
+    ) -> float:
         if n < 0:
             return nan
         elif n == 0:
@@ -386,24 +417,28 @@ class Normal(Distribution):
             )
 
 
-class StudentsT(Distribution):
+class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
     """
     Standardized Student's distribution for use with ARCH models
     """
 
-    def __init__(self, random_state=None) -> None:
-        super().__init__(
-            "Standardized Student's t", random_state=random_state
-        )
+    def __init__(self, random_state: Optional[RandomState] = None) -> None:
+        super().__init__("Standardized Student's t", random_state=random_state)
         self.num_params = 1
 
-    def constraints(self):
+    def constraints(self) -> Tuple[NDArray, NDArray]:
         return array([[1], [-1]]), array([2.05, -500.0])
 
-    def bounds(self, resids):
+    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
         return [(2.05, 500.0)]
 
-    def loglikelihood(self, parameters, resids, sigma2, individual=False):
+    def loglikelihood(
+        self,
+        parameters: ArrayLike1D,
+        resids: ArrayLike,
+        sigma2: ArrayLike,
+        individual: bool = False,
+    ) -> Union[float, NDArray]:
         r"""Computes the log-likelihood of assuming residuals are have a
         standardized (to have unit variance) Student's t distribution,
         conditional on the variance.
@@ -448,7 +483,7 @@ class StudentsT(Distribution):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid):
+    def starting_values(self, std_resid: ArrayLike1D) -> NDArray:
         """
         Parameters
         ----------
@@ -470,35 +505,42 @@ class StudentsT(Distribution):
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv])
 
-    def _simulator(self, size):
+    def _simulator(self, size: Union[int, Tuple[int, ...]]) -> NDArray:
+        assert self._parameters is not None
         parameters = self._parameters
         std_dev = sqrt(parameters[0] / (parameters[0] - 2))
         return self._random_state.standard_t(self._parameters[0], size=size) / std_dev
 
-    def simulate(self, parameters):
+    def simulate(
+        self, parameters: NDArray
+    ) -> Callable[[Union[int, Tuple[int, ...]]], NDArray]:
         parameters = asarray(parameters)[None]
         if parameters[0] <= 2.0:
             raise ValueError("The shape parameter must be larger than 2")
         self._parameters = parameters
         return self._simulator
 
-    def parameter_names(self):
+    def parameter_names(self) -> List[str]:
         return ["nu"]
 
-    def cdf(self, resids, parameters=None):
+    def cdf(
+        self, resids: ArrayLike, parameters: Optional[ArrayLike1D] = None
+    ) -> NDArray:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = nu / (nu - 2)
         return stats.t(nu, scale=1.0 / sqrt(var)).cdf(resids)
 
-    def ppf(self, pits, parameters=None):
+    def ppf(
+        self, pits: ArrayLike1D, parameters: Optional[ArrayLike1D] = None
+    ) -> NDArray:
         parameters = self._check_constraints(parameters)
         pits = asarray(pits)
         nu = parameters[0]
         var = nu / (nu - 2)
         return stats.t(nu, scale=1.0 / sqrt(var)).ppf(pits)
 
-    def moment(self, n, parameters=None):
+    def moment(self, n: int, parameters: Optional[ArrayLike1D] = None) -> float:
         if n < 0:
             return nan
 
@@ -507,7 +549,9 @@ class StudentsT(Distribution):
         var = nu / (nu - 2)
         return stats.t.moment(n, nu, scale=1.0 / sqrt(var))
 
-    def partial_moment(self, n, z=0, parameters=None):
+    def partial_moment(
+        self, n: int, z: float = 0.0, parameters: Optional[ArrayLike1D] = None
+    ) -> float:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = nu / (nu - 2)
@@ -516,7 +560,7 @@ class StudentsT(Distribution):
         return moment
 
     @staticmethod
-    def _ord_t_partial_moment(n, z, nu):
+    def _ord_t_partial_moment(n: int, z: float, nu: float) -> float:
         r"""
         Partial moments for ordinary parameterization of Students t df=nu
 
@@ -564,7 +608,7 @@ class StudentsT(Distribution):
         return moment
 
 
-class SkewStudent(Distribution):
+class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     r"""
     Standardized Skewed Student's distribution for use with ARCH models
 
@@ -584,19 +628,23 @@ class SkewStudent(Distribution):
 
     """
 
-    def __init__(self, random_state=None) -> None:
-        super().__init__(
-            "Standardized Skew Student's t", random_state=random_state
-        )
+    def __init__(self, random_state: Optional[RandomState] = None) -> None:
+        super().__init__("Standardized Skew Student's t", random_state=random_state)
         self.num_params = 2
 
-    def constraints(self):
+    def constraints(self) -> Tuple[NDArray, NDArray]:
         return array([[1, 0], [-1, 0], [0, 1], [0, -1]]), array([2.05, -300.0, -1, -1])
 
-    def bounds(self, resids):
+    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
         return [(2.05, 300.0), (-1, 1)]
 
-    def loglikelihood(self, parameters, resids, sigma2, individual=False):
+    def loglikelihood(
+        self,
+        parameters: ArrayLike1D,
+        resids: ArrayLike,
+        sigma2: ArrayLike,
+        individual: bool = False,
+    ) -> NDArray:
         r"""Computes the log-likelihood of assuming residuals are have a
         standardized (to have unit variance) Skew Student's t distribution,
         conditional on the variance.
@@ -662,7 +710,7 @@ class SkewStudent(Distribution):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid):
+    def starting_values(self, std_resid: ArrayLike1D) -> NDArray:
         """
         Parameters
         ----------
@@ -684,11 +732,14 @@ class SkewStudent(Distribution):
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv, 0.0])
 
-    def _simulator(self, size):
+    def _simulator(self, size: Union[int, Tuple[int, ...]]) -> NDArray:
         # No need to normalize since it is already done in parameterization
+        assert self._parameters is not None
         return self.ppf(stats.uniform.rvs(size=size), self._parameters[0])
 
-    def simulate(self, parameters):
+    def simulate(
+        self, parameters: NDArray
+    ) -> Callable[[Union[int, Tuple[int, ...]]], NDArray]:
         parameters = asarray(parameters)[None]
         if parameters[0, 0] <= 2.0:
             raise ValueError("The shape parameter must be larger than 2")
@@ -699,10 +750,10 @@ class SkewStudent(Distribution):
         self._parameters = parameters
         return self._simulator
 
-    def parameter_names(self):
+    def parameter_names(self) -> List[str]:
         return ["nu", "lambda"]
 
-    def __const_a(self, parameters):
+    def __const_a(self, parameters: NDArray) -> float:
         """Compute a constant.
 
         Parameters
@@ -720,7 +771,7 @@ class SkewStudent(Distribution):
         c = self.__const_c(parameters)
         return 4 * lam * exp(c) * (eta - 2) / (eta - 1)
 
-    def __const_b(self, parameters):
+    def __const_b(self, parameters: NDArray) -> float:
         """Compute b constant.
 
         Parameters
@@ -738,7 +789,7 @@ class SkewStudent(Distribution):
         return (1 + 3 * lam ** 2 - a ** 2) ** 0.5
 
     @staticmethod
-    def __const_c(parameters):
+    def __const_c(parameters: NDArray) -> float:
         """Compute c constant.
 
         Parameters
@@ -755,7 +806,9 @@ class SkewStudent(Distribution):
         # return gamma((eta+1)/2) / ((pi*(eta-2))**.5 * gamma(eta/2))
         return gammaln((eta + 1) / 2) - gammaln(eta / 2) - log(pi * (eta - 2)) / 2
 
-    def cdf(self, resids, parameters=None):
+    def cdf(
+        self, resids: ArrayLike, parameters: Optional[ArrayLike1D] = None
+    ) -> NDArray:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(resids)
         if scalar:
@@ -776,7 +829,9 @@ class SkewStudent(Distribution):
             p = p[0]
         return p
 
-    def ppf(self, pits, parameters=None):
+    def ppf(
+        self, pits: ArrayLike1D, parameters: Optional[ArrayLike1D] = None
+    ) -> NDArray:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(pits)
         if scalar:
@@ -801,7 +856,7 @@ class SkewStudent(Distribution):
             icdf = icdf[0]
         return icdf
 
-    def moment(self, n, parameters=None):
+    def moment(self, n: int, parameters: Optional[ArrayLike1D] = None) -> float:
         parameters = self._check_constraints(parameters)
         eta, lam = parameters
 
@@ -831,7 +886,9 @@ class SkewStudent(Distribution):
 
         return moment
 
-    def partial_moment(self, n, z=0, parameters=None):
+    def partial_moment(
+        self, n: int, z: float = 0.0, parameters: Optional[ArrayLike1D] = None
+    ) -> float:
         parameters = self._check_constraints(parameters)
         eta, lam = parameters
 
@@ -873,24 +930,28 @@ class SkewStudent(Distribution):
         return moment
 
 
-class GeneralizedError(Distribution):
+class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
     """
     Generalized Error distribution for use with ARCH models
     """
 
-    def __init__(self, random_state=None) -> None:
-        super().__init__(
-            "Generalized Error Distribution", random_state=random_state
-        )
+    def __init__(self, random_state: Optional[RandomState] = None) -> None:
+        super().__init__("Generalized Error Distribution", random_state=random_state)
         self.num_params = 1
 
-    def constraints(self):
+    def constraints(self) -> Tuple[NDArray, NDArray]:
         return array([[1], [-1]]), array([1.01, -500.0])
 
-    def bounds(self, resids):
+    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
         return [(1.01, 500.0)]
 
-    def loglikelihood(self, parameters, resids, sigma2, individual=False):
+    def loglikelihood(
+        self,
+        parameters: ArrayLike1D,
+        resids: ArrayLike,
+        sigma2: ArrayLike,
+        individual: bool = False,
+    ) -> NDArray:
         r"""Computes the log-likelihood of assuming residuals are have a
         Generalized Error Distribution, conditional on the variance.
 
@@ -940,7 +1001,7 @@ class GeneralizedError(Distribution):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid):
+    def starting_values(self, std_resid: ArrayLike1D) -> NDArray:
         """
         Parameters
         ----------
@@ -959,7 +1020,8 @@ class GeneralizedError(Distribution):
         """
         return array([1.5])
 
-    def _simulator(self, size):
+    def _simulator(self, size: Union[int, Tuple[int, ...]]) -> NDArray:
+        assert self._parameters is not None
         parameters = self._parameters
         nu = parameters[0]
         randoms = self._random_state.standard_gamma(1 / nu, size) ** (1.0 / nu)
@@ -968,30 +1030,36 @@ class GeneralizedError(Distribution):
 
         return randoms / scale
 
-    def simulate(self, parameters):
+    def simulate(
+        self, parameters: NDArray
+    ) -> Callable[[Union[int, Tuple[int, ...]]], NDArray]:
         parameters = asarray(parameters)[None]
         if parameters[0] <= 1.0:
             raise ValueError("The shape parameter must be larger than 1")
         self._parameters = parameters
         return self._simulator
 
-    def parameter_names(self):
+    def parameter_names(self) -> List[str]:
         return ["nu"]
 
-    def ppf(self, pits, parameters=None):
+    def ppf(
+        self, pits: ArrayLike1D, parameters: Optional[ArrayLike1D] = None
+    ) -> NDArray:
         parameters = self._check_constraints(parameters)
         pits = asarray(pits)
         nu = parameters[0]
         var = stats.gennorm(nu).var()
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).ppf(pits)
 
-    def cdf(self, resids, parameters=None):
+    def cdf(
+        self, resids: ArrayLike, parameters: Optional[ArrayLike1D] = None
+    ) -> NDArray:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = stats.gennorm(nu).var()
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).cdf(resids)
 
-    def moment(self, n, parameters=None):
+    def moment(self, n: int, parameters: Optional[ArrayLike1D] = None) -> float:
         if n < 0:
             return nan
 
@@ -1000,7 +1068,9 @@ class GeneralizedError(Distribution):
         var = stats.gennorm(nu).var()
         return stats.gennorm.moment(n, nu, scale=1.0 / sqrt(var))
 
-    def partial_moment(self, n, z=0, parameters=None):
+    def partial_moment(
+        self, n: int, z: float = 0.0, parameters: Optional[ArrayLike1D] = None
+    ) -> float:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         scale = 1.0 / sqrt(stats.gennorm(nu).var())
@@ -1008,7 +1078,7 @@ class GeneralizedError(Distribution):
         return moment
 
     @staticmethod
-    def _ord_gennorm_partial_moment(n, z, beta):
+    def _ord_gennorm_partial_moment(n: int, z: int, beta: float) -> float:
         r"""
         Partial moment for ordinary generalized normal parameterization.
 

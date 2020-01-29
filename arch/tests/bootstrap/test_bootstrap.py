@@ -265,11 +265,11 @@ def test_conf_int_percentile(bs_setup):
     ci = bs.conf_int(bs_setup.func, reps=num_bootstrap, size=0.90, method="percentile")
     bs.reset()
     ci_u = bs.conf_int(
-        bs_setup.func, tail="upper", reps=num_bootstrap, size=0.95, method="percentile",
+        bs_setup.func, tail="upper", reps=num_bootstrap, size=0.95, method="percentile"
     )
     bs.reset()
     ci_l = bs.conf_int(
-        bs_setup.func, tail="lower", reps=num_bootstrap, size=0.95, method="percentile",
+        bs_setup.func, tail="lower", reps=num_bootstrap, size=0.95, method="percentile"
     )
     bs.reset()
     results = np.zeros((num_bootstrap, 2))
@@ -378,7 +378,7 @@ def test_studentized(bs_setup):
 
     bs.reset()
     ci = bs.conf_int(
-        bs_setup.func, reps=num_bootstrap, method="studentized", studentize_reps=50,
+        bs_setup.func, reps=num_bootstrap, method="studentized", studentize_reps=50
     )
 
     bs.reset()
@@ -751,7 +751,7 @@ def test_bca_against_bcajack():
         return sample[1] / sample[0]
 
     arch_ci = arch_bs.conf_int(
-        func=func, reps=B, size=confidence_interval_size, method="bca",
+        func=func, reps=B, size=confidence_interval_size, method="bca"
     )
 
     # # callable from R

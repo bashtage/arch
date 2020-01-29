@@ -9,9 +9,9 @@ from typing import Any, Dict, Hashable, List, Optional, Tuple, Type, Union
 
 import numpy as np
 from pandas import DataFrame, DatetimeIndex, Index, NaT, Series, Timestamp, to_datetime
+from property_cached import cached_property
 
 from arch.typing import AnyPandas, ArrayLike, DateLike, NDArray
-from arch.vendor import cached_property
 
 __all__ = [
     "ensure1d",
@@ -132,7 +132,10 @@ class DocStringInheritor(type):
                             clsdict[attr] = cached_property(attribute.func)
                         elif isinstance(attribute, property):
                             clsdict[attr] = property(
-                                attribute.fget, attribute.fset, attribute.fdel, doc
+                                attribute.__get__,
+                                attribute.__set__,
+                                attribute.__delete__,
+                                doc,
                             )
                         else:
                             attribute.__doc__ = doc
@@ -140,9 +143,19 @@ class DocStringInheritor(type):
         return type.__new__(mcs, name, bases, clsdict)
 
 
-AbstractDocStringInheritor = type(
-    "AbstractDocStringInheritor", (ABCMeta, DocStringInheritor), {}
-)
+class ConcreteClassMeta(ABCMeta):
+    def __init__(self, *args: Any, **kwargs: Any):
+        super(ConcreteClassMeta, self).__init__(*args, **kwargs)
+        missing: List[str] = getattr(self, "__abstractmethods__", [])
+        if missing:
+            missing_meth = ", ".join(missing)
+            raise TypeError(
+                f"{self.__name__} has not implemented abstract methods {missing_meth}"
+            )
+
+
+class AbstractDocStringInheritor(ConcreteClassMeta, DocStringInheritor):
+    pass
 
 
 def date_to_index(

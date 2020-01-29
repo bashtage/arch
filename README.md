@@ -6,35 +6,37 @@ Autoregressive Conditional Heteroskedasticity (ARCH) and other tools for
 financial econometrics, written in Python (with Cython and/or Numba used
 to improve performance)
 
-###### Continuous Integration
+**Continuous Integration**
 
 [![Travis Build Status](https://travis-ci.org/bashtage/arch.svg?branch=master)](https://travis-ci.org/bashtage/arch)
 [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/nmt02u7jwcgx7i2x?svg=true)](https://ci.appveyor.com/project/bashtage/arch/branch/master)
 
-###### Documentation
+**Online Documentation**
 
 [![Documentation Status](https://readthedocs.org/projects/arch/badge/?version=latest)](http://arch.readthedocs.org/en/latest/)
 
-###### Coverage
+**Coverage**
 
 [![Coverage Status](https://coveralls.io/repos/github/bashtage/arch/badge.svg?branch=master)](https://coveralls.io/r/bashtage/arch?branch=master)
 [![codecov](https://codecov.io/gh/bashtage/arch/branch/master/graph/badge.svg)](https://codecov.io/gh/bashtage/arch)
 
-###### Code Inspections
+**Code Inspections**
+
 [![Code Quality: Python](https://img.shields.io/lgtm/grade/python/g/bashtage/arch.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bashtage/arch/context:python)
 [![Total Alerts](https://img.shields.io/lgtm/alerts/g/bashtage/arch.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bashtage/arch/alerts)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/93f6fd90209842bf97fd20fda8db70ef)](https://www.codacy.com/manual/bashtage/arch?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bashtage/arch&amp;utm_campaign=Badge_Grade)
 [![codebeat badge](https://codebeat.co/badges/18a78c15-d74b-4820-b56d-72f7e4087532)](https://codebeat.co/projects/github-com-bashtage-arch-master)
 
-###### Citation
+**Citation**
+
 [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.3551028.svg)](https://doi.org/10.5281/zenodo.3551028)
 
 ## Module Contents
 
-* [Univariate ARCH Models](#volatility)
-* [Unit Root Tests](#unit-root)
-* [Bootstrapping](#bootstrap)
-* [Multiple Comparison Tests](#multiple-comparison)
+*  [Univariate ARCH Models](#volatility)
+*  [Unit Root Tests](#unit-root)
+*  [Bootstrapping](#bootstrap)
+*  [Multiple Comparison Tests](#multiple-comparison)
 
 ### Python 3
 
@@ -56,38 +58,38 @@ research available at [Kevin Sheppard's site](http://www.kevinsheppard.com).
 
 Contributions are welcome.  There are opportunities at many levels to contribute:
 
-* Implement new volatility process, e.g., FIGARCH
-* Improve docstrings where unclear or with typos
-* Provide examples, preferably in the form of IPython notebooks
+*  Implement new volatility process, e.g., FIGARCH
+*  Improve docstrings where unclear or with typos
+*  Provide examples, preferably in the form of IPython notebooks
 
 ## Examples
 
-<a name="volatility"/>
+<a id="volatility"></a>
 
 ### Volatility Modeling
 
-* Mean models
-  * Constant mean
-  * Heterogeneous Autoregression (HAR)
-  * Autoregression (AR)
-  * Zero mean
-  * Models with and without exogenous regressors
-* Volatility models
-  * ARCH
-  * GARCH
-  * TARCH
-  * EGARCH
-  * EWMA/RiskMetrics
-* Distributions
-  * Normal
-  * Student's T
-  * Generalized Error Distribution
+*  Mean models
+   *  Constant mean
+   *  Heterogeneous Autoregression (HAR)
+   *  Autoregression (AR)
+   *  Zero mean
+   *  Models with and without exogenous regressors
+*  Volatility models
+   *  ARCH
+   *  GARCH
+   *  TARCH
+   *  EGARCH
+   *  EWMA/RiskMetrics
+*  Distributions
+   *  Normal
+   *  Student's T
+   *  Generalized Error Distribution
 
 See the [univariate volatility example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/univariate_volatility_modeling.ipynb) for a more complete overview.
 
 ```python
 import datetime as dt
-import pandas.io.data as web
+import pandas_datareader.data as web
 st = dt.datetime(1990,1,1)
 en = dt.datetime(2014,1,1)
 data = web.get_data_yahoo('^FTSE', start=st, end=en)
@@ -98,33 +100,33 @@ am = arch_model(returns)
 res = am.fit()
 ```
 
-<a name="unit-root"/>
+<a id="unit-root"></a>
 
 ### Unit Root Tests
 
-* Augmented Dickey-Fuller
-* Dickey-Fuller GLS
-* Phillips-Perron
-* KPSS
-* Zivot-Andrews
-* Variance Ratio tests
+*  Augmented Dickey-Fuller
+*  Dickey-Fuller GLS
+*  Phillips-Perron
+*  KPSS
+*  Zivot-Andrews
+*  Variance Ratio tests
 
 See the [unit root testing example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/unitroot_examples.ipynb) for examples of testing series for unit roots.
 
-<a name="bootstrap"/>
+<a id="bootstrap"></a>
 
 ### Bootstrap
 
-* Bootstraps
-  * IID Bootstrap
-  * Stationary Bootstrap
-  * Circular Block Bootstrap
-  * Moving Block Bootstrap
-* Methods
-  * Confidence interval construction
-  * Covariance estimation
-  * Apply method to estimate model across bootstraps
-  * Generic Bootstrap iterator
+*  Bootstraps
+   *  IID Bootstrap
+   *  Stationary Bootstrap
+   *  Circular Block Bootstrap
+   *  Moving Block Bootstrap
+*  Methods
+   *  Confidence interval construction
+   *  Covariance estimation
+   *  Apply method to estimate model across bootstraps
+   *  Generic Bootstrap iterator
 
 See the [bootstrap example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/bootstrap_examples.ipynb) 
 for examples of bootstrapping the Sharpe ratio and a Probit model from 
@@ -134,7 +136,8 @@ Statsmodels.
 # Import data
 import datetime as dt
 import pandas as pd
-import pandas.io.data as web
+import numpy as np
+import pandas_datareader.data as web
 start = dt.datetime(1951,1,1)
 end = dt.datetime(2014,1,1)
 sp500 = web.get_data_yahoo('^GSPC', start=start, end=end)
@@ -155,14 +158,14 @@ bs = IIDBootstrap(returns)
 ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 ```
 
-<a name="multiple-comparison"/>
+<a id="multiple-comparison"></a>
 
 ### Multiple Comparison Procedures
 
-* Test of Superior Predictive Ability (SPA), also known as the Reality
-  Check or Bootstrap Data Snooper
-* Stepwise (StepM)
-* Model Confidence Set (MCS)
+*  Test of Superior Predictive Ability (SPA), also known as the Reality
+   Check or Bootstrap Data Snooper
+*  Stepwise (StepM)
+*  Model Confidence Set (MCS)
 
 See the [multiple comparison example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/multiple-comparison_examples.ipynb)
 for examples of the multiple comparison procedures.
@@ -172,19 +175,19 @@ for examples of the multiple comparison procedures.
 These requirements reflect the testing environment.  It is possible
 that arch will work with older versions.
 
-* Python (3.6+)
-* NumPy (1.14+)
-* SciPy (1.0.1+)
-* Pandas (0.23+)
-* statsmodels (0.9+)
-* matplotlib (2.0+), optional
-* property-cached (1.6.3+), optional
+*  Python (3.6+)
+*  NumPy (1.14+)
+*  SciPy (1.0.1+)
+*  Pandas (0.23+)
+*  statsmodels (0.9+)
+*  matplotlib (2.0+), optional
+*  property-cached (1.6.3+), optional
 
 ### Optional Requirements
 
-* Numba (0.35+) will be used if available **and** when installed using
-  the --no-binary option
-* jupyter and notebook are required to run the notebooks
+*  Numba (0.35+) will be used if available **and** when installed using
+   the --no-binary option
+*  jupyter and notebook are required to run the notebooks
 
 ## Installing
 
@@ -237,11 +240,11 @@ ahead-of-time compiled extensions.
 
 The development requirements are:
 
-* Cython (0.29+, if not using --no-binary)
-* pytest (For tests)
-* sphinx (to build docs)
-* sphinx_material (to build docs)
-* jupyter, notebook and nbsphinx (to build docs)
+*  Cython (0.29+, if not using --no-binary)
+*  pytest (For tests)
+*  sphinx (to build docs)
+*  sphinx_material (to build docs)
+*  jupyter, notebook and nbsphinx (to build docs)
 
 ### Installation Notes:
 

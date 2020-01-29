@@ -3,7 +3,7 @@ Volatility processes for ARCH model estimation.  All volatility processes must
 inherit from :class:`VolatilityProcess` and provide the same methods with the
 same inputs.
 """
-from abc import abstractmethod
+from abc import ABCMeta, abstractmethod
 import itertools
 from warnings import warn
 
@@ -160,7 +160,7 @@ class VarianceForecast(object):
         return self._shocks
 
 
-class VolatilityProcess(object, metaclass=AbstractDocStringInheritor):
+class VolatilityProcess(object, metaclass=ABCMeta):
     """
     Abstract base class for ARCH models.  Allows the conditional mean model to be specified
     separately from the conditional variance, even though parameters are estimated jointly.
@@ -688,7 +688,7 @@ class VolatilityProcess(object, metaclass=AbstractDocStringInheritor):
         pass
 
 
-class ConstantVariance(VolatilityProcess):
+class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
     Constant volatility process
 
@@ -763,7 +763,7 @@ class ConstantVariance(VolatilityProcess):
         return VarianceForecast(forecasts, forecast_paths, shocks)
 
 
-class GARCH(VolatilityProcess):
+class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
     GARCH and related model estimation
 
@@ -1197,7 +1197,7 @@ class GARCH(VolatilityProcess):
         return VarianceForecast(forecasts, paths, shocks)
 
 
-class HARCH(VolatilityProcess):
+class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
     Heterogeneous ARCH process
 
@@ -1391,7 +1391,7 @@ class HARCH(VolatilityProcess):
         return VarianceForecast(paths.mean(1), paths, shocks)
 
 
-class MIDASHyperbolic(VolatilityProcess):
+class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
     MIDAS Hyperbolic ARCH process
 
@@ -1740,7 +1740,7 @@ class ARCH(GARCH):
         return svs[int(loc)]
 
 
-class EWMAVariance(VolatilityProcess):
+class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
     Exponentially Weighted Moving-Average (RiskMetrics) Variance process
 
@@ -1883,7 +1883,7 @@ class EWMAVariance(VolatilityProcess):
         return VarianceForecast(paths.mean(1), paths, shocks)
 
 
-class RiskMetrics2006(VolatilityProcess):
+class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     """
     RiskMetrics 2006 Variance process
 
@@ -2123,7 +2123,7 @@ class RiskMetrics2006(VolatilityProcess):
         return VarianceForecast(paths.mean(1), paths, shocks)
 
 
-class EGARCH(VolatilityProcess):
+class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
     EGARCH model estimation
 
@@ -2402,7 +2402,7 @@ class EGARCH(VolatilityProcess):
         return VarianceForecast(paths.mean(1), paths, shocks)
 
 
-class FixedVariance(VolatilityProcess):
+class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     """
     Fixed volatility process
 
@@ -2493,7 +2493,7 @@ class FixedVariance(VolatilityProcess):
         return VarianceForecast(forecasts, forecast_paths, shocks)
 
 
-class FIGARCH(VolatilityProcess):
+class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     r"""
     FIGARCH model
 
