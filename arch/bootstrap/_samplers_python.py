@@ -7,21 +7,23 @@ def stationary_bootstrap_sample_python(
     indices: NDArray, u: NDArray, p: float
 ) -> NDArray:
     """
+    Generate indices for sampling from the stationary bootstrap.
+
     Parameters
     -------
-    indices : ndarray
-        Array containing draws from randint with the same size as the data in
-        the range of [0,nobs)
+    indices: ndarray
+        Single-dimensional array containing draws from randint with the same
+        size as the data in the range of [0,nobs).
     u : ndarray
-        Array of standard uniforms
+        Single-dimensional Array of standard uniforms.
     p : float
         Probability that a new block is started in the stationary bootstrap.
-        The multiplicative reciprocal of the window length
+        The multiplicative reciprocal of the window length.
 
     Returns
     -------
-    indices : ndarray
-        Indices for an iteration of the stationary bootstrap
+    ndarray
+        Indices for an iteration of the stationary bootstrap.
     """
     num_items = indices.shape[0]
     for i in range(1, num_items):

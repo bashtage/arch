@@ -6,6 +6,7 @@ import copy
 
 import numpy as np
 from pandas import DataFrame
+from property_cached import cached_property
 from scipy.optimize import OptimizeResult
 from statsmodels.tsa.tsatools import lagmat
 
@@ -29,8 +30,12 @@ from arch.univariate.volatility import (
     HARCH,
     ConstantVariance,
 )
-from arch.utility.array import cutoff_to_index, ensure1d, parse_dataframe
-from arch.vendor import cached_property
+from arch.utility.array import (
+    AbstractDocStringInheritor,
+    cutoff_to_index,
+    ensure1d,
+    parse_dataframe,
+)
 
 __all__ = ["HARX", "ConstantMean", "ZeroMean", "ARX", "arch_model", "LS"]
 
@@ -100,7 +105,7 @@ def _ar_to_impulse(steps, params):
     return impulse
 
 
-class HARX(ARCHModel):
+class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     r"""
     Heterogeneous Autoregression (HAR), with optional exogenous regressors,
     model estimation and simulation

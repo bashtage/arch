@@ -1,5 +1,6 @@
 import os
 import timeit
+from typing import List
 
 import numpy as np
 from numpy.random import RandomState
@@ -54,7 +55,7 @@ class Timer(object):
         self.repeat = repeat
         self.number = number
         self._run = False
-        self.times = []
+        self.times: List[float] = []
         self._codes = [first, second]
         self.ratio = np.inf
 
@@ -63,7 +64,7 @@ class Timer(object):
             self.time()
         self.ratio = self.times[0] / self.times[1]
         title = self.model_name + " timing"
-        print(title)
+        print("\n" + title)
         print("-" * len(title))
         print(self.first_name + ": " + "{:0.3f} ms".format(1000 * self.times[0]))
         print(self.second_name + ": " + "{:0.3f} ms".format(1000 * self.times[1]))
@@ -83,16 +84,14 @@ class Timer(object):
             self.first_name
             + "/"
             + self.second_name
-            + " Ratio: {:0.3f}".format(self.ratio)
+            + " Ratio: {:0.3f}\n".format(self.ratio)
         )
-        print("\n")
 
     def time(self):
         self.times = []
         for code in self._codes:
             timer = timeit.Timer(code, setup=self.setup)
             self.times.append(min(timer.repeat(self.repeat, self.number)))
-        return None
 
 
 class TestRecursions(object):

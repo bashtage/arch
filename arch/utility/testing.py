@@ -1,8 +1,7 @@
 from typing import Dict, Optional
 
+from property_cached import cached_property
 from scipy.stats import chi2
-
-from arch.vendor import cached_property
 
 __all__ = ["WaldTestStatistic"]
 
