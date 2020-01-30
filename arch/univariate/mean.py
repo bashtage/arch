@@ -237,17 +237,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     def parameter_names(self) -> List[str]:
         return self._generate_variable_names()
 
-    @staticmethod
-    def _static_gaussian_loglikelihood(resids: NDArray) -> float:
-        nobs = resids.shape[0]
-        sigma2 = resids.dot(resids) / nobs
-
-        loglikelihood = -0.5 * nobs * np.log(2 * np.pi)
-        loglikelihood -= 0.5 * nobs * np.log(sigma2)
-        loglikelihood -= 0.5 * nobs
-
-        return loglikelihood
-
     def _model_description(self, include_lags: bool = True) -> Dict[str, str]:
         """Generates the model description for use by __str__ and related
         functions"""
@@ -1290,10 +1279,10 @@ class LS(HARX):
 
 
 def arch_model(
-    y: ArrayLike,
+    y: Optional[ArrayLike],
     x: Optional[ArrayLike] = None,
     mean: str = "Constant",
-    lags: int = 0,
+    lags: Union[int, List[int], NDArray] = 0,
     vol: str = "Garch",
     p: Union[int, List[int]] = 1,
     o: int = 0,

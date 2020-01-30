@@ -1,5 +1,5 @@
 import datetime as dt
-from typing import TypeVar, Union
+from typing import Hashable, Optional, TypeVar, Union
 
 import numpy as np
 from pandas import DataFrame, Series, Timestamp
@@ -12,6 +12,7 @@ __all__ = [
     "DateLike",
     "ArrayLike1D",
     "ArrayLike2D",
+    "Label",
 ]
 
 NDArray = Union[np.ndarray]
@@ -21,3 +22,4 @@ ArrayLike = Union[NDArray, DataFrame, Series]
 NDArrayOrFrame = TypeVar("NDArrayOrFrame", np.ndarray, DataFrame)
 AnyPandas = Union[Series, DataFrame]
 DateLike = Union[str, dt.datetime, np.datetime64, Timestamp]
+Label = Optional[Hashable]
