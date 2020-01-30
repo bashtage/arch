@@ -5,6 +5,7 @@ same inputs.
 """
 from abc import ABCMeta, abstractmethod
 import itertools
+from typing import List
 from warnings import warn
 
 import numpy as np
@@ -682,13 +683,13 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         return self._normal.loglikelihood([], resids, sigma2)
 
     @abstractmethod
-    def parameter_names(self) -> None:
+    def parameter_names(self) -> List[str]:
         """
         Names of model parameters
 
         Returns
         -------
-         names : list (str)
+        names : list (str)
             Variables names
         """
         pass

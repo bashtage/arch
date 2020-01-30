@@ -106,7 +106,7 @@ for root, _, filenames in os.walk(os.path.join(os.getcwd(), "arch")):  # noqa: E
             matches.append(filename)
     if matches:
         package_data[".".join(os.path.relpath(root).split(os.path.sep))] = filetypes
-
+package_data["arch"].append("py.typed")
 
 def run_setup(binary=True):
     if not binary:
