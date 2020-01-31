@@ -5,7 +5,7 @@ from arch.data.utility import load_file
 
 def load() -> DataFrame:
     """
-    Load the graduate school admissions dataused in the examples
+    Load the graduate school admissions data used in the examples
 
     Returns
     -------

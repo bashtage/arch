@@ -52,14 +52,19 @@ class Distribution(object, metaclass=ABCMeta):
         """The name of the distribution"""
         return self._name
 
-    def _check_constraints(self, params: ArrayLike1D) -> ArrayLike1D:
-        bounds = self.bounds(None)
-        nparams = 0 if params is None else len(params)
+    def _check_constraints(
+        self, parameters: Optional[Union[Sequence[float], ArrayLike1D]]
+    ) -> NDArray:
+        bounds = self.bounds(empty(0))
+        if parameters is not None:
+            params = ensure1d(parameters, "parameters", False)
+            nparams = len(params)
+        else:
+            nparams = 0
         if nparams != len(bounds):
             raise ValueError("parameters must have {0} elements".format(len(bounds)))
         if len(bounds) == 0:
-            return params
-        params = asarray(params)
+            return empty(0)
         for p, n, b in zip(params, self.name, bounds):
             if not (b[0] <= p <= b[1]):
                 raise ValueError(
@@ -152,7 +157,7 @@ class Distribution(object, metaclass=ABCMeta):
     @abstractmethod
     def loglikelihood(
         self,
-        parameters: Sequence[float],
+        parameters: Union[Sequence[float], ArrayLike1D],
         resids: ArrayLike,
         sigma2: ArrayLike,
         individual: bool = False,
@@ -215,7 +220,9 @@ class Distribution(object, metaclass=ABCMeta):
 
     @abstractmethod
     def ppf(
-        self, pits: ArrayLike1D, parameters: Optional[ArrayLike1D] = None
+        self,
+        pits: Union[Sequence[float], ArrayLike1D],
+        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> NDArray:
         """
         Inverse cumulative density function (ICDF)
@@ -237,7 +244,9 @@ class Distribution(object, metaclass=ABCMeta):
 
     @abstractmethod
     def cdf(
-        self, resids: ArrayLike, parameters: Optional[ArrayLike1D] = None
+        self,
+        resids: Union[Sequence[float], ArrayLike1D],
+        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> NDArray:
         """
         Cumulative distribution function
@@ -258,7 +267,9 @@ class Distribution(object, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def moment(self, n: int, parameters: Optional[ArrayLike1D] = None) -> float:
+    def moment(
+        self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
+    ) -> float:
         """
         Moment of order n
 
@@ -278,7 +289,10 @@ class Distribution(object, metaclass=ABCMeta):
 
     @abstractmethod
     def partial_moment(
-        self, n: int, z: float = 0.0, parameters: Optional[ArrayLike1D] = None
+        self,
+        n: int,
+        z: float = 0.0,
+        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> float:
         r"""
         Order n lower partial moment from -inf to z
@@ -341,7 +355,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
 
     def loglikelihood(
         self,
-        parameters: Sequence[float],
+        parameters: Union[Sequence[float], ArrayLike1D],
         resids: ArrayLike,
         sigma2: ArrayLike,
         individual: bool = False,
@@ -398,26 +412,35 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         return []
 
     def cdf(
-        self, resids: ArrayLike, parameters: Optional[ArrayLike1D] = None
+        self,
+        resids: Union[Sequence[float], ArrayLike1D],
+        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> NDArray:
         self._check_constraints(parameters)
-        return stats.norm.cdf(resids)
+        return stats.norm.cdf(asarray(resids))
 
     def ppf(
-        self, pits: ArrayLike1D, parameters: Optional[ArrayLike1D] = None
+        self,
+        pits: Union[Sequence[float], ArrayLike1D],
+        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> NDArray:
         self._check_constraints(parameters)
         pits = asarray(pits)
         return stats.norm.ppf(pits)
 
-    def moment(self, n: int, parameters: Optional[ArrayLike1D] = None) -> float:
+    def moment(
+        self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
+    ) -> float:
         if n < 0:
             return nan
 
         return stats.norm.moment(n)
 
     def partial_moment(
-        self, n: int, z: float = 0.0, parameters: Optional[ArrayLike1D] = None
+        self,
+        n: int,
+        z: float = 0.0,
+        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> float:
         if n < 0:
             return nan
@@ -449,7 +472,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
 
     def loglikelihood(
         self,
-        parameters: Sequence[float],
+        parameters: Union[Sequence[float], ArrayLike1D],
         resids: ArrayLike,
         sigma2: ArrayLike,
         individual: bool = False,
@@ -541,15 +564,19 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         return ["nu"]
 
     def cdf(
-        self, resids: ArrayLike, parameters: Optional[ArrayLike1D] = None
+        self,
+        resids: Union[Sequence[float], ArrayLike1D],
+        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> NDArray:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = nu / (nu - 2)
-        return stats.t(nu, scale=1.0 / sqrt(var)).cdf(resids)
+        return stats.t(nu, scale=1.0 / sqrt(var)).cdf(asarray(resids))
 
     def ppf(
-        self, pits: ArrayLike1D, parameters: Optional[ArrayLike1D] = None
+        self,
+        pits: Union[Sequence[float], ArrayLike1D],
+        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> NDArray:
         parameters = self._check_constraints(parameters)
         pits = asarray(pits)
@@ -557,17 +584,21 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         var = nu / (nu - 2)
         return stats.t(nu, scale=1.0 / sqrt(var)).ppf(pits)
 
-    def moment(self, n: int, parameters: Optional[ArrayLike1D] = None) -> float:
+    def moment(
+        self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
+    ) -> float:
         if n < 0:
             return nan
-
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = nu / (nu - 2)
         return stats.t.moment(n, nu, scale=1.0 / sqrt(var))
 
     def partial_moment(
-        self, n: int, z: float = 0.0, parameters: Optional[ArrayLike1D] = None
+        self,
+        n: int,
+        z: float = 0.0,
+        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> float:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
@@ -658,12 +689,13 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
     def loglikelihood(
         self,
-        parameters: Sequence[float],
+        parameters: Union[Sequence[float], ArrayLike1D],
         resids: ArrayLike,
         sigma2: ArrayLike,
         individual: bool = False,
     ) -> NDArray:
-        r"""Computes the log-likelihood of assuming residuals are have a
+        r"""
+        Computes the log-likelihood of assuming residuals are have a
         standardized (to have unit variance) Skew Student's t distribution,
         conditional on the variance.
 
@@ -830,7 +862,9 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         return gammaln((eta + 1) / 2) - gammaln(eta / 2) - log(pi * (eta - 2)) / 2
 
     def cdf(
-        self, resids: ArrayLike, parameters: Optional[ArrayLike1D] = None
+        self,
+        resids: ArrayLike,
+        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> NDArray:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(resids)
@@ -846,6 +880,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         y1 = (b * resids + a) / (1 - lam) * sqrt(var)
         y2 = (b * resids + a) / (1 + lam) * sqrt(var)
         tcdf = stats.t(eta).cdf
+        resids = asarray(resids)
         p = (1 - lam) * tcdf(y1) * (resids < (-a / b))
         p += (resids >= (-a / b)) * ((1 - lam) / 2 + (1 + lam) * (tcdf(y2) - 0.5))
         if scalar:
@@ -853,7 +888,9 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         return p
 
     def ppf(
-        self, pits: ArrayLike1D, parameters: Optional[ArrayLike1D] = None
+        self,
+        pits: Union[Sequence[float], ArrayLike1D],
+        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> NDArray:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(pits)
@@ -879,7 +916,9 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
             icdf = icdf[0]
         return icdf
 
-    def moment(self, n: int, parameters: Optional[ArrayLike1D] = None) -> float:
+    def moment(
+        self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
+    ) -> float:
         parameters = self._check_constraints(parameters)
         eta, lam = parameters
 
@@ -910,7 +949,10 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         return moment
 
     def partial_moment(
-        self, n: int, z: float = 0.0, parameters: Optional[ArrayLike1D] = None
+        self,
+        n: int,
+        z: float = 0.0,
+        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> float:
         parameters = self._check_constraints(parameters)
         eta, lam = parameters
@@ -971,7 +1013,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
 
     def loglikelihood(
         self,
-        parameters: Sequence[float],
+        parameters: Union[Sequence[float], ArrayLike1D],
         resids: ArrayLike,
         sigma2: ArrayLike,
         individual: bool = False,
@@ -1070,7 +1112,9 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         return ["nu"]
 
     def ppf(
-        self, pits: ArrayLike1D, parameters: Optional[ArrayLike1D] = None
+        self,
+        pits: Union[Sequence[float], ArrayLike1D],
+        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> NDArray:
         parameters = self._check_constraints(parameters)
         pits = asarray(pits)
@@ -1079,14 +1123,19 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).ppf(pits)
 
     def cdf(
-        self, resids: ArrayLike, parameters: Optional[ArrayLike1D] = None
+        self,
+        resids: ArrayLike,
+        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> NDArray:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = stats.gennorm(nu).var()
+        resids = asarray(resids)
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).cdf(resids)
 
-    def moment(self, n: int, parameters: Optional[ArrayLike1D] = None) -> float:
+    def moment(
+        self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
+    ) -> float:
         if n < 0:
             return nan
 
@@ -1096,7 +1145,10 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         return stats.gennorm.moment(n, nu, scale=1.0 / sqrt(var))
 
     def partial_moment(
-        self, n: int, z: float = 0.0, parameters: Optional[ArrayLike1D] = None
+        self,
+        n: int,
+        z: float = 0.0,
+        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> float:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]

@@ -1820,7 +1820,7 @@ def auto_bandwidth(
     for i in range(n + 1):
         a = list(y[i:])
         b = list(y[: len(y) - i])
-        sig[i] = sum([i * j for (i, j) in zip(a, b)])
+        sig[i] = int(sum([i * j for (i, j) in zip(a, b)]))
 
     sigma_m1 = sig[1 : len(sig)]  # sigma without the 1st element
     s0 = sig[0] + 2 * sum(sigma_m1)
