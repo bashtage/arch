@@ -1,4 +1,4 @@
-from typing import Dict, Hashable, List, Optional, Tuple, Union
+from typing import Dict, Hashable, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -11,7 +11,7 @@ from arch.bootstrap.base import (
 from arch.typing import ArrayLike, NDArray
 from arch.utility.array import DocStringInheritor, ensure2d
 
-__all__ = ["StepM", "SPA", "RealityCheck"]
+__all__ = ["StepM", "SPA", "RealityCheck", "MCS"]
 
 
 def _info_to_str(
@@ -148,7 +148,7 @@ class MCS(MultipleComparison):
         if not self._results_computed:
             raise RuntimeError("Must call compute before accessing results")
 
-    def _format_pvalues(self, eliminated: List[Tuple[int, float]]) -> pd.DataFrame:
+    def _format_pvalues(self, eliminated: Sequence[Tuple[int, float]]) -> pd.DataFrame:
         columns = ["Model index", "Pvalue"]
         mcs = pd.DataFrame(eliminated, columns=columns)
         max_pval = mcs.iloc[0, 1]

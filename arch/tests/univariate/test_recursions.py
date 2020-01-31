@@ -848,7 +848,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
             backcast,
             self.var_bounds,
         )
-        lam = rec.figarch_weights(parameters[1:], p, q, truncation=trunc_lag)
+        lam = rec.figarch_weights(parameters[1:], p, q, trunc_lag=trunc_lag)
         lam_rev = lam[::-1]
         omega_tilde = parameters[0] / (1 - parameters[-1])
         sigma2_direct = np.empty_like(sigma2)
@@ -901,7 +901,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
 
     def test_figarch_weights(self):
         parameters = np.array([1.0, 0.4])
-        lam = rec.figarch_weights(parameters[1:], 0, 0, truncation=1000)
+        lam = rec.figarch_weights(parameters[1:], 0, 0, trunc_lag=1000)
         lam_direct = np.empty_like(lam)
         lam_direct[0] = parameters[-1]
         for i in range(1, 1000):

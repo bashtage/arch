@@ -40,7 +40,7 @@ class TestVolatiltyProcesses(object):
     def setup_class(cls):
         cls.rng = RandomState(1234)
         cls.T = 1000
-        cls.resids = cls.rng.randn(cls.T)
+        cls.resids = cls.rng.standard_normal(cls.T)
         cls.resid_var = np.var(cls.resids)
         cls.sigma2 = np.zeros_like(cls.resids)
         cls.backcast = 1.0
@@ -1102,11 +1102,11 @@ class TestVolatiltyProcesses(object):
         assert fv.parameter_names() == []
         assert fv.name == "Fixed Variance (Unit Scale)"
         assert_equal(cons[0], np.empty((0, 0)))
-        assert_equal(cons[1], np.empty((0)))
+        assert_equal(cons[1], np.empty(0))
         assert bounds == []
         rng = Normal()
         with pytest.raises(NotImplementedError):
-            fv.simulate(parameters, 1000, rng)
+            fv.simulate(parameters, 1000, rng.simulate([]))
 
         fv = FixedVariance(variance, unit_scale=True)
         fv.start, fv.stop = 123, 731

@@ -7,7 +7,6 @@ from numpy import (
     arange,
     argwhere,
     array,
-    asarray,
     ceil,
     cumsum,
     diag,
@@ -39,7 +38,7 @@ from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import OLS, RegressionResults
 from statsmodels.tsa.tsatools import lagmat
 
-from arch.typing import ArrayLike, ArrayLike1D, ArrayLike2D, NDArray
+from arch.typing import ArrayLike, ArrayLike1D, ArrayLike2D, NDArray, Union
 from arch.unitroot.critical_values.dfgls import (
     dfgls_cv_approx,
     dfgls_large_p,
@@ -546,7 +545,7 @@ class UnitRootTest(object):
         return self._lags
 
     @lags.setter
-    def lags(self, value: Tuple[int, int32, int64]) -> None:
+    def lags(self, value: Union[int, int32, int64]) -> None:
         types = (int, int32, int64)
         if (
             value is not None
@@ -1776,7 +1775,9 @@ def kpss_crit(stat: float, trend: str = "c") -> Tuple[float, NDArray]:
     return pvalue, crit_value
 
 
-def auto_bandwidth(y: ArrayLike1D, kernel: str = "ba") -> float:
+def auto_bandwidth(
+    y: Union[Sequence[Union[float, int]], ArrayLike1D], kernel: str = "ba"
+) -> float:
     """
     Automatic bandwidth selection of Andrews (1991) and Newey & West (1994).
 
@@ -1796,12 +1797,9 @@ def auto_bandwidth(y: ArrayLike1D, kernel: str = "ba") -> float:
     float
         The estimated optimal bandwidth.
     """
-
-    y = asarray(y)
-    if y.ndim != 1 or y.shape[0] < 2:
-        raise ValueError(
-            "Data must be of dimension 1 and contain more than one observation"
-        )
+    y = ensure1d(y, "y")
+    if y.shape[0] < 2:
+        raise ValueError("Data must contain more than one observation")
 
     kernel = kernel.lower()
     if kernel in ("ba", "bartlett", "nw"):

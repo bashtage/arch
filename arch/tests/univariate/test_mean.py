@@ -74,7 +74,7 @@ class TestMeanModel(object):
     def setup_class(cls):
         cls.rng = RandomState(1234)
         cls.T = 1000
-        cls.resids = cls.rng.randn(cls.T)
+        cls.resids = cls.rng.standard_normal(cls.T)
         zm = ZeroMean()
         zm.volatility = GARCH()
         seed = 12345
@@ -92,7 +92,7 @@ class TestMeanModel(object):
         cls.y_series = pd.Series(
             cls.y, name="VeryVeryLongLongVariableName", index=date_index
         )
-        x = cls.resids + cls.rng.randn(cls.T)
+        x = cls.resids + cls.rng.standard_normal(cls.T)
         cls.x = x[:, None]
         cls.x_df = pd.DataFrame(cls.x, columns=["LongExogenousName"])
         cls.resid_var = np.var(cls.resids)
@@ -114,7 +114,7 @@ class TestMeanModel(object):
         assert_equal(b, np.empty((0,)))
         assert isinstance(cm.volatility, ConstantVariance)
         assert isinstance(cm.distribution, Normal)
-        assert_equal(cm.lags, None)
+        assert cm.lags is None
         res = cm.fit(disp=DISPLAY)
         expected = np.array([self.y.mean(), self.y.var()])
         assert_almost_equal(res.params, expected)
@@ -148,7 +148,7 @@ class TestMeanModel(object):
         assert_equal(b, np.empty((0,)))
         assert isinstance(zm.volatility, ConstantVariance)
         assert isinstance(zm.distribution, Normal)
-        assert_equal(zm.lags, None)
+        assert zm.lags is None
         res = zm.fit(disp=DISPLAY)
         assert_almost_equal(res.params, np.array([np.mean(self.y ** 2)]))
 
@@ -173,7 +173,7 @@ class TestMeanModel(object):
         harx = HARX(self.y, self.x, lags=[1, 5, 22])
         assert harx.x is self.x
         params = np.array([1.0, 0.4, 0.3, 0.2, 1.0, 1.0])
-        data = harx.simulate(params, self.T, x=self.rng.randn(self.T + 500, 1))
+        harx.simulate(params, self.T, x=self.rng.randn(self.T + 500, 1))
         iv = self.rng.randn(22, 1)
         data = harx.simulate(
             params, self.T, x=self.rng.randn(self.T + 500, 1), initial_value=iv
@@ -209,14 +209,14 @@ class TestMeanModel(object):
         params = np.linalg.pinv(rhs).dot(lhs)
         assert_almost_equal(params, res.params[:-1])
 
-        assert_equal(harx.hold_back, None)
+        assert harx.hold_back is None
         assert_equal(harx.lags, [1, 5, 22])
         assert_equal(harx.name, "HAR-X")
         assert_equal(harx.use_rotated, False)
-        harx
+        assert isinstance(harx.__repr__(), str)
         harx._repr_html_()
         res = harx.fit(cov_type="mle", disp=DISPLAY)
-        res
+        assert isinstance(res.__repr__(), str)
 
     def test_harx_error(self):
         with pytest.raises(ValueError):
@@ -293,7 +293,7 @@ class TestMeanModel(object):
         # TODO
         # assert_frame_equal(direct, forecasts)
 
-        assert_equal(har.hold_back, None)
+        assert har.hold_back is None
         assert_equal(har.lags, [1, 5, 22])
         assert_equal(har.name, "HAR")
         assert_equal(har.use_rotated, False)
@@ -355,7 +355,7 @@ class TestMeanModel(object):
         assert_equal(arx.lags, np.array([[0, 1, 2], [1, 2, 3]]))
         assert_equal(arx.name, "AR-X")
         assert_equal(arx.use_rotated, False)
-        arx
+        assert isinstance(arx.__repr__(), str)
         arx._repr_html_()
 
     def test_ar(self):
@@ -409,7 +409,7 @@ class TestMeanModel(object):
         # TODO
         # assert_frame_equal(direct, forecasts)
 
-        assert_equal(ar.hold_back, None)
+        assert ar.hold_back is None
         assert_equal(ar.lags, np.array([[0, 1, 2], [1, 2, 3]]))
         assert_equal(ar.name, "AR")
         assert_equal(ar.use_rotated, False)
@@ -431,7 +431,7 @@ class TestMeanModel(object):
         assert "Constant Variance" in str(summ)
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
         res = ar.fit(disp=DISPLAY, update_freq=5, cov_type="mle")
-        res.param_cov
+        assert isinstance(res.param_cov, pd.DataFrame)
         sims = res.forecast(horizon=5, method="simulation")
         assert isinstance(sims.simulations.residual_variances, np.ndarray)
         assert isinstance(sims.simulations.residuals, np.ndarray)
@@ -466,7 +466,7 @@ class TestMeanModel(object):
     def test_arch_arx(self):
         self.rng.seed(12345)
         x = self.rng.randn(500, 3)
-        y = x.sum(1) + 3 * self.rng.randn(500)
+        y = x.sum(1) + 3 * self.rng.standard_normal(500)
 
         am = ARX(y=y, x=x)
         res = am.fit(disp=DISPLAY)
@@ -483,9 +483,9 @@ class TestMeanModel(object):
         am = ARX(y=y, lags=2, x=x)
         res = am.fit(disp=DISPLAY)
         summ = res.summary().as_text()
-        repr = res.__repr__()
-        assert str(hex(id(res))) in repr
-        assert summ[:10] == repr[:10]
+        res_repr = res.__repr__()
+        assert str(hex(id(res))) in res_repr
+        assert summ[:10] == res_repr[:10]
 
         am.volatility = ARCH(p=2)
         results = am.fit(update_freq=0, disp=DISPLAY)
@@ -629,7 +629,7 @@ class TestMeanModel(object):
         with pytest.raises(ValueError):
             ar.simulate(np.ones(5), 100)
         with pytest.raises(ValueError):
-            ar.simulate(np.ones(3), 100, initial_value=self.rng.randn(10))
+            ar.simulate(np.ones(3), 100, initial_value=self.rng.standard_normal(10))
 
         with pytest.raises(ValueError):
             ar.volatility = ConstantVariance()
@@ -788,7 +788,7 @@ class TestMeanModel(object):
 
     def test_align(self):
         dates = pd.date_range("2000-01-01", "2010-01-01", freq="M")
-        columns = ["h." + "{0:>02}".format(str(h + 1)) for h in range(10)]
+        columns = ["h." + "{0:>02}".format(h + 1) for h in range(10)]
         forecasts = pd.DataFrame(self.rng.randn(120, 10), index=dates, columns=columns)
 
         aligned = _align_forecast(forecasts.copy(), align="origin")

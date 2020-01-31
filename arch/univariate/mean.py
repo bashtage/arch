@@ -3,7 +3,7 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 :class:`ARCHModel` and provide the same methods with the same inputs.
 """
 import copy
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 from pandas import DataFrame
@@ -183,7 +183,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self,
         y: Optional[ArrayLike] = None,
         x: Optional[ArrayLike] = None,
-        lags: Optional[Union[int, List[int], NDArray]] = None,
+        lags: Optional[
+            Union[int, Sequence[int], Sequence[Sequence[int]], NDArray]
+        ] = None,
         constant: bool = True,
         use_rotated: bool = False,
         hold_back: Optional[int] = None,
@@ -207,9 +209,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self.use_rotated = use_rotated
         self.regressors = np.empty((0, 0))
 
-        self.name = "HAR"
+        self._name = "HAR"
         if self._x is not None:
-            self.name += "-X"
+            self._name += "-X"
         if lags is not None:
             max_lags = int(np.max(np.asarray(lags, dtype=np.int32)))
         else:
@@ -302,7 +304,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def simulate(
         self,
-        params: ArrayLike,
+        params: Sequence[float],
         nobs: int,
         burn: int = 500,
         initial_value: Optional[Union[float, NDArray]] = None,
@@ -839,7 +841,7 @@ class ConstantMean(HARX):
             distribution=distribution,
             rescale=rescale,
         )
-        self.name = "Constant Mean"
+        self._name = "Constant Mean"
 
     def parameter_names(self) -> List[str]:
         return ["mu"]
@@ -986,7 +988,7 @@ class ZeroMean(HARX):
             distribution=distribution,
             rescale=rescale,
         )
-        self.name = "Zero Mean"
+        self._name = "Zero Mean"
 
     def parameter_names(self) -> List[str]:
         return []
@@ -1171,9 +1173,9 @@ class ARX(HARX):
             distribution=distribution,
             rescale=rescale,
         )
-        self.name = "AR"
+        self._name = "AR"
         if self._x is not None:
-            self.name += "-X"
+            self._name += "-X"
 
     def _model_description(self, include_lags: bool = True) -> Dict[str, str]:
         """Generates the model description for use by __str__ and related
@@ -1272,7 +1274,7 @@ class LS(HARX):
             distribution=distribution,
             rescale=rescale,
         )
-        self.name = "Least Squares"
+        self._name = "Least Squares"
 
     def _model_description(self, include_lags: bool = False) -> Dict[str, str]:
         return super()._model_description(include_lags)
@@ -1282,7 +1284,7 @@ def arch_model(
     y: Optional[ArrayLike],
     x: Optional[ArrayLike] = None,
     mean: str = "Constant",
-    lags: Union[int, List[int], NDArray] = 0,
+    lags: Optional[Union[int, List[int], NDArray]] = 0,
     vol: str = "Garch",
     p: Union[int, List[int]] = 1,
     o: int = 0,
@@ -1331,6 +1333,12 @@ def arch_model(
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
         lag lengths to estimate on the common sample.
+    rescale : bool
+        Flag indicating whether to automatically rescale data if the scale
+        of the data is likely to produce convergence issues when estimating
+        model parameters. If False, the model is estimated on the data without
+        transformation.  If True, than y is rescaled and the new scale is
+        reported in the estimation results.
 
     Returns
     -------
@@ -1402,15 +1410,24 @@ def arch_model(
     else:  # mean == "zero"
         am = ZeroMean(y, hold_back=hold_back, rescale=rescale)
 
+    if vol in ("arch", "garch", "figarch", "egarch") and not isinstance(p, int):
+        raise TypeError(
+            "p must be a scalar int for all volatility processes except HARCH."
+        )
+
     if vol == "constant":
         v: VolatilityProcess = ConstantVariance()
     elif vol == "arch":
+        assert isinstance(p, int)
         v = ARCH(p=p)
     elif vol == "figarch":
+        assert isinstance(p, int)
         v = FIGARCH(p=p, q=q)
     elif vol == "garch":
+        assert isinstance(p, int)
         v = GARCH(p=p, o=o, q=q, power=power)
     elif vol == "egarch":
+        assert isinstance(p, int)
         v = EGARCH(p=p, o=o, q=q)
     else:  # vol == 'harch'
         v = HARCH(lags=p)
