@@ -209,7 +209,7 @@ class TestUnitRoot(object):
         mu = dy.mean()
         dy2 = y[2:] - y[:-2]
         nq = dy.shape[0]
-        denom = np.sum((dy - mu) ** 2.0) / (nq)
+        denom = np.sum((dy - mu) ** 2.0) / nq
         num = np.sum((dy2 - 2 * mu) ** 2.0) / (nq * 2)
         ratio = num / denom
 

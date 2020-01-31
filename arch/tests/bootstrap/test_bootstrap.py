@@ -574,7 +574,7 @@ def test_bca(bs_setup):
     b = b[:, None]
     q = stats.norm.ppf(np.array([0.025, 0.975]))
 
-    base = bs_setup.func(bs_setup.x)
+    bs_setup.func(bs_setup.x)
     nobs = bs_setup.x.shape[0]
     jk = _loo_jackknife(bs_setup.func, nobs, [bs_setup.x], {})
     u = jk.mean() - jk
@@ -740,7 +740,7 @@ def test_bca_against_bcajack():
     rng_seed_obs = 42
     rs = np.random.RandomState(rng_seed_obs)
     observations = rs.multivariate_normal(mean=[8, 4], cov=np.identity(2), size=20)
-    B = 2000
+    b = 2000
     rng_seed = 123
     rs = np.random.RandomState(rng_seed)
     arch_bs = IIDBootstrap(observations, random_state=rs)
@@ -751,7 +751,7 @@ def test_bca_against_bcajack():
         return sample[1] / sample[0]
 
     arch_ci = arch_bs.conf_int(
-        func=func, reps=B, size=confidence_interval_size, method="bca"
+        func=func, reps=b, size=confidence_interval_size, method="bca"
     )
 
     # # callable from R
@@ -780,6 +780,9 @@ def test_bca_against_bcajack():
 
 
 def test_state():
+    final = 0
+    final_seed = 1
+    final_state = 2
     bs = IIDBootstrap(np.arange(100))
     bs.seed(23456)
     state = bs.get_state()
@@ -796,6 +799,8 @@ def test_state():
 
 
 def test_reset():
+    final = 0
+    final_reset = 1
     bs = IIDBootstrap(np.arange(100))
     state = bs.get_state()
     for data, _ in bs.bootstrap(10):
@@ -819,7 +824,7 @@ def test_pass_random_state():
 
 def test_iid_unequal_equiv():
     rs = RandomState(0)
-    x = rs.randn(500)
+    x = rs.standard_normal(500)
     rs1 = RandomState(0)
     bs1 = IIDBootstrap(x, random_state=rs1)
 
@@ -836,8 +841,8 @@ def test_unequal_bs():
         return args[0].mean() - args[1].mean()
 
     rs = RandomState(0)
-    x = rs.randn(800)
-    y = rs.randn(200)
+    x = rs.standard_normal(800)
+    y = rs.standard_normal(200)
 
     bs = IndependentSamplesBootstrap(x, y, random_state=rs)
     variance = bs.var(mean_diff)
@@ -862,8 +867,8 @@ def test_unequal_bs_kwargs():
         return x.mean() - y.mean()
 
     rs = RandomState(0)
-    x = rs.randn(800)
-    y = rs.randn(200)
+    x = rs.standard_normal(800)
+    y = rs.standard_normal(200)
 
     bs = IndependentSamplesBootstrap(x=x, y=y, random_state=rs)
     variance = bs.var(mean_diff)
@@ -886,8 +891,8 @@ def test_unequal_reset():
         return args[0].mean() - args[1].mean()
 
     rs = RandomState(0)
-    x = rs.randn(800)
-    y = rs.randn(200)
+    x = rs.standard_normal(800)
+    y = rs.standard_normal(200)
     orig_state = rs.get_state()
     bs = IndependentSamplesBootstrap(x, y, random_state=rs)
     variance = bs.var(mean_diff)

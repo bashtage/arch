@@ -4,12 +4,13 @@ Core classes for ARCH models
 from abc import ABCMeta, abstractmethod
 from copy import deepcopy
 import datetime as dt
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 import warnings
 
 import numpy as np
 import pandas as pd
 from pandas import DataFrame, Series
+from pandas.util._decorators import deprecate_kwarg
 from property_cached import cached_property
 from scipy.optimize import OptimizeResult
 import scipy.stats as stats
@@ -46,6 +47,7 @@ __all__ = [
     "ARCHModel",
     "ARCHModelForecast",
     "constraint",
+    "format_float_fixed",
 ]
 
 CONVERGENCE_WARNGING = """\
@@ -170,7 +172,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         hold_back: Optional[int] = None,
         rescale: Optional[bool] = None,
     ) -> None:
-
+        self._name = "ARCHModel"
         self._is_pandas = isinstance(y, (DataFrame, Series))
         if y is not None:
             self._y_series = ensure1d(y, "y", series=True)
@@ -204,6 +206,11 @@ class ARCHModel(object, metaclass=ABCMeta):
             self._distribution = Normal()
         else:
             raise TypeError("distribution must inherit from Distribution")
+
+    @property
+    def name(self) -> str:
+        """THe name of the model."""
+        return self._name
 
     def constraints(self) -> Tuple[NDArray, NDArray]:
         """
@@ -520,7 +527,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         last_obs: Union[int, DateLike] = None,
         tol: Optional[float] = None,
         options: Optional[Dict[str, Any]] = None,
-        backcast: Optional[float] = None,
+        backcast: Optional[Union[float, NDArray]] = None,
     ) -> "ARCHModelResult":
         r"""
         Fits the model given a nobs by 1 vector of sigma2 values
@@ -1009,7 +1016,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         resid: NDArray,
         volatility: NDArray,
         dep_var: Series,
-        names: List[str],
+        names: Sequence[str],
         loglikelihood: float,
         is_pandas: bool,
         model: ARCHModel,
@@ -1094,7 +1101,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         table.extend_right(SimpleTable(vals, stubs=stubs))
         smry.tables.append(table)
 
-        stubs = self._names
+        stubs = list(self._names)
         header = ["coef"]
         coef_vals = (self.params,)
         formats = [(10, 4)]
@@ -1303,7 +1310,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
     def forecast(
         self,
-        params: Optional[NDArray] = None,
+        params: Optional[ArrayLike1D] = None,
         horizon: int = 1,
         start: Union[int, DateLike] = None,
         align: str = "origin",
@@ -1390,13 +1397,14 @@ class ARCHModelFixedResult(_SummaryRepr):
             params, horizon, start, align, method, simulations, rng, random_state
         )
 
+    @deprecate_kwarg("type", "plot_type")
     def hedgehog_plot(
         self,
         params: Optional[ArrayLike1D] = None,
         horizon: int = 10,
         step: int = 10,
         start: Union[int, DateLike] = None,
-        type: str = "volatility",
+        plot_type: str = "volatility",
         method: str = "analytic",
         simulations: int = 1000,
     ) -> "Figure":
@@ -1419,7 +1427,7 @@ class ARCHModelFixedResult(_SummaryRepr):
             inputs that have a datetime index.  Strings must be convertible
             to a date time, such as in '1945-01-01'.  If not provided, the start
             is set to the earliest forecastable date.
-        type : {'volatility', 'mean'}
+        plot_type : {'volatility', 'mean'}
             Quantity to plot, the forecast volatility or the forecast mean
         method : {'analytic', 'simulation', 'bootstrap'}
             Method to use when producing the forecast. The default is analytic.
@@ -1449,7 +1457,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         """
         import matplotlib.pyplot as plt
 
-        plot_mean = type.lower() == "mean"
+        plot_mean = plot_type.lower() == "mean"
         if start is None:
             invalid_start = True
             start = 0
@@ -1591,7 +1599,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         volatility: NDArray,
         cov_type: str,
         dep_var: Series,
-        names: List[str],
+        names: Sequence[str],
         loglikelihood: float,
         is_pandas: bool,
         optim_output: OptimizeResult,
@@ -1722,7 +1730,7 @@ class ARCHModelResult(ARCHModelFixedResult):
                 + "]"
             )
 
-        stubs = self._names
+        stubs = list(self._names)
         header = ["coef", "std err", "t", "P>|t|", "95.0% Conf. Int."]
         table_vals = (
             self.params,

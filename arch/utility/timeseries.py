@@ -1,4 +1,4 @@
-from typing import List, Optional, Sequence, Tuple
+from typing import Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
@@ -18,7 +18,7 @@ Some of the column named being added were not unique and have been renamed.
 
 
 def _enforce_unique_col_name(
-    existing: List[str], new: Sequence[str]
+    existing: Sequence[str], new: Sequence[str]
 ) -> Tuple[str, ...]:
     converted_names = []
     unique_names = list(new[:])
@@ -62,7 +62,7 @@ def add_trend(
         "ctt" add constant and linear and quadratic trend.
     prepend : bool
         If True, prepends the new data to the columns of x.
-    n : int, positive
+    nobs : int, positive
         Positive integer containing the length of the trend series.  Only used
         if x is none.
     has_constant : str {'raise', 'add', 'skip'}

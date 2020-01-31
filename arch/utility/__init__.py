@@ -7,9 +7,19 @@ from arch.utility.cov import cov_nw
 PKG = os.path.dirname(os.path.dirname(__file__))
 
 
-def test(
-    extra_args: Optional[Union[str, Sequence[str]]] = None, exit: bool = True
-) -> None:
+def test(extra_args: Optional[Union[str, Sequence[str]]] = None) -> None:
+    """
+    Test runner that allows testing of installed package.
+
+    Exists with test status code upon completion.
+
+    Parameters
+    ----------
+    extra_args : {str, list[str]}, default None
+        Extra arguments to pass to pytest. Default options are --tb=short
+        and --disable-pytest-warnings. Providing extra_args overwrites the
+        defaults with the user-provided arguments.
+    """
     try:
         import pytest
     except ImportError:
@@ -28,8 +38,7 @@ def test(
     cmd = [PKG] + cmd
     print("running: pytest {}".format(" ".join(cmd)))
     status = pytest.main(cmd)
-    if exit:
-        sys.exit(status)
+    sys.exit(status)
 
 
 __all__ = ["cov_nw", "test"]

@@ -326,7 +326,7 @@ def midas_recursion(double[::1] parameters,
 cdef double[::1] _figarch_weights(double[::1] parameters,
                                   int p,
                                   int q,
-                                  int truncation):
+                                  int trunc_lag):
 
     cdef double phi, d, beta
     cdef double [::1] lam, delta
@@ -337,19 +337,19 @@ cdef double[::1] _figarch_weights(double[::1] parameters,
     beta = parameters[p + q] if q else 0.0
 
     # Recursive weight computation
-    lam = np.empty(truncation)
-    delta = np.empty(truncation)
+    lam = np.empty(trunc_lag)
+    delta = np.empty(trunc_lag)
     lam[0] = phi - beta + d
     delta[0] = d
-    for i in range(1, truncation):
+    for i in range(1, trunc_lag):
         delta[i] = (i - d) / (i + 1) * delta[i - 1]
         lam[i] = beta * lam[i - 1] + (delta[i] - phi * delta[i - 1])
 
     return lam
 
 
-def figarch_weights(double[::1] parameters, int p, int q, int truncation):
-    return np.asarray(_figarch_weights(parameters, p, q, truncation))
+def figarch_weights(double[::1] parameters, int p, int q, int trunc_lag):
+    return np.asarray(_figarch_weights(parameters, p, q, trunc_lag))
 
 
 def figarch_recursion(double[::1] parameters,

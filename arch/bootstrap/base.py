@@ -1,5 +1,15 @@
 import copy
-from typing import Any, Callable, Dict, Generator, List, Optional, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generator,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 from numpy.random import RandomState
@@ -58,7 +68,10 @@ def _get_acceleration(jk_params: NDArray) -> float:
 
 
 def _loo_jackknife(
-    func: Callable[..., NDArray], nobs: int, args: List[ArrayLike], kwargs: ArrayLike
+    func: Callable[..., NDArray],
+    nobs: int,
+    args: Sequence[ArrayLike],
+    kwargs: ArrayLike,
 ) -> NDArray:
     """
     Leave one out jackknife estimation

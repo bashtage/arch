@@ -5,7 +5,7 @@ from arch.compat.pandas import is_datetime64_any_dtype
 
 from abc import ABCMeta
 import datetime as dt
-from typing import Any, Dict, Hashable, List, Optional, Tuple, Type, Union
+from typing import Any, Dict, Hashable, List, Optional, Sequence, Tuple, Type, Union
 
 import numpy as np
 from pandas import DataFrame, DatetimeIndex, Index, NaT, Series, Timestamp, to_datetime
@@ -21,6 +21,7 @@ __all__ = [
     "cutoff_to_index",
     "ensure2d",
     "AbstractDocStringInheritor",
+    "find_index",
 ]
 
 deprecation_doc = """
@@ -29,7 +30,9 @@ deprecation_doc = """
 
 
 def ensure1d(
-    x: Union[Series, DataFrame, NDArray], name: Hashable, series: bool = False
+    x: Union[int, float, Sequence[Union[int, float]], ArrayLike,],  # noqa: E231
+    name: Optional[Hashable],
+    series: bool = False,
 ) -> Union[NDArray, Series]:
     if isinstance(x, Series):
         if not isinstance(x.name, str):
@@ -42,31 +45,31 @@ def ensure1d(
     if isinstance(x, DataFrame):
         if x.shape[1] != 1:
             raise ValueError(f"{name} must be squeezable to 1 dimension")
-        else:
-            x = Series(x.iloc[:, 0], x.index)
-            if not isinstance(x.name, str):
-                x.name = str(x.name)
-        if series:
-            return x
-        else:
-            return np.asarray(x)
+        if not series:
+            return np.asarray(x.iloc[:, 0])
+        x_series = Series(x.iloc[:, 0], x.index)
+        if not isinstance(x_series.name, str):
+            x_series.name = str(x_series.name)
+        return x_series
 
-    if not isinstance(x, np.ndarray):
-        x = np.asarray(x)
-    if x.ndim == 0:
-        x = x[None]
-    elif x.ndim != 1:
-        x = np.squeeze(x)
-        if x.ndim != 1:
-            raise ValueError(f"{name} must be squeezable to 1 dimension")
+    x_arr = np.squeeze(np.asarray(x))
+    if x_arr.ndim == 0:
+        x_arr = x_arr[None]
+    elif x_arr.ndim != 1:
+        raise ValueError(f"{name} must be squeezable to 1 dimension")
 
     if series:
-        return Series(x, name=name)
+        return Series(x_arr, name=name)
     else:
-        return np.asarray(x)
+        return x_arr
 
 
-def ensure2d(x: ArrayLike, name: str) -> Union[DataFrame, NDArray]:
+def ensure2d(
+    x: Union[
+        Sequence[Union[float, int]], Sequence[Sequence[Union[float, int]]], ArrayLike
+    ],
+    name: str,
+) -> Union[DataFrame, NDArray]:
     if isinstance(x, Series):
         return DataFrame(x)
     elif isinstance(x, DataFrame):
@@ -146,13 +149,13 @@ class DocStringInheritor(type):
 
 
 class ConcreteClassMeta(ABCMeta):
-    def __init__(self, *args: Any, **kwargs: Any):
-        super(ConcreteClassMeta, self).__init__(*args, **kwargs)
-        missing: List[str] = getattr(self, "__abstractmethods__", [])
+    def __init__(cls, *args: Any, **kwargs: Any):
+        super(ConcreteClassMeta, cls).__init__(*args, **kwargs)
+        missing: List[str] = getattr(cls, "__abstractmethods__", [])
         if missing:
             missing_meth = ", ".join(missing)
             raise TypeError(
-                f"{self.__name__} has not implemented abstract methods {missing_meth}"
+                f"{cls.__name__} has not implemented abstract methods {missing_meth}"
             )
 
 
@@ -161,7 +164,8 @@ class AbstractDocStringInheritor(ConcreteClassMeta, DocStringInheritor):
 
 
 def date_to_index(
-    date: Union[str, dt.datetime, np.datetime64, Timestamp], date_index: DatetimeIndex
+    date: Union[str, dt.date, dt.datetime, np.datetime64, Timestamp],
+    date_index: Union[DatetimeIndex, NDArray],
 ) -> int:
     """
     Looks up a date in an array of dates
@@ -190,6 +194,7 @@ def date_to_index(
     if not isinstance(date, (dt.datetime, np.datetime64, str)):
         raise ValueError("date must be a datetime, datetime64 or string")
     elif isinstance(date, Timestamp):
+        assert isinstance(date_index, DatetimeIndex)
         if date_index.tzinfo is not None:
             date = date.tz_convert("GMT").tz_localize(None)
         date = date.to_datetime64()
@@ -250,7 +255,7 @@ def cutoff_to_index(
     return int_index
 
 
-def find_index(s: AnyPandas, index: DateLike) -> int:
+def find_index(s: AnyPandas, index: Union[int, DateLike]) -> int:
     """
     Returns the numeric index for a string or datetime
 

@@ -10,10 +10,10 @@ import pandas as pd
 from statsmodels.tsa.tsatools import add_trend
 
 
-def simulate_kpss(nobs, B, trend="c", rng=None):
+def simulate_kpss(nobs, b, trend="c", rng=None):
     """
     Simulated the KPSS test statistic for nobs observations,
-    performing B replications.
+    performing b replications.
     """
     if rng is None:
         rng = RandomState()
@@ -21,7 +21,7 @@ def simulate_kpss(nobs, B, trend="c", rng=None):
 
     standard_normal = rng.standard_normal
 
-    e = standard_normal((nobs, B))
+    e = standard_normal((nobs, b))
     z = np.ones((nobs, 1))
     if trend == "ct":
         z = add_trend(z, trend="t")

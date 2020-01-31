@@ -222,7 +222,7 @@ class TestStepM(object):
         stepm_pandas = StepM(self.benchmark_series, adj_models, size=0.20, reps=200)
         stepm_pandas.seed(23456)
         stepm_pandas.compute()
-        stepm_pandas.superior_models
+        assert isinstance(stepm_pandas.superior_models, list)
         members = adj_models.columns.isin(stepm_pandas.superior_models)
         numeric_locs = np.argwhere(members).squeeze()
         numeric_locs.sort()
@@ -236,7 +236,7 @@ class TestStepM(object):
         assert len(superior_models) > 0
         spa = SPA(self.benchmark, adj_models, reps=120)
         spa.compute()
-        spa.pvalues
+        assert isinstance(spa.pvalues, pd.Series)
         spa.critical_values(0.05)
         spa.better_models(0.05)
         adj_models = self.models_df - linspace(-3.0, 3.0, self.k)
@@ -295,7 +295,7 @@ class TestStepM(object):
             stepm.superior_models
 
     def test_exact_ties(self):
-        adj_models = self.models_df - 100.0
+        adj_models: pd.DataFrame = self.models_df - 100.0
         adj_models.iloc[:, :2] -= adj_models.iloc[:, :2].mean()
         adj_models.iloc[:, :2] += self.benchmark_df.mean().iloc[0]
         stepm = StepM(self.benchmark_df, adj_models, size=0.10)
@@ -418,8 +418,8 @@ class TestMCS(object):
     def test_output_types(self):
         mcs = MCS(self.losses_df, 0.05, reps=100, block_size=10, method="r")
         mcs.compute()
-        assert_equal(type(mcs.included), list)
-        assert_equal(type(mcs.excluded), list)
+        assert isinstance(mcs.included, list)
+        assert isinstance(mcs.excluded, list)
         assert isinstance(mcs.pvalues, pd.DataFrame)
 
     def test_mcs_error(self):
