@@ -34,6 +34,7 @@ arch.univariate.ConstantMean
       :toctree: generated/
 
       ~ConstantMean.distribution
+      ~ConstantMean.name
       ~ConstantMean.num_params
       ~ConstantMean.volatility
       ~ConstantMean.x

@@ -33,6 +33,7 @@ arch.univariate.volatility.VolatilityProcess
    .. autosummary::
       :toctree: generated/
 
+      ~VolatilityProcess.name
       ~VolatilityProcess.start
       ~VolatilityProcess.stop
    

@@ -34,6 +34,7 @@ arch.univariate.HARX
       :toctree: generated/
 
       ~HARX.distribution
+      ~HARX.name
       ~HARX.num_params
       ~HARX.volatility
       ~HARX.x

@@ -33,6 +33,7 @@ arch.univariate.HARCH
    .. autosummary::
       :toctree: generated/
 
+      ~HARCH.name
       ~HARCH.start
       ~HARCH.stop
    

@@ -33,6 +33,7 @@ arch.univariate.distribution.Distribution
    .. autosummary::
       :toctree: generated/
 
+      ~Distribution.name
       ~Distribution.random_state
    
    

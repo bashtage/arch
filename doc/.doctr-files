@@ -259,6 +259,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.ARCH.bounds.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ARCH.compute_variance.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ARCH.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ARCH.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.ARCH.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ARCH.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ARCH.simulate.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ARCH.start.rst.txt
@@ -272,6 +273,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.ARX.distribution.rst
 doc/_sources/univariate/generated/generated/arch.univariate.ARX.fit.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ARX.fix.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ARX.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.ARX.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ARX.num_params.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ARX.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ARX.resids.rst.txt
@@ -287,6 +289,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.ConstantMean.distrib
 doc/_sources/univariate/generated/generated/arch.univariate.ConstantMean.fit.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ConstantMean.fix.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ConstantMean.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.ConstantMean.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ConstantMean.num_params.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ConstantMean.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ConstantMean.resids.rst.txt
@@ -301,6 +304,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.ConstantVariance.bou
 doc/_sources/univariate/generated/generated/arch.univariate.ConstantVariance.compute_variance.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ConstantVariance.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ConstantVariance.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.ConstantVariance.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ConstantVariance.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ConstantVariance.simulate.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ConstantVariance.start.rst.txt
@@ -313,6 +317,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.EGARCH.bounds.rst.tx
 doc/_sources/univariate/generated/generated/arch.univariate.EGARCH.compute_variance.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.EGARCH.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.EGARCH.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.EGARCH.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.EGARCH.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.EGARCH.simulate.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.EGARCH.start.rst.txt
@@ -325,6 +330,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.EWMAVariance.bounds.
 doc/_sources/univariate/generated/generated/arch.univariate.EWMAVariance.compute_variance.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.EWMAVariance.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.EWMAVariance.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.EWMAVariance.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.EWMAVariance.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.EWMAVariance.simulate.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.EWMAVariance.start.rst.txt
@@ -337,6 +343,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.FIGARCH.bounds.rst.t
 doc/_sources/univariate/generated/generated/arch.univariate.FIGARCH.compute_variance.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.FIGARCH.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.FIGARCH.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.FIGARCH.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.FIGARCH.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.FIGARCH.simulate.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.FIGARCH.start.rst.txt
@@ -350,6 +357,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.FixedVariance.bounds
 doc/_sources/univariate/generated/generated/arch.univariate.FixedVariance.compute_variance.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.FixedVariance.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.FixedVariance.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.FixedVariance.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.FixedVariance.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.FixedVariance.simulate.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.FixedVariance.start.rst.txt
@@ -362,6 +370,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.GARCH.bounds.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GARCH.compute_variance.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GARCH.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GARCH.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.GARCH.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GARCH.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GARCH.simulate.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GARCH.start.rst.txt
@@ -373,6 +382,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.cdf
 doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.loglikelihood.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.moment.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.partial_moment.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.GeneralizedError.ppf.rst.txt
@@ -385,6 +395,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.HARCH.bounds.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.HARCH.compute_variance.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.HARCH.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.HARCH.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.HARCH.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.HARCH.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.HARCH.simulate.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.HARCH.start.rst.txt
@@ -398,6 +409,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.HARX.distribution.rs
 doc/_sources/univariate/generated/generated/arch.univariate.HARX.fit.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.HARX.fix.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.HARX.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.HARX.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.HARX.num_params.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.HARX.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.HARX.resids.rst.txt
@@ -413,6 +425,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.LS.distribution.rst.
 doc/_sources/univariate/generated/generated/arch.univariate.LS.fit.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.LS.fix.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.LS.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.LS.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.LS.num_params.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.LS.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.LS.resids.rst.txt
@@ -427,6 +440,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.MIDASHyperbolic.boun
 doc/_sources/univariate/generated/generated/arch.univariate.MIDASHyperbolic.compute_variance.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.MIDASHyperbolic.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.MIDASHyperbolic.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.MIDASHyperbolic.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.MIDASHyperbolic.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.MIDASHyperbolic.simulate.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.MIDASHyperbolic.start.rst.txt
@@ -438,6 +452,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.Normal.cdf.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.Normal.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.Normal.loglikelihood.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.Normal.moment.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.Normal.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.Normal.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.Normal.partial_moment.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.Normal.ppf.rst.txt
@@ -450,6 +465,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.RiskMetrics2006.boun
 doc/_sources/univariate/generated/generated/arch.univariate.RiskMetrics2006.compute_variance.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.RiskMetrics2006.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.RiskMetrics2006.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.RiskMetrics2006.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.RiskMetrics2006.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.RiskMetrics2006.simulate.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.RiskMetrics2006.start.rst.txt
@@ -461,6 +477,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.cdf.rst.
 doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.loglikelihood.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.moment.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.partial_moment.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.SkewStudent.ppf.rst.txt
@@ -472,6 +489,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.cdf.rst.tx
 doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.loglikelihood.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.moment.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.partial_moment.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.StudentsT.ppf.rst.txt
@@ -485,6 +503,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.ZeroMean.distributio
 doc/_sources/univariate/generated/generated/arch.univariate.ZeroMean.fit.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ZeroMean.fix.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ZeroMean.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.ZeroMean.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ZeroMean.num_params.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ZeroMean.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.ZeroMean.resids.rst.txt
@@ -500,6 +519,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModel.distr
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModel.fit.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModel.fix.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModel.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModel.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModel.num_params.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModel.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.base.ARCHModel.resids.rst.txt
@@ -554,6 +574,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.distribution.Distrib
 doc/_sources/univariate/generated/generated/arch.univariate.distribution.Distribution.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.distribution.Distribution.loglikelihood.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.distribution.Distribution.moment.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.distribution.Distribution.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.distribution.Distribution.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.distribution.Distribution.partial_moment.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.distribution.Distribution.ppf.rst.txt
@@ -566,6 +587,7 @@ doc/_sources/univariate/generated/generated/arch.univariate.volatility.Volatilit
 doc/_sources/univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.compute_variance.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.constraints.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.forecast.rst.txt
+doc/_sources/univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.name.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.parameter_names.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.simulate.rst.txt
 doc/_sources/univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.start.rst.txt
@@ -886,6 +908,7 @@ doc/univariate/generated/generated/arch.univariate.ARCH.bounds.html
 doc/univariate/generated/generated/arch.univariate.ARCH.compute_variance.html
 doc/univariate/generated/generated/arch.univariate.ARCH.constraints.html
 doc/univariate/generated/generated/arch.univariate.ARCH.forecast.html
+doc/univariate/generated/generated/arch.univariate.ARCH.name.html
 doc/univariate/generated/generated/arch.univariate.ARCH.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.ARCH.simulate.html
 doc/univariate/generated/generated/arch.univariate.ARCH.start.html
@@ -899,6 +922,7 @@ doc/univariate/generated/generated/arch.univariate.ARX.distribution.html
 doc/univariate/generated/generated/arch.univariate.ARX.fit.html
 doc/univariate/generated/generated/arch.univariate.ARX.fix.html
 doc/univariate/generated/generated/arch.univariate.ARX.forecast.html
+doc/univariate/generated/generated/arch.univariate.ARX.name.html
 doc/univariate/generated/generated/arch.univariate.ARX.num_params.html
 doc/univariate/generated/generated/arch.univariate.ARX.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.ARX.resids.html
@@ -914,6 +938,7 @@ doc/univariate/generated/generated/arch.univariate.ConstantMean.distribution.htm
 doc/univariate/generated/generated/arch.univariate.ConstantMean.fit.html
 doc/univariate/generated/generated/arch.univariate.ConstantMean.fix.html
 doc/univariate/generated/generated/arch.univariate.ConstantMean.forecast.html
+doc/univariate/generated/generated/arch.univariate.ConstantMean.name.html
 doc/univariate/generated/generated/arch.univariate.ConstantMean.num_params.html
 doc/univariate/generated/generated/arch.univariate.ConstantMean.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.ConstantMean.resids.html
@@ -928,6 +953,7 @@ doc/univariate/generated/generated/arch.univariate.ConstantVariance.bounds.html
 doc/univariate/generated/generated/arch.univariate.ConstantVariance.compute_variance.html
 doc/univariate/generated/generated/arch.univariate.ConstantVariance.constraints.html
 doc/univariate/generated/generated/arch.univariate.ConstantVariance.forecast.html
+doc/univariate/generated/generated/arch.univariate.ConstantVariance.name.html
 doc/univariate/generated/generated/arch.univariate.ConstantVariance.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.ConstantVariance.simulate.html
 doc/univariate/generated/generated/arch.univariate.ConstantVariance.start.html
@@ -940,6 +966,7 @@ doc/univariate/generated/generated/arch.univariate.EGARCH.bounds.html
 doc/univariate/generated/generated/arch.univariate.EGARCH.compute_variance.html
 doc/univariate/generated/generated/arch.univariate.EGARCH.constraints.html
 doc/univariate/generated/generated/arch.univariate.EGARCH.forecast.html
+doc/univariate/generated/generated/arch.univariate.EGARCH.name.html
 doc/univariate/generated/generated/arch.univariate.EGARCH.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.EGARCH.simulate.html
 doc/univariate/generated/generated/arch.univariate.EGARCH.start.html
@@ -952,6 +979,7 @@ doc/univariate/generated/generated/arch.univariate.EWMAVariance.bounds.html
 doc/univariate/generated/generated/arch.univariate.EWMAVariance.compute_variance.html
 doc/univariate/generated/generated/arch.univariate.EWMAVariance.constraints.html
 doc/univariate/generated/generated/arch.univariate.EWMAVariance.forecast.html
+doc/univariate/generated/generated/arch.univariate.EWMAVariance.name.html
 doc/univariate/generated/generated/arch.univariate.EWMAVariance.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.EWMAVariance.simulate.html
 doc/univariate/generated/generated/arch.univariate.EWMAVariance.start.html
@@ -964,6 +992,7 @@ doc/univariate/generated/generated/arch.univariate.FIGARCH.bounds.html
 doc/univariate/generated/generated/arch.univariate.FIGARCH.compute_variance.html
 doc/univariate/generated/generated/arch.univariate.FIGARCH.constraints.html
 doc/univariate/generated/generated/arch.univariate.FIGARCH.forecast.html
+doc/univariate/generated/generated/arch.univariate.FIGARCH.name.html
 doc/univariate/generated/generated/arch.univariate.FIGARCH.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.FIGARCH.simulate.html
 doc/univariate/generated/generated/arch.univariate.FIGARCH.start.html
@@ -977,6 +1006,7 @@ doc/univariate/generated/generated/arch.univariate.FixedVariance.bounds.html
 doc/univariate/generated/generated/arch.univariate.FixedVariance.compute_variance.html
 doc/univariate/generated/generated/arch.univariate.FixedVariance.constraints.html
 doc/univariate/generated/generated/arch.univariate.FixedVariance.forecast.html
+doc/univariate/generated/generated/arch.univariate.FixedVariance.name.html
 doc/univariate/generated/generated/arch.univariate.FixedVariance.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.FixedVariance.simulate.html
 doc/univariate/generated/generated/arch.univariate.FixedVariance.start.html
@@ -989,6 +1019,7 @@ doc/univariate/generated/generated/arch.univariate.GARCH.bounds.html
 doc/univariate/generated/generated/arch.univariate.GARCH.compute_variance.html
 doc/univariate/generated/generated/arch.univariate.GARCH.constraints.html
 doc/univariate/generated/generated/arch.univariate.GARCH.forecast.html
+doc/univariate/generated/generated/arch.univariate.GARCH.name.html
 doc/univariate/generated/generated/arch.univariate.GARCH.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.GARCH.simulate.html
 doc/univariate/generated/generated/arch.univariate.GARCH.start.html
@@ -1000,6 +1031,7 @@ doc/univariate/generated/generated/arch.univariate.GeneralizedError.cdf.html
 doc/univariate/generated/generated/arch.univariate.GeneralizedError.constraints.html
 doc/univariate/generated/generated/arch.univariate.GeneralizedError.loglikelihood.html
 doc/univariate/generated/generated/arch.univariate.GeneralizedError.moment.html
+doc/univariate/generated/generated/arch.univariate.GeneralizedError.name.html
 doc/univariate/generated/generated/arch.univariate.GeneralizedError.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.GeneralizedError.partial_moment.html
 doc/univariate/generated/generated/arch.univariate.GeneralizedError.ppf.html
@@ -1012,6 +1044,7 @@ doc/univariate/generated/generated/arch.univariate.HARCH.bounds.html
 doc/univariate/generated/generated/arch.univariate.HARCH.compute_variance.html
 doc/univariate/generated/generated/arch.univariate.HARCH.constraints.html
 doc/univariate/generated/generated/arch.univariate.HARCH.forecast.html
+doc/univariate/generated/generated/arch.univariate.HARCH.name.html
 doc/univariate/generated/generated/arch.univariate.HARCH.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.HARCH.simulate.html
 doc/univariate/generated/generated/arch.univariate.HARCH.start.html
@@ -1025,6 +1058,7 @@ doc/univariate/generated/generated/arch.univariate.HARX.distribution.html
 doc/univariate/generated/generated/arch.univariate.HARX.fit.html
 doc/univariate/generated/generated/arch.univariate.HARX.fix.html
 doc/univariate/generated/generated/arch.univariate.HARX.forecast.html
+doc/univariate/generated/generated/arch.univariate.HARX.name.html
 doc/univariate/generated/generated/arch.univariate.HARX.num_params.html
 doc/univariate/generated/generated/arch.univariate.HARX.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.HARX.resids.html
@@ -1040,6 +1074,7 @@ doc/univariate/generated/generated/arch.univariate.LS.distribution.html
 doc/univariate/generated/generated/arch.univariate.LS.fit.html
 doc/univariate/generated/generated/arch.univariate.LS.fix.html
 doc/univariate/generated/generated/arch.univariate.LS.forecast.html
+doc/univariate/generated/generated/arch.univariate.LS.name.html
 doc/univariate/generated/generated/arch.univariate.LS.num_params.html
 doc/univariate/generated/generated/arch.univariate.LS.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.LS.resids.html
@@ -1054,6 +1089,7 @@ doc/univariate/generated/generated/arch.univariate.MIDASHyperbolic.bounds.html
 doc/univariate/generated/generated/arch.univariate.MIDASHyperbolic.compute_variance.html
 doc/univariate/generated/generated/arch.univariate.MIDASHyperbolic.constraints.html
 doc/univariate/generated/generated/arch.univariate.MIDASHyperbolic.forecast.html
+doc/univariate/generated/generated/arch.univariate.MIDASHyperbolic.name.html
 doc/univariate/generated/generated/arch.univariate.MIDASHyperbolic.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.MIDASHyperbolic.simulate.html
 doc/univariate/generated/generated/arch.univariate.MIDASHyperbolic.start.html
@@ -1065,6 +1101,7 @@ doc/univariate/generated/generated/arch.univariate.Normal.cdf.html
 doc/univariate/generated/generated/arch.univariate.Normal.constraints.html
 doc/univariate/generated/generated/arch.univariate.Normal.loglikelihood.html
 doc/univariate/generated/generated/arch.univariate.Normal.moment.html
+doc/univariate/generated/generated/arch.univariate.Normal.name.html
 doc/univariate/generated/generated/arch.univariate.Normal.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.Normal.partial_moment.html
 doc/univariate/generated/generated/arch.univariate.Normal.ppf.html
@@ -1077,6 +1114,7 @@ doc/univariate/generated/generated/arch.univariate.RiskMetrics2006.bounds.html
 doc/univariate/generated/generated/arch.univariate.RiskMetrics2006.compute_variance.html
 doc/univariate/generated/generated/arch.univariate.RiskMetrics2006.constraints.html
 doc/univariate/generated/generated/arch.univariate.RiskMetrics2006.forecast.html
+doc/univariate/generated/generated/arch.univariate.RiskMetrics2006.name.html
 doc/univariate/generated/generated/arch.univariate.RiskMetrics2006.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.RiskMetrics2006.simulate.html
 doc/univariate/generated/generated/arch.univariate.RiskMetrics2006.start.html
@@ -1088,6 +1126,7 @@ doc/univariate/generated/generated/arch.univariate.SkewStudent.cdf.html
 doc/univariate/generated/generated/arch.univariate.SkewStudent.constraints.html
 doc/univariate/generated/generated/arch.univariate.SkewStudent.loglikelihood.html
 doc/univariate/generated/generated/arch.univariate.SkewStudent.moment.html
+doc/univariate/generated/generated/arch.univariate.SkewStudent.name.html
 doc/univariate/generated/generated/arch.univariate.SkewStudent.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.SkewStudent.partial_moment.html
 doc/univariate/generated/generated/arch.univariate.SkewStudent.ppf.html
@@ -1099,6 +1138,7 @@ doc/univariate/generated/generated/arch.univariate.StudentsT.cdf.html
 doc/univariate/generated/generated/arch.univariate.StudentsT.constraints.html
 doc/univariate/generated/generated/arch.univariate.StudentsT.loglikelihood.html
 doc/univariate/generated/generated/arch.univariate.StudentsT.moment.html
+doc/univariate/generated/generated/arch.univariate.StudentsT.name.html
 doc/univariate/generated/generated/arch.univariate.StudentsT.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.StudentsT.partial_moment.html
 doc/univariate/generated/generated/arch.univariate.StudentsT.ppf.html
@@ -1112,6 +1152,7 @@ doc/univariate/generated/generated/arch.univariate.ZeroMean.distribution.html
 doc/univariate/generated/generated/arch.univariate.ZeroMean.fit.html
 doc/univariate/generated/generated/arch.univariate.ZeroMean.fix.html
 doc/univariate/generated/generated/arch.univariate.ZeroMean.forecast.html
+doc/univariate/generated/generated/arch.univariate.ZeroMean.name.html
 doc/univariate/generated/generated/arch.univariate.ZeroMean.num_params.html
 doc/univariate/generated/generated/arch.univariate.ZeroMean.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.ZeroMean.resids.html
@@ -1127,6 +1168,7 @@ doc/univariate/generated/generated/arch.univariate.base.ARCHModel.distribution.h
 doc/univariate/generated/generated/arch.univariate.base.ARCHModel.fit.html
 doc/univariate/generated/generated/arch.univariate.base.ARCHModel.fix.html
 doc/univariate/generated/generated/arch.univariate.base.ARCHModel.forecast.html
+doc/univariate/generated/generated/arch.univariate.base.ARCHModel.name.html
 doc/univariate/generated/generated/arch.univariate.base.ARCHModel.num_params.html
 doc/univariate/generated/generated/arch.univariate.base.ARCHModel.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.base.ARCHModel.resids.html
@@ -1181,6 +1223,7 @@ doc/univariate/generated/generated/arch.univariate.distribution.Distribution.cdf
 doc/univariate/generated/generated/arch.univariate.distribution.Distribution.constraints.html
 doc/univariate/generated/generated/arch.univariate.distribution.Distribution.loglikelihood.html
 doc/univariate/generated/generated/arch.univariate.distribution.Distribution.moment.html
+doc/univariate/generated/generated/arch.univariate.distribution.Distribution.name.html
 doc/univariate/generated/generated/arch.univariate.distribution.Distribution.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.distribution.Distribution.partial_moment.html
 doc/univariate/generated/generated/arch.univariate.distribution.Distribution.ppf.html
@@ -1193,6 +1236,7 @@ doc/univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.
 doc/univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.compute_variance.html
 doc/univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.constraints.html
 doc/univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.forecast.html
+doc/univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.name.html
 doc/univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.parameter_names.html
 doc/univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.simulate.html
 doc/univariate/generated/generated/arch.univariate.volatility.VolatilityProcess.start.html

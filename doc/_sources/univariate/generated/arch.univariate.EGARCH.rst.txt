@@ -33,6 +33,7 @@ arch.univariate.EGARCH
    .. autosummary::
       :toctree: generated/
 
+      ~EGARCH.name
       ~EGARCH.start
       ~EGARCH.stop
    

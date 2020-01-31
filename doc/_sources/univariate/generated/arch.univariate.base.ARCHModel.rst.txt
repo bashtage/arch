@@ -34,6 +34,7 @@ arch.univariate.base.ARCHModel
       :toctree: generated/
 
       ~ARCHModel.distribution
+      ~ARCHModel.name
       ~ARCHModel.num_params
       ~ARCHModel.volatility
       ~ARCHModel.y

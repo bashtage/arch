@@ -33,6 +33,7 @@ arch.univariate.Normal
    .. autosummary::
       :toctree: generated/
 
+      ~Normal.name
       ~Normal.random_state
    
    

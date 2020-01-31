@@ -33,6 +33,7 @@ arch.univariate.FIGARCH
    .. autosummary::
       :toctree: generated/
 
+      ~FIGARCH.name
       ~FIGARCH.start
       ~FIGARCH.stop
       ~FIGARCH.truncation

@@ -33,6 +33,7 @@ arch.univariate.GeneralizedError
    .. autosummary::
       :toctree: generated/
 
+      ~GeneralizedError.name
       ~GeneralizedError.random_state
    
    

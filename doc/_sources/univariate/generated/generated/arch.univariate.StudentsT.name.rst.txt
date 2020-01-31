@@ -1,0 +1,6 @@
+arch.univariate.StudentsT.name
+==============================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: StudentsT.name

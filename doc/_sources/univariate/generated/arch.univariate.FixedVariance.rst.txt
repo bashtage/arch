@@ -33,6 +33,7 @@ arch.univariate.FixedVariance
    .. autosummary::
       :toctree: generated/
 
+      ~FixedVariance.name
       ~FixedVariance.start
       ~FixedVariance.stop
    

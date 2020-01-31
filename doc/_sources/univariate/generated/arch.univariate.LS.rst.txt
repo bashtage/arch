@@ -34,6 +34,7 @@ arch.univariate.LS
       :toctree: generated/
 
       ~LS.distribution
+      ~LS.name
       ~LS.num_params
       ~LS.volatility
       ~LS.x

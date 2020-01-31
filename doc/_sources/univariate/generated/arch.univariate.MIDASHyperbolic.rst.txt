@@ -33,6 +33,7 @@ arch.univariate.MIDASHyperbolic
    .. autosummary::
       :toctree: generated/
 
+      ~MIDASHyperbolic.name
       ~MIDASHyperbolic.start
       ~MIDASHyperbolic.stop
    

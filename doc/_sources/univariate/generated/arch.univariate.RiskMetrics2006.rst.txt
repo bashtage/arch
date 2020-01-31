@@ -33,6 +33,7 @@ arch.univariate.RiskMetrics2006
    .. autosummary::
       :toctree: generated/
 
+      ~RiskMetrics2006.name
       ~RiskMetrics2006.start
       ~RiskMetrics2006.stop
    

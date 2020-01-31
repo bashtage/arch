@@ -34,6 +34,7 @@ arch.univariate.ARX
       :toctree: generated/
 
       ~ARX.distribution
+      ~ARX.name
       ~ARX.num_params
       ~ARX.volatility
       ~ARX.x

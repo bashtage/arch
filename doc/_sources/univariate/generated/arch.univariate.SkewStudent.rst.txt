@@ -33,6 +33,7 @@ arch.univariate.SkewStudent
    .. autosummary::
       :toctree: generated/
 
+      ~SkewStudent.name
       ~SkewStudent.random_state
    
    

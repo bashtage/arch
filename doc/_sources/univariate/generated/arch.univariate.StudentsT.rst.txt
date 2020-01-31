@@ -33,6 +33,7 @@ arch.univariate.StudentsT
    .. autosummary::
       :toctree: generated/
 
+      ~StudentsT.name
       ~StudentsT.random_state
    
    

@@ -33,6 +33,7 @@ arch.univariate.EWMAVariance
    .. autosummary::
       :toctree: generated/
 
+      ~EWMAVariance.name
       ~EWMAVariance.start
       ~EWMAVariance.stop
    
