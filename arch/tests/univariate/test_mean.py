@@ -123,7 +123,7 @@ class TestMeanModel(object):
         direct = pd.DataFrame(
             index=np.arange(self.y.shape[0]),
             columns=["h.{0:>02d}".format(i + 1) for i in range(20)],
-            dtype=np.float64,
+            dtype="double",
         )
         direct.iloc[20:, :] = res.params.iloc[0]
         # TODO
@@ -156,7 +156,7 @@ class TestMeanModel(object):
         direct = pd.DataFrame(
             index=np.arange(self.y.shape[0]),
             columns=["h.{0:>02d}".format(i + 1) for i in range(99)],
-            dtype=np.float64,
+            dtype="double",
         )
         direct.iloc[:, :] = 0.0
         assert isinstance(forecasts, ARCHModelForecast)
@@ -271,7 +271,7 @@ class TestMeanModel(object):
         direct = pd.DataFrame(
             index=np.arange(t),
             columns=["h." + str(i + 1) for i in range(6)],
-            dtype=np.float64,
+            dtype="float64",
         )
 
         params = np.asarray(res.params)
@@ -303,7 +303,7 @@ class TestMeanModel(object):
         direct = pd.DataFrame(
             index=self.y_series.index,
             columns=["h." + str(i + 1) for i in range(6)],
-            dtype=np.float64,
+            dtype="float64",
         )
         forecasts = res.forecast(horizon=6)
         params = np.asarray(res.params)
@@ -393,7 +393,7 @@ class TestMeanModel(object):
         direct = pd.DataFrame(
             index=np.arange(y.shape[0]),
             columns=["h." + str(i + 1) for i in range(5)],
-            dtype=np.float64,
+            dtype="float64",
         )
         params = res.params.iloc[:-1]
         for i in range(2, y.shape[0]):
@@ -458,10 +458,10 @@ class TestMeanModel(object):
 
         res.plot(scale=360)
         res.hedgehog_plot(start=500)
-        res.hedgehog_plot(start=500, type="mean")
-        res.hedgehog_plot(type="volatility")
+        res.hedgehog_plot(start=500, plot_type="mean")
+        res.hedgehog_plot(plot_type="volatility")
         res.hedgehog_plot(start=500, method="simulation", simulations=100)
-        res.hedgehog_plot(type="volatility", method="bootstrap")
+        res.hedgehog_plot(plot_type="volatility", method="bootstrap")
 
     def test_arch_arx(self):
         self.rng.seed(12345)

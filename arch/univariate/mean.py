@@ -1002,7 +1002,7 @@ class ZeroMean(HARX):
 
     def simulate(
         self,
-        params: ArrayLike,
+        params: Union[Sequence[float], ArrayLike1D],
         nobs: int,
         burn: int = 500,
         initial_value: Optional[Union[float, NDArray]] = None,
@@ -1052,6 +1052,7 @@ class ZeroMean(HARX):
         >>> zm.volatility = GARCH(p=1, o=1, q=1)
         >>> sim_data = zm.simulate([0.05, 0.1, 0.1, 0.8], 300)
         """
+        params = ensure1d(params, "params", False)
         if initial_value is not None or x is not None:
             raise ValueError(
                 "Both initial value and x must be none when "

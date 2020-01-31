@@ -606,7 +606,7 @@ def test_apply(bs_setup):
     bs.seed(23456)
 
     results = bs.apply(bs_setup.func, 1000)
-    bs.reset(23456)
+    bs.reset(True)
     direct_results = []
     for pos, _ in bs.bootstrap(1000):
         direct_results.append(bs_setup.func(*pos))
@@ -619,7 +619,7 @@ def test_apply_series(bs_setup):
     bs.seed(23456)
 
     results = bs.apply(bs_setup.func, 1000)
-    bs.reset(23456)
+    bs.reset(True)
     direct_results = []
     for pos, _ in bs.bootstrap(1000):
         direct_results.append(bs_setup.func(*pos))

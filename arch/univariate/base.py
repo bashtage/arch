@@ -427,7 +427,7 @@ class ARCHModel(object, metaclass=ABCMeta):
 
     def fix(
         self,
-        params: ArrayLike1D,
+        params: Union[Sequence[float], ArrayLike1D],
         first_obs: Union[int, DateLike] = None,
         last_obs: Union[int, DateLike] = None,
     ) -> "ARCHModelFixedResult":
@@ -464,7 +464,7 @@ class ARCHModel(object, metaclass=ABCMeta):
 
         var_bounds = v.variance_bounds(resids)
 
-        params = np.asarray(params)
+        params = ensure1d(params, "params", False)
         loglikelihood = -1.0 * self._loglikelihood(params, sigma2, backcast, var_bounds)
 
         mp, vp, dp = self._parse_parameters(params)
@@ -1453,7 +1453,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         >>> sim_data.index = pd.date_range('2000-01-01',periods=250)
         >>> am = arch_model(sim_data['data'],mean='HAR',lags=[1,5,22],  vol='Constant')
         >>> res = am.fit()
-        >>> fig = res.hedgehog_plot(type='mean')
+        >>> fig = res.hedgehog_plot(plot_type='mean')
         """
         import matplotlib.pyplot as plt
 
@@ -1888,7 +1888,7 @@ def _format_forecasts(
     horizon = values.shape[1]
     format_str = "{0:>0" + str(int(np.ceil(np.log10(horizon + 0.5)))) + "}"
     columns = ["h." + format_str.format(h + 1) for h in range(horizon)]
-    forecasts = DataFrame(values, index=index, columns=columns, dtype=np.float64)
+    forecasts = DataFrame(values, index=index, columns=columns, dtype="float")
     return forecasts
 
 
@@ -1917,10 +1917,10 @@ class ARCHModelForecastSimulation(object):
 
     def __init__(
         self,
-        values: DataFrame,
-        residuals: DataFrame,
-        variances: DataFrame,
-        residual_variances: DataFrame,
+        values: NDArray,
+        residuals: NDArray,
+        variances: NDArray,
+        residual_variances: NDArray,
     ) -> None:
         self._values = values
         self._residuals = residuals
@@ -1928,19 +1928,19 @@ class ARCHModelForecastSimulation(object):
         self._residual_variances = residual_variances
 
     @property
-    def values(self) -> DataFrame:
+    def values(self) -> NDArray:
         return self._values
 
     @property
-    def residuals(self) -> DataFrame:
+    def residuals(self) -> NDArray:
         return self._residuals
 
     @property
-    def variances(self) -> DataFrame:
+    def variances(self) -> NDArray:
         return self._variances
 
     @property
-    def residual_variances(self) -> DataFrame:
+    def residual_variances(self) -> NDArray:
         return self._residual_variances
 
 

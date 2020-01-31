@@ -1,4 +1,4 @@
-from numpy import exp, inf, log, nan, pi
+from numpy import exp, inf, log, nan, ones_like, pi
 from numpy.testing import assert_almost_equal, assert_equal
 import pytest
 from scipy.integrate import quad
@@ -43,7 +43,8 @@ def test_moment(dist, params):
 
     # verify moments that exist
     def f(x, n):
-        return (x ** n) * exp(dist.loglikelihood(params, x, 1, True))
+        sigma2 = ones_like(x)
+        return (x ** n) * exp(dist.loglikelihood(params, x, sigma2, True))
 
     for n in range(6):  # moments 0-5
 

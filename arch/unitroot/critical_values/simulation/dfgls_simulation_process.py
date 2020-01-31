@@ -120,7 +120,7 @@ for t in trends:
     # Compute tau star
     err_large = res_large.resid
     # Missing 1 parameter here, replace with 0
-    params = np.append(res_small.params, 0.0)
+    params = np.append(np.asarray(res_small.params), np.zeros(1))
     err_small = lhs_large - rhs_large.dot(params)
     # Find the location that minimizes the total absolute error
     m = lhs_large.shape[0]

@@ -71,7 +71,7 @@ def _loo_jackknife(
     func: Callable[..., NDArray],
     nobs: int,
     args: Sequence[ArrayLike],
-    kwargs: ArrayLike,
+    kwargs: Dict[str, ArrayLike],
 ) -> NDArray:
     """
     Leave one out jackknife estimation
@@ -137,7 +137,9 @@ def _add_extra_kwargs(
     if extra_kwargs is None:
         return kwargs
     else:
-        return dict(list(kwargs.items()) + list(extra_kwargs.items()))
+        kwargs_copy = kwargs.copy()
+        kwargs_copy.update(extra_kwargs)
+        return kwargs_copy
 
 
 class IIDBootstrap(object, metaclass=DocStringInheritor):
@@ -666,7 +668,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         bs
             Bootstrap instance
         """
-        pos_arguments = copy.deepcopy(self._parameters)
+        pos_arguments: List[Union[int, ArrayLike]] = copy.deepcopy(self._parameters)
         pos_arguments.extend(args)
         bs = self.__class__(*pos_arguments, **kwargs)
         if self._seed is not None:
@@ -1088,7 +1090,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         return pos_indices, kw_indices
 
     @property
-    def index(self) -> NDArray:
+    def index(self) -> Tuple[List[NDArray], Dict[str, NDArray]]:
         """
         Returns the current index of the bootstrap
 
