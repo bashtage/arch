@@ -230,12 +230,12 @@ class TestForecasting(object):
         fill = np.empty((1, 5))
         fill.fill(np.nan)
         expected = np.concatenate((fill, expected[:, 2:]))
-        assert_allclose(fcast.mean.values, expected)
+        assert_allclose(np.asarray(fcast.mean), expected)
 
         expected = np.empty((1000, 5))
         expected[:2] = np.nan
         expected[2:] = res.params.iloc[-1]
-        assert_allclose(fcast.residual_variance.values, expected)
+        assert_allclose(np.asarray(fcast.residual_variance), expected)
 
         with pytest.raises(ValueError):
             res.forecast(horizon=5, start=0)
@@ -530,7 +530,7 @@ class TestForecasting(object):
         direct = const + har01 * y_01 + har02 * y_02 + ex0 * x0 + ex1 * x1
         direct = np.vstack(([[np.nan]], direct, [[np.nan]]))
         direct = pd.DataFrame(direct, columns=["h.1"])
-        assert_allclose(direct.values, fcasts.mean)
+        assert_allclose(np.asarray(direct), fcasts.mean)
 
         fcasts2 = res.forecast(horizon=2, start=1)
         assert fcasts2.mean.shape == (1000, 2)

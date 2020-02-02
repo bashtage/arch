@@ -598,7 +598,7 @@ def test_pandas_integer_index(bs_setup):
     bs = IIDBootstrap(x, x_int)
     bs.seed(23456)
     for pdata, _ in bs.bootstrap(10):
-        assert_equal(pdata[0], pdata[1].values)
+        assert_equal(pdata[0], np.asarray(pdata[1]))
 
 
 def test_apply(bs_setup):
