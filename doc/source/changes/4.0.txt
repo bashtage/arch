@@ -2,13 +2,17 @@
 Version 4
 =========
 
-Since 4.11
-==========
+Release 4.12
+============
+- Added typing support to all classes, functions and methods (:issue:`338`,
+  :issue:`341`, :issue:`342`, :issue:`343`, :issue:`345`, :issue:`346`).
+- Fixed an issue that caused tests to fail on SciPy 1.4+ (:issue:`339`).
 - Dropped support for Python 3.5 inline with NEP 29 (:issue:`334`).
-- Added methods to compute moment and lower partial moments for standardized residuals. See,
-  for example, :func:`~arch.univariate.SkewStudent.moment` and
+- Added methods to compute moment and lower partial moments for standardized
+  residuals. See, for example, :func:`~arch.univariate.SkewStudent.moment` and
   :func:`~arch.univariate.SkewStudent.partial_moment` (:issue:`329`).
-- Fixed a bug that produced an OverflowError when a time series has no variance (:issue:`331`).
+- Fixed a bug that produced an OverflowError when a time series has no
+  variance (:issue:`331`).
 
 Release 4.11
 ============
