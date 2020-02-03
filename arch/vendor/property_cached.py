@@ -32,9 +32,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import asyncio
 import functools
-import sys
 import threading
 from time import time
+from typing import Any, Mapping
 import weakref
 
 __author__ = "Martin Larralde"
@@ -52,21 +52,12 @@ class cached_property(property):
 
     _sentinel = object()
 
-    if sys.version_info[0] < 3:
-
-        def _update_wrapper(self, func):
-            self.__doc__ = getattr(func, "__doc__", None)
-            self.__module__ = getattr(func, "__module__", None)
-            self.__name__ = getattr(func, "__name__", None)
-
-    else:
-
-        _update_wrapper = functools.update_wrapper
+    _update_wrapper = functools.update_wrapper
 
     def __init__(self, func) -> None:
-        self.cache = weakref.WeakKeyDictionary()
+        self.cache: Mapping[str, Any] = weakref.WeakKeyDictionary()
         self.func = func
-        self._update_wrapper(func)
+        self._update_wrapper(func)  # type: ignore
 
     def __get__(self, obj, cls):
         if obj is None:

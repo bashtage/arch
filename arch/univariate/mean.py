@@ -7,7 +7,6 @@ from typing import Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 from pandas import DataFrame
-from arch.vendor import cached_property
 from scipy.optimize import OptimizeResult
 from statsmodels.tsa.tsatools import lagmat
 
@@ -40,6 +39,7 @@ from arch.utility.array import (
     ensure1d,
     parse_dataframe,
 )
+from arch.vendor import cached_property
 
 __all__ = ["HARX", "ConstantMean", "ZeroMean", "ARX", "arch_model", "LS"]
 
