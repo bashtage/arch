@@ -7,7 +7,7 @@ from typing import Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 from pandas import DataFrame
-from property_cached import cached_property
+from arch.vendor import cached_property
 from scipy.optimize import OptimizeResult
 from statsmodels.tsa.tsatools import lagmat
 

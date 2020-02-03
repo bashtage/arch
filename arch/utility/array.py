@@ -9,7 +9,7 @@ from typing import Any, Dict, Hashable, List, Optional, Sequence, Tuple, Type, U
 
 import numpy as np
 from pandas import DataFrame, DatetimeIndex, Index, NaT, Series, Timestamp, to_datetime
-from property_cached import cached_property
+from arch.vendor import cached_property
 
 from arch.typing import AnyPandas, ArrayLike, DateLike, NDArray
 

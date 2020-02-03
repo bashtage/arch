@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 from pandas import DataFrame, Series
 from pandas.util._decorators import deprecate_kwarg
-from property_cached import cached_property
+from arch.vendor import cached_property
 from scipy.optimize import OptimizeResult
 import scipy.stats as stats
 from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
