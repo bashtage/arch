@@ -81,6 +81,12 @@ __all__ = [
     "auto_bandwidth",
 ]
 
+MUTATING_WARNING = """\
+Mutating unit root tests is deprecated and will raise an error in the first release \
+of arch 5.x after August 2020. Create new test objects to change test \
+parametrization.
+"""
+
 TREND_MAP = {None: "nc", 0: "c", 1: "ct", 2: "ctt"}
 
 TREND_DESCRIPTION = {
@@ -399,7 +405,9 @@ class UnitRootTest(object):
         self._lags = lags
         self._valid_trends = valid_trends
         self._trend = ""
-        self.trend = trend
+        if trend not in self.valid_trends:
+            raise ValueError("trend not understood")
+        self._trend = trend
         self._stat: Optional[float] = None
         self._critical_values: Dict[str, float] = {}
         self._pvalue: Optional[float] = None
@@ -553,6 +561,7 @@ class UnitRootTest(object):
             or (isinstance(value, types) and value < 0)
         ):
             raise ValueError("lags must be a non-negative integer or None")
+        warnings.warn(MUTATING_WARNING, FutureWarning)
         if self._lags != value:
             self._reset()
         self._lags = int(value)
@@ -574,6 +583,7 @@ class UnitRootTest(object):
     def trend(self, value: str) -> None:
         if value not in self.valid_trends:
             raise ValueError("trend not understood")
+        warnings.warn(MUTATING_WARNING, FutureWarning)
         if self._trend != value:
             self._reset()
             self._trend = value
@@ -727,6 +737,7 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
 
     @max_lags.setter
     def max_lags(self, value: Optional[int]) -> None:
+        warnings.warn(MUTATING_WARNING, FutureWarning)
         if self._max_lags != value:
             self._reset()
             self._lags = None
@@ -871,6 +882,7 @@ class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
     def trend(self, value: str) -> None:
         if value not in self.valid_trends:
             raise ValueError("trend not understood")
+        warnings.warn(MUTATING_WARNING, FutureWarning)
         if self._trend != value:
             self._reset()
             self._trend = value
@@ -894,6 +906,7 @@ class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
 
     @max_lags.setter
     def max_lags(self, value: Optional[int]) -> None:
+        warnings.warn(MUTATING_WARNING, FutureWarning)
         if self._max_lags != value:
             self._reset()
             self._lags = None
@@ -1064,6 +1077,7 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
     def test_type(self, value: str) -> None:
         if value not in ("rho", "tau"):
             raise ValueError("stat must be either " "rho" " or " "tau" ".")
+        warnings.warn(MUTATING_WARNING, FutureWarning)
         self._reset()
         self._test_type = value
 
@@ -1493,6 +1507,7 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
 
     @overlap.setter
     def overlap(self, value: bool) -> None:
+        warnings.warn(MUTATING_WARNING, FutureWarning)
         self._reset()
         self._overlap = bool(value)
 
@@ -1504,6 +1519,7 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
 
     @robust.setter
     def robust(self, value: bool) -> None:
+        warnings.warn(MUTATING_WARNING, FutureWarning)
         self._reset()
         self._robust = bool(value)
 
@@ -1514,6 +1530,7 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
 
     @debiased.setter
     def debiased(self, value: bool) -> None:
+        warnings.warn(MUTATING_WARNING, FutureWarning)
         self._reset()
         self._debiased = bool(value)
 

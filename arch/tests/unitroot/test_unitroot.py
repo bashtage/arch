@@ -108,11 +108,13 @@ class TestUnitRoot(object):
         adf2 = ADF(self.inflation, method="t-stat", low_memory=True)
         assert_equal(adf2.lags, 11)
         old_stat = adf.stat
-        adf.lags += 1
+        with pytest.warns(FutureWarning, match="Mutating unit root"):
+            adf.lags += 1
         assert adf.stat != old_stat
         old_stat = adf.stat
         assert_equal(adf.y, self.inflation)
-        adf.trend = "ctt"
+        with pytest.warns(FutureWarning, match="Mutating unit root"):
+            adf.trend = "ctt"
         assert adf.stat != old_stat
         assert adf.trend == "ctt"
         assert len(adf.valid_trends) == len(("nc", "c", "ct", "ctt"))
@@ -141,7 +143,8 @@ class TestUnitRoot(object):
         pp = PhillipsPerron(self.inflation, lags=12)
         assert_almost_equal(pp.stat, -7.8076512, DECIMAL_4)
         assert pp.test_type == "tau"
-        pp.test_type = "rho"
+        with pytest.warns(FutureWarning, match="Mutating unit root"):
+            pp.test_type = "rho"
         assert_almost_equal(pp.stat, -108.1552688, DECIMAL_2)
         pp.summary()
 
@@ -156,7 +159,8 @@ class TestUnitRoot(object):
         lags = ceil(12.0 * ((n / 100.0) ** (1.0 / 4.0)))
         assert_equal(pp.lags, lags)
         assert_almost_equal(pp.stat, -8.135547778, DECIMAL_4)
-        pp.test_type = "rho"
+        with pytest.warns(FutureWarning, match="Mutating unit root"):
+            pp.test_type = "rho"
         assert_almost_equal(pp.stat, -118.7746451, DECIMAL_2)
 
     def test_dfgls_c(self):
@@ -176,7 +180,8 @@ class TestUnitRoot(object):
         assert_equal(dfgls.lags, 2)
         assert_equal(dfgls.max_lags, 3)
         assert_almost_equal(dfgls.stat, -2.9035369, DECIMAL_4)
-        dfgls.max_lags = 1
+        with pytest.warns(FutureWarning, match="Mutating unit root"):
+            dfgls.max_lags = 1
         assert_equal(dfgls.lags, 1)
 
     def test_dfgls_bad_trend(self):
@@ -215,7 +220,8 @@ class TestUnitRoot(object):
 
         assert_almost_equal(ratio, vr.vr)
         assert "Variance-Ratio Test" in str(vr)
-        vr.debiased = True
+        with pytest.warns(FutureWarning, match="Mutating unit root"):
+            vr.debiased = True
         assert vr.debiased is True
 
     def test_variance_ratio_no_overlap(self):
@@ -237,7 +243,8 @@ class TestUnitRoot(object):
         ratio = num / denom
         assert_equal(ratio, computed_value)
 
-        vr.overlap = True
+        with pytest.warns(FutureWarning, match="Mutating unit root"):
+            vr.overlap = True
         assert_equal(vr.overlap, True)
         vr2 = VarianceRatio(self.inflation)
         assert_almost_equal(vr.stat, vr2.stat)
@@ -256,7 +263,8 @@ class TestUnitRoot(object):
         stat = np.sqrt(nq) * (ratio - 1) / np.sqrt(variance)
         assert_almost_equal(stat, vr.stat)
         orig_stat = vr.stat
-        vr.robust = True
+        with pytest.warns(FutureWarning, match="Mutating unit root"):
+            vr.robust = True
         assert_equal(vr.robust, True)
         assert vr.stat != orig_stat
 
@@ -390,7 +398,8 @@ def test_trends_low_memory(trend):
     adf2 = ADF(y, trend=trend, low_memory=True, max_lags=16)
     assert adf.lags == adf2.lags
     assert adf.max_lags == 16
-    adf.max_lags = 1
+    with pytest.warns(FutureWarning, match="Mutating unit root"):
+        adf.max_lags = 1
     assert_equal(adf.lags, 1)
     assert_equal(adf.max_lags, 1)
 
