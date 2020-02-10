@@ -2,6 +2,11 @@
 Version 4
 =========
 
+Since 4.12
+==========
+- Issue warnings when unit root tests are mutated. Will raise after 5.0
+  is released.
+
 Release 4.12
 ============
 - Added typing support to all classes, functions and methods (:issue:`338`,
