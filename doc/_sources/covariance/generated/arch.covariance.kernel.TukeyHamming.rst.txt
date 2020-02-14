@@ -1,0 +1,37 @@
+arch.covariance.kernel.TukeyHamming
+===================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoclass:: TukeyHamming
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~TukeyHamming.bandwidth
+      ~TukeyHamming.bandwidth_scale
+      ~TukeyHamming.centered
+      ~TukeyHamming.cov
+      ~TukeyHamming.kernel_const
+      ~TukeyHamming.kernel_weights
+      ~TukeyHamming.name
+      ~TukeyHamming.opt_bandwidth
+      ~TukeyHamming.rate
+   
+   
+   

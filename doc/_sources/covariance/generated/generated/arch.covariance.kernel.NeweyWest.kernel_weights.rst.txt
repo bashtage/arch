@@ -1,0 +1,6 @@
+arch.covariance.kernel.NeweyWest.kernel\_weights
+================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: NeweyWest.kernel_weights

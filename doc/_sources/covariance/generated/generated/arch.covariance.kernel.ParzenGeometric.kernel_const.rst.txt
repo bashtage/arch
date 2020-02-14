@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenGeometric.kernel\_const
+====================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenGeometric.kernel_const

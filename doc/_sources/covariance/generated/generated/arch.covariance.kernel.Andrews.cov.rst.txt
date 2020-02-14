@@ -1,0 +1,6 @@
+arch.covariance.kernel.Andrews.cov
+==================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Andrews.cov

@@ -1,0 +1,37 @@
+arch.covariance.kernel.Andrews
+==============================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoclass:: Andrews
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~Andrews.bandwidth
+      ~Andrews.bandwidth_scale
+      ~Andrews.centered
+      ~Andrews.cov
+      ~Andrews.kernel_const
+      ~Andrews.kernel_weights
+      ~Andrews.name
+      ~Andrews.opt_bandwidth
+      ~Andrews.rate
+   
+   
+   

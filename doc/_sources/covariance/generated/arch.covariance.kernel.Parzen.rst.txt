@@ -1,0 +1,37 @@
+arch.covariance.kernel.Parzen
+=============================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoclass:: Parzen
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~Parzen.bandwidth
+      ~Parzen.bandwidth_scale
+      ~Parzen.centered
+      ~Parzen.cov
+      ~Parzen.kernel_const
+      ~Parzen.kernel_weights
+      ~Parzen.name
+      ~Parzen.opt_bandwidth
+      ~Parzen.rate
+   
+   
+   

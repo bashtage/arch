@@ -1,0 +1,6 @@
+arch.covariance.kernel.QuadraticSpectral.name
+=============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: QuadraticSpectral.name

@@ -1,0 +1,37 @@
+arch.covariance.kernel.Bartlett
+===============================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoclass:: Bartlett
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~Bartlett.bandwidth
+      ~Bartlett.bandwidth_scale
+      ~Bartlett.centered
+      ~Bartlett.cov
+      ~Bartlett.kernel_const
+      ~Bartlett.kernel_weights
+      ~Bartlett.name
+      ~Bartlett.opt_bandwidth
+      ~Bartlett.rate
+   
+   
+   

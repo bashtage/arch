@@ -1,0 +1,37 @@
+arch.covariance.kernel.TukeyParzen
+==================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoclass:: TukeyParzen
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~TukeyParzen.bandwidth
+      ~TukeyParzen.bandwidth_scale
+      ~TukeyParzen.centered
+      ~TukeyParzen.cov
+      ~TukeyParzen.kernel_const
+      ~TukeyParzen.kernel_weights
+      ~TukeyParzen.name
+      ~TukeyParzen.opt_bandwidth
+      ~TukeyParzen.rate
+   
+   
+   

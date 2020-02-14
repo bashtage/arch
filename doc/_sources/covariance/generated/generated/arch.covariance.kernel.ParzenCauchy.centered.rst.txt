@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenCauchy.centered
+============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenCauchy.centered

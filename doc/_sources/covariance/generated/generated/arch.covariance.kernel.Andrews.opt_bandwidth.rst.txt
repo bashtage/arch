@@ -1,0 +1,6 @@
+arch.covariance.kernel.Andrews.opt\_bandwidth
+=============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Andrews.opt_bandwidth

@@ -1,0 +1,37 @@
+arch.covariance.kernel.ParzenRiesz
+==================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoclass:: ParzenRiesz
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ParzenRiesz.bandwidth
+      ~ParzenRiesz.bandwidth_scale
+      ~ParzenRiesz.centered
+      ~ParzenRiesz.cov
+      ~ParzenRiesz.kernel_const
+      ~ParzenRiesz.kernel_weights
+      ~ParzenRiesz.name
+      ~ParzenRiesz.opt_bandwidth
+      ~ParzenRiesz.rate
+   
+   
+   

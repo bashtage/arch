@@ -1,0 +1,37 @@
+arch.covariance.kernel.ParzenGeometric
+======================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoclass:: ParzenGeometric
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ParzenGeometric.bandwidth
+      ~ParzenGeometric.bandwidth_scale
+      ~ParzenGeometric.centered
+      ~ParzenGeometric.cov
+      ~ParzenGeometric.kernel_const
+      ~ParzenGeometric.kernel_weights
+      ~ParzenGeometric.name
+      ~ParzenGeometric.opt_bandwidth
+      ~ParzenGeometric.rate
+   
+   
+   

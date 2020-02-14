@@ -1,0 +1,6 @@
+arch.covariance.kernel.QuadraticSpectral.bandwidth\_scale
+=========================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: QuadraticSpectral.bandwidth_scale

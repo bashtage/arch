@@ -1,0 +1,6 @@
+arch.covariance.kernel.CovarianceEstimate.long\_run
+===================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: CovarianceEstimate.long_run

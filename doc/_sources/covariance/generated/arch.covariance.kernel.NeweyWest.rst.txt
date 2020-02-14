@@ -1,0 +1,37 @@
+arch.covariance.kernel.NeweyWest
+================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoclass:: NeweyWest
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~NeweyWest.bandwidth
+      ~NeweyWest.bandwidth_scale
+      ~NeweyWest.centered
+      ~NeweyWest.cov
+      ~NeweyWest.kernel_const
+      ~NeweyWest.kernel_weights
+      ~NeweyWest.name
+      ~NeweyWest.opt_bandwidth
+      ~NeweyWest.rate
+   
+   
+   

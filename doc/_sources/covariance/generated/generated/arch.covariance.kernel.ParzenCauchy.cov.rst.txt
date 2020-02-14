@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenCauchy.cov
+=======================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenCauchy.cov
