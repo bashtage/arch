@@ -97,7 +97,6 @@ class Distribution(object, metaclass=ABCMeta):
         -----
         Must call `simulate` before using `_simulator`
         """
-        pass
 
     @abstractmethod
     def simulate(
@@ -117,7 +116,6 @@ class Distribution(object, metaclass=ABCMeta):
             Callable that take a single output size argument and returns i.i.d.
             draws from the distribution
         """
-        pass
 
     @abstractmethod
     def constraints(self) -> Tuple[NDArray, NDArray]:
@@ -135,7 +133,6 @@ class Distribution(object, metaclass=ABCMeta):
         -----
         Parameters satisfy the constraints A.dot(parameters)-b >= 0
         """
-        pass
 
     @abstractmethod
     def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
@@ -152,7 +149,6 @@ class Distribution(object, metaclass=ABCMeta):
         bounds : list
             List containing a single tuple with (lower, upper) bounds
         """
-        pass
 
     @abstractmethod
     def loglikelihood(
@@ -182,7 +178,6 @@ class Distribution(object, metaclass=ABCMeta):
         Returns the loglikelihood where resids are the "data",
         and parameters and sigma2 are inputs.
         """
-        pass
 
     @abstractmethod
     def starting_values(self, std_resid: NDArray) -> NDArray:
@@ -204,7 +199,6 @@ class Distribution(object, metaclass=ABCMeta):
         -----
         Size of sv depends on the distribution
         """
-        pass
 
     @abstractmethod
     def parameter_names(self) -> List[str]:
@@ -216,7 +210,6 @@ class Distribution(object, metaclass=ABCMeta):
         names : list (str)
             Parameter names
         """
-        pass
 
     @abstractmethod
     def ppf(
@@ -240,7 +233,6 @@ class Distribution(object, metaclass=ABCMeta):
         i : ndarray
             Inverse CDF values
         """
-        pass
 
     @abstractmethod
     def cdf(
@@ -264,7 +256,6 @@ class Distribution(object, metaclass=ABCMeta):
         f : ndarray
             CDF values
         """
-        pass
 
     @abstractmethod
     def moment(
@@ -285,7 +276,6 @@ class Distribution(object, metaclass=ABCMeta):
         float
             Calculated moment
         """
-        pass
 
     @abstractmethod
     def partial_moment(
@@ -326,7 +316,6 @@ class Distribution(object, metaclass=ABCMeta):
 
         See [1]_ for more details.
         """
-        pass
 
     def __str__(self) -> str:
         return self._description()

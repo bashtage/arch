@@ -51,7 +51,7 @@ def wrapper(n, trend, b, seed=0):
 
 
 if __name__ == "__main__":
-    trends = ("nc", "c", "ct", "ctt")
+    trends = ("n", "c", "ct", "ctt")
     T = array(
         (
             20,

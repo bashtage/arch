@@ -234,7 +234,6 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         NotImplementedError
             * If method is not known or not supported
         """
-        pass
 
     def _one_step_forecast(
         self,
@@ -315,7 +314,6 @@ class VolatilityProcess(object, metaclass=ABCMeta):
             Class containing the variance forecasts, and, if using simulation
             or bootstrap, the simulated paths.
         """
-        pass
 
     @abstractmethod
     def _simulation_forecast(
@@ -362,7 +360,6 @@ class VolatilityProcess(object, metaclass=ABCMeta):
             Class containing the variance forecasts, and, if using simulation
             or bootstrap, the simulated paths.
         """
-        pass
 
     def _bootstrap_forecast(
         self,
@@ -479,7 +476,6 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         sv : ndarray
             Array of starting values
         """
-        pass
 
     def backcast(self, resids: NDArray) -> float:
         """
@@ -534,7 +530,6 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         bounds : list[tuple[float,float]]
             List of bounds where each element is (lower, upper).
         """
-        pass
 
     @abstractmethod
     def compute_variance(
@@ -562,7 +557,6 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         var_bounds : ndarray
             Array containing columns of lower and upper bounds
         """
-        pass
 
     @abstractmethod
     def constraints(self) -> Tuple[NDArray, NDArray]:
@@ -582,7 +576,6 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         Values returned are used in constructing linear inequality
         constraints of the form A.dot(parameters) - b >= 0
         """
-        pass
 
     def forecast(
         self,
@@ -725,7 +718,6 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         variance : ndarray
             The simulated variance
         """
-        pass
 
     def _gaussian_loglikelihood(
         self, parameters: NDArray, resids: NDArray, backcast: float, var_bounds: NDArray
@@ -748,7 +740,6 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         names : list (str)
             Variables names
         """
-        pass
 
 
 class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):

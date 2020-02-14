@@ -1,7 +1,7 @@
 import numpy as np
 from statsmodels.regression.linear_model import OLS
 
-trends = ("nc", "c", "ct", "ctt")
+trends = ("n", "c", "ct", "ctt")
 critical_values = (1.0, 5.0, 10.0)
 adf_z_cv_approx = {}
 for t in trends:

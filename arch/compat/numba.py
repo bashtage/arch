@@ -3,7 +3,7 @@ from typing import Any, Callable
 
 
 class PerformanceWarning(UserWarning):
-    pass
+    """Warning issued if recursions are run in CPython"""
 
 
 performance_warning = """

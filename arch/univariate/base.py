@@ -307,7 +307,6 @@ class ARCHModel(object, metaclass=ABCMeta):
         """
         Must be overridden with closed form estimator
         """
-        pass
 
     @staticmethod
     def _static_gaussian_loglikelihood(resids: NDArray) -> float:
@@ -514,7 +513,6 @@ class ARCHModel(object, metaclass=ABCMeta):
         -----
         Adjusted sample must follow Python semantics of first_obs:last_obs
         """
-        pass
 
     def fit(
         self,
@@ -766,7 +764,6 @@ class ARCHModel(object, metaclass=ABCMeta):
         names : list (str)
             List of variable names for the mean model
         """
-        pass
 
     def starting_values(self) -> NDArray:
         """
@@ -829,7 +826,6 @@ class ARCHModel(object, metaclass=ABCMeta):
         resids : ndarray
             Model residuals
         """
-        pass
 
     def compute_param_cov(
         self, params: NDArray, backcast: Optional[float] = None, robust: bool = True
@@ -966,7 +962,6 @@ class ARCHModel(object, metaclass=ABCMeta):
         [102, 2], so that it is aligned with the observation to use when
         evaluating, but still in the same column.
         """
-        pass
 
 
 class _SummaryRepr(object):

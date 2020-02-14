@@ -27,6 +27,7 @@ to improve performance)
 - [Unit Root Tests](#unit-root)
 - [Bootstrapping](#bootstrap)
 - [Multiple Comparison Tests](#multiple-comparison)
+- [Long-run Covariance Estimation](#long-run-covariance)
 
 ### Python 3
 
@@ -158,6 +159,27 @@ ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 
 See the [multiple comparison example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/multiple-comparison_examples.ipynb)
 for examples of the multiple comparison procedures.
+
+
+<a id="long-run-covariance"></a>
+
+### Long-run Covariance Estimation
+
+Kernel-based estimators of long-run covariance including the
+Bartlett kernel which is known as Newey-West in econometrics.
+Automatic bandwidth selection is available for all of the 
+covariance estimators.
+
+```python
+from arch.covariance.kernel import Bartlett
+from arch.data import nasdaq
+data = nasdaq.load()
+returns = data[["Adj Close"]].pct_change().dropna()
+
+cov_est = Bartlett(returns ** 2)
+# Get the long-run covariance
+cov_est.cov.long_run
+```
 
 ## Requirements
 
