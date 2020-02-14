@@ -87,10 +87,10 @@ of arch 5.x after August 2020. Create new test objects to change test \
 parametrization.
 """
 
-TREND_MAP = {None: "nc", 0: "c", 1: "ct", 2: "ctt"}
+TREND_MAP = {None: "n", 0: "c", 1: "ct", 2: "ctt"}
 
 TREND_DESCRIPTION = {
-    "nc": "No Trend",
+    "n": "No Trend",
     "c": "Constant",
     "ct": "Constant and Linear Time Trend",
     "ctt": "Constant, Linear and Quadratic Time Trends",
@@ -178,7 +178,7 @@ def _autolag_ols_low_memory(
     level = level / sqrt(level.dot(level))
     trendx = []
     nobs = lhs.shape[0]
-    if trend == "nc":
+    if trend == "n":
         trendx = empty((nobs, 0))
     else:
         if "tt" in trend:
@@ -326,7 +326,7 @@ def _df_select_lags(
     # This is the absolute maximum number of lags possible,
     # only needed to very short time series.
     max_max_lags = nobs // 2 - 1
-    if trend != "nc":
+    if trend != "n":
         max_max_lags -= len(trend)
     if max_lags is None:
         max_lags = int(ceil(12.0 * power(nobs / 100.0, 1 / 4.0)))
@@ -341,7 +341,7 @@ def _df_select_lags(
     rhs[:, 0] = y[-nobs - 1 : -1]  # replace 0 with level of y
     lhs = delta_y[-nobs:]
 
-    if trend != "nc":
+    if trend != "n":
         full_rhs = add_trend(rhs, trend, prepend=True)
     else:
         full_rhs = rhs
@@ -387,7 +387,7 @@ def _estimate_df_regression(y: NDArray, trend: str, lags: int) -> RegressionResu
     rhs[:, 0] = y[-nobs - 1 : -1]  # replace lag 0 with level of y
     rhs = _add_column_names(rhs, lags)
 
-    if trend != "nc":
+    if trend != "n":
         rhs = add_trend(rhs.iloc[:, : lags + 1], trend)
 
     return OLS(lhs, rhs).fit()
@@ -405,6 +405,12 @@ class UnitRootTest(object):
         self._lags = lags
         self._valid_trends = valid_trends
         self._trend = ""
+        if trend == "nc":
+            warnings.warn(
+                'Trend "nc" is deprecated and has been replaced with "n" (for none).',
+                FutureWarning,
+            )
+            trend = "n"
         if trend not in self.valid_trends:
             raise ValueError("trend not understood")
         self._trend = trend
@@ -682,7 +688,7 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
         method: str = "AIC",
         low_memory: Optional[bool] = None,
     ) -> None:
-        valid_trends = ("nc", "c", "ct", "ctt")
+        valid_trends = ("n", "c", "ct", "ctt")
         super().__init__(y, lags, trend, valid_trends)
         self._max_lags = max_lags
         self._method = method
@@ -852,14 +858,14 @@ class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
             max_lags, method = self._max_lags, self._method
             assert self._low_memory is not None
             icbest, bestlag = _df_select_lags(
-                y_detrended, "nc", max_lags, method, low_memory=self._low_memory
+                y_detrended, "n", max_lags, method, low_memory=self._low_memory
             )
             self._lags = bestlag
 
         # 3. Run Regression
         lags = self._lags
 
-        resols = _estimate_df_regression(y_detrended, lags=lags, trend="nc")
+        resols = _estimate_df_regression(y_detrended, lags=lags, trend="n")
         self._regression = resols
         self._nobs = int(resols.nobs)
         self._stat = resols.tvalues[0]
@@ -1005,7 +1011,7 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
         trend: str = "c",
         test_type: str = "tau",
     ) -> None:
-        valid_trends = ("nc", "c", "ct")
+        valid_trends = ("n", "c", "ct")
         super().__init__(y, lags, trend, valid_trends)
         self._test_type = test_type
         self._stat_rho = None
@@ -1026,7 +1032,7 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
         rhs = y[:-1, None]
         rhs = _add_column_names(rhs, 0)
         lhs = y[1:, None]
-        if trend != "nc":
+        if trend != "n":
             rhs = add_trend(rhs, trend)
 
         resols = OLS(lhs, rhs).fit()
@@ -1477,7 +1483,7 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
     ) -> None:
         if lags < 2:
             raise ValueError("lags must be an integer larger than 2")
-        valid_trends = ("nc", "c")
+        valid_trends = ("n", "c")
         super().__init__(y, lags, trend, valid_trends)
         self._test_name = "Variance-Ratio Test"
         self._null_hypothesis = "The process is a random walk."
@@ -1550,7 +1556,7 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
                 )
 
         nobs = y.shape[0]
-        if trend == "nc":
+        if trend == "n":
             mu = 0
         else:
             mu = (y[-1] - y[0]) / (nobs - 1)
@@ -1610,7 +1616,7 @@ def mackinnonp(
         "T-value" from an Augmented Dickey-Fuller or DFGLS regression.
     regression : {'c', 'nc', 'ct', 'ctt'}
         This is the method of regression that was used.  Following MacKinnon's
-        notation, this can be "c" for constant, "nc" for no constant, "ct" for
+        notation, this can be "c" for constant, "n" for no constant, "ct" for
         constant and trend, and "ctt" for constant, trend, and trend-squared.
     num_unit_roots : int
         The number of series believed to be I(1).  For (Augmented) Dickey-
@@ -1731,7 +1737,7 @@ def mackinnoncrit(
         https://ideas.repec.org/p/qed/wpaper/1227.html
     """
     dist_type = dist_type.lower()
-    valid_regression = ["c", "ct", "nc", "ctt"]
+    valid_regression = ["c", "ct", "n", "ctt"]
     if dist_type == "dfgls":
         valid_regression = ["c", "ct"]
     if regression not in valid_regression:

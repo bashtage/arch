@@ -144,7 +144,7 @@ class TestDistributions(object):
         bounds = dist.bounds(self.resids)
         assert_equal(len(bounds), 1)
 
-        a, b = dist.constraints()
+        a, _ = dist.constraints()
         assert_equal(a.shape, (2, 1))
 
         assert_array_equal(dist.starting_values(self.resids), np.array([1.5]))

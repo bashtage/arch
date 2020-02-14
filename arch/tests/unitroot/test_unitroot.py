@@ -70,7 +70,7 @@ class TestUnitRoot(object):
         assert_almost_equal(adf, -6.56880, DECIMAL_4)
 
     def test_adf_nc_no_lags(self):
-        adf = ADF(self.inflation, trend="nc", lags=0)
+        adf = ADF(self.inflation, trend="n", lags=0)
         assert_almost_equal(adf.stat, -3.88845, DECIMAL_4)
         # 16.239
 
@@ -117,9 +117,9 @@ class TestUnitRoot(object):
             adf.trend = "ctt"
         assert adf.stat != old_stat
         assert adf.trend == "ctt"
-        assert len(adf.valid_trends) == len(("nc", "c", "ct", "ctt"))
+        assert len(adf.valid_trends) == len(("n", "c", "ct", "ctt"))
         for d in adf.valid_trends:
-            assert d in ("nc", "c", "ct", "ctt")
+            assert d in ("n", "c", "ct", "ctt")
         assert adf.null_hypothesis == "The process contains a unit root."
         assert adf.alternative_hypothesis == "The process is weakly " "stationary."
 
@@ -168,6 +168,13 @@ class TestUnitRoot(object):
         assert_almost_equal(dfgls.stat, -6.017304, DECIMAL_4)
         dfgls.summary()
         dfgls.regression.summary()
+        assert dfgls.trend == "c"
+        with pytest.warns(FutureWarning, match="Mutating unit root"):
+            dfgls.trend = "ct"
+        assert dfgls.trend == "ct"
+        with pytest.warns(FutureWarning, match="Mutating unit root"):
+            dfgls.trend = "c"
+        assert dfgls.trend == "c"
 
     def test_dfgls(self):
         dfgls = DFGLS(self.inflation, trend="ct", lags=0)
@@ -187,7 +194,7 @@ class TestUnitRoot(object):
     def test_dfgls_bad_trend(self):
         dfgls = DFGLS(self.inflation, trend="ct", method="BIC", max_lags=3)
         with pytest.raises(ValueError):
-            dfgls.trend = "nc"
+            dfgls.trend = "n"
 
         assert dfgls != 0.0
 
@@ -270,7 +277,7 @@ class TestUnitRoot(object):
 
     def test_variance_ratio_no_constant(self):
         y = self.rng.standard_normal(100)
-        vr = VarianceRatio(y, trend="nc", debiased=False)
+        vr = VarianceRatio(y, trend="n", debiased=False)
         dy = np.diff(y)
         mu = 0.0
         dy2 = y[2:] - y[:-2]
@@ -390,7 +397,7 @@ class TestAutolagOLS(object):
         assert np.max(np.argwhere(np.abs(direct[2:]) > crit)) == sel_lag
 
 
-@pytest.mark.parametrize("trend", ["nc", "c", "ct", "ctt"])
+@pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
 def test_trends_low_memory(trend):
     rnd = np.random.RandomState(12345)
     y = np.cumsum(rnd.standard_normal(250))
@@ -404,13 +411,13 @@ def test_trends_low_memory(trend):
     assert_equal(adf.max_lags, 1)
 
 
-@pytest.mark.parametrize("trend", ["nc", "c", "ct", "ctt"])
+@pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
 def test_representations(trend):
     rnd = np.random.RandomState(12345)
     y = np.cumsum(rnd.standard_normal(250))
     adf = ADF(y, trend=trend, max_lags=16)
     check = "Constant"
-    if trend == "nc":
+    if trend == "n":
         check = "No Trend"
     assert check in adf.__repr__()
     assert check in adf.__repr__()
@@ -465,9 +472,6 @@ def test_mackinnoncrit_errors():
 
 def test_adf_short_timeseries():
     # GH 262
-    import numpy as np
-    from arch.unitroot import ADF
-
     x = np.asarray([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0])
     adf = ADF(x)
     assert_almost_equal(adf.stat, -2.236, decimal=3)
@@ -590,3 +594,13 @@ def test_bw_selection():
 
     with pytest.raises(ValueError):
         auto_bandwidth([1])
+
+
+def test_invalid_trend():
+    with pytest.raises(ValueError, match="trend not understood"):
+        ADF(np.random.standard_normal(100), trend="unknown")
+
+
+def test_nc_warning():
+    with pytest.warns(FutureWarning, match='Trend "nc" is deprecated'):
+        ADF(np.random.standard_normal(100), trend="nc")

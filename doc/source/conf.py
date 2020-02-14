@@ -260,8 +260,8 @@ intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
     "python": ("https://docs.python.org/3/", None),
-    "numpy": ("https://docs.scipy.org/doc/numpy", None),
-    "np": ("https://docs.scipy.org/doc/numpy", None),
+    "numpy": ("https://numpy.org/devdocs/", None),
+    "np": ("https://numpy.org/devdocs/", None),
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
     "pd": ("https://pandas.pydata.org/pandas-docs/stable/", None),
 }

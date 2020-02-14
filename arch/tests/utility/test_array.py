@@ -123,8 +123,6 @@ class TestUtils(object):
             Docstring
             """
 
-            pass
-
         class B(A):
             pass
 

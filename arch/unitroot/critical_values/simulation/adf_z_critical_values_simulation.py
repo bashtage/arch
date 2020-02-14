@@ -61,7 +61,7 @@ dview["wrapper"] = wrapper
 dview["adf_simulation"] = adf_simulation
 lview = rc.load_balanced_view()
 
-trends = ("nc", "c", "ct", "ctt")
+trends = ("n", "c", "ct", "ctt")
 T = array(
     (
         20,
