@@ -1,4 +1,5 @@
-doc/_images/bootstrap_bootstrap_examples_14_0.png
+doc/_images/bootstrap_bootstrap_examples_15_0.png
+doc/_images/bootstrap_bootstrap_examples_23_0.png
 doc/_images/bootstrap_histogram.png
 doc/_images/color-logo.svg
 doc/_images/multiple-comparison_multiple-comparison_examples_17_0.png
@@ -45,6 +46,7 @@ doc/_sources/bootstrap/generated/arch.bootstrap.IIDBootstrap.rst.txt
 doc/_sources/bootstrap/generated/arch.bootstrap.IndependentSamplesBootstrap.rst.txt
 doc/_sources/bootstrap/generated/arch.bootstrap.MovingBlockBootstrap.rst.txt
 doc/_sources/bootstrap/generated/arch.bootstrap.StationaryBootstrap.rst.txt
+doc/_sources/bootstrap/generated/arch.bootstrap.optimal_block_length.rst.txt
 doc/_sources/bootstrap/generated/generated/arch.bootstrap.CircularBlockBootstrap.apply.rst.txt
 doc/_sources/bootstrap/generated/generated/arch.bootstrap.CircularBlockBootstrap.bootstrap.rst.txt
 doc/_sources/bootstrap/generated/generated/arch.bootstrap.CircularBlockBootstrap.clone.rst.txt
@@ -812,6 +814,7 @@ doc/bootstrap/generated/arch.bootstrap.IIDBootstrap.html
 doc/bootstrap/generated/arch.bootstrap.IndependentSamplesBootstrap.html
 doc/bootstrap/generated/arch.bootstrap.MovingBlockBootstrap.html
 doc/bootstrap/generated/arch.bootstrap.StationaryBootstrap.html
+doc/bootstrap/generated/arch.bootstrap.optimal_block_length.html
 doc/bootstrap/generated/generated/arch.bootstrap.CircularBlockBootstrap.apply.html
 doc/bootstrap/generated/generated/arch.bootstrap.CircularBlockBootstrap.bootstrap.html
 doc/bootstrap/generated/generated/arch.bootstrap.CircularBlockBootstrap.clone.html

@@ -21,3 +21,4 @@ for this reason.
    StationaryBootstrap
    CircularBlockBootstrap
    MovingBlockBootstrap
+   optimal_block_length
