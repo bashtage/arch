@@ -11,6 +11,7 @@ args
 arx
 autocorrelation
 autocorrelations
+autocovariances
 autolag
 Autoregression
 Autoregressions
@@ -31,11 +32,13 @@ centerings
 CircularBlockBootstrap
 cointegration
 conf
+const
 ConstantMean
 ConstantVariance
 cov
 Covariance
 covariance
+CovarianceEstimate
 covariances
 covergence
 ctt
@@ -45,6 +48,7 @@ debiased
 dependant
 detrending
 DF
+df
 DFGLS
 differencing
 disp
@@ -94,16 +98,21 @@ nan
 nc
 ndarray
 ndarrays
+NeweyWest
 Nonparametric
 nonparametric
 nonrobust
 nparam
 num
+nvar
 nw
 param
 parameterless
 params
 parzen
+ParzenCauchy
+ParzenGeometric
+ParzenRiesz
 PhillipsPerron
 pos
 ppf
@@ -112,6 +121,7 @@ Probit
 pvalue
 pvalues
 qs
+QuadraticSpectral
 quantiles
 quartile
 Rabba
@@ -151,6 +161,9 @@ studentst
 StudentsT
 subclassing
 th
+TukeyHamming
+TukeyHanning
+TukeyParzen
 tvalues
 unitroot
 univariate
@@ -158,6 +171,7 @@ unstandardized
 VaR
 VarianceRatio
 VolatilityProcess
+volatilty
 vr
 Winkler
 zag

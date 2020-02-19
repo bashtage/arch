@@ -1,14 +1,18 @@
 Akaike
 Biometrika
+Bithell
 Bollerslev
 Chernick
 Davison
+Dimitris
 Econometrica
 Econometrics
 Efron
 Fama
 Foroni
 GJR
+Halbert
+Hanning
 Hobijn
 Khrapov
 Kwiatkowski
@@ -23,6 +27,7 @@ Ooms
 Parameterless
 Perron
 Politis
+Reisz
 Rothenberg
 Schwarz
 Schwert
@@ -30,8 +35,8 @@ Sheppard
 Stanislav
 Stata
 Tibshirani
+Tukey
 Varanelli
 Wooldridge
 Zenodo
 Zivot
-Bithell

@@ -8,6 +8,7 @@ from arch.bootstrap.base import (
     IndependentSamplesBootstrap,
     MovingBlockBootstrap,
     StationaryBootstrap,
+    optimal_block_length,
 )
 from arch.bootstrap.multiple_comparison import MCS, SPA, RealityCheck, StepM
 
@@ -29,6 +30,7 @@ __all__ = [
     "StepM",
     "MCS",
     "_samplers_python",
+    "optimal_block_length",
 ]
 
 if COMPILED_SAMPLERS:

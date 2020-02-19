@@ -209,7 +209,7 @@ class ARCHModel(object, metaclass=ABCMeta):
 
     @property
     def name(self) -> str:
-        """THe name of the model."""
+        """The name of the model."""
         return self._name
 
     def constraints(self) -> Tuple[NDArray, NDArray]:
