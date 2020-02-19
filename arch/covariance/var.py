@@ -1,7 +1,7 @@
-from typing import Dict, NamedTuple, Optional, Sequence, Tuple, List
+from typing import Dict, NamedTuple, Optional, Tuple
 
 import numpy as np
-from numpy import column_stack, ones, zeros
+from numpy import ones, zeros
 from numpy.linalg import lstsq
 import pandas as pd
 from statsmodels.tools import add_constant
@@ -23,10 +23,9 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
         self,
         x: ArrayLike,
         lags: Optional[int] = None,
-        diagonal_lags: Optional[int] = None,
         method: str = "aic",
-        max_lag: Optional[int] = None,
         diagonal: bool = True,
+        max_lag: Optional[int] = None,
         kernel: str = "bartlett",
         bandwidth: Optional[float] = None,
         df_adjust: int = 0,
@@ -37,51 +36,103 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
             x, bandwidth=bandwidth, df_adjust=df_adjust, center=center, weights=weights
         )
         self._kernel = kernel
-        self._lags = lags
-        self._diagonal_lags = diagonal_lags
+        self._lags = 0
+        self._diagonal_lags = (0,) * self._x.shape[0]
         self._method = method
         self._diagonal = diagonal
         self._max_lag = max_lag
+        self._auto_lag_selection = True
+        self._format_lags(lags)
 
-    def _ic_single(
-        self,
-        idx: int,
-        resid: NDArray,
-        regressors: NDArray,
-        lags: NDArray,
-        lag: int,
-        nparam: int,
-    ) -> Tuple[int, NDArray]:
-        add_lags = lags[:, lag:]
-        params = np.linalg.lstsq(regressors, add_lags, rcond=None)[0]
-        add_lags_resid = add_lags - regressors @ params
-        curr_resid = resid[:, [idx]].copy()
-        nobs = resid.shape[0]
-        ic = np.full(add_lags.shape[1] + 1, np.inf)
-        best_resids = resid
-        for i in range(add_lags.shape[1] + 1):
-            if i > 0:
-                params = np.linalg.lstsq(add_lags_resid[:, :i], curr_resid, rcond=None)
-                new_resid = curr_resid - add_lags_resid[:, :i] @ params[0]
-                resid[:, [idx]] = new_resid
-            sigma = resid.T @ resid / nobs
-            _, ld = np.linalg.slogdet(sigma)
-            if self._method == "aic":
-                ic[i] = ld + 2 * (nparam + i) / nobs
-            elif self._method == "hqc":
-                ic[i] = ld + np.log(np.log(nobs)) * (nparam + i) / nobs
-            else:  # bic
-                ic[i] = ld + np.log(nobs) * (nparam + i) / nobs
-            if ic[i] == ic.min():
-                best_resids = resid.copy()
-        return int(np.argmin(ic)), best_resids
+    def _format_lags(self, lags) -> None:
+        """
+        Check lag inputs and standard values for lags and diagonal lags
+        """
+        if lags is None:
+            return
 
-    def _select_lags(self) -> Tuple[int, Tuple[int, ...]]:
+        self._auto_lag_selection = False
+        self._lags = int(lags)
+        if self._lags < 0:
+            raise ValueError("lags must be a non-negative integer.")
+        self._diagonal_lags = self._lags
+        return
+
+    def _ic(self, sigma, nparam, nobs):
+        _, ld = np.linalg.slogdet(sigma)
+        if self._method == "aic":
+            return ld + 2 * nparam / nobs
+        elif self._method == "hqc":
+            return ld + np.log(np.log(nobs)) * nparam / nobs
+        else:  # bic
+            return ld + np.log(nobs) * nparam / nobs
+
+    def _setup_model_data(self, max_lag: int) -> Tuple[NDArray, NDArray, NDArray]:
         nobs, nvar = self._x.shape
+        lhs = np.empty((nobs - max_lag, nvar))
+        rhs = np.empty((nobs - max_lag, nvar * max_lag))
+        rhs_locs = np.arange(0, nvar * max_lag, nvar)
+        indiv_lags = np.empty((nvar, nobs - max_lag, max_lag))
+        for i in range(nvar):
+            lags, lead = lagmat(self._x[:, i], max_lag, trim="both", original="sep")
+            lhs[:, [i]] = lead
+            indiv_lags[i] = lags
+            rhs[:, rhs_locs + i] = lags
+        if self._center:
+            rhs = add_constant(rhs, True)
+        return lhs, rhs, indiv_lags
+
+    @staticmethod
+    def _fit_diagonal(x, diag_lag, lags):
+        nvar = x.shape[1]
+        for i in range(nvar):
+            lhs = lags[i, :, :diag_lag]
+            x[:, i] -= lhs @ lstsq(lhs, x[:, i], rcond=None)[0]
+        return x
+
+    def _ic_from_vars(
+        self,
+        lhs: NDArray,
+        rhs: NDArray,
+        indiv_lags: NDArray,
+        full_order: int,
+        max_lag: int,
+    ) -> Dict[Tuple[int, int], float]:
+        c = int(self._center)
+        nobs, nvar = lhs.shape
+        _rhs = rhs[:, : (c + full_order * nvar)]
+        params = lstsq(_rhs, lhs, rcond=None)[0]
+        resids0 = lhs - _rhs @ params
+        sigma = resids0.T @ resids0 / nobs
+        nparam = (c + full_order * nvar) * nvar
+        ics: Dict[Tuple[int, int], float] = {}
+        ics[(full_order, full_order)] = self._ic(sigma, nparam, nobs)
+        if not self._diagonal:
+            return ics
+
+        purged_indiv_lags = np.empty((nvar, nobs, max_lag - full_order))
+        for i in range(nvar):
+            single = indiv_lags[i, :, full_order:]
+            params = lstsq(_rhs, single, rcond=None)[0]
+            purged_indiv_lags[i] = single - _rhs @ params
+        for diag_lag in range(1, max_lag - full_order + 1):
+            resids = self._fit_diagonal(resids0.copy(), diag_lag, purged_indiv_lags)
+            sigma = resids.T @ resids / nobs
+            nparam = (c + full_order * nvar) * nvar + nvar * diag_lag
+            ics[(full_order, full_order + diag_lag)] = self._ic(sigma, nparam, nobs)
+        return ics
+
+    def _select_lags(self) -> Tuple[int, int]:
+        """Select lags if needed"""
+        if not self._auto_lag_selection:
+            return self._lags, self._diagonal_lags
+
+        nobs, nvar = self._x.shape
+        # Use rule-of-thumb is not provided
         max_lag = int(nobs ** (1 / 3)) if self._max_lag is None else self._max_lag
         # Ensure at least nvar obs left over
         max_lag = min(max_lag, (nobs - nvar) // nvar)
-        if max_lag == 0:
+        if max_lag == 0 and self._max_lag is None:
             import warnings
 
             warnings.warn(
@@ -90,92 +141,36 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
                 f"series {nvar}.",
                 RuntimeWarning,
             )
+        lhs, rhs, indiv_lags = self._setup_model_data(max_lag)
 
-        lhs_data = []
-        rhs_data:List[List[NDArray]] = [[] for _ in range(max_lag)]
-        indiv_lags = []
-        for i in range(nvar):
-            lags, lead = lagmat(self._x[:, i], max_lag, trim="both", original="sep")
-            lhs_data.append(lead)
-            indiv_lags.append(lags)
-            for k in range(max_lag):
-                rhs_data[k].append(lags[:, [k]])
-
-        lhs = column_stack(lhs_data)
-        rhs = column_stack([column_stack(r) for r in rhs_data])
-
-        if self._center:
-            rhs = add_constant(rhs, True)
-        c = int(self._center)
-        lhs_obs = lhs.shape[0]
-        ics: Dict[Tuple[int, Tuple[int, ...]], float] = {}
-        for i in range(max_lag + 1):
-            indiv_lag_len = []
-            x = rhs[:, : (i * nvar) + c]
-            nparam = 0
-            resid = lhs
-            if i > 0 or self._center:
-                params = lstsq(x, lhs, rcond=None)[0]
-                resid = lhs - x @ params
-                nparam = params.size
-            for idx in range(nvar):
-                lag_len, resid = self._ic_single(
-                    idx, resid, x, indiv_lags[idx], i, nparam
-                )
-                indiv_lag_len.append(lag_len + i)
-
-            sigma = resid.T @ resid / lhs_obs
-            _, ld = np.linalg.slogdet(sigma)
-            if self._method == "aic":
-                ic = ld + 2 * nparam / lhs_obs
-            elif self._method == "hqc":
-                ic = ld + np.log(np.log(lhs_obs)) * nparam / lhs_obs
-            else:  # bic
-                ic = ld + np.log(lhs_obs) * nparam / lhs_obs
-            ics[(i, tuple(indiv_lag_len))] = ic
+        ics: Dict[Tuple[int, int], float] = {}
+        for full_order in range(max_lag + 1):
+            _ics = self._ic_from_vars(lhs, rhs, indiv_lags, full_order, max_lag)
+            ics.update(_ics)
         ic = np.array([crit for crit in ics.values()])
         models = [key for key in ics.keys()]
         return models[ic.argmin()]
 
-    def _estimate_var(self, common: int, individual: Sequence[int]) -> VARModel:
+    def _estimate_var(self, full_order: int, diag_order: int) -> VARModel:
         nobs, nvar = self._x.shape
         center = int(self._center)
-        max_lag = max(common, max(individual))
-        lhs = np.empty((nobs - max_lag, nvar))
-        extra_lags = []
-        rhs = np.empty((nobs - max_lag, nvar * common + center))
-        if self._center:
-            rhs[:, 0] = 1
-        for i in range(nvar):
-            lags, lead = lagmat(self._x[:, i], max_lag, trim="both", original="sep")
-            lhs[:, i : i + 1] = lead
-            extra_lags.append(lags[:, common : individual[i]])
-            for k in range(common):
-                rhs[:, center + i + nvar * k] = lags[:, k]
+        max_lag = max(full_order, diag_order)
+        lhs, rhs, extra_lags = self._setup_model_data(max_lag)
+        c = int(self._center)
+        rhs = rhs[:, : c + full_order * nvar]
+        extra_lags = extra_lags[:, :, full_order:diag_order]
+
         params = zeros((nvar, nvar * max_lag + center))
         resids = np.empty_like(lhs)
         ncommon = rhs.shape[1]
         for i in range(nvar):
             full_rhs = np.hstack([rhs, extra_lags[i]])
-
-            single_params = np.linalg.lstsq(full_rhs, lhs[:, i], rcond=None)[0]
+            single_params = lstsq(full_rhs, lhs[:, i], rcond=None)[0]
             params[i, :ncommon] = single_params[:ncommon]
-            locs = ncommon + nvar * np.arange(extra_lags[1].shape[1])
+            locs = ncommon + i + nvar * np.arange(extra_lags[i].shape[1])
             params[i, locs] = single_params[ncommon:]
             resids[:, i] = lhs[:, i] - full_rhs @ single_params
         return VARModel(resids, params, max_lag, self._center)
-
-    def _setup_lags(self) -> Tuple[int, Tuple[int, ...]]:
-        nvar = self._x.shape[1]
-        common = 0
-        indiv = (0,) * nvar
-        if self._lags is None and self._diagonal_lags is None:
-            return self._select_lags()
-        if self._lags is not None:
-            common = self._lags
-        if self._diagonal_lags is not None:
-            indiv = (self._diagonal_lags,) * nvar
-        return common, indiv
 
     @staticmethod
     def _companion_form(
@@ -193,13 +188,18 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
         sigma[:nvar, :nvar] = short_run
         return coeffs, sigma
 
+    @property
     def cov(self) -> CovarianceEstimate:
         x = self._x
         common, individual = self._select_lags()
+        print(common, individual)
         var_mod = self._estimate_var(common, individual)
         resids = var_mod.resids
         nobs, nvar = resids.shape
         short_run = resids.T @ resids / nobs
+        if var_mod.var_order == 0:
+            # Special case VAR(0)
+            return CovarianceEstimate(short_run, np.zeros((nvar, nvar)))
         coeff_sum = zeros((nvar, nvar))
         params = var_mod.params[:, var_mod.intercept :]
         for i in range(var_mod.var_order):
