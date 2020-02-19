@@ -420,7 +420,7 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         """
         Construct loose bounds for conditional variances.
 
-        These bounds are used in parameter estiamtio to ensure
+        These bounds are used in parameter estiamtion to ensure
         that the log-likelihood does not produce NaN values.
 
         Parameters

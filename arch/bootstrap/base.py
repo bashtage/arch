@@ -17,7 +17,7 @@ import pandas as pd
 import scipy.stats as stats
 
 from arch.typing import ArrayLike, NDArray
-from arch.utility.array import DocStringInheritor
+from arch.utility.array import DocStringInheritor, ensure2d
 from arch.utility.exceptions import (
     StudentizationError,
     arg_type_error,
@@ -31,12 +31,142 @@ __all__ = [
     "CircularBlockBootstrap",
     "MovingBlockBootstrap",
     "IndependentSamplesBootstrap",
+    "optimal_block_length",
 ]
 
 try:
     from arch.bootstrap._samplers import stationary_bootstrap_sample
 except ImportError:  # pragma: no cover
     from arch.bootstrap._samplers_python import stationary_bootstrap_sample
+
+
+def _single_optimal_block(x: NDArray) -> Tuple[float, float]:
+    """
+    Compute the optimal window length for a single series
+
+    Parameters
+    ----------
+    x : ndarray
+        The data to use in the optimal window estimation
+
+    Returns
+    -------
+    stationary : float
+        Estimated optimal window length for stationary bootstrap
+    circular : float
+        Estimated optimal window length for circular bootstrap
+    """
+    nobs = x.shape[0]
+    eps = x - x.mean(0)
+    b_max = np.ceil(min(3 * np.sqrt(nobs), nobs / 3))
+    kn = max(5, int(np.log10(nobs)))
+    m_max = int(np.ceil(np.sqrt(nobs))) + kn
+    # Find first collection of kn autocorrelations that are insignificant
+    cv = 2 * np.sqrt(np.log10(nobs) / nobs)
+    acv = np.zeros(m_max + 1)
+    abs_acorr = np.zeros(m_max + 1)
+    opt_m: Optional[int] = None
+    for i in range(m_max + 1):
+        v1 = eps[i + 1 :] @ eps[i + 1 :]
+        v2 = eps[: -(i + 1)] @ eps[: -(i + 1)]
+        cross_prod = eps[i:] @ eps[: nobs - i]
+        acv[i] = cross_prod / nobs
+        abs_acorr[i] = np.abs(cross_prod) / np.sqrt(v1 * v2)
+        if i >= kn:
+            if np.all(abs_acorr[i - kn : i] < cv) and opt_m is None:
+                opt_m = i - kn
+    m = 2 * max(opt_m, 1) if opt_m is not None else m_max
+    m = min(m, m_max)
+
+    g = 0.0
+    lr_acv = acv[0]
+    for k in range(1, m + 1):
+        lam = 1 if k / m <= 1 / 2 else 2 * (1 - k / m)
+        g += 2 * lam * k * acv[k]
+        lr_acv += 2 * lam * acv[k]
+    d_sb = 2 * lr_acv ** 2
+    d_cb = 4 / 3 * lr_acv ** 2
+    b_sb = ((2 * g ** 2) / d_sb) ** (1 / 3) * nobs ** (1 / 3)
+    b_cb = ((2 * g ** 2) / d_cb) ** (1 / 3) * nobs ** (1 / 3)
+    b_sb = min(b_sb, b_max)
+    b_cb = min(b_cb, b_max)
+    return b_sb, b_cb
+
+
+def optimal_block_length(x: ArrayLike) -> pd.DataFrame:
+    r"""
+    Estimate optimal window length for time-series bootstraps
+
+    Parameters
+    ----------
+    x : array_like
+        A one-dimensional or two-dimensional array-like.  Operates columns by
+        column if 2-dimensional.
+
+    Returns
+    -------
+    DataFrame
+        A DataFrame with two columns `b_sb`, the estimated optimal block size
+        for the Stationary Bootstrap and `b_cb`, the estimated optimal block
+        size for the circular bootstrap.
+
+    See Also
+    --------
+    arch.bootstrap.StationaryBootstrap
+       Politis and Romano's bootstrap with exp. distributed block lengths
+    arch.bootstrap.CircularBlockBootstrap
+       Circular (wrap-around) bootstrap
+
+    Notes
+    -----
+    Algorithm described in ([1]_) its correction ([2]_) depends on a tuning
+    parameter m, which is chosen as the first value where k_n consecutive
+    autocorrelations of x are all inside a conservative band of
+    :math:`\pm 2\sqrt{\log_{10}(n)/n}` where n is the sample size. The maximum
+    value of m is set to :math:`\lceil \sqrt{n} + k_n \rceil` where
+    :math:`k_n=\max(5, \log_{10}(n))`. The block length is then computed as
+
+    .. math::
+
+       b^{OPT}_i = \left(\frac{2g^2}{d_{i}} n\right)^{\frac{1}{3}}
+
+    where
+
+    .. math::
+
+       g & = \sum_{k=-m}^m h\left(\frac{k}{m}\right)|k|\hat{\gamma_{k}} \\
+       h(x) & = \min(1, 2(1-|x|)) \\
+       d_{i} & = c_{i} \left(\hat{\sigma}^2\right)^2 \\
+       \hat{\sigma}^2 & = \sum_{k=-m}^m h\left(\frac{k}{m}\right)\hat{\gamma_{k}} \\
+       \hat{\gamma_{i}} & = n^{-1} \sum_{k=i+1}^n
+                          \left(x_k-\bar{x}\right)\left(x_{k-i}-\bar{x}\right) \\
+
+    and the two remaining constants :math:`c_i` are 2 for the Stationary
+    bootstrap and 4/3 for the Circular bootstrap.
+
+    Some of the tuning parameters are taken from Andrew Patton's MATLAB
+    program that computes the optimal block length.  The block lengths do
+    not match this implementation since the autocovariances and
+    autocorrelations are all computed using the maximum sample length
+    rather than a common sampling length.
+
+    References
+    ----------
+    .. [1] Dimitris N. Politis & Halbert White (2004) Automatic Block-Length
+       Selection for the Dependent Bootstrap, Econometric Reviews, 23:1,
+       53-70, DOI: 10.1081/ETC-120028836.
+    .. [2] Andrew Patton , Dimitris N. Politis & Halbert White (2009)
+       Correction to “Automatic Block-Length Selection for the Dependent
+       Bootstrap” by D. Politis and H. White, Econometric Reviews, 28:4,
+       372-375, DOI: 10.1080/07474930802459016.
+    """
+    x_arr = ensure2d(np.asarray(x), "x")
+    opt = [_single_optimal_block(col) for col in x_arr.T]
+    if isinstance(x, (pd.DataFrame, pd.Series)):
+        idx = [x.name] if isinstance(x, pd.Series) else list(x.columns)
+    else:
+        idx = [i for i in range(x_arr.shape[1])]
+    return pd.DataFrame(opt, index=idx, columns=["stationary", "circular"])
 
 
 def _get_acceleration(jk_params: NDArray) -> float:
@@ -1183,6 +1313,13 @@ class CircularBlockBootstrap(IIDBootstrap):
     Note that ``random_state`` is a reserved keyword and any variable
     passed using this keyword must be an instance of ``RandomState``.
 
+    See Also
+    --------
+    arch.bootstrap.optimal_block_length
+       Optimal block length estimation
+    arch.bootstrap.StationaryBootstrap
+       Politis and Romano's bootstrap with exp. distributed block lengths
+
     Examples
     --------
     Data can be accessed in a number of ways.  Positional data is retained in
@@ -1283,6 +1420,13 @@ class StationaryBootstrap(CircularBlockBootstrap):
     Note that ``random_state`` is a reserved keyword and any variable
     passed using this keyword must be an instance of ``RandomState``.
 
+    See Also
+    --------
+    arch.bootstrap.optimal_block_length
+       Optimal block length estimation
+    arch.bootstrap.CircularBlockBootstrap
+       Circular (wrap-around) bootstrap
+
     Examples
     --------
     Data can be accessed in a number of ways.  Positional data is retained in
@@ -1358,6 +1502,15 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     attribute after the bootstrap has been created. See the example below.
     Note that ``random_state`` is a reserved keyword and any variable
     passed using this keyword must be an instance of ``RandomState``.
+
+    See Also
+    --------
+    arch.bootstrap.optimal_block_length
+       Optimal block length estimation
+    arch.bootstrap.StationaryBootstrap
+       Politis and Romano's bootstrap with exp. distributed block lengths
+    arch.bootstrap.CircularBlockBootstrap
+       Circular (wrap-around) bootstrap
 
     Examples
     --------

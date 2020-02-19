@@ -144,7 +144,7 @@ def test_parzen_auto(data: ArrayLike):
 
     if data.ndim == 1:
         # This test is noisy
-        expected_bw = (18, 19)
+        expected_bw: Tuple[int, ...] = (18, 19)
         expected_weights = [
             1.0000e00,
             9.8575e-01,

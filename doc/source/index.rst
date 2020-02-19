@@ -29,13 +29,13 @@ routines relevant for the analysis of financial data.
 
 Citation
 ========
-This package should be cited using Zenodo. For example, for the 4.8.1 release,
+This package should be cited using Zenodo. For example, for the 4.13 release,
 
-.. [*] Kevin Sheppard. (2019, March 28). bashtage/arch: Release 4.8.1 (Version 4.8.1).
-   Zenodo. https://zenodo.org/record/2613877
+.. [*] Kevin Sheppard. (2019, March 28). bashtage/arch: Release 4.13 (Version 4.13).
+   Zenodo. https://zenodo.org/record/593254
 
 .. image:: https://zenodo.org/badge/doi/10.5281/zenodo.3551028.svg
-   :target: https://doi.org/10.5281/zenodo.3551028
+   :target: https://doi.org/10.5281/zenodo.593254
 
 Index
 =====

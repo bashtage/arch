@@ -68,7 +68,8 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.coverage",
     "sphinx.ext.ifconfig",
-    "numpydoc",
+    # "numpydoc",
+    "sphinx.ext.napoleon",
     "sphinx_autodoc_typehints",
     "IPython.sphinxext.ipython_console_highlighting",
     "IPython.sphinxext.ipython_directive",
@@ -268,9 +269,21 @@ intersphinx_mapping = {
 
 extlinks = {"issue": ("https://github.com/bashtage/arch/issues/%s", "GH")}
 
-napoleon_use_admonition_for_examples = True
+napoleon_use_admonition_for_examples = False
 napoleon_use_admonition_for_notes = False
-napoleon_use_admonition_for_references = True
+napoleon_use_admonition_for_references = False
+
+numpydoc_use_autodoc_signature = True
+numpydoc_xref_param_type = True
+numpydoc_class_members_toctree = False
+
+numpydoc_xref_aliases = {
+    "Figure": "matplotlib.figure.Figure",
+    "Axes": "matplotlib.axes.Axes",
+    "AxesSubplot": "matplotlib.axes.Axes",
+    "DataFrame": "pandas.DataFrame",
+    "Series": "pandas.Series",
+}
 
 autosummary_generate = True
 autoclass_content = "class"
