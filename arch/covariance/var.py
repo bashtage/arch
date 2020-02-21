@@ -44,6 +44,10 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
         self._auto_lag_selection = True
         self._format_lags(lags)
 
+        # Attach for testing only
+        self._ics: Dict[Tuple[int, int], float] = {}
+        self._order = (0, 0)
+
     def _format_lags(self, lags) -> None:
         """
         Check lag inputs and standard values for lags and diagonal lags
@@ -52,9 +56,9 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
             return
 
         self._auto_lag_selection = False
-        self._lags = int(lags)
-        if self._lags < 0:
+        if not np.isscalar(lags) or lags < 0 or int(lags) != lags:
             raise ValueError("lags must be a non-negative integer.")
+        self._lags = int(lags)
         self._diagonal_lags = self._lags
         return
 
@@ -63,7 +67,7 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
         if self._method == "aic":
             return ld + 2 * nparam / nobs
         elif self._method == "hqc":
-            return ld + np.log(np.log(nobs)) * nparam / nobs
+            return ld + 2 * np.log(np.log(nobs)) * nparam / nobs
         else:  # bic
             return ld + np.log(nobs) * nparam / nobs
 
@@ -105,8 +109,9 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
         resids0 = lhs - _rhs @ params
         sigma = resids0.T @ resids0 / nobs
         nparam = (c + full_order * nvar) * nvar
-        ics: Dict[Tuple[int, int], float] = {}
-        ics[(full_order, full_order)] = self._ic(sigma, nparam, nobs)
+        ics: Dict[Tuple[int, int], float] = {
+            (full_order, full_order): self._ic(sigma, nparam, nobs)
+        }
         if not self._diagonal:
             return ics
 
@@ -141,14 +146,14 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
                 f"series {nvar}.",
                 RuntimeWarning,
             )
+        self._max_lag = max_lag
         lhs, rhs, indiv_lags = self._setup_model_data(max_lag)
 
-        ics: Dict[Tuple[int, int], float] = {}
         for full_order in range(max_lag + 1):
             _ics = self._ic_from_vars(lhs, rhs, indiv_lags, full_order, max_lag)
-            ics.update(_ics)
-        ic = np.array([crit for crit in ics.values()])
-        models = [key for key in ics.keys()]
+            self._ics.update(_ics)
+        ic = np.array([crit for crit in self._ics.values()])
+        models = [key for key in self._ics.keys()]
         return models[ic.argmin()]
 
     def _estimate_var(self, full_order: int, diag_order: int) -> VARModel:
@@ -186,33 +191,56 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
             )
         sigma = zeros((nvar * nlag, nvar * nlag))
         sigma[:nvar, :nvar] = short_run
-        return coeffs, sigma
+        multiplier = np.linalg.inv(np.eye(coeffs.size) - np.kron(coeffs, coeffs))
+        vec_sigma = sigma.ravel()[:, None]
+        vec_var_cov = multiplier @ vec_sigma
+        var_cov = vec_var_cov.reshape((nvar * nlag, nvar * nlag)).T
+        return coeffs, var_cov
 
     @property
     def cov(self) -> CovarianceEstimate:
         x = self._x
         common, individual = self._select_lags()
-        print(common, individual)
+        self._order = (common, individual)
         var_mod = self._estimate_var(common, individual)
         resids = var_mod.resids
         nobs, nvar = resids.shape
         short_run = resids.T @ resids / nobs
         if var_mod.var_order == 0:
             # Special case VAR(0)
+            # TODO: Docs should reflect different DoF adjustment
             return CovarianceEstimate(short_run, np.zeros((nvar, nvar)))
+        comp_coefs, comp_var_cov = self._companion_form(var_mod, short_run)
+        max_eig = np.abs(np.linalg.eigvals(comp_coefs)).max()
+        if max_eig >= 1:
+            raise ValueError(
+                f"""\
+The parameters of the estimated VAR model are not compatible with covariance \
+stationarity, and the long-run covariance cannot be computed. The model estimated is \
+a VAR({max(common, individual)}) where the final {max(0, individual-common)} lags \
+have diagonal coefficient matrices. The maximum eigenvalue of the companion-form \
+VAR(1) coefficient matrix is {max_eig}."""
+            )
+        # TODO: Eigenvalue check
         coeff_sum = zeros((nvar, nvar))
         params = var_mod.params[:, var_mod.intercept :]
         for i in range(var_mod.var_order):
             coeff_sum += params[:, i * nvar : (i + 1) * nvar]
         d = np.linalg.inv(np.eye(nvar) - coeff_sum)
         scale = nobs / (nobs - nvar)
-        long_run = scale * (d @ short_run @ d)
-        comp_coefs, comp_sigma = self._companion_form(var_mod, short_run)
+        long_run = scale * (d @ short_run @ d.T)
+
+        # TODO: Consider an alternative using sample moments like
+        #  [Gamma0  Gamma1  Gamma2, ... ]
+        #  [Gamma1' Gamma0  Gamma1, ... ]
+        #  [Gamma2' Gamma1' Gamma0, ... ]
         comp_nvar = comp_coefs.shape[0]
         i_minus_coefs_inv = np.linalg.inv(np.eye(comp_nvar) - comp_coefs)
-        one_sided = scale * i_minus_coefs_inv @ comp_sigma
+
+        one_sided = scale * i_minus_coefs_inv @ comp_var_cov
+        one_sided_strict = comp_coefs @ one_sided
+
         one_sided = one_sided[:nvar, :nvar]
-        one_sided_strict = scale * comp_coefs @ i_minus_coefs_inv @ comp_sigma
         one_sided_strict = one_sided_strict[:nvar, :nvar]
         columns = x.columns if isinstance(x, pd.DataFrame) else None
 
