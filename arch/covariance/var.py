@@ -19,6 +19,22 @@ class VARModel(NamedTuple):
 
 
 class PreWhitenRecoloredCovariance(CovarianceEstimator):
+    """
+    Parameters
+    ----------
+    x : array_like
+    lags : int, default None
+    method : {"aic", "hqc", "bic"}, default "aic"
+    diagonal : bool, default True
+    max_lag : int, default None
+    sample_autocov : bool, default False
+    kernel : str, default "bartlett"
+    bandwidth : float, default None
+    df_adjust : int, default 0
+    center : bool, default True
+    weights : array_like, default None
+    """
+
     def __init__(
         self,
         x: ArrayLike,
@@ -26,6 +42,7 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
         method: str = "aic",
         diagonal: bool = True,
         max_lag: Optional[int] = None,
+        sample_autocov: bool = False,
         kernel: str = "bartlett",
         bandwidth: Optional[float] = None,
         df_adjust: int = 0,
@@ -43,6 +60,7 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
         self._max_lag = max_lag
         self._auto_lag_selection = True
         self._format_lags(lags)
+        self._sample_autocov = sample_autocov
 
         # Attach for testing only
         self._ics: Dict[Tuple[int, int], float] = {}
@@ -177,9 +195,45 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
             resids[:, i] = lhs[:, i] - full_rhs @ single_params
         return VARModel(resids, params, max_lag, self._center)
 
-    @staticmethod
+    def _estimate_sample_cov(self, nvar: int, nlag: int) -> NDArray:
+        """
+        #  [Gamma0  Gamma1  Gamma2, ... ]
+        #  [Gamma1' Gamma0  Gamma1, ... ]
+        #  [Gamma2' Gamma1' Gamma0, ... ]
+
+        :param nvar:
+        :param nlag:
+        :return:
+        """
+        x = self._x
+        if self._center:
+            x = x - x.mean(0)
+        nobs = x.shape[0]
+        var_cov = zeros((nvar * nlag, nvar * nlag))
+        gamma = zeros((nlag, nvar, nvar))
+        for i in range(nlag):
+            gamma[i] = (x[i:].T @ x[: (nobs - i)]) / nobs
+        for r in range(nlag):
+            for c in range(nlag):
+                g = gamma[np.abs(r - c)]
+                if c > r:
+                    g = g.T
+                var_cov[r * nvar : (r + 1) * nvar, c * nvar : (c + 1) * nvar] = g
+        return var_cov
+
+    def _estimate_model_cov(
+        self, nvar: int, nlag: int, coeffs: NDArray, short_run: NDArray
+    ) -> NDArray:
+        sigma = zeros((nvar * nlag, nvar * nlag))
+        sigma[:nvar, :nvar] = short_run
+        multiplier = np.linalg.inv(np.eye(coeffs.size) - np.kron(coeffs, coeffs))
+        vec_sigma = sigma.ravel()[:, None]
+        vec_var_cov = multiplier @ vec_sigma
+        var_cov = vec_var_cov.reshape((nvar * nlag, nvar * nlag)).T
+        return var_cov
+
     def _companion_form(
-        var_model: VARModel, short_run: NDArray
+        self, var_model: VARModel, short_run: NDArray
     ) -> Tuple[NDArray, NDArray]:
         nvar = var_model.resids.shape[1]
         nlag = var_model.var_order
@@ -189,12 +243,10 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
             coeffs[(i + 1) * nvar : (i + 2) * nvar, i * nvar : (i + 1) * nvar] = np.eye(
                 nvar
             )
-        sigma = zeros((nvar * nlag, nvar * nlag))
-        sigma[:nvar, :nvar] = short_run
-        multiplier = np.linalg.inv(np.eye(coeffs.size) - np.kron(coeffs, coeffs))
-        vec_sigma = sigma.ravel()[:, None]
-        vec_var_cov = multiplier @ vec_sigma
-        var_cov = vec_var_cov.reshape((nvar * nlag, nvar * nlag)).T
+        if self._sample_autocov:
+            var_cov = self._estimate_sample_cov(nvar, nlag)
+        else:
+            var_cov = self._estimate_model_cov(nvar, nlag, coeffs, short_run)
         return coeffs, var_cov
 
     @property
@@ -221,7 +273,6 @@ a VAR({max(common, individual)}) where the final {max(0, individual-common)} lag
 have diagonal coefficient matrices. The maximum eigenvalue of the companion-form \
 VAR(1) coefficient matrix is {max_eig}."""
             )
-        # TODO: Eigenvalue check
         coeff_sum = zeros((nvar, nvar))
         params = var_mod.params[:, var_mod.intercept :]
         for i in range(var_mod.var_order):
@@ -230,10 +281,6 @@ VAR(1) coefficient matrix is {max_eig}."""
         scale = nobs / (nobs - nvar)
         long_run = scale * (d @ short_run @ d.T)
 
-        # TODO: Consider an alternative using sample moments like
-        #  [Gamma0  Gamma1  Gamma2, ... ]
-        #  [Gamma1' Gamma0  Gamma1, ... ]
-        #  [Gamma2' Gamma1' Gamma0, ... ]
         comp_nvar = comp_coefs.shape[0]
         i_minus_coefs_inv = np.linalg.inv(np.eye(comp_nvar) - comp_coefs)
 

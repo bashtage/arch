@@ -170,9 +170,9 @@ def test_short_long_run(data, center, diagonal, method, lags):
     assert_allclose(cov.long_run, expected_long_run)
 
 
-def test_data(data):
-    pwrc = PreWhitenRecoloredCovariance(data)
-    direct_var(data, True, 1, 3)
+@pytest.mark.parametrize("sample_autocov", [True, False])
+def test_data(data, sample_autocov):
+    pwrc = PreWhitenRecoloredCovariance(data, sample_autocov=sample_autocov)
     pwrc.cov
 
 
