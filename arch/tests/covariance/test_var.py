@@ -11,6 +11,25 @@ from arch.typing import NDArray
 
 DATA_PARAMS = list(product([1, 3], [True, False], [0]))  # , 1, 3]))
 DATA_IDS = [f"dim: {d}, pandas: {p}, order: {o}" for d, p, o in DATA_PARAMS]
+KERNELS = [
+    "Bartlett",
+    "Parzen",
+    "ParzenCauchy",
+    "ParzenGeometric",
+    "ParzenRiesz",
+    "TukeyHamming",
+    "TukeyHanning",
+    "TukeyParzen",
+    "QuadraticSpectral",
+    "Andrews",
+    "Gallant",
+    "NeweyWest",
+]
+
+
+@pytest.fixture(params=KERNELS)
+def kernel(request):
+    return request.param
 
 
 @pytest.fixture(scope="module", params=DATA_PARAMS, ids=DATA_IDS)
@@ -82,9 +101,14 @@ def direct_var(
         if diag_order > full_order:
             locs[diag_start:] = c + i + nvar * np.arange(full_order, diag_order)
         _rhs = rhs[:, locs]
-        p = np.linalg.lstsq(_rhs, lhs[:, i : i + 1], rcond=None)[0]
-        params[i : i + 1, locs] = p.T
-        resids[:, i : i + 1] = lhs[:, i : i + 1] - _rhs @ p
+        if _rhs.shape[1] > 0:
+            p = np.linalg.lstsq(_rhs, lhs[:, i : i + 1], rcond=None)[0]
+            params[i : i + 1, locs] = p.T
+            resids[:, i : i + 1] = lhs[:, i : i + 1] - _rhs @ p
+        else:
+            # Branch is a workaround of NumPy 1.15
+            # TODO: Remove after NumPy 1.15 dropped
+            resids[:, i: i + 1] = lhs[:, i: i + 1]
     return params, resids
 
 
@@ -125,10 +149,11 @@ def test_direct_var(data, const, full_order, diag_order, max_order, ic):
 @pytest.mark.parametrize("method", ["aic", "bic", "hqc"])
 def test_ic(data, center, diagonal, method):
     pwrc = PreWhitenRecoloredCovariance(
-        data, center=center, diagonal=diagonal, method=method
+        data, center=center, diagonal=diagonal, method=method, bandwidth=0.0,
     )
     cov = pwrc.cov
-    assert isinstance(cov.short_run, np.ndarray)
+    expected_type = np.ndarray if isinstance(data, np.ndarray) else pd.DataFrame
+    assert isinstance(cov.short_run, expected_type)
     expected_max_lag = int(data.shape[0] ** (1 / 3))
     assert pwrc._max_lag == expected_max_lag
     expected_ics = {}
@@ -152,7 +177,7 @@ def test_ic(data, center, diagonal, method):
 @pytest.mark.parametrize("lags", [0, 1, 3])
 def test_short_long_run(data, center, diagonal, method, lags):
     pwrc = PreWhitenRecoloredCovariance(
-        data, center=center, diagonal=diagonal, method=method, lags=lags
+        data, center=center, diagonal=diagonal, method=method, lags=lags, bandwidth=0.0,
     )
     cov = pwrc.cov
     full_order, diag_order = pwrc._order
@@ -172,7 +197,9 @@ def test_short_long_run(data, center, diagonal, method, lags):
 
 @pytest.mark.parametrize("sample_autocov", [True, False])
 def test_data(data, sample_autocov):
-    pwrc = PreWhitenRecoloredCovariance(data, sample_autocov=sample_autocov)
+    pwrc = PreWhitenRecoloredCovariance(
+        data, sample_autocov=sample_autocov, bandwidth=0.0
+    )
     pwrc.cov
 
 

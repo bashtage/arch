@@ -1,7 +1,7 @@
-from typing import Dict, NamedTuple, Optional, Tuple
+from typing import Dict, NamedTuple, Optional, Tuple, Type
 
 import numpy as np
-from numpy import ones, zeros
+from numpy import zeros
 from numpy.linalg import lstsq
 import pandas as pd
 from statsmodels.tools import add_constant
@@ -25,7 +25,7 @@ def _normalize_name(name: str) -> str:
     return name
 
 
-KERNELS = {}
+KERNELS: Dict[str, Type[CovarianceEstimator]] = {}
 for name in kernel.__all__:
     estimator = getattr(kernel, name)
     if issubclass(estimator, kernel.CovarianceEstimator):
@@ -77,7 +77,7 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
         super().__init__(
             x, bandwidth=bandwidth, df_adjust=df_adjust, center=center, weights=weights
         )
-        self._kernel = kernel
+        self._kernel_name = kernel
         self._lags = 0
         self._diagonal_lags = (0,) * self._x.shape[0]
         self._method = method
@@ -100,6 +100,7 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
                 f"are:\n\n{available_val}"
             )
         self._kernel = KERNELS[kernel]
+        self._kernel_instance: Optional[CovarianceEstimator] = None
 
         # Attach for testing only
         self._ics: Dict[Tuple[int, int], float] = {}
@@ -162,8 +163,13 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
         c = int(self._center)
         nobs, nvar = lhs.shape
         _rhs = rhs[:, : (c + full_order * nvar)]
-        params = lstsq(_rhs, lhs, rcond=None)[0]
-        resids0 = lhs - _rhs @ params
+        if _rhs.shape[1] > 0 and lhs.shape[1] > 0:
+            params = lstsq(_rhs, lhs, rcond=None)[0]
+            resids0 = lhs - _rhs @ params
+        else:
+            # Branch is a workaround of NumPy 1.15
+            # TODO: Remove after NumPy 1.15 dropped
+            resids0 = lhs
         sigma = resids0.T @ resids0 / nobs
         nparam = (c + full_order * nvar) * nvar
         ics: Dict[Tuple[int, int], float] = {
@@ -175,8 +181,14 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
         purged_indiv_lags = np.empty((nvar, nobs, max_lag - full_order))
         for i in range(nvar):
             single = indiv_lags[i, :, full_order:]
-            params = lstsq(_rhs, single, rcond=None)[0]
-            purged_indiv_lags[i] = single - _rhs @ params
+            if single.shape[1] > 0 and _rhs.shape[1] > 0:
+                params = lstsq(_rhs, single, rcond=None)[0]
+                purged_indiv_lags[i] = single - _rhs @ params
+            else:
+                # Branch is a workaround of NumPy 1.15
+                # TODO: Remove after NumPy 1.15 dropped
+                purged_indiv_lags[i] = single
+
         for diag_lag in range(1, max_lag - full_order + 1):
             resids = self._fit_diagonal(resids0.copy(), diag_lag, purged_indiv_lags)
             sigma = resids.T @ resids / nobs
@@ -227,11 +239,17 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
         ncommon = rhs.shape[1]
         for i in range(nvar):
             full_rhs = np.hstack([rhs, extra_lags[i]])
-            single_params = lstsq(full_rhs, lhs[:, i], rcond=None)[0]
-            params[i, :ncommon] = single_params[:ncommon]
-            locs = ncommon + i + nvar * np.arange(extra_lags[i].shape[1])
-            params[i, locs] = single_params[ncommon:]
-            resids[:, i] = lhs[:, i] - full_rhs @ single_params
+            if full_rhs.shape[1] > 0:
+                single_params = lstsq(full_rhs, lhs[:, i], rcond=None)[0]
+                params[i, :ncommon] = single_params[:ncommon]
+                locs = ncommon + i + nvar * np.arange(extra_lags[i].shape[1])
+                params[i, locs] = single_params[ncommon:]
+                resids[:, i] = lhs[:, i] - full_rhs @ single_params
+            else:
+                # Branch is a workaround of NumPy 1.15
+                # TODO: Remove after NumPy 1.15 dropped
+                resids[:, i] = lhs[:, i]
+
         return VARModel(resids, params, max_lag, self._center)
 
     def _estimate_sample_cov(self, nvar: int, nlag: int) -> NDArray:
@@ -290,17 +308,23 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
 
     @property
     def cov(self) -> CovarianceEstimate:
-        x = self._x
         common, individual = self._select_lags()
         self._order = (common, individual)
         var_mod = self._estimate_var(common, individual)
         resids = var_mod.resids
         nobs, nvar = resids.shape
-        short_run = resids.T @ resids / nobs
+        self._kernel_instance = self._kernel(
+            resids, self._bandwidth, 0, False, self._x_weights, self._force_int
+        )
+        kern_cov = self._kernel_instance.cov
+        short_run = kern_cov.short_run
+        x_orig = self._x_orig
+        columns = x_orig.columns if isinstance(x_orig, pd.DataFrame) else None
         if var_mod.var_order == 0:
             # Special case VAR(0)
             # TODO: Docs should reflect different DoF adjustment
-            return CovarianceEstimate(short_run, np.zeros((nvar, nvar)))
+            oss = kern_cov.one_sided_strict
+            return CovarianceEstimate(short_run, oss, columns)
         comp_coefs, comp_var_cov = self._companion_form(var_mod, short_run)
         max_eig = np.abs(np.linalg.eigvals(comp_coefs)).max()
         if max_eig >= 1:
@@ -328,7 +352,6 @@ VAR(1) coefficient matrix is {max_eig}."""
 
         one_sided = one_sided[:nvar, :nvar]
         one_sided_strict = one_sided_strict[:nvar, :nvar]
-        columns = x.columns if isinstance(x, pd.DataFrame) else None
 
         return CovarianceEstimate(
             short_run,
@@ -338,14 +361,29 @@ VAR(1) coefficient matrix is {max_eig}."""
             one_sided=one_sided,
         )
 
-    def bandwidth_scale(self) -> float:
-        return 1.0
+    def _ensure_kernel_instantized(self) -> None:
+        if self._kernel_instance is None:
+            self.cov
 
+    @property
+    def bandwidth_scale(self) -> float:
+        self._ensure_kernel_instantized()
+        assert self._kernel_instance is not None
+        return self._kernel_instance.bandwidth_scale
+
+    @property
     def kernel_const(self) -> float:
-        return 1.0
+        self._ensure_kernel_instantized()
+        assert self._kernel_instance is not None
+        return self._kernel_instance.kernel_const
 
     def _weights(self) -> NDArray:
-        return ones(0)
+        self._ensure_kernel_instantized()
+        assert self._kernel_instance is not None
+        return self._kernel_instance._weights()
 
+    @property
     def rate(self) -> float:
-        return 2 / 9
+        self._ensure_kernel_instantized()
+        assert self._kernel_instance is not None
+        return self._kernel_instance.rate
