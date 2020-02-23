@@ -7,6 +7,7 @@ import pandas as pd
 from statsmodels.tools import add_constant
 from statsmodels.tsa.tsatools import lagmat
 
+from arch.covariance import kernel
 from arch.covariance.kernel import CovarianceEstimate, CovarianceEstimator
 from arch.typing import ArrayLike, NDArray
 
@@ -16,6 +17,21 @@ class VARModel(NamedTuple):
     params: NDArray
     var_order: int
     intercept: bool
+
+
+def _normalize_name(name: str) -> str:
+    name = name.replace("-", "").replace("_", "")
+    name = name.lower()
+    return name
+
+
+KERNELS = {}
+for name in kernel.__all__:
+    estimator = getattr(kernel, name)
+    if issubclass(estimator, kernel.CovarianceEstimator):
+        KERNELS[_normalize_name(name)] = estimator
+        KERNELS[name] = estimator
+print(KERNELS)
 
 
 class PreWhitenRecoloredCovariance(CovarianceEstimator):
@@ -33,6 +49,15 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
     df_adjust : int, default 0
     center : bool, default True
     weights : array_like, default None
+
+    See Also
+    --------
+
+    Notes
+    -----
+
+    Examples
+    --------
     """
 
     def __init__(
@@ -61,12 +86,26 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
         self._auto_lag_selection = True
         self._format_lags(lags)
         self._sample_autocov = sample_autocov
+        original_kernel = kernel
+        kernel = _normalize_name(kernel)
+        if kernel not in KERNELS:
+            import string
+
+            available = [key for key in KERNELS if key[0] in string.ascii_uppercase]
+            available_val = "\n ".join(
+                [f"{knl} {_normalize_name(knl)}" for knl in available]
+            )
+            raise ValueError(
+                f"kernel {original_kernel} was not found. The available kernels "
+                f"are:\n\n{available_val}"
+            )
+        self._kernel = KERNELS[kernel]
 
         # Attach for testing only
         self._ics: Dict[Tuple[int, int], float] = {}
         self._order = (0, 0)
 
-    def _format_lags(self, lags) -> None:
+    def _format_lags(self, lags: Optional[int]) -> None:
         """
         Check lag inputs and standard values for lags and diagonal lags
         """
@@ -80,7 +119,7 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
         self._diagonal_lags = self._lags
         return
 
-    def _ic(self, sigma, nparam, nobs):
+    def _ic(self, sigma: NDArray, nparam: int, nobs: int) -> float:
         _, ld = np.linalg.slogdet(sigma)
         if self._method == "aic":
             return ld + 2 * nparam / nobs
@@ -105,7 +144,7 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
         return lhs, rhs, indiv_lags
 
     @staticmethod
-    def _fit_diagonal(x, diag_lag, lags):
+    def _fit_diagonal(x: NDArray, diag_lag: int, lags: NDArray) -> NDArray:
         nvar = x.shape[1]
         for i in range(nvar):
             lhs = lags[i, :, :diag_lag]
