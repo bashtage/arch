@@ -6,6 +6,9 @@ Since 4.12
 ==========
 - Issue warnings when unit root tests are mutated. Will raise after 5.0
   is released.
+- Fixed a bug in :class:`arch.univariate.SkewStudent` which did not use the
+  user-provided `RandomState` when one was provided. This prevented
+  reproducing simulated values (:issue:`353`).
 
 Release 4.12
 ============

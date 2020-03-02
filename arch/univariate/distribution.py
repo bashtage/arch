@@ -776,7 +776,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def _simulator(self, size: Union[int, Tuple[int, ...]]) -> NDArray:
         # No need to normalize since it is already done in parameterization
         assert self._parameters is not None
-        return self.ppf(stats.uniform.rvs(size=size), self._parameters)
+        return self.ppf(self._random_state.random_sample(size=size), self._parameters)
 
     def simulate(
         self, parameters: Union[int, float, Sequence[Union[float, int]], ArrayLike1D]
