@@ -182,7 +182,7 @@
             <span class=k >raise</span> <span class=ne >ValueError</span><span class=p >(</span>
                 <span class=s2 >"Degrees of freedom is &lt;= 0 after adjusting the sample "</span>
                 <span class=s2 >"size of x using df_adjust. df_adjust must be less than"</span>
-                <span class=sa >f</span><span class=s2 >" </span><span class=si >{self._x.shape[0]}</span><span class=s2 >"</span>
+                <span class=sa >f</span><span class=s2 >" </span><span class=si >{</span><span class=bp >self</span><span class=o >.</span><span class=n >_x</span><span class=o >.</span><span class=n >shape</span><span class=p >[</span><span class=mi >0</span><span class=p >]</span><span class=si >}</span><span class=s2 >"</span>
             <span class=p >)</span>
         <span class=k >if</span> <span class=n >weights</span> <span class=ow >is</span> <span class=kc >None</span><span class=p >:</span>
             <span class=n >xw</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >_x_weights</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >ones</span><span class=p >((</span><span class=bp >self</span><span class=o >.</span><span class=n >_x</span><span class=o >.</span><span class=n >shape</span><span class=p >[</span><span class=mi >1</span><span class=p >],</span> <span class=mi >1</span><span class=p >))</span>
@@ -196,7 +196,7 @@
             <span class=ow >or</span> <span class=n >np</span><span class=o >.</span><span class=n >all</span><span class=p >(</span><span class=n >xw</span> <span class=o >==</span> <span class=mi >0</span><span class=p >)</span>
         <span class=p >):</span>
             <span class=k >raise</span> <span class=ne >ValueError</span><span class=p >(</span>
-                <span class=sa >f</span><span class=s2 >"weights must be a 1 by </span><span class=si >{self._x.shape[1]}</span><span class=s2 > (x.shape[1]) "</span>
+                <span class=sa >f</span><span class=s2 >"weights must be a 1 by </span><span class=si >{</span><span class=bp >self</span><span class=o >.</span><span class=n >_x</span><span class=o >.</span><span class=n >shape</span><span class=p >[</span><span class=mi >1</span><span class=p >]</span><span class=si >}</span><span class=s2 > (x.shape[1]) "</span>
                 <span class=sa >f</span><span class=s2 >"array with non-negative values where at least one value is "</span>
                 <span class=s2 >"strictly greater than 0."</span>
             <span class=p >)</span>
@@ -204,16 +204,16 @@
 
     <span class=k >def</span> <span class=fm >__str__</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >str</span><span class=p >:</span>
         <span class=n >out</span> <span class=o >=</span> <span class=p >(</span>
-            <span class=sa >f</span><span class=s2 >"Kernel: </span><span class=si >{self.name}</span><span class=s2 >"</span><span class=p >,</span>
-            <span class=sa >f</span><span class=s2 >"Bandwidth: </span><span class=si >{self.bandwidth}</span><span class=s2 >"</span><span class=p >,</span>
-            <span class=sa >f</span><span class=s2 >"Degree of Freedom Adjustment: </span><span class=si >{self._df_adjust}</span><span class=s2 >"</span><span class=p >,</span>
-            <span class=sa >f</span><span class=s2 >"Centered: </span><span class=si >{self.centered}</span><span class=s2 >"</span><span class=p >,</span>
-            <span class=sa >f</span><span class=s2 >"Automatic Bandwidth: </span><span class=si >{self._auto_bandwidth}</span><span class=s2 >"</span><span class=p >,</span>
+            <span class=sa >f</span><span class=s2 >"Kernel: </span><span class=si >{</span><span class=bp >self</span><span class=o >.</span><span class=n >name</span><span class=si >}</span><span class=s2 >"</span><span class=p >,</span>
+            <span class=sa >f</span><span class=s2 >"Bandwidth: </span><span class=si >{</span><span class=bp >self</span><span class=o >.</span><span class=n >bandwidth</span><span class=si >}</span><span class=s2 >"</span><span class=p >,</span>
+            <span class=sa >f</span><span class=s2 >"Degree of Freedom Adjustment: </span><span class=si >{</span><span class=bp >self</span><span class=o >.</span><span class=n >_df_adjust</span><span class=si >}</span><span class=s2 >"</span><span class=p >,</span>
+            <span class=sa >f</span><span class=s2 >"Centered: </span><span class=si >{</span><span class=bp >self</span><span class=o >.</span><span class=n >centered</span><span class=si >}</span><span class=s2 >"</span><span class=p >,</span>
+            <span class=sa >f</span><span class=s2 >"Automatic Bandwidth: </span><span class=si >{</span><span class=bp >self</span><span class=o >.</span><span class=n >_auto_bandwidth</span><span class=si >}</span><span class=s2 >"</span><span class=p >,</span>
         <span class=p >)</span>
         <span class=k >return</span> <span class=s2 >"</span><span class=se >\n</span><span class=s2 >"</span><span class=o >.</span><span class=n >join</span><span class=p >(</span><span class=n >out</span><span class=p >)</span>
 
     <span class=k >def</span> <span class=fm >__repr__</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >str</span><span class=p >:</span>
-        <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=fm >__str__</span><span class=p >()</span> <span class=o >+</span> <span class=sa >f</span><span class=s2 >"</span><span class=se >\n</span><span class=s2 >ID: {hex(id(self))}"</span>
+        <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=fm >__str__</span><span class=p >()</span> <span class=o >+</span> <span class=sa >f</span><span class=s2 >"</span><span class=se >\n</span><span class=s2 >ID: </span><span class=si >{</span><span class=nb >hex</span><span class=p >(</span><span class=nb >id</span><span class=p >(</span><span class=bp >self</span><span class=p >))</span><span class=si >}</span><span class=s2 >"</span>
 
     <span class=nd >@property</span>
     <span class=k >def</span> <span class=nf >name</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >str</span><span class=p >:</span>
@@ -677,4 +677,4 @@
 <span class=sd >    --------</span>
 <span class=sd >    Bartlett</span>
 <span class=sd >    """</span></div>
-</pre></div> </article> </div> </div> </main> </div> <footer class=md-footer > <div class=md-footer-nav > <nav class="md-footer-nav__inner md-grid"> </a> </nav> </div> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-footer-copyright > <div class=md-footer-copyright__highlight > &#169; Copyright 2019, Kevin Sheppard. </div> Created using <a href="http://www.sphinx-doc.org/">Sphinx</a> 2.4.3. and <a href="https://github.com/bashtage/sphinx-material/">Material for Sphinx</a> </div> </div> </div> </footer> <script src="../../../_static/javascripts/application.js"></script> <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
+</pre></div> </article> </div> </div> </main> </div> <footer class=md-footer > <div class=md-footer-nav > <nav class="md-footer-nav__inner md-grid"> </a> </nav> </div> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-footer-copyright > <div class=md-footer-copyright__highlight > &#169; Copyright 2019, Kevin Sheppard. </div> Created using <a href="http://www.sphinx-doc.org/">Sphinx</a> 2.4.4. and <a href="https://github.com/bashtage/sphinx-material/">Material for Sphinx</a> </div> </div> </div> </footer> <script src="../../../_static/javascripts/application.js"></script> <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
