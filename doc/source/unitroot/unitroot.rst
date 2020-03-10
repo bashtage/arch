@@ -19,11 +19,21 @@ The first four all start with the null of a unit root and have an alternative
 of a stationary process. The final test, KPSS, has a null of a stationary
 process with an alternative of a unit root.
 
+Cointegration Testing
+---------------------
+The module extended the single-series unit root testing to multiple
+series and cointegration testing.
+
+* Engle-Granger Cointegration Test (:class:`~arch.unitroot.engle_granger`)
+
+
 .. toctree::
     :maxdepth: 1
 
     Introduction <introduction>
     Examples <unitroot_examples.ipynb>
     Unit Root Tests <tests>
+    Cointegration Testing <unitroot_cointegration_examples.ipynb>
+    Cointegration <cointegration>
 
 

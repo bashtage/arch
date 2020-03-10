@@ -146,7 +146,7 @@ def _autolag_ols_low_memory(
     y: NDArray, maxlag: int, trend: str, method: str
 ) -> Tuple[float, int]:
     """
-    Compules the lag length that minimizes an info criterion .
+    Computes the lag length that minimizes an info criterion .
 
     Parameters
     ----------
@@ -430,8 +430,7 @@ class UnitRootTest(object):
         return str(type(self)) + '\n"""\n' + self.__str__() + '\n"""'
 
     def _repr_html_(self) -> str:
-        """Display as HTML for IPython notebook.
-        """
+        """Display as HTML for IPython notebook."""
         return self.summary().as_html()
 
     def _compute_statistic(self) -> None:
