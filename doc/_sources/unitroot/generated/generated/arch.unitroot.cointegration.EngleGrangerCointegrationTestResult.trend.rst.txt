@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.EngleGrangerCointegrationTestResult.trend
+=====================================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: EngleGrangerCointegrationTestResult.trend

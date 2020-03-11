@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.EngleGrangerCointegrationTestResult.lags
+====================================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: EngleGrangerCointegrationTestResult.lags

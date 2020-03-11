@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.engle\_granger
+==========================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autofunction:: engle_granger

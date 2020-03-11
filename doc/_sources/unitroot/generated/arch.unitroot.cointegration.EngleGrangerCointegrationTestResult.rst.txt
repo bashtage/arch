@@ -1,0 +1,43 @@
+arch.unitroot.cointegration.EngleGrangerCointegrationTestResult
+===============================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoclass:: EngleGrangerCointegrationTestResult
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~EngleGrangerCointegrationTestResult.plot
+      ~EngleGrangerCointegrationTestResult.summary
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~EngleGrangerCointegrationTestResult.alternative_hypothesis
+      ~EngleGrangerCointegrationTestResult.cointegrating_vector
+      ~EngleGrangerCointegrationTestResult.critical_values
+      ~EngleGrangerCointegrationTestResult.distribution_order
+      ~EngleGrangerCointegrationTestResult.lags
+      ~EngleGrangerCointegrationTestResult.max_lags
+      ~EngleGrangerCointegrationTestResult.name
+      ~EngleGrangerCointegrationTestResult.null_hypothesis
+      ~EngleGrangerCointegrationTestResult.pvalue
+      ~EngleGrangerCointegrationTestResult.resid
+      ~EngleGrangerCointegrationTestResult.rho
+      ~EngleGrangerCointegrationTestResult.stat
+      ~EngleGrangerCointegrationTestResult.trend
+   
+   
+   
