@@ -1,5 +1,5 @@
-from .cointegration import EngleGrangerCointegrationTestResult, engle_granger
-from .unitroot import (
+from arch.unitroot.cointegration import EngleGrangerCointegrationTestResult, engle_granger
+from arch.unitroot.unitroot import (
     ADF,
     DFGLS,
     KPSS,
