@@ -1,4 +1,5 @@
-from arch.unitroot.unitroot import (
+from .cointegration import EngleGrangerCointegrationTestResult, engle_granger
+from .unitroot import (
     ADF,
     DFGLS,
     KPSS,
@@ -16,4 +17,6 @@ __all__ = [
     "PhillipsPerron",
     "ZivotAndrews",
     "auto_bandwidth",
+    "engle_granger",
+    "EngleGrangerCointegrationTestResult",
 ]

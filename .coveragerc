@@ -23,6 +23,8 @@ exclude_lines =
     pytest.xfail
     # Ignore ImportError protection
     except ImportError
+    # Ignore type checking code
+    if TYPE_CHECKING
     # Cython function declarations
     cdef
 
