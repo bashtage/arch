@@ -26,6 +26,21 @@ __all__ = [
     "NeweyWest",
 ]
 
+KERNELS = [
+    "Bartlett",
+    "Parzen",
+    "ParzenCauchy",
+    "ParzenGeometric",
+    "ParzenRiesz",
+    "TukeyHamming",
+    "TukeyHanning",
+    "TukeyParzen",
+    "QuadraticSpectral",
+    "Andrews",
+    "Gallant",
+    "NeweyWest",
+]
+
 
 class CovarianceEstimate(object):
     r"""
@@ -388,6 +403,13 @@ class CovarianceEstimator(ABC):
         labels = self._x_orig.columns if isinstance(self._x_orig, DataFrame) else None
         return CovarianceEstimate(sr, oss, labels)
 
+    @property
+    def force_int(self) -> bool:
+        """
+        Flag indicating whether the bandwidth is restricted to be an integer.
+        """
+        return self._force_int
+
 
 bartlett_formula = """\
 w=\\begin{cases} 1-\\left|z\\right| & z\\leq1 \\\\ 0 & z>1 \\end{cases}
@@ -640,11 +662,12 @@ class QuadraticSpectral(CovarianceEstimator, metaclass=AbstractDocStringInherito
     def _weights(self) -> NDArray:
         bw = self.bandwidth
         nobs = self._x.shape[0]
-        w = np.empty(nobs)
+        w = np.zeros(nobs)
         w[0] = 1.0
-        x = np.arange(1, nobs) / bw
-        z = 6 * np.pi * x / 5
-        w[1:] = 3 / z ** 2 * (np.sin(z) / z - np.cos(z))
+        if bw > 0:
+            x = np.arange(1, nobs) / bw
+            z = 6 * np.pi * x / 5
+            w[1:] = 3 / z ** 2 * (np.sin(z) / z - np.cos(z))
         return w
 
 
