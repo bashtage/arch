@@ -7,7 +7,8 @@ import os
 import numpy as np
 from numpy.random import RandomState
 import pandas as pd
-from statsmodels.tsa.tsatools import add_trend
+
+from arch.utility.timeseries import add_trend
 
 
 def simulate_kpss(nobs, b, trend="c", rng=None):

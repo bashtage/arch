@@ -55,11 +55,14 @@ def add_trend(
     ----------
     x : {ndarray, DataFrame}
         Original array of data. If None, then nobs must be a positive integer
-    trend : str {"c","t","ct","ctt"}
-        "c" add constant only
-        "t" add trend only
-        "ct" add constant and linear trend
-        "ctt" add constant and linear and quadratic trend.
+    trend : str {"n", "c","t","ct","ctt"}
+        The trend(s) to add. Supported options are:
+
+        * "n" no trend (no-op)
+        * "c" add constant only
+        * "t" add trend only
+        * "ct" add constant and linear trend
+        * "ctt" add constant and linear and quadratic trend.
     prepend : bool
         If True, prepends the new data to the columns of x.
     nobs : int, positive
@@ -77,7 +80,9 @@ def add_trend(
     currently no checking for an existing trend.
     """
     trend = trend.lower()
-    if trend == "c":
+    if trend == "n":
+        return x
+    elif trend == "c":
         trend_order = 0
     elif trend == "ct" or trend == "t":
         trend_order = 1

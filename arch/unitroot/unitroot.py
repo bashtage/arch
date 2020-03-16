@@ -79,6 +79,8 @@ __all__ = [
     "mackinnonp",
     "ZivotAndrews",
     "auto_bandwidth",
+    "TREND_DESCRIPTION",
+    "SHORT_TREND_DESCRIPTION",
 ]
 
 MUTATING_WARNING = """\
@@ -95,6 +97,14 @@ TREND_DESCRIPTION = {
     "ct": "Constant and Linear Time Trend",
     "ctt": "Constant, Linear and Quadratic Time Trends",
     "t": "Linear Time Trend (No Constant)",
+}
+
+SHORT_TREND_DESCRIPTION = {
+    "n": "No Trend",
+    "c": "Constant",
+    "ct": "Const and Linear Trend",
+    "ctt": "Const., Lin. and Quad. Trends",
+    "t": "Linear Time Trend (No Const.)",
 }
 
 
