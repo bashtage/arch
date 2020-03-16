@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.DynamicOLSResults.std\_errors
+=========================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: DynamicOLSResults.std_errors

@@ -1,0 +1,6 @@
+arch.covariance.kernel.QuadraticSpectral.force\_int
+===================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: QuadraticSpectral.force_int

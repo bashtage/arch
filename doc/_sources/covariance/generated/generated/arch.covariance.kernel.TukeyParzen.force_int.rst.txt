@@ -1,0 +1,6 @@
+arch.covariance.kernel.TukeyParzen.force\_int
+=============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: TukeyParzen.force_int

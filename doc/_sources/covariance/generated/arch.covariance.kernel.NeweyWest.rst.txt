@@ -27,6 +27,7 @@ arch.covariance.kernel.NeweyWest
       ~NeweyWest.bandwidth_scale
       ~NeweyWest.centered
       ~NeweyWest.cov
+      ~NeweyWest.force_int
       ~NeweyWest.kernel_const
       ~NeweyWest.kernel_weights
       ~NeweyWest.name

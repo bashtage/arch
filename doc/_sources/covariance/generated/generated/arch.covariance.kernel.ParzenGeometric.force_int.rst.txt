@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenGeometric.force\_int
+=================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenGeometric.force_int

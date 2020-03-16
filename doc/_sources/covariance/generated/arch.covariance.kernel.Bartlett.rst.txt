@@ -27,6 +27,7 @@ arch.covariance.kernel.Bartlett
       ~Bartlett.bandwidth_scale
       ~Bartlett.centered
       ~Bartlett.cov
+      ~Bartlett.force_int
       ~Bartlett.kernel_const
       ~Bartlett.kernel_weights
       ~Bartlett.name

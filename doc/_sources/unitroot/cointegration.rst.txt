@@ -9,5 +9,7 @@ Cointegration Tests
 .. autosummary::
    :toctree: generated/
 
+   DynamicOLS
+   DynamicOLSResults
    engle_granger
    EngleGrangerCointegrationTestResult

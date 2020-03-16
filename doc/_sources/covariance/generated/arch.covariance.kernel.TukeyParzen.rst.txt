@@ -27,6 +27,7 @@ arch.covariance.kernel.TukeyParzen
       ~TukeyParzen.bandwidth_scale
       ~TukeyParzen.centered
       ~TukeyParzen.cov
+      ~TukeyParzen.force_int
       ~TukeyParzen.kernel_const
       ~TukeyParzen.kernel_weights
       ~TukeyParzen.name

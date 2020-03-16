@@ -1,0 +1,6 @@
+arch.covariance.kernel.TukeyHamming.force\_int
+==============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: TukeyHamming.force_int

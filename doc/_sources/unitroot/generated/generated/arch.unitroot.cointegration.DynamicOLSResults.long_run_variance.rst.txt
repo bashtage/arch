@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.DynamicOLSResults.long\_run\_variance
+=================================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: DynamicOLSResults.long_run_variance

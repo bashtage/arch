@@ -27,6 +27,7 @@ arch.covariance.kernel.ParzenRiesz
       ~ParzenRiesz.bandwidth_scale
       ~ParzenRiesz.centered
       ~ParzenRiesz.cov
+      ~ParzenRiesz.force_int
       ~ParzenRiesz.kernel_const
       ~ParzenRiesz.kernel_weights
       ~ParzenRiesz.name

@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.DynamicOLSResults.residual\_variance
+================================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: DynamicOLSResults.residual_variance

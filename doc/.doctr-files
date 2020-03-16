@@ -141,6 +141,7 @@ doc/_sources/covariance/generated/generated/arch.covariance.kernel.Andrews.bandw
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Andrews.bandwidth_scale.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Andrews.centered.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Andrews.cov.rst.txt
+doc/_sources/covariance/generated/generated/arch.covariance.kernel.Andrews.force_int.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Andrews.kernel_const.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Andrews.kernel_weights.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Andrews.name.rst.txt
@@ -150,6 +151,7 @@ doc/_sources/covariance/generated/generated/arch.covariance.kernel.Bartlett.band
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Bartlett.bandwidth_scale.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Bartlett.centered.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Bartlett.cov.rst.txt
+doc/_sources/covariance/generated/generated/arch.covariance.kernel.Bartlett.force_int.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Bartlett.kernel_const.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Bartlett.kernel_weights.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Bartlett.name.rst.txt
@@ -163,6 +165,7 @@ doc/_sources/covariance/generated/generated/arch.covariance.kernel.Gallant.bandw
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Gallant.bandwidth_scale.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Gallant.centered.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Gallant.cov.rst.txt
+doc/_sources/covariance/generated/generated/arch.covariance.kernel.Gallant.force_int.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Gallant.kernel_const.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Gallant.kernel_weights.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Gallant.name.rst.txt
@@ -172,6 +175,7 @@ doc/_sources/covariance/generated/generated/arch.covariance.kernel.NeweyWest.ban
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.NeweyWest.bandwidth_scale.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.NeweyWest.centered.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.NeweyWest.cov.rst.txt
+doc/_sources/covariance/generated/generated/arch.covariance.kernel.NeweyWest.force_int.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.NeweyWest.kernel_const.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.NeweyWest.kernel_weights.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.NeweyWest.name.rst.txt
@@ -181,6 +185,7 @@ doc/_sources/covariance/generated/generated/arch.covariance.kernel.Parzen.bandwi
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Parzen.bandwidth_scale.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Parzen.centered.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Parzen.cov.rst.txt
+doc/_sources/covariance/generated/generated/arch.covariance.kernel.Parzen.force_int.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Parzen.kernel_const.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Parzen.kernel_weights.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.Parzen.name.rst.txt
@@ -190,6 +195,7 @@ doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.bandwidth_scale.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.centered.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.cov.rst.txt
+doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.force_int.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.kernel_const.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.kernel_weights.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.name.rst.txt
@@ -199,6 +205,7 @@ doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenGeometr
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenGeometric.bandwidth_scale.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenGeometric.centered.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenGeometric.cov.rst.txt
+doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenGeometric.force_int.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenGeometric.kernel_const.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenGeometric.kernel_weights.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenGeometric.name.rst.txt
@@ -208,6 +215,7 @@ doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.b
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.bandwidth_scale.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.centered.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.cov.rst.txt
+doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.force_int.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.kernel_const.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.kernel_weights.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.name.rst.txt
@@ -217,6 +225,7 @@ doc/_sources/covariance/generated/generated/arch.covariance.kernel.QuadraticSpec
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.QuadraticSpectral.bandwidth_scale.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.QuadraticSpectral.centered.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.QuadraticSpectral.cov.rst.txt
+doc/_sources/covariance/generated/generated/arch.covariance.kernel.QuadraticSpectral.force_int.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.QuadraticSpectral.kernel_const.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.QuadraticSpectral.kernel_weights.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.QuadraticSpectral.name.rst.txt
@@ -226,6 +235,7 @@ doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.bandwidth_scale.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.centered.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.cov.rst.txt
+doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.force_int.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.kernel_const.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.kernel_weights.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.name.rst.txt
@@ -235,6 +245,7 @@ doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.bandwidth_scale.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.centered.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.cov.rst.txt
+doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.force_int.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.kernel_const.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.kernel_weights.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.name.rst.txt
@@ -244,6 +255,7 @@ doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.b
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.bandwidth_scale.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.centered.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.cov.rst.txt
+doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.force_int.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.kernel_const.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.kernel_weights.rst.txt
 doc/_sources/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.name.rst.txt
@@ -282,6 +294,8 @@ doc/_sources/unitroot/generated/arch.unitroot.PhillipsPerron.rst.txt
 doc/_sources/unitroot/generated/arch.unitroot.VarianceRatio.rst.txt
 doc/_sources/unitroot/generated/arch.unitroot.ZivotAndrews.rst.txt
 doc/_sources/unitroot/generated/arch.unitroot.auto_bandwidth.rst.txt
+doc/_sources/unitroot/generated/arch.unitroot.cointegration.DynamicOLS.rst.txt
+doc/_sources/unitroot/generated/arch.unitroot.cointegration.DynamicOLSResults.rst.txt
 doc/_sources/unitroot/generated/arch.unitroot.cointegration.EngleGrangerCointegrationTestResult.rst.txt
 doc/_sources/unitroot/generated/arch.unitroot.cointegration.engle_granger.rst.txt
 doc/_sources/unitroot/generated/generated/arch.unitroot.ADF.alternative_hypothesis.rst.txt
@@ -359,6 +373,25 @@ doc/_sources/unitroot/generated/generated/arch.unitroot.ZivotAndrews.summary.rst
 doc/_sources/unitroot/generated/generated/arch.unitroot.ZivotAndrews.trend.rst.txt
 doc/_sources/unitroot/generated/generated/arch.unitroot.ZivotAndrews.valid_trends.rst.txt
 doc/_sources/unitroot/generated/generated/arch.unitroot.ZivotAndrews.y.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLS.fit.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.bandwidth.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.cov.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.cov_type.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.full_cov.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.full_params.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.kernel.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.lags.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.leads.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.long_run_variance.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.params.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.pvalues.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.resid.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.residual_variance.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.rsquared.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.rsquared_adj.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.std_errors.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.summary.rst.txt
+doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.tvalues.rst.txt
 doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.EngleGrangerCointegrationTestResult.alternative_hypothesis.rst.txt
 doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.EngleGrangerCointegrationTestResult.cointegrating_vector.rst.txt
 doc/_sources/unitroot/generated/generated/arch.unitroot.cointegration.EngleGrangerCointegrationTestResult.critical_values.rst.txt
@@ -928,6 +961,7 @@ doc/covariance/generated/generated/arch.covariance.kernel.Andrews.bandwidth.html
 doc/covariance/generated/generated/arch.covariance.kernel.Andrews.bandwidth_scale.html
 doc/covariance/generated/generated/arch.covariance.kernel.Andrews.centered.html
 doc/covariance/generated/generated/arch.covariance.kernel.Andrews.cov.html
+doc/covariance/generated/generated/arch.covariance.kernel.Andrews.force_int.html
 doc/covariance/generated/generated/arch.covariance.kernel.Andrews.kernel_const.html
 doc/covariance/generated/generated/arch.covariance.kernel.Andrews.kernel_weights.html
 doc/covariance/generated/generated/arch.covariance.kernel.Andrews.name.html
@@ -937,6 +971,7 @@ doc/covariance/generated/generated/arch.covariance.kernel.Bartlett.bandwidth.htm
 doc/covariance/generated/generated/arch.covariance.kernel.Bartlett.bandwidth_scale.html
 doc/covariance/generated/generated/arch.covariance.kernel.Bartlett.centered.html
 doc/covariance/generated/generated/arch.covariance.kernel.Bartlett.cov.html
+doc/covariance/generated/generated/arch.covariance.kernel.Bartlett.force_int.html
 doc/covariance/generated/generated/arch.covariance.kernel.Bartlett.kernel_const.html
 doc/covariance/generated/generated/arch.covariance.kernel.Bartlett.kernel_weights.html
 doc/covariance/generated/generated/arch.covariance.kernel.Bartlett.name.html
@@ -950,6 +985,7 @@ doc/covariance/generated/generated/arch.covariance.kernel.Gallant.bandwidth.html
 doc/covariance/generated/generated/arch.covariance.kernel.Gallant.bandwidth_scale.html
 doc/covariance/generated/generated/arch.covariance.kernel.Gallant.centered.html
 doc/covariance/generated/generated/arch.covariance.kernel.Gallant.cov.html
+doc/covariance/generated/generated/arch.covariance.kernel.Gallant.force_int.html
 doc/covariance/generated/generated/arch.covariance.kernel.Gallant.kernel_const.html
 doc/covariance/generated/generated/arch.covariance.kernel.Gallant.kernel_weights.html
 doc/covariance/generated/generated/arch.covariance.kernel.Gallant.name.html
@@ -959,6 +995,7 @@ doc/covariance/generated/generated/arch.covariance.kernel.NeweyWest.bandwidth.ht
 doc/covariance/generated/generated/arch.covariance.kernel.NeweyWest.bandwidth_scale.html
 doc/covariance/generated/generated/arch.covariance.kernel.NeweyWest.centered.html
 doc/covariance/generated/generated/arch.covariance.kernel.NeweyWest.cov.html
+doc/covariance/generated/generated/arch.covariance.kernel.NeweyWest.force_int.html
 doc/covariance/generated/generated/arch.covariance.kernel.NeweyWest.kernel_const.html
 doc/covariance/generated/generated/arch.covariance.kernel.NeweyWest.kernel_weights.html
 doc/covariance/generated/generated/arch.covariance.kernel.NeweyWest.name.html
@@ -968,6 +1005,7 @@ doc/covariance/generated/generated/arch.covariance.kernel.Parzen.bandwidth.html
 doc/covariance/generated/generated/arch.covariance.kernel.Parzen.bandwidth_scale.html
 doc/covariance/generated/generated/arch.covariance.kernel.Parzen.centered.html
 doc/covariance/generated/generated/arch.covariance.kernel.Parzen.cov.html
+doc/covariance/generated/generated/arch.covariance.kernel.Parzen.force_int.html
 doc/covariance/generated/generated/arch.covariance.kernel.Parzen.kernel_const.html
 doc/covariance/generated/generated/arch.covariance.kernel.Parzen.kernel_weights.html
 doc/covariance/generated/generated/arch.covariance.kernel.Parzen.name.html
@@ -977,6 +1015,7 @@ doc/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.bandwidth
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.bandwidth_scale.html
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.centered.html
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.cov.html
+doc/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.force_int.html
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.kernel_const.html
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.kernel_weights.html
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenCauchy.name.html
@@ -986,6 +1025,7 @@ doc/covariance/generated/generated/arch.covariance.kernel.ParzenGeometric.bandwi
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenGeometric.bandwidth_scale.html
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenGeometric.centered.html
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenGeometric.cov.html
+doc/covariance/generated/generated/arch.covariance.kernel.ParzenGeometric.force_int.html
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenGeometric.kernel_const.html
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenGeometric.kernel_weights.html
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenGeometric.name.html
@@ -995,6 +1035,7 @@ doc/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.bandwidth.
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.bandwidth_scale.html
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.centered.html
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.cov.html
+doc/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.force_int.html
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.kernel_const.html
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.kernel_weights.html
 doc/covariance/generated/generated/arch.covariance.kernel.ParzenRiesz.name.html
@@ -1004,6 +1045,7 @@ doc/covariance/generated/generated/arch.covariance.kernel.QuadraticSpectral.band
 doc/covariance/generated/generated/arch.covariance.kernel.QuadraticSpectral.bandwidth_scale.html
 doc/covariance/generated/generated/arch.covariance.kernel.QuadraticSpectral.centered.html
 doc/covariance/generated/generated/arch.covariance.kernel.QuadraticSpectral.cov.html
+doc/covariance/generated/generated/arch.covariance.kernel.QuadraticSpectral.force_int.html
 doc/covariance/generated/generated/arch.covariance.kernel.QuadraticSpectral.kernel_const.html
 doc/covariance/generated/generated/arch.covariance.kernel.QuadraticSpectral.kernel_weights.html
 doc/covariance/generated/generated/arch.covariance.kernel.QuadraticSpectral.name.html
@@ -1013,6 +1055,7 @@ doc/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.bandwidth
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.bandwidth_scale.html
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.centered.html
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.cov.html
+doc/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.force_int.html
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.kernel_const.html
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.kernel_weights.html
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyHamming.name.html
@@ -1022,6 +1065,7 @@ doc/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.bandwidth
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.bandwidth_scale.html
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.centered.html
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.cov.html
+doc/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.force_int.html
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.kernel_const.html
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.kernel_weights.html
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyHanning.name.html
@@ -1031,6 +1075,7 @@ doc/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.bandwidth.
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.bandwidth_scale.html
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.centered.html
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.cov.html
+doc/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.force_int.html
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.kernel_const.html
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.kernel_weights.html
 doc/covariance/generated/generated/arch.covariance.kernel.TukeyParzen.name.html
@@ -1076,6 +1121,8 @@ doc/unitroot/generated/arch.unitroot.PhillipsPerron.html
 doc/unitroot/generated/arch.unitroot.VarianceRatio.html
 doc/unitroot/generated/arch.unitroot.ZivotAndrews.html
 doc/unitroot/generated/arch.unitroot.auto_bandwidth.html
+doc/unitroot/generated/arch.unitroot.cointegration.DynamicOLS.html
+doc/unitroot/generated/arch.unitroot.cointegration.DynamicOLSResults.html
 doc/unitroot/generated/arch.unitroot.cointegration.EngleGrangerCointegrationTestResult.html
 doc/unitroot/generated/arch.unitroot.cointegration.engle_granger.html
 doc/unitroot/generated/generated/arch.unitroot.ADF.alternative_hypothesis.html
@@ -1153,6 +1200,25 @@ doc/unitroot/generated/generated/arch.unitroot.ZivotAndrews.summary.html
 doc/unitroot/generated/generated/arch.unitroot.ZivotAndrews.trend.html
 doc/unitroot/generated/generated/arch.unitroot.ZivotAndrews.valid_trends.html
 doc/unitroot/generated/generated/arch.unitroot.ZivotAndrews.y.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLS.fit.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.bandwidth.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.cov.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.cov_type.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.full_cov.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.full_params.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.kernel.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.lags.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.leads.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.long_run_variance.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.params.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.pvalues.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.resid.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.residual_variance.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.rsquared.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.rsquared_adj.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.std_errors.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.summary.html
+doc/unitroot/generated/generated/arch.unitroot.cointegration.DynamicOLSResults.tvalues.html
 doc/unitroot/generated/generated/arch.unitroot.cointegration.EngleGrangerCointegrationTestResult.alternative_hypothesis.html
 doc/unitroot/generated/generated/arch.unitroot.cointegration.EngleGrangerCointegrationTestResult.cointegrating_vector.html
 doc/unitroot/generated/generated/arch.unitroot.cointegration.EngleGrangerCointegrationTestResult.critical_values.html

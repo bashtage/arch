@@ -27,6 +27,7 @@ arch.covariance.kernel.Gallant
       ~Gallant.bandwidth_scale
       ~Gallant.centered
       ~Gallant.cov
+      ~Gallant.force_int
       ~Gallant.kernel_const
       ~Gallant.kernel_weights
       ~Gallant.name

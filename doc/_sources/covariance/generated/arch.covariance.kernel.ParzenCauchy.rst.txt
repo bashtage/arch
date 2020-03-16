@@ -27,6 +27,7 @@ arch.covariance.kernel.ParzenCauchy
       ~ParzenCauchy.bandwidth_scale
       ~ParzenCauchy.centered
       ~ParzenCauchy.cov
+      ~ParzenCauchy.force_int
       ~ParzenCauchy.kernel_const
       ~ParzenCauchy.kernel_weights
       ~ParzenCauchy.name

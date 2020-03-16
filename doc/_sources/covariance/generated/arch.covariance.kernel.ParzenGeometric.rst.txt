@@ -27,6 +27,7 @@ arch.covariance.kernel.ParzenGeometric
       ~ParzenGeometric.bandwidth_scale
       ~ParzenGeometric.centered
       ~ParzenGeometric.cov
+      ~ParzenGeometric.force_int
       ~ParzenGeometric.kernel_const
       ~ParzenGeometric.kernel_weights
       ~ParzenGeometric.name

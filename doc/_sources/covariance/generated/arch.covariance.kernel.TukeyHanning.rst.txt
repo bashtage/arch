@@ -27,6 +27,7 @@ arch.covariance.kernel.TukeyHanning
       ~TukeyHanning.bandwidth_scale
       ~TukeyHanning.centered
       ~TukeyHanning.cov
+      ~TukeyHanning.force_int
       ~TukeyHanning.kernel_const
       ~TukeyHanning.kernel_weights
       ~TukeyHanning.name

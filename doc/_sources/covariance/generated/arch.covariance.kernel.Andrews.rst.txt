@@ -27,6 +27,7 @@ arch.covariance.kernel.Andrews
       ~Andrews.bandwidth_scale
       ~Andrews.centered
       ~Andrews.cov
+      ~Andrews.force_int
       ~Andrews.kernel_const
       ~Andrews.kernel_weights
       ~Andrews.name

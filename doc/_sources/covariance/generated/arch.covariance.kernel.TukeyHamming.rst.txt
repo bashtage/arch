@@ -27,6 +27,7 @@ arch.covariance.kernel.TukeyHamming
       ~TukeyHamming.bandwidth_scale
       ~TukeyHamming.centered
       ~TukeyHamming.cov
+      ~TukeyHamming.force_int
       ~TukeyHamming.kernel_const
       ~TukeyHamming.kernel_weights
       ~TukeyHamming.name

@@ -27,6 +27,7 @@ arch.covariance.kernel.QuadraticSpectral
       ~QuadraticSpectral.bandwidth_scale
       ~QuadraticSpectral.centered
       ~QuadraticSpectral.cov
+      ~QuadraticSpectral.force_int
       ~QuadraticSpectral.kernel_const
       ~QuadraticSpectral.kernel_weights
       ~QuadraticSpectral.name

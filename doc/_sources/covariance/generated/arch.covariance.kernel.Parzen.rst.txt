@@ -27,6 +27,7 @@ arch.covariance.kernel.Parzen
       ~Parzen.bandwidth_scale
       ~Parzen.centered
       ~Parzen.cov
+      ~Parzen.force_int
       ~Parzen.kernel_const
       ~Parzen.kernel_weights
       ~Parzen.name

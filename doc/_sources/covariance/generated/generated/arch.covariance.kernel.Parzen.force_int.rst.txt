@@ -1,0 +1,6 @@
+arch.covariance.kernel.Parzen.force\_int
+========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Parzen.force_int
