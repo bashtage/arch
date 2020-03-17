@@ -928,7 +928,16 @@ class DynamicOLS(object):
             data.append(lag_data)
         data_df: pd.DataFrame = pd.concat(data, axis=1).dropna()
         lhs, rhs = data_df.iloc[:, :1], data_df.iloc[:, 1:]
+        nrhs = rhs.shape[1]
         rhs = add_trend(rhs, trend=self._trend, prepend=True)
+        ntrend = rhs.shape[1] - nrhs
+        if ntrend:
+            nx = x.shape[1]
+            trend = rhs.iloc[:, :ntrend]
+            rhs = pd.concat(
+                [rhs.iloc[:, ntrend : ntrend + nx], trend, rhs.iloc[:, ntrend + nx :]],
+                axis=1,
+            )
         return lhs, rhs
 
     def _ic(self, resids: NDArray, nparam: int) -> float:

@@ -201,3 +201,11 @@ def test_exceptions(data):
         y, x = data[:, :2].T
     with pytest.raises(ValueError, match="trend must be one of"):
         engle_granger(y, x, trend="nc")
+
+
+def test_name_ci_vector(data):
+    if not isinstance(data, pd.DataFrame):
+        return
+    eg = engle_granger(data.w, data[["x", "y", "z"]])
+    ci = eg.cointegrating_vector
+    assert list(ci.index) == ["w", "x", "y", "z", "const"]
