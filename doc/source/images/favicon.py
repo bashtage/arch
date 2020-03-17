@@ -3,8 +3,9 @@ import datetime
 import matplotlib.font_manager
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas_datareader as pdr
 import seaborn as sns
+
+import pandas_datareader as pdr
 
 colors = sns.color_palette("muted")
 

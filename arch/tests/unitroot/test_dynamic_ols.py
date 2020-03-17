@@ -61,8 +61,6 @@ def data(request) -> Tuple[NDArray, NDArray]:
     phi[:, 1, 1] *= 0.8 / phi[:, 1, 1].sum()
     phi[:, 0, 1] *= 0.2 / phi[:, 0, 1].sum()
     phi[:, 1, 0] *= 0.2 / phi[:, 1, 0].sum()
-    print(phi)
-    print(np.linalg.eigvals(phi.sum(0) - np.eye(2)))
     y = e.copy()
     for i in range(3, y.shape[0]):
         y[i] = e[i]
@@ -106,9 +104,8 @@ def test_smoke_fit(data, cov_type, kernel, bandwidth, force_int, df_adjust):
     assert isinstance(res.resid, pd.Series)
     assert isinstance(res.cov, pd.DataFrame)
     assert isinstance(res.kernel, str)
-
-    print(res.summary())
-    print(res.summary(True))
+    assert isinstance(res.summary().as_text(), str)
+    assert isinstance(res.summary(True).as_text(), str)
 
 
 def test_mismatch_lead_lag(data):
@@ -139,9 +136,9 @@ def test_basic(trivariate_data):
     # Tested against Eviews. Note: bandwidth is 1 less than Eviews bandwidth (2)
     y, x = trivariate_data
     res = DynamicOLS(y, x, leads=1, lags=1).fit(bandwidth=1, df_adjust=True)
-    assert_allclose(res.params, [91.65392, -11.65535, 2.301629], rtol=1e-4)
-    assert_allclose(res.std_errors, [1.341955, 0.102846, 0.017243], rtol=1e-4)
-    assert_allclose(res.tvalues, [68.29882, -113.3279, 133.4834], rtol=1e-4)
+    assert_allclose(res.params, [-11.65535, 2.301629, 91.65392], rtol=1e-4)
+    assert_allclose(res.std_errors, [0.102846, 0.017243, 1.341955], rtol=1e-4)
+    assert_allclose(res.tvalues, [-113.3279, 133.4834, 68.29882], rtol=1e-4)
     assert_allclose(res.pvalues, [0.0000, 0.0000, 0.0000], atol=1e-5)
     assert_allclose(res.long_run_variance, 39.35663, rtol=1e-4)
     assert_allclose(np.sqrt(res.residual_variance), 4.759419, rtol=1e-4)
@@ -150,10 +147,10 @@ def test_basic(trivariate_data):
 
 
 LEADS_LAGS = (
-    ([0, 0], ((85.28087, 1.712124), (-11.16047, 0.131134), (2.218772, 0.021983),)),
-    ([0, 1], ((89.31582, 1.545362), (-11.47526, 0.118405), (2.271718, 0.019851),)),
-    ([1, 0], ((89.43907, 1.474557), (-11.48150, 0.112980), (2.272349, 0.018941),)),
-    ([7, 3], ((96.03174, 0.893012), (-11.98434, 0.068532), (2.356085, 0.011497),)),
+    ([0, 0], ((-11.16047, 0.131134), (2.218772, 0.021983), (85.28087, 1.712124),)),
+    ([0, 1], ((-11.47526, 0.118405), (2.271718, 0.019851), (89.31582, 1.545362),)),
+    ([1, 0], ((-11.48150, 0.112980), (2.272349, 0.018941), (89.43907, 1.474557),)),
+    ([7, 3], ((-11.98434, 0.068532), (2.356085, 0.011497), (96.03174, 0.893012),)),
 )
 
 
@@ -172,7 +169,7 @@ def test_direct_eviews(trivariate_data, config):
     assert_allclose(res.std_errors, se, rtol=1e-4)
 
 
-AUTO = ([10, 4], ((96.33288, 0.870645), (-12.00320, 0.066865), (2.359063, 0.011222),))
+AUTO = ([10, 4], ((-12.00320, 0.066865), (2.359063, 0.011222), (96.33288, 0.870645),))
 
 
 @pytest.mark.parametrize("config", [AUTO])
@@ -194,10 +191,10 @@ TRENDS = (
         "ct",
         (11, 4),
         (
-            (97.79006, 0.970597),
-            (0.004077, 0.001256),
             (-12.25629, 0.102684),
             (2.398460, 0.016533),
+            (97.79006, 0.970597),
+            (0.004077, 0.001256),
         ),
         2.553272040644449,
         0.999443,
@@ -206,11 +203,11 @@ TRENDS = (
         "ctt",
         (10, 4),
         (
+            (-12.18877, 0.098193),
+            (2.389796, 0.015789),
             (95.88975, 0.959303),
             (0.014283, 0.001882),
             (-1.32e-05, 1.83e-06),
-            (-12.18877, 0.098193),
-            (2.389796, 0.015789),
         ),
         3.927197694670395,
         0.999492,
@@ -232,8 +229,8 @@ def test_auto_trends_eviews(trivariate_data, config):
     assert res.leads == leads
     assert res.lags == lags
     # Trends not checked since trends intrepreted differently
-    assert_allclose(res.params.iloc[-2:], params[-2:], rtol=1e-4)
-    assert_allclose(res.std_errors[-2:], se[-2:], rtol=1e-4)
+    assert_allclose(res.params.iloc[:2], params[:2], rtol=1e-4)
+    assert_allclose(res.std_errors[:2], se[:2], rtol=1e-4)
     # Check resid to verify equivalent
     assert_allclose(res.resid.iloc[-1], final_resid, rtol=1e-4)
     assert_allclose(res.rsquared, r2, rtol=1e-5)
@@ -254,7 +251,7 @@ def test_kernels_eviews(trivariate_data, config):
     assert_allclose(res.long_run_variance, lrvar, rtol=1e-5)
 
 
-HAC = (((96.33288, 1.331138), (-12.00320, 0.097762), (2.359063, 0.016323),),)
+HAC = (((-12.00320, 0.097762), (2.359063, 0.016323), (96.33288, 1.331138),),)
 
 
 @pytest.mark.parametrize("config", HAC)

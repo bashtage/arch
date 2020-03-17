@@ -81,7 +81,9 @@ def add_trend(
     """
     trend = trend.lower()
     if trend == "n":
-        return x
+        if x is not None:
+            return x
+        return np.empty((nobs, 0))
     elif trend == "c":
         trend_order = 0
     elif trend == "ct" or trend == "t":

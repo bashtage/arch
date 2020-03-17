@@ -51,7 +51,7 @@ cmdclass = versioneer.get_cmdclass()
 # prevent setup.py from crashing by calling import numpy before
 # numpy is installed
 class build_ext(_build_ext):
-    def build_extensions(self):
+    def build_extensions(self) -> None:
         numpy_incl = pkg_resources.resource_filename("numpy", "core/include")
 
         for ext in self.extensions:
@@ -75,20 +75,18 @@ cmdclass["build_ext"] = build_ext
 
 
 class BinaryDistribution(Distribution):
-    def is_pure(self):
+    def is_pure(self) -> bool:
         return False
 
 
 class CleanCommand(Command):
-    user_options = []
-
-    def run(self):
+    def run(self) -> None:
         raise NotImplementedError("Use git clean -xfd instead")
 
-    def initialize_options(self):
+    def initialize_options(self) -> None:
         pass
 
-    def finalize_options(self):
+    def finalize_options(self) -> None:
         pass
 
 
@@ -108,7 +106,8 @@ for root, _, filenames in os.walk(os.path.join(os.getcwd(), "arch")):  # noqa: E
         package_data[".".join(os.path.relpath(root).split(os.path.sep))] = filetypes
 package_data["arch"].append("py.typed")
 
-def run_setup(binary=True):
+
+def run_setup(binary: bool = True) -> None:
     if not binary:
         extensions = []
     else:
@@ -142,7 +141,7 @@ def run_setup(binary=True):
         version=versioneer.get_version(),
         description="ARCH for Python",
         long_description=description,
-        long_description_content_type='text/markdown',
+        long_description_content_type="text/markdown",
         author="Kevin Sheppard",
         author_email="kevin.sheppard@economics.ox.ac.uk",
         url="http://github.com/bashtage/arch",
