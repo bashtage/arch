@@ -4,11 +4,9 @@ import pandas as pd
 import pytest
 from statsmodels.iolib.summary import Summary
 
-from arch.unitroot.cointegration import (
-    engle_granger,
-    engle_granger_cv,
-    engle_granger_pval,
-)
+from arch.unitroot._engle_granger import engle_granger_cv, engle_granger_pval
+from arch.unitroot._shared import ResidualCointegrationTestResult, _cross_section
+from arch.unitroot.cointegration import engle_granger
 
 try:
     import matplotlib.pyplot as plt  # noqa
@@ -228,3 +226,19 @@ def test_plot(data):
         exog = data[:, exog_locs]
     test = engle_granger(dep, exog)
     assert isinstance(test.plot(), plt.Figure)
+
+
+def test_cross_section_exceptions():
+    y = np.random.standard_normal(1000)
+    x = np.random.standard_normal((1000, 2))
+    with pytest.raises(ValueError, match="trend must be one of "):
+        _cross_section(y, x, "unknown")
+
+
+def test_base_summary():
+    cv = pd.Series([1.0, 2, 3], index=[1, 5, 10])
+    y = np.random.standard_normal(1000)
+    x = np.random.standard_normal((1000, 2))
+    xsection = _cross_section(y, x, "ct")
+    res = ResidualCointegrationTestResult(1.0, 0.05, cv, xsection=xsection)
+    assert isinstance(res.summary(), Summary)

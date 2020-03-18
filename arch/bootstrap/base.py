@@ -1123,7 +1123,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
 class IndependentSamplesBootstrap(IIDBootstrap):
     """
-    Bootstrap where each input is independently resmapled
+    Bootstrap where each input is independently resampled
 
     Parameters
     ----------

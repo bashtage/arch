@@ -25,6 +25,7 @@ to improve performance)
 
 - [Univariate ARCH Models](#volatility)
 - [Unit Root Tests](#unit-root)
+- [Cointegration Testing and Analysis](#cointegration)
 - [Bootstrapping](#bootstrap)
 - [Multiple Comparison Tests](#multiple-comparison)
 - [Long-run Covariance Estimation](#long-run-covariance)
@@ -102,7 +103,23 @@ res = am.fit()
 - Zivot-Andrews
 - Variance Ratio tests
 
-See the [unit root testing example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/unitroot_examples.ipynb) for examples of testing series for unit roots.
+See the [unit root testing example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/unitroot_examples.ipynb)
+for examples of testing series for unit roots.
+
+<a id="unit-root"></a>
+
+### Cointegration Testing and Analysis
+
+- Tests
+  - Emgle-Granger Test
+  - Phillips-Ouliaris Test
+- Cointegration Vector Estimation
+  - Canonical Cointegrating Regression 
+  - Dynamic OLS
+  - Fully Modified OLS
+
+See the [cointegration testing example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/unitroot_cointegration_examples.ipynb)
+for examples of testing series for cointegration.
 
 <a id="bootstrap"></a>
 
@@ -218,8 +235,12 @@ This command should work whether you have a compiler installed or not.
 If you want to install with the `--no-binary` options, use
 
 ```bash
-pip install arch --install-option="--no-binary"
+pip install arch --install-option="--no-binary" --no-build-isoloation
 ```
+
+The `--no-build-isoloation` uses the existing NumPy when building the
+source. This is usually needed since pip will attempt to build all
+dependencies from source when `--install-option` is used.
 
 You can alternatively install the latest version from GitHub
 
@@ -227,8 +248,8 @@ You can alternatively install the latest version from GitHub
 pip install git+https://github.com/bashtage/arch.git
 ```
 
-`--install-option="--no-binary"` can be used to disable compilation of
-the extensions.
+`--install-option="--no-binary" --no-build-isoloation` can be used to
+disable compilation of the extensions.
 
 ### Anaconda
 
