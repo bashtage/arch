@@ -6,18 +6,10 @@ import numpy as np
 import scipy.stats as stats
 from statsmodels.regression.linear_model import OLS, WLS
 
+from shared import format_dict
+
 PERCENTILES = list(np.arange(0.1, 1.0, 0.1)) + list(np.arange(1.0, 100.0, 0.5))
 PERCENTILES = PERCENTILES[::-1]
-
-
-def format_dict(d):
-    return (
-        str(d)
-        .replace(" ", "")
-        .replace("],", "],\n")
-        .replace(":", ":\n")
-        .replace("},", "},\n")
-    )
 
 
 files = glob.glob("engle-granger/*.npz")

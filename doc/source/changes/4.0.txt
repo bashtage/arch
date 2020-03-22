@@ -4,6 +4,13 @@ Version 4
 
 Since 4.12
 ==========
+- Added three methods to estimate cointegrating vectors:
+  :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg`,
+  :class:`~arch.unitroot.cointegration.DynamicOLS`, and
+  :class:`~arch.unitroot.cointegration.FullyModifiedOLS`
+  (:issue:`356`, :issue:`359`).
+- Added Engle-Granger (:func:`~arch.unitroot.cointegration.engle_granger`)
+  cointegration testing (:issue:`354`).
 - Issue warnings when unit root tests are mutated. Will raise after 5.0
   is released.
 - Fixed a bug in :class:`arch.univariate.SkewStudent` which did not use the

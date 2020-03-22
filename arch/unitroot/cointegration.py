@@ -1,7 +1,8 @@
-from typing import Any, Dict, Optional, Tuple, Type
+from typing import Any, Dict, List, NamedTuple, Optional, Sequence, Tuple, Type
 
 import numpy as np
 import pandas as pd
+from pandas.util._decorators import Appender, Substitution
 from scipy import stats
 from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
 from statsmodels.iolib.table import SimpleTable
@@ -44,15 +45,48 @@ KERNEL_ESTIMATORS: Dict[str, Type[lrcov.CovarianceEstimator]] = {
 KERNEL_ESTIMATORS.update({kernel: getattr(lrcov, kernel) for kernel in lrcov.KERNELS})
 
 
-def _cross_section(y: ArrayLike1D, x: ArrayLike2D, trend: str) -> RegressionResults:
-    if trend not in ("n", "c", "ct", "ctt"):
-        raise ValueError('trend must be one of "n", "c", "ct" or "ctt"')
+class CointegrationSetup(NamedTuple):
+    y: pd.Series
+    x: pd.DataFrame
+    trend: str
+
+
+def _check_kernel(kernel: str) -> str:
+    kernel = kernel.replace("-", "").replace("_", "").lower()
+    if kernel not in KERNEL_ESTIMATORS:
+        est = "\n".join(sorted([k for k in KERNEL_ESTIMATORS]))
+        raise ValueError(
+            f"kernel is not a known kernel estimator. Must be one of:\n {est}"
+        )
+    return kernel
+
+
+def _check_cointegrating_regression(
+    y: ArrayLike1D,
+    x: ArrayLike2D,
+    trend: str,
+    supported_trends: Tuple[str, ...] = ("n", "c", "ct", "ctt"),
+) -> CointegrationSetup:
     y = ensure1d(y, "y", True)
     x = ensure2d(x, "x")
-
+    if y.shape[0] != x.shape[0]:
+        raise ValueError(
+            f"The number of observations in y and x differ. y has "
+            f"{y.shape[0]} observtations, and x has {x.shape[0]}."
+        )
     if not isinstance(x, pd.DataFrame):
         cols = [f"x{i}" for i in range(1, x.shape[1] + 1)]
-        x = pd.DataFrame(x, columns=cols, index=y.index)
+        x_df = pd.DataFrame(x, columns=cols, index=y.index)
+    else:
+        x_df = x
+    trend = trend.lower()
+    if trend.lower() not in supported_trends:
+        trends = ",".join([f'"{st}"' for st in supported_trends])
+        raise ValueError(f"Unknown trend. Must be one of {{{trends}}}")
+    return CointegrationSetup(y, x_df, trend)
+
+
+def _cross_section(y: pd.Series, x: pd.DataFrame, trend: str) -> RegressionResults:
     x = add_trend(x, trend)
     res = OLS(y, x).fit()
     return res
@@ -122,8 +156,10 @@ def engle_granger(
     determined by the number of assumed stochastic trends when the null
     hypothesis is true.
     """
-    x = ensure2d(x, "x")
-    xsection = _cross_section(y, x, trend)
+    setup = _check_cointegrating_regression(y, x, trend)
+    y = setup.y
+    x = setup.x
+    xsection = _cross_section(y, x, setup.trend)
     resid = xsection.resid
     # Never pass in the trend here since only used in x-section
     adf = ADF(resid, lags, trend="n", max_lags=max_lags, method=method)
@@ -350,7 +386,7 @@ class EngleGrangerCointegrationTestResult(CointegrationTestResult):
         Parameters
         ----------
         axes : Axes, default None
-            Matplotlib axes instance to hold the figure.
+            matplotlib axes instance to hold the figure.
         title : str, default None
             Title for the figure.
 
@@ -494,62 +530,33 @@ def engle_granger_pval(stat: float, trend: str, num_x: int) -> float:
     return stats.norm().cdf(params @ x)
 
 
-class DynamicOLSResults:
-    """
-    Estimation results for Dynamic OLS models
-
-    Parameters
-    ----------
-    params : Series
-        The estimated model parameters.
-    cov : DataFrame
-        The estimated parameter covariance.
-    resid : Series
-        The model residuals.
-    lags : int
-        The number of lags included in the model.
-    leads : int
-        The number of leads included in the model.
-    cov_type : str
-        The type of the parameter covariance estimator used.
-    kernel_est : CovarianceEstimator
-        The covariance estimator instance used to estimate the parameter
-        covariance.
-    reg_results : RegressionResults
-        Regression results from fitting statsmodels OLS.
-    df_adjust : bool
-        Whether to degree of freedom adjust the estimator.
-    """
-
+class _CommonCointegrationResults(object):
     def __init__(
         self,
         params: pd.Series,
         cov: pd.DataFrame,
         resid: pd.Series,
-        lags: int,
-        leads: int,
-        cov_type: str,
         kernel_est: lrcov.CovarianceEstimator,
         num_x: int,
         trend: str,
-        reg_results: RegressionResults,
         df_adjust: bool,
-    ) -> None:
+        r2: float,
+        adj_r2: float,
+        estimator_type: str,
+    ):
         self._params = params
         self._cov = cov
         self._resid = resid
         self._bandwidth = kernel_est.bandwidth
         self._kernel = kernel_est.__class__.__name__
         self._kernel_est = kernel_est
-        self._leads = leads
-        self._lags = lags
-        self._cov_type = cov_type
         self._num_x = num_x
-        self._ci_size = params.shape[0] - num_x * (leads + lags + 1)
         self._trend = trend
-        self._rsquared = reg_results.rsquared
-        self._rsquared_adj = reg_results.rsquared_adj
         self._df_adjust = df_adjust
+        self._ci_size = params.shape[0]
+        self._rsquared = r2
+        self._rsquared_adj = adj_r2
+        self._estimator_type = estimator_type
 
     @property
     def params(self) -> pd.Series:
@@ -584,31 +591,9 @@ class DynamicOLSResults:
         return self._cov.iloc[: self._ci_size, : self._ci_size]
 
     @property
-    def full_params(self) -> pd.Series:
-        """The complete set of parameters, including leads and lags"""
-        return self._params
-
-    @property
-    def full_cov(self) -> pd.DataFrame:
-        """
-        Parameter covariance of the all model parameters, incl. leads and lags
-        """
-        return self._cov
-
-    @property
     def resid(self) -> pd.Series:
         """The model residuals"""
         return self._resid
-
-    @property
-    def lags(self) -> int:
-        """The number of lags included in the model"""
-        return self._lags
-
-    @property
-    def leads(self) -> int:
-        """The number of leads included in the model"""
-        return self._leads
 
     @property
     def kernel(self) -> str:
@@ -619,11 +604,6 @@ class DynamicOLSResults:
     def bandwidth(self) -> float:
         """The bandwidth used in the parameter covariance estimation"""
         return self._bandwidth
-
-    @property
-    def cov_type(self) -> str:
-        """The type of parameter covariance estimator used"""
-        return self._cov_type
 
     @property
     def rsquared(self) -> float:
@@ -649,7 +629,7 @@ class DynamicOLSResults:
         if not self._df_adjust:
             return 1.0
         nobs = self._resid.shape[0]
-        nvar = self.full_params.shape[0]
+        nvar = self.params.shape[0]
         return nobs / (nobs - nvar)
 
     @property
@@ -696,6 +676,207 @@ class DynamicOLSResults:
         """
         return self._df_scale * self._cov_est.long_run[0, 0]
 
+    @staticmethod
+    def _top_table(
+        top_left: Sequence[Tuple[str, str]],
+        top_right: Sequence[Tuple[str, str]],
+        title: str,
+    ) -> SimpleTable:
+        stubs = []
+        vals = []
+        for stub, val in top_left:
+            stubs.append(stub)
+            vals.append([val])
+        table = SimpleTable(vals, txt_fmt=fmt_2cols, title=title, stubs=stubs)
+
+        fmt = fmt_2cols.copy()
+        fmt["data_fmts"][1] = "%18s"
+
+        top_right = [("%-21s" % ("  " + k), v) for k, v in top_right]
+        stubs = []
+        vals = []
+        for stub, val in top_right:
+            stubs.append(stub)
+            vals.append([val])
+        table.extend_right(SimpleTable(vals, stubs=stubs))
+
+        return table
+
+    def _top_right(self) -> List[Tuple[str, str]]:
+        top_right = [
+            ("No. Observations:", str(self._resid.shape[0])),
+            ("R²:", str_format(self.rsquared)),
+            ("Adjusted. R²:", str_format(self.rsquared_adj)),
+            ("Residual Variance:", str_format(self.residual_variance)),
+            ("Long-run Variance:", str_format(self.long_run_variance)),
+            ("", ""),
+        ]
+        return top_right
+
+    @staticmethod
+    def _param_table(
+        params: NDArray,
+        se: NDArray,
+        tstats: NDArray,
+        pvalues: NDArray,
+        stubs: Sequence[str],
+        title: str,
+    ) -> SimpleTable:
+        ci = params[:, None] + se[:, None] * stats.norm.ppf([[0.025, 0.975]])
+        param_data = np.column_stack([params, se, tstats, pvalues, ci])
+        data = []
+        for row in param_data:
+            txt_row = []
+            for i, v in enumerate(row):
+                f = str_format
+                if i == 3:
+                    f = pval_format
+                txt_row.append(f(v))
+            data.append(txt_row)
+
+        header = ["Parameter", "Std. Err.", "T-stat", "P-value", "Lower CI", "Upper CI"]
+        table = SimpleTable(
+            data, stubs=stubs, txt_fmt=fmt_params, headers=header, title=title
+        )
+        return table
+
+    def summary(self) -> Summary:
+        """
+        Summary of the model, containing estimated parameters and std. errors
+
+        Returns
+        -------
+        Summary
+            A summary instance with method that support export to text, csv
+            or latex.
+        """
+        if self._bandwidth != int(self._bandwidth):
+            bw = str_format(self._bandwidth)
+        else:
+            bw = str(int(self._bandwidth))
+
+        top_left = [
+            ("Trend:", SHORT_TREND_DESCRIPTION[self._trend]),
+            ("Kernel:", str(self._kernel)),
+            ("Bandwidth:", bw),
+            ("", ""),
+            ("", ""),
+            ("", ""),
+        ]
+
+        top_right = self._top_right()
+        smry = Summary()
+        title = self._estimator_type
+        table = self._top_table(top_left, top_right, title)
+        # Top Table
+        # Parameter table
+        smry.tables.append(table)
+        params = np.asarray(self.params)
+        stubs = list(self.params.index)
+        se = np.asarray(self.std_errors)
+        tstats = np.asarray(self.tvalues)
+        pvalues = np.asarray(self.pvalues)
+
+        title = "Cointegrating Vector"
+        table = self._param_table(params, se, tstats, pvalues, stubs, title)
+        smry.tables.append(table)
+
+        return smry
+
+
+class DynamicOLSResults(_CommonCointegrationResults):
+    """
+    Estimation results for Dynamic OLS models
+
+    Parameters
+    ----------
+    params : Series
+        The estimated model parameters.
+    cov : DataFrame
+        The estimated parameter covariance.
+    resid : Series
+        The model residuals.
+    lags : int
+        The number of lags included in the model.
+    leads : int
+        The number of leads included in the model.
+    cov_type : str
+        The type of the parameter covariance estimator used.
+    kernel_est : CovarianceEstimator
+        The covariance estimator instance used to estimate the parameter
+        covariance.
+    reg_results : RegressionResults
+        Regression results from fitting statsmodels OLS.
+    df_adjust : bool
+        Whether to degree of freedom adjust the estimator.
+    """
+
+    def __init__(
+        self,
+        params: pd.Series,
+        cov: pd.DataFrame,
+        resid: pd.Series,
+        lags: int,
+        leads: int,
+        cov_type: str,
+        kernel_est: lrcov.CovarianceEstimator,
+        num_x: int,
+        trend: str,
+        reg_results: RegressionResults,
+        df_adjust: bool,
+    ) -> None:
+        super().__init__(
+            params,
+            cov,
+            resid,
+            kernel_est,
+            num_x,
+            trend,
+            df_adjust,
+            r2=reg_results.rsquared,
+            adj_r2=reg_results.rsquared_adj,
+            estimator_type="Dynamic OLS",
+        )
+        self._leads = leads
+        self._lags = lags
+        self._cov_type = cov_type
+        self._ci_size = params.shape[0] - self._num_x * (leads + lags + 1)
+
+    @property
+    def full_params(self) -> pd.Series:
+        """The complete set of parameters, including leads and lags"""
+        return self._params
+
+    @property
+    def full_cov(self) -> pd.DataFrame:
+        """
+        Parameter covariance of the all model parameters, incl. leads and lags
+        """
+        return self._cov
+
+    @property
+    def lags(self) -> int:
+        """The number of lags included in the model"""
+        return self._lags
+
+    @property
+    def leads(self) -> int:
+        """The number of leads included in the model"""
+        return self._leads
+
+    @property
+    def cov_type(self) -> str:
+        """The type of parameter covariance estimator used"""
+        return self._cov_type
+
+    @property
+    def _df_scale(self) -> float:
+        if not self._df_adjust:
+            return 1.0
+        nobs = self._resid.shape[0]
+        nvar = self.full_params.shape[0]
+        return nobs / (nobs - nvar)
+
     def summary(self, full: bool = False) -> Summary:
         """
         Summary of the model, containing estimated parameters and std. errors
@@ -725,37 +906,14 @@ class DynamicOLSResults:
             ("Kernel:", str(self._kernel)),
             ("Bandwidth:", bw),
         ]
-        # TODO: Need missing values
-        top_right = [
-            ("No. Observations:", str(self._resid.shape[0])),
-            ("R²:", str_format(self.rsquared)),
-            ("Adjusted. R²:", str_format(self.rsquared_adj)),
-            ("Residual Variance:", str_format(self.residual_variance)),
-            ("Long-run Variance:", str_format(self.long_run_variance)),
-            ("", ""),
-        ]
+
+        top_right = self._top_right()
         smry = Summary()
         typ = "Cointegrating Vector" if not full else "Model"
         title = f"Dynamic OLS {typ} Summary"
-        stubs = []
-        vals = []
-        for stub, val in top_left:
-            stubs.append(stub)
-            vals.append([val])
-        table = SimpleTable(vals, txt_fmt=fmt_2cols, title=title, stubs=stubs)
-
+        table = self._top_table(top_left, top_right, title)
         # Top Table
         # Parameter table
-        fmt = fmt_2cols.copy()
-        fmt["data_fmts"][1] = "%18s"
-
-        top_right = [("%-21s" % ("  " + k), v) for k, v in top_right]
-        stubs = []
-        vals = []
-        for stub, val in top_right:
-            stubs.append(stub)
-            vals.append([val])
-        table.extend_right(SimpleTable(vals, stubs=stubs))
         smry.tables.append(table)
         if full:
             params = np.asarray(self.full_params)
@@ -769,23 +927,9 @@ class DynamicOLSResults:
             se = np.asarray(self.std_errors)
             tstats = np.asarray(self.tvalues)
             pvalues = np.asarray(self.pvalues)
-        ci = params[:, None] + se[:, None] * stats.norm.ppf([[0.025, 0.975]])
 
-        param_data = np.column_stack([params, se, tstats, pvalues, ci])
-        data = []
-        for row in param_data:
-            txt_row = []
-            for i, v in enumerate(row):
-                f = str_format
-                if i == 3:
-                    f = pval_format
-                txt_row.append(f(v))
-            data.append(txt_row)
         title = "Cointegrating Vector" if not full else "Model Parameters"
-        header = ["Parameter", "Std. Err.", "T-stat", "P-value", "Lower CI", "Upper CI"]
-        table = SimpleTable(
-            data, stubs=stubs, txt_fmt=fmt_params, headers=header, title=title
-        )
+        table = self._param_table(params, se, tstats, pvalues, stubs, title)
         smry.tables.append(table)
 
         return smry
@@ -793,7 +937,7 @@ class DynamicOLSResults:
 
 class DynamicOLS(object):
     r"""
-    Estimate Cointegrating Vector using Dynamic OLS
+    Dynamic OLS (DOLS) cointegrating vector estimation
 
     Parameters
     ----------
@@ -852,6 +996,17 @@ class DynamicOLS(object):
 
     where c is 2 for Akaike, :math:`2\ln\ln T` for Hannan-Quinn and
     :math:`\ln T` for Schwartz/Bayesian.
+
+    See [1]_ and [2]_ for further details.
+
+    References
+    ----------
+    .. [1] Saikkonen, P. (1992). Estimation and testing of cointegrated
+       systems by an autoregressive approximation. Econometric theory,
+       8(1), 1-27.
+    .. [2] Stock, J. H., & Watson, M. W. (1993). A simple estimator of
+       cointegrating vectors in higher order integrated systems.
+       Econometrica: Journal of the Econometric Society, 783-820.
     """
 
     def __init__(
@@ -866,21 +1021,16 @@ class DynamicOLS(object):
         max_lead: Optional[int] = None,
         method: str = "bic",
     ) -> None:
-        self._y = ensure1d(y, "y", True)
-        assert isinstance(self._y, pd.Series)
-        self._x = ensure2d(x, "x")
-        self._trend = trend
+        setup = _check_cointegrating_regression(y, x, trend)
+        self._y = setup.y
+        self._x = setup.x
+        self._trend = setup.trend
         self._lags = lags
         self._leads = leads
         self._max_lag = max_lag
         self._max_lead = max_lead
         self._method = method
         self._common = bool(common)
-        if not isinstance(self._x, pd.DataFrame):
-            cols = [f"x_{i}" for i in range(1, self._x.shape[1] + 1)]
-            self._x_df = pd.DataFrame(self._x, columns=cols, index=self._y.index)
-        else:
-            self._x_df = self._x
         self._y_df = pd.DataFrame(self._y)
         self._check_inputs()
 
@@ -892,8 +1042,6 @@ class DynamicOLS(object):
             "hqic",
         ):
             raise ValueError('method must be one of "aic", "bic", or "hqic"')
-        if self._trend not in ("n", "c", "ct", "ctt"):
-            raise ValueError('trend must of be one of "n","c","ct", or "ctt"')
         max_lag = self._max_lag
         self._max_lag = int(max_lag) if max_lag is not None else max_lag
         max_lead = self._max_lead
@@ -909,12 +1057,23 @@ class DynamicOLS(object):
             raise ValueError(
                 "common is specified but max_lead and max_lag have different values"
             )
+        max_ll = self._max_lead_lag()
+
+        obs_remaining = self._y.shape[0] - 1
+        obs_remaining -= max_ll if max_lag is None else max_lag
+        obs_remaining -= max_ll if max_lead is None else max_lead
+        if obs_remaining <= 0:
+            raise ValueError(
+                "max_lag and max_lead are too large for the amount of "
+                "data. The largest model specification in the search "
+                "cannot be estimated."
+            )
 
     def _format_variables(
         self, leads: int, lags: int
     ) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Format the variables for the regression"""
-        x = self._x_df
+        x = self._x
         y = self._y_df
         delta_x = x.diff()
         data = [y, x]
@@ -952,13 +1111,16 @@ class DynamicOLS(object):
             penalty = np.log(nobs)
         return np.log(sigma2) + nparam * penalty / nobs
 
+    def _max_lead_lag(self) -> int:
+        nobs = self._y.shape[0]
+        return int(np.ceil(12.0 * (nobs / 100) ** (1 / 4)))
+
     def _leads_and_lags(self) -> Tuple[int, int]:
         """Select the optimal number of leads and lags"""
         if self._lags is not None and self._leads is not None:
             return self._leads, self._lags
         nobs = self._y.shape[0]
         max_lead_lag = int(np.ceil(12.0 * (nobs / 100) ** (1 / 4)))
-        # TODO: Make sure max lags is estimable
         if self._lags is None:
             max_lag = max_lead_lag if self._max_lag is None else self._max_lag
             min_lag = 0
@@ -972,7 +1134,7 @@ class DynamicOLS(object):
         variables = self._format_variables(max_lead, max_lag)
         lhs = np.asarray(variables[0])
         rhs = np.asarray(variables[1])
-        nx = self._x_df.shape[1]
+        nx = self._x.shape[1]
         # +1 to account for the Delta X(t) (not a lead or a lag)
         lead_lag_offset = rhs.shape[1] - (max_lead + max_lag + 1) * nx
         always_loc = np.arange(lead_lag_offset)
@@ -1056,7 +1218,7 @@ class DynamicOLS(object):
         where :math:`\hat{\sigma}^2_{HAC}` is an estimator of the long-run
         variance of the regression error and
         :math:`\hat{\Sigma}_{ZZ}=T^{-1}Z'Z`. :math:`Z_t` is a vector the
-        includes all terms in the regression (i.e., determinstics,
+        includes all terms in the regression (i.e., deterministics,
         cross-sectional, leads and lags) When using the robust covariance,
         the parameter covariance is estimated as
 
@@ -1080,7 +1242,7 @@ class DynamicOLS(object):
             cov_type, kernel, bandwidth, force_int, df_adjust, rhs, resid
         )
         params = pd.Series(np.squeeze(coeffs), index=rhs.columns, name="params")
-        num_x = self._x_df.shape[1]
+        num_x = self._x.shape[1]
         return DynamicOLSResults(
             params,
             cov,
@@ -1132,3 +1294,385 @@ class DynamicOLS(object):
             raise ValueError("Unknown cov_type")
         cov_df = pd.DataFrame(cov, columns=rhs.columns, index=rhs.columns)
         return cov_df, est
+
+
+class CointegrationAnalysisResults(_CommonCointegrationResults):
+    def __init__(
+        self,
+        params: pd.Series,
+        cov: pd.DataFrame,
+        resid: pd.Series,
+        omega_112: float,
+        kernel_est: lrcov.CovarianceEstimator,
+        num_x: int,
+        trend: str,
+        df_adjust: bool,
+        rsquared: float,
+        rsquared_adj: float,
+        estimator_type: str,
+    ):
+        super().__init__(
+            params,
+            cov,
+            resid,
+            kernel_est,
+            num_x,
+            trend,
+            df_adjust,
+            rsquared,
+            rsquared_adj,
+            estimator_type,
+        )
+        self._omega_112 = omega_112
+
+    @property
+    def long_run_variance(self) -> float:
+        """
+        Long-run variance estimate used in the parameter covariance estimator
+        """
+        return self._omega_112
+
+
+COMMON_DOCSTRING = r"""
+    %(method)s cointegrating vector estimation.
+
+    Parameters
+    ----------
+    y : array_like
+        The left-hand-side variable in the cointegrating regression.
+    x : array_like
+        The right-hand-side variables in the cointegrating regression.
+    trend : {{"n","c","ct","ctt"}}, default "c"
+        Trend to include in the cointegrating regression. Trends are:
+
+        * "n": No deterministic terms
+        * "c": Constant
+        * "ct": Constant and linear trend
+        * "ctt": Constant, linear and quadratic trends
+    x_trend : {None,"c","ct","ctt"}, default None
+        Trends that affects affect the x-data but do not appear in the
+        cointegrating regression. x_trend must be at least as large as
+        trend, so that if trend is "ct", x_trend must be either "ct" or
+        "ctt".
+
+    Notes
+    -----
+    The cointegrating vector is estimated from the regressions
+
+    .. math::
+
+       Y_t & = D_{1t} \delta + X_t \beta + \eta_{1t} \\
+       X_t & = D_{1t} \Gamma_1 + D_{2t}\Gamma_2 + \epsilon_{2t} \\
+       \eta_{2t} & = \Delta \epsilon_{2t}
+
+    or if estimated in differences, the last two lines are
+
+    .. math::
+
+       \Delta X_t = \Delta D_{1t} \Gamma_1 + \Delta D_{2t} \Gamma_2 + \eta_{2t}
+
+    Define the vector of residuals as :math:`\eta = (\eta_{1t},\eta'_{2t})'`, and the
+    long-run covariance
+
+    .. math::
+
+       \Omega = \sum_{h=-\infty}^{\infty} E[\eta_t\eta_{t-h}']
+
+    and the one-sided long-run covariance matrix
+
+    .. math::
+
+       \Lambda_0 = \sum_{h=0}^\infty E[\eta_t\eta_{t-h}']
+
+    The covariance matrices are partitioned into a block form
+
+    .. math::
+
+       \Omega = \left[\begin{array}{cc}
+                         \omega_{11} & \omega_{12} \\
+                         \omega'_{12} & \Omega_{22}
+                \end{array} \right]
+
+    The cointegrating vector is then estimated using modified data
+
+%(estimator)s
+    """
+
+CCR_METHOD = "Canonical Cointegrating Regression"
+
+CCR_ESTIMATOR = r"""
+    .. math::
+
+        X^\star_t & = X_t - \hat{\Lambda}_2'\hat{\Sigma}^{-1}\hat{\eta}_t \\
+        Y^\star_t & = Y_t - (\hat{\Sigma}^{-1} \hat{\Lambda}_2 \hat{\beta}
+                           + \hat{\kappa})' \hat{\eta}_t
+
+    where :math:`\hat{\kappa} = (0,\hat{\Omega}_{22}^{-1}\hat{\Omega}'_{12})` and
+    the regression
+
+    .. math::
+
+       Y^\star_t = D_{1t} \delta + X^\star_t \beta + \eta^\star_{1t}
+
+    See [1]_ for further details.
+
+    References
+    ----------
+    .. [1] Park, J. Y. (1992). Canonical cointegrating regressions. Econometrica:
+       Journal of the Econometric Society, 119-143.
+"""
+
+FMOLS_METHOD = "Fully Modified OLS"
+
+FMOLS_ESTIMATOR = r"""
+    .. math::
+
+       Y^\star_t = Y_t - \hat{\omega}_{12}\hat{\Omega}_{22}\hat{\eta}_{2t}
+
+    as
+
+    .. math::
+
+        \hat{\theta} = \left[\begin{array}{c}\hat{\gamma}_1 \\ \hat{\beta} \end{array}\right]
+                     = \left(\sum_{t=2}^T Z_tZ'_t\right)^{-1}
+                       \left(\sum_{t=2}^t Z_t Y^\star_t -
+                       T \left[\begin{array}{c} 0 \\ \lambda^{\star\prime}_{12}
+                       \end{array}\right]\right)
+
+    where the bias term is defined
+
+    .. math::
+
+       \lambda^\star_{12} = \hat{\lambda}_{12}
+                            - \hat{\omega}_{12}\hat{\Omega}_{22}\hat{\omega}_{21}
+
+    See [1]_ for further details.
+
+    References
+    ----------
+    .. [1] Hansen, B. E., & Phillips, P. C. (1990). Estimation and inference in models of
+       cointegration: A simulation study. Advances in Econometrics, 8(1989), 225-248.
+"""
+
+
+@Substitution(method=FMOLS_METHOD, estimator=FMOLS_ESTIMATOR)
+@Appender(COMMON_DOCSTRING)
+class FullyModifiedOLS(object):
+    def __init__(
+        self,
+        y: ArrayLike1D,
+        x: ArrayLike2D,
+        trend: str = "c",
+        x_trend: Optional[str] = None,
+    ) -> None:
+        setup = _check_cointegrating_regression(y, x, trend)
+        self._y = setup.y
+        self._x = setup.x
+        self._trend = setup.trend
+        self._x_trend = x_trend
+        self._y_df = pd.DataFrame(self._y)
+
+    def _common_fit(
+        self, kernel: str, bandwidth: Optional[float], force_int: bool, diff: bool
+    ) -> Tuple[lrcov.CovarianceEstimator, NDArray, NDArray]:
+        kernel = _check_kernel(kernel)
+        res = _cross_section(self._y, self._x, self._trend)
+        x = np.asarray(self._x)
+        eta_1 = np.asarray(res.resid)
+        x_trend = self._trend if self._x_trend is None else self._x_trend
+        tr = add_trend(nobs=x.shape[0], trend=x_trend)
+        if tr.shape[1] > 1 and diff:
+            delta_tr = np.diff(tr[:, 1:], axis=0)
+            delta_x = np.diff(x, axis=0)
+            gamma = np.linalg.lstsq(delta_tr, delta_x, rcond=None)[0]
+            eta_2 = delta_x - delta_tr @ gamma
+        else:
+            if tr.shape[1]:
+                gamma = np.linalg.lstsq(tr, x, rcond=None)[0]
+                eps = x - tr @ gamma
+            else:
+                eps = x
+            eta_2 = np.diff(eps, axis=0)
+        eta = np.column_stack([eta_1[1:], eta_2])
+        kernel = _check_kernel(kernel)
+        kern_est = KERNEL_ESTIMATORS[kernel]
+        cov_est = kern_est(eta, bandwidth=bandwidth, center=False, force_int=force_int)
+        beta = np.asarray(res.params)[: x.shape[1]]
+        return cov_est, eta, beta
+
+    def _final_statistics(self, theta: pd.Series) -> Tuple[pd.Series, float, float]:
+        z = add_trend(self._x, self._trend)
+        nobs, nvar = z.shape
+        resid = self._y - np.asarray(z @ theta)
+        resid.name = "resid"
+        center = 0.0
+        tss_df = 0
+        if "c" in self._trend:
+            center = self._y.mean()
+            tss_df = 1
+        y_centered = self._y - center
+        ssr = resid.T @ resid
+        tss = y_centered.T @ y_centered
+        r2 = 1.0 - ssr / tss
+        r2_adj = 1.0 - (ssr / (nobs - nvar)) / (tss / (nobs - tss_df))
+        return resid, r2, r2_adj
+
+    def fit(
+        self,
+        kernel: str = "bartlett",
+        bandwidth: Optional[float] = None,
+        force_int: bool = True,
+        diff: bool = False,
+        df_adjust: bool = False,
+    ) -> CointegrationAnalysisResults:
+        """
+        Estimate the cointegrating vector.
+
+        Parameters
+        ----------
+        diff : bool, default False
+            Use differenced data to estimate the residuals.
+        kernel : str, default "bartlett"
+            The string name of any of any known kernel-based long-run
+            covariance estimators. Common choices are "bartlett" for the
+            Bartlett kernel (Newey-West), "parzen" for the Parzen kernel
+            and "quadratic-spectral" for Quadratic Spectral kernel.
+        bandwidth : int, default None
+            The bandwidth to use. If not provided, the optimal bandwidth is
+            estimated from the data. Setting the bandwidth to 0 and using
+            "unadjusted" produces the classic OLS covariance estimator.
+            Setting the bandwidth to 0 and using "robust" produces White's
+            covariance estimator.
+        force_int : bool, default False
+            Whether the force the estimated optimal bandwidth to be an integer.
+        df_adjust : bool, default False
+            Whether the adjust the parameter covariance to account for the
+            number of parameters estimated in the regression. If true, the
+            parameter covariance estimator is multiplied by T/(T-k) where
+            k is the number of regressors in the model.
+
+        Returns
+        -------
+        CointegrationAnalysisResults
+            The estimation results instance.
+        """
+        cov_est, eta, _ = self._common_fit(kernel, bandwidth, force_int, diff)
+        omega = np.asarray(cov_est.cov.long_run)
+        lmbda = np.asarray(cov_est.cov.one_sided)
+        omega_12 = omega[:1, 1:]
+        omega_22 = omega[1:, 1:]
+        omega_22_inv = np.linalg.inv(omega_22)
+        eta_2 = eta[:, 1:]
+        y, x = np.asarray(self._y_df), np.asarray(self._x)
+        y_dot = y[1:] - eta_2 @ omega_22_inv @ omega_12.T
+
+        lmbda_12 = lmbda[:1, 1:]
+        lmbda_22 = lmbda[1:, 1:]
+        lmbda_12_dot = lmbda_12 - omega_12 @ omega_22_inv @ lmbda_22
+        z_df = add_trend(self._x, trend=self._trend)
+        z_df = z_df.iloc[1:]
+        z = np.asarray(z_df)
+        zpz = z.T @ z
+
+        nobs, nvar = z.shape
+        bias = np.zeros((nvar, 1))
+        kx = x.shape[1]
+        bias[:kx] = lmbda_12_dot.T
+        zpydot = z.T @ y_dot - nobs * bias
+
+        params = np.squeeze(np.linalg.solve(zpz, zpydot))
+        omega_11 = omega[:1, :1]
+        scale = 1.0 if not df_adjust else nobs / (nobs - nvar)
+        omega_112 = scale * (omega_11 - omega_12 @ omega_22_inv @ omega_12.T)
+        zpz_inv = np.linalg.inv(zpz)
+        param_cov = omega_112 * zpz_inv
+        cols = z_df.columns
+        params = pd.Series(params.squeeze(), index=cols, name="params")
+        param_cov = pd.DataFrame(param_cov, columns=cols, index=cols)
+        resid, r2, r2_adj = self._final_statistics(params)
+        resid_kern = KERNEL_ESTIMATORS[kernel](
+            resid, bandwidth=cov_est.bandwidth, force_int=cov_est.force_int
+        )
+        return CointegrationAnalysisResults(
+            params,
+            param_cov,
+            resid,
+            omega_112[0, 0],
+            resid_kern,
+            kx,
+            self._trend,
+            df_adjust,
+            r2,
+            r2_adj,
+            "Fully Modified OLS",
+        )
+
+
+@Substitution(method=CCR_METHOD, estimator=CCR_ESTIMATOR)
+@Appender(COMMON_DOCSTRING)
+class CanonicalCointegratingReg(FullyModifiedOLS):
+    def __init__(
+        self,
+        y: ArrayLike1D,
+        x: ArrayLike2D,
+        trend: str = "c",
+        x_trend: Optional[str] = None,
+    ) -> None:
+        super().__init__(y, x, trend, x_trend)
+
+    @Appender(FullyModifiedOLS.fit.__doc__)
+    def fit(
+        self,
+        kernel: str = "bartlett",
+        bandwidth: Optional[float] = None,
+        force_int: bool = True,
+        diff: bool = False,
+        df_adjust: bool = False,
+    ) -> CointegrationAnalysisResults:
+        cov_est, eta, beta = self._common_fit(kernel, bandwidth, force_int, diff)
+        omega = np.asarray(cov_est.cov.long_run)
+        lmbda = np.asarray(cov_est.cov.one_sided)
+        sigma = np.asarray(cov_est.cov.short_run)
+
+        lmbda2 = lmbda[:, 1:]
+        sigma_inv = np.linalg.inv(sigma)
+        y, x = np.asarray(self._y_df), np.asarray(self._x)
+        x_star = x[1:] - eta @ (sigma_inv @ lmbda2)
+
+        kx = x.shape[1]
+        omega_12 = omega[:1, 1:]
+        omega_22 = omega[1:, 1:]
+        omega_22_inv = np.linalg.inv(omega_22)
+        bias = np.zeros((kx + 1, 1))
+        bias[1:] = omega_22_inv @ omega_12.T
+        # K x K        K by 1
+        #  K by 1
+        y_star = y[1:] - eta @ (sigma_inv @ lmbda2 @ beta[:, None] + bias)
+        z_star = add_trend(x_star, trend=self._trend)
+        params = np.linalg.lstsq(z_star, y_star, rcond=None)[0]
+
+        omega_11 = omega[:1, :1]
+        nobs, nvar = z_star.shape
+        scale = 1.0 if not df_adjust else nobs / (nobs - nvar)
+        omega_112 = scale * omega_11 - omega_12 @ omega_22_inv @ omega_12.T
+        param_cov = omega_112 * np.linalg.inv(z_star.T @ z_star)
+        cols = add_trend(self._x.iloc[:10], self._trend).columns
+        params = pd.Series(params.squeeze(), index=cols, name="params")
+        param_cov = pd.DataFrame(param_cov, columns=cols, index=cols)
+        resid, r2, r2_adj = self._final_statistics(params)
+        resid_kern = KERNEL_ESTIMATORS[kernel](
+            resid, bandwidth=cov_est.bandwidth, force_int=cov_est.force_int
+        )
+        return CointegrationAnalysisResults(
+            params,
+            param_cov,
+            resid,
+            omega_112[0, 0],
+            resid_kern,
+            kx,
+            self._trend,
+            df_adjust,
+            r2,
+            r2_adj,
+            "Fully Modified OLS",
+        )

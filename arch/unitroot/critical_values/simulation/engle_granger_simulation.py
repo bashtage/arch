@@ -10,11 +10,10 @@ from random import shuffle
 import sys
 from typing import List
 
+import colorama
 from joblib import Parallel, cpu_count, delayed
 import numpy as np
 from numpy.random import PCG64, Generator, SeedSequence
-
-import colorama
 
 ROOT = os.path.join(os.path.split(os.path.abspath(__file__))[0], "engle-granger")
 if not os.path.exists(ROOT):
@@ -229,7 +228,11 @@ if __name__ == "__main__":
     print(f"Total configuration: {nconfig}, Remaining: {nremconfig}")
 
     shuffle(remaining_configs)
-    Parallel(verbose=50, n_jobs=njobs)(
-        delayed(partial_block)(rg, trend=trend, idx=idx)
-        for ((idx, rg), trend) in remaining_configs
-    )
+    if njobs == 1:
+        for ((idx, rg), trend) in remaining_configs:
+            partial_block(rg, trend=trend, idx=idx)
+    else:
+        Parallel(verbose=50, n_jobs=njobs)(
+            delayed(partial_block)(rg, trend=trend, idx=idx)
+            for ((idx, rg), trend) in remaining_configs
+        )

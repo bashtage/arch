@@ -67,7 +67,7 @@ class MultipleComparison(object):
 
 class MCS(MultipleComparison):
     """
-    Implementation of the Model Confidence Set (MCS)
+    Model Confidence Set (MCS) of Hansen, Lunde and Nason.
 
     Parameters
     ----------
@@ -91,9 +91,13 @@ class MCS(MultipleComparison):
         'circular' or 'cbb': Circular block bootstrap
         'moving block' or 'mbb': Moving block bootstrap
 
+    Notes
+    -----
+    See [1]_ for details.
+
     References
     ----------
-    Hansen, P. R., Lunde, A., & Nason, J. M. (2011). The model confidence set.
+    .. [1] Hansen, P. R., Lunde, A., & Nason, J. M. (2011). The model confidence set.
     Econometrica, 79(2), 453-497.
     """
 
@@ -322,7 +326,7 @@ class MCS(MultipleComparison):
 
 class StepM(MultipleComparison):
     """
-    Implementation of Romano and Wolf's StepM multiple comparison procedure
+    StepM multiple comparison procedure of Romano and Wolf.
 
     Parameters
     ----------
@@ -362,9 +366,16 @@ class StepM(MultipleComparison):
     multiple comparison procedure.  Uses SPA and the consistent selection
     procedure.
 
+    See [1]_ for detail.
+
     See Also
     --------
     SPA
+
+    References
+    ----------
+    .. [1] Romano, J. P., & Wolf, M. (2005). Stepwise multiple testing as
+       formalized data snooping. Econometrica, 73(4), 1237-1282.
     """
 
     def __init__(
@@ -459,8 +470,9 @@ class StepM(MultipleComparison):
 
 class SPA(MultipleComparison, metaclass=DocStringInheritor):
     """
-    Implementation of the Test of Superior Predictive Ability (SPA),
-    which is also known as the Reality Check or Bootstrap Data Snooper.
+    Test of Superior Predictive Ability (SPA) of White and Hansen.
+
+    The SPA is also known as the Reality Check or Bootstrap Data Snooper.
 
     Parameters
     ----------
@@ -501,10 +513,18 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         - Consistent : Only recenter if closer than a log(log(t)) bound
         - Lower : Never recenter a model if worse than benchmark
 
+    See [1]_ and [2]_ for details.
+
     See Also
     --------
     StepM
 
+    References
+    ----------
+    .. [1] Hansen, P. R. (2005). A test for superior predictive ability.
+       Journal of Business & Economic Statistics, 23(4), 365-380.
+    .. [2] White, H. (2000). A reality check for data snooping. Econometrica,
+       68(5), 1097-1126.
     """
 
     def __init__(

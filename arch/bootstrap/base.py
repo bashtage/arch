@@ -252,7 +252,7 @@ def _add_extra_kwargs(
     ----------
     kwargs : dict
         Keyword argument dictionary
-    extra_kwargs : dict, optional
+    extra_kwargs : dict, default None
         Keyword argument dictionary to add
 
     Returns
@@ -475,7 +475,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
         Parameters
         ----------
-        use_seed : bool, optional
+        use_seed : bool, default True
             Flag indicating whether to use the last seed if provided.  If
             False or if no seed has been set, the bootstrap will be reset
             to the initial state.  Default is True
@@ -547,35 +547,35 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         ----------
         func : callable
             Function the computes parameter values.  See Notes for requirements
-        reps : int, optional
+        reps : int, default 1000
             Number of bootstrap replications
-        method : string, optional
+        method : string, default "basic"
             One of 'basic', 'percentile', 'studentized', 'norm' (identical to
             'var', 'cov'), 'bc' (identical to 'debiased', 'bias-corrected'), or
             'bca'
-        size : float, optional
+        size : float, default 0.95
             Coverage of confidence interval
-        tail : string, optional
+        tail : string, default "two"
             One of 'two', 'upper' or 'lower'.
-        reuse : bool, optional
+        reuse : bool, default False
             Flag indicating whether to reuse previously computed bootstrap
             results.  This allows alternative methods to be compared without
             rerunning the bootstrap simulation.  Reuse is ignored if reps is
             not the same across multiple runs, func changes across calls, or
             method is 'studentized'.
-        sampling : string, optional
+        sampling : string, default "nonparametric"
             Type of sampling to use: 'nonparametric', 'semi-parametric' (or
             'semi') or 'parametric'.  The default is 'nonparametric'.  See
             notes about the changes to func required when using 'semi' or
             'parametric'.
-        extra_kwargs : dict, optional
+        extra_kwargs : dict, default None
             Extra keyword arguments to use when calling func and std_err_func,
             when appropriate
-        std_err_func : callable, optional
+        std_err_func : callable, default None
             Function to use when standardizing estimated parameters when using
             the studentized bootstrap.  Providing an analytical function
             eliminates the need for a nested bootstrap
-        studentize_reps : int, optional
+        studentize_reps : int, default 1000
             Number of bootstraps to use in the inner bootstrap when using the
             studentized bootstrap.  Ignored when ``std_err_func`` is provided
 
@@ -818,9 +818,9 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         ----------
         func : callable
             Function the computes parameter values.  See Notes for requirements
-        reps : int, optional
+        reps : int, default 1000
             Number of bootstrap replications
-        extra_kwargs : dict, optional
+        extra_kwargs : dict, default None
             Extra keyword arguments to use when calling func.  Must not
             conflict with keyword arguments used to initialize bootstrap
 
@@ -942,13 +942,13 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         func : callable
             Callable function that returns the statistic of interest as a
             1-d array
-        reps : int, optional
+        reps : int, default 1000
             Number of bootstrap replications
-        recenter : bool, optional
+        recenter : bool, default True
             Whether to center the bootstrap variance estimator on the average
             of the bootstrap samples (True) or to center on the original sample
             estimate (False).  Default is True.
-        extra_kwargs : dict, optional
+        extra_kwargs : dict, default None
             Dictionary of extra keyword arguments to pass to func
 
         Returns
@@ -1023,13 +1023,13 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         func : callable
             Callable function that returns the statistic of interest as a
             1-d array
-        reps : int, optional
+        reps : int, default 1000
             Number of bootstrap replications
-        recenter : bool, optional
+        recenter : bool, default True
             Whether to center the bootstrap variance estimator on the average
             of the bootstrap samples (True) or to center on the original sample
             estimate (False).  Default is True.
-        extra_kwargs: dict, optional
+        extra_kwargs: dict, default None
             Dictionary of extra keyword arguments to pass to func
 
         Returns
@@ -1123,7 +1123,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
 class IndependentSamplesBootstrap(IIDBootstrap):
     """
-    Bootstrap the independently resamples each input
+    Bootstrap where each input is independently resmapled
 
     Parameters
     ----------
@@ -1239,7 +1239,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
 
         Parameters
         ----------
-        use_seed : bool, optional
+        use_seed : bool, default True
             Flag indicating whether to use the last seed if provided.  If
             False or if no seed has been set, the bootstrap will be reset
             to the initial state.  Default is True
@@ -1279,7 +1279,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
 
 class CircularBlockBootstrap(IIDBootstrap):
     """
-    Bootstrap based on blocks of the same length with end-to-start wrap around
+    Bootstrap using blocks of the same length with end-to-start wrap around
 
     Parameters
     ----------
@@ -1386,7 +1386,7 @@ class CircularBlockBootstrap(IIDBootstrap):
 
 class StationaryBootstrap(CircularBlockBootstrap):
     """
-    Politis and Romano (1994) bootstrap with expon. distributed block sizes
+    Politis and Romano (1994) bootstrap with expon distributed block sizes
 
     Parameters
     ----------
@@ -1469,7 +1469,7 @@ class StationaryBootstrap(CircularBlockBootstrap):
 
 class MovingBlockBootstrap(CircularBlockBootstrap):
     """
-    Bootstrap based on blocks of the same length without wrap around
+    Bootstrap using blocks of the same length without wrap around
 
     Parameters
     ----------
