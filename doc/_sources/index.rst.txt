@@ -25,6 +25,7 @@ routines relevant for the analysis of financial data.
     Multiple Comparison Problems <multiple-comparison/multiple-comparisons>
     Unit Root Tests <unitroot/unitroot>
     Long-run Covariance Estimation <covariance/covariance>
+    API Reference <api>
     Change Log <changes>
 
 Citation

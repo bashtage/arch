@@ -9,7 +9,23 @@ Cointegration Tests
 .. autosummary::
    :toctree: generated/
 
-   DynamicOLS
-   DynamicOLSResults
    engle_granger
+
+Cointegrating Vector Estimation
+===============================
+.. autosummary::
+   :toctree: generated/
+
+   DynamicOLS
+   FullyModifiedOLS
+   CanonicalCointegratingReg
+
+Results Classes
+---------------
+
+.. autosummary::
+   :toctree: generated/
+
+   CointegrationAnalysisResults
+   DynamicOLSResults
    EngleGrangerCointegrationTestResult

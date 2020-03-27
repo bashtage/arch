@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.CointegrationAnalysisResults.rsquared\_adj
+======================================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: CointegrationAnalysisResults.rsquared_adj

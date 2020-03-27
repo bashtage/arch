@@ -346,14 +346,14 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Probit (Statsmodels)"
+    "## Probit (statsmodels)"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "The second example makes use of a Probit model from Statsmodels.  The demo data is university admissions data which contains a binary variable for being admitted, GRE score, GPA score and quartile rank. This data is downloaded from the internet and imported using pandas."
+    "The second example makes use of a Probit model from statsmodels.  The demo data is university admissions data which contains a binary variable for being admitted, GRE score, GPA score and quartile rank. This data is downloaded from the internet and imported using pandas."
    ]
   },
   {
@@ -442,7 +442,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Most models in Statsmodels are implemented as classes, require an explicit call to `fit` and return a class containing parameter estimates and other quantities.  These classes cannot be directly used with the bootstrap methods.  However, a simple wrapper can be written that takes the data as the only inputs and returns parameters estimated using a Statsmodel model."
+    "Most models in statsmodels are implemented as classes, require an explicit call to `fit` and return a class containing parameter estimates and other quantities.  These classes cannot be directly used with the bootstrap methods.  However, a simple wrapper can be written that takes the data as the only inputs and returns parameters estimated using a Statsmodel model."
    ]
   },
   {

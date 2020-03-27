@@ -511,7 +511,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "These residuals look quite a bit better although it is possible the break in teh cointegrating vector happened around 2005 when oil prices first surged."
+    "These residuals look quite a bit better although it is possible the break in the cointegrating vector happened around 2005 when oil prices first surged."
    ]
   },
   {

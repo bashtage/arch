@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.CointegrationAnalysisResults.residual\_variance
+===========================================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: CointegrationAnalysisResults.residual_variance

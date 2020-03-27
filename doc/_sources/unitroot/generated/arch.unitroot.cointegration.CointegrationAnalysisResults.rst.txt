@@ -1,0 +1,41 @@
+arch.unitroot.cointegration.CointegrationAnalysisResults
+========================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoclass:: CointegrationAnalysisResults
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~CointegrationAnalysisResults.summary
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~CointegrationAnalysisResults.bandwidth
+      ~CointegrationAnalysisResults.cov
+      ~CointegrationAnalysisResults.kernel
+      ~CointegrationAnalysisResults.long_run_variance
+      ~CointegrationAnalysisResults.params
+      ~CointegrationAnalysisResults.pvalues
+      ~CointegrationAnalysisResults.resid
+      ~CointegrationAnalysisResults.residual_variance
+      ~CointegrationAnalysisResults.rsquared
+      ~CointegrationAnalysisResults.rsquared_adj
+      ~CointegrationAnalysisResults.std_errors
+      ~CointegrationAnalysisResults.tvalues
+   
+   
+   

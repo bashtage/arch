@@ -1,0 +1,22 @@
+arch.unitroot.cointegration.FullyModifiedOLS
+============================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoclass:: FullyModifiedOLS
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~FullyModifiedOLS.fit
+   
+   
+   
+   
+   
+   

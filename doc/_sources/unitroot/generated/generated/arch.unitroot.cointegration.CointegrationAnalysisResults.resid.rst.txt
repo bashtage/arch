@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.CointegrationAnalysisResults.resid
+==============================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: CointegrationAnalysisResults.resid
