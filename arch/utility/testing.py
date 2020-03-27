@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict
 
 from scipy.stats import chi2
 
@@ -21,17 +21,12 @@ class WaldTestStatistic(object):
         A statement of the test's null hypothesis
     alternative : str
         A statement of the test's alternative hypothesis
-    name : str, optional
+    name : str, default "" (empty)
         Name of test
     """
 
     def __init__(
-        self,
-        stat: float,
-        df: int,
-        null: str,
-        alternative: str,
-        name: Optional[str] = None,
+        self, stat: float, df: int, null: str, alternative: str, name: str = "",
     ) -> None:
         self._stat = stat
         self._null = null

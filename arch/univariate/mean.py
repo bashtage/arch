@@ -1296,7 +1296,7 @@ def arch_model(
     rescale: Optional[bool] = None,
 ) -> HARX:
     """
-    Convenience function to simplify initialization of ARCH models
+    Initialization of common ARCH model specifications
 
     Parameters
     ----------

@@ -136,7 +136,7 @@ class CovarianceEstimate(object):
 
 class CovarianceEstimator(ABC):
     r"""
-    Covariance estimation using %(kernel_name)s kernel.
+    %(kernel_name)s kernel covariance estimation.
 
     Parameters
     ----------
@@ -476,7 +476,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="the Parzen-Reisz", formula=parzen_reisz_formula)
+@Substitution(kernel_name="Parzen-Reisz", formula=parzen_reisz_formula)
 class ParzenRiesz(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -560,7 +560,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="the Tukey-Hamming", formula=tukey_hamming_formula)
+@Substitution(kernel_name="Tukey-Hamming", formula=tukey_hamming_formula)
 class TukeyHamming(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -588,7 +588,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="the Tukey-Hanning", formula=tukey_hanning_formula)
+@Substitution(kernel_name="Tukey-Hanning", formula=tukey_hanning_formula)
 class TukeyHanning(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -616,7 +616,7 @@ w=\\begin{cases} \
 """
 
 
-@Substitution(kernel_name="the Tukey-Parzen", formula=tukey_parzen_formula)
+@Substitution(kernel_name="Tukey-Parzen", formula=tukey_parzen_formula)
 class TukeyParzen(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     @property
     def kernel_const(self) -> float:
@@ -636,7 +636,7 @@ class TukeyParzen(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
         return 0.436 + 0.564 * np.cos(np.pi * x)
 
 
-qs_name = "the Quadratic-Spectral (Andrews')"
+qs_name = "Quadratic-Spectral (Andrews')"
 qs_formula = """\
 w=\\begin{cases} \
 1 & z=0\\\\ \

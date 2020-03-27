@@ -11,7 +11,7 @@ from arch.unitroot.cointegration import (
 )
 
 try:
-    import matplotlib.pyplot  # noqa
+    import matplotlib.pyplot as plt  # noqa
 
     HAS_MATPLOTLIB = True
 except ImportError:
@@ -173,6 +173,8 @@ def test_trivariate(data, trend, method, lhs):
 
         fig = test.plot()
         assert isinstance(fig, plt.Figure)
+    assert isinstance(test.resid, pd.Series)
+    assert test.resid.shape[0] == dep.shape[0]
 
 
 def test_exceptions_pvals():
@@ -199,7 +201,7 @@ def test_exceptions(data):
         y, x = data.y, data.x
     else:
         y, x = data[:, :2].T
-    with pytest.raises(ValueError, match="trend must be one of"):
+    with pytest.raises(ValueError, match="Unknown trend. Must be one of"):
         engle_granger(y, x, trend="nc")
 
 
@@ -209,3 +211,20 @@ def test_name_ci_vector(data):
     eg = engle_granger(data.w, data[["x", "y", "z"]])
     ci = eg.cointegrating_vector
     assert list(ci.index) == ["w", "x", "y", "z", "const"]
+
+
+@pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not available")
+def test_plot(data):
+    rhs = ["x", "y", "z"]
+    lhs = "y"
+    if isinstance(data, pd.DataFrame):
+        rhs.remove(lhs)
+        dep, exog = data[lhs], data[rhs]
+    else:
+        dep_loc = rhs.index(lhs)
+        exog_locs = [0, 1, 2]
+        exog_locs.remove(dep_loc)
+        dep = data[:, dep_loc]
+        exog = data[:, exog_locs]
+    test = engle_granger(dep, exog)
+    assert isinstance(test.plot(), plt.Figure)

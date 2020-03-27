@@ -1,5 +1,9 @@
 import pytest
 
+pytest_plugins = [
+    "arch.tests.unitroot.cointegration_data",
+]
+
 
 def pytest_configure(config):
     # Minimal config to simplify running tests from lm.test()

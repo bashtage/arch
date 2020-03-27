@@ -1,7 +1,7 @@
 Univariate Volatility Models
 ----------------------------
 
-``arch.univaraite`` provides both high-level (:func:`arch.arch_model`) and low-level
+``arch.univaraite`` provides both high-level (:func:`~arch.univariate.arch_model`) and low-level
 methods (see :ref:`mean-models`) to specify models. All models can be used to produce forecasts
 either analytically (when tractable) or using simulation-based methods (Monte Carlo or
 residual Bootstrap).

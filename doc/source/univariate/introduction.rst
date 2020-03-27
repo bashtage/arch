@@ -20,7 +20,7 @@ A complete ARCH model is divided into three components:
 * a :ref:`distribution<distributions>` for the standardized residuals.
 
 In most applications, the simplest method to construct this model is to use the constructor
-function :meth:`~arch.arch_model`
+function :meth:`~arch.univariate.arch_model`
 
 .. code-block:: python
 
@@ -116,5 +116,5 @@ Model Constructor
 While models can be carefully specified using the individual components, most common specifications can be specified
 using a simple model constructor.
 
-.. currentmodule:: arch
+.. currentmodule:: arch.univariate
 .. autofunction:: arch_model
