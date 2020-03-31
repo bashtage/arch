@@ -98,7 +98,7 @@ class MCS(MultipleComparison):
     References
     ----------
     .. [1] Hansen, P. R., Lunde, A., & Nason, J. M. (2011). The model confidence set.
-    Econometrica, 79(2), 453-497.
+       Econometrica, 79(2), 453-497.
     """
 
     def __init__(

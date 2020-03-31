@@ -683,7 +683,7 @@ class Gallant(Parzen):
 
 class Andrews(QuadraticSpectral):
     """
-    Alternative name for QuadraticSpectral covariance estimator.
+    Alternative name of the QuadraticSpectral covariance estimator.
 
     See Also
     --------

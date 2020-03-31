@@ -10,6 +10,7 @@ Cointegration Tests
    :toctree: generated/
 
    engle_granger
+   phillips_ouliaris
 
 Cointegrating Vector Estimation
 ===============================
@@ -28,4 +29,5 @@ Results Classes
 
    CointegrationAnalysisResults
    DynamicOLSResults
-   EngleGrangerCointegrationTestResult
+   EngleGrangerTestResults
+   PhillipsOuliarisTestResults
