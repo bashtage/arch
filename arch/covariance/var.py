@@ -1,4 +1,4 @@
-from typing import Dict, NamedTuple, Optional, Tuple, Type
+from typing import Dict, NamedTuple, Optional, Tuple
 
 import numpy as np
 from numpy import zeros
@@ -7,8 +7,12 @@ import pandas as pd
 from statsmodels.tools import add_constant
 from statsmodels.tsa.tsatools import lagmat
 
-from arch.covariance import kernel
-from arch.covariance.kernel import CovarianceEstimate, CovarianceEstimator
+from arch.covariance import KERNEL_ERR, KERNEL_ESTIMATORS
+from arch.covariance.kernel import (
+    CovarianceEstimate,
+    CovarianceEstimator,
+    normalize_kernel_name,
+)
 from arch.typing import ArrayLike, NDArray
 
 
@@ -17,21 +21,6 @@ class VARModel(NamedTuple):
     params: NDArray
     var_order: int
     intercept: bool
-
-
-def _normalize_name(name: str) -> str:
-    name = name.replace("-", "").replace("_", "")
-    name = name.lower()
-    return name
-
-
-KERNELS: Dict[str, Type[CovarianceEstimator]] = {}
-for name in kernel.__all__:
-    estimator = getattr(kernel, name)
-    if issubclass(estimator, kernel.CovarianceEstimator):
-        KERNELS[_normalize_name(name)] = estimator
-        KERNELS[name] = estimator
-print(KERNELS)
 
 
 class PreWhitenRecoloredCovariance(CovarianceEstimator):
@@ -86,20 +75,11 @@ class PreWhitenRecoloredCovariance(CovarianceEstimator):
         self._auto_lag_selection = True
         self._format_lags(lags)
         self._sample_autocov = sample_autocov
-        original_kernel = kernel
-        kernel = _normalize_name(kernel)
-        if kernel not in KERNELS:
-            import string
+        kernel = normalize_kernel_name(kernel)
+        if kernel not in KERNEL_ESTIMATORS:
+            raise ValueError(KERNEL_ERR)
 
-            available = [key for key in KERNELS if key[0] in string.ascii_uppercase]
-            available_val = "\n ".join(
-                [f"{knl} {_normalize_name(knl)}" for knl in available]
-            )
-            raise ValueError(
-                f"kernel {original_kernel} was not found. The available kernels "
-                f"are:\n\n{available_val}"
-            )
-        self._kernel = KERNELS[kernel]
+        self._kernel = KERNEL_ESTIMATORS[kernel]
         self._kernel_instance: Optional[CovarianceEstimator] = None
 
         # Attach for testing only

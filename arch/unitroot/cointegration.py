@@ -8,7 +8,8 @@ from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
 from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import OLS, RegressionResults
 
-import arch.covariance.kernel as lrcov
+from arch.covariance import KERNEL_ERR, KERNEL_ESTIMATORS
+from arch.covariance.kernel import CovarianceEstimate, CovarianceEstimator
 from arch.typing import ArrayLike1D, ArrayLike2D, NDArray
 from arch.unitroot._engle_granger import EngleGrangerTestResults, engle_granger
 from arch.unitroot._phillips_ouliaris import (
@@ -17,8 +18,6 @@ from arch.unitroot._phillips_ouliaris import (
     phillips_ouliaris,
 )
 from arch.unitroot._shared import (
-    KERNEL_ERR,
-    KERNEL_ESTIMATORS,
     _check_cointegrating_regression,
     _check_kernel,
     _cross_section,
@@ -46,7 +45,7 @@ class _CommonCointegrationResults(object):
         params: pd.Series,
         cov: pd.DataFrame,
         resid: pd.Series,
-        kernel_est: lrcov.CovarianceEstimator,
+        kernel_est: CovarianceEstimator,
         num_x: int,
         trend: str,
         df_adjust: bool,
@@ -126,7 +125,7 @@ class _CommonCointegrationResults(object):
         return self._rsquared_adj
 
     @cached_property
-    def _cov_est(self) -> lrcov.CovarianceEstimate:
+    def _cov_est(self) -> CovarianceEstimate:
         r = np.asarray(self._resid)
         kern_class = self._kernel_est.__class__
         bw = self._bandwidth
@@ -329,7 +328,7 @@ class DynamicOLSResults(_CommonCointegrationResults):
         lags: int,
         leads: int,
         cov_type: str,
-        kernel_est: lrcov.CovarianceEstimator,
+        kernel_est: CovarianceEstimator,
         num_x: int,
         trend: str,
         reg_results: RegressionResults,
@@ -776,7 +775,7 @@ class DynamicOLS(object):
         df_adjust: bool,
         rhs: pd.DataFrame,
         resids: pd.Series,
-    ) -> Tuple[pd.DataFrame, lrcov.CovarianceEstimator]:
+    ) -> Tuple[pd.DataFrame, CovarianceEstimator]:
         """Estimate the covariance"""
         kernel = kernel.lower().replace("-", "").replace("_", "")
         if kernel not in KERNEL_ESTIMATORS:
@@ -810,7 +809,7 @@ class CointegrationAnalysisResults(_CommonCointegrationResults):
         cov: pd.DataFrame,
         resid: pd.Series,
         omega_112: float,
-        kernel_est: lrcov.CovarianceEstimator,
+        kernel_est: CovarianceEstimator,
         num_x: int,
         trend: str,
         df_adjust: bool,
@@ -981,7 +980,7 @@ class FullyModifiedOLS(object):
 
     def _common_fit(
         self, kernel: str, bandwidth: Optional[float], force_int: bool, diff: bool
-    ) -> Tuple[lrcov.CovarianceEstimator, NDArray, NDArray]:
+    ) -> Tuple[CovarianceEstimator, NDArray, NDArray]:
         kernel = _check_kernel(kernel)
         res = _cross_section(self._y, self._x, self._trend)
         x = np.asarray(self._x)

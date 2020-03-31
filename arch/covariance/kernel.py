@@ -24,6 +24,7 @@ __all__ = [
     "Andrews",
     "Gallant",
     "NeweyWest",
+    "normalize_kernel_name",
 ]
 
 KERNELS = [
@@ -40,6 +41,22 @@ KERNELS = [
     "Gallant",
     "NeweyWest",
 ]
+
+
+def normalize_kernel_name(name: str) -> str:
+    """
+    Normalize a Kernel name using standard replacements
+
+    Removes - and _ and converts to lower case.
+
+    Returns
+    -------
+    str
+        The normalized kernel name.
+    """
+    name = name.replace("-", "").replace("_", "")
+    name = name.lower()
+    return name
 
 
 class CovarianceEstimate(object):

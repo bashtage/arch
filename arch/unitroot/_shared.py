@@ -1,10 +1,10 @@
-from typing import Any, Dict, NamedTuple, Optional, Tuple, Type
+from typing import Any, Dict, NamedTuple, Optional, Tuple
 
 import pandas as pd
 from statsmodels.iolib.summary import Summary
 from statsmodels.regression.linear_model import OLS, RegressionResults
 
-import arch.covariance.kernel as lrcov
+from arch.covariance import KERNEL_ESTIMATORS
 from arch.typing import ArrayLike1D, ArrayLike2D
 from arch.utility.array import ensure1d, ensure2d
 from arch.utility.timeseries import add_trend
@@ -13,13 +13,6 @@ try:
     import matplotlib.pyplot as plt
 except ImportError:
     pass
-
-KERNEL_ESTIMATORS: Dict[str, Type[lrcov.CovarianceEstimator]] = {
-    kernel.lower(): getattr(lrcov, kernel) for kernel in lrcov.KERNELS
-}
-KERNEL_ESTIMATORS.update({kernel: getattr(lrcov, kernel) for kernel in lrcov.KERNELS})
-KNOWN_KERNELS = "\n".join(sorted([k for k in KERNEL_ESTIMATORS]))
-KERNEL_ERR = f"kernel is not a known estimator. Must be one of:\n {KNOWN_KERNELS}"
 
 
 class CointegrationSetup(NamedTuple):

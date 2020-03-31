@@ -108,7 +108,7 @@ def direct_var(
         else:
             # Branch is a workaround of NumPy 1.15
             # TODO: Remove after NumPy 1.15 dropped
-            resids[:, i: i + 1] = lhs[:, i: i + 1]
+            resids[:, i : i + 1] = lhs[:, i : i + 1]
     return params, resids
 
 

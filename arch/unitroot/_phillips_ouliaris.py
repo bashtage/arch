@@ -7,14 +7,10 @@ from statsmodels.iolib.summary import Summary
 from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import RegressionResults
 
-import arch.covariance.kernel as lrcov
+from arch.covariance import KERNEL_ERR, KERNEL_ESTIMATORS
+from arch.covariance.kernel import CovarianceEstimator
 from arch.typing import ArrayLike1D, ArrayLike2D
-from arch.unitroot._shared import (
-    KERNEL_ERR,
-    KERNEL_ESTIMATORS,
-    ResidualCointegrationTestResult,
-    _cross_section,
-)
+from arch.unitroot._shared import ResidualCointegrationTestResult, _cross_section
 from arch.unitroot.critical_values.phillips_ouliaris import (
     CV_PARAMETERS,
     CV_TAU_MIN,
@@ -314,7 +310,7 @@ class PhillipsOuliarisTestResults(ResidualCointegrationTestResult):
         order: int = 2,
         xsection: Optional[RegressionResults] = None,
         test_type: str = "Za",
-        kernel_est: Optional[lrcov.CovarianceEstimator] = None,
+        kernel_est: Optional[CovarianceEstimator] = None,
         rho: float = 0.0,
     ) -> None:
         super().__init__(
