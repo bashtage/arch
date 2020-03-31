@@ -65,6 +65,7 @@ Cointegration Testing
 .. autosummary::
 
    ~arch.unitroot.cointegration.engle_granger
+   ~arch.unitroot.cointegration.phillips_ouliaris
 
 Cointegrating Relationship Estimation
 -------------------------------------
@@ -76,7 +77,6 @@ Cointegrating Relationship Estimation
 
 Bootstraps
 ----------
-
 
 .. autosummary::
    ~arch.bootstrap.IIDBootstrap

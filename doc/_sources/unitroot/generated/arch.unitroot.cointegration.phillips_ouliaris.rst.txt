@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.phillips\_ouliaris
+==============================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autofunction:: phillips_ouliaris

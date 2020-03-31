@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.EngleGrangerTestResults.max\_lags
+=============================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: EngleGrangerTestResults.max_lags

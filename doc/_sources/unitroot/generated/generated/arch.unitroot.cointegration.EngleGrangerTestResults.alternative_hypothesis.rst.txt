@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.EngleGrangerTestResults.alternative\_hypothesis
+===========================================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: EngleGrangerTestResults.alternative_hypothesis

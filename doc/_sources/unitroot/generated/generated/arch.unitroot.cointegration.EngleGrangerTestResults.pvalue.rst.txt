@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.EngleGrangerTestResults.pvalue
+==========================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: EngleGrangerTestResults.pvalue
