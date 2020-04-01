@@ -16,7 +16,17 @@ def test_smoke(data, trend, lags, leads, common, max_lag, method):
     y, x = data
     if common:
         leads = lags
-    mod = DynamicOLS(y, x, trend, lags, leads, common, max_lag, max_lag, method)
+    mod = DynamicOLS(
+        y,
+        x,
+        trend,
+        lags=lags,
+        leads=leads,
+        common=common,
+        max_lag=max_lag,
+        max_lead=max_lag,
+        method=method,
+    )
     mod.fit()
 
 
@@ -27,8 +37,14 @@ def test_smoke(data, trend, lags, leads, common, max_lag, method):
 @pytest.mark.parametrize("df_adjust", [True, False])
 def test_smoke_fit(data, cov_type, kernel, bandwidth, force_int, df_adjust):
     y, x = data
-    mod = DynamicOLS(y, x, "ct", 3, 5, False)
-    res = mod.fit(cov_type, kernel, bandwidth, force_int, df_adjust)
+    mod = DynamicOLS(y, x, "ct", lags=3, leads=5, common=False)
+    res = mod.fit(
+        cov_type,
+        kernel=kernel,
+        bandwidth=bandwidth,
+        force_int=force_int,
+        df_adjust=df_adjust,
+    )
     assert isinstance(res.leads, int)
     assert isinstance(res.lags, int)
     assert isinstance(res.bandwidth, (int, float))
@@ -44,7 +60,7 @@ def test_smoke_fit(data, cov_type, kernel, bandwidth, force_int, df_adjust):
 def test_mismatch_lead_lag(data):
     y, x = data
     with pytest.raises(ValueError, match="common is specified but leads"):
-        DynamicOLS(y, x, "c", 4, 5, True)
+        DynamicOLS(y, x, "c", lags=4, leads=5, common=True)
     with pytest.raises(ValueError, match="common is specified but max_lead"):
         DynamicOLS(y, x, max_lag=6, max_lead=7, common=True)
 

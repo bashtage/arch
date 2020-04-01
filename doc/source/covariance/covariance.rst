@@ -1,9 +1,11 @@
 Long-run Covariance Estimation
 ==============================
 
-
 Long-run Covariance Estimators
 ------------------------------
+
+Kernel-based Estimators
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. module:: arch.covariance.kernel
    :synopsis: Kernel-based long-run covariance estimation
@@ -25,11 +27,31 @@ Long-run Covariance Estimators
    TukeyHamming
    TukeyHanning
    TukeyParzen
+   ZeroLag
 
-Results
--------
+
+Vector AR-based Estimators
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. module:: arch.covariance.var
+   :synopsis: Vector-AR-based long-run covariance estimation
+
+.. currentmodule:: arch.covariance.var
 
 .. autosummary::
    :toctree: generated/
 
-   CovarianceEstimate
+   PreWhitenedRecolored
+
+Results
+-------
+
+All long-run covariance estimators return their results using the same type
+of object.
+
+.. currentmodule:: arch.covariance
+
+.. autosummary::
+   :toctree: generated/
+
+   ~kernel.CovarianceEstimate

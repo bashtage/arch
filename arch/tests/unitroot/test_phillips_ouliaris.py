@@ -2,6 +2,7 @@ from typing import Tuple
 
 import numpy as np
 from numpy.testing import assert_allclose
+import pandas as pd
 import pytest
 from statsmodels.iolib.summary import Summary
 
@@ -165,3 +166,65 @@ def test_auto_bandwidth(trivariate_data):
     assert int(res.bandwidth) != res.bandwidth
     res = phillips_ouliaris(y, x, force_int=True)
     assert int(res.bandwidth) == res.bandwidth
+
+
+REFERENCE = (
+    (
+        "n",
+        [
+            [-4.017712, 0.0062, -31.26709, 0.0079],
+            [-4.207778, 0.0033, -33.83294, 0.0046],
+            [-4.218211, 0.0031, -33.87041, 0.0045],
+        ],
+    ),
+    (
+        "c",
+        [
+            [-29.56978, 0.0000, -1210.576, 0.0001],
+            [-32.09233, 0.0000, -976.0578, 0.0001],
+            [-31.93710, 0.0000, -986.2292, 0.0001],
+        ],
+    ),
+    (
+        "ct",
+        [
+            [-27.55381, 0.0001, -1179.019, 0.0001],
+            [-32.22650, 0.0001, -967.9824, 0.0001],
+            [-31.75132, 0.0001, -999.3838, 0.0001],
+        ],
+    ),
+    (
+        "ctt",
+        [
+            [-27.61660, 0.0000, -1180.209, 0.0001],
+            [-32.50041, 0.0000, -950.8720, 0.0001],
+            [-31.94475, 0.0000, -983.4933, 0.0001],
+        ],
+    ),
+)
+
+
+@pytest.mark.parametrize("result", REFERENCE)
+def test_against_ref(trivariate_data, result):
+    trend = result[0]
+    ref = result[1]
+    for i in range(3):
+        ref_row = ref[i]
+        x_idx = list(np.arange(3))
+        x_idx.pop(i)
+        y_idx = [i]
+        if isinstance(trivariate_data[0], pd.DataFrame):
+            z = pd.concat(trivariate_data, axis=1)
+            x = z.iloc[:, x_idx]
+            y = z.iloc[:, y_idx]
+        else:
+            z = np.column_stack(trivariate_data)
+            x = z[:, x_idx]
+            y = z[:, y_idx]
+        zt = phillips_ouliaris(y, x, trend=trend, test_type="Zt", bandwidth=9)
+        za = phillips_ouliaris(y, x, trend=trend, test_type="Za", bandwidth=9)
+        scale = y.shape[0] / (y.shape[0] - 1)
+        assert_allclose(zt.stat, np.sqrt(scale) * ref_row[0], rtol=1e-4)
+        assert_allclose(zt.pvalue, ref_row[1], atol=1e-3)
+        assert_allclose(za.stat, scale * ref_row[2], rtol=1e-4)
+        assert_allclose(za.pvalue, ref_row[3], atol=1e-3)

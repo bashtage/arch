@@ -523,6 +523,7 @@ class DynamicOLS(object):
         y: ArrayLike1D,
         x: ArrayLike2D,
         trend: str = "c",
+        *,
         lags: Optional[int] = None,
         leads: Optional[int] = None,
         common: bool = False,
@@ -671,6 +672,7 @@ class DynamicOLS(object):
     def fit(
         self,
         cov_type: str = "unadjusted",
+        *,
         kernel: str = "bartlett",
         bandwidth: Optional[int] = None,
         force_int: bool = False,
@@ -788,12 +790,16 @@ class DynamicOLS(object):
         kernel_est = KERNEL_ESTIMATORS[kernel]
         scale = nobs / (nobs - nx) if df_adjust else 1.0
         if cov_type in ("unadjusted", "homoskedastic"):
-            est = kernel_est(eps, bandwidth, center=False, force_int=force_int)
+            est = kernel_est(
+                eps, bandwidth=bandwidth, center=False, force_int=force_int
+            )
             sigma2 = np.squeeze(est.cov.long_run)
             cov = (scale * sigma2) * sigma_xx_inv / nobs
         elif cov_type in ("robust", "kernel"):
             scores = x * eps
-            est = kernel_est(scores, bandwidth, center=False, force_int=force_int)
+            est = kernel_est(
+                scores, bandwidth=bandwidth, center=False, force_int=force_int
+            )
             s = est.cov.long_run
             cov = scale * sigma_xx_inv @ s @ sigma_xx_inv / nobs
         else:
@@ -969,6 +975,7 @@ class FullyModifiedOLS(object):
         y: ArrayLike1D,
         x: ArrayLike2D,
         trend: str = "c",
+        *,
         x_trend: Optional[str] = None,
     ) -> None:
         setup = _check_cointegrating_regression(y, x, trend)
@@ -1025,6 +1032,7 @@ class FullyModifiedOLS(object):
 
     def fit(
         self,
+        *,
         kernel: str = "bartlett",
         bandwidth: Optional[float] = None,
         force_int: bool = True,
@@ -1122,13 +1130,15 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         y: ArrayLike1D,
         x: ArrayLike2D,
         trend: str = "c",
+        *,
         x_trend: Optional[str] = None,
     ) -> None:
-        super().__init__(y, x, trend, x_trend)
+        super().__init__(y, x, trend, x_trend=x_trend)
 
     @Appender(FullyModifiedOLS.fit.__doc__)
     def fit(
         self,
+        *,
         kernel: str = "bartlett",
         bandwidth: Optional[float] = None,
         force_int: bool = True,

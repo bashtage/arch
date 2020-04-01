@@ -1,4 +1,3 @@
-from itertools import product
 from typing import Optional, Tuple
 
 import numpy as np
@@ -6,11 +5,10 @@ from numpy.testing import assert_allclose
 import pandas as pd
 import pytest
 
-from arch.covariance.var import PreWhitenRecoloredCovariance
+from arch.covariance.kernel import CovarianceEstimate
+from arch.covariance.var import PreWhitenedRecolored
 from arch.typing import NDArray
 
-DATA_PARAMS = list(product([1, 3], [True, False], [0]))  # , 1, 3]))
-DATA_IDS = [f"dim: {d}, pandas: {p}, order: {o}" for d, p, o in DATA_PARAMS]
 KERNELS = [
     "Bartlett",
     "Parzen",
@@ -30,40 +28,6 @@ KERNELS = [
 @pytest.fixture(params=KERNELS)
 def kernel(request):
     return request.param
-
-
-@pytest.fixture(scope="module", params=DATA_PARAMS, ids=DATA_IDS)
-def data(request):
-    dim, pandas, order = request.param
-    rs = np.random.RandomState([839084, 3823810, 982103, 829108])
-    burn = 100
-    shape = (burn + 500,)
-    if dim > 1:
-        shape += (3,)
-    rvs = rs.standard_normal(shape)
-    phi = np.zeros((order, dim, dim))
-    if order > 0:
-        phi[0] = np.eye(dim) * 0.4 + 0.1
-        for i in range(1, order):
-            phi[i] = 0.3 / (i + 1) * np.eye(dim)
-        for i in range(order, burn + 500):
-            for j in range(order):
-                if dim == 1:
-                    rvs[i] += np.squeeze(phi[j] * rvs[i - j - 1])
-                else:
-                    rvs[i] += phi[j] @ rvs[i - j - 1]
-    if order > 1:
-        p = np.eye(dim * order, dim * order, -dim)
-        for j in range(order):
-            p[:dim, j * dim : (j + 1) * dim] = phi[j]
-        v, _ = np.linalg.eig(p)
-        assert np.max(np.abs(v)) < 1
-    rvs = rvs[burn:]
-    if pandas and dim == 1:
-        return pd.Series(rvs, name="x")
-    elif pandas:
-        return pd.DataFrame(rvs, columns=[f"x{i}" for i in range(dim)])
-    return rvs
 
 
 def direct_var(
@@ -140,29 +104,38 @@ def direct_ic(
 @pytest.mark.parametrize("diag_order", [3, 5])
 @pytest.mark.parametrize("max_order", [None, 10])
 @pytest.mark.parametrize("ic", ["aic", "bic", "hqc"])
-def test_direct_var(data, const, full_order, diag_order, max_order, ic):
-    direct_ic(data, ic, const, full_order, diag_order, max_order)
+def test_direct_var(covariance_data, const, full_order, diag_order, max_order, ic):
+    direct_ic(covariance_data, ic, const, full_order, diag_order, max_order)
 
 
 @pytest.mark.parametrize("center", [True, False])
 @pytest.mark.parametrize("diagonal", [True, False])
 @pytest.mark.parametrize("method", ["aic", "bic", "hqc"])
-def test_ic(data, center, diagonal, method):
-    pwrc = PreWhitenRecoloredCovariance(
-        data, center=center, diagonal=diagonal, method=method, bandwidth=0.0,
+def test_ic(covariance_data, center, diagonal, method):
+    pwrc = PreWhitenedRecolored(
+        covariance_data, center=center, diagonal=diagonal, method=method, bandwidth=0.0,
     )
     cov = pwrc.cov
-    expected_type = np.ndarray if isinstance(data, np.ndarray) else pd.DataFrame
+    expected_type = (
+        np.ndarray if isinstance(covariance_data, np.ndarray) else pd.DataFrame
+    )
     assert isinstance(cov.short_run, expected_type)
-    expected_max_lag = int(data.shape[0] ** (1 / 3))
+    expected_max_lag = int(covariance_data.shape[0] ** (1 / 3))
     assert pwrc._max_lag == expected_max_lag
     expected_ics = {}
     for full_order in range(expected_max_lag + 1):
         diag_limit = expected_max_lag + 1 if diagonal else full_order + 1
+        if covariance_data.ndim == 1 or covariance_data.shape[1] == 1:
+            diag_limit = full_order + 1
         for diag_order in range(full_order, diag_limit):
             key = (full_order, diag_order)
             expected_ics[key] = direct_ic(
-                data, method, center, full_order, diag_order, max_order=expected_max_lag
+                covariance_data,
+                method,
+                center,
+                full_order,
+                diag_order,
+                max_order=expected_max_lag,
             )
     assert tuple(sorted(pwrc._ics.keys())) == tuple(sorted(expected_ics.keys()))
     for key in expected_ics:
@@ -175,13 +148,18 @@ def test_ic(data, center, diagonal, method):
 @pytest.mark.parametrize("diagonal", [True, False])
 @pytest.mark.parametrize("method", ["aic", "bic", "hqc"])
 @pytest.mark.parametrize("lags", [0, 1, 3])
-def test_short_long_run(data, center, diagonal, method, lags):
-    pwrc = PreWhitenRecoloredCovariance(
-        data, center=center, diagonal=diagonal, method=method, lags=lags, bandwidth=0.0,
+def test_short_long_run(covariance_data, center, diagonal, method, lags):
+    pwrc = PreWhitenedRecolored(
+        covariance_data,
+        center=center,
+        diagonal=diagonal,
+        method=method,
+        lags=lags,
+        bandwidth=0.0,
     )
     cov = pwrc.cov
     full_order, diag_order = pwrc._order
-    params, resids = direct_var(data, center, full_order, diag_order)
+    params, resids = direct_var(covariance_data, center, full_order, diag_order)
     nobs, nvar = resids.shape
     expected_short_run = resids.T @ resids / nobs
     assert_allclose(cov.short_run, expected_short_run)
@@ -195,25 +173,47 @@ def test_short_long_run(data, center, diagonal, method, lags):
     assert_allclose(cov.long_run, expected_long_run)
 
 
-@pytest.mark.parametrize("sample_autocov", [True, False])
-def test_data(data, sample_autocov):
-    pwrc = PreWhitenRecoloredCovariance(
-        data, sample_autocov=sample_autocov, bandwidth=0.0
+@pytest.mark.parametrize("force_int", [True, False])
+def test_pwrc_attributes(covariance_data, force_int):
+    pwrc = PreWhitenedRecolored(covariance_data, force_int=force_int)
+    assert isinstance(pwrc.bandwidth_scale, float)
+    assert isinstance(pwrc.kernel_const, float)
+    assert isinstance(pwrc.rate, float)
+    assert isinstance(pwrc._weights(), np.ndarray)
+    assert pwrc.force_int == force_int
+    expected_type = (
+        np.ndarray if isinstance(covariance_data, np.ndarray) else pd.DataFrame
     )
-    pwrc.cov
+    assert isinstance(pwrc.cov.short_run, expected_type)
+    assert isinstance(pwrc.cov.long_run, expected_type)
+    assert isinstance(pwrc.cov.one_sided, expected_type)
+    assert isinstance(pwrc.cov.one_sided_strict, expected_type)
+
+
+@pytest.mark.parametrize("sample_autocov", [True, False])
+def test_data(covariance_data, sample_autocov, kernel):
+    pwrc = PreWhitenedRecolored(
+        covariance_data, sample_autocov=sample_autocov, kernel=kernel, bandwidth=0.0
+    )
+    assert isinstance(pwrc.cov, CovarianceEstimate)
 
 
 def test_pwrc_errors():
     x = np.random.standard_normal((500, 2))
     with pytest.raises(ValueError, match="lags must be a"):
-        PreWhitenRecoloredCovariance(x, lags=-1)
+        PreWhitenedRecolored(x, lags=-1)
     with pytest.raises(ValueError, match="lags must be a"):
-        PreWhitenRecoloredCovariance(x, lags=np.array([2]))
+        PreWhitenedRecolored(x, lags=np.array([2]))
     with pytest.raises(ValueError, match="lags must be a"):
-        PreWhitenRecoloredCovariance(x, lags=3.5)
+        PreWhitenedRecolored(x, lags=3.5)
 
 
 def test_pwrc_warnings():
     x = np.random.standard_normal((9, 5))
     with pytest.warns(RuntimeWarning, match="The maximum number of lags is 0"):
-        PreWhitenRecoloredCovariance(x).cov
+        assert isinstance(PreWhitenedRecolored(x).cov, CovarianceEstimate)
+
+
+def test_unknown_kernel(covariance_data):
+    with pytest.raises(ValueError, match=""):
+        PreWhitenedRecolored(covariance_data, kernel="unknown")
