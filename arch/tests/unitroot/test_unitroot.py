@@ -478,6 +478,33 @@ def test_adf_short_timeseries():
     assert adf.lags == 1
 
 
+def test_adf_buggy_timeseries1():
+    x = np.asarray([0])
+    adf = ADF(x)
+    # ValueError: maxlag should be < nobs
+    adf.stat
+
+
+def test_adf_buggy_timeseries2():
+    x = np.asarray([0, 0])
+    adf = ADF(x)
+    # IndexError: index 0 is out of bounds for axis 0 with size 0
+    adf.stat
+
+
+def test_adf_buggy_timeseries3():
+    x = np.asarray([1]*1000)
+    adf = ADF(x)
+    # AssertionError: Number of manager items must equal union of block items
+    # # manager items: 1, # tot_items: 0
+    adf.stat
+
+def test_kpss_buggy_timeseries1():
+    x = np.asarray([0])
+    adf = KPSS(x)
+    # ValueError: cannot convert float NaN to integer
+    adf.stat
+
 kpss_autolag_data = (
     (dataset_loader(macrodata)["realgdp"], "c", 9),
     (dataset_loader(sunspots)["SUNACTIVITY"], "c", 7),
