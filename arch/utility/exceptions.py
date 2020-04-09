@@ -80,3 +80,12 @@ apply the studentized bootstrap if any of the variances the values returned
 by func have not variability when resampled. The estimated covariance
 is:\n\n {cov}
 """
+
+
+class InfeasibleTestException(RuntimeError):
+    pass
+
+
+infeasible_test_error = """
+Fewer observations are available than are required to perform the test.
+"""

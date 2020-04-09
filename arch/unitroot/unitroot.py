@@ -3,7 +3,9 @@ import warnings
 
 from numpy import (
     abs,
+    amax,
     amin,
+    any as npany,
     arange,
     argwhere,
     array,
@@ -19,6 +21,7 @@ from numpy import (
     int32,
     int64,
     interp,
+    isnan,
     log,
     nan,
     ones,
@@ -30,7 +33,7 @@ from numpy import (
     squeeze,
     sum,
 )
-from numpy.linalg import inv, matrix_rank, pinv, qr, solve
+from numpy.linalg import LinAlgError, inv, matrix_rank, pinv, qr, solve
 from pandas import DataFrame
 from scipy.stats import norm
 from statsmodels.iolib.summary import Summary
@@ -65,7 +68,12 @@ from arch.unitroot.critical_values.kpss import kpss_critical_values
 from arch.unitroot.critical_values.zivot_andrews import za_critical_values
 from arch.utility import cov_nw
 from arch.utility.array import DocStringInheritor, ensure1d, ensure2d
-from arch.utility.exceptions import InvalidLengthWarning, invalid_length_doc
+from arch.utility.exceptions import (
+    InfeasibleTestException,
+    InvalidLengthWarning,
+    infeasible_test_error,
+    invalid_length_doc,
+)
 from arch.utility.timeseries import add_trend
 
 __all__ = [
@@ -106,6 +114,20 @@ SHORT_TREND_DESCRIPTION = {
     "ctt": "Const., Lin. and Quad. Trends",
     "t": "Linear Time Trend (No Const.)",
 }
+
+
+def _is_reduced_rank(x: NDArray) -> bool:
+    """
+    Check if a matrix has reduced rank preferring quick checks
+    """
+    if x.shape[1] > x.shape[0]:
+        return True
+    elif npany(isnan(x)):
+        return True
+    elif sum(amax(x, axis=0) == amin(x, axis=0)) > 1:
+        return True
+    else:
+        return matrix_rank(x) < x.shape[1]
 
 
 def _select_best_ic(
@@ -357,6 +379,15 @@ def _df_select_lags(
         full_rhs = rhs
 
     start_lag = full_rhs.shape[1] - rhs.shape[1] + 1
+    if _is_reduced_rank(full_rhs):
+        raise InfeasibleTestException(
+            "The maximum lag you are considering results in an ADF regression with "
+            "a singular regressor matrix and so a specification test be run. This "
+            "may occur if your series have little variation and so is locally "
+            "constant, or may occur if you are attempting to test a very short "
+            "series. You can manually set maximum lag length to consider smaller "
+            "models."
+        )
     ic_best, best_lag = _autolag_ols(lhs, full_rhs, start_lag, max_lags, method)
     return ic_best, best_lag
 
@@ -443,6 +474,12 @@ class UnitRootTest(object):
         """Display as HTML for IPython notebook."""
         return self.summary().as_html()
 
+    def _check_specification(self) -> None:
+        """
+        Check that the data are compatible with running a test.
+        """
+        raise NotImplementedError
+
     def _compute_statistic(self) -> None:
         """This is the core routine that computes the test statistic, computes
         the p-value and constructs the critical values.
@@ -460,6 +497,7 @@ class UnitRootTest(object):
         needed
         """
         if self._stat is None:
+            self._check_specification()
             self._compute_statistic()
 
     @property
@@ -718,6 +756,12 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
         self._ic_best = ic_best
         self._lags = best_lag
 
+    def _check_specification(self) -> None:
+        trend_order = len(self._trend) if self._trend != "nc" else 0
+        lag_len = 0 if self._lags is None else self._lags
+        if self._y.shape[0] < (3 + trend_order + lag_len):
+            raise InfeasibleTestException(infeasible_test_error)
+
     def _compute_statistic(self) -> None:
         if self._lags is None:
             self._select_lag()
@@ -844,6 +888,12 @@ class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
             self._c = -7.0
         else:
             self._c = -13.5
+
+    def _check_specification(self) -> None:
+        trend_order = len(self._trend) if self._trend != "nc" else 0
+        lag_len = 0 if self._lags is None else self._lags
+        if self._y.shape[0] < (3 + trend_order + lag_len):
+            raise InfeasibleTestException(infeasible_test_error)
 
     def _compute_statistic(self) -> None:
         """Core routine to estimate DF-GLS test statistic"""
@@ -1028,6 +1078,12 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
         self._test_name = "Phillips-Perron Test"
         self._lags = lags
 
+    def _check_specification(self) -> None:
+        trend_order = len(self._trend) if self._trend != "nc" else 0
+        lag_len = 0 if self._lags is None else self._lags
+        if self._y.shape[0] < (3 + trend_order + lag_len):
+            raise InfeasibleTestException(infeasible_test_error)
+
     def _compute_statistic(self) -> None:
         """Core routine to estimate PP test statistics"""
         # 1. Estimate Regression
@@ -1043,10 +1099,13 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
         lhs = y[1:, None]
         if trend != "n":
             rhs = add_trend(rhs, trend)
-
+        if _is_reduced_rank(rhs):
+            raise InfeasibleTestException(infeasible_test_error)
         resols = OLS(lhs, rhs).fit()
         k = rhs.shape[1]
         n, u = resols.nobs, resols.resid
+        if lags > u.shape[0]:
+            raise InfeasibleTestException(infeasible_test_error)
         lam2 = cov_nw(u, lags, demean=False)
         lam = sqrt(lam2)
         # 2. Compute components
@@ -1186,6 +1245,12 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
         self._alternative_hypothesis = "The process contains a unit root."
         self._resids: Optional[ArrayLike1D] = None
 
+    def _check_specification(self) -> None:
+        trend_order = len(self._trend) if self._trend != "nc" else 0
+        lag_len = 0 if self._lags is None else self._lags
+        if self._y.shape[0] <= (3 + trend_order + lag_len):
+            raise InfeasibleTestException(infeasible_test_error)
+
     def _compute_statistic(self) -> None:
         # 1. Estimate model with trend
         nobs, y, trend = self._nobs, self._y, self._trend
@@ -1199,6 +1264,8 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
             else:
                 self._autolag()
         assert self._lags is not None
+        if u.shape[0] < self._lags + 1:
+            raise InfeasibleTestException(infeasible_test_error)
         lam = cov_nw(u, self._lags, demean=False)
         s = cumsum(u)
         self._stat = 1 / (nobs ** 2.0) * sum(s ** 2.0) / lam
@@ -1326,13 +1393,22 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
         """
         Minimal implementation of LS estimator for internal use
         """
-        xpxi = inv(exog.T.dot(exog))
+        try:
+            xpxi = inv(exog.T.dot(exog))
+        except LinAlgError:
+            raise InfeasibleTestException(infeasible_test_error)
         xpy = exog.T.dot(endog)
         nobs, k_exog = exog.shape
         b = xpxi.dot(xpy)
         e = endog - exog.dot(b)
         sigma2 = e.T.dot(e) / (nobs - k_exog)
         return b / sqrt(diag(sigma2 * xpxi))
+
+    def _check_specification(self) -> None:
+        trend_order = len(self._trend) if self._trend != "nc" else 0
+        lag_len = 0 if self._lags is None else self._lags
+        if self._y.shape[0] < (3 + trend_order + lag_len):
+            raise InfeasibleTestException(infeasible_test_error)
 
     def _compute_statistic(self) -> None:
         """This is the core routine that computes the test statistic, computes
@@ -1395,7 +1471,7 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
             if bp == start_period + 1:
                 rank = matrix_rank(exog)
                 if rank < exog.shape[1]:
-                    raise ValueError(
+                    raise InfeasibleTestException(
                         "ZA: auxiliary exog matrix is not full rank.\n cols "
                         "{0}. rank = {1}".format(exog.shape[1], rank)
                     )
@@ -1548,6 +1624,12 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
         warnings.warn(MUTATING_WARNING, FutureWarning)
         self._reset()
         self._debiased = bool(value)
+
+    def _check_specification(self) -> None:
+        trend_order = len(self._trend) if self._trend != "nc" else 0
+        lag_len = 0 if self._lags is None else self._lags
+        if self._y.shape[0] < (2 + trend_order + lag_len):
+            raise InfeasibleTestException(infeasible_test_error)
 
     def _compute_statistic(self) -> None:
         overlap, debiased, robust = self._overlap, self._debiased, self._robust

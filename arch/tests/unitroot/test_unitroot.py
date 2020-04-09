@@ -25,6 +25,7 @@ from arch.unitroot.unitroot import (
     mackinnoncrit,
     mackinnonp,
 )
+from arch.utility.exceptions import InfeasibleTestException
 
 DECIMAL_5 = 5
 DECIMAL_4 = 4
@@ -474,36 +475,41 @@ def test_adf_short_timeseries():
     # GH 262
     x = np.asarray([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0])
     adf = ADF(x)
-    assert_almost_equal(adf.stat, -2.236, decimal=3)
-    assert adf.lags == 1
+    with pytest.raises(InfeasibleTestException):
+        adf.stat
 
 
 def test_adf_buggy_timeseries1():
     x = np.asarray([0])
     adf = ADF(x)
     # ValueError: maxlag should be < nobs
-    adf.stat
+    with pytest.raises(InfeasibleTestException, match="Fewer observations are"):
+        adf.stat
 
 
 def test_adf_buggy_timeseries2():
     x = np.asarray([0, 0])
     adf = ADF(x)
     # IndexError: index 0 is out of bounds for axis 0 with size 0
-    adf.stat
+    with pytest.raises(InfeasibleTestException, match="Fewer observations are"):
+        adf.stat
 
 
 def test_adf_buggy_timeseries3():
-    x = np.asarray([1]*1000)
+    x = np.asarray([1] * 1000)
     adf = ADF(x)
     # AssertionError: Number of manager items must equal union of block items
     # # manager items: 1, # tot_items: 0
-    adf.stat
+    with pytest.raises(InfeasibleTestException, match="The maximum lag you are"):
+        adf.stat
+
 
 def test_kpss_buggy_timeseries1():
     x = np.asarray([0])
     adf = KPSS(x)
-    # ValueError: cannot convert float NaN to integer
-    adf.stat
+    with pytest.raises(InfeasibleTestException):
+        adf.stat
+
 
 kpss_autolag_data = (
     (dataset_loader(macrodata)["realgdp"], "c", 9),
@@ -631,3 +637,36 @@ def test_invalid_trend():
 def test_nc_warning():
     with pytest.warns(FutureWarning, match='Trend "nc" is deprecated'):
         ADF(np.random.standard_normal(100), trend="nc")
+
+
+@pytest.mark.parametrize("nobs", np.arange(1, 11).tolist())
+@pytest.mark.parametrize(
+    "stat", [ADF, KPSS, DFGLS, PhillipsPerron, VarianceRatio, ZivotAndrews]
+)
+@pytest.mark.parametrize("trend", ["nc", "c", "ct", "ctt"])
+def test_wrong_exceptions(stat, nobs, trend):
+    y = np.random.standard_normal((nobs,))
+    try:
+        stat(y, trend=trend).stat
+    except InfeasibleTestException:
+        pass
+    except ValueError as ve:
+        if "trend" not in ve.args[0]:
+            raise
+
+
+@pytest.mark.parametrize("nobs", [2, 10, 100])
+@pytest.mark.parametrize(
+    "stat", [ADF, KPSS, DFGLS, PhillipsPerron, VarianceRatio, ZivotAndrews]
+)
+@pytest.mark.parametrize("trend", ["nc", "c", "ct", "ctt"])
+def test_wrong_exceptions_nearly_constant_series(stat, nobs, trend):
+    y = np.zeros((nobs,))
+    y[-1] = 1.0
+    try:
+        stat(y, trend=trend).stat
+    except InfeasibleTestException:
+        pass
+    except ValueError as ve:
+        if "trend" not in ve.args[0]:
+            raise

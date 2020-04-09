@@ -4,6 +4,8 @@ Version 4
 
 Since 4.12
 ==========
+- Improved checks for unit root tests to help users understand when a test is infeasible
+  (:issue:`364`).
 - Added Phillips-Ouliaris (:func:`~arch.unitroot.cointegration.phillips_ouliaris`)
   cointegration tests (:issue:`360`).
 - Added three methods to estimate cointegrating vectors:
