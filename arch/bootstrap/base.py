@@ -202,6 +202,7 @@ def _loo_jackknife(
     nobs: int,
     args: Sequence[ArrayLike],
     kwargs: Dict[str, ArrayLike],
+    extra_kwargs: Optional[Dict[str, ArrayLike]] = None,
 ) -> NDArray:
     """
     Leave one out jackknife estimation
@@ -238,6 +239,8 @@ def _loo_jackknife(
                 kwargs_copy[k] = v.iloc[items]
             else:
                 kwargs_copy[k] = v[items]
+        if extra_kwargs is not None:
+            kwargs_copy.update(extra_kwargs)
         results.append(func(*args_copy, **kwargs_copy))
     return np.array(results)
 
@@ -721,7 +724,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
                             "computed from datasets with "
                             "different lengths"
                         )
-                    a = self._bca_acceleration(func)
+                    a = self._bca_acceleration(func, extra_kwargs)
                 else:
                     a = 0.0
                 percentiles = stats.norm.cdf(
@@ -777,9 +780,11 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         b = stats.norm.ppf(p)
         return b[:, None]
 
-    def _bca_acceleration(self, func: Callable[..., ArrayLike]) -> float:
+    def _bca_acceleration(
+        self, func: Callable[..., ArrayLike], extra_kwags: Optional[Dict[str, Any]]
+    ) -> float:
         nobs = self._num_items
-        jk_params = _loo_jackknife(func, nobs, self._args, self._kwargs)
+        jk_params = _loo_jackknife(func, nobs, self._args, self._kwargs, extra_kwags)
         return _get_acceleration(jk_params)
 
     def clone(self, *args: ArrayLike, **kwargs: ArrayLike) -> "IIDBootstrap":
