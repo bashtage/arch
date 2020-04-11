@@ -4,6 +4,7 @@ Version 4
 
 Since 4.12
 ==========
+- Fixed a bug when using "bca" confidence intervals with ``extra_kwargs`` (:issue:`366`).
 - Added Phillips-Ouliaris (:func:`~arch.unitroot.cointegration.phillips_ouliaris`)
   cointegration tests (:issue:`360`).
 - Added three methods to estimate cointegrating vectors:

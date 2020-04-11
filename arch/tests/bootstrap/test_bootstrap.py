@@ -761,7 +761,7 @@ def test_bca_against_bcajack():
     #     _mean = x.mean(axis=0)
     #     return float(_mean[1] / _mean[0])
     # output = bcaboot.bcajack(x=observations, B=float(B), func=func_r)
-    a = arch_bs._bca_acceleration(func)
+    a = arch_bs._bca_acceleration(func, None)
     b = arch_bs._bca_bias()
     # bca_lims = np.array(output[1])[:, 0]
     # # bca confidence intervals for: 0.025, 0.05, 0.1, 0.16, 0.5,
@@ -928,3 +928,15 @@ def test_list_input():
     with pytest.raises(TypeError, match="Input `data` "):
         vals = np.random.standard_normal(25).tolist()
         IIDBootstrap(data=vals)
+
+
+def test_bca_extra_kwarg():
+    # GH 366
+    def f(a, b):
+        return a.mean(0)
+
+    x = np.random.standard_normal(1000)
+    bs = IIDBootstrap(x)
+    ci = bs.conf_int(f, extra_kwargs={"b": "anything"}, reps=100, method="bca")
+    assert isinstance(ci, np.ndarray)
+    assert ci.shape == (2, 1)
