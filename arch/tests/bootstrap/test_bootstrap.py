@@ -590,6 +590,17 @@ def test_bca(bs_setup):
     ci = ci.T
     assert_allclose(ci_direct, ci)
 
+    bs = IIDBootstrap(y=bs_setup.x)
+    bs.seed(23456)
+
+    ci_kwarg = bs.conf_int(bs_setup.func, reps=num_bootstrap, method="bca")
+    assert_allclose(ci_kwarg, ci)
+
+    bs = IIDBootstrap(y=bs_setup.x_df)
+    bs.seed(23456)
+    ci_kwarg_pandas = bs.conf_int(bs_setup.func, reps=num_bootstrap, method="bca")
+    assert_allclose(ci_kwarg_pandas, ci)
+
 
 def test_pandas_integer_index(bs_setup):
     x = bs_setup.x
@@ -940,3 +951,17 @@ def test_bca_extra_kwarg():
     ci = bs.conf_int(f, extra_kwargs={"b": "anything"}, reps=100, method="bca")
     assert isinstance(ci, np.ndarray)
     assert ci.shape == (2, 1)
+
+
+def test_set_randomstate(bs_setup):
+    bs = IIDBootstrap(bs_setup.x)
+    rs = np.random.RandomState([12345])
+    bs.random_state = rs
+    assert bs.random_state is rs
+
+
+def test_set_randomstate_exception(bs_setup):
+    bs = IIDBootstrap(bs_setup.x)
+    rs = np.array([1, 2, 3, 4])
+    with pytest.raises(TypeError, match="Value being set must be a RandomState"):
+        bs.random_state = rs
