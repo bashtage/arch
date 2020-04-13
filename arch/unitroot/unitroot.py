@@ -3,7 +3,9 @@ import warnings
 
 from numpy import (
     abs,
+    amax,
     amin,
+    any as npany,
     arange,
     argwhere,
     array,
@@ -19,6 +21,7 @@ from numpy import (
     int32,
     int64,
     interp,
+    isnan,
     log,
     nan,
     ones,
@@ -30,7 +33,7 @@ from numpy import (
     squeeze,
     sum,
 )
-from numpy.linalg import inv, matrix_rank, pinv, qr, solve
+from numpy.linalg import LinAlgError, inv, matrix_rank, pinv, qr, solve
 from pandas import DataFrame
 from scipy.stats import norm
 from statsmodels.iolib.summary import Summary
@@ -65,7 +68,11 @@ from arch.unitroot.critical_values.kpss import kpss_critical_values
 from arch.unitroot.critical_values.zivot_andrews import za_critical_values
 from arch.utility import cov_nw
 from arch.utility.array import DocStringInheritor, ensure1d, ensure2d
-from arch.utility.exceptions import InvalidLengthWarning, invalid_length_doc
+from arch.utility.exceptions import (
+    InfeasibleTestException,
+    InvalidLengthWarning,
+    invalid_length_doc,
+)
 from arch.utility.timeseries import add_trend
 
 __all__ = [
@@ -106,6 +113,21 @@ SHORT_TREND_DESCRIPTION = {
     "ctt": "Const., Lin. and Quad. Trends",
     "t": "Linear Time Trend (No Const.)",
 }
+
+
+def _is_reduced_rank(x: NDArray) -> Tuple[bool, Optional[int]]:
+    """
+    Check if a matrix has reduced rank preferring quick checks
+    """
+    if x.shape[1] > x.shape[0]:
+        return True, None
+    elif npany(isnan(x)):
+        return True, None
+    elif sum(amax(x, axis=0) == amin(x, axis=0)) > 1:
+        return True, None
+    else:
+        x_rank = matrix_rank(x)
+        return x_rank < x.shape[1], x_rank
 
 
 def _select_best_ic(
@@ -150,6 +172,15 @@ def _select_best_ic(
         raise ValueError("Unknown method")
 
     return icbest, lag
+
+
+singular_array_error = """\
+The maximum lag you are considering ({max_lags}) results in an ADF regression with a
+singular regressor matrix after including {lag} lags, and so a specification test be
+run. This may occur if your series have little variation and so is locally constant,
+or may occur if you are attempting to test a very short series. You can manually set
+maximum lag length to consider smaller models.\
+"""
 
 
 def _autolag_ols_low_memory(
@@ -226,7 +257,12 @@ def _autolag_ols_low_memory(
     tstat[0] = inf
     for i in range(m, m + maxlag + 1):
         xpx_sub = xpx[:i, :i]
-        b = solve(xpx_sub, xpy[:i])
+        try:
+            b = solve(xpx_sub, xpy[:i])
+        except LinAlgError:
+            raise InfeasibleTestException(
+                singular_array_error.format(max_lags=maxlag, lag=m - i)
+            )
         sigma2[i - m] = (ypy - b.T.dot(xpx_sub).dot(b)) / nobs
         if method == "t-stat":
             xpxi = inv(xpx_sub)
@@ -273,18 +309,25 @@ def _autolag_ols(
     the highest lag in the last column.
     """
     method = method.lower()
-
+    exog_singular, exog_rank = _is_reduced_rank(exog)
+    if exog_singular:
+        if exog_rank is None:
+            exog_rank = matrix_rank(exog)
+        raise InfeasibleTestException(
+            singular_array_error.format(
+                max_lags=maxlag, lag=max(exog_rank - startlag, 0)
+            )
+        )
     q, r = qr(exog)
     qpy = q.T.dot(endog)
     ypy = endog.T.dot(endog)
     xpx = exog.T.dot(exog)
-    effective_max_lag = min(maxlag, matrix_rank(xpx) - startlag)
 
-    sigma2 = empty(effective_max_lag + 1)
-    tstat = empty(effective_max_lag + 1)
+    sigma2 = empty(maxlag + 1)
+    tstat = empty(maxlag + 1)
     nobs = float(endog.shape[0])
     tstat[0] = inf
-    for i in range(startlag, startlag + effective_max_lag + 1):
+    for i in range(startlag, startlag + maxlag + 1):
         b = solve(r[:i, :i], qpy[:i])
         sigma2[i - startlag] = (ypy - b.T.dot(xpx[:i, :i]).dot(b)) / nobs
         if method == "t-stat" and i > startlag:
@@ -443,6 +486,11 @@ class UnitRootTest(object):
         """Display as HTML for IPython notebook."""
         return self.summary().as_html()
 
+    def _check_specification(self) -> None:
+        """
+        Check that the data are compatible with running a test.
+        """
+
     def _compute_statistic(self) -> None:
         """This is the core routine that computes the test statistic, computes
         the p-value and constructs the critical values.
@@ -460,6 +508,7 @@ class UnitRootTest(object):
         needed
         """
         if self._stat is None:
+            self._check_specification()
             self._compute_statistic()
 
     @property
@@ -717,6 +766,16 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
         )
         self._ic_best = ic_best
         self._lags = best_lag
+
+    def _check_specification(self) -> None:
+        trend_order = len(self._trend) if self._trend != "nc" else 0
+        lag_len = 0 if self._lags is None else self._lags
+        required = 3 + trend_order + lag_len
+        if self._y.shape[0] < (required):
+            raise InfeasibleTestException(
+                f"A minmum of {required} observations are needed to run an ADF with "
+                f"trend {self.trend} and the user-specified number of lags."
+            )
 
     def _compute_statistic(self) -> None:
         if self._lags is None:
@@ -1392,6 +1451,7 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
                 exog[: (cutoff - 1), 2] = 0
                 exog[(cutoff - 1) :, 2] = t_const[0 : (nobs - bp + 1)]
             # check exog rank on first iteration
+            # TODO: Need to check rank of first and last block
             if bp == start_period + 1:
                 rank = matrix_rank(exog)
                 if rank < exog.shape[1]:
