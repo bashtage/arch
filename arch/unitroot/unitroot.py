@@ -1087,6 +1087,16 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
         self._test_name = "Phillips-Perron Test"
         self._lags = lags
 
+    def _check_specification(self) -> None:
+        trend_order = len(self._trend) if self._trend != "nc" else 0
+        lag_len = 0 if self._lags is None else self._lags
+        required = max(3 + trend_order, lag_len)
+        if self._y.shape[0] < (required):
+            raise InfeasibleTestException(
+                f"A minmum of {required} observations are needed to run an ADF with "
+                f"trend {self.trend} and the user-specified number of lags."
+            )
+
     def _compute_statistic(self) -> None:
         """Core routine to estimate PP test statistics"""
         # 1. Estimate Regression
@@ -1106,6 +1116,12 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
         resols = OLS(lhs, rhs).fit()
         k = rhs.shape[1]
         n, u = resols.nobs, resols.resid
+        if u.shape[0] < lags:
+            raise InfeasibleTestException(
+                f"The number of observations {u.shape[0]} is less than the number of"
+                f"lags in the long-run covariance estimator, {lags}. You must have "
+                "lags <= nobs."
+            )
         lam2 = cov_nw(u, lags, demean=False)
         lam = sqrt(lam2)
         # 2. Compute components
