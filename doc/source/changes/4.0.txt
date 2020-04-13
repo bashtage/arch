@@ -4,6 +4,9 @@ Version 4
 
 Since 4.12
 ==========
+- Improved exceptions in :class:`~arch.unitroot.ADF` when test specification
+  is infeasible to the time series being too short or the required regression
+  model being reduced rank (:issue:`364`).
 - Fixed a bug when using "bca" confidence intervals with ``extra_kwargs`` (:issue:`366`).
 - Added Phillips-Ouliaris (:func:`~arch.unitroot.cointegration.phillips_ouliaris`)
   cointegration tests (:issue:`360`).

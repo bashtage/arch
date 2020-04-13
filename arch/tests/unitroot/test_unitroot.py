@@ -21,10 +21,12 @@ from arch.unitroot import ADF, DFGLS, KPSS, PhillipsPerron, VarianceRatio, Zivot
 from arch.unitroot.critical_values.dickey_fuller import tau_2010
 from arch.unitroot.unitroot import (
     _autolag_ols,
+    _is_reduced_rank,
     auto_bandwidth,
     mackinnoncrit,
     mackinnonp,
 )
+from arch.utility.exceptions import InfeasibleTestException
 
 DECIMAL_5 = 5
 DECIMAL_4 = 4
@@ -474,8 +476,39 @@ def test_adf_short_timeseries():
     # GH 262
     x = np.asarray([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0])
     adf = ADF(x)
-    assert_almost_equal(adf.stat, -2.236, decimal=3)
-    assert adf.lags == 1
+    msg = r"The maximum lag you are considering \(3\)"
+    with pytest.raises(InfeasibleTestException, match=msg):
+        adf.stat
+    adf = ADF(x, low_memory=True)
+    with pytest.raises(InfeasibleTestException, match=msg):
+        adf.stat
+
+
+def test_adf_buggy_timeseries1():
+    x = np.asarray([0])
+    adf = ADF(x)
+    # ValueError: maxlag should be < nobs
+    msg = "A minmum of 4 observations are needed"
+    with pytest.raises(InfeasibleTestException, match=msg):
+        adf.stat
+
+
+def test_adf_buggy_timeseries2():
+    x = np.asarray([0, 0])
+    adf = ADF(x)
+    # IndexError: index 0 is out of bounds for axis 0 with size 0
+    msg = "A minmum of 4 observations are needed"
+    with pytest.raises(InfeasibleTestException, match=msg):
+        adf.stat
+
+
+def test_adf_buggy_timeseries3():
+    x = np.asarray([1] * 1000)
+    adf = ADF(x)
+    # AssertionError: Number of manager items must equal union of block items
+    # # manager items: 1, # tot_items: 0
+    with pytest.raises(InfeasibleTestException, match="The maximum lag you are"):
+        adf.stat
 
 
 kpss_autolag_data = (
@@ -579,6 +612,13 @@ def test_zivot_andrews_error():
         ZivotAndrews(y, trim=0.5)
 
 
+def test_zivot_andrews_reduced_rank():
+    y = np.random.standard_normal(1000)
+    y[1:] = 3.0
+    with pytest.raises(ValueError, match="ZA: auxiliary exog matrix is not full rank"):
+        ZivotAndrews(y, lags=1).stat
+
+
 def test_bw_selection():
     bw_ba = round(auto_bandwidth(REAL_TIME_SERIES, kernel="ba"), 7)
     assert_allclose(bw_ba, TRUE_BW_FROM_R_BA)
@@ -604,3 +644,33 @@ def test_invalid_trend():
 def test_nc_warning():
     with pytest.warns(FutureWarning, match='Trend "nc" is deprecated'):
         ADF(np.random.standard_normal(100), trend="nc")
+
+
+@pytest.mark.parametrize("nobs", np.arange(1, 11).tolist())
+@pytest.mark.parametrize("stat", [ADF])
+@pytest.mark.parametrize("trend", ["nc", "c", "ct", "ctt"])
+def test_wrong_exceptions(stat, nobs, trend):
+    y = np.random.standard_normal((nobs,))
+    try:
+        stat(y, trend=trend).stat
+    except InfeasibleTestException:
+        pass
+
+
+@pytest.mark.parametrize("nobs", [2, 10, 100])
+@pytest.mark.parametrize("stat", [ADF])
+@pytest.mark.parametrize("trend", ["nc", "c", "ct", "ctt"])
+def test_wrong_exceptions_nearly_constant_series(stat, nobs, trend):
+    y = np.zeros((nobs,))
+    y[-1] = 1.0
+    try:
+        stat(y, trend=trend).stat
+    except InfeasibleTestException:
+        pass
+
+
+@pytest.mark.parametrize(
+    "x", [np.ones((2, 10)), np.full((20, 2), np.nan), np.ones((20, 2))]
+)
+def test_rank_checker(x):
+    assert _is_reduced_rank(x)
