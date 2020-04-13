@@ -1261,6 +1261,16 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
         self._alternative_hypothesis = "The process contains a unit root."
         self._resids: Optional[ArrayLike1D] = None
 
+    def _check_specification(self) -> None:
+        trend_order = len(self._trend)
+        lag_len = 0 if self._lags is None else self._lags
+        required = max(1 + trend_order, lag_len)
+        if self._y.shape[0] < (required):
+            raise InfeasibleTestException(
+                f"A minmum of {required} observations are needed to run an ADF with "
+                f"trend {self.trend} and the user-specified number of lags."
+            )
+
     def _compute_statistic(self) -> None:
         # 1. Estimate model with trend
         nobs, y, trend = self._nobs, self._y, self._trend
@@ -1274,6 +1284,12 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
             else:
                 self._autolag()
         assert self._lags is not None
+        if u.shape[0] < self._lags:
+            raise InfeasibleTestException(
+                f"The number of observations {u.shape[0]} is less than the number of"
+                f"lags in the long-run covariance estimator, {self._lags}. You must have "
+                "lags <= nobs."
+            )
         lam = cov_nw(u, self._lags, demean=False)
         s = cumsum(u)
         self._stat = 1 / (nobs ** 2.0) * sum(s ** 2.0) / lam
@@ -1305,6 +1321,12 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
             resids_prod /= self._nobs / 2
             s0 += resids_prod
             s1 += i * resids_prod
+        if s0 <= 0:
+            raise InfeasibleTestException(
+                f"Residuals are all zero and so automatic bandwidth selection cannot "
+                f"be used. This is usually an indication that the series being testes "
+                f"is too small or have constant values."
+            )
         s_hat = s1 / s0
         pwr = 1.0 / 3.0
         gamma_hat = 1.1447 * power(s_hat * s_hat, pwr)

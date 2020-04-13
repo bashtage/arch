@@ -674,12 +674,14 @@ def test_nc_warning():
 
 
 @pytest.mark.parametrize("nobs", np.arange(1, 11).tolist())
-@pytest.mark.parametrize("stat", [ADF, PhillipsPerron])
+@pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS])
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
 def test_wrong_exceptions(stat, nobs, trend):
-    y = np.random.standard_normal((nobs,))
-    if stat is PhillipsPerron and trend == "ctt":
+    if (stat in (PhillipsPerron, KPSS) and trend == "ctt") or (
+        stat is KPSS and trend == "n"
+    ):
         return
+    y = np.random.standard_normal((nobs,))
     try:
         stat(y, trend=trend).stat
     except InfeasibleTestException:
@@ -687,10 +689,12 @@ def test_wrong_exceptions(stat, nobs, trend):
 
 
 @pytest.mark.parametrize("nobs", [2, 10, 100])
-@pytest.mark.parametrize("stat", [ADF, PhillipsPerron])
+@pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS])
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
 def test_wrong_exceptions_nearly_constant_series(stat, nobs, trend):
-    if stat is PhillipsPerron and trend == "ctt":
+    if (stat in (PhillipsPerron, KPSS) and trend == "ctt") or (
+        stat is KPSS and trend == "n"
+    ):
         return
     y = np.zeros((nobs,))
     y[-1] = 1.0
@@ -704,6 +708,12 @@ def test_phillips_perron_specifed_lag():
     y = np.zeros((10,))
     with pytest.raises(InfeasibleTestException, match="A minmum of 12 observations"):
         PhillipsPerron(y, lags=12).stat
+
+
+def test_kpss_legacy():
+    y = np.random.standard_normal(4)
+    with pytest.raises(InfeasibleTestException, match="The number of observations 4"):
+        KPSS(y, lags=-1).stat
 
 
 @pytest.mark.parametrize(
