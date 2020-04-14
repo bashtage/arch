@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.GeneralizedError.cdf
+====================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: GeneralizedError.cdf

@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelResult.loglikelihood
+==================================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelResult.loglikelihood

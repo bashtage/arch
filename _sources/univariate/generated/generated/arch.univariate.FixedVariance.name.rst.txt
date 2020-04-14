@@ -1,0 +1,6 @@
+arch.univariate.FixedVariance.name
+==================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FixedVariance.name

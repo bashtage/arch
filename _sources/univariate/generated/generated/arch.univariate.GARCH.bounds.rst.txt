@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.GARCH.bounds
+============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: GARCH.bounds

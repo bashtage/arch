@@ -1,0 +1,6 @@
+arch.univariate.HARX.num\_params
+================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: HARX.num_params

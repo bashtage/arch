@@ -1,0 +1,8 @@
+:orphan:
+
+arch.unitroot.cointegration.EngleGrangerTestResults.summary
+===========================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. automethod:: EngleGrangerTestResults.summary

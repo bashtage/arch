@@ -1,0 +1,6 @@
+arch.covariance.kernel.Gallant.kernel\_weights
+==============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Gallant.kernel_weights

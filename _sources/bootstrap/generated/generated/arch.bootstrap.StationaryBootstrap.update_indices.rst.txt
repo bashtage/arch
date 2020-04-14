@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.StationaryBootstrap.update\_indices
+==================================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: StationaryBootstrap.update_indices

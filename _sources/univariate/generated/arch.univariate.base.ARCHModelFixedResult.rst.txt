@@ -1,0 +1,43 @@
+arch.univariate.base.ARCHModelFixedResult
+=========================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoclass:: ARCHModelFixedResult
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ARCHModelFixedResult.arch_lm_test
+      ~ARCHModelFixedResult.forecast
+      ~ARCHModelFixedResult.hedgehog_plot
+      ~ARCHModelFixedResult.plot
+      ~ARCHModelFixedResult.summary
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ARCHModelFixedResult.aic
+      ~ARCHModelFixedResult.bic
+      ~ARCHModelFixedResult.conditional_volatility
+      ~ARCHModelFixedResult.loglikelihood
+      ~ARCHModelFixedResult.model
+      ~ARCHModelFixedResult.nobs
+      ~ARCHModelFixedResult.num_params
+      ~ARCHModelFixedResult.params
+      ~ARCHModelFixedResult.resid
+      ~ARCHModelFixedResult.std_resid
+   
+   
+   

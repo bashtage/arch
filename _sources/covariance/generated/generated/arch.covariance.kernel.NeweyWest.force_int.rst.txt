@@ -1,0 +1,6 @@
+arch.covariance.kernel.NeweyWest.force\_int
+===========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: NeweyWest.force_int

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.MIDASHyperbolic.simulate
+========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: MIDASHyperbolic.simulate

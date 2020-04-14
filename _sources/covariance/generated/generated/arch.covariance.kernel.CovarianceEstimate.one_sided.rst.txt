@@ -1,0 +1,6 @@
+arch.covariance.kernel.CovarianceEstimate.one\_sided
+====================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: CovarianceEstimate.one_sided

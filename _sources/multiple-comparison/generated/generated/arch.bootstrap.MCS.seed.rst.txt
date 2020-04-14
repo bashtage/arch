@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.MCS.seed
+=======================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: MCS.seed

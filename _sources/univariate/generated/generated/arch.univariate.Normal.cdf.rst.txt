@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.Normal.cdf
+==========================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: Normal.cdf

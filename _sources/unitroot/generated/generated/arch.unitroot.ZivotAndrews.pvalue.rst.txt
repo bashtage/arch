@@ -1,0 +1,6 @@
+arch.unitroot.ZivotAndrews.pvalue
+=================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ZivotAndrews.pvalue

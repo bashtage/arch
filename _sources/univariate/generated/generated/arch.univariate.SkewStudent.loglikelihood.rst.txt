@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.SkewStudent.loglikelihood
+=========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: SkewStudent.loglikelihood

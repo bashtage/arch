@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.IndependentSamplesBootstrap.get\_state
+=====================================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: IndependentSamplesBootstrap.get_state

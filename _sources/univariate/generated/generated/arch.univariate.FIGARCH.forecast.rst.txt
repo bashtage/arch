@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FIGARCH.forecast
+================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FIGARCH.forecast

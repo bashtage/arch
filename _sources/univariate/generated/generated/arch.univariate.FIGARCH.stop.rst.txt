@@ -1,0 +1,6 @@
+arch.univariate.FIGARCH.stop
+============================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FIGARCH.stop

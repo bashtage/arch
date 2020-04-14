@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.DynamicOLSResults.lags
+==================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: DynamicOLSResults.lags

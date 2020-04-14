@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.CointegrationAnalysisResults.tvalues
+================================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: CointegrationAnalysisResults.tvalues

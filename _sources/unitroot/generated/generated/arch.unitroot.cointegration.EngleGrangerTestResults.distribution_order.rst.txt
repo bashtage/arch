@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.EngleGrangerTestResults.distribution\_order
+=======================================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: EngleGrangerTestResults.distribution_order

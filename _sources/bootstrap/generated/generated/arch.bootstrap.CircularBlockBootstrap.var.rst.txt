@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.CircularBlockBootstrap.var
+=========================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: CircularBlockBootstrap.var

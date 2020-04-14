@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.CircularBlockBootstrap.update\_indices
+=====================================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: CircularBlockBootstrap.update_indices

@@ -1,0 +1,6 @@
+arch.covariance.kernel.Bartlett.bandwidth\_scale
+================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Bartlett.bandwidth_scale

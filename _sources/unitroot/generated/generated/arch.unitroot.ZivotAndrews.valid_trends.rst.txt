@@ -1,0 +1,6 @@
+arch.unitroot.ZivotAndrews.valid\_trends
+========================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ZivotAndrews.valid_trends

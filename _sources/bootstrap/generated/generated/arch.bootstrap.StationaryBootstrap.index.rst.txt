@@ -1,0 +1,6 @@
+arch.bootstrap.StationaryBootstrap.index
+========================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: StationaryBootstrap.index

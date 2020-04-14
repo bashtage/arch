@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.EWMAVariance.backcast
+=====================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: EWMAVariance.backcast

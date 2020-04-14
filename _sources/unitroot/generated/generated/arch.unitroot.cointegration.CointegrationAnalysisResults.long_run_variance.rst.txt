@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.CointegrationAnalysisResults.long\_run\_variance
+============================================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: CointegrationAnalysisResults.long_run_variance

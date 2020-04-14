@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ZeroMean.compute\_param\_cov
+============================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ZeroMean.compute_param_cov

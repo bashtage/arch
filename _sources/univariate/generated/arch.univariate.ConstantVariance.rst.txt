@@ -1,0 +1,41 @@
+arch.univariate.ConstantVariance
+================================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: ConstantVariance
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ConstantVariance.backcast
+      ~ConstantVariance.backcast_transform
+      ~ConstantVariance.bounds
+      ~ConstantVariance.compute_variance
+      ~ConstantVariance.constraints
+      ~ConstantVariance.forecast
+      ~ConstantVariance.parameter_names
+      ~ConstantVariance.simulate
+      ~ConstantVariance.starting_values
+      ~ConstantVariance.variance_bounds
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ConstantVariance.name
+      ~ConstantVariance.start
+      ~ConstantVariance.stop
+   
+   
+   

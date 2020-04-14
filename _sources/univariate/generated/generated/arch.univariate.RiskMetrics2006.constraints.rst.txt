@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.RiskMetrics2006.constraints
+===========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: RiskMetrics2006.constraints

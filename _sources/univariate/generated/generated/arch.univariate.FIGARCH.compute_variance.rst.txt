@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FIGARCH.compute\_variance
+=========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FIGARCH.compute_variance

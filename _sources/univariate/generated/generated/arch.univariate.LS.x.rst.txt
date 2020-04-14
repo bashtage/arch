@@ -1,0 +1,6 @@
+arch.univariate.LS.x
+====================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: LS.x

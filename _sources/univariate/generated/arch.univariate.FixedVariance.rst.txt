@@ -1,0 +1,41 @@
+arch.univariate.FixedVariance
+=============================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: FixedVariance
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~FixedVariance.backcast
+      ~FixedVariance.backcast_transform
+      ~FixedVariance.bounds
+      ~FixedVariance.compute_variance
+      ~FixedVariance.constraints
+      ~FixedVariance.forecast
+      ~FixedVariance.parameter_names
+      ~FixedVariance.simulate
+      ~FixedVariance.starting_values
+      ~FixedVariance.variance_bounds
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~FixedVariance.name
+      ~FixedVariance.start
+      ~FixedVariance.stop
+   
+   
+   

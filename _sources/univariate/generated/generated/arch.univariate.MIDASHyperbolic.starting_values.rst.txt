@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.MIDASHyperbolic.starting\_values
+================================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: MIDASHyperbolic.starting_values

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FIGARCH.bounds
+==============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FIGARCH.bounds

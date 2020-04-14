@@ -1,0 +1,6 @@
+arch.unitroot.ZivotAndrews.stat
+===============================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ZivotAndrews.stat

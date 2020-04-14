@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.LS.fit
+======================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: LS.fit

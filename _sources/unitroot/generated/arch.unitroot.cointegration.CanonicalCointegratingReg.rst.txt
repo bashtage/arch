@@ -1,0 +1,22 @@
+arch.unitroot.cointegration.CanonicalCointegratingReg
+=====================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoclass:: CanonicalCointegratingReg
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~CanonicalCointegratingReg.fit
+   
+   
+   
+   
+   
+   

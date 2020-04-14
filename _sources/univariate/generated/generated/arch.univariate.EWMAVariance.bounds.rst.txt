@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.EWMAVariance.bounds
+===================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: EWMAVariance.bounds

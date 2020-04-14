@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.EWMAVariance.compute\_variance
+==============================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: EWMAVariance.compute_variance

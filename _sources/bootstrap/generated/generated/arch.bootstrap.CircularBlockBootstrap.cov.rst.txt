@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.CircularBlockBootstrap.cov
+=========================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: CircularBlockBootstrap.cov

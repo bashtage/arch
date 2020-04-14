@@ -1,0 +1,8 @@
+:orphan:
+
+arch.unitroot.cointegration.FullyModifiedOLS.fit
+================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. automethod:: FullyModifiedOLS.fit

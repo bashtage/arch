@@ -1,0 +1,6 @@
+arch.unitroot.DFGLS.max\_lags
+=============================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: DFGLS.max_lags

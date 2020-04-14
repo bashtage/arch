@@ -1,0 +1,44 @@
+arch.univariate.ZeroMean
+========================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: ZeroMean
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ZeroMean.bounds
+      ~ZeroMean.compute_param_cov
+      ~ZeroMean.constraints
+      ~ZeroMean.fit
+      ~ZeroMean.fix
+      ~ZeroMean.forecast
+      ~ZeroMean.parameter_names
+      ~ZeroMean.resids
+      ~ZeroMean.simulate
+      ~ZeroMean.starting_values
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ZeroMean.distribution
+      ~ZeroMean.name
+      ~ZeroMean.num_params
+      ~ZeroMean.volatility
+      ~ZeroMean.x
+      ~ZeroMean.y
+   
+   
+   

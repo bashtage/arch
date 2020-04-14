@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.volatility.VolatilityProcess.backcast
+=====================================================
+
+.. currentmodule:: arch.univariate.volatility
+
+.. automethod:: VolatilityProcess.backcast

@@ -1,0 +1,6 @@
+arch.unitroot.KPSS.nobs
+=======================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: KPSS.nobs

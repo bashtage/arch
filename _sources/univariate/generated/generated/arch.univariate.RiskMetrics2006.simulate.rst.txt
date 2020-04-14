@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.RiskMetrics2006.simulate
+========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: RiskMetrics2006.simulate

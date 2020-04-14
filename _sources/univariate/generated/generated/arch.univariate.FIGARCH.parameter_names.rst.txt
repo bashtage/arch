@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FIGARCH.parameter\_names
+========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FIGARCH.parameter_names

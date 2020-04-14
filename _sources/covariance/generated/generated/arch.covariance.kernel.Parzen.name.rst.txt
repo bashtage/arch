@@ -1,0 +1,6 @@
+arch.covariance.kernel.Parzen.name
+==================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Parzen.name

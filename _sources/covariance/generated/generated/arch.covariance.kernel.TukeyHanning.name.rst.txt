@@ -1,0 +1,6 @@
+arch.covariance.kernel.TukeyHanning.name
+========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: TukeyHanning.name

@@ -1,0 +1,41 @@
+arch.univariate.EWMAVariance
+============================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: EWMAVariance
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~EWMAVariance.backcast
+      ~EWMAVariance.backcast_transform
+      ~EWMAVariance.bounds
+      ~EWMAVariance.compute_variance
+      ~EWMAVariance.constraints
+      ~EWMAVariance.forecast
+      ~EWMAVariance.parameter_names
+      ~EWMAVariance.simulate
+      ~EWMAVariance.starting_values
+      ~EWMAVariance.variance_bounds
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~EWMAVariance.name
+      ~EWMAVariance.start
+      ~EWMAVariance.stop
+   
+   
+   

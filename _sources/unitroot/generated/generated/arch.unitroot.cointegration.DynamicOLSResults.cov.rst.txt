@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.DynamicOLSResults.cov
+=================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: DynamicOLSResults.cov

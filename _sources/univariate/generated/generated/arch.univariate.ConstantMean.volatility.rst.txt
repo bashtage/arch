@@ -1,0 +1,6 @@
+arch.univariate.ConstantMean.volatility
+=======================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ConstantMean.volatility

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.HARX.fix
+========================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: HARX.fix

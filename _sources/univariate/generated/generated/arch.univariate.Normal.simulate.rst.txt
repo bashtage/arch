@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.Normal.simulate
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: Normal.simulate

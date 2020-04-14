@@ -1,0 +1,40 @@
+arch.univariate.distribution.Distribution
+=========================================
+
+.. currentmodule:: arch.univariate.distribution
+
+.. autoclass:: Distribution
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~Distribution.bounds
+      ~Distribution.cdf
+      ~Distribution.constraints
+      ~Distribution.loglikelihood
+      ~Distribution.moment
+      ~Distribution.parameter_names
+      ~Distribution.partial_moment
+      ~Distribution.ppf
+      ~Distribution.simulate
+      ~Distribution.starting_values
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~Distribution.name
+      ~Distribution.random_state
+   
+   
+   

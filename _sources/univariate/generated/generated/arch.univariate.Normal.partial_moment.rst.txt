@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.Normal.partial\_moment
+======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: Normal.partial_moment

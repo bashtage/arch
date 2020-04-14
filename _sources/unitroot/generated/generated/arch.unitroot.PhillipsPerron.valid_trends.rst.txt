@@ -1,0 +1,6 @@
+arch.unitroot.PhillipsPerron.valid\_trends
+==========================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: PhillipsPerron.valid_trends

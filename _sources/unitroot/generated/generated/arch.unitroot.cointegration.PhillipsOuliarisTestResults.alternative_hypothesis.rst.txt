@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.PhillipsOuliarisTestResults.alternative\_hypothesis
+===============================================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: PhillipsOuliarisTestResults.alternative_hypothesis

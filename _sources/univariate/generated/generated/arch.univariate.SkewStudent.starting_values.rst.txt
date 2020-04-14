@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.SkewStudent.starting\_values
+============================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: SkewStudent.starting_values

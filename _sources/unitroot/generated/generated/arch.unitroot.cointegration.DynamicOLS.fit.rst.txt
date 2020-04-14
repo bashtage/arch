@@ -1,0 +1,8 @@
+:orphan:
+
+arch.unitroot.cointegration.DynamicOLS.fit
+==========================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. automethod:: DynamicOLS.fit

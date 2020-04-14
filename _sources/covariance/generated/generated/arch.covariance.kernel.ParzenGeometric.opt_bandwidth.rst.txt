@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenGeometric.opt\_bandwidth
+=====================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenGeometric.opt_bandwidth

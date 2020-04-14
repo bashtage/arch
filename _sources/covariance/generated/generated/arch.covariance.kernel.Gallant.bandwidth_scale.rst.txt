@@ -1,0 +1,6 @@
+arch.covariance.kernel.Gallant.bandwidth\_scale
+===============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Gallant.bandwidth_scale

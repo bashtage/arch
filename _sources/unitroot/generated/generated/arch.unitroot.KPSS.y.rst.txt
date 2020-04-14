@@ -1,0 +1,6 @@
+arch.unitroot.KPSS.y
+====================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: KPSS.y

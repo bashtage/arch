@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.volatility.VolatilityProcess.backcast\_transform
+================================================================
+
+.. currentmodule:: arch.univariate.volatility
+
+.. automethod:: VolatilityProcess.backcast_transform

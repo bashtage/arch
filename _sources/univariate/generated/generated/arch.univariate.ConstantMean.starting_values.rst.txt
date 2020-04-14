@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ConstantMean.starting\_values
+=============================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ConstantMean.starting_values

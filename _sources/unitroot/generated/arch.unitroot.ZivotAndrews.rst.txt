@@ -1,0 +1,39 @@
+arch.unitroot.ZivotAndrews
+==========================
+
+.. currentmodule:: arch.unitroot
+
+.. autoclass:: ZivotAndrews
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ZivotAndrews.summary
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ZivotAndrews.alternative_hypothesis
+      ~ZivotAndrews.critical_values
+      ~ZivotAndrews.lags
+      ~ZivotAndrews.nobs
+      ~ZivotAndrews.null_hypothesis
+      ~ZivotAndrews.pvalue
+      ~ZivotAndrews.stat
+      ~ZivotAndrews.trend
+      ~ZivotAndrews.valid_trends
+      ~ZivotAndrews.y
+   
+   
+   

@@ -1,0 +1,6 @@
+arch.unitroot.PhillipsPerron.null\_hypothesis
+=============================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: PhillipsPerron.null_hypothesis

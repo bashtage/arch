@@ -1,0 +1,6 @@
+arch.covariance.kernel.CovarianceEstimate.short\_run
+====================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: CovarianceEstimate.short_run

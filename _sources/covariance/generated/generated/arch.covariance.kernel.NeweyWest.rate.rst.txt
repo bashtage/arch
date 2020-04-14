@@ -1,0 +1,6 @@
+arch.covariance.kernel.NeweyWest.rate
+=====================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: NeweyWest.rate

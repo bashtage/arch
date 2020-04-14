@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.StepM.compute
+============================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: StepM.compute

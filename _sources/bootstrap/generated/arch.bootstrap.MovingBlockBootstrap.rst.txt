@@ -1,0 +1,41 @@
+arch.bootstrap.MovingBlockBootstrap
+===================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoclass:: MovingBlockBootstrap
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~MovingBlockBootstrap.apply
+      ~MovingBlockBootstrap.bootstrap
+      ~MovingBlockBootstrap.clone
+      ~MovingBlockBootstrap.conf_int
+      ~MovingBlockBootstrap.cov
+      ~MovingBlockBootstrap.get_state
+      ~MovingBlockBootstrap.reset
+      ~MovingBlockBootstrap.seed
+      ~MovingBlockBootstrap.set_state
+      ~MovingBlockBootstrap.update_indices
+      ~MovingBlockBootstrap.var
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~MovingBlockBootstrap.index
+      ~MovingBlockBootstrap.random_state
+   
+   
+   

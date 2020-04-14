@@ -1,0 +1,6 @@
+arch.unitroot.PhillipsPerron.stat
+=================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: PhillipsPerron.stat

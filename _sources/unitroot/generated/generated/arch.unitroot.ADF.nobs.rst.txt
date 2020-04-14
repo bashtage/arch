@@ -1,0 +1,6 @@
+arch.unitroot.ADF.nobs
+======================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ADF.nobs

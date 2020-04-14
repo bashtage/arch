@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.DynamicOLSResults.pvalues
+=====================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: DynamicOLSResults.pvalues

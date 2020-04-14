@@ -1,0 +1,6 @@
+arch.univariate.HARX.distribution
+=================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: HARX.distribution

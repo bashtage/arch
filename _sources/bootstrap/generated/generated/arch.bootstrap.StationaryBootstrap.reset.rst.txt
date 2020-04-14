@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.StationaryBootstrap.reset
+========================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: StationaryBootstrap.reset

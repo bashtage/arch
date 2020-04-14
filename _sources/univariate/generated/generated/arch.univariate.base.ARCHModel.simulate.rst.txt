@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.base.ARCHModel.simulate
+=======================================
+
+.. currentmodule:: arch.univariate.base
+
+.. automethod:: ARCHModel.simulate

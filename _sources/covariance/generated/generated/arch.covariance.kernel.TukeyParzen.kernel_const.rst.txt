@@ -1,0 +1,6 @@
+arch.covariance.kernel.TukeyParzen.kernel\_const
+================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: TukeyParzen.kernel_const

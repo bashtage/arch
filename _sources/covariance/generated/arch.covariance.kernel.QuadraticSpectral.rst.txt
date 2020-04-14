@@ -1,0 +1,38 @@
+arch.covariance.kernel.QuadraticSpectral
+========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoclass:: QuadraticSpectral
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~QuadraticSpectral.bandwidth
+      ~QuadraticSpectral.bandwidth_scale
+      ~QuadraticSpectral.centered
+      ~QuadraticSpectral.cov
+      ~QuadraticSpectral.force_int
+      ~QuadraticSpectral.kernel_const
+      ~QuadraticSpectral.kernel_weights
+      ~QuadraticSpectral.name
+      ~QuadraticSpectral.opt_bandwidth
+      ~QuadraticSpectral.rate
+   
+   
+   

@@ -1,0 +1,41 @@
+arch.bootstrap.IndependentSamplesBootstrap
+==========================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoclass:: IndependentSamplesBootstrap
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~IndependentSamplesBootstrap.apply
+      ~IndependentSamplesBootstrap.bootstrap
+      ~IndependentSamplesBootstrap.clone
+      ~IndependentSamplesBootstrap.conf_int
+      ~IndependentSamplesBootstrap.cov
+      ~IndependentSamplesBootstrap.get_state
+      ~IndependentSamplesBootstrap.reset
+      ~IndependentSamplesBootstrap.seed
+      ~IndependentSamplesBootstrap.set_state
+      ~IndependentSamplesBootstrap.update_indices
+      ~IndependentSamplesBootstrap.var
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~IndependentSamplesBootstrap.index
+      ~IndependentSamplesBootstrap.random_state
+   
+   
+   

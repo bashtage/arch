@@ -1,0 +1,6 @@
+arch.unitroot.DFGLS.nobs
+========================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: DFGLS.nobs

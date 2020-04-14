@@ -1,0 +1,8 @@
+:orphan:
+
+arch.unitroot.cointegration.PhillipsOuliarisTestResults.plot
+============================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. automethod:: PhillipsOuliarisTestResults.plot

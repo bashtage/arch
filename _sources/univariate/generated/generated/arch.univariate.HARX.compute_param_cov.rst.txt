@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.HARX.compute\_param\_cov
+========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: HARX.compute_param_cov

@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.DynamicOLSResults.bandwidth
+=======================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: DynamicOLSResults.bandwidth

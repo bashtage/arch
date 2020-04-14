@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.IIDBootstrap.apply
+=================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: IIDBootstrap.apply

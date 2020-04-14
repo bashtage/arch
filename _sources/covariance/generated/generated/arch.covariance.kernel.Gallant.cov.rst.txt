@@ -1,0 +1,6 @@
+arch.covariance.kernel.Gallant.cov
+==================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Gallant.cov

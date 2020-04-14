@@ -1,0 +1,8 @@
+:orphan:
+
+arch.unitroot.ADF.summary
+=========================
+
+.. currentmodule:: arch.unitroot
+
+.. automethod:: ADF.summary

@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.CointegrationAnalysisResults.cov
+============================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: CointegrationAnalysisResults.cov

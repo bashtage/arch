@@ -1,0 +1,6 @@
+arch.univariate.Normal.name
+===========================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: Normal.name

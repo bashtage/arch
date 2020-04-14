@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.HARX.starting\_values
+=====================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: HARX.starting_values

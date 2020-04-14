@@ -1,0 +1,6 @@
+arch.unitroot.ZivotAndrews.alternative\_hypothesis
+==================================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ZivotAndrews.alternative_hypothesis

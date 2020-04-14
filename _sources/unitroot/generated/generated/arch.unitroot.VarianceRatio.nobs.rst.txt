@@ -1,0 +1,6 @@
+arch.unitroot.VarianceRatio.nobs
+================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: VarianceRatio.nobs

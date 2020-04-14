@@ -1,0 +1,8 @@
+:orphan:
+
+arch.unitroot.VarianceRatio.summary
+===================================
+
+.. currentmodule:: arch.unitroot
+
+.. automethod:: VarianceRatio.summary

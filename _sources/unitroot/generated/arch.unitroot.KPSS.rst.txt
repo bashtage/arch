@@ -1,0 +1,39 @@
+arch.unitroot.KPSS
+==================
+
+.. currentmodule:: arch.unitroot
+
+.. autoclass:: KPSS
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~KPSS.summary
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~KPSS.alternative_hypothesis
+      ~KPSS.critical_values
+      ~KPSS.lags
+      ~KPSS.nobs
+      ~KPSS.null_hypothesis
+      ~KPSS.pvalue
+      ~KPSS.stat
+      ~KPSS.trend
+      ~KPSS.valid_trends
+      ~KPSS.y
+   
+   
+   

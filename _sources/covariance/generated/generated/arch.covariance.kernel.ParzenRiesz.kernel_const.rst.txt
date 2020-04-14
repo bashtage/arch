@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenRiesz.kernel\_const
+================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenRiesz.kernel_const

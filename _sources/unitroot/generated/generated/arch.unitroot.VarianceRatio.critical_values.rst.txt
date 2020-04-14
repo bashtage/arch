@@ -1,0 +1,6 @@
+arch.unitroot.VarianceRatio.critical\_values
+============================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: VarianceRatio.critical_values

@@ -1,0 +1,6 @@
+arch.covariance.kernel.NeweyWest.bandwidth
+==========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: NeweyWest.bandwidth

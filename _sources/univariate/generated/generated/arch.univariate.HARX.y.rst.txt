@@ -1,0 +1,6 @@
+arch.univariate.HARX.y
+======================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: HARX.y

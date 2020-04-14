@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenRiesz.bandwidth
+============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenRiesz.bandwidth

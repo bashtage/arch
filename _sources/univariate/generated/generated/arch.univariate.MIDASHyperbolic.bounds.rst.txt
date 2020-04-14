@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.MIDASHyperbolic.bounds
+======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: MIDASHyperbolic.bounds

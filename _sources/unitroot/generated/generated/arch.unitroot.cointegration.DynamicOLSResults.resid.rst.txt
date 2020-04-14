@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.DynamicOLSResults.resid
+===================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: DynamicOLSResults.resid

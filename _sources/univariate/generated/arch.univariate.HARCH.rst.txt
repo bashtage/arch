@@ -1,0 +1,41 @@
+arch.univariate.HARCH
+=====================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: HARCH
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~HARCH.backcast
+      ~HARCH.backcast_transform
+      ~HARCH.bounds
+      ~HARCH.compute_variance
+      ~HARCH.constraints
+      ~HARCH.forecast
+      ~HARCH.parameter_names
+      ~HARCH.simulate
+      ~HARCH.starting_values
+      ~HARCH.variance_bounds
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~HARCH.name
+      ~HARCH.start
+      ~HARCH.stop
+   
+   
+   

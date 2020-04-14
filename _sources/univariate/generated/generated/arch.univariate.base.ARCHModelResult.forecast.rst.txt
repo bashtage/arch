@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.base.ARCHModelResult.forecast
+=============================================
+
+.. currentmodule:: arch.univariate.base
+
+.. automethod:: ARCHModelResult.forecast

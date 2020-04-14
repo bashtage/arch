@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.EWMAVariance.parameter\_names
+=============================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: EWMAVariance.parameter_names

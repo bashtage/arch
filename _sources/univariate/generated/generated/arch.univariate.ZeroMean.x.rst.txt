@@ -1,0 +1,6 @@
+arch.univariate.ZeroMean.x
+==========================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ZeroMean.x

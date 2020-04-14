@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.PhillipsOuliarisTestResults.trend
+=============================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: PhillipsOuliarisTestResults.trend

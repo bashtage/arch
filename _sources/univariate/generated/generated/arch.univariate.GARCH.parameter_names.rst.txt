@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.GARCH.parameter\_names
+======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: GARCH.parameter_names

@@ -1,0 +1,6 @@
+arch.univariate.ConstantMean.distribution
+=========================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ConstantMean.distribution

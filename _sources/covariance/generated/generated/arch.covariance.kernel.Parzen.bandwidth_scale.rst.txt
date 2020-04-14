@@ -1,0 +1,6 @@
+arch.covariance.kernel.Parzen.bandwidth\_scale
+==============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Parzen.bandwidth_scale

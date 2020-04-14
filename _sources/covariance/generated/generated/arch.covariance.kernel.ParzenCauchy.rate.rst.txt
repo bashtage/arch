@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenCauchy.rate
+========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenCauchy.rate

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.SkewStudent.parameter\_names
+============================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: SkewStudent.parameter_names

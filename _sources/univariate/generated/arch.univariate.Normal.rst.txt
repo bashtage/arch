@@ -1,0 +1,40 @@
+arch.univariate.Normal
+======================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: Normal
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~Normal.bounds
+      ~Normal.cdf
+      ~Normal.constraints
+      ~Normal.loglikelihood
+      ~Normal.moment
+      ~Normal.parameter_names
+      ~Normal.partial_moment
+      ~Normal.ppf
+      ~Normal.simulate
+      ~Normal.starting_values
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~Normal.name
+      ~Normal.random_state
+   
+   
+   

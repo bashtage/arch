@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ConstantMean.forecast
+=====================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ConstantMean.forecast

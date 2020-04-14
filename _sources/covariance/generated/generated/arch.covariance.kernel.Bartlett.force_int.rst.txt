@@ -1,0 +1,6 @@
+arch.covariance.kernel.Bartlett.force\_int
+==========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Bartlett.force_int

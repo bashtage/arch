@@ -1,0 +1,6 @@
+arch.covariance.kernel.Gallant.force\_int
+=========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Gallant.force_int

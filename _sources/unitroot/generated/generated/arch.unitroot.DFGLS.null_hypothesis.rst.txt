@@ -1,0 +1,6 @@
+arch.unitroot.DFGLS.null\_hypothesis
+====================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: DFGLS.null_hypothesis

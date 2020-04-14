@@ -1,0 +1,22 @@
+arch.unitroot.cointegration.DynamicOLS
+======================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoclass:: DynamicOLS
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~DynamicOLS.fit
+   
+   
+   
+   
+   
+   

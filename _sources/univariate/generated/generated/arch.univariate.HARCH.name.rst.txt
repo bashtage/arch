@@ -1,0 +1,6 @@
+arch.univariate.HARCH.name
+==========================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: HARCH.name

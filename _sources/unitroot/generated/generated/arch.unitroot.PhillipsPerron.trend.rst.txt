@@ -1,0 +1,6 @@
+arch.unitroot.PhillipsPerron.trend
+==================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: PhillipsPerron.trend

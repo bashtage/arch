@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.SPA.subset
+=========================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: SPA.subset

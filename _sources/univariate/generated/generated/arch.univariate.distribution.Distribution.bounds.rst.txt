@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.distribution.Distribution.bounds
+================================================
+
+.. currentmodule:: arch.univariate.distribution
+
+.. automethod:: Distribution.bounds

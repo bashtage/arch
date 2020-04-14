@@ -1,0 +1,6 @@
+arch.covariance.kernel.TukeyHamming.kernel\_const
+=================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: TukeyHamming.kernel_const

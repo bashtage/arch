@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenCauchy.force\_int
+==============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenCauchy.force_int

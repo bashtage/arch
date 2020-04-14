@@ -1,0 +1,6 @@
+arch.covariance.kernel.Bartlett.kernel\_const
+=============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Bartlett.kernel_const

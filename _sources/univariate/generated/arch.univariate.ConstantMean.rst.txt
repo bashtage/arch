@@ -1,0 +1,44 @@
+arch.univariate.ConstantMean
+============================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: ConstantMean
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ConstantMean.bounds
+      ~ConstantMean.compute_param_cov
+      ~ConstantMean.constraints
+      ~ConstantMean.fit
+      ~ConstantMean.fix
+      ~ConstantMean.forecast
+      ~ConstantMean.parameter_names
+      ~ConstantMean.resids
+      ~ConstantMean.simulate
+      ~ConstantMean.starting_values
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ConstantMean.distribution
+      ~ConstantMean.name
+      ~ConstantMean.num_params
+      ~ConstantMean.volatility
+      ~ConstantMean.x
+      ~ConstantMean.y
+   
+   
+   

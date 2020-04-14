@@ -1,0 +1,6 @@
+arch.univariate.GARCH.stop
+==========================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: GARCH.stop

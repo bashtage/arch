@@ -1,0 +1,41 @@
+arch.bootstrap.CircularBlockBootstrap
+=====================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoclass:: CircularBlockBootstrap
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~CircularBlockBootstrap.apply
+      ~CircularBlockBootstrap.bootstrap
+      ~CircularBlockBootstrap.clone
+      ~CircularBlockBootstrap.conf_int
+      ~CircularBlockBootstrap.cov
+      ~CircularBlockBootstrap.get_state
+      ~CircularBlockBootstrap.reset
+      ~CircularBlockBootstrap.seed
+      ~CircularBlockBootstrap.set_state
+      ~CircularBlockBootstrap.update_indices
+      ~CircularBlockBootstrap.var
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~CircularBlockBootstrap.index
+      ~CircularBlockBootstrap.random_state
+   
+   
+   

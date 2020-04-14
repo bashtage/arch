@@ -1,0 +1,6 @@
+arch.univariate.ConstantMean.y
+==============================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ConstantMean.y

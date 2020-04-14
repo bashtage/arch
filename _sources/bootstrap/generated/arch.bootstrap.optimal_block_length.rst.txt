@@ -1,0 +1,6 @@
+arch.bootstrap.optimal\_block\_length
+=====================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autofunction:: optimal_block_length

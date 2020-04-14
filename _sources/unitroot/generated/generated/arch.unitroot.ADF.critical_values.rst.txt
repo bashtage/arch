@@ -1,0 +1,6 @@
+arch.unitroot.ADF.critical\_values
+==================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ADF.critical_values

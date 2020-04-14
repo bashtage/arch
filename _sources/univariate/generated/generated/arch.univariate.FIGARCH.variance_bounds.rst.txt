@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FIGARCH.variance\_bounds
+========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FIGARCH.variance_bounds

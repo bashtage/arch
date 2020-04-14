@@ -1,0 +1,6 @@
+arch.univariate.LS.distribution
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: LS.distribution
