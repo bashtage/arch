@@ -190,7 +190,7 @@ def _get_acceleration(jk_params: NDArray) -> float:
     denom = 6 * (np.sum(u ** 2, 0) ** (3.0 / 2.0))
     small = denom < (np.abs(numer) * np.finfo(np.float64).eps)
     if small.any():
-        message = "Jackknife variance estimate {jk_var} is " "too small to use BCa"
+        message = "Jackknife variance estimate {jk_var} is too small to use BCa"
         raise RuntimeError(message.format(jk_var=denom))
     a = numer / denom
     a = np.atleast_1d(a)
@@ -371,7 +371,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
             for arg in all_args:
                 if len(arg) != self._num_items:
                     raise ValueError(
-                        "All inputs must have the same number of " "elements in axis 0"
+                        "All inputs must have the same number of elements in axis 0"
                     )
         self._index = np.arange(self._num_items)
 
