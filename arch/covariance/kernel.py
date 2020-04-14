@@ -24,6 +24,8 @@ __all__ = [
     "Andrews",
     "Gallant",
     "NeweyWest",
+    "normalize_kernel_name",
+    "ZeroLag",
 ]
 
 KERNELS = [
@@ -39,7 +41,24 @@ KERNELS = [
     "Andrews",
     "Gallant",
     "NeweyWest",
+    "ZeroLag",
 ]
+
+
+def normalize_kernel_name(name: str) -> str:
+    """
+    Normalize a Kernel name using standard replacements
+
+    Removes - and _ and converts to lower case.
+
+    Returns
+    -------
+    str
+        The normalized kernel name.
+    """
+    name = name.replace("-", "").replace("_", "")
+    name = name.lower()
+    return name
 
 
 class CovarianceEstimate(object):
@@ -172,6 +191,7 @@ class CovarianceEstimator(ABC):
     def __init__(
         self,
         x: ArrayLike,
+        *,
         bandwidth: Optional[float] = None,
         df_adjust: int = 0,
         center: bool = True,
@@ -699,3 +719,29 @@ class NeweyWest(Bartlett):
     --------
     Bartlett
     """
+
+
+zero_lag_name = "Zero-lag (No autocorrelation)"
+zero_lag_formula = """\
+w= 1 & z=0\\\\ \
+\\ 0 & z>0 \
+\\end{cases} \
+"""
+
+
+@Substitution(kernel_name=zero_lag_name, formula=zero_lag_formula)
+class ZeroLag(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
+    @property
+    def kernel_const(self) -> float:
+        return 1.0
+
+    @property
+    def bandwidth_scale(self) -> float:
+        return 0.0
+
+    @property
+    def rate(self) -> float:
+        return 0.0
+
+    def _weights(self) -> NDArray:
+        return np.ones(1)

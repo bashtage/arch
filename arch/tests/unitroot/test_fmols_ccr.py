@@ -20,8 +20,8 @@ def test_fmols_smoke(
     y, x = trivariate_data
     if x_trend is not None and len(x_trend) < len(trend):
         x_trend = trend
-    mod = FullyModifiedOLS(y, x, trend, x_trend)
-    res = mod.fit(kernel, bandwidth, force_int, diff)
+    mod = FullyModifiedOLS(y, x, trend, x_trend=x_trend)
+    res = mod.fit(kernel=kernel, bandwidth=bandwidth, force_int=force_int, diff=diff)
     assert isinstance(res.summary(), Summary)
 
 
@@ -35,8 +35,8 @@ def test_ccr_smoke(trivariate_data, trend, x_trend, diff, kernel, bandwidth, for
     y, x = trivariate_data
     if x_trend is not None and len(x_trend) < len(trend):
         x_trend = trend
-    mod = CanonicalCointegratingReg(y, x, trend, x_trend)
-    res = mod.fit(kernel, bandwidth, force_int, diff)
+    mod = CanonicalCointegratingReg(y, x, trend, x_trend=x_trend)
+    res = mod.fit(kernel=kernel, bandwidth=bandwidth, force_int=force_int, diff=diff)
     assert isinstance(res.summary(), Summary)
 
 
@@ -189,7 +189,7 @@ def test_fmols_eviews(trivariate_data, test_key):
     trend, x_trend, diff = test_key
     key = (trend, x_trend, diff)
     test_res = setup_test_values(FMOLS_RES[key])
-    mod = FullyModifiedOLS(y, x, trend, x_trend)
+    mod = FullyModifiedOLS(y, x, trend, x_trend=x_trend)
     # BW is one less than what Eviews reports
     res = mod.fit(bandwidth=6, force_int=True, diff=diff, df_adjust=True)
     if trend != "ctt":
@@ -322,7 +322,7 @@ def test_ccr_eviews(trivariate_data, test_key):
     trend, x_trend, diff = test_key
     key = (trend, x_trend, diff)
     test_res = setup_test_values(CCR_RES[key])
-    mod = CanonicalCointegratingReg(y, x, trend, x_trend)
+    mod = CanonicalCointegratingReg(y, x, trend, x_trend=x_trend)
     # BW is one less than what Eviews reports
     res = mod.fit(bandwidth=6, force_int=True, diff=diff, df_adjust=True)
     if trend == "n":

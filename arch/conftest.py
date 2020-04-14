@@ -2,6 +2,7 @@ import pytest
 
 pytest_plugins = [
     "arch.tests.unitroot.cointegration_data",
+    "arch.tests.covariance.covariance_data",
 ]
 
 
