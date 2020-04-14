@@ -431,7 +431,7 @@ def test_unknown_method():
     rnd = np.random.RandomState(12345)
     y = np.cumsum(rnd.standard_normal(250))
     with pytest.raises(ValueError):
-        assert (np.isfinite(ADF(y, method="unknown").stat))
+        assert np.isfinite(ADF(y, method="unknown").stat)
 
 
 def test_auto_low_memory():
@@ -478,10 +478,10 @@ def test_adf_short_timeseries():
     adf = ADF(x)
     msg = r"The maximum lag you are considering \(3\)"
     with pytest.raises(InfeasibleTestException, match=msg):
-        assert (np.isfinite(adf.stat))
+        assert np.isfinite(adf.stat)
     adf = ADF(x, low_memory=True)
     with pytest.raises(InfeasibleTestException, match=msg):
-        assert (np.isfinite(adf.stat))
+        assert np.isfinite(adf.stat)
 
 
 def test_adf_buggy_timeseries1():
@@ -499,7 +499,7 @@ def test_adf_buggy_timeseries2():
     # IndexError: index 0 is out of bounds for axis 0 with size 0
     msg = "A minimum of 4 observations are needed"
     with pytest.raises(InfeasibleTestException, match=msg):
-        assert (np.isfinite(adf.stat))
+        assert np.isfinite(adf.stat)
 
 
 def test_adf_buggy_timeseries3():
@@ -508,7 +508,7 @@ def test_adf_buggy_timeseries3():
     # AssertionError: Number of manager items must equal union of block items
     # # manager items: 1, # tot_items: 0
     with pytest.raises(InfeasibleTestException, match="The maximum lag you are"):
-        assert (np.isfinite(adf.stat))
+        assert np.isfinite(adf.stat)
 
 
 def test_kpss_buggy_timeseries1():
@@ -516,35 +516,8 @@ def test_kpss_buggy_timeseries1():
     adf = KPSS(x)
     # ValueError: cannot convert float NaN to integer
     with pytest.raises(InfeasibleTestException, match="A minimum of 2 observations"):
-        assert (np.isfinite(adf.stat))
+        assert np.isfinite(adf.stat)
 
-
-def test_adf_buggy_timeseries1():
-    x = np.asarray([0])
-    adf = ADF(x)
-    # ValueError: maxlag should be < nobs
-    adf.stat
-
-
-def test_adf_buggy_timeseries2():
-    x = np.asarray([0, 0])
-    adf = ADF(x)
-    # IndexError: index 0 is out of bounds for axis 0 with size 0
-    adf.stat
-
-
-def test_adf_buggy_timeseries3():
-    x = np.asarray([1]*1000)
-    adf = ADF(x)
-    # AssertionError: Number of manager items must equal union of block items
-    # # manager items: 1, # tot_items: 0
-    adf.stat
-
-def test_kpss_buggy_timeseries1():
-    x = np.asarray([0])
-    adf = KPSS(x)
-    # ValueError: cannot convert float NaN to integer
-    adf.stat
 
 kpss_autolag_data = (
     (dataset_loader(macrodata)["realgdp"], "c", 9),
@@ -651,7 +624,7 @@ def test_zivot_andrews_reduced_rank():
     y = np.random.standard_normal(1000)
     y[1:] = 3.0
     with pytest.raises(InfeasibleTestException, match="The regressor matrix is"):
-        assert (np.isfinite(ZivotAndrews(y, lags=1).stat))
+        assert np.isfinite(ZivotAndrews(y, lags=1).stat)
 
 
 def test_bw_selection():
