@@ -615,7 +615,7 @@ def test_zivot_andrews_error():
 def test_zivot_andrews_reduced_rank():
     y = np.random.standard_normal(1000)
     y[1:] = 3.0
-    with pytest.raises(ValueError, match="ZA: auxiliary exog matrix is not full rank"):
+    with pytest.raises(InfeasibleTestException, match="The regressor matrix is"):
         ZivotAndrews(y, lags=1).stat
 
 
@@ -647,12 +647,12 @@ def test_nc_warning():
 
 
 @pytest.mark.parametrize("nobs", np.arange(1, 11).tolist())
-@pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS])
+@pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS, ZivotAndrews])
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
 def test_wrong_exceptions(stat, nobs, trend):
-    if (stat in (PhillipsPerron, KPSS) and trend == "ctt") or (
-        stat is KPSS and trend == "n"
-    ):
+    skip = trend == "ctt" and stat in (PhillipsPerron, KPSS, ZivotAndrews)
+    skip |= trend == "n" and stat in (KPSS, ZivotAndrews)
+    if skip:
         return
     y = np.random.standard_normal((nobs,))
     try:
@@ -662,12 +662,12 @@ def test_wrong_exceptions(stat, nobs, trend):
 
 
 @pytest.mark.parametrize("nobs", [2, 10, 100])
-@pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS])
+@pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS, ZivotAndrews])
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
 def test_wrong_exceptions_nearly_constant_series(stat, nobs, trend):
-    if (stat in (PhillipsPerron, KPSS) and trend == "ctt") or (
-        stat is KPSS and trend == "n"
-    ):
+    skip = trend == "ctt" and stat in (PhillipsPerron, KPSS, ZivotAndrews)
+    skip |= trend == "n" and stat in (KPSS, ZivotAndrews)
+    if skip:
         return
     y = np.zeros((nobs,))
     y[-1] = 1.0
@@ -694,3 +694,14 @@ def test_kpss_legacy():
 )
 def test_rank_checker(x):
     assert _is_reduced_rank(x)
+
+
+@pytest.mark.parametrize("nobs", list(range(7, 11)))  # list(range(1,11)))
+@pytest.mark.parametrize("trend", ["ct"])  # ["c", "ct", "t"])
+def test_wrong_exceptions_nearly_constant_series_za_lags(nobs, trend):
+    y = np.zeros((nobs,))
+    y[-1] = 1.0
+    try:
+        ZivotAndrews(y, lags=2, trend=trend).stat
+    except InfeasibleTestException:
+        pass
