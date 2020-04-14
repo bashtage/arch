@@ -2,6 +2,13 @@
    :width: 33.3%
    :alt: arch logo
 
+.. note::
+
+  `Stable documentation <https://bashtage.github.io/arch/>`_ for the latest release
+  is located at `doc <https://bashtage.github.io/arch/>`_.
+  Documentation for `recent developments <https://bashtage.github.io/arch/devel/>`_
+  is located at `devel <https://bashtage.github.io/arch/devel/>`_.
+
 Introduction
 ============
 
@@ -10,7 +17,8 @@ The ARCH toolbox contains routines for:
 - Univariate volatility models;
 - Bootstrapping;
 - Multiple comparison procedures;
-- Unit root tests; and
+- Unit root tests;
+- Cointegration Testing and Estimation; and
 - Long-run covariance estimation.
 
 Future plans are to continue to expand this toolbox to include additional
@@ -23,7 +31,7 @@ routines relevant for the analysis of financial data.
     Univariate Volatility Models <univariate/univariate>
     Bootstrapping <bootstrap/bootstrap>
     Multiple Comparison Problems <multiple-comparison/multiple-comparisons>
-    Unit Root Tests <unitroot/unitroot>
+    Unit Root Tests and Cointegration Analysis <unitroot/unitroot>
     Long-run Covariance Estimation <covariance/covariance>
     API Reference <api>
     Change Log <changes>
@@ -43,5 +51,3 @@ Index
 
 * :ref:`genindex`
 * :ref:`modindex`
-
-
