@@ -1,0 +1,40 @@
+arch.univariate.StudentsT
+=========================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: StudentsT
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~StudentsT.bounds
+      ~StudentsT.cdf
+      ~StudentsT.constraints
+      ~StudentsT.loglikelihood
+      ~StudentsT.moment
+      ~StudentsT.parameter_names
+      ~StudentsT.partial_moment
+      ~StudentsT.ppf
+      ~StudentsT.simulate
+      ~StudentsT.starting_values
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~StudentsT.name
+      ~StudentsT.random_state
+   
+   
+   

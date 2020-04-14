@@ -1,0 +1,6 @@
+arch.covariance.kernel.TukeyHanning.bandwidth\_scale
+====================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: TukeyHanning.bandwidth_scale

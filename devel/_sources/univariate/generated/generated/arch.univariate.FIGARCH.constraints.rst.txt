@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FIGARCH.constraints
+===================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FIGARCH.constraints

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.RiskMetrics2006.parameter\_names
+================================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: RiskMetrics2006.parameter_names

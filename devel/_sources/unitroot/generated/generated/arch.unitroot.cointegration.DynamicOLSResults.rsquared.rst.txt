@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.DynamicOLSResults.rsquared
+======================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: DynamicOLSResults.rsquared

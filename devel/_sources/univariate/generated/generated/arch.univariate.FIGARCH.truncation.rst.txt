@@ -1,0 +1,6 @@
+arch.univariate.FIGARCH.truncation
+==================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FIGARCH.truncation

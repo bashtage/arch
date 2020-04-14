@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.SkewStudent.cdf
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: SkewStudent.cdf

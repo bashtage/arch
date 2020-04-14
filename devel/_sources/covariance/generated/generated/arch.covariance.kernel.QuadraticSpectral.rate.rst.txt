@@ -1,0 +1,6 @@
+arch.covariance.kernel.QuadraticSpectral.rate
+=============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: QuadraticSpectral.rate

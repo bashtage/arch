@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.base.ARCHModel.compute\_param\_cov
+==================================================
+
+.. currentmodule:: arch.univariate.base
+
+.. automethod:: ARCHModel.compute_param_cov

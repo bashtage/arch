@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ARCH.backcast
+=============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ARCH.backcast

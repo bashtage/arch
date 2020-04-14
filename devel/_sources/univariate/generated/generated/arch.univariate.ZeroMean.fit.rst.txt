@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ZeroMean.fit
+============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ZeroMean.fit

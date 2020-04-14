@@ -1,0 +1,6 @@
+arch.univariate.MIDASHyperbolic.start
+=====================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: MIDASHyperbolic.start

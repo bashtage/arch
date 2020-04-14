@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ARX.fix
+=======================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ARX.fix

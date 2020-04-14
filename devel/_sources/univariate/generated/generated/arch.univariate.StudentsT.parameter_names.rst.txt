@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.StudentsT.parameter\_names
+==========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: StudentsT.parameter_names

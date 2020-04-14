@@ -1,0 +1,6 @@
+arch.unitroot.KPSS.critical\_values
+===================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: KPSS.critical_values

@@ -1,0 +1,6 @@
+arch.covariance.kernel.Bartlett.kernel\_weights
+===============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Bartlett.kernel_weights

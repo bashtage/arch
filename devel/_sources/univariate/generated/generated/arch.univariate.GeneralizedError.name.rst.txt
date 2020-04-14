@@ -1,0 +1,6 @@
+arch.univariate.GeneralizedError.name
+=====================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: GeneralizedError.name

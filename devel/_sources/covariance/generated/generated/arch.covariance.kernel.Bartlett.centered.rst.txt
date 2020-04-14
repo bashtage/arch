@@ -1,0 +1,6 @@
+arch.covariance.kernel.Bartlett.centered
+========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Bartlett.centered

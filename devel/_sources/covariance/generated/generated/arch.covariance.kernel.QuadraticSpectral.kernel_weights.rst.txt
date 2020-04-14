@@ -1,0 +1,6 @@
+arch.covariance.kernel.QuadraticSpectral.kernel\_weights
+========================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: QuadraticSpectral.kernel_weights

@@ -1,0 +1,6 @@
+arch.covariance.kernel.TukeyParzen.rate
+=======================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: TukeyParzen.rate

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.EWMAVariance.forecast
+=====================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: EWMAVariance.forecast

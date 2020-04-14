@@ -1,0 +1,6 @@
+arch.bootstrap.StepM.superior\_models
+=====================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: StepM.superior_models

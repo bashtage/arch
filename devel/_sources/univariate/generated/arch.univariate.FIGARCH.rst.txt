@@ -1,0 +1,42 @@
+arch.univariate.FIGARCH
+=======================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: FIGARCH
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~FIGARCH.backcast
+      ~FIGARCH.backcast_transform
+      ~FIGARCH.bounds
+      ~FIGARCH.compute_variance
+      ~FIGARCH.constraints
+      ~FIGARCH.forecast
+      ~FIGARCH.parameter_names
+      ~FIGARCH.simulate
+      ~FIGARCH.starting_values
+      ~FIGARCH.variance_bounds
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~FIGARCH.name
+      ~FIGARCH.start
+      ~FIGARCH.stop
+      ~FIGARCH.truncation
+   
+   
+   

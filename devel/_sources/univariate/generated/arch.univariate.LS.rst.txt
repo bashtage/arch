@@ -1,0 +1,44 @@
+arch.univariate.LS
+==================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: LS
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~LS.bounds
+      ~LS.compute_param_cov
+      ~LS.constraints
+      ~LS.fit
+      ~LS.fix
+      ~LS.forecast
+      ~LS.parameter_names
+      ~LS.resids
+      ~LS.simulate
+      ~LS.starting_values
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~LS.distribution
+      ~LS.name
+      ~LS.num_params
+      ~LS.volatility
+      ~LS.x
+      ~LS.y
+   
+   
+   

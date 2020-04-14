@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.EngleGrangerTestResults.rho
+=======================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: EngleGrangerTestResults.rho

@@ -1,0 +1,6 @@
+arch.covariance.kernel.TukeyParzen.centered
+===========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: TukeyParzen.centered

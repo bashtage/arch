@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.StudentsT.bounds
+================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: StudentsT.bounds

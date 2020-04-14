@@ -1,0 +1,6 @@
+arch.covariance.kernel.TukeyHanning.kernel\_weights
+===================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: TukeyHanning.kernel_weights

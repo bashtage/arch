@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.EGARCH.backcast\_transform
+==========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: EGARCH.backcast_transform

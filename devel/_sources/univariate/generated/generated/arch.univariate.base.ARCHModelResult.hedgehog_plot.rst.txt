@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.base.ARCHModelResult.hedgehog\_plot
+===================================================
+
+.. currentmodule:: arch.univariate.base
+
+.. automethod:: ARCHModelResult.hedgehog_plot

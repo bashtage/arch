@@ -1,0 +1,6 @@
+arch.unitroot.PhillipsPerron.lags
+=================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: PhillipsPerron.lags

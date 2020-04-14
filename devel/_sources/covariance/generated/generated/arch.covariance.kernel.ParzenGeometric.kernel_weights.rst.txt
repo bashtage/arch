@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenGeometric.kernel\_weights
+======================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenGeometric.kernel_weights

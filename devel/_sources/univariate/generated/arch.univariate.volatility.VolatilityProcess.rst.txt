@@ -1,0 +1,41 @@
+arch.univariate.volatility.VolatilityProcess
+============================================
+
+.. currentmodule:: arch.univariate.volatility
+
+.. autoclass:: VolatilityProcess
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~VolatilityProcess.backcast
+      ~VolatilityProcess.backcast_transform
+      ~VolatilityProcess.bounds
+      ~VolatilityProcess.compute_variance
+      ~VolatilityProcess.constraints
+      ~VolatilityProcess.forecast
+      ~VolatilityProcess.parameter_names
+      ~VolatilityProcess.simulate
+      ~VolatilityProcess.starting_values
+      ~VolatilityProcess.variance_bounds
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~VolatilityProcess.name
+      ~VolatilityProcess.start
+      ~VolatilityProcess.stop
+   
+   
+   

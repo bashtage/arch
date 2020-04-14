@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.PhillipsOuliarisTestResults.stat
+============================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: PhillipsOuliarisTestResults.stat

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ConstantVariance.bounds
+=======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ConstantVariance.bounds

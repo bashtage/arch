@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.GARCH.variance\_bounds
+======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: GARCH.variance_bounds

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.StationaryBootstrap.var
+======================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: StationaryBootstrap.var

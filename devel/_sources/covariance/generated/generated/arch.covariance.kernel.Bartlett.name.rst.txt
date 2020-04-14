@@ -1,0 +1,6 @@
+arch.covariance.kernel.Bartlett.name
+====================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Bartlett.name

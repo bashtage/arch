@@ -1,0 +1,6 @@
+arch.unitroot.ADF.valid\_trends
+===============================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ADF.valid_trends

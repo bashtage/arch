@@ -1,0 +1,6 @@
+arch.univariate.ARX.name
+========================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ARX.name

@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenCauchy.opt\_bandwidth
+==================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenCauchy.opt_bandwidth

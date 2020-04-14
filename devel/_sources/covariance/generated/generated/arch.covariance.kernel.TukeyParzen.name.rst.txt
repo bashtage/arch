@@ -1,0 +1,6 @@
+arch.covariance.kernel.TukeyParzen.name
+=======================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: TukeyParzen.name

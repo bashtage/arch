@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.DynamicOLSResults.leads
+===================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: DynamicOLSResults.leads

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.Normal.moment
+=============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: Normal.moment

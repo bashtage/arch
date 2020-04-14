@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ARX.parameter\_names
+====================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ARX.parameter_names

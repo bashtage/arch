@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FIGARCH.backcast\_transform
+===========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FIGARCH.backcast_transform

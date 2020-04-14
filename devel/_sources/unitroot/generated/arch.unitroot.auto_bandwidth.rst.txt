@@ -1,0 +1,6 @@
+arch.unitroot.auto\_bandwidth
+=============================
+
+.. currentmodule:: arch.unitroot
+
+.. autofunction:: auto_bandwidth

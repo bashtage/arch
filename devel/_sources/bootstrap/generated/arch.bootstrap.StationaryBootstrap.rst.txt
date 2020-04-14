@@ -1,0 +1,41 @@
+arch.bootstrap.StationaryBootstrap
+==================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoclass:: StationaryBootstrap
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~StationaryBootstrap.apply
+      ~StationaryBootstrap.bootstrap
+      ~StationaryBootstrap.clone
+      ~StationaryBootstrap.conf_int
+      ~StationaryBootstrap.cov
+      ~StationaryBootstrap.get_state
+      ~StationaryBootstrap.reset
+      ~StationaryBootstrap.seed
+      ~StationaryBootstrap.set_state
+      ~StationaryBootstrap.update_indices
+      ~StationaryBootstrap.var
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~StationaryBootstrap.index
+      ~StationaryBootstrap.random_state
+   
+   
+   

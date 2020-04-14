@@ -1,0 +1,6 @@
+arch.covariance.kernel.TukeyHamming.centered
+============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: TukeyHamming.centered

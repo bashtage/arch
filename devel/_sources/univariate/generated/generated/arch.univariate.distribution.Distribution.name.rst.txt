@@ -1,0 +1,6 @@
+arch.univariate.distribution.Distribution.name
+==============================================
+
+.. currentmodule:: arch.univariate.distribution
+
+.. autoproperty:: Distribution.name

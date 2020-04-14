@@ -1,0 +1,41 @@
+arch.bootstrap.IIDBootstrap
+===========================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoclass:: IIDBootstrap
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~IIDBootstrap.apply
+      ~IIDBootstrap.bootstrap
+      ~IIDBootstrap.clone
+      ~IIDBootstrap.conf_int
+      ~IIDBootstrap.cov
+      ~IIDBootstrap.get_state
+      ~IIDBootstrap.reset
+      ~IIDBootstrap.seed
+      ~IIDBootstrap.set_state
+      ~IIDBootstrap.update_indices
+      ~IIDBootstrap.var
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~IIDBootstrap.index
+      ~IIDBootstrap.random_state
+   
+   
+   

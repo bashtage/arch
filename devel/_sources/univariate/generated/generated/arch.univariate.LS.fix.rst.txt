@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.LS.fix
+======================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: LS.fix

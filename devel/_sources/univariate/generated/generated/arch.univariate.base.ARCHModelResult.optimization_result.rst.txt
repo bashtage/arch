@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelResult.optimization\_result
+=========================================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelResult.optimization_result

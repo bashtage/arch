@@ -1,0 +1,32 @@
+arch.covariance.kernel.CovarianceEstimate
+=========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoclass:: CovarianceEstimate
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~CovarianceEstimate.long_run
+      ~CovarianceEstimate.one_sided
+      ~CovarianceEstimate.one_sided_strict
+      ~CovarianceEstimate.short_run
+   
+   
+   

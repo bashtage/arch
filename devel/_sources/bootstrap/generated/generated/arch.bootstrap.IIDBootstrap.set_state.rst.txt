@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.IIDBootstrap.set\_state
+======================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: IIDBootstrap.set_state

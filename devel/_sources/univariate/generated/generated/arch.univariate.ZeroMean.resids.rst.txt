@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ZeroMean.resids
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ZeroMean.resids

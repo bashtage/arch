@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.HARCH.simulate
+==============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: HARCH.simulate

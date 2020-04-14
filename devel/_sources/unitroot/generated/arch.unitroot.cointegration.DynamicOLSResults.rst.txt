@@ -1,0 +1,46 @@
+arch.unitroot.cointegration.DynamicOLSResults
+=============================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoclass:: DynamicOLSResults
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~DynamicOLSResults.summary
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~DynamicOLSResults.bandwidth
+      ~DynamicOLSResults.cov
+      ~DynamicOLSResults.cov_type
+      ~DynamicOLSResults.full_cov
+      ~DynamicOLSResults.full_params
+      ~DynamicOLSResults.kernel
+      ~DynamicOLSResults.lags
+      ~DynamicOLSResults.leads
+      ~DynamicOLSResults.long_run_variance
+      ~DynamicOLSResults.params
+      ~DynamicOLSResults.pvalues
+      ~DynamicOLSResults.resid
+      ~DynamicOLSResults.residual_variance
+      ~DynamicOLSResults.rsquared
+      ~DynamicOLSResults.rsquared_adj
+      ~DynamicOLSResults.std_errors
+      ~DynamicOLSResults.tvalues
+   
+   
+   

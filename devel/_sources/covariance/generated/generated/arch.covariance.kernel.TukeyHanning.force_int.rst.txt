@@ -1,0 +1,6 @@
+arch.covariance.kernel.TukeyHanning.force\_int
+==============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: TukeyHanning.force_int

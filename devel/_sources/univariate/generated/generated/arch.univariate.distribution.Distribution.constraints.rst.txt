@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.distribution.Distribution.constraints
+=====================================================
+
+.. currentmodule:: arch.univariate.distribution
+
+.. automethod:: Distribution.constraints

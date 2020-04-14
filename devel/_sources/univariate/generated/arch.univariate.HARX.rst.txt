@@ -1,0 +1,44 @@
+arch.univariate.HARX
+====================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: HARX
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~HARX.bounds
+      ~HARX.compute_param_cov
+      ~HARX.constraints
+      ~HARX.fit
+      ~HARX.fix
+      ~HARX.forecast
+      ~HARX.parameter_names
+      ~HARX.resids
+      ~HARX.simulate
+      ~HARX.starting_values
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~HARX.distribution
+      ~HARX.name
+      ~HARX.num_params
+      ~HARX.volatility
+      ~HARX.x
+      ~HARX.y
+   
+   
+   

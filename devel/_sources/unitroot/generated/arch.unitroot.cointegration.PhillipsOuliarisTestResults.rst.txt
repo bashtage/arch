@@ -1,0 +1,42 @@
+arch.unitroot.cointegration.PhillipsOuliarisTestResults
+=======================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoclass:: PhillipsOuliarisTestResults
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~PhillipsOuliarisTestResults.plot
+      ~PhillipsOuliarisTestResults.summary
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~PhillipsOuliarisTestResults.alternative_hypothesis
+      ~PhillipsOuliarisTestResults.bandwidth
+      ~PhillipsOuliarisTestResults.cointegrating_vector
+      ~PhillipsOuliarisTestResults.critical_values
+      ~PhillipsOuliarisTestResults.distribution_order
+      ~PhillipsOuliarisTestResults.kernel
+      ~PhillipsOuliarisTestResults.name
+      ~PhillipsOuliarisTestResults.null_hypothesis
+      ~PhillipsOuliarisTestResults.pvalue
+      ~PhillipsOuliarisTestResults.resid
+      ~PhillipsOuliarisTestResults.stat
+      ~PhillipsOuliarisTestResults.trend
+   
+   
+   

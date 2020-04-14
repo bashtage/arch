@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.GeneralizedError.ppf
+====================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: GeneralizedError.ppf

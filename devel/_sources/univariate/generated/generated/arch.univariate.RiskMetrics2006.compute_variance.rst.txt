@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.RiskMetrics2006.compute\_variance
+=================================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: RiskMetrics2006.compute_variance

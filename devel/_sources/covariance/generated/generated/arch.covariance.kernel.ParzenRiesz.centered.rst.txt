@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenRiesz.centered
+===========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenRiesz.centered

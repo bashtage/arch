@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.EngleGrangerTestResults.resid
+=========================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: EngleGrangerTestResults.resid

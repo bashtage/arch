@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.Normal.loglikelihood
+====================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: Normal.loglikelihood

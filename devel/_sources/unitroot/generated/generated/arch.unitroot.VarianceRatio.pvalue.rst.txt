@@ -1,0 +1,6 @@
+arch.unitroot.VarianceRatio.pvalue
+==================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: VarianceRatio.pvalue

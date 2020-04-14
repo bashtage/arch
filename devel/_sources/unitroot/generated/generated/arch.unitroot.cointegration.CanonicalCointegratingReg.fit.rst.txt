@@ -1,0 +1,8 @@
+:orphan:
+
+arch.unitroot.cointegration.CanonicalCointegratingReg.fit
+=========================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. automethod:: CanonicalCointegratingReg.fit

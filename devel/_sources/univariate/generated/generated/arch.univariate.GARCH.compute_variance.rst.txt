@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.GARCH.compute\_variance
+=======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: GARCH.compute_variance

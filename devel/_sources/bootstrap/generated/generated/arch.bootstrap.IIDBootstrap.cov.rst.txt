@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.IIDBootstrap.cov
+===============================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: IIDBootstrap.cov

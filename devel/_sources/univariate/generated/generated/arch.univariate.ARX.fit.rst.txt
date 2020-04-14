@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ARX.fit
+=======================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ARX.fit

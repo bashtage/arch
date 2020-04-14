@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.volatility.VolatilityProcess.compute\_variance
+==============================================================
+
+.. currentmodule:: arch.univariate.volatility
+
+.. automethod:: VolatilityProcess.compute_variance

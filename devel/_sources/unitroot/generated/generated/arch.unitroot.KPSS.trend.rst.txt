@@ -1,0 +1,6 @@
+arch.unitroot.KPSS.trend
+========================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: KPSS.trend

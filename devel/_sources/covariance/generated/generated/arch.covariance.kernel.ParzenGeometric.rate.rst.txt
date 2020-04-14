@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenGeometric.rate
+===========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenGeometric.rate

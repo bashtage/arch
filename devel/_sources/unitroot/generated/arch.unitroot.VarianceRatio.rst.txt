@@ -1,0 +1,43 @@
+arch.unitroot.VarianceRatio
+===========================
+
+.. currentmodule:: arch.unitroot
+
+.. autoclass:: VarianceRatio
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~VarianceRatio.summary
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~VarianceRatio.alternative_hypothesis
+      ~VarianceRatio.critical_values
+      ~VarianceRatio.debiased
+      ~VarianceRatio.lags
+      ~VarianceRatio.nobs
+      ~VarianceRatio.null_hypothesis
+      ~VarianceRatio.overlap
+      ~VarianceRatio.pvalue
+      ~VarianceRatio.robust
+      ~VarianceRatio.stat
+      ~VarianceRatio.trend
+      ~VarianceRatio.valid_trends
+      ~VarianceRatio.vr
+      ~VarianceRatio.y
+   
+   
+   

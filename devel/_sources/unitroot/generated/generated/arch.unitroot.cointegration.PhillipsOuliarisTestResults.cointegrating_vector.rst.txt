@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.PhillipsOuliarisTestResults.cointegrating\_vector
+=============================================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: PhillipsOuliarisTestResults.cointegrating_vector

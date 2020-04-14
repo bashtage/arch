@@ -1,0 +1,6 @@
+arch.unitroot.KPSS.null\_hypothesis
+===================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: KPSS.null_hypothesis

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.SPA.critical\_values
+===================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: SPA.critical_values

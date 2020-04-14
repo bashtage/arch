@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.HARX.forecast
+=============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: HARX.forecast

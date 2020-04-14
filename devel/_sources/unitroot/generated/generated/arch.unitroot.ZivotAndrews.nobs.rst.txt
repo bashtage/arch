@@ -1,0 +1,6 @@
+arch.unitroot.ZivotAndrews.nobs
+===============================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ZivotAndrews.nobs

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ZeroMean.parameter\_names
+=========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ZeroMean.parameter_names

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.RiskMetrics2006.forecast
+========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: RiskMetrics2006.forecast

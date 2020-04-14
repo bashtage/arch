@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.Normal.parameter\_names
+=======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: Normal.parameter_names

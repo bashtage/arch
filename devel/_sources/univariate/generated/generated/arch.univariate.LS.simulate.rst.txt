@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.LS.simulate
+===========================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: LS.simulate

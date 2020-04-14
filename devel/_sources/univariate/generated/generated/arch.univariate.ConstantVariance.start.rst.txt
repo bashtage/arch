@@ -1,0 +1,6 @@
+arch.univariate.ConstantVariance.start
+======================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ConstantVariance.start

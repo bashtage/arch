@@ -1,0 +1,40 @@
+arch.univariate.SkewStudent
+===========================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: SkewStudent
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~SkewStudent.bounds
+      ~SkewStudent.cdf
+      ~SkewStudent.constraints
+      ~SkewStudent.loglikelihood
+      ~SkewStudent.moment
+      ~SkewStudent.parameter_names
+      ~SkewStudent.partial_moment
+      ~SkewStudent.ppf
+      ~SkewStudent.simulate
+      ~SkewStudent.starting_values
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~SkewStudent.name
+      ~SkewStudent.random_state
+   
+   
+   

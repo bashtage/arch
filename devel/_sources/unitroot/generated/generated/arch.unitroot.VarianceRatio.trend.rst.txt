@@ -1,0 +1,6 @@
+arch.unitroot.VarianceRatio.trend
+=================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: VarianceRatio.trend

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FixedVariance.constraints
+=========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FixedVariance.constraints

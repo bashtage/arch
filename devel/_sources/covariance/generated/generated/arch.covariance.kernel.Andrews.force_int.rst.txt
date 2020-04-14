@@ -1,0 +1,6 @@
+arch.covariance.kernel.Andrews.force\_int
+=========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Andrews.force_int

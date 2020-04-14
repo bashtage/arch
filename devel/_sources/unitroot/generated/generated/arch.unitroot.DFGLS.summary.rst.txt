@@ -1,0 +1,8 @@
+:orphan:
+
+arch.unitroot.DFGLS.summary
+===========================
+
+.. currentmodule:: arch.unitroot
+
+.. automethod:: DFGLS.summary

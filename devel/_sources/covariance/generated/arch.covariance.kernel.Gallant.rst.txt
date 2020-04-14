@@ -1,0 +1,38 @@
+arch.covariance.kernel.Gallant
+==============================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoclass:: Gallant
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~Gallant.bandwidth
+      ~Gallant.bandwidth_scale
+      ~Gallant.centered
+      ~Gallant.cov
+      ~Gallant.force_int
+      ~Gallant.kernel_const
+      ~Gallant.kernel_weights
+      ~Gallant.name
+      ~Gallant.opt_bandwidth
+      ~Gallant.rate
+   
+   
+   

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.GeneralizedError.moment
+=======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: GeneralizedError.moment

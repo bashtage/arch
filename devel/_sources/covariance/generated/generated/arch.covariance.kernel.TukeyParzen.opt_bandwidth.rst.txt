@@ -1,0 +1,6 @@
+arch.covariance.kernel.TukeyParzen.opt\_bandwidth
+=================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: TukeyParzen.opt_bandwidth

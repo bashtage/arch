@@ -1,0 +1,6 @@
+arch.univariate.EGARCH.name
+===========================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: EGARCH.name

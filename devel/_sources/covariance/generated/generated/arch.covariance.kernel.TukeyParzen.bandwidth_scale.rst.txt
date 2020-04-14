@@ -1,0 +1,6 @@
+arch.covariance.kernel.TukeyParzen.bandwidth\_scale
+===================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: TukeyParzen.bandwidth_scale

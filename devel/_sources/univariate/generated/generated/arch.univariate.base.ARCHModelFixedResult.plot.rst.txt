@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.base.ARCHModelFixedResult.plot
+==============================================
+
+.. currentmodule:: arch.univariate.base
+
+.. automethod:: ARCHModelFixedResult.plot

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.HARCH.constraints
+=================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: HARCH.constraints

@@ -1,0 +1,40 @@
+arch.univariate.GeneralizedError
+================================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: GeneralizedError
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~GeneralizedError.bounds
+      ~GeneralizedError.cdf
+      ~GeneralizedError.constraints
+      ~GeneralizedError.loglikelihood
+      ~GeneralizedError.moment
+      ~GeneralizedError.parameter_names
+      ~GeneralizedError.partial_moment
+      ~GeneralizedError.ppf
+      ~GeneralizedError.simulate
+      ~GeneralizedError.starting_values
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~GeneralizedError.name
+      ~GeneralizedError.random_state
+   
+   
+   

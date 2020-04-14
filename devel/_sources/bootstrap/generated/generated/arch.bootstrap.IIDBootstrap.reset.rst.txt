@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.IIDBootstrap.reset
+=================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: IIDBootstrap.reset

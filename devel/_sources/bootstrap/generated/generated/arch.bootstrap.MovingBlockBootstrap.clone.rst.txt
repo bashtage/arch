@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.MovingBlockBootstrap.clone
+=========================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: MovingBlockBootstrap.clone

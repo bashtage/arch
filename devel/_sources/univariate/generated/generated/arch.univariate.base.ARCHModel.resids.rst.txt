@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.base.ARCHModel.resids
+=====================================
+
+.. currentmodule:: arch.univariate.base
+
+.. automethod:: ARCHModel.resids

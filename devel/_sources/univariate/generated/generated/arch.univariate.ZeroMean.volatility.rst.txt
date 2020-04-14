@@ -1,0 +1,6 @@
+arch.univariate.ZeroMean.volatility
+===================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ZeroMean.volatility

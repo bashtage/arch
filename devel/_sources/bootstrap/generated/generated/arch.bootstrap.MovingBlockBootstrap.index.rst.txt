@@ -1,0 +1,6 @@
+arch.bootstrap.MovingBlockBootstrap.index
+=========================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: MovingBlockBootstrap.index

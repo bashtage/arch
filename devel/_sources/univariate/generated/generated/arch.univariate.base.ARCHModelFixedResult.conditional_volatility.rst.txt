@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelFixedResult.conditional\_volatility
+=================================================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelFixedResult.conditional_volatility

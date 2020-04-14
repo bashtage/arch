@@ -1,0 +1,6 @@
+arch.unitroot.ADF.null\_hypothesis
+==================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ADF.null_hypothesis

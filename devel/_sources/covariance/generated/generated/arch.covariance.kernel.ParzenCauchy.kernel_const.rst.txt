@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenCauchy.kernel\_const
+=================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenCauchy.kernel_const

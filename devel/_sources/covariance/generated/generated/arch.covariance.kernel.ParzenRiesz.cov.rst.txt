@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenRiesz.cov
+======================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenRiesz.cov

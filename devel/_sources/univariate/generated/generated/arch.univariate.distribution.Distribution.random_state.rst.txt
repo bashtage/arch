@@ -1,0 +1,6 @@
+arch.univariate.distribution.Distribution.random\_state
+=======================================================
+
+.. currentmodule:: arch.univariate.distribution
+
+.. autoproperty:: Distribution.random_state

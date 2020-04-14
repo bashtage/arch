@@ -1,0 +1,6 @@
+arch.unitroot.ADF.alternative\_hypothesis
+=========================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ADF.alternative_hypothesis

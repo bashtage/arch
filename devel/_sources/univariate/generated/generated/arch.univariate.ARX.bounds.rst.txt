@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ARX.bounds
+==========================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ARX.bounds

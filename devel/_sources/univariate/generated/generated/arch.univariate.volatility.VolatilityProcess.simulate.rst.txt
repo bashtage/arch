@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.volatility.VolatilityProcess.simulate
+=====================================================
+
+.. currentmodule:: arch.univariate.volatility
+
+.. automethod:: VolatilityProcess.simulate

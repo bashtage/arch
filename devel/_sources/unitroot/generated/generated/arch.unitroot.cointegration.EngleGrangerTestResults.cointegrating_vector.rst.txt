@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.EngleGrangerTestResults.cointegrating\_vector
+=========================================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: EngleGrangerTestResults.cointegrating_vector

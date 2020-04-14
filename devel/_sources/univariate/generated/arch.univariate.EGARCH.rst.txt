@@ -1,0 +1,41 @@
+arch.univariate.EGARCH
+======================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: EGARCH
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~EGARCH.backcast
+      ~EGARCH.backcast_transform
+      ~EGARCH.bounds
+      ~EGARCH.compute_variance
+      ~EGARCH.constraints
+      ~EGARCH.forecast
+      ~EGARCH.parameter_names
+      ~EGARCH.simulate
+      ~EGARCH.starting_values
+      ~EGARCH.variance_bounds
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~EGARCH.name
+      ~EGARCH.start
+      ~EGARCH.stop
+   
+   
+   

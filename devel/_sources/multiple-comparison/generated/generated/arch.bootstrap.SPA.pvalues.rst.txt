@@ -1,0 +1,6 @@
+arch.bootstrap.SPA.pvalues
+==========================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: SPA.pvalues

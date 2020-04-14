@@ -1,0 +1,34 @@
+arch.bootstrap.MCS
+==================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoclass:: MCS
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~MCS.compute
+      ~MCS.reset
+      ~MCS.seed
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~MCS.excluded
+      ~MCS.included
+      ~MCS.pvalues
+   
+   
+   

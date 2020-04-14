@@ -1,0 +1,6 @@
+arch.covariance.kernel.NeweyWest.name
+=====================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: NeweyWest.name

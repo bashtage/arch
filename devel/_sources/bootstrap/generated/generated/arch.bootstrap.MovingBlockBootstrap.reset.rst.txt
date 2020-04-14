@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.MovingBlockBootstrap.reset
+=========================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: MovingBlockBootstrap.reset

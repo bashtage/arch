@@ -1,0 +1,6 @@
+arch.unitroot.ZivotAndrews.critical\_values
+===========================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ZivotAndrews.critical_values

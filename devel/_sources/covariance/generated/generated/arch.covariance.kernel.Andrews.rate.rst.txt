@@ -1,0 +1,6 @@
+arch.covariance.kernel.Andrews.rate
+===================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: Andrews.rate

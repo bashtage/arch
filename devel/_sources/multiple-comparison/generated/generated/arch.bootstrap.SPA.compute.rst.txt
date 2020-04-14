@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.SPA.compute
+==========================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: SPA.compute

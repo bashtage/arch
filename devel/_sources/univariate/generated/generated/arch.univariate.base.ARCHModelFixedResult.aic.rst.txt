@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelFixedResult.aic
+=============================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelFixedResult.aic

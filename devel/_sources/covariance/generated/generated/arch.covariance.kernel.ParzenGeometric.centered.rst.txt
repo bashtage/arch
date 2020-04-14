@@ -1,0 +1,6 @@
+arch.covariance.kernel.ParzenGeometric.centered
+===============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: ParzenGeometric.centered

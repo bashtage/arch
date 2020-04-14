@@ -1,0 +1,6 @@
+arch.unitroot.VarianceRatio.robust
+==================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: VarianceRatio.robust

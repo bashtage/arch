@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelResult.convergence\_flag
+======================================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelResult.convergence_flag

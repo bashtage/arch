@@ -1,0 +1,6 @@
+arch.unitroot.KPSS.stat
+=======================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: KPSS.stat

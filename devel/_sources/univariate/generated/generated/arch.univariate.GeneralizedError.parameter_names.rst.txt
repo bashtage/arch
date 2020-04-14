@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.GeneralizedError.parameter\_names
+=================================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: GeneralizedError.parameter_names

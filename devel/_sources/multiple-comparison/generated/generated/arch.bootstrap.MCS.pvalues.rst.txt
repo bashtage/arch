@@ -1,0 +1,6 @@
+arch.bootstrap.MCS.pvalues
+==========================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: MCS.pvalues

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.EGARCH.simulate
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: EGARCH.simulate

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ConstantMean.constraints
+========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ConstantMean.constraints

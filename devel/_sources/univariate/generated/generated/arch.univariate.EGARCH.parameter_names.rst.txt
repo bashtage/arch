@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.EGARCH.parameter\_names
+=======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: EGARCH.parameter_names

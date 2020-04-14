@@ -1,0 +1,6 @@
+arch.unitroot.ADF.lags
+======================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: ADF.lags

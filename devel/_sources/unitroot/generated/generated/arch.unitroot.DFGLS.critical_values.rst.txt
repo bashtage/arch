@@ -1,0 +1,6 @@
+arch.unitroot.DFGLS.critical\_values
+====================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: DFGLS.critical_values

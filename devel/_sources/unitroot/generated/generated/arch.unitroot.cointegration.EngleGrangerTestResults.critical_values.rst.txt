@@ -1,0 +1,6 @@
+arch.unitroot.cointegration.EngleGrangerTestResults.critical\_values
+====================================================================
+
+.. currentmodule:: arch.unitroot.cointegration
+
+.. autoproperty:: EngleGrangerTestResults.critical_values

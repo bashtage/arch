@@ -1,0 +1,6 @@
+arch.covariance.kernel.QuadraticSpectral.centered
+=================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: QuadraticSpectral.centered

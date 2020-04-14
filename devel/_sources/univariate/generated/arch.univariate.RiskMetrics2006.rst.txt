@@ -1,0 +1,41 @@
+arch.univariate.RiskMetrics2006
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: RiskMetrics2006
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~RiskMetrics2006.backcast
+      ~RiskMetrics2006.backcast_transform
+      ~RiskMetrics2006.bounds
+      ~RiskMetrics2006.compute_variance
+      ~RiskMetrics2006.constraints
+      ~RiskMetrics2006.forecast
+      ~RiskMetrics2006.parameter_names
+      ~RiskMetrics2006.simulate
+      ~RiskMetrics2006.starting_values
+      ~RiskMetrics2006.variance_bounds
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~RiskMetrics2006.name
+      ~RiskMetrics2006.start
+      ~RiskMetrics2006.stop
+   
+   
+   

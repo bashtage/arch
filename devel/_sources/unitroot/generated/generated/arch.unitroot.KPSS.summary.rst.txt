@@ -1,0 +1,8 @@
+:orphan:
+
+arch.unitroot.KPSS.summary
+==========================
+
+.. currentmodule:: arch.unitroot
+
+.. automethod:: KPSS.summary

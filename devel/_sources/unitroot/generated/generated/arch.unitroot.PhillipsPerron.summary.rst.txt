@@ -1,0 +1,8 @@
+:orphan:
+
+arch.unitroot.PhillipsPerron.summary
+====================================
+
+.. currentmodule:: arch.unitroot
+
+.. automethod:: PhillipsPerron.summary

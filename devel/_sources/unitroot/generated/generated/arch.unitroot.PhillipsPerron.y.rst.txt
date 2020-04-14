@@ -1,0 +1,6 @@
+arch.unitroot.PhillipsPerron.y
+==============================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: PhillipsPerron.y

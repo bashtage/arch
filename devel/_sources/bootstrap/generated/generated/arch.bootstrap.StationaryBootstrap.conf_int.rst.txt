@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.StationaryBootstrap.conf\_int
+============================================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: StationaryBootstrap.conf_int

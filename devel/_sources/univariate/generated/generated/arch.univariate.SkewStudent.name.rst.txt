@@ -1,0 +1,6 @@
+arch.univariate.SkewStudent.name
+================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: SkewStudent.name

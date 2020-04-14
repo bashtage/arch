@@ -1,0 +1,6 @@
+arch.univariate.ZeroMean.distribution
+=====================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ZeroMean.distribution

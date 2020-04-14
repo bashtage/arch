@@ -1,0 +1,8 @@
+:orphan:
+
+arch.bootstrap.MCS.compute
+==========================
+
+.. currentmodule:: arch.bootstrap
+
+.. automethod:: MCS.compute

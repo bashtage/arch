@@ -1,0 +1,41 @@
+arch.unitroot.DFGLS
+===================
+
+.. currentmodule:: arch.unitroot
+
+.. autoclass:: DFGLS
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~DFGLS.summary
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~DFGLS.alternative_hypothesis
+      ~DFGLS.critical_values
+      ~DFGLS.lags
+      ~DFGLS.max_lags
+      ~DFGLS.nobs
+      ~DFGLS.null_hypothesis
+      ~DFGLS.pvalue
+      ~DFGLS.regression
+      ~DFGLS.stat
+      ~DFGLS.trend
+      ~DFGLS.valid_trends
+      ~DFGLS.y
+   
+   
+   
