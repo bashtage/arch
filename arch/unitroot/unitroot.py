@@ -213,10 +213,10 @@ def _autolag_ols_low_memory(
     """
     method = method.lower()
     deltay = diff(y)
-    deltay = deltay / sqrt(deltay.dot(deltay))
+    deltay = deltay / sqrt(deltay @ deltay)
     lhs = deltay[maxlag:][:, None]
     level = y[maxlag:-1]
-    level = level / sqrt(level.dot(level))
+    level = level / sqrt(level @ level)
     trendx = []
     nobs = lhs.shape[0]
     if trend == "n":
@@ -237,20 +237,20 @@ def _autolag_ols_low_memory(
     m = rhs.shape[1]
     xpx = empty((m + maxlag, m + maxlag)) * nan
     xpy = empty((m + maxlag, 1)) * nan
-    xpy[:m] = rhs.T.dot(lhs)
-    xpx[:m, :m] = rhs.T.dot(rhs)
+    xpy[:m] = rhs.T @ lhs
+    xpx[:m, :m] = rhs.T @ rhs
     for i in range(maxlag):
         x1 = deltay[maxlag - i - 1 : -(1 + i)]
-        block = rhs.T.dot(x1)
+        block = rhs.T @ x1
         xpx[m + i, :m] = block
         xpx[:m, m + i] = block
-        xpy[m + i] = x1.dot(lhs)
+        xpy[m + i] = x1 @ lhs
         for j in range(i, maxlag):
             x2 = deltay[maxlag - j - 1 : -(1 + j)]
-            x1px2 = x1.dot(x2)
+            x1px2 = x1 @ x2
             xpx[m + i, m + j] = x1px2
             xpx[m + j, m + i] = x1px2
-    ypy = lhs.T.dot(lhs)
+    ypy = lhs.T @ lhs
     sigma2 = empty(maxlag + 1)
 
     tstat = empty(maxlag + 1)
@@ -263,7 +263,7 @@ def _autolag_ols_low_memory(
             raise InfeasibleTestException(
                 singular_array_error.format(max_lags=maxlag, lag=m - i)
             )
-        sigma2[i - m] = (ypy - b.T.dot(xpx_sub).dot(b)) / nobs
+        sigma2[i - m] = (ypy - b.T @ xpx_sub @ b) / nobs
         if method == "t-stat":
             xpxi = inv(xpx_sub)
             stderr = sqrt(sigma2[i - m] * xpxi[-1, -1])
@@ -319,9 +319,9 @@ def _autolag_ols(
             )
         )
     q, r = qr(exog)
-    qpy = q.T.dot(endog)
-    ypy = endog.T.dot(endog)
-    xpx = exog.T.dot(exog)
+    qpy = q.T @ endog
+    ypy = endog.T @ endog
+    xpx = exog.T @ exog
 
     sigma2 = empty(maxlag + 1)
     tstat = empty(maxlag + 1)
@@ -329,7 +329,7 @@ def _autolag_ols(
     tstat[0] = inf
     for i in range(startlag, startlag + maxlag + 1):
         b = solve(r[:i, :i], qpy[:i])
-        sigma2[i - startlag] = (ypy - b.T.dot(xpx[:i, :i]).dot(b)) / nobs
+        sigma2[i - startlag] = (ypy - b.T @ xpx[:i, :i] @ b) / nobs
         if method == "t-stat" and i > startlag:
             xpxi = inv(xpx[:i, :i])
             stderr = sqrt(sigma2[i - startlag] * xpxi[-1, -1])
@@ -768,7 +768,7 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
         self._lags = best_lag
 
     def _check_specification(self) -> None:
-        trend_order = len(self._trend) if self._trend != "nc" else 0
+        trend_order = len(self._trend) if self._trend not in ("n", "nc") else 0
         lag_len = 0 if self._lags is None else self._lags
         required = 3 + trend_order + lag_len
         if self._y.shape[0] < (required):
@@ -917,9 +917,9 @@ class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
         delta_z[1:, :] = delta_z[1:, :] - (1 + ct) * delta_z[:-1, :]
         delta_y = self._y.copy()[:, None]
         delta_y[1:] = delta_y[1:] - (1 + ct) * delta_y[:-1]
-        detrend_coef = pinv(delta_z).dot(delta_y)
+        detrend_coef = pinv(delta_z) @ delta_y
         y = self._y
-        y_detrended = y - z.dot(detrend_coef).ravel()
+        y_detrended = y - (z @ detrend_coef).ravel()
 
         # 2. determine lag length, if needed
         if self._lags is None:
@@ -1088,7 +1088,7 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
         self._lags = lags
 
     def _check_specification(self) -> None:
-        trend_order = len(self._trend) if self._trend != "nc" else 0
+        trend_order = len(self._trend) if self._trend not in ("n", "nc") else 0
         lag_len = 0 if self._lags is None else self._lags
         required = max(3 + trend_order, lag_len)
         if self._y.shape[0] < (required):
@@ -1125,7 +1125,7 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
         lam2 = cov_nw(u, lags, demean=False)
         lam = sqrt(lam2)
         # 2. Compute components
-        s2 = u.dot(u) / (n - k)
+        s2 = u @ u / (n - k)
         s = sqrt(s2)
         gamma0 = s2 * (n - k) / n
         sigma = resols.bse[0]
@@ -1317,7 +1317,7 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
         s0 = sum(resids ** 2) / self._nobs
         s1 = 0
         for i in range(1, covlags + 1):
-            resids_prod = resids[i:].dot(resids[: self._nobs - i])
+            resids_prod = resids[i:] @ resids[: self._nobs - i]
             resids_prod /= self._nobs / 2
             s0 += resids_prod
             s1 += i * resids_prod
@@ -1418,18 +1418,27 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
         )
         self._alternative_hypothesis = "The process is trend and break stationary."
 
-    @staticmethod
-    def _quick_ols(endog: NDArray, exog: NDArray) -> NDArray:
+    def _quick_ols(self, endog: NDArray, exog: NDArray) -> NDArray:
         """
         Minimal implementation of LS estimator for internal use
         """
-        xpxi = inv(exog.T.dot(exog))
-        xpy = exog.T.dot(endog)
+        xpxi = inv(exog.T @ exog)
+        xpy = exog.T @ endog
         nobs, k_exog = exog.shape
-        b = xpxi.dot(xpy)
-        e = endog - exog.dot(b)
-        sigma2 = e.T.dot(e) / (nobs - k_exog)
+        b = xpxi @ xpy
+        e = endog - exog @ b
+        sigma2 = e.T @ e / (nobs - k_exog)
         return b / sqrt(diag(sigma2 * xpxi))
+
+    def _check_specification(self) -> None:
+        trend_order = len(self._trend)
+        lag_len = 0 if self._lags is None else self._lags
+        required = 3 + trend_order + lag_len
+        if self._y.shape[0] < (required):
+            raise InfeasibleTestException(
+                f"A minmum of {required} observations are needed to run an ADF with "
+                f"trend {self.trend} and the user-specified number of lags."
+            )
 
     def _compute_statistic(self) -> None:
         """This is the core routine that computes the test statistic, computes
@@ -1457,8 +1466,8 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
             basecols = 4
         # first-diff y and standardize for numerical stability
         dy = diff(y, axis=0)[:, 0]
-        dy /= sqrt(dy.T.dot(dy))
-        y = y / sqrt(y.T.dot(y))
+        dy /= sqrt(dy.T @ dy)
+        y = y / sqrt(y.T @ y)
         # reserve exog space
         exog = empty((dy[baselags:].shape[0], basecols + baselags))
         # normalize constant for stability in long time series
@@ -1477,6 +1486,11 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
         for bp in range(start_period + 1, end_period + 1):
             # update intercept dummy / trend / trend dummy
             cutoff = bp - (baselags + 1)
+            if cutoff <= 0:
+                raise InfeasibleTestException(
+                    f"The number of observations is too small to use the Zivot-Andrews "
+                    f"test with trend {trend} and {self._lags} lags."
+                )
             if trend != "t":
                 exog[:cutoff, 1] = 0
                 exog[cutoff:, 1] = c_const
@@ -1489,13 +1503,14 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
                 exog[: (cutoff - 1), 2] = 0
                 exog[(cutoff - 1) :, 2] = t_const[0 : (nobs - bp + 1)]
             # check exog rank on first iteration
-            # TODO: Need to check rank of first and last block
             if bp == start_period + 1:
                 rank = matrix_rank(exog)
                 if rank < exog.shape[1]:
-                    raise ValueError(
-                        "ZA: auxiliary exog matrix is not full rank.\n cols "
-                        "{0}. rank = {1}".format(exog.shape[1], rank)
+                    raise InfeasibleTestException(
+                        f"The regressor matrix is singular. The can happen if the data "
+                        "contains regions of constant observations, if the number of "
+                        f"lags ({self._lags}) is too large, or if the series is very "
+                        "short."
                     )
             stats[bp] = self._quick_ols(dy[baselags:], exog)[basecols - 1]
         # return best seen
@@ -1697,7 +1712,7 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
             scale = sum(z2) ** 2.0
             theta = 0.0
             for k in range(1, q):
-                delta = nq * z2[k:].dot(z2[:-k]) / scale
+                delta = nq * z2[k:] @ z2[:-k] / scale
                 # GH 286, CLM 2.4.43
                 theta += 4 * (1 - k / q) ** 2.0 * delta
             self._stat_variance = theta
