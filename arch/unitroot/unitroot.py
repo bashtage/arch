@@ -1,4 +1,5 @@
-from typing import Dict, List, Optional, Sequence, Tuple
+from abc import ABCMeta, abstractmethod
+from typing import Dict, List, Optional, Sequence, Tuple, Union
 import warnings
 
 from numpy import (
@@ -41,7 +42,7 @@ from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import OLS, RegressionResults
 from statsmodels.tsa.tsatools import lagmat
 
-from arch.typing import ArrayLike, ArrayLike1D, ArrayLike2D, NDArray, Union
+from arch.typing import ArrayLike, ArrayLike1D, ArrayLike2D, NDArray
 from arch.unitroot.critical_values.dfgls import (
     dfgls_cv_approx,
     dfgls_large_p,
@@ -67,7 +68,7 @@ from arch.unitroot.critical_values.dickey_fuller import (
 from arch.unitroot.critical_values.kpss import kpss_critical_values
 from arch.unitroot.critical_values.zivot_andrews import za_critical_values
 from arch.utility import cov_nw
-from arch.utility.array import DocStringInheritor, ensure1d, ensure2d
+from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
 from arch.utility.exceptions import (
     InfeasibleTestException,
     InvalidLengthWarning,
@@ -134,7 +135,7 @@ def _select_best_ic(
     method: str, nobs: float, sigma2: NDArray, tstat: NDArray
 ) -> Tuple[float, int]:
     """
-    Comutes the best information criteria
+    Computes the best information criteria
 
     Parameters
     ----------
@@ -143,7 +144,7 @@ def _select_best_ic(
     nobs : float
         Number of observations in time series
     sigma2 : ndarray
-        maxlag + 1 array containins MLE estimates of the residual variance
+        maxlag + 1 array containing MLE estimates of the residual variance
     tstat : ndarray
         maxlag + 1 array containing t-statistic values. Only used if method
         is 't-stat'
@@ -446,7 +447,7 @@ def _estimate_df_regression(y: NDArray, trend: str, lags: int) -> RegressionResu
     return OLS(lhs, rhs).fit()
 
 
-class UnitRootTest(object):
+class UnitRootTest(object, metaclass=ABCMeta):
     """Base class to be used for inheritance in unit root bootstrap"""
 
     def __init__(
@@ -486,16 +487,17 @@ class UnitRootTest(object):
         """Display as HTML for IPython notebook."""
         return self.summary().as_html()
 
+    @abstractmethod
     def _check_specification(self) -> None:
         """
         Check that the data are compatible with running a test.
         """
 
+    @abstractmethod
     def _compute_statistic(self) -> None:
         """This is the core routine that computes the test statistic, computes
         the p-value and constructs the critical values.
         """
-        raise NotImplementedError("Subclass must implement")
 
     def _reset(self) -> None:
         """Resets the unit root test so that it will be recomputed
@@ -653,7 +655,7 @@ class UnitRootTest(object):
             self._trend = value
 
 
-class ADF(UnitRootTest, metaclass=DocStringInheritor):
+class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
     """
     Augmented Dickey-Fuller unit root test
 
@@ -771,9 +773,9 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
         trend_order = len(self._trend) if self._trend not in ("n", "nc") else 0
         lag_len = 0 if self._lags is None else self._lags
         required = 3 + trend_order + lag_len
-        if self._y.shape[0] < (required):
+        if self._y.shape[0] < required:
             raise InfeasibleTestException(
-                f"A minmum of {required} observations are needed to run an ADF with "
+                f"A minimum of {required} observations are needed to run an ADF with "
                 f"trend {self.trend} and the user-specified number of lags."
             )
 
@@ -818,7 +820,7 @@ class ADF(UnitRootTest, metaclass=DocStringInheritor):
         self._max_lags = value
 
 
-class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
+class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     """
     Elliott, Rothenberg and Stock's GLS version of the Dickey-Fuller test
 
@@ -904,6 +906,16 @@ class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
         else:
             self._c = -13.5
 
+    def _check_specification(self) -> None:
+        trend_order = len(self._trend)
+        lag_len = 0 if self._lags is None else self._lags
+        required = 3 + trend_order + lag_len
+        if self._y.shape[0] < required:
+            raise InfeasibleTestException(
+                f"A minimum of {required} observations are needed to run an ADF with "
+                f"trend {self.trend} and the user-specified number of lags."
+            )
+
     def _compute_statistic(self) -> None:
         """Core routine to estimate DF-GLS test statistic"""
         # 1. GLS detrend
@@ -987,7 +999,7 @@ class DFGLS(UnitRootTest, metaclass=DocStringInheritor):
         self._max_lags = value
 
 
-class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
+class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
     """
     Phillips-Perron unit root test
 
@@ -1091,9 +1103,9 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
         trend_order = len(self._trend) if self._trend not in ("n", "nc") else 0
         lag_len = 0 if self._lags is None else self._lags
         required = max(3 + trend_order, lag_len)
-        if self._y.shape[0] < (required):
+        if self._y.shape[0] < required:
             raise InfeasibleTestException(
-                f"A minmum of {required} observations are needed to run an ADF with "
+                f"A minimum of {required} observations are needed to run an ADF with "
                 f"trend {self.trend} and the user-specified number of lags."
             )
 
@@ -1130,6 +1142,12 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
         gamma0 = s2 * (n - k) / n
         sigma = resols.bse[0]
         sigma2 = sigma ** 2.0
+        if sigma <= 0:
+            raise InfeasibleTestException(
+                "The estimated variance of the coefficient in the Phillips-Perron "
+                "regression is 0. This may occur if the series contains constant "
+                "values or the residual variance in the regression is 0."
+            )
         rho = resols.params[0]
         # 3. Compute statistics
         self._stat_tau = sqrt(gamma0 / lam2) * ((rho - 1) / sigma) - 0.5 * (
@@ -1172,7 +1190,7 @@ class PhillipsPerron(UnitRootTest, metaclass=DocStringInheritor):
         self._test_type = value
 
 
-class KPSS(UnitRootTest, metaclass=DocStringInheritor):
+class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     """
     Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test
 
@@ -1265,9 +1283,9 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
         trend_order = len(self._trend)
         lag_len = 0 if self._lags is None else self._lags
         required = max(1 + trend_order, lag_len)
-        if self._y.shape[0] < (required):
+        if self._y.shape[0] < required:
             raise InfeasibleTestException(
-                f"A minmum of {required} observations are needed to run an ADF with "
+                f"A minimum of {required} observations are needed to run an ADF with "
                 f"trend {self.trend} and the user-specified number of lags."
             )
 
@@ -1334,7 +1352,7 @@ class KPSS(UnitRootTest, metaclass=DocStringInheritor):
         self._lags = autolags
 
 
-class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
+class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
     """
     Zivot-Andrews structural-break unit-root test
 
@@ -1418,7 +1436,8 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
         )
         self._alternative_hypothesis = "The process is trend and break stationary."
 
-    def _quick_ols(self, endog: NDArray, exog: NDArray) -> NDArray:
+    @staticmethod
+    def _quick_ols(endog: NDArray, exog: NDArray) -> NDArray:
         """
         Minimal implementation of LS estimator for internal use
         """
@@ -1434,9 +1453,9 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
         trend_order = len(self._trend)
         lag_len = 0 if self._lags is None else self._lags
         required = 3 + trend_order + lag_len
-        if self._y.shape[0] < (required):
+        if self._y.shape[0] < required:
             raise InfeasibleTestException(
-                f"A minmum of {required} observations are needed to run an ADF with "
+                f"A minimum of {required} observations are needed to run an ADF with "
                 f"trend {self.trend} and the user-specified number of lags."
             )
 
@@ -1543,7 +1562,7 @@ class ZivotAndrews(UnitRootTest, metaclass=DocStringInheritor):
         }
 
 
-class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
+class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
     """
     Variance Ratio test of a random walk.
 
@@ -1662,6 +1681,16 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
         self._reset()
         self._debiased = bool(value)
 
+    def _check_specification(self) -> None:
+        assert self._lags is not None
+        lags = self._lags
+        required = 2 * lags if not self._overlap else lags + 1 + int(self.debiased)
+        if self._y.shape[0] < required:
+            raise InfeasibleTestException(
+                f"A minimum of {required} observations are needed to run an ADF with "
+                f"trend {self.trend} and the user-specified number of lags."
+            )
+
     def _compute_statistic(self) -> None:
         overlap, debiased, robust = self._overlap, self._debiased, self._robust
         y, nobs, q, trend = self._y, self._nobs, self._lags, self._trend
@@ -1700,7 +1729,7 @@ class VarianceRatio(UnitRootTest, metaclass=DocStringInheritor):
             sigma2_1 *= nq / (nq - 1)
             m = q * (nq - q + 1) * (1 - (q / nq))
             sigma2_q *= (nq * q) / m
-            self._summary_text = ["Computed with overlapping blocks " "(de-biased)"]
+            self._summary_text = ["Computed with overlapping blocks (de-biased)"]
 
         if not overlap:
             self._stat_variance = 2.0 * (q - 1)

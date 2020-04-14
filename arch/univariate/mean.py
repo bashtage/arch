@@ -224,7 +224,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             from warnings import warn
 
             warn(
-                "hold_back is less then the minimum number given the lags " "selected",
+                "hold_back is less then the minimum number given the lags selected",
                 RuntimeWarning,
             )
             self._hold_back = max_lags
@@ -473,7 +473,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         if lags.ndim == 1:
             if np.any(lags <= 0):
                 raise ValueError(
-                    "When using the 1-d format of lags, values " "must be positive"
+                    "When using the 1-d format of lags, values must be positive"
                 )
             lags = np.unique(lags)
             temp = np.array([lags, lags])
@@ -502,9 +502,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             if self.use_rotated:
                 from warnings import warn
 
-                warn(
-                    "Rotation is not available when using the " "2-d lags input format"
-                )
+                warn("Rotation is not available when using the 2-d lags input format")
         else:
             raise ValueError("Incorrect format for lags")
 
@@ -568,7 +566,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         _first_obs_index += self._hold_back
         _last_obs_index = cutoff_to_index(last_obs, index, self._y.shape[0])
         if _last_obs_index <= _first_obs_index:
-            raise ValueError("first_obs and last_obs produce in an " "empty array.")
+            raise ValueError("first_obs and last_obs produce in an empty array.")
         self._fit_indices = [_first_obs_index, _last_obs_index]
         self._fit_y = self._y[_first_obs_index:_last_obs_index]
         reg = self.regressors
