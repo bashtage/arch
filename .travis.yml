@@ -120,8 +120,9 @@ script:
       make spelling
       make html
       cd ..
+      doctr deploy devel --build-tags
       if [[ "$TRAVIS_BRANCH" = "master" || ! -z "$TRAVIS_TAG" ]]; then
-        doctr deploy doc --build-tags
+        doctr deploy . --build-tags
       fi
     fi
   - flake8 arch
