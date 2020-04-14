@@ -422,7 +422,7 @@ def phillips_ouliaris_cv(test_type: str, trend: str, num: int, nobs: int) -> pd.
         raise ValueError(f"trend must by one of: {valid}")
     if not 2 <= num <= 13:
         raise ValueError(
-            "The number of stochastic trends must be between 2 and " "12 (inclusive)"
+            "The number of stochastic trends must be between 2 and 12 (inclusive)"
         )
     key = (test_type, trend, num)
     tbl = CV_PARAMETERS[key]
@@ -476,7 +476,7 @@ def phillips_ouliaris_pval(stat: float, test_type: str, trend: str, num: int) ->
         raise ValueError(f"trend must by one of: {valid}")
     if not 2 <= num <= 13:
         raise ValueError(
-            "The number of stochastic trends must be between 2 and " "12 (inclusive)"
+            "The number of stochastic trends must be between 2 and 12 (inclusive)"
         )
     key = (test_type, trend, num)
     if test_type in ("Pu", "Pz"):

@@ -123,7 +123,7 @@ class TestUnitRoot(object):
         for d in adf.valid_trends:
             assert d in ("n", "c", "ct", "ctt")
         assert adf.null_hypothesis == "The process contains a unit root."
-        assert adf.alternative_hypothesis == "The process is weakly " "stationary."
+        assert adf.alternative_hypothesis == "The process is weakly stationary."
 
     def test_kpss_auto(self):
         kpss = KPSS(self.inflation, lags=-1)
@@ -431,7 +431,7 @@ def test_unknown_method():
     rnd = np.random.RandomState(12345)
     y = np.cumsum(rnd.standard_normal(250))
     with pytest.raises(ValueError):
-        ADF(y, method="unknown").stat
+        assert (np.isfinite(ADF(y, method="unknown").stat))
 
 
 def test_auto_low_memory():
@@ -478,28 +478,28 @@ def test_adf_short_timeseries():
     adf = ADF(x)
     msg = r"The maximum lag you are considering \(3\)"
     with pytest.raises(InfeasibleTestException, match=msg):
-        adf.stat
+        assert (np.isfinite(adf.stat))
     adf = ADF(x, low_memory=True)
     with pytest.raises(InfeasibleTestException, match=msg):
-        adf.stat
+        assert (np.isfinite(adf.stat))
 
 
 def test_adf_buggy_timeseries1():
     x = np.asarray([0])
     adf = ADF(x)
     # ValueError: maxlag should be < nobs
-    msg = "A minmum of 4 observations are needed"
+    msg = "A minimum of 4 observations are needed"
     with pytest.raises(InfeasibleTestException, match=msg):
-        adf.stat
+        assert np.isfinite(adf.stat)
 
 
 def test_adf_buggy_timeseries2():
     x = np.asarray([0, 0])
     adf = ADF(x)
     # IndexError: index 0 is out of bounds for axis 0 with size 0
-    msg = "A minmum of 4 observations are needed"
+    msg = "A minimum of 4 observations are needed"
     with pytest.raises(InfeasibleTestException, match=msg):
-        adf.stat
+        assert (np.isfinite(adf.stat))
 
 
 def test_adf_buggy_timeseries3():
@@ -508,7 +508,15 @@ def test_adf_buggy_timeseries3():
     # AssertionError: Number of manager items must equal union of block items
     # # manager items: 1, # tot_items: 0
     with pytest.raises(InfeasibleTestException, match="The maximum lag you are"):
-        adf.stat
+        assert (np.isfinite(adf.stat))
+
+
+def test_kpss_buggy_timeseries1():
+    x = np.asarray([0])
+    adf = KPSS(x)
+    # ValueError: cannot convert float NaN to integer
+    with pytest.raises(InfeasibleTestException, match="A minimum of 2 observations"):
+        assert (np.isfinite(adf.stat))
 
 
 kpss_autolag_data = (
@@ -616,7 +624,7 @@ def test_zivot_andrews_reduced_rank():
     y = np.random.standard_normal(1000)
     y[1:] = 3.0
     with pytest.raises(InfeasibleTestException, match="The regressor matrix is"):
-        ZivotAndrews(y, lags=1).stat
+        assert (np.isfinite(ZivotAndrews(y, lags=1).stat))
 
 
 def test_bw_selection():
@@ -647,46 +655,46 @@ def test_nc_warning():
 
 
 @pytest.mark.parametrize("nobs", np.arange(1, 11).tolist())
-@pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS, ZivotAndrews])
+@pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS, ZivotAndrews, DFGLS])
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
 def test_wrong_exceptions(stat, nobs, trend):
-    skip = trend == "ctt" and stat in (PhillipsPerron, KPSS, ZivotAndrews)
-    skip |= trend == "n" and stat in (KPSS, ZivotAndrews)
+    skip = trend == "ctt" and stat in (PhillipsPerron, KPSS, ZivotAndrews, DFGLS)
+    skip |= trend == "n" and stat in (KPSS, ZivotAndrews, DFGLS)
     if skip:
         return
     y = np.random.standard_normal((nobs,))
     try:
-        stat(y, trend=trend).stat
+        assert np.isfinite(stat(y, trend=trend).stat)
     except InfeasibleTestException:
         pass
 
 
 @pytest.mark.parametrize("nobs", [2, 10, 100])
-@pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS, ZivotAndrews])
+@pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS, ZivotAndrews, DFGLS])
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
 def test_wrong_exceptions_nearly_constant_series(stat, nobs, trend):
-    skip = trend == "ctt" and stat in (PhillipsPerron, KPSS, ZivotAndrews)
-    skip |= trend == "n" and stat in (KPSS, ZivotAndrews)
+    skip = trend == "ctt" and stat in (PhillipsPerron, KPSS, ZivotAndrews, DFGLS)
+    skip |= trend == "n" and stat in (KPSS, ZivotAndrews, DFGLS)
     if skip:
         return
     y = np.zeros((nobs,))
     y[-1] = 1.0
     try:
-        stat(y, trend=trend).stat
+        assert np.isfinite(stat(y, trend=trend).stat)
     except InfeasibleTestException:
         pass
 
 
 def test_phillips_perron_specifed_lag():
     y = np.zeros((10,))
-    with pytest.raises(InfeasibleTestException, match="A minmum of 12 observations"):
-        PhillipsPerron(y, lags=12).stat
+    with pytest.raises(InfeasibleTestException, match="A minimum of 12 observations"):
+        assert np.isfinite(PhillipsPerron(y, lags=12).stat)
 
 
 def test_kpss_legacy():
     y = np.random.standard_normal(4)
     with pytest.raises(InfeasibleTestException, match="The number of observations 4"):
-        KPSS(y, lags=-1).stat
+        assert np.isfinite(KPSS(y, lags=-1).stat)
 
 
 @pytest.mark.parametrize(
@@ -696,12 +704,26 @@ def test_rank_checker(x):
     assert _is_reduced_rank(x)
 
 
-@pytest.mark.parametrize("nobs", list(range(7, 11)))  # list(range(1,11)))
-@pytest.mark.parametrize("trend", ["ct"])  # ["c", "ct", "t"])
+@pytest.mark.parametrize("nobs", list(range(1, 11)))
+@pytest.mark.parametrize("trend", ["c", "ct", "t"])
 def test_wrong_exceptions_nearly_constant_series_za_lags(nobs, trend):
     y = np.zeros((nobs,))
     y[-1] = 1.0
     try:
-        ZivotAndrews(y, lags=2, trend=trend).stat
+        assert np.isfinite(ZivotAndrews(y, lags=2, trend=trend).stat)
+    except InfeasibleTestException:
+        pass
+
+
+@pytest.mark.filterwarnings("ignore::arch.utility.exceptions.InvalidLengthWarning")
+@pytest.mark.parametrize("nobs", np.arange(1, 11).tolist())
+@pytest.mark.parametrize("trend", ["n", "c"])
+@pytest.mark.parametrize("overlap", [True, False])
+@pytest.mark.parametrize("debiased", [True, False])
+def test_wrong_exceptions_variance_ratio(nobs, trend, overlap, debiased):
+    y = np.random.standard_normal((nobs,))
+    try:
+        vr = VarianceRatio(y, trend=trend, lags=4, overlap=overlap, debiased=debiased)
+        assert np.isfinite(vr.stat)
     except InfeasibleTestException:
         pass

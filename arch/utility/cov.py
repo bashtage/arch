@@ -42,7 +42,7 @@ def cov_nw(
     n = z.shape[0]
     if ddof > n:
         raise ValueError(
-            "ddof must be strictly smaller than the number of " "observations"
+            "ddof must be strictly smaller than the number of observations"
         )
     if lags > n:
         error = "lags must be weakly smaller than the number of observations"
