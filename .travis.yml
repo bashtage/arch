@@ -113,15 +113,21 @@ script:
       python -c "import arch; arch.test(['-r a','-m (not slow)','--durations=25'])"
       cd ..
     fi
+  - set -e
   - |
-    if [[ "$DOCBUILD" = true ]]; then
-      python setup.py install
+    if [[ ${DOCBUILD} = true ]]; then
+      sudo apt-get install -y enchant
+      pip install sphinxcontrib-spelling sphinx-material
+      pip list
       cd doc
-      make spelling
       make html
+      make html
+      make spelling
       cd ..
       doctr deploy devel --build-tags
-      if [[ "$TRAVIS_BRANCH" = "master" || ! -z "$TRAVIS_TAG" ]]; then
+      if [[ -z ${TRAVIS_TAG} ]]; then
+        echo "Not a tagged build."
+      else
         doctr deploy . --build-tags
       fi
     fi
