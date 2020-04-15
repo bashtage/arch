@@ -8,7 +8,7 @@ services:
 
 env:
   global:
-    - COVERAGE=true
+    - TEST_INSTALL=false
     - USE_NUMBA=true
     - USE_PIP=false
     - STATSMODELS_MASTER=false
@@ -27,6 +27,7 @@ matrix:
   - python: 3.7
     env:
       - PYTHON=3.7
+      - TEST_INSTALL=true
       - ARCH_CYTHON_COVERAGE=true
   - python: 3.7
     env:
@@ -90,28 +91,32 @@ before_install:
   - if [[ "$STATSMODELS_MASTER" == true ]]; then sh ./ci/install-statsmodels-master.sh; fi;
   - pip list
   - export SRCDIR="$PWD"
-  - if [[ "$COVERAGE" == true ]]; then export COVERAGE_OPTS="--cov-config .coveragerc --cov=arch --cov-report xml:coverage.xml --cov-report term"; fi
+  - export COVERAGE_OPTS="--cov-config .coveragerc --cov=arch --cov-report xml:coverage.xml --cov-report term"
 
 install:
   - |
-    if [[ "$COVERAGE" == true ]]; then
-      pip install -e .
-    else
+    if [[ "$TEST_INSTALL" == true ]]; then
       pip install .
+    else
+      pip install -e .
     fi
 
 script:
   - set -e
   - python ci/performance.py
   - |
-    if [[ "$COVERAGE" == true ]]; then
-      echo pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
-      pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
-    else
+    if [[ "$TEST_INSTALL" == true ]]; then
       mkdir test
       cd test
-      python -c "import arch; arch.test(['-r a','-m (not slow)','--durations=25'])"
+      export TEST_DIR="$PWD"
+      python -c "import arch; arch.test(['-r a','--cov-config','../.coveragerc','--cov=arch','--cov-report','xml:coverage.xml'])"
+      ls
       cd ..
+      ls
+    else
+      export TEST_DIR="$PWD"
+      echo pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
+      pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
     fi
   - set -e
   - |
@@ -134,9 +139,9 @@ script:
   - flake8 arch
 
 after_success:
-  - |
-    if [[ "$COVERAGE" = true ]]; then
-      codecov
-      coveralls --rcfile="$SRCDIR"/.coveragerc
-      python-codacy-coverage -r coverage.xml
-    fi
+  # Test install coverage is in ./test
+  - cd $TEST_DIR
+  - ls -l *
+  - codecov
+  - coveralls --rcfile="$SRCDIR"/.coveragerc
+  - wget -qO - https://coverage.codacy.com/get.sh | bash -s report -l Python -r coverage.xml
