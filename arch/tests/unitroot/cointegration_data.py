@@ -64,8 +64,6 @@ def trivariate_data(request) -> Tuple[ArrayLike2D, ArrayLike2D]:
         idx = pd.date_range("1-1-2000", periods=nobs, freq="M")
         cols = [f"y{i}" for i in range(1, 4)]
         data = pd.DataFrame(y, columns=cols, index=idx)
-        # TODO: Remove
-        data.to_csv("trivariate-data.csv")
         return data.iloc[:, :1], data.iloc[:, 1:]
 
     return y[:, :1], y[:, 1:]

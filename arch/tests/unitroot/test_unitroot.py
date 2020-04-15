@@ -472,18 +472,6 @@ def test_mackinnoncrit_errors():
     assert np.all(cv_50 <= cv_inf)
 
 
-def test_adf_short_timeseries():
-    # GH 262
-    x = np.asarray([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0])
-    adf = ADF(x)
-    msg = r"The maximum lag you are considering \(3\)"
-    with pytest.raises(InfeasibleTestException, match=msg):
-        assert np.isfinite(adf.stat)
-    adf = ADF(x, low_memory=True)
-    with pytest.raises(InfeasibleTestException, match=msg):
-        assert np.isfinite(adf.stat)
-
-
 def test_adf_buggy_timeseries1():
     x = np.asarray([0])
     adf = ADF(x)
@@ -513,7 +501,7 @@ def test_adf_buggy_timeseries3():
 
 def test_kpss_buggy_timeseries1():
     x = np.asarray([0])
-    adf = KPSS(x)
+    adf = KPSS(x, lags=0)
     # ValueError: cannot convert float NaN to integer
     with pytest.raises(InfeasibleTestException, match="A minimum of 2 observations"):
         assert np.isfinite(adf.stat)
@@ -654,6 +642,7 @@ def test_nc_warning():
         ADF(np.random.standard_normal(100), trend="nc")
 
 
+@pytest.mark.filterwarnings("ignore:Lag selection has changed:DeprecationWarning")
 @pytest.mark.parametrize("nobs", np.arange(1, 11).tolist())
 @pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS, ZivotAndrews, DFGLS])
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
@@ -669,6 +658,7 @@ def test_wrong_exceptions(stat, nobs, trend):
         pass
 
 
+@pytest.mark.filterwarnings("ignore:Lag selection has changed:DeprecationWarning")
 @pytest.mark.parametrize("nobs", [2, 10, 100])
 @pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS, ZivotAndrews, DFGLS])
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])

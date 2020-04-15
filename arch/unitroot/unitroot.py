@@ -379,7 +379,7 @@ def _df_select_lags(
     nobs = y.shape[0]
     # This is the absolute maximum number of lags possible,
     # only needed to very short time series.
-    max_max_lags = nobs // 2 - 1
+    max_max_lags = max((nobs - 1) // 2 - 1, 0)
     if trend != "n":
         max_max_lags -= len(trend)
     if max_lags is None:
