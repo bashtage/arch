@@ -94,29 +94,20 @@ before_install:
   - export COVERAGE_OPTS="--cov-config .coveragerc --cov=arch --cov-report xml:coverage.xml --cov-report term"
 
 install:
-  - |
-    if [[ "$TEST_INSTALL" == true ]]; then
-      pip install .
-    else
-      pip install -e .
-    fi
+  - pip install -e .
 
 script:
   - set -e
   - python ci/performance.py
+  - echo pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
+  - pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
   - |
     if [[ "$TEST_INSTALL" == true ]]; then
-      mkdir test
-      cd test
-      export TEST_DIR="$PWD"
-      python -c "import arch; arch.test(['-r a','--cov-config','../.coveragerc','--cov=arch','--cov-report','xml:coverage.xml'])"
-      ls
+      pip install .
+      mkdir arch_test
+      cd arch_test
+      python -c "import arch; arch.test(['-m (not slow)'])"
       cd ..
-      ls
-    else
-      export TEST_DIR="$PWD"
-      echo pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
-      pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
     fi
   - set -e
   - |
@@ -140,7 +131,6 @@ script:
 
 after_success:
   # Test install coverage is in ./test
-  - cd $TEST_DIR
   - ls -l *
   - codecov
   - coveralls --rcfile="$SRCDIR"/.coveragerc

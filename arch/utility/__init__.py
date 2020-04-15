@@ -7,7 +7,7 @@ from arch.utility.cov import cov_nw
 PKG = os.path.dirname(os.path.dirname(__file__))
 
 
-def test(extra_args: Optional[Union[str, Sequence[str]]] = None) -> None:
+def test(extra_args: Optional[Union[str, Sequence[str]]] = None, exit=True) -> None:
     """
     Test runner that allows testing of installed package.
 
@@ -38,7 +38,8 @@ def test(extra_args: Optional[Union[str, Sequence[str]]] = None) -> None:
     cmd = [PKG] + cmd
     print("running: pytest {}".format(" ".join(cmd)))
     status = pytest.main(cmd)
-    sys.exit(status)
+    if exit:
+        sys.exit(status)
 
 
 __all__ = ["cov_nw", "test"]
