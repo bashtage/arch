@@ -1,5 +1,4 @@
 import datetime as dt
-import os
 
 import numpy as np
 from numpy.random import RandomState
@@ -263,7 +262,5 @@ class TestUtils(object):
         assert idx == 1
 
 
-@pytest.mark.skipif(os.name != "nt", reason="XVFB is broken on travis")
-class TestDoc(object):
-    def test_doc(self):
-        doc()
+def test_doc():
+    doc()
