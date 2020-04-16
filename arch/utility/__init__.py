@@ -7,7 +7,9 @@ from arch.utility.cov import cov_nw
 PKG = os.path.dirname(os.path.dirname(__file__))
 
 
-def test(extra_args: Optional[Union[str, Sequence[str]]] = None, exit=True) -> None:
+def test(
+    extra_args: Optional[Union[str, Sequence[str]]] = None, exit: bool = True
+) -> None:
     """
     Test runner that allows testing of installed package.
 
