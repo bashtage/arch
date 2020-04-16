@@ -8,7 +8,7 @@ services:
 
 env:
   global:
-    - TEST_INSTALL=false
+    - COVERAGE=true
     - USE_NUMBA=true
     - USE_PIP=false
     - STATSMODELS_MASTER=false
@@ -27,8 +27,13 @@ matrix:
   - python: 3.7
     env:
       - PYTHON=3.7
-      - TEST_INSTALL=true
       - ARCH_CYTHON_COVERAGE=true
+  - python: 3.8
+    env:
+      - PYTHON=3.8
+      - STATSMODELS_MASTER=true
+      - USE_PIP=true
+      - COVERAGE=false
   - python: 3.7
     env:
       - PYTHON=3.7
@@ -36,7 +41,6 @@ matrix:
       - SCIPY=1.2
       - MATPLOTLIB=2
       - PANDAS=0.23
-      - STATSMODELS_MASTER=true
   - python: 3.7
     env:
       - USE_PIP=true
@@ -85,28 +89,32 @@ before_install:
     else
       source ci/use-conda.sh
     fi
-  -  if [[ "$STATSMODELS_MASTER" == true ]]; then sh ./ci/install-statsmodels-master.sh; fi;
   - source ci/install-common.sh
-
   - if [[ "$STATSMODELS_MASTER" == true ]]; then sh ./ci/install-statsmodels-master.sh; fi;
   - pip list
   - export SRCDIR="$PWD"
   - export COVERAGE_OPTS="--cov-config .coveragerc --cov=arch --cov-report xml:coverage.xml --cov-report term"
 
 install:
-  - pip install -e .
+  - |
+    if [[ "$COVERAGE" == true ]]; then
+      pip install -e .
+    else
+      pip install .
+    fi
 
 script:
   - set -e
   - python ci/performance.py
   - echo pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
-  - pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
   - |
-    if [[ "$TEST_INSTALL" == true ]]; then
+    if [[ "$COVERAGE" == true ]]; then
+      pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
+    else
       pip install .
       mkdir arch_test
       cd arch_test
-      python -c "import arch; arch.test(['-m (not slow)'])"
+      python -c "import arch; arch.test(['-r a','-m (not slow)'])"
       cd ..
     fi
   - set -e
@@ -131,7 +139,10 @@ script:
 
 after_success:
   # Test install coverage is in ./test
-  - ls -l *
-  - codecov
-  - coveralls --rcfile="$SRCDIR"/.coveragerc
-  - wget -qO - https://coverage.codacy.com/get.sh | bash -s report -l Python -r coverage.xml
+  - |
+    if [[ "$COVERAGE" == true ]]; then
+      codecov
+      coveralls --rcfile="$SRCDIR"/.coveragerc
+      wget -qO - https://coverage.codacy.com/get.sh | bash -s report -l Python -r coverage.xml
+    fi
+
