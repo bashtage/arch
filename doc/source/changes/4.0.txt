@@ -2,8 +2,12 @@
 Version 4
 =========
 
-Since 4.13
-==========
+Release 4.14
+============
+- Added Kernel-based long-run variance estimation in ``arch.covariance.kernel``.
+  Examples include the :class:`~arch.covariance.kernel.Bartlett` and the
+  :class:`~arch.covariance.kernel.Parzen` kernels.  All estimators suppose automatic
+  bandwidth selection.
 - Improved exceptions in :class:`~arch.unitroot.ADF`,  :class:`~arch.unitroot.KPSS`,
   :class:`~arch.unitroot.PhillipsPerron`, :class:`~arch.unitroot.VarianceRatio`,
   and :class:`~arch.unitroot.ZivotAndrews` when test specification is infeasible to
@@ -24,6 +28,10 @@ Since 4.13
 - Fixed a bug in :class:`arch.univariate.SkewStudent` which did not use the
   user-provided `RandomState` when one was provided. This prevented
   reproducing simulated values (:issue:`353`).
+
+Release 4.13
+============
+- Restored the vendored copy of ``property_cached`` for conda package building.
 
 Release 4.12
 ============
