@@ -294,6 +294,11 @@ def worker(
             last_print_remaining = remaining
     results = results.quantile(QUANTILES)
     results.to_hdf(full_path, "results")
+    if os.path.exists(temp_file_name(full_path)):
+        try:
+            os.unlink(temp_file_name(full_path))
+        except OSError:
+            pass
 
 
 if __name__ == "__main__":
