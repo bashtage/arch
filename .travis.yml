@@ -24,6 +24,10 @@ env:
 matrix:
   fast_finish: true
   include:
+  - os: osx
+    language: generic
+    env:
+      - USE_PIP=true
   - python: 3.7
     env:
       - PYTHON=3.7
@@ -79,7 +83,6 @@ matrix:
 
 before_install:
   - git fetch --tags
-  - sudo apt-get -y install pandoc
   # Avoid noise from matplotlib
   - mkdir -p $HOME/.config/matplotlib
   # Build package list to avoid empty package=versions
@@ -120,7 +123,7 @@ script:
   - set -e
   - |
     if [[ ${DOCBUILD} = true ]]; then
-      sudo apt-get install -y enchant
+      sudo apt-get install -y enchant pandoc
       pip install sphinxcontrib-spelling sphinx-material
       pip list
       cd doc
