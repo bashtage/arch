@@ -10,7 +10,7 @@ from arch.univariate import GARCH, Normal, ZeroMean
 def small_data():
     rs = np.random.RandomState([2389280, 238901, 382908031])
     mod = ZeroMean(None, volatility=GARCH(), distribution=Normal(random_state=rs))
-    sim = mod.simulate([1e-4, 0.05, 0.90], nobs=1000)
+    sim = mod.simulate([1e-3, 0.05, 0.90], nobs=1000)
     return sim.data
 
 
@@ -18,7 +18,7 @@ def small_data():
 def small_data2():
     rs = np.random.RandomState([2389280, 238901, 382908031])
     mod = ZeroMean(None, volatility=GARCH(), distribution=Normal(random_state=rs))
-    sim = mod.simulate([1e-4, 0.05, 0.90], nobs=1000)
+    sim = mod.simulate([1e-3, 0.05, 0.90], nobs=1000)
     return sim.data
 
 
@@ -26,7 +26,7 @@ def small_data2():
 def std_data():
     rs = np.random.RandomState([2389280, 238901, 382908031])
     mod = ZeroMean(None, volatility=GARCH(), distribution=Normal(random_state=rs))
-    sim = mod.simulate([1e-1, 0.05, 0.90], nobs=1000)
+    sim = mod.simulate([1.0, 0.05, 0.90], nobs=1000)
     return sim.data
 
 
@@ -36,9 +36,9 @@ def test_reproducibility(small_data, small_data2):
 
 def test_blank(small_data, std_data):
     small_mod = ZeroMean(small_data, volatility=GARCH(), rescale=False)
-    small_res = small_mod.fit()
+    small_res = small_mod.fit(starting_values=np.array([1e-3, 0.05, 0.90]), disp="off")
     mod = ZeroMean(std_data, volatility=GARCH(), rescale=False)
-    res = mod.fit()
+    res = mod.fit(starting_values=np.array([1, 0.05, 0.90]), disp="off")
     assert_allclose(1e3 * small_res.params[0], res.params[0], rtol=5e-3)
 
 
