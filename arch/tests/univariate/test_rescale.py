@@ -1,5 +1,3 @@
-import sys
-
 import numpy as np
 from numpy.testing import assert_allclose
 import pandas as pd
@@ -36,12 +34,11 @@ def test_reproducibility(small_data, small_data2):
     pd.testing.assert_series_equal(small_data, small_data2)
 
 
-@pytest.mark.skipif(sys.platform == "darwin", reason="Buggy on OSX/pip NumPy")
 def test_blank(small_data, std_data):
     small_mod = ZeroMean(small_data, volatility=GARCH(), rescale=False)
-    small_res = small_mod.fit(disp="off")
+    small_res = small_mod.fit()
     mod = ZeroMean(std_data, volatility=GARCH(), rescale=False)
-    res = mod.fit(disp="off")
+    res = mod.fit()
     assert_allclose(1e3 * small_res.params[0], res.params[0], rtol=5e-3)
 
 

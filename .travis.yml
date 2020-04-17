@@ -24,14 +24,15 @@ env:
 matrix:
   fast_finish: true
   include:
-  - os: osx
-    language: generic
-    env:
-      - USE_PIP=true
   - python: 3.7
     env:
       - PYTHON=3.7
       - ARCH_CYTHON_COVERAGE=true
+  - os: osx
+    osx_image:  xcode11.3
+    language: generic
+    env:
+      - USE_PIP=true
   - python: 3.8
     env:
       - PYTHON=3.8
@@ -82,6 +83,8 @@ matrix:
       - PYTEST_PATTERN="(slow or not slow)"
 
 before_install:
+  - source ci/travis-osx-setup.sh
+  - python --version
   - git fetch --tags
   # Avoid noise from matplotlib
   - mkdir -p $HOME/.config/matplotlib
@@ -101,7 +104,7 @@ before_install:
 install:
   - |
     if [[ "$COVERAGE" == true ]]; then
-      pip install -e .
+      pip install -e . --no-build-isolation
     else
       pip install .
     fi
@@ -109,12 +112,11 @@ install:
 script:
   - set -e
   - python ci/performance.py
-  - echo pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
   - |
     if [[ "$COVERAGE" == true ]]; then
+      echo pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch/tests/univariate/test_rescale.py
       pytest -r a -m "$PYTEST_PATTERN" ${COVERAGE_OPTS} --durations=25 arch
     else
-      pip install .
       mkdir arch_test
       cd arch_test
       python -c "import arch; arch.test(['-r a','-m (not slow)'])"
