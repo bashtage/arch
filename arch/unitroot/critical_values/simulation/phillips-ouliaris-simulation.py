@@ -248,11 +248,16 @@ def load_partial(
 ) -> Tuple[np.random.Generator, pd.DataFrame, int]:
     temp_file = temp_file_name(full_path)
     if os.path.exists(temp_file):
-        with gzip.open(temp_file, "rb") as pkl:
-            info = pickle.load(pkl)
-        gen = info["gen"]
-        results = info["results"]
-        remaining = info["remaining"]
+        try:
+            with gzip.open(temp_file, "rb") as pkl:
+                info = pickle.load(pkl)
+            gen = info["gen"]
+            results = info["results"]
+            remaining = info["remaining"]
+        except EOFError:
+            print(f"{RED}{temp_file} is corrupt, deleting.{RESET}")
+            os.unlink(temp_file)
+
     return gen, results, remaining
 
 
@@ -285,12 +290,13 @@ def worker(
         remaining_time = int(time_per_iter * remaining)
         rem = str(dt.timedelta(seconds=remaining_time))
         if last_print_remaining - remaining >= DISP_ITERATIONS:
+            print(f"Index: {idx} {RED}Saving{RESET}")
+            save_partial(gen, results, remaining, full_path)
             print(
                 f"Index: {idx}, Statistic: {statistic}, Trend: {trend}, "
-                f"Remaining: {GREEN}{remaining}{RESET}"
+                f"Remaining: {GREEN}{remaining}{RESET}, "
+                f"Est. time remaining: {RED}{rem}{RESET}"
             )
-            print(f"Est. time remaining: {RED}{rem}{RESET}")
-            save_partial(gen, results, remaining, full_path)
             last_print_remaining = remaining
     results = results.quantile(QUANTILES)
     results.to_hdf(full_path, "results")

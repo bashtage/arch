@@ -149,6 +149,8 @@ if not on_rtd:  # only import and set the theme if we"re building docs locally
         "html_minify": True,
         "css_minify": True,
         "master_doc": False,
+        "version_dropdown": True,
+        "version_info": {"Release": "/", "Development": "/devel"},
     }
 
 html_favicon = "images/favicon.ico"
