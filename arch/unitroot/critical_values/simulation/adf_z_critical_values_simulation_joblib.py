@@ -1,117 +1,128 @@
 """
 Simulation of ADF z-test critical values.  Closely follows MacKinnon (2010).
-Running this files requires an IPython cluster, which is assumed to be
-on the local machine.  This can be started using a command similar to
-
-    ipcluster start -n 4
-
-Remote clusters can be used by modifying the call to Client.
 """
-import datetime
+import argparse
+import os
+import random
 
-from numpy import arange, array, nan, percentile, savez, zeros
-from numpy.random import RandomState
-from statsmodels.tools.parallel import parallel_func
+import colorama
+from joblib import Parallel, delayed
+import numpy as np
+from numpy.random import PCG64, Generator, SeedSequence
+import psutil
 
-from .adf_simulation import adf_simulation
+from adf_simulation import (
+    OUTPUT_PATH,
+    PERCENTILES,
+    TIME_SERIES_LENGTHS,
+    TRENDS,
+    adf_simulation,
+)
 
-# Number of workers
-NUM_JOBS = 4
+GREEN = colorama.Fore.GREEN
+BLUE = colorama.Fore.BLUE
+RED = colorama.Fore.RED
+RESET = colorama.Fore.RESET
+
 # Number of repetitions
 EX_NUM = 500
 # Number of simulations per exercise
-EX_SIZE = 200000
+EX_SIZE = 250000
 # Approximately controls memory use, in MiB
 MAX_MEMORY_SIZE = 100
 
 
-def wrapper(n, trend, b, seed=0):
+# raw entropy (16 bits each) from random.org
+RAW = [
+    64303,
+    60269,
+    6936,
+    46495,
+    33811,
+    56090,
+    36001,
+    55726,
+    32840,
+    17611,
+    32276,
+    58287,
+    10615,
+    53045,
+    52978,
+    10484,
+    25209,
+    35367,
+    52618,
+    24147,
+]
+ENTROPY = [(RAW[i] << 16) + RAW[i + 1] for i in range(0, len(RAW), 2)]
+
+
+def single_experiment(trend, gen: Generator, file_name: str):
     """
     Wraps and blocks the main simulation so that the maximum amount of memory
     can be controlled on multi processor systems when executing in parallel
     """
-    rng = RandomState()
-    rng.seed(seed)
-    remaining = b
-    res = zeros(b)
-    finished = 0
-    block_size = int(2 ** 20.0 * MAX_MEMORY_SIZE / (8.0 * n))
-    for _ in range(0, b, block_size):
-        if block_size < remaining:
-            count = block_size
-        else:
-            count = remaining
-        st = finished
-        en = finished + count
-        res[st:en] = adf_simulation(n, trend, count, rng)
-        finished += count
-        remaining -= count
 
-    return res
+    res = np.zeros(EX_SIZE)
+    output = np.zeros((len(PERCENTILES), len(TIME_SERIES_LENGTHS)))
+    for col, nobs in enumerate(TIME_SERIES_LENGTHS):
+        remaining = EX_SIZE
+        finished = 0
+        block_size = int(2 ** 20.0 * MAX_MEMORY_SIZE / (8.0 * nobs))
+        for _ in range(0, EX_SIZE, block_size):
+            if block_size < remaining:
+                count = block_size
+            else:
+                count = remaining
+            st = finished
+            en = finished + count
+            res[st:en] = adf_simulation(nobs, trend, count, gen)
+            finished += count
+            remaining -= count
+        output[:, col] = np.percentile(res, PERCENTILES)
+    np.savez(file_name, results=output)
 
 
 if __name__ == "__main__":
-    trends = ("n", "c", "ct", "ctt")
-    T = array(
-        (
-            20,
-            25,
-            30,
-            35,
-            40,
-            45,
-            50,
-            60,
-            70,
-            80,
-            90,
-            100,
-            120,
-            140,
-            160,
-            180,
-            200,
-            250,
-            300,
-            350,
-            400,
-            450,
-            500,
-            600,
-            700,
-            800,
-            900,
-            1000,
-            1200,
-            1400,
-            2000,
-        )
+    parser = argparse.ArgumentParser("Simulations for ADF-Z critical values")
+    parser.add_argument(
+        "--ncpu",
+        type=int,
+        action="store",
+        help="Number of CPUs to use. If not specified, uses cpu_count() - 1",
     )
-    T = T[::-1]
-    m = T.shape[0]
-    percentiles = list(arange(0.5, 100.0, 0.5))
-    rng = RandomState(0)
-    seeds = rng.random_integers(0, 2 ** 31 - 2, size=EX_NUM)
+    parser.add_argument(
+        "--z_only", action="store_true", help="Only execute Z-type tests",
+    )
+    args = parser.parse_args()
+    njobs = getattr(args, "ncpu", None)
+    njobs = psutil.cpu_count(logical=False) - 1 if njobs is None else njobs
+    njobs = max(njobs, 1)
 
-    parallel, p_func, n_jobs = parallel_func(wrapper, n_jobs=NUM_JOBS, verbose=2)
-    parallel.pre_dispatch = NUM_JOBS
-    for tr in trends:
-        results = zeros((len(percentiles), len(T), EX_NUM)) * nan
-        filename = "adf_z_" + tr + ".npz"
-
+    ss = SeedSequence(ENTROPY)
+    children = ss.spawn(len(TRENDS) * EX_NUM)
+    generators = [Generator(PCG64(child)) for child in children]
+    jobs = []
+    count = 0
+    for tr in TRENDS:
         for i in range(EX_NUM):
-            print("Experiment Number {0} for Trend {1}".format(i + 1, tr))
-            # Non parallel version
-            # out = [wrapper(a,b,c,d) for a,b,c,d in
-            #        zip(T, [tr] * m, [EX_SIZE] * m, [seeds[i]] * m)]
-            now = datetime.datetime.now()
-            out = parallel(p_func(t, tr, EX_SIZE, seed=seeds[i]) for t in T)
-            quantiles = map(lambda x: percentile(x, percentiles), out)
-            results[:, :, i] = array(quantiles).T
-            elapsed = datetime.datetime.now() - now
-            print("Elapsed time {0} seconds".format(elapsed))
-
-            if i % 50 == 0:
-                savez(filename, trend=tr, results=results, percentiles=percentiles, T=T)
-
-        savez(filename, trend=tr, results=results, percentiles=percentiles, T=T)
+            file_name = os.path.join(OUTPUT_PATH, f"adf_z_{tr}-{i:04d}.npz")
+            jobs.append((tr, generators[count], file_name))
+            count += 1
+    jobs = [job for job in jobs if not os.path.exists(job[-1])]
+    random.shuffle(jobs)
+    nremconfig = len(jobs)
+    nconfig = len(children)
+    print(
+        f"Total configurations: {BLUE}{nconfig}{RESET}, "
+        f"Remaining: {RED}{nremconfig}{RESET}"
+    )
+    print(f"Running on {BLUE}{njobs}{RESET} CPUs")
+    if njobs > 1:
+        Parallel(verbose=50, n_jobs=njobs)(
+            delayed(single_experiment)(t, g, f) for t, g, f in jobs
+        )
+    else:
+        for job in jobs:
+            single_experiment(*job)
