@@ -1,79 +1,66 @@
-import numpy as np
-from statsmodels.regression.linear_model import OLS
+import glob
+import os
 
-trends = ("n", "c", "ct", "ctt")
+from black import FileMode, TargetVersion, format_file_contents
+import numpy as np
+import pandas as pd
+
+from adf_simulation import OUTPUT_PATH, PERCENTILES, TIME_SERIES_LENGTHS, TRENDS
+from shared import estimate_cv_regression, fit_pval_model, format_dict
+
 critical_values = (1.0, 5.0, 10.0)
 adf_z_cv_approx = {}
-for t in trends:
-    print(t)
-    data = np.load("adf_z_" + t + ".npz")
-    percentiles = data["percentiles"]
-    trend = data["trend"]
-    results = data["results"]
-    # T = data['T']
-    data.close()
+adf_pvals = {}
+adf_z_max = {}
+adf_z_min = {}
+adf_z_star = {}
+adf_z_small_p = {}
+adf_z_large_p = {}
 
-    # Remove later
-    T = np.array(
-        (
-            20,
-            25,
-            30,
-            35,
-            40,
-            45,
-            50,
-            60,
-            70,
-            80,
-            90,
-            100,
-            120,
-            140,
-            160,
-            180,
-            200,
-            250,
-            300,
-            350,
-            400,
-            450,
-            500,
-            600,
-            700,
-            800,
-            900,
-            1000,
-            1200,
-            1400,
-            2000,
-        )
-    )
-    T = T[::-1]
+for trend in TRENDS:
+    data_files = glob.glob(os.path.join(OUTPUT_PATH, f"adf_z_{trend}-*.npz"))
+    percentiles = PERCENTILES
+    all_results = []
+    for df in data_files:
+        with np.load(df) as data:
+            all_results.append(data["results"])
+    results = np.hstack(all_results)
+    cols = TIME_SERIES_LENGTHS.tolist() * len(data_files)
+    results = pd.DataFrame(results, index=PERCENTILES / 100.0, columns=cols)
 
-    # For percentiles 1, 5 and 10, regress on a constant, and powers of 1/T
-    out = []
-    for cv in critical_values:
-        num_ex = results.shape[2]
-        loc = np.where(percentiles == cv)[0][0]
-        lhs = np.squeeze(results[loc, :, :])
-        # Adjust for effective sample size, this is what lookup the code uses
-        tau = np.ones((num_ex, 1)).dot(T[None, :]) - 1.0
-        tau = tau.T
-        lhs = lhs.ravel()
-        tau = tau.ravel()
-        tau = tau[:, None]
-        n = lhs.shape[0]
-        rhs = np.ones((n, 1))
-        rhs = np.hstack((rhs, 1.0 / tau))
-        rhs = np.hstack((rhs, (1.0 / tau) ** 2.0))
-        rhs = np.hstack((rhs, (1.0 / tau) ** 3.0))
-        res = OLS(lhs, rhs).fit()
-        res.params[np.abs(res.tvalues) < 1.96] = 0.0
-        out.append(res.params)
+    cv_approx = estimate_cv_regression(results, critical_values)
+    adf_z_cv_approx[trend] = [cv_approx[cv] for cv in critical_values]
 
-    adf_z_cv_approx[t] = np.array(out)
+    pvals = fit_pval_model(results[2000], small_order=4, use_log=True)
+    adf_z_max[trend] = pvals.tau_max
+    adf_z_min[trend] = pvals.tau_min
+    adf_z_star[trend] = pvals.tau_star
+    adf_z_small_p[trend] = pvals.small_p
+    adf_z_large_p[trend] = pvals.large_p
 
-print("from numpy import array")
-print("")
-print("adf_z_cv_approx = " + str(adf_z_cv_approx))
+formatted_code = "adf_z_min = " + format_dict(adf_z_min)
+formatted_code += "\n\nadf_z_star = " + format_dict(adf_z_star)
+formatted_code += "\n\nadf_z_max = " + format_dict(adf_z_max)
+formatted_code += "\n\n# The small p parameters are for np.log(np.abs(stat))\n"
+formatted_code += "adf_z_small_p = " + format_dict(adf_z_small_p)
+formatted_code += "\n\nadf_z_large_p = " + format_dict(adf_z_large_p)
+formatted_code += "\n\nadf_z_cv_approx = " + format_dict(adf_z_cv_approx)
+
+with open("../dickey_fuller.py", "r") as cvs:
+    lines = cvs.readlines()
+
+retain = []
+for line in lines:
+    if "# Z values from" in line:
+        break
+    retain.append(line)
+retain.append("\n\n# Z values from new simulations, 500 exercises, 250,000 per ex.\n")
+
+formatted_code = "".join(retain) + formatted_code
+
+targets = {TargetVersion.PY36, TargetVersion.PY37, TargetVersion.PY38}
+fm = FileMode(target_versions=targets)
+formatted_code = format_file_contents(formatted_code, fast=False, mode=fm)
+
+with open("../dickey_fuller.py", "w") as cvs:
+    cvs.write(formatted_code)

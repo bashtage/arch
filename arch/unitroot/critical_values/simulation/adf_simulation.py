@@ -1,6 +1,62 @@
-from numpy import arange, cumsum, dot, ones, vstack
+import os
+import platform
+
+from numpy import arange, array, cumsum, dot, ones, vstack
 from numpy.linalg import pinv
 from numpy.random import RandomState
+
+# Storage Location
+if platform.system() == "Linux":
+    BASE_PATH = os.path.join("/mnt", "c")
+else:
+    BASE_PATH = "C:\\\\"
+OUTPUT_PATH = os.path.join(BASE_PATH, "Users", "kevin", "Dropbox", "adf-z")
+
+PERCENTILES = (
+    list(arange(1, 10))
+    + list(arange(10, 50, 5))
+    + list(arange(50, 950, 10))
+    + list(arange(950, 990, 5))
+    + list(arange(990, 999))
+)
+PERCENTILES = array(PERCENTILES) / 10.0
+
+TRENDS = ("n", "c", "ct", "ctt")
+TIME_SERIES_LENGTHS = array(
+    (
+        20,
+        25,
+        30,
+        35,
+        40,
+        45,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100,
+        120,
+        140,
+        160,
+        180,
+        200,
+        250,
+        300,
+        350,
+        400,
+        450,
+        500,
+        600,
+        700,
+        800,
+        900,
+        1000,
+        1200,
+        1400,
+        2000,
+    )
+)
 
 
 def adf_simulation(n, trend, b, rng=None):

@@ -1898,8 +1898,8 @@ def mackinnoncrit(
         asymptotic_cv = tau_2010[regression][num_unit_roots - 1, :, 0]
         poly_coef = tau_2010[regression][num_unit_roots - 1, :, :].T
     elif dist_type == "adf-z":
-        poly_coef = adf_z_cv_approx[regression].T
-        asymptotic_cv = adf_z_cv_approx[regression][:, 0]
+        poly_coef = array(adf_z_cv_approx[regression]).T
+        asymptotic_cv = array(adf_z_cv_approx[regression])[:, 0]
     elif dist_type == "dfgls":
         poly_coef = dfgls_cv_approx[regression].T
         asymptotic_cv = dfgls_cv_approx[regression][:, 0]
