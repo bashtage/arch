@@ -195,6 +195,7 @@ unstandardized
 vals
 VaR
 VarianceRatio
+vendored
 VolatilityProcess
 volatilty
 vr
