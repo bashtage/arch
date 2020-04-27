@@ -11,6 +11,7 @@ from distutils.version import LooseVersion
 import glob
 import os
 import shutil
+from typing import Dict, List
 
 import arch
 
@@ -39,12 +40,17 @@ copyright = "2019, Kevin Sheppard"
 author = "Kevin Sheppard"
 
 # The short X.Y version
-version = arch.__version__
-ver = LooseVersion(arch.__version__).version
-if "+" in ver:
-    loc = ver.index("+")
-    version = ".".join(map(str, ver[:loc]))
-    version += " (+{0})".format(ver[loc + 1])
+loose_version = LooseVersion(arch.__version__)
+short_version = version = arch.__version__
+if "+" in loose_version.version:
+    version = version.replace(".dirty", "")
+    version = version.split("+")
+    commits, tag = version[1].split(".")
+    version = version[0]
+    short_tag = " (+{0})".format(commits)
+    tag = " (+" + commits + ", " + tag + ")"
+    short_version = version + short_tag
+    version = version + tag
 # The full version, including alpha/beta/rc tags.
 release = arch.__version__
 
@@ -110,7 +116,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns: List[str] = []
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "colorful"  # "sphinx"
@@ -139,7 +145,7 @@ if not on_rtd:  # only import and set the theme if we"re building docs locally
         "repo_url": "https://github.com/bashtage/arch/",
         "repo_name": "ARCH",
         # Set the name of the project to appear in the sidebar
-        "nav_title": project + " " + version,
+        "nav_title": project + " " + short_version,
         "globaltoc_depth": 2,
         "globaltoc_collapse": True,
         "globaltoc_includehidden": True,
@@ -150,7 +156,10 @@ if not on_rtd:  # only import and set the theme if we"re building docs locally
         "css_minify": True,
         "master_doc": False,
         "version_dropdown": True,
-        "version_info": {"Release": "/", "Development": "/devel"},
+        "version_info": {
+            "Release": "https://bashtage.github.io/arch/",
+            "Development": "https://bashtage.github.io/arch/devel/",
+        },
     }
 
 html_favicon = "images/favicon.ico"
@@ -191,7 +200,7 @@ htmlhelp_basename = "arch"
 
 # -- Options for LaTeX output ------------------------------------------------
 
-latex_elements = {
+latex_elements: Dict[str, str] = {
     # The paper size ("letterpaper" or "a4paper").
     #
     # "papersize": "letterpaper",
