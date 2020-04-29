@@ -1368,7 +1368,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         The number of lags to use in the ADF regression.  If omitted or None,
         `method` is used to automatically select the lag length with no more
         than `max_lags` are included.
-    trend : {'c', 'ct', 'ctt'}, optional
+    trend : {'c', 't', 'ct'}, optional
         The trend component to include in the Zivot-Andrews test
         'c' - Include a constant (Default)
         't' - Include a linear time trend
