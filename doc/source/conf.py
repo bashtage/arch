@@ -159,6 +159,7 @@ if not on_rtd:  # only import and set the theme if we"re building docs locally
         "version_info": {
             "Release": "https://bashtage.github.io/arch/",
             "Development": "https://bashtage.github.io/arch/devel/",
+            "RTD (Release)": "https://arch.readthedocs.io/",
         },
     }
 
