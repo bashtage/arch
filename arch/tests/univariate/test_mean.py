@@ -1141,3 +1141,13 @@ def test_no_variance():
     mod = arch_model(np.ones(100))
     with pytest.warns(ConvergenceWarning):
         mod.fit(disp=DISPLAY)
+
+
+def test_1d_exog():
+    y = np.random.standard_normal((300))
+    x = np.random.standard_normal((300))
+    am = arch_model(y, x, mean="ARX", lags=2, vol="ARCH", q=0)
+    res = am.fit()
+    am = arch_model(y, x[:, None], mean="ARX", lags=2, vol="ARCH", q=0)
+    res2 = am.fit()
+    assert_series_equal(res.params, res2.params)
