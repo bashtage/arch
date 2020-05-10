@@ -444,6 +444,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     def _check_specification(self) -> None:
         """Checks the specification for obvious errors """
         if self._x is not None:
+            if self._x.ndim == 1:
+                self._x = self._x[:, None]
             if self._x.ndim != 2 or self._x.shape[0] != self._y.shape[0]:
                 raise ValueError(
                     "x must be nobs by n, where nobs is the same as "
