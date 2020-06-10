@@ -885,7 +885,7 @@ devel/_static/javascripts/lunr/tinyseg.js
 devel/_static/javascripts/lunr/wordcut.js
 devel/_static/javascripts/modernizr.js
 devel/_static/javascripts/version_dropdown.js
-devel/_static/jquery-3.4.1.js
+devel/_static/jquery-3.5.1.js
 devel/_static/jquery.js
 devel/_static/jquery.min.map
 devel/_static/language_data.js
