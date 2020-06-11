@@ -111,7 +111,7 @@ for examples of testing series for unit roots.
 ### Cointegration Testing and Analysis
 
 - Tests
-  - Emgle-Granger Test
+  - Engle-Granger Test
   - Phillips-Ouliaris Test
 - Cointegration Vector Estimation
   - Canonical Cointegrating Regression 
