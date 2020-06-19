@@ -351,6 +351,8 @@ class UnitRootTest(object):
         self._test_name = None
         self._title = None
         self._summary_text = None
+        self.coef_pvalue = None
+        self._res_summary = None
 
     def __str__(self):
         return self.summary().__str__()
@@ -504,6 +506,16 @@ class UnitRootTest(object):
         if self._trend != value:
             self._reset()
             self._trend = value
+
+    @property
+    def coeff_pvalue(self):
+        self._compute_if_needed()
+        return self._coeff_pvalue
+
+    @property
+    def res_summary(self):
+        self._compute_if_needed()
+        return self._res_summary
 
 
 @add_metaclass(DocStringInheritor)
@@ -995,6 +1007,10 @@ class PhillipsPerron(UnitRootTest):
                                  "10%": critical_values[2]}
 
         self._title = self._test_name + ' (Z-' + self._test_type + ')'
+
+        self._coeff_pvalue = resols.pvalues
+
+        self._res_summary = resols.summary()
 
     @property
     def test_type(self):
