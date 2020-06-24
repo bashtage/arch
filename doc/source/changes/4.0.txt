@@ -2,6 +2,12 @@
 Version 4
 =========
 
+Release 4.15
+============
+- This is a minor release with doc fixes and other small updates. The only notable
+  feature is :func:`~arch.unitroot.unitroot.PhillipsPerron.regression` which returns
+  regression results from the model estimated as part of the test (:issue:`395`).
+
 Release 4.14
 ============
 - Added Kernel-based long-run variance estimation in ``arch.covariance.kernel``.
