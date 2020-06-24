@@ -692,6 +692,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         rng: Optional[Callable[[Union[int, Tuple[int, ...]]], NDArray]] = None,
         random_state: Optional[np.random.RandomState] = None,
     ) -> ARCHModelForecast:
+        if not isinstance(horizon, (int, np.integer)) or horizon < 1:
+            raise ValueError("horizon must be an integer >= 1.")
         # Check start
         earliest, default_start = self._fit_indices
         default_start = max(0, default_start - 1)

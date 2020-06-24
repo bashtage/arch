@@ -1341,9 +1341,9 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
             s1 += i * resids_prod
         if s0 <= 0:
             raise InfeasibleTestException(
-                f"Residuals are all zero and so automatic bandwidth selection cannot "
-                f"be used. This is usually an indication that the series being testes "
-                f"is too small or have constant values."
+                "Residuals are all zero and so automatic bandwidth selection cannot "
+                "be used. This is usually an indication that the series being testes "
+                "is too small or have constant values."
             )
         s_hat = s1 / s0
         pwr = 1.0 / 3.0

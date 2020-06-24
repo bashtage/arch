@@ -1388,6 +1388,8 @@ class ARCHModelFixedResult(_SummaryRepr):
                 or params.ndim != self._params.ndim
             ):
                 raise ValueError("params have incorrect dimensions")
+        if not isinstance(horizon, (int, np.integer)) or horizon < 1:
+            raise ValueError("horizon must be an integer >= 1.")
         return self.model.forecast(
             params, horizon, start, align, method, simulations, rng, random_state
         )

@@ -235,6 +235,8 @@ class TestVarianceForecasts(object):
         )
         expected[:100] = np.nan
         assert_allclose(forecast.forecasts, expected)
+        with pytest.raises(ValueError, match="horizon must be an integer >= 1"):
+            vol.forecast(params, self.resid, backcast, var_bounds, start=0, horizon=0)
 
     def test_arch_1_forecast_simulation(self):
         dist = Normal(self.rng)

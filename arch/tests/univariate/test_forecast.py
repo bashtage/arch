@@ -123,6 +123,8 @@ class TestForecasting(object):
         assert_allclose(
             fcast.residual_variance.iloc[499:], np.ones((501, 3)) * params[0]
         )
+        with pytest.raises(ValueError, match="horizon must be an integer >= 1"):
+            res.forecast(horizon=0)
 
     def test_frame_labels(self):
         am = arch_model(self.zero_mean, mean="Zero", vol="Constant")

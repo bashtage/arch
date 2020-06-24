@@ -6,10 +6,8 @@ import os
 import random
 
 import colorama
-from joblib import Parallel, delayed
 import numpy as np
 from numpy.random import PCG64, Generator, SeedSequence
-import psutil
 
 from adf_simulation import (
     OUTPUT_PATH,
@@ -18,6 +16,8 @@ from adf_simulation import (
     TRENDS,
     adf_simulation,
 )
+from joblib import Parallel, delayed
+import psutil
 
 GREEN = colorama.Fore.GREEN
 BLUE = colorama.Fore.BLUE
