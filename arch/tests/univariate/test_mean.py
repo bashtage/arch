@@ -132,6 +132,8 @@ class TestMeanModel(object):
         assert isinstance(cm.__repr__(), str)
         assert isinstance(cm.__str__(), str)
         assert "<strong>" in cm._repr_html_()
+        with pytest.raises(ValueError, match="horizon must be an integer >= 1"):
+            res.forecast(horizon=0, start=20)
 
     def test_zero_mean(self):
         zm = ZeroMean(self.y)
@@ -456,12 +458,18 @@ class TestMeanModel(object):
         with pytest.raises(ValueError):
             res.plot(annualize="unknown")
 
+        import matplotlib.pyplot as plt
+
+        plt.close("all")
+
         res.plot(scale=360)
         res.hedgehog_plot(start=500)
         res.hedgehog_plot(start=500, plot_type="mean")
         res.hedgehog_plot(plot_type="volatility")
         res.hedgehog_plot(start=500, method="simulation", simulations=100)
         res.hedgehog_plot(plot_type="volatility", method="bootstrap")
+
+        plt.close("all")
 
     def test_arch_arx(self):
         self.rng.seed(12345)

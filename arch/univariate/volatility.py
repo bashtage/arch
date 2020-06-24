@@ -643,7 +643,8 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         method = method.lower()
         if method not in ("analytic", "simulation", "bootstrap"):
             raise ValueError("{0} is not a known forecasting method".format(method))
-
+        if not isinstance(horizon, (int, np.integer)) or horizon < 1:
+            raise ValueError("horizon must be an integer >= 1.")
         self._check_forecasting_method(method, horizon)
         start = len(resids) - 1 if start is None else start
         if method == "analytic":
@@ -2743,7 +2744,7 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
         if not self._unit_scale:
-            v = self.starting_values(resids)
+            v = float(np.squeeze(self.starting_values(resids)))
             _resids = resids / np.sqrt(self._variance[self._start : self._stop])
             mu = _resids.mean()
             return [(v / 100000.0, 10.0 * (v + mu ** 2.0))]

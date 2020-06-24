@@ -171,6 +171,8 @@ def test_trivariate(data, trend, method, lhs):
 
         fig = test.plot()
         assert isinstance(fig, plt.Figure)
+
+        plt.close("all")
     assert isinstance(test.resid, pd.Series)
     assert test.resid.shape[0] == dep.shape[0]
 
