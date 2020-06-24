@@ -351,6 +351,7 @@ devel/_sources/unitroot/generated/generated/arch.unitroot.PhillipsPerron.lags.rs
 devel/_sources/unitroot/generated/generated/arch.unitroot.PhillipsPerron.nobs.rst.txt
 devel/_sources/unitroot/generated/generated/arch.unitroot.PhillipsPerron.null_hypothesis.rst.txt
 devel/_sources/unitroot/generated/generated/arch.unitroot.PhillipsPerron.pvalue.rst.txt
+devel/_sources/unitroot/generated/generated/arch.unitroot.PhillipsPerron.regression.rst.txt
 devel/_sources/unitroot/generated/generated/arch.unitroot.PhillipsPerron.stat.rst.txt
 devel/_sources/unitroot/generated/generated/arch.unitroot.PhillipsPerron.summary.rst.txt
 devel/_sources/unitroot/generated/generated/arch.unitroot.PhillipsPerron.test_type.rst.txt
@@ -1212,6 +1213,7 @@ devel/unitroot/generated/generated/arch.unitroot.PhillipsPerron.lags.html
 devel/unitroot/generated/generated/arch.unitroot.PhillipsPerron.nobs.html
 devel/unitroot/generated/generated/arch.unitroot.PhillipsPerron.null_hypothesis.html
 devel/unitroot/generated/generated/arch.unitroot.PhillipsPerron.pvalue.html
+devel/unitroot/generated/generated/arch.unitroot.PhillipsPerron.regression.html
 devel/unitroot/generated/generated/arch.unitroot.PhillipsPerron.stat.html
 devel/unitroot/generated/generated/arch.unitroot.PhillipsPerron.summary.html
 devel/unitroot/generated/generated/arch.unitroot.PhillipsPerron.test_type.html
