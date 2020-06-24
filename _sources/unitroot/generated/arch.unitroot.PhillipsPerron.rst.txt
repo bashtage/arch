@@ -30,6 +30,7 @@ arch.unitroot.PhillipsPerron
       ~PhillipsPerron.nobs
       ~PhillipsPerron.null_hypothesis
       ~PhillipsPerron.pvalue
+      ~PhillipsPerron.regression
       ~PhillipsPerron.stat
       ~PhillipsPerron.test_type
       ~PhillipsPerron.trend

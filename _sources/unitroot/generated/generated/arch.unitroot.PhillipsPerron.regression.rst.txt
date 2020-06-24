@@ -1,0 +1,6 @@
+arch.unitroot.PhillipsPerron.regression
+=======================================
+
+.. currentmodule:: arch.unitroot
+
+.. autoproperty:: PhillipsPerron.regression

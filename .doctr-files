@@ -351,6 +351,7 @@
 ./_sources/unitroot/generated/generated/arch.unitroot.PhillipsPerron.nobs.rst.txt
 ./_sources/unitroot/generated/generated/arch.unitroot.PhillipsPerron.null_hypothesis.rst.txt
 ./_sources/unitroot/generated/generated/arch.unitroot.PhillipsPerron.pvalue.rst.txt
+./_sources/unitroot/generated/generated/arch.unitroot.PhillipsPerron.regression.rst.txt
 ./_sources/unitroot/generated/generated/arch.unitroot.PhillipsPerron.stat.rst.txt
 ./_sources/unitroot/generated/generated/arch.unitroot.PhillipsPerron.summary.rst.txt
 ./_sources/unitroot/generated/generated/arch.unitroot.PhillipsPerron.test_type.rst.txt
@@ -843,7 +844,6 @@
 ./_static/fonts/specimen/MaterialIcons-Regular.ttf
 ./_static/fonts/specimen/MaterialIcons-Regular.woff
 ./_static/fonts/specimen/MaterialIcons-Regular.woff2
-./_static/guzzle.css
 ./_static/images/android-chrome-192x192.png
 ./_static/images/android-chrome-512x512.png
 ./_static/images/apple-touch-icon.png
@@ -886,7 +886,7 @@
 ./_static/javascripts/lunr/wordcut.js
 ./_static/javascripts/modernizr.js
 ./_static/javascripts/version_dropdown.js
-./_static/jquery-3.4.1.js
+./_static/jquery-3.5.1.js
 ./_static/jquery.js
 ./_static/jquery.min.map
 ./_static/language_data.js
@@ -1213,6 +1213,7 @@
 ./unitroot/generated/generated/arch.unitroot.PhillipsPerron.nobs.html
 ./unitroot/generated/generated/arch.unitroot.PhillipsPerron.null_hypothesis.html
 ./unitroot/generated/generated/arch.unitroot.PhillipsPerron.pvalue.html
+./unitroot/generated/generated/arch.unitroot.PhillipsPerron.regression.html
 ./unitroot/generated/generated/arch.unitroot.PhillipsPerron.stat.html
 ./unitroot/generated/generated/arch.unitroot.PhillipsPerron.summary.html
 ./unitroot/generated/generated/arch.unitroot.PhillipsPerron.test_type.html
