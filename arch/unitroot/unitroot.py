@@ -1098,6 +1098,7 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._stat_tau = None
         self._test_name = "Phillips-Perron Test"
         self._lags = lags
+        self._regression = None
 
     def _check_specification(self) -> None:
         trend_order = len(self._trend) if self._trend not in ("n", "nc") else 0
@@ -1126,6 +1127,7 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
             rhs = add_trend(rhs, trend)
 
         resols = OLS(lhs, rhs).fit()
+        self._regression = OLS(lhs, rhs).fit(cov_type="HAC", cov_kwds={"maxlags": lags})
         k = rhs.shape[1]
         n, u = resols.nobs, resols.resid
         if u.shape[0] < lags:
@@ -1188,6 +1190,17 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         warnings.warn(MUTATING_WARNING, FutureWarning)
         self._reset()
         self._test_type = value
+
+    @property
+    def regression(self) -> RegressionResults:
+        """
+        Returns OLS regression results for the specification used in the test
+
+        The results returned use a Newey-West covariance matrix with the same
+        number of lags as are used in the test statistic.
+        """
+        self._compute_if_needed()
+        return self._regression
 
 
 class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):

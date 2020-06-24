@@ -150,6 +150,12 @@ class TestUnitRoot(object):
         assert_almost_equal(pp.stat, -108.1552688, DECIMAL_2)
         pp.summary()
 
+    def test_pp_regression(self):
+        pp = PhillipsPerron(self.inflation, lags=12)
+        reg = pp.regression
+        assert len(reg.params) == 2
+        assert "(HAC) using 12 lags" in str(reg.summary())
+
     def test_pp_bad_type(self):
         pp = PhillipsPerron(self.inflation, lags=12)
         with pytest.raises(ValueError):
