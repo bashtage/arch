@@ -139,7 +139,7 @@ def _select_best_ic(
 
     Parameters
     ----------
-    method : {'aic', 'bic', 't-stat'}
+    method : {"aic", "bic", "t-stat"}
         Method to use when finding the lag length
     nobs : float
         Number of observations in time series
@@ -147,7 +147,7 @@ def _select_best_ic(
         maxlag + 1 array containing MLE estimates of the residual variance
     tstat : ndarray
         maxlag + 1 array containing t-statistic values. Only used if method
-        is 't-stat'
+        is "t-stat"
 
     Returns
     -------
@@ -196,9 +196,9 @@ def _autolag_ols_low_memory(
         Variable being tested for a unit root
     maxlag : int
         The highest lag order for lag length selection.
-    trend : {'nc', 'c', 'ct','ctt'}
+    trend : {"n", "c", "ct", "ctt"}
         Trend in the model
-    method : {'aic', 'bic', 't-stat'}
+    method : {"aic", "bic", "t-stat"}
         Method to use when finding the lag length
 
     Returns
@@ -290,10 +290,11 @@ def _autolag_ols(
         The first zero-indexed column to hold a lag.  See Notes.
     maxlag : int
         The highest lag order for lag length selection.
-    method : {'aic', 'bic', 't-stat'}
-        aic - Akaike Information Criterion
-        bic - Bayes Information Criterion
-        t-stat - Based on last lag
+    method : {"aic", "bic", "t-stat"}
+
+        * aic - Akaike Information Criterion
+        * bic - Bayes Information Criterion
+        * t-stat - Based on last lag
 
     Returns
     -------
@@ -353,13 +354,13 @@ def _df_select_lags(
     ----------
     y : ndarray
         The data for the lag selection exercise
-    trend : {'nc','c','ct','ctt'}
+    trend : {"n","c","ct","ctt"}
         The trend order
     max_lags : int
         The maximum number of lags to check.  This setting affects all
         estimation since the sample is adjusted by max_lags when
         fitting the models
-    method : {'AIC','BIC','t-stat'}
+    method : {"AIC","BIC","t-stat"}
         The method to use when estimating the model
     low_memory : bool
         Flag indicating whether to use the low-memory algorithm for
@@ -418,7 +419,7 @@ def _estimate_df_regression(y: NDArray, trend: str, lags: int) -> RegressionResu
     ----------
     y : ndarray
         The data for the lag selection
-    trend : {'nc','c','ct','ctt'}
+    trend : {"n","c","ct","ctt"}
         The trend order
     lags : int
         The number of lags to include in the ADF regression
@@ -667,19 +668,23 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
         The number of lags to use in the ADF regression.  If omitted or None,
         `method` is used to automatically select the lag length with no more
         than `max_lags` are included.
-    trend : {'nc', 'c', 'ct', 'ctt'}, optional
-        The trend component to include in the ADF test
-        'nc' - No trend components
-        'c' - Include a constant (Default)
-        'ct' - Include a constant and linear time trend
-        'ctt' - Include a constant and linear and quadratic time trends
+    trend : {"n", "c", "ct", "ctt"}, optional
+        The trend component to include in the test
+
+        - "n" - No trend components
+        - "c" - Include a constant (Default)
+        - "ct" - Include a constant and linear time trend
+        - "ctt" - Include a constant and linear and quadratic time trends
+
     max_lags : int, optional
         The maximum number of lags to use when selecting lag length
-    method : {'AIC', 'BIC', 't-stat'}, optional
+    method : {"AIC", "BIC", "t-stat"}, optional
         The method to use when selecting the lag length
-        'AIC' - Select the minimum of the Akaike IC
-        'BIC' - Select the minimum of the Schwarz/Bayesian IC
-        't-stat' - Select the minimum of the Schwarz/Bayesian IC
+
+        - "AIC" - Select the minimum of the Akaike IC
+        - "BIC" - Select the minimum of the Schwarz/Bayesian IC
+        - "t-stat" - Select the minimum of the Schwarz/Bayesian IC
+
     low_memory : bool
         Flag indicating whether to use a low memory implementation of the
         lag selection algorithm. The low memory algorithm is slower than
@@ -708,18 +713,18 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
     >>> import numpy as np
     >>> import statsmodels.api as sm
     >>> data = sm.datasets.macrodata.load().data
-    >>> inflation = np.diff(np.log(data['cpi']))
+    >>> inflation = np.diff(np.log(data["cpi"]))
     >>> adf = ADF(inflation)
-    >>> print('{0:0.4f}'.format(adf.stat))
+    >>> print("{0:0.4f}".format(adf.stat))
     -3.0931
-    >>> print('{0:0.4f}'.format(adf.pvalue))
+    >>> print("{0:0.4f}".format(adf.pvalue))
     0.0271
     >>> adf.lags
     2
-    >>> adf.trend='ct'
-    >>> print('{0:0.4f}'.format(adf.stat))
+    >>> adf.trend="ct"
+    >>> print("{0:0.4f}".format(adf.stat))
     -3.2111
-    >>> print('{0:0.4f}'.format(adf.pvalue))
+    >>> print("{0:0.4f}".format(adf.pvalue))
     0.0822
 
     References
@@ -832,17 +837,20 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         The number of lags to use in the ADF regression.  If omitted or None,
         `method` is used to automatically select the lag length with no more
         than `max_lags` are included.
-    trend : {'c', 'ct'}, optional
-        The trend component to include in the ADF test
-        'c' - Include a constant (Default)
-        'ct' - Include a constant and linear time trend
+    trend : {"c", "ct"}, optional
+        The trend component to include in the test
+
+        - "c" - Include a constant (Default)
+        - "ct" - Include a constant and linear time trend
+
     max_lags : int, optional
         The maximum number of lags to use when selecting lag length
-    method : {'AIC', 'BIC', 't-stat'}, optional
+    method : {"AIC", "BIC", "t-stat"}, optional
         The method to use when selecting the lag length
-        'AIC' - Select the minimum of the Akaike IC
-        'BIC' - Select the minimum of the Schwarz/Bayesian IC
-        't-stat' - Select the minimum of the Schwarz/Bayesian IC
+
+        - "AIC" - Select the minimum of the Akaike IC
+        - "BIC" - Select the minimum of the Schwarz/Bayesian IC
+        - "t-stat" - Select the minimum of the Schwarz/Bayesian IC
 
     Notes
     -----
@@ -854,8 +862,8 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     DFGLS differs from the ADF test in that an initial GLS detrending step
     is used before a trend-less ADF regression is run.
 
-    Critical values and p-values when trend is 'c' are identical to
-    the ADF.  When trend is set to 'ct, they are from ...
+    Critical values and p-values when trend is "c" are identical to
+    the ADF.  When trend is set to "ct", they are from ...
 
     Examples
     --------
@@ -863,18 +871,18 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     >>> import numpy as np
     >>> import statsmodels.api as sm
     >>> data = sm.datasets.macrodata.load().data
-    >>> inflation = np.diff(np.log(data['cpi']))
+    >>> inflation = np.diff(np.log(data["cpi"]))
     >>> dfgls = DFGLS(inflation)
-    >>> print('{0:0.4f}'.format(dfgls.stat))
+    >>> print("{0:0.4f}".format(dfgls.stat))
     -2.7611
-    >>> print('{0:0.4f}'.format(dfgls.pvalue))
+    >>> print("{0:0.4f}".format(dfgls.pvalue))
     0.0059
     >>> dfgls.lags
     2
-    >>> dfgls.trend = 'ct'
-    >>> print('{0:0.4f}'.format(dfgls.stat))
+    >>> dfgls.trend = "ct"
+    >>> print("{0:0.4f}".format(dfgls.stat))
     -2.9036
-    >>> print('{0:0.4f}'.format(dfgls.pvalue))
+    >>> print("{0:0.4f}".format(dfgls.pvalue))
     0.0447
 
     References
@@ -1011,14 +1019,16 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         The number of lags to use in the Newey-West estimator of the long-run
         covariance.  If omitted or None, the lag length is set automatically to
         12 * (nobs/100) ** (1/4)
-    trend : {'nc', 'c', 'ct'}, optional
-        The trend component to include in the ADF test
-            'nc' - No trend components
-            'c' - Include a constant (Default)
-            'ct' - Include a constant and linear time trend
-    test_type : {'tau', 'rho'}
-        The test to use when computing the test statistic. 'tau' is based on
-        the t-stat and 'rho' uses a test based on nobs times the re-centered
+    trend : {"n", "c", "ct"}, optional
+        The trend component to include in the test
+
+        - "n" - No trend components
+        - "c" - Include a constant (Default)
+        - "ct" - Include a constant and linear time trend
+
+    test_type : {"tau", "rho"}
+        The test to use when computing the test statistic. "tau" is based on
+        the t-stat and "rho" uses a test based on nobs times the re-centered
         regression coefficient
 
     Notes
@@ -1044,23 +1054,23 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
     >>> import numpy as np
     >>> import statsmodels.api as sm
     >>> data = sm.datasets.macrodata.load().data
-    >>> inflation = np.diff(np.log(data['cpi']))
+    >>> inflation = np.diff(np.log(data["cpi"]))
     >>> pp = PhillipsPerron(inflation)
-    >>> print('{0:0.4f}'.format(pp.stat))
+    >>> print("{0:0.4f}".format(pp.stat))
     -8.1356
-    >>> print('{0:0.4f}'.format(pp.pvalue))
+    >>> print("{0:0.4f}".format(pp.pvalue))
     0.0000
     >>> pp.lags
     15
-    >>> pp.trend = 'ct'
-    >>> print('{0:0.4f}'.format(pp.stat))
+    >>> pp.trend = "ct"
+    >>> print("{0:0.4f}".format(pp.stat))
     -8.2022
-    >>> print('{0:0.4f}'.format(pp.pvalue))
+    >>> print("{0:0.4f}".format(pp.pvalue))
     0.0000
-    >>> pp.test_type = 'rho'
-    >>> print('{0:0.4f}'.format(pp.stat))
+    >>> pp.test_type = "rho"
+    >>> print("{0:0.4f}".format(pp.stat))
     -120.3271
-    >>> print('{0:0.4f}'.format(pp.pvalue))
+    >>> print("{0:0.4f}".format(pp.pvalue))
     0.0000
 
     References
@@ -1179,8 +1189,10 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     @property
     def test_type(self) -> str:
-        """Gets or sets the test type returned by stat.
-        Valid values are 'tau' or 'rho'"""
+        """
+        Gets or sets the test type returned by stat.
+        Valid values are "tau" or "rho"
+        """
         return self._test_type
 
     @test_type.setter
@@ -1218,10 +1230,10 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         Andrews (1991), Newey & West (1994), and Schwert (1989).
         Set lags=-1 to use the old method that only depends on the sample
         size, 12 * (nobs/100) ** (1/4).
-    trend : {'c', 'ct'}, optional
+    trend : {"c", "ct"}, optional
         The trend component to include in the ADF test
-            'c' - Include a constant (Default)
-            'ct' - Include a constant and linear time trend
+            "c" - Include a constant (Default)
+            "ct" - Include a constant and linear time trend
 
     Notes
     -----
@@ -1240,16 +1252,16 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     >>> import numpy as np
     >>> import statsmodels.api as sm
     >>> data = sm.datasets.macrodata.load().data
-    >>> inflation = np.diff(np.log(data['cpi']))
+    >>> inflation = np.diff(np.log(data["cpi"]))
     >>> kpss = KPSS(inflation)
-    >>> print('{0:0.4f}'.format(kpss.stat))
+    >>> print("{0:0.4f}".format(kpss.stat))
     0.2870
-    >>> print('{0:0.4f}'.format(kpss.pvalue))
+    >>> print("{0:0.4f}".format(kpss.pvalue))
     0.1473
-    >>> kpss.trend = 'ct'
-    >>> print('{0:0.4f}'.format(kpss.stat))
+    >>> kpss.trend = "ct"
+    >>> print("{0:0.4f}".format(kpss.stat))
     0.2075
-    >>> print('{0:0.4f}'.format(kpss.pvalue))
+    >>> print("{0:0.4f}".format(kpss.pvalue))
     0.0128
 
     References
@@ -1381,21 +1393,24 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         The number of lags to use in the ADF regression.  If omitted or None,
         `method` is used to automatically select the lag length with no more
         than `max_lags` are included.
-    trend : {'c', 't', 'ct'}, optional
-        The trend component to include in the Zivot-Andrews test
-        'c' - Include a constant (Default)
-        't' - Include a linear time trend
-        'ct' - Include a constant and linear time trend
+    trend : {"c", "t", "ct"}, optional
+        The trend component to include in the test
+
+        - "c" - Include a constant (Default)
+        - "t" - Include a linear time trend
+        - "ct" - Include a constant and linear time trend
+
     trim : float
         percentage of series at begin/end to exclude from break-period
         calculation in range [0, 0.333] (default=0.15)
     max_lags : int, optional
         The maximum number of lags to use when selecting lag length
-    method : {'AIC', 'BIC', 't-stat'}, optional
+    method : {"AIC", "BIC", "t-stat"}, optional
         The method to use when selecting the lag length
-        'AIC' - Select the minimum of the Akaike IC
-        'BIC' - Select the minimum of the Schwarz/Bayesian IC
-        't-stat' - Select the minimum of the Schwarz/Bayesian IC
+
+        - "AIC" - Select the minimum of the Akaike IC
+        - "BIC" - Select the minimum of the Schwarz/Bayesian IC
+        - "t-stat" - Select the minimum of the Schwarz/Bayesian IC
 
     Notes
     -----
@@ -1586,8 +1601,8 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
     lags : int
         The number of periods to used in the multi-period variance, which is
         the numerator of the test statistic.  Must be at least 2
-    trend : {'nc', 'c'}, optional
-        'c' allows for a non-zero drift in the random walk, while 'nc' requires
+    trend : {"n", "c"}, optional
+        "c" allows for a non-zero drift in the random walk, while "n" requires
         that the increments to y are mean 0
     overlap : bool, optional
         Indicates whether to use all overlapping blocks.  Default is True.  If
@@ -1612,11 +1627,11 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
     >>> from arch.unitroot import VarianceRatio
     >>> import datetime as dt
     >>> import pandas_datareader as pdr
-    >>> data = pdr.get_data_fred('DJIA')
-    >>> data = data.resample('M').last()  # End of month
-    >>> returns = data['DJIA'].pct_change().dropna()
+    >>> data = pdr.get_data_fred("DJIA")
+    >>> data = data.resample("M").last()  # End of month
+    >>> returns = data["DJIA"].pct_change().dropna()
     >>> vr = VarianceRatio(returns, lags=12)
-    >>> print('{0:0.4f}'.format(vr.pvalue))
+    >>> print("{0:0.4f}".format(vr.pvalue))
     0.0000
 
     References
@@ -1778,18 +1793,18 @@ def mackinnonp(
     ----------
     stat : float
         "T-value" from an Augmented Dickey-Fuller or DFGLS regression.
-    regression : {'c', 'nc', 'ct', 'ctt'}
+    regression : {"c", "n", "ct", "ctt"}
         This is the method of regression that was used.  Following MacKinnon's
         notation, this can be "c" for constant, "n" for no constant, "ct" for
         constant and trend, and "ctt" for constant, trend, and trend-squared.
     num_unit_roots : int
         The number of series believed to be I(1).  For (Augmented) Dickey-
         Fuller N = 1.
-    dist_type : {'ADF-t', 'ADF-z', 'DFGLS'}
+    dist_type : {"ADF-t", "ADF-z", "DFGLS"}
         The test type to use when computing p-values.  Options include
-        'ADF-t' - ADF t-stat based bootstrap
-        'ADF-z' - ADF z bootstrap
-        'DFGLS' - GLS detrended Dickey Fuller
+        "ADF-t" - ADF t-stat based bootstrap
+        "ADF-z" - ADF z bootstrap
+        "DFGLS" - GLS detrended Dickey Fuller
 
     Returns
     -------
@@ -1805,7 +1820,7 @@ def mackinnonp(
     Notes
     -----
     Most values are from MacKinnon (1994).  Values for DFGLS test statistics
-    and the 'nc' version of the ADF z test statistic were computed following
+    and the "n" version of the ADF z test statistic were computed following
     the methodology of MacKinnon (1994).
     """
     dist_type = dist_type.lower()
@@ -1868,17 +1883,17 @@ def mackinnoncrit(
         non-cointegration is being tested.  For N > 12, the critical values
         are linearly interpolated (not yet implemented).  For the ADF test,
         N = 1.
-    regression : {'c', 'tc', 'ctt', 'nc'}, optional
+    regression : {"c", "ct", "ctt", "n"}, optional
         Following MacKinnon (1996), these stand for the type of regression run.
-        'c' for constant and no trend, 'tc' for constant with a linear trend,
-        'ctt' for constant with a linear and quadratic trend, and 'nc' for
+        "c" for constant and no trend, "ct" for constant with a linear trend,
+        "ctt" for constant with a linear and quadratic trend, and "n" for
         no constant.  The values for the no constant case are taken from the
         1996 paper, as they were not updated for 2010 due to the unrealistic
         assumptions that would underlie such a case.
     nobs : {int, np.inf}, optional
         This is the sample size.  If the sample size is numpy.inf, then the
         asymptotic critical values are returned.
-    dist_type : {'adf-t', 'adf-z', 'dfgls'}, optional
+    dist_type : {"adf-t", "adf-z", "dfgls"}, optional
         Type of test statistic
 
     Returns
@@ -1934,7 +1949,7 @@ def kpss_crit(stat: float, trend: str = "c") -> Tuple[float, NDArray]:
     ----------
     stat : float
         The KPSS test statistic.
-    trend : {'c','ct'}
+    trend : {"c","ct"}
         The trend used when computing the KPSS statistic
 
     Returns
@@ -1975,9 +1990,9 @@ def auto_bandwidth(
     kernel : str
         The kernel function to use for selecting the bandwidth
 
-        - 'ba', 'bartlett', 'nw': Bartlett kernel (default)
-        - 'pa', 'parzen', 'gallant': Parzen kernel
-        - 'qs', 'andrews':  Quadratic Spectral kernel
+        - "ba", "bartlett", "nw": Bartlett kernel (default)
+        - "pa", "parzen", "gallant": Parzen kernel
+        - "qs", "andrews":  Quadratic Spectral kernel
 
     Returns
     -------
@@ -2029,7 +2044,7 @@ def auto_bandwidth(
         t_power = 1 / (2 * q + 1)
         if kernel == "pa":
             gamma = 2.6614 * (((s2 / s0) ** 2) ** t_power)
-        else:  # kernel == 'qs':
+        else:  # kernel == "qs":
             gamma = 1.3221 * (((s2 / s0) ** 2) ** t_power)
 
     bandwidth = gamma * power(len(y), t_power)
