@@ -13,9 +13,8 @@ scale well with 128 or more engines.
 import datetime
 import time
 
-from numpy import array, nan, percentile, savez
-
 from ipyparallel import Client
+from numpy import array, nan, percentile, savez
 
 from .adf_simulation import adf_simulation
 

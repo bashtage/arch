@@ -1264,8 +1264,8 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         >>> fig = res.plot(scale=360)
         """
-        from matplotlib.pyplot import figure
         from matplotlib.axes import Axes
+        from matplotlib.pyplot import figure
 
         def _set_tight_x(
             axis: Axes, index: Tuple[Union[float, DateLike], Union[float, DateLike]]

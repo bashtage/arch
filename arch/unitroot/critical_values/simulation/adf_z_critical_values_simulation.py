@@ -9,9 +9,8 @@ Remote clusters can be used by modifying the call to Client.
 """
 import datetime
 
-from numpy import array, nan, percentile, savez
-
 from ipyparallel import Client
+from numpy import array, nan, percentile, savez
 
 from .adf_simulation import adf_simulation
 
