@@ -5,10 +5,6 @@ import argparse
 import os
 import random
 
-import colorama
-import numpy as np
-from numpy.random import PCG64, Generator, SeedSequence
-
 from adf_simulation import (
     OUTPUT_PATH,
     PERCENTILES,
@@ -16,7 +12,10 @@ from adf_simulation import (
     TRENDS,
     adf_simulation,
 )
+import colorama
 from joblib import Parallel, delayed
+import numpy as np
+from numpy.random import PCG64, Generator, SeedSequence
 import psutil
 
 GREEN = colorama.Fore.GREEN

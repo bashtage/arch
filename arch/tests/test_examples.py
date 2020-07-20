@@ -6,11 +6,11 @@ import pytest
 
 try:
     import jupyter_client
-    import nbformat
-    from nbconvert.preprocessors import ExecutePreprocessor
 
     # matplotlib is required for most notebooks
     import matplotlib  # noqa: F401
+    from nbconvert.preprocessors import ExecutePreprocessor
+    import nbformat
 
     kernels = jupyter_client.kernelspec.find_kernel_specs()
 except ImportError:  # pragma: no cover

@@ -9,12 +9,11 @@ import matplotlib.backends.backend_pdf
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from phillips_ouliaris import FILE_TYPES, ROOT, TRENDS
 from scipy import stats
 import seaborn as sns
-from statsmodels.regression.linear_model import OLS, WLS
-
-from phillips_ouliaris import FILE_TYPES, ROOT, TRENDS
 from shared import format_dict
+from statsmodels.regression.linear_model import OLS, WLS
 
 META = {"z_a": "negative", "z_t": "negative", "p_u": "positive", "p_z": "positive"}
 CRITICAL_VALUES = (1, 5, 10)

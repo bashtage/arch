@@ -19,21 +19,21 @@ from arch.utility.exceptions import InitialValueWarning, initial_value_warning
 
 try:
     from arch.univariate.recursions import (
+        egarch_recursion,
+        figarch_recursion,
+        figarch_weights,
         garch_recursion,
         harch_recursion,
-        egarch_recursion,
         midas_recursion,
-        figarch_weights,
-        figarch_recursion,
     )
 except ImportError:  # pragma: no cover
     from arch.univariate.recursions_python import (
-        garch_recursion,
-        harch_recursion,
         egarch_recursion,
-        midas_recursion,
         figarch_recursion,
         figarch_weights,
+        garch_recursion,
+        harch_recursion,
+        midas_recursion,
     )
 
 __all__ = [

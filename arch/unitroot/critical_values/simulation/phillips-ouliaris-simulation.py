@@ -8,15 +8,15 @@ import sys
 from typing import Optional, Tuple
 
 import colorama
+from joblib import Parallel, delayed
 import numpy as np
 from numpy.linalg import inv, lstsq, solve
 import pandas as pd
+from phillips_ouliaris import QUANTILES, ROOT, SAMPLE_SIZES, TRENDS
+import psutil
 
 from arch.typing import NDArray
 from arch.utility.timeseries import add_trend
-from joblib import Parallel, delayed
-from phillips_ouliaris import QUANTILES, ROOT, SAMPLE_SIZES, TRENDS
-import psutil
 
 GREEN = colorama.Fore.GREEN
 BLUE = colorama.Fore.BLUE

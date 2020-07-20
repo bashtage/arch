@@ -4,9 +4,8 @@ import glob
 from black import FileMode, TargetVersion, format_file_contents
 import numpy as np
 import scipy.stats as stats
-from statsmodels.regression.linear_model import OLS, WLS
-
 from shared import format_dict
+from statsmodels.regression.linear_model import OLS, WLS
 
 PERCENTILES = list(np.arange(0.1, 1.0, 0.1)) + list(np.arange(1.0, 100.0, 0.5))
 PERCENTILES = PERCENTILES[::-1]

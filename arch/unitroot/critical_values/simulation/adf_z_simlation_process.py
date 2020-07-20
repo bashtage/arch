@@ -1,11 +1,10 @@
 import glob
 import os
 
+from adf_simulation import OUTPUT_PATH, PERCENTILES, TIME_SERIES_LENGTHS, TRENDS
 from black import FileMode, TargetVersion, format_file_contents
 import numpy as np
 import pandas as pd
-
-from adf_simulation import OUTPUT_PATH, PERCENTILES, TIME_SERIES_LENGTHS, TRENDS
 from shared import estimate_cv_regression, fit_pval_model, format_dict
 
 critical_values = (1.0, 5.0, 10.0)
