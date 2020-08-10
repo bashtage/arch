@@ -1,4 +1,4 @@
-arch.univariate.RiskMetrics2006
+﻿arch.univariate.RiskMetrics2006
 ===============================
 
 .. currentmodule:: arch.univariate

@@ -1,4 +1,4 @@
-arch.covariance.kernel.TukeyParzen
+﻿arch.covariance.kernel.TukeyParzen
 ==================================
 
 .. currentmodule:: arch.covariance.kernel

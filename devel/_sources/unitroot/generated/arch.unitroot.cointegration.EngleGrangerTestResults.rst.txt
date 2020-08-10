@@ -1,4 +1,4 @@
-arch.unitroot.cointegration.EngleGrangerTestResults
+﻿arch.unitroot.cointegration.EngleGrangerTestResults
 ===================================================
 
 .. currentmodule:: arch.unitroot.cointegration

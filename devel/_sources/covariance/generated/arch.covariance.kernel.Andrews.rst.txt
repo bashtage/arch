@@ -1,4 +1,4 @@
-arch.covariance.kernel.Andrews
+﻿arch.covariance.kernel.Andrews
 ==============================
 
 .. currentmodule:: arch.covariance.kernel

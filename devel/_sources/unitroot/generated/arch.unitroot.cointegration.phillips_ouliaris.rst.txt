@@ -1,4 +1,4 @@
-arch.unitroot.cointegration.phillips\_ouliaris
+﻿arch.unitroot.cointegration.phillips\_ouliaris
 ==============================================
 
 .. currentmodule:: arch.unitroot.cointegration

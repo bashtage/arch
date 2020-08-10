@@ -1,4 +1,4 @@
-arch.univariate.FIGARCH
+﻿arch.univariate.FIGARCH
 =======================
 
 .. currentmodule:: arch.univariate

@@ -1,4 +1,4 @@
-arch.univariate.FixedVariance
+﻿arch.univariate.FixedVariance
 =============================
 
 .. currentmodule:: arch.univariate

@@ -1,4 +1,4 @@
-arch.unitroot.PhillipsPerron
+﻿arch.unitroot.PhillipsPerron
 ============================
 
 .. currentmodule:: arch.unitroot

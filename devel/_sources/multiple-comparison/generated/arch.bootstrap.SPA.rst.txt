@@ -1,4 +1,4 @@
-arch.bootstrap.SPA
+﻿arch.bootstrap.SPA
 ==================
 
 .. currentmodule:: arch.bootstrap

@@ -1,4 +1,4 @@
-arch.univariate.EWMAVariance
+﻿arch.univariate.EWMAVariance
 ============================
 
 .. currentmodule:: arch.univariate

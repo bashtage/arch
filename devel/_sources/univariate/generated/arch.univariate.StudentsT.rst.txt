@@ -1,4 +1,4 @@
-arch.univariate.StudentsT
+﻿arch.univariate.StudentsT
 =========================
 
 .. currentmodule:: arch.univariate

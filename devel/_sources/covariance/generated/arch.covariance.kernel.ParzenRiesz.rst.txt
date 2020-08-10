@@ -1,4 +1,4 @@
-arch.covariance.kernel.ParzenRiesz
+﻿arch.covariance.kernel.ParzenRiesz
 ==================================
 
 .. currentmodule:: arch.covariance.kernel

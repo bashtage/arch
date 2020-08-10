@@ -1,4 +1,4 @@
-arch.bootstrap.optimal\_block\_length
+﻿arch.bootstrap.optimal\_block\_length
 =====================================
 
 .. currentmodule:: arch.bootstrap

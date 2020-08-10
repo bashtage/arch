@@ -1,4 +1,4 @@
-arch.unitroot.cointegration.DynamicOLS
+﻿arch.unitroot.cointegration.DynamicOLS
 ======================================
 
 .. currentmodule:: arch.unitroot.cointegration

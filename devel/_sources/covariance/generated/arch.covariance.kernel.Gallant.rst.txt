@@ -1,4 +1,4 @@
-arch.covariance.kernel.Gallant
+﻿arch.covariance.kernel.Gallant
 ==============================
 
 .. currentmodule:: arch.covariance.kernel

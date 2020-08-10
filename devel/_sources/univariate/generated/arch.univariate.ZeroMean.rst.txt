@@ -1,4 +1,4 @@
-arch.univariate.ZeroMean
+﻿arch.univariate.ZeroMean
 ========================
 
 .. currentmodule:: arch.univariate

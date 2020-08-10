@@ -1,4 +1,4 @@
-arch.univariate.distribution.Distribution
+﻿arch.univariate.distribution.Distribution
 =========================================
 
 .. currentmodule:: arch.univariate.distribution

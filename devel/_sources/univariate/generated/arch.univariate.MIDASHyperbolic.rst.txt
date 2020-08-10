@@ -1,4 +1,4 @@
-arch.univariate.MIDASHyperbolic
+﻿arch.univariate.MIDASHyperbolic
 ===============================
 
 .. currentmodule:: arch.univariate

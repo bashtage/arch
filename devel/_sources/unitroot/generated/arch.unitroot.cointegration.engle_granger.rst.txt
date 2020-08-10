@@ -1,4 +1,4 @@
-arch.unitroot.cointegration.engle\_granger
+﻿arch.unitroot.cointegration.engle\_granger
 ==========================================
 
 .. currentmodule:: arch.unitroot.cointegration

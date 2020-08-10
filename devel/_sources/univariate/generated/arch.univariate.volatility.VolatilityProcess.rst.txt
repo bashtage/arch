@@ -1,4 +1,4 @@
-arch.univariate.volatility.VolatilityProcess
+﻿arch.univariate.volatility.VolatilityProcess
 ============================================
 
 .. currentmodule:: arch.univariate.volatility

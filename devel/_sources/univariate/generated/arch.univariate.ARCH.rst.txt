@@ -1,4 +1,4 @@
-arch.univariate.ARCH
+﻿arch.univariate.ARCH
 ====================
 
 .. currentmodule:: arch.univariate

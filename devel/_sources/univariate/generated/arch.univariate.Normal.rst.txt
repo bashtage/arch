@@ -1,4 +1,4 @@
-arch.univariate.Normal
+﻿arch.univariate.Normal
 ======================
 
 .. currentmodule:: arch.univariate

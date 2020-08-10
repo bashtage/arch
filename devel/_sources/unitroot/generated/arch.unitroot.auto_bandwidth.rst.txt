@@ -1,4 +1,4 @@
-arch.unitroot.auto\_bandwidth
+﻿arch.unitroot.auto\_bandwidth
 =============================
 
 .. currentmodule:: arch.unitroot

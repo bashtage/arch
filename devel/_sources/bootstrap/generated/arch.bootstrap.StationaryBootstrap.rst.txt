@@ -1,4 +1,4 @@
-arch.bootstrap.StationaryBootstrap
+﻿arch.bootstrap.StationaryBootstrap
 ==================================
 
 .. currentmodule:: arch.bootstrap

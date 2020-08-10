@@ -1,4 +1,4 @@
-arch.covariance.kernel.TukeyHanning
+﻿arch.covariance.kernel.TukeyHanning
 ===================================
 
 .. currentmodule:: arch.covariance.kernel

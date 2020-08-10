@@ -1,4 +1,4 @@
-arch.univariate.HARX
+﻿arch.univariate.HARX
 ====================
 
 .. currentmodule:: arch.univariate

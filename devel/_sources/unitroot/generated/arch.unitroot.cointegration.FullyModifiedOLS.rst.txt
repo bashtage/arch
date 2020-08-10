@@ -1,4 +1,4 @@
-arch.unitroot.cointegration.FullyModifiedOLS
+﻿arch.unitroot.cointegration.FullyModifiedOLS
 ============================================
 
 .. currentmodule:: arch.unitroot.cointegration

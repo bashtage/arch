@@ -1,4 +1,4 @@
-arch.bootstrap.MovingBlockBootstrap
+﻿arch.bootstrap.MovingBlockBootstrap
 ===================================
 
 .. currentmodule:: arch.bootstrap
