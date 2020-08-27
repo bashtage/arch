@@ -30,7 +30,7 @@ deprecation_doc = """
 
 
 def ensure1d(
-    x: Union[int, float, Sequence[Union[int, float]], ArrayLike,],  # noqa: E231
+    x: Union[int, float, Sequence[Union[int, float]], ArrayLike],  # noqa: E231
     name: Optional[Hashable],
     series: bool = False,
 ) -> Union[NDArray, Series]:
