@@ -120,7 +120,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
 """
 
     def test_garch(self):
-        nobs, resids, = self.nobs, self.resids
+        nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([0.1, 0.4, 0.3, 0.2])
@@ -233,7 +233,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
 
     def test_harch(self):
-        nobs, resids, = self.nobs, self.resids
+        nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([0.1, 0.4, 0.3, 0.2])
@@ -281,7 +281,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
 
     def test_arch(self):
-        nobs, resids, = self.nobs, self.resids
+        nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([0.1, 0.4, 0.3, 0.2])
@@ -329,7 +329,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
 
     def test_garch_power_1(self):
-        nobs, resids, = self.nobs, self.resids
+        nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([0.1, 0.4, 0.3, 0.2])
@@ -364,7 +364,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert_almost_equal(sigma2_python, sigma2)
 
     def test_garch_direct(self):
-        nobs, resids, = self.nobs, self.resids
+        nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([0.1, 0.4, 0.3, 0.2])
@@ -403,7 +403,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert_almost_equal(sigma2_python, sigma2)
 
     def test_garch_no_q(self):
-        nobs, resids, = self.nobs, self.resids
+        nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([0.1, 0.4, 0.3])
@@ -438,7 +438,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert_almost_equal(sigma2_python, sigma2)
 
     def test_garch_no_p(self):
-        nobs, resids, = self.nobs, self.resids
+        nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([0.1, 0.4, 0.3])
@@ -473,7 +473,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert_almost_equal(sigma2_python, sigma2)
 
     def test_garch_no_o(self):
-        nobs, resids, = self.nobs, self.resids
+        nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([0.1, 0.4, 0.3, 0.2])
@@ -535,7 +535,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert_almost_equal(sigma2_garch, sigma2)
 
     def test_bounds(self):
-        nobs, resids, = self.nobs, self.resids
+        nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([1e100, 0.4, 0.3, 0.2])
@@ -774,7 +774,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
 
     def test_midas_hyperbolic(self):
-        nobs, resids, = self.nobs, self.resids
+        nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([0.1, 0.8, 0])
@@ -831,7 +831,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
 
     def test_figarch_recursion(self):
-        nobs, resids, = self.nobs, self.resids
+        nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
         parameters = np.array([1.0, 0.2, 0.4, 0.3])
         fresids = resids ** 2

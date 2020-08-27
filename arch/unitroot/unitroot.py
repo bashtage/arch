@@ -500,8 +500,7 @@ class UnitRootTest(object, metaclass=ABCMeta):
         """
 
     def _reset(self) -> None:
-        """Resets the unit root test so that it will be recomputed
-        """
+        """Resets the unit root test so that it will be recomputed"""
         self._stat = None
         assert self._stat is None
 
@@ -515,14 +514,12 @@ class UnitRootTest(object, metaclass=ABCMeta):
 
     @property
     def null_hypothesis(self) -> str:
-        """The null hypothesis
-        """
+        """The null hypothesis"""
         return self._null_hypothesis
 
     @property
     def alternative_hypothesis(self) -> str:
-        """The alternative hypothesis
-        """
+        """The alternative hypothesis"""
         return self._alternative_hypothesis
 
     @property
@@ -538,16 +535,14 @@ class UnitRootTest(object, metaclass=ABCMeta):
 
     @property
     def pvalue(self) -> float:
-        """Returns the p-value for the test statistic
-        """
+        """Returns the p-value for the test statistic"""
         self._compute_if_needed()
         assert self._pvalue is not None
         return self._pvalue
 
     @property
     def stat(self) -> float:
-        """The test statistic for a unit root
-        """
+        """The test statistic for a unit root"""
         self._compute_if_needed()
         assert self._stat is not None
         return self._stat
@@ -561,8 +556,7 @@ class UnitRootTest(object, metaclass=ABCMeta):
         return self._critical_values
 
     def summary(self) -> Summary:
-        """Summary of test, containing statistic, p-value and critical values
-        """
+        """Summary of test, containing statistic, p-value and critical values"""
         table_data = [
             ("Test Statistic", "{0:0.3f}".format(self.stat)),
             ("P-value", "{0:0.3f}".format(self.pvalue)),
@@ -634,8 +628,7 @@ class UnitRootTest(object, metaclass=ABCMeta):
 
     @property
     def y(self) -> ArrayLike:
-        """Returns the data used in the test statistic
-        """
+        """Returns the data used in the test statistic"""
         return self._y
 
     @property
@@ -804,8 +797,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     @property
     def regression(self) -> RegressionResults:
-        """Returns the OLS regression results from the ADF model estimated
-        """
+        """Returns the OLS regression results from the ADF model estimated"""
         self._compute_if_needed()
         return self._regression
 
@@ -986,8 +978,7 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     @property
     def regression(self) -> RegressionResults:
-        """Returns the OLS regression results from the ADF model estimated
-        """
+        """Returns the OLS regression results from the ADF model estimated"""
         self._compute_if_needed()
         return self._regression
 
@@ -1688,7 +1679,7 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
     @property
     def robust(self) -> bool:
         """Sets of gets the indicator to use a heteroskedasticity robust
-        variance estimator """
+        variance estimator"""
         return self._robust
 
     @robust.setter
