@@ -709,7 +709,6 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
             values = results
             if method == studentized:
                 # studentized uses studentized parameter estimates
-                # assert isinstance(studentized_results, NDArray)
                 values = cast(NDArray, studentized_results)
 
             if method in ("debiased", "bc", "bias-corrected", "bca"):
