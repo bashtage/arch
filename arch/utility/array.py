@@ -272,7 +272,7 @@ def find_index(s: AnyPandas, index: Union[int, DateLike]) -> int:
         Integer location of index value
     """
     if isinstance(index, (int, np.int, np.int64)):
-        return index
+        return int(index)
     date_index = to_datetime(index, errors="coerce")
 
     if date_index is NaT:
@@ -280,4 +280,4 @@ def find_index(s: AnyPandas, index: Union[int, DateLike]) -> int:
     loc = np.argwhere(s.index == date_index).squeeze()
     if loc.size == 0:
         raise ValueError("index not found")
-    return loc
+    return int(loc)

@@ -218,10 +218,10 @@ def _autolag_ols_low_memory(
     lhs = deltay[maxlag:][:, None]
     level = y[maxlag:-1]
     level = level / sqrt(level @ level)
-    trendx = []
+    trendx: List[NDArray] = []
     nobs = lhs.shape[0]
     if trend == "n":
-        trendx = empty((nobs, 0))
+        trendx.append(empty((nobs, 0)))
     else:
         if "tt" in trend:
             tt = arange(1, nobs + 1, dtype=float64)[:, None] ** 2
@@ -233,8 +233,7 @@ def _autolag_ols_low_memory(
             trendx.append(t)
         if trend.startswith("c"):
             trendx.append(ones((nobs, 1)) / sqrt(nobs))
-        trendx = hstack(trendx)
-    rhs = hstack([level[:, None], trendx])
+    rhs = hstack([level[:, None], hstack(trendx)])
     m = rhs.shape[1]
     xpx = empty((m + maxlag, m + maxlag)) * nan
     xpy = empty((m + maxlag, 1)) * nan
@@ -1374,7 +1373,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         pwr = 1.0 / 3.0
         gamma_hat = 1.1447 * power(s_hat * s_hat, pwr)
         autolags = amin([self._nobs, int(gamma_hat * power(self._nobs, pwr))])
-        self._lags = autolags
+        self._lags = int(autolags)
 
 
 class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
@@ -1564,7 +1563,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._all_stats[start_period + 1 : end_period + 1] = stats[
             start_period + 1 : end_period + 1
         ]
-        self._stat = amin(stats)
+        self._stat = float(amin(stats))
         self._cv_interpolate()
 
     def _cv_interpolate(self) -> None:
@@ -1777,7 +1776,9 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         assert self._vr is not None
 
         self._stat = sqrt(nq) * (self._vr - 1) / sqrt(self._stat_variance)
-        self._pvalue = 2 - 2 * norm.cdf(abs(self._stat))
+        assert self._stat is not None
+        abs_stat = float(abs(self._stat))
+        self._pvalue = 2 - 2 * norm.cdf(abs(abs_stat))
 
 
 def mackinnonp(
@@ -1857,7 +1858,7 @@ def mackinnonp(
     if stat <= starstat:
         poly_coef = small_p
         if dist_type == "adf-z":
-            stat = log(abs(stat))  # Transform stat for small p ADF-z
+            stat = float(log(abs(stat)))  # Transform stat for small p ADF-z
     else:
         poly_coef = large_p
     return norm.cdf(polyval(poly_coef[::-1], stat))

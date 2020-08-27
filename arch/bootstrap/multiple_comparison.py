@@ -122,7 +122,8 @@ class MCS(MultipleComparison):
         else:
             self.block_size = block_size
 
-        self.t, self.k = losses.shape
+        self.t: int = losses.shape[0]
+        self.k: int = losses.shape[1]
         self.method = method
         # Bootstrap indices since the same bootstrap should be used in the
         # repeated steps
@@ -402,7 +403,8 @@ class StepM(MultipleComparison):
             nested=nested,
         )
         self.block_size = self.spa.block_size
-        self.t, self.k = self.models.shape
+        self.t = self.models.shape[0]
+        self.k = self.models.shape[1]
         self.reps = reps
         self.size = size
         self._superior_models: Optional[List[Hashable]] = None
@@ -430,7 +432,7 @@ class StepM(MultipleComparison):
         self.spa.compute()
         # 2. If any models superior, store indices, remove and re-run SPA
         better_models = list(self.spa.better_models(self.size))
-        all_better_models = better_models
+        all_better_models = better_models[:]
         # 3. Stop if nothing superior
         while better_models and (len(better_models) < self.k):
             # A. Use Selector to remove better models
@@ -438,7 +440,7 @@ class StepM(MultipleComparison):
             if isinstance(self.models, pd.DataFrame):  # Columns
                 selector[self.models.columns.isin(all_better_models)] = False
             else:
-                selector[np.array(list(all_better_models))] = False
+                selector[np.array(all_better_models)] = False
             self.spa.subset(selector)
             # B. Rerun
             self.spa.compute()
@@ -447,7 +449,6 @@ class StepM(MultipleComparison):
         # Reset SPA
         selector = np.ones(self.k, dtype=np.bool)
         self.spa.subset(selector)
-        all_better_models = list(all_better_models)
         all_better_models.sort()
         self._superior_models = all_better_models
 

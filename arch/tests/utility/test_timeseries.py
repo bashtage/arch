@@ -13,6 +13,11 @@ def rng():
     return RandomState(12345)
 
 
+def test_add_trend_err():
+    with pytest.raises(ValueError, match="One and only one"):
+        add_trend(x=None, trend="ctt", nobs=None)
+
+
 def test_add_trend_prepend(rng):
     n = 10
     x = rng.randn(n, 1)

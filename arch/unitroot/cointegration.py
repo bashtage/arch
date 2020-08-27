@@ -439,6 +439,7 @@ class DynamicOLSResults(_CommonCointegrationResults):
             pvalues = np.asarray(self.pvalues)
 
         title = "Cointegrating Vector" if not full else "Model Parameters"
+        assert isinstance(se, np.ndarray)
         table = self._param_table(params, se, tstats, pvalues, stubs, title)
         smry.tables.append(table)
 
@@ -614,11 +615,11 @@ class DynamicOLS(object):
         nobs = resids.shape[0]
         sigma2 = resids.T @ resids / nobs
         if self._method == "aic":
-            penalty = 2
+            penalty = 2.0
         elif self._method == "hqic":
-            penalty = 2 * np.log(np.log(nobs))
+            penalty = 2.0 * float(np.log(np.log(nobs)))
         else:  # bic
-            penalty = np.log(nobs)
+            penalty = float(np.log(nobs))
         return np.log(sigma2) + nparam * penalty / nobs
 
     def _max_lead_lag(self) -> int:

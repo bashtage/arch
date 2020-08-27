@@ -375,7 +375,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
                     )
         self._index = np.arange(self._num_items)
 
-        self._parameters: List[int] = []
+        self._parameters: List[Union[int, ArrayLike]] = []
         self._seed: Optional[Union[int, List[int], NDArray]] = None
         self.pos_data = args
         self.kw_data = kwargs
@@ -383,7 +383,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
         self._base: Optional[NDArray] = None
         self._results: Optional[NDArray] = None
-        self._studentized_results = None
+        self._studentized_results: Optional[NDArray] = None
         self._last_func: Optional[Callable[..., ArrayLike]] = None
         for key, value in kwargs.items():
             attr = getattr(self, key, None)
@@ -409,7 +409,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         return html
 
     @property
-    def random_state(self) -> np.random.RandomState:
+    def random_state(self) -> RandomState:
         """
         Set or get the instance random state
 
@@ -426,13 +426,13 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         return self._random_state
 
     @random_state.setter
-    def random_state(self, random_state: np.random.RandomState) -> None:
+    def random_state(self, random_state: RandomState) -> None:
         if not isinstance(random_state, RandomState):
             raise TypeError("Value being set must be a RandomState")
         self._random_state = random_state
 
     @property
-    def index(self) -> NDArray:
+    def index(self) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:
         """
         The current index of the bootstrap
         """
@@ -679,10 +679,10 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         assert base is not None
         studentized_results = self._studentized_results
 
-        std_err = []
+        std_err = np.empty((0,))
         if method in ("norm", "var", "cov", studentized):
             errors = results - results.mean(axis=0)
-            std_err = np.sqrt(np.diag(errors.T.dot(errors) / reps))
+            std_err = np.asarray(np.sqrt(np.diag(errors.T.dot(errors) / reps)))
 
         if tail == "two":
             alpha = (1.0 - size) / 2
@@ -708,6 +708,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
             values = results
             if method == studentized:
                 # studentized uses studentized parameter estimates
+                assert isinstance(studentized_results, NDArray)
                 values = studentized_results
 
             if method in ("debiased", "bc", "bias-corrected", "bca"):
@@ -730,9 +731,9 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
                 percentiles = stats.norm.cdf(
                     b + (b + norm_quantiles) / (1.0 - a * (b + norm_quantiles))
                 )
-                percentiles = list(100 * percentiles)
+                percentiles *= 100
             else:
-                percentiles = [100 * p for p in percentiles]  # Rescale
+                percentiles = np.array([100 * p for p in percentiles])  # Rescale
 
             k = values.shape[1]
             lower = np.zeros(k)
@@ -1094,7 +1095,9 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
         return (errors ** 2).sum(0) / reps
 
-    def update_indices(self) -> NDArray:
+    def update_indices(
+        self,
+    ) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:
         """
         Update indices for the next iteration of the bootstrap.  This must
         be overridden when creating new bootstraps.
@@ -1208,7 +1211,9 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         self._num_arg_items = [len(arg) for arg in args]
         self._num_kw_items = {key: len(kwargs[key]) for key in self._kwargs}
 
-    def update_indices(self) -> Tuple[List[NDArray], Dict[str, NDArray]]:
+    def update_indices(
+        self,
+    ) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:
         """
         Update indices for the next iteration of the bootstrap.  This must
         be overridden when creating new bootstraps.
@@ -1225,7 +1230,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         return pos_indices, kw_indices
 
     @property
-    def index(self) -> Tuple[List[NDArray], Dict[str, NDArray]]:
+    def index(self) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:
         """
         Returns the current index of the bootstrap
 
@@ -1374,7 +1379,9 @@ class CircularBlockBootstrap(IIDBootstrap):
         html += ", <strong>ID</strong>: " + hex(id(self)) + ")"
         return html
 
-    def update_indices(self) -> NDArray:
+    def update_indices(
+        self,
+    ) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:
         num_blocks = self._num_items // self.block_size
         if num_blocks * self.block_size < self._num_items:
             num_blocks += 1
@@ -1465,7 +1472,9 @@ class StationaryBootstrap(CircularBlockBootstrap):
         super().__init__(block_size, *args, **kwargs)
         self._p = 1.0 / block_size
 
-    def update_indices(self) -> NDArray:
+    def update_indices(
+        self,
+    ) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:
         indices = self.random_state.randint(self._num_items, size=self._num_items)
         indices = indices.astype(np.int64)
         u = self.random_state.random_sample(self._num_items)
@@ -1549,7 +1558,9 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     ) -> None:
         super().__init__(block_size, *args, **kwargs)
 
-    def update_indices(self) -> None:
+    def update_indices(
+        self,
+    ) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:
         num_blocks = self._num_items // self.block_size
         if num_blocks * self.block_size < self._num_items:
             num_blocks += 1
@@ -1571,5 +1582,7 @@ class MOONBootstrap(IIDBootstrap):  # pragma: no cover
         super().__init__(*args, **kwargs)
         self.block_size = block_size
 
-    def update_indices(self) -> None:  # pragma: no cover
+    def update_indices(
+        self,
+    ) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:  # pragma: no cover
         raise NotImplementedError

@@ -4,7 +4,7 @@ Core classes for ARCH models
 from abc import ABCMeta, abstractmethod
 from copy import deepcopy
 import datetime as dt
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union, cast
 import warnings
 
 import numpy as np
@@ -190,7 +190,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         self.rescale = rescale
         self.scale = 1.0
 
-        self._backcast: Optional[float] = None
+        self._backcast: Optional[Union[float, NDArray]] = None
         self._var_bounds: Optional[NDArray] = None
 
         if isinstance(volatility, VolatilityProcess):
@@ -320,7 +320,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         return loglikelihood
 
     def _fit_parameterless_model(
-        self, cov_type: str, backcast: float
+        self, cov_type: str, backcast: Union[float, NDArray]
     ) -> "ARCHModelResult":
         """
         When models have no parameters, fill return values
@@ -371,7 +371,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         self,
         parameters: NDArray,
         sigma2: NDArray,
-        backcast: float,
+        backcast: Union[float, NDArray],
         var_bounds: NDArray,
         individual: bool = False,
     ) -> Union[float, NDArray]:
@@ -471,7 +471,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         resids = self.resids(mp)
         vol = np.zeros_like(resids)
         self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
-        vol = np.sqrt(vol)
+        vol = np.asarray(np.sqrt(vol))
 
         names = self._all_parameter_names()
         # Reshape resids and vol
@@ -557,7 +557,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         options : dict, optional
             Options to pass to `scipy.optimize.minimize`.  Valid entries
             include 'ftol', 'eps', 'disp', and 'maxiter'.
-        backcast : float, optional
+        backcast : {float, ndarray}, optional
             Value to use as backcast. Should be measure :math:`\sigma^2_0`
             since model-specific non-linear transformations are applied to
             value before computing the variance recursions.
@@ -601,6 +601,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         if backcast is None:
             backcast = v.backcast(resids)
         else:
+            assert backcast is not None
             backcast = v.backcast_transform(backcast)
 
         if has_closed_form:
@@ -613,7 +614,7 @@ class ARCHModel(object, metaclass=ABCMeta):
             return self._fit_parameterless_model(cov_type=cov_type, backcast=backcast)
 
         sigma2 = np.zeros_like(resids)
-
+        assert backcast is not None
         self._backcast = backcast
         sv_volatility = v.starting_values(resids)
         self._var_bounds = var_bounds = v.variance_bounds(resids)
@@ -718,7 +719,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         resids = self.resids(mp)
         vol = np.zeros_like(resids)
         self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
-        vol = np.sqrt(vol)
+        vol = cast(NDArray, np.sqrt(vol))
 
         try:
             r2 = self._r2(mp)
@@ -779,8 +780,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         # Remove sigma2
         if params.shape[0] == 1:
             return np.empty(0)
-        elif params.shape[0] > 1:
-            return params[:-1]
+        return params[:-1]
 
     @cached_property
     @abstractmethod
@@ -828,7 +828,10 @@ class ARCHModel(object, metaclass=ABCMeta):
         """
 
     def compute_param_cov(
-        self, params: NDArray, backcast: Optional[float] = None, robust: bool = True
+        self,
+        params: NDArray,
+        backcast: Optional[Union[float, NDArray]] = None,
+        robust: bool = True,
     ) -> NDArray:
         """
         Computes parameter covariances using numerical derivatives.
@@ -1914,10 +1917,10 @@ class ARCHModelForecastSimulation(object):
 
     def __init__(
         self,
-        values: NDArray,
-        residuals: NDArray,
-        variances: NDArray,
-        residual_variances: NDArray,
+        values: Optional[NDArray],
+        residuals: Optional[NDArray],
+        variances: Optional[NDArray],
+        residual_variances: Optional[NDArray],
     ) -> None:
         self._values = values
         self._residuals = residuals
@@ -1925,19 +1928,19 @@ class ARCHModelForecastSimulation(object):
         self._residual_variances = residual_variances
 
     @property
-    def values(self) -> NDArray:
+    def values(self) -> Optional[NDArray]:
         return self._values
 
     @property
-    def residuals(self) -> NDArray:
+    def residuals(self) -> Optional[NDArray]:
         return self._residuals
 
     @property
-    def variances(self) -> NDArray:
+    def variances(self) -> Optional[NDArray]:
         return self._variances
 
     @property
-    def residual_variances(self) -> NDArray:
+    def residual_variances(self) -> Optional[NDArray]:
         return self._residual_variances
 
 
