@@ -10,7 +10,7 @@ def str_format(v: float) -> str:
     av = abs(v)
     digits = 0
     if av != 0:
-        digits = np.ceil(np.log10(av))
+        digits = int(np.ceil(np.log10(av)))
     if digits > 4 or digits <= -4:
         return "{0:8.4g}".format(v)
 

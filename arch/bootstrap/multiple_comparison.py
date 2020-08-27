@@ -122,7 +122,8 @@ class MCS(MultipleComparison):
         else:
             self.block_size = block_size
 
-        self.t, self.k = losses.shape
+        self.t: int = losses.shape[0]
+        self.k: int = losses.shape[1]
         self.method = method
         # Bootstrap indices since the same bootstrap should be used in the
         # repeated steps
@@ -402,7 +403,8 @@ class StepM(MultipleComparison):
             nested=nested,
         )
         self.block_size = self.spa.block_size
-        self.t, self.k = self.models.shape
+        self.t = self.models.shape[0]
+        self.k = self.models.shape[1]
         self.reps = reps
         self.size = size
         self._superior_models: Optional[List[Hashable]] = None

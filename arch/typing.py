@@ -25,4 +25,4 @@ NDArrayOrFrame = TypeVar("NDArrayOrFrame", np.ndarray, DataFrame)
 AnyPandas = Union[Series, DataFrame]
 DateLike = Union[str, dt.datetime, np.datetime64, Timestamp]
 Label = Optional[Hashable]
-FloatOrArray = TypeVar("FloatOrArray", float, NDArray)
+FloatOrArray = TypeVar("FloatOrArray", float, np.ndarray)

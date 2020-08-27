@@ -794,7 +794,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def parameter_names(self) -> List[str]:
         return ["nu", "lambda"]
 
-    def __const_a(self, parameters: Sequence[float]) -> float:
+    def __const_a(self, parameters: Union[NDArray, Sequence[float]]) -> float:
         """
         Compute a constant.
 
@@ -811,9 +811,9 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         """
         eta, lam = parameters
         c = self.__const_c(parameters)
-        return 4 * lam * exp(c) * (eta - 2) / (eta - 1)
+        return float(4 * lam * exp(c) * (eta - 2) / (eta - 1))
 
-    def __const_b(self, parameters: Sequence[float]) -> float:
+    def __const_b(self, parameters: Union[NDArray, Sequence[float]]) -> float:
         """
         Compute b constant.
 
@@ -827,12 +827,12 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         b : float
             Constant used in the distribution
         """
-        lam = parameters[1]
+        lam = float(parameters[1])
         a = self.__const_a(parameters)
         return (1 + 3 * lam ** 2 - a ** 2) ** 0.5
 
     @staticmethod
-    def __const_c(parameters: Sequence[float]) -> float:
+    def __const_c(parameters: Union[NDArray, Sequence[float]]) -> float:
         """
         Compute c constant.
 
@@ -848,7 +848,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         """
         eta = parameters[0]
         # return gamma((eta+1)/2) / ((pi*(eta-2))**.5 * gamma(eta/2))
-        return gammaln((eta + 1) / 2) - gammaln(eta / 2) - log(pi * (eta - 2)) / 2
+        return float(gammaln((eta + 1) / 2) - gammaln(eta / 2) - log(pi * (eta - 2)) / 2)
 
     def cdf(
         self,

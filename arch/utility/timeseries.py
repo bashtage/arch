@@ -42,7 +42,7 @@ def _enforce_unique_col_name(
 
 
 def add_trend(
-    x: NDArrayOrFrame = None,
+    x: Optional[NDArrayOrFrame] = None,
     trend: str = "c",
     prepend: bool = False,
     nobs: Optional[int] = None,
@@ -80,9 +80,12 @@ def add_trend(
     currently no checking for an existing trend.
     """
     trend = trend.lower()
+    if (x is None and nobs is None) or (x is not None and nobs is not None):
+        raise ValueError("One and only one of x or nobs must be provided.")
     if trend == "n":
         if x is not None:
             return x
+        assert nobs is not None
         return np.empty((nobs, 0))
     elif trend == "c":
         trend_order = 0
@@ -131,5 +134,5 @@ def add_trend(
             x = np.column_stack((trend_array, x))
         else:
             x = np.column_stack((x, trend_array))
-
+    assert x is not None
     return x

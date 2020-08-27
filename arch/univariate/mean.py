@@ -3,10 +3,10 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 :class:`ARCHModel` and provide the same methods with the same inputs.
 """
 import copy
-from typing import Callable, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Callable, Dict, List, Optional, Sequence, Tuple, Union, cast
 
 import numpy as np
-from pandas import DataFrame
+from pandas import DataFrame, Index
 from scipy.optimize import OptimizeResult
 from statsmodels.tsa.tsatools import lagmat
 
@@ -202,7 +202,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         )
         self._x = x
         self._x_names: List[str] = []
-        self._x_index = None
+        self._x_index: Optional[Union[NDArray, Index]] = None
         self.lags = lags
         self._lags = np.empty(0)
         self.constant = constant
@@ -304,7 +304,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def simulate(
         self,
-        params: Sequence[float],
+        params: Union[NDArray, Sequence[float]],
         nobs: int,
         burn: int = 500,
         initial_value: Optional[Union[float, NDArray]] = None,
@@ -368,6 +368,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
         k_x = 0
         if x is not None:
+            x = np.asarray(x)
             k_x = x.shape[1]
             if x.shape[0] != nobs + burn:
                 raise ValueError("x must have nobs + burn rows")
@@ -376,7 +377,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         vc = self.volatility.num_params
         dc = self.distribution.num_params
         num_params = mc + vc + dc
-        params = ensure1d(params, "params", series=False)
+        params = cast(NDArray, ensure1d(params, "params", series=False))
         if params.shape[0] != num_params:
             raise ValueError(
                 "params has the wrong number of elements. "
@@ -390,7 +391,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             vol_params, nobs + burn, simulator, burn, initial_value_vol
         )
         errors = sim_data[0]
-        vol = np.sqrt(sim_data[1])
+        vol = cast(NDArray, np.sqrt(sim_data[1]))
 
         max_lag = np.max(self._lags)
         y = np.zeros(nobs + burn)
@@ -424,7 +425,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         lags = self._lags
         if self.constant:
             variable_names.append("Const")
-        if lags is not None:
+        if lags is not None and lags.size:
             variable_names.extend(self._generate_lag_names())
         if self._x is not None:
             variable_names.extend(self._x_names)
@@ -461,11 +462,10 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         Reformat input lags to be a 2 by m array, which simplifies other
         operations.  Output is stored in _lags
         """
-        lags = self.lags
-        if lags is None:
-            self._lags = None
+
+        if self.lags is None:
             return
-        lags = np.asarray(lags)
+        lags = np.asarray(self.lags)
         if np.any(lags < 0):
             raise ValueError("Input to lags must be non-negative")
 
@@ -733,6 +733,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             random_state=random_state,
         )
         var_fcasts = vfcast.forecasts
+        assert var_fcasts is not None
         var_fcasts = _forecast_pad(earliest, var_fcasts)
 
         arp = self._har_to_ar(mp)
@@ -749,11 +750,16 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         for i in range(horizon):
             lrf = var_fcasts[:, : (i + 1)].dot(impulse[i::-1] ** 2)
             longrun_var_fcasts[:, i] = lrf
-
+        variance_paths: Optional[NDArray] = None
+        mean_paths: Optional[NDArray] = None
+        shocks: Optional[NDArray] = None
+        long_run_variance_paths: Optional[NDArray] = None
         if method.lower() in ("simulation", "bootstrap"):
             # TODO: This is not tested, but probably right
+            assert isinstance(vfcast.forecast_paths, np.ndarray)
             variance_paths = _forecast_pad(earliest, vfcast.forecast_paths)
             long_run_variance_paths = variance_paths.copy()
+            assert isinstance(vfcast.shocks, np.ndarray)
             shocks = _forecast_pad(earliest, vfcast.shocks)
             for i in range(horizon):
                 _impulses = impulse[i::-1][:, None]
@@ -772,8 +778,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                         + shocks[i, :, j]
                     )
             mean_paths = mean_paths[:, :, m:]
-        else:
-            variance_paths = mean_paths = shocks = long_run_variance_paths = None
 
         index = self._y_series.index
         return ARCHModelForecast(
@@ -919,6 +923,7 @@ class ConstantMean(HARX):
         errors = sim_values[0]
         y = errors + mp
         vol = np.sqrt(sim_values[1])
+        assert isinstance(vol, np.ndarray)
         df = dict(data=y[burn:], volatility=vol[burn:], errors=errors[burn:])
         df = DataFrame(df)
         return df
@@ -1069,6 +1074,7 @@ class ZeroMean(HARX):
         errors = sim_values[0]
         y = errors
         vol = np.sqrt(sim_values[1])
+        assert isinstance(vol, np.ndarray)
         df = dict(data=y[burn:], volatility=vol[burn:], errors=errors[burn:])
         df = DataFrame(df)
 
@@ -1151,24 +1157,27 @@ class ARX(HARX):
         # Convert lags to 2-d format
 
         if lags is not None:
-            lags = np.asarray(lags)
-            if lags.ndim == 0:
-                if lags < 0:
+            lags_arr = np.asarray(lags)
+            assert lags_arr is not None
+            if lags_arr.ndim == 0:
+                if lags_arr < 0:
                     raise ValueError("lags must be a positive integer.")
-                elif lags == 0:
+                elif lags_arr == 0:
                     lags = None
                 else:
-                    lags = np.arange(1, int(lags) + 1)
+                    lags_arr = np.arange(1, int(lags_arr) + 1)
             if lags is not None:
-                if lags.ndim == 1:
-                    lags = np.vstack((lags, lags))
-                    lags[0, :] -= 1
-                else:
+                if lags_arr.ndim != 1:
                     raise ValueError("lags does not follow a supported format")
+                else:
+                    lags_arr = np.vstack((lags_arr, lags_arr))
+                    assert lags_arr is not None
+                    lags_arr[0, :] -= 1
+
         super().__init__(
             y,
             x,
-            lags,
+            None if lags is None else lags_arr,
             constant,
             False,
             hold_back,

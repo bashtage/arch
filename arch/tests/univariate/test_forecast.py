@@ -394,8 +394,8 @@ class TestForecasting(object):
         )
         rs.set_state(state)
         repeat = res.forecast(horizon=5, start=900, method="bootstrap", random_state=rs)
-        assert_frame_equal(forecast.mean, repeat.mean, check_less_precise=True)
-        assert_frame_equal(forecast.variance, repeat.variance, check_less_precise=True)
+        assert_frame_equal(forecast.mean, repeat.mean)
+        assert_frame_equal(forecast.variance, repeat.variance)
 
     def test_ar2_garch11(self):
         pass
