@@ -1,6 +1,6 @@
 # Performance
 cython>=0.29.14
-numba>=0.35
+numba>=0.35,!=0.50.*
 
 # Graphics
 matplotlib>=2
