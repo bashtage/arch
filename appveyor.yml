@@ -1,7 +1,7 @@
 skip_tags: true
 clone_depth: 50
 
-os: Visual Studio 2015
+os: Visual Studio 2017
 
 environment:
   matrix:
@@ -23,7 +23,8 @@ build_script:
   - cmd: SET PATH=C:\Py;C:\Py\Scripts;C:\Py\Library\bin;%PATH%
   - cmd: conda config --set always_yes yes
   - cmd: conda update conda --quiet
-  - cmd: conda install numpy cython pytest pandas scipy patsy statsmodels matplotlib numba nbconvert nbformat pip pyyaml setuptools pyqt pyparsing --quiet
+  - cmd: conda install numpy cython pytest pandas scipy patsy statsmodels matplotlib nbconvert nbformat pip pyyaml setuptools pyqt pyparsing --quiet
+  - cmd: conda install -c numba numba llvmlite
   - cmd: python -m pip install --upgrade pip
   - cmd: pip install pytest-xdist!=1.30 property_cached
   - cmd: pip install -e .

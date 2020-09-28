@@ -118,8 +118,7 @@ def arch_recursion_python(
             if (t - i - 1) < 0:
                 sigma2[t] += parameters[i + 1] * backcast
             else:
-                # Remove square due to numba error in 0.50.1
-                sigma2[t] += parameters[i + 1] * (resids[t - i - 1] * resids[t - i - 1])
+                sigma2[t] += parameters[i + 1] * resids[t - i - 1] ** 2
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
 
     return sigma2
