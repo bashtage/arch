@@ -130,10 +130,12 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     x : {ndarray, DataFrame}, optional
         nobs by k element array containing exogenous regressors
     lags : {scalar, ndarray}, optional
-        Description of lag structure of the HAR.  Scalar included all lags
-        between 1 and the value.  A 1-d array includes the HAR lags 1:lags[0],
-        1:lags[1], ... A 2-d array includes the HAR lags of the form
-        lags[0,j]:lags[1,j] for all columns of lags.
+        Description of lag structure of the HAR.
+        * Scalar included all lags between 1 and the value.
+        * A 1-d n-element array includes the HAR lags 1:lags[0]+1,
+          1:lags[1]+1, ... 1:lags[n]+1.
+        * A 2-d (2,n)-element array that includes the HAR lags of the form
+          lags[0,j]:lags[1,j]+1 for all columns of lags.
     constant : bool, optional
         Flag whether the model should include a constant
     use_rotated : bool, optional
@@ -157,7 +159,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     --------
     >>> import numpy as np
     >>> from arch.univariate import HARX
-    >>> y = np.random.randn(100)
+    >>> y = np.random.RandomState(1234).randn(100)
     >>> harx = HARX(y, lags=[1, 5, 22])
     >>> res = harx.fit()
 
@@ -165,6 +167,24 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     >>> index = date_range('2000-01-01', freq='M', periods=y.shape[0])
     >>> y = Series(y, name='y', index=index)
     >>> har = HARX(y, lags=[1, 6], hold_back=10)
+
+    Models with equivalent parameteriations of lags. Thie first uses
+    overlapping lags.
+    >>> harx_1 = HARX(y, lags=[1,5,22])
+
+    The next uses rotated lags so that they do not overlap.
+    >>> harx_2 = HARX(y, lags=[1,5,22], use_rotated=True)
+
+    The third manually specified overlapping lags.
+    >>> harx_3 = HARX(y, lags=[[1, 1, 1], [1, 5, 22]])
+
+    The final manually specified non-overlapping lags
+    >>> harx_4 = HARX(y, lags=[[1, 2, 6], [1, 5, 22]])
+
+    It is simple to verify that these are theequivalent by inspecting the R2.
+    >>> models = [harx_1, harx_2, harx_3, harx_4]
+    >>> print([mod.fit().rsquared for mod in models])
+    0.085, 0.085, 0.085, 0.085
 
     Notes
     -----
@@ -488,12 +508,16 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         elif lags.ndim == 2:
             if lags.shape[0] != 2:
                 raise ValueError("When using a 2-d array, lags must by k by 2")
-            if np.any(lags[0] < 0) or np.any(lags[1] <= 0):
-                raise ValueError("Incorrect values in lags")
-
+            if np.any(lags[0] <= 0) or np.any(lags[1] < lags[0]):
+                raise ValueError(
+                    "When using a 2-d array, all values must be larger than 0 and "
+                    "lags[0,j] <= lags[1,j] for all lags values."
+                )
             ind = np.lexsort(np.flipud(lags))
             lags = lags[:, ind]
             test_mat = np.zeros((lags.shape[1], np.max(lags)))
+            # Subtract 1 so first is 0 indexed
+            lags = lags - np.array([[1], [0]])
             for i in range(lags.shape[1]):
                 test_mat[i, lags[0, i] : lags[1, i]] = 1.0
             rank = np.linalg.matrix_rank(test_mat)
@@ -1172,7 +1196,6 @@ class ARX(HARX):
                 else:
                     lags_arr = np.vstack((lags_arr, lags_arr))
                     assert lags_arr is not None
-                    lags_arr[0, :] -= 1
 
         super().__init__(
             y,

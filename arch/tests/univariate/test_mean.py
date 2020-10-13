@@ -230,7 +230,7 @@ class TestMeanModel(object):
         with pytest.raises(ValueError):
             HARX(self.y, self.x, lags=[[0], [0]])
         with pytest.raises(ValueError):
-            HARX(self.y, self.x, lags=[[1, 1, 2], [2, 3, 2]])
+            HARX(self.y, self.x, lags=[[1, 1, 3], [2, 3, 3]])
         with pytest.raises(ValueError):
             HARX(self.y, self.x, lags=[[[1], [3]]])
 
@@ -354,7 +354,7 @@ class TestMeanModel(object):
         params = np.linalg.pinv(rhs).dot(lhs)
         assert_almost_equal(params, res.params[:-1])
         assert_equal(arx.hold_back, 10)
-        assert_equal(arx.lags, np.array([[0, 1, 2], [1, 2, 3]]))
+        assert_equal(arx.lags, np.array([[1, 2, 3], [1, 2, 3]]))
         assert_equal(arx.name, "AR-X")
         assert_equal(arx.use_rotated, False)
         assert isinstance(arx.__repr__(), str)
@@ -412,7 +412,7 @@ class TestMeanModel(object):
         # assert_frame_equal(direct, forecasts)
 
         assert ar.hold_back is None
-        assert_equal(ar.lags, np.array([[0, 1, 2], [1, 2, 3]]))
+        assert_equal(ar.lags, np.array([[1, 2, 3], [1, 2, 3]]))
         assert_equal(ar.name, "AR")
         assert_equal(ar.use_rotated, False)
         ar.__repr__()
@@ -1159,3 +1159,15 @@ def test_1d_exog():
     am = arch_model(y, x[:, None], mean="ARX", lags=2, vol="ARCH", q=0)
     res2 = am.fit()
     assert_series_equal(res.params, res2.params)
+
+
+def test_harx_lag_spec(simulated_data):
+    harx_1 = HARX(simulated_data, lags=[1, 5, 22])
+    harx_2 = HARX(simulated_data, lags=[1, 5, 22], use_rotated=True)
+    harx_3 = HARX(simulated_data, lags=[[1, 1, 1], [1, 5, 22]])
+    harx_4 = HARX(simulated_data, lags=[[1, 2, 6], [1, 5, 22]])
+
+    r2 = harx_1.fit().rsquared
+    assert_almost_equal(harx_2.fit().rsquared, r2)
+    assert_almost_equal(harx_3.fit().rsquared, r2)
+    assert_almost_equal(harx_4.fit().rsquared, r2)
