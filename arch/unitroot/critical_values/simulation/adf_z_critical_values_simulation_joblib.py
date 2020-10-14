@@ -92,9 +92,7 @@ if __name__ == "__main__":
         help="Number of CPUs to use. If not specified, uses cpu_count() - 1",
     )
     parser.add_argument(
-        "--z_only",
-        action="store_true",
-        help="Only execute Z-type tests",
+        "--z_only", action="store_true", help="Only execute Z-type tests",
     )
     args = parser.parse_args()
     njobs = getattr(args, "ncpu", None)

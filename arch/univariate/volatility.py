@@ -2270,7 +2270,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         mus = self._ewma_smoothing_parameters()
 
         sigma2_temp = np.zeros_like(sigma2)
-        assert isinstance(backcast, NDArray)
+        backcast = cast(NDArray, backcast)
         for k in range(kmax):
             mu = mus[k]
             ewma_recursion(mu, resids, sigma2_temp, nobs, backcast[k])
@@ -2348,7 +2348,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         kmax = self.kmax
         w = self._ewma_combination_weights()
         mus = self._ewma_smoothing_parameters()
-        backcast = np.asarray(backcast)
+        backcast = cast(NDArray, np.asarray(backcast))
 
         t = resids.shape[0]
         paths = np.full((t, simulations, horizon), np.nan)
@@ -2359,7 +2359,6 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         component_one_step = np.empty((kmax, t + 1))
         _resids = np.empty((t + 1))
         _resids[:-1] = resids
-        assert isinstance(backcast, NDArray)
         for k in range(kmax):
             mu = mus[k]
             ewma_recursion(mu, _resids, component_one_step[k, :], t + 1, backcast[k])
