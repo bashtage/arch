@@ -9,6 +9,7 @@ from typing import (
     Sequence,
     Tuple,
     Union,
+    cast,
 )
 
 import numpy as np
@@ -708,8 +709,8 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
             values = results
             if method == studentized:
                 # studentized uses studentized parameter estimates
-                assert isinstance(studentized_results, NDArray)
-                values = studentized_results
+                # assert isinstance(studentized_results, NDArray)
+                values = cast(NDArray, studentized_results)
 
             if method in ("debiased", "bc", "bias-corrected", "bca"):
                 # bias corrected uses modified percentiles, but is
