@@ -1152,8 +1152,9 @@ def test_no_variance():
 
 
 def test_1d_exog():
-    y = np.random.standard_normal((300))
-    x = np.random.standard_normal((300))
+    rs = np.random.RandomState(329302)
+    y = rs.standard_normal((300))
+    x = rs.standard_normal((300))
     am = arch_model(y, x, mean="ARX", lags=2, vol="ARCH", q=0)
     res = am.fit()
     am = arch_model(y, x[:, None], mean="ARX", lags=2, vol="ARCH", q=0)

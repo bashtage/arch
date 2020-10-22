@@ -26,7 +26,12 @@ class WaldTestStatistic(object):
     """
 
     def __init__(
-        self, stat: float, df: int, null: str, alternative: str, name: str = "",
+        self,
+        stat: float,
+        df: int,
+        null: str,
+        alternative: str,
+        name: str = "",
     ) -> None:
         self._stat = stat
         self._null = null
