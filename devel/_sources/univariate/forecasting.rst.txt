@@ -74,7 +74,7 @@ Variance forecasts are constructed for the conditional variances as
    :nowrap:
 
    \begin{eqnarray}
-      \sigma^2_{t+1} & = & \omega + \alpha \epsilon_t^2 + \beta \sigma^2_{t-1} \\
+      \sigma^2_{t+1} & = & \omega + \alpha \epsilon_t^2 + \beta \sigma^2_t \\
       \sigma^2_{t+h} & = & \omega + \alpha  E_{t}[\epsilon_{t+h-1}^2] + \beta E_{t}[\sigma^2_{t+h-1}] \, h \geq 2 \\
                      & = & \omega + \left(\alpha  + \beta\right) E_{t}[\sigma^2_{t+h-1}] \, h \geq 2
    \end{eqnarray}
