@@ -12,6 +12,7 @@ variables:
   PYTHONHASHSEED: 12345678 # Ensure tests are correctly gathered by xdist
   SETUPTOOLS_USE_DISTUTILS: "stdlib"
   TEST_INSTALL: false
+  MPLBACKEND: agg
 
 jobs:
 - template: ci/azure/azure_template_posix.yml
