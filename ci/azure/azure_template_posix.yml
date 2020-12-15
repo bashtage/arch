@@ -98,11 +98,7 @@ jobs:
         echo "Testing editable install"
         pytest arch --junitxml=junit/test-results.xml -n auto --durations=25
       fi
-
-  - script: |
-
-    displayName: 'pytest (Site packages)'
-    condition: eq(variables.test_install, true)
+    displayName: 'Run tests'
 
   - task: PublishTestResults@2
     inputs:

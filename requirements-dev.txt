@@ -22,5 +22,6 @@ sphinx_material
 nbsphinx
 jupyter
 notebook
+nbconvert==5.6.1
 numpydoc>=0.9.2
 sphinx-autodoc-typehints
