@@ -40,6 +40,7 @@ jobs:
         NUMPY: 1.17
       python_3.9:
         python.version: '3.9'
+        TEST_INSTALL: true
       python_38_no_numba:
         python.version: '3.8'
         USE_NUMBA: false
@@ -78,24 +79,24 @@ jobs:
   - script: |
       python -m pip install -e . -v --no-build-isolation
     displayName: 'Install arch (Editable)'
-    condition: ne(variables['python.version'], '3.9')
+    condition: eq(variables.test_install, false)
 
   - script: |
       python setup.py bdist_wheel
       WHL=$(ls -t dist)
       pip install ./dist/${WHL}
     displayName: 'Install arch (Site packages)'
-    condition: eq(variables['python.version'], '3.9')
+    condition: eq(variables.test_install, false)
 
   - script: |
       pytest arch --junitxml=junit/test-results.xml -n auto --durations=25
-    displayName: 'pytest'
+    displayName: 'pytest (Editable)'
     condition: ne(variables['python.version'], '3.9')
 
   - script: |
       python -c "import arch; arch.test()"
     displayName: 'pytest (Site packages)'
-    condition: ne(variables['python.version'], '3.9')
+    condition: eq(variables.test_install, true)
 
   - task: PublishTestResults@2
     inputs:
