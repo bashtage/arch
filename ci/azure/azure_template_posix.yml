@@ -1,0 +1,104 @@
+# Python package
+# Create and test a Python package on multiple Python versions.
+# Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+
+parameters:
+  # defaults for any parameters that are not specified
+  name: ''
+  vmImage: ''
+
+
+jobs:
+
+- job: ${{ parameters.name }}Test
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+  strategy:
+    matrix:
+      python_38_coverage:
+        python.version: '3.8'
+        ARCH_CYTHON_COVERAGE: true
+      python_38_statsmodels_master:
+        python.version: '3.8'
+        STATSMODELS_MASTER: true
+        COVERAGE: false
+      python37:
+        python.version: '3.7'
+        NUMPY: 1.16
+        SCIPY: 1.2
+        MATPLOTLIB: 2
+        PANDAS: 0.23
+      python_38_numba:
+        python.version: '3.8'
+        USE_NUMBA: true
+        MATPLOTLIB: 3
+        PYTEST_PATTERN: "(slow or not slow)"
+      python37_numpy117:
+        python.version: '3.7'
+        MATPLOTLIB: 3
+        NUMPY: 1.17
+      python: 3.9
+        python.version: '3.9'
+      python_38_no_numba:
+        python.version: '3.8'
+        USE_NUMBA: false
+        MATPLOTLIB: 3
+        PYTEST_PATTERN: "(slow or not slow)"
+      python_38_numpy_118:
+        python.version: '3.8'
+        NUMPY: 1.18
+        USE_NUMBA: false
+        PYTEST_PATTERN: "(slow or not slow)"
+    maxParallel: 10
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+    displayName: 'Use Python $(python.version)'
+
+  - script: |
+      python -m pip install --upgrade pip setuptools wheel
+      source ci/azure/install-posix.sh
+      jupyter kernelspec list
+    displayName: 'Install dependencies'
+
+  - script: |
+     flake8 arch
+     black --check arch
+     isort --check arch
+    displayName: 'Check style and formatting'
+
+  - script: |
+      python -m pip list
+    displayName: 'List Configuration'
+
+  - script: |
+      python -m pip install -e . -v --no-build-isolation
+    displayName: 'Install arch (Editable)'
+    condition: ne(variables['python.version'], '3.9')
+
+  - script: |
+      python setup.py bdist_wheel
+      WHL=$(ls -t dist)
+      pip install ./dist/${WHL}
+    displayName: 'Install arch (Site packages)'
+    condition: eq(variables['python.version'], '3.9')
+
+  - script: |
+      pytest arch --junitxml=junit/test-results.xml -n auto --durations=25
+    displayName: 'pytest'
+    condition: ne(variables['python.version'], '3.9')
+
+  - script: |
+      python -c "import arch; arch.test()"
+    displayName: 'pytest (Site packages)'
+    condition: ne(variables['python.version'], '3.9')
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '**/test-results.xml'
+      testRunTitle: 'Python $(python.version)'
+    condition: succeededOrFailed()
