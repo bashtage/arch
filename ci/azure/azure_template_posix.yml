@@ -77,24 +77,30 @@ jobs:
     displayName: 'List Configuration'
 
   - script: |
-      python -m pip install -e . -v --no-build-isolation
-    displayName: 'Install arch (Editable)'
-    condition: eq(variables.test_install, false)
+      echo ${TEST_INSTALL}
+      if [[ ${TEST_INSTALL} == true ]]; then
+        echo "Installing to site packages"
+        python setup.py bdist_wheel
+        WHL=$(ls -t dist)
+        pip install ./dist/${WHL}
+      else
+        echo "Editable install"
+        python -m pip install -e . -v --no-build-isolation
+      fi
+    displayName: 'Install arch'
 
   - script: |
-      python setup.py bdist_wheel
-      WHL=$(ls -t dist)
-      pip install ./dist/${WHL}
-    displayName: 'Install arch (Site packages)'
-    condition: eq(variables.test_install, false)
+      echo ${TEST_INSTALL}
+      if [[ ${TEST_INSTALL} == true ]]; then
+        echo "Testing site packages"
+        python -c "import arch; arch.test()"
+      else
+        echo "Testing editable install"
+        pytest arch --junitxml=junit/test-results.xml -n auto --durations=25
+      fi
 
   - script: |
-      pytest arch --junitxml=junit/test-results.xml -n auto --durations=25
-    displayName: 'pytest (Editable)'
-    condition: ne(variables['python.version'], '3.9')
 
-  - script: |
-      python -c "import arch; arch.test()"
     displayName: 'pytest (Site packages)'
     condition: eq(variables.test_install, true)
 
