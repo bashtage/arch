@@ -1,0 +1,24 @@
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops#passing-parameters
+
+trigger:
+- master
+
+variables:
+  MKL_NUM_THREADS: 1
+  NUMEXPR_NUM_THREADS: 1
+  OMP_NUM_THREADS: 1
+  VML_NUM_THREADS: 1
+  OPENBLAS_NUM_THREADS: 1
+  PYTHONHASHSEED: 12345678 # Ensure tests are correctly gathered by xdist
+  SETUPTOOLS_USE_DISTUTILS: "stdlib"
+
+jobs:
+- template: ci/azure/azure_template_posix.yml
+  parameters:
+    name: Linux
+    vmImage: ubuntu-20.04
+
+- template: ci/azure/azure_template_windows.yml
+  parameters:
+    name: Windows
+    vmImage: windows-2019
