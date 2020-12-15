@@ -11,10 +11,11 @@ try:
     import matplotlib  # noqa: F401
     from nbconvert.preprocessors import ExecutePreprocessor
     import nbformat
-
+    SKIP = False
     kernels = jupyter_client.kernelspec.find_kernel_specs()
 except ImportError:  # pragma: no cover
     pytestmark = pytest.mark.skip(reason="Required packages not available")
+    SKIP = True
 
 SLOW_NOTEBOOKS = ["multiple-comparison_examples.ipynb"]
 if bool(os.environ.get("ARCH_TEST_SLOW_NOTEBOOKS", False)):
@@ -36,6 +37,7 @@ def notebook(request):
 
 
 @pytest.mark.slow
+@pytest.mark.skipif(SKIP, reason="Required packages not available")
 def test_notebook(notebook):
     nb_name = os.path.split(notebook)[-1]
     if nb_name in SLOW_NOTEBOOKS:

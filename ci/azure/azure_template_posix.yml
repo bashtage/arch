@@ -25,29 +25,30 @@ jobs:
         COVERAGE: false
       python37:
         python.version: '3.7'
-        NUMPY: 1.16
-        SCIPY: 1.2
-        MATPLOTLIB: 2
-        PANDAS: 0.23
+        NUMPY: 1.16.6
+        SCIPY: 1.2.3
+        MATPLOTLIB: 2.2.5
+        PANDAS: 0.23.4
       python_38_numba:
         python.version: '3.8'
         USE_NUMBA: true
-        MATPLOTLIB: 3
+        MATPLOTLIB: 3.3.3
         PYTEST_PATTERN: "(slow or not slow)"
       python37_numpy117:
         python.version: '3.7'
-        MATPLOTLIB: 3
-        NUMPY: 1.17
-      python: 3.9
+        MATPLOTLIB: 3.0.3
+        NUMPY: 1.17.5
+      python_3.9:
         python.version: '3.9'
+        TEST_INSTALL: true
       python_38_no_numba:
         python.version: '3.8'
         USE_NUMBA: false
-        MATPLOTLIB: 3
+        MATPLOTLIB: 3.3.3
         PYTEST_PATTERN: "(slow or not slow)"
       python_38_numpy_118:
         python.version: '3.8'
-        NUMPY: 1.18
+        NUMPY: 1.18.5
         USE_NUMBA: false
         PYTEST_PATTERN: "(slow or not slow)"
     maxParallel: 10
@@ -76,26 +77,30 @@ jobs:
     displayName: 'List Configuration'
 
   - script: |
-      python -m pip install -e . -v --no-build-isolation
-    displayName: 'Install arch (Editable)'
-    condition: ne(variables['python.version'], '3.9')
+      if [[ ${TEST_INSTALL} == true ]]; then
+        echo "Installing to site packages"
+        python setup.py bdist_wheel
+        WHL=$(ls -t dist)
+        pip install ./dist/${WHL}
+      else
+        echo "Editable install"
+        python -m pip install -e . -v --no-build-isolation
+      fi
+    displayName: 'Install arch'
 
   - script: |
-      python setup.py bdist_wheel
-      WHL=$(ls -t dist)
-      pip install ./dist/${WHL}
-    displayName: 'Install arch (Site packages)'
-    condition: eq(variables['python.version'], '3.9')
-
-  - script: |
-      pytest arch --junitxml=junit/test-results.xml -n auto --durations=25
-    displayName: 'pytest'
-    condition: ne(variables['python.version'], '3.9')
-
-  - script: |
-      python -c "import arch; arch.test()"
-    displayName: 'pytest (Site packages)'
-    condition: ne(variables['python.version'], '3.9')
+      echo ${TEST_INSTALL}
+      if [[ ${TEST_INSTALL} == true ]]; then
+        echo "Testing site packages"
+        mkdir test_run_dir
+        pushd test_run_dir
+        python -c "import arch; arch.test()"
+        popd
+      else
+        echo "Testing editable install"
+        pytest arch --junitxml=junit/test-results.xml -n auto --durations=25
+      fi
+    displayName: 'Run tests'
 
   - task: PublishTestResults@2
     inputs:

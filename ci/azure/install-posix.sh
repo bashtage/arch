@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-python -m pip install cython pytest pytest-xdist coverage pytest-cov ipython jupyter notebook nbconvert "property_cached>=1.6.3" black==20.8b1 isort flake8
+python -m pip install cython pytest pytest-xdist coverage pytest-cov ipython jupyter notebook nbconvert "property_cached>=1.6.3" black==20.8b1 isort flake8 nbconvert==5.6.1
 
 CMD="python -m pip install numpy"
 if [[ -n ${NUMPY} ]]; then CMD="$CMD==${NUMPY}"; fi;
