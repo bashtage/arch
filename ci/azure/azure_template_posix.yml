@@ -77,7 +77,6 @@ jobs:
     displayName: 'List Configuration'
 
   - script: |
-      echo ${TEST_INSTALL}
       if [[ ${TEST_INSTALL} == true ]]; then
         echo "Installing to site packages"
         python setup.py bdist_wheel
@@ -93,7 +92,10 @@ jobs:
       echo ${TEST_INSTALL}
       if [[ ${TEST_INSTALL} == true ]]; then
         echo "Testing site packages"
+        mkdir test_run_dir
+        pushd test_run_dir
         python -c "import arch; arch.test()"
+        popd
       else
         echo "Testing editable install"
         pytest arch --junitxml=junit/test-results.xml -n auto --durations=25
