@@ -73,8 +73,7 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
-      echo ${PATH}
-      which python
+      source ci/azure/update_path.sh
       if [[ ${STATSMODELS_MASTER} == "true" ]]; then
         echo "Installing statsmodels master"
         source ci/install-statsmodels-master.sh
@@ -82,16 +81,24 @@ jobs:
     displayName: 'Install statsmodels master'
 
   - script: |
+     source ci/azure/update_path.sh
      flake8 arch
      black --check arch
      isort --check arch
     displayName: 'Check style and formatting'
 
   - script: |
-      python -m pip list
+      if [[ ${USE_CONDA} == "true" ]]; then
+        source ci/azure/update_path.sh
+        conda list
+      else
+        python -m pip list
+      fi
+
     displayName: 'List Configuration'
 
   - script: |
+      source ci/azure/update_path.sh
       if [[ ${TEST_INSTALL} == "true" ]]; then
         echo "Installing to site packages"
         python setup.py bdist_wheel
@@ -104,6 +111,7 @@ jobs:
     displayName: 'Install arch'
 
   - script: |
+      source ci/azure/update_path.sh
       if [[ ${TEST_INSTALL} == true ]]; then
         echo "Testing site packages"
         mkdir test_run_dir
