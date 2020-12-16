@@ -61,11 +61,14 @@ jobs:
       architecture: 'x64'
     displayName: 'Use Python $(python.version)'
 
+  - bash: |
+      if [[ ${USE_CONDA} == "true" ]]; then
+        echo "##vso[task.prependpath]$CONDA/bin"
+      fi
+    displayName: 'Add conda to PATH if needed'
+
   - script: |
       source ci/azure/install-posix.sh
-      if [[ ${USE_CONDA} == "true" ]]; then
-        echo "##vso[task.setvariable variable=PATH]${HOME}/miniconda3/bin:${PATH}"
-      fi
       jupyter kernelspec list
     displayName: 'Install dependencies'
 
@@ -73,26 +76,22 @@ jobs:
       echo ${PATH}
       which python
       if [[ ${STATSMODELS_MASTER} == "true" ]]; then
-        source ci/azure/update_path.sh
         echo "Installing statsmodels master"
         source ci/install-statsmodels-master.sh
       fi
     displayName: 'Install statsmodels master'
 
   - script: |
-     source ci/azure/update_path.sh
      flake8 arch
      black --check arch
      isort --check arch
     displayName: 'Check style and formatting'
 
   - script: |
-      source ci/azure/update_path.sh
       python -m pip list
     displayName: 'List Configuration'
 
   - script: |
-      source ci/azure/update_path.sh
       if [[ ${TEST_INSTALL} == "true" ]]; then
         echo "Installing to site packages"
         python setup.py bdist_wheel
@@ -105,7 +104,6 @@ jobs:
     displayName: 'Install arch'
 
   - script: |
-      source ci/azure/update_path.sh
       if [[ ${TEST_INSTALL} == true ]]; then
         echo "Testing site packages"
         mkdir test_run_dir
