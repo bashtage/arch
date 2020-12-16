@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-conda remove statsmodels --yes
-export GITDIR=$PWD
-cd ~
-git clone --branch=master --depth=10 https://github.com/statsmodels/statsmodels.git
+python -m pip uninstall statsmodels -y
+export REPO_DIR=$PWD
+mkdir statsmodels-clone
+cd statsmodels-clone
+git clone --branch=master --depth=1000 https://github.com/statsmodels/statsmodels.git
 cd statsmodels
-python setup.py install
-cd $GITDIR
-pip install seaborn
+pip install . -v
+cd ${REPO_DIR}

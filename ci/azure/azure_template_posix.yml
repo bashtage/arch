@@ -67,6 +67,13 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
+      if [[ ${STATSMODELS_MASTER} == "true" ]]; then
+        echo "Installing statsmodels master"
+        source ci/install-statsmodels-master.sh
+      fi
+    displayName: 'Install statsmodels master'
+
+  - script: |
      flake8 arch
      black --check arch
      isort --check arch
@@ -77,7 +84,7 @@ jobs:
     displayName: 'List Configuration'
 
   - script: |
-      if [[ ${TEST_INSTALL} == true ]]; then
+      if [[ ${TEST_INSTALL} == "true" ]]; then
         echo "Installing to site packages"
         python setup.py bdist_wheel
         WHL=$(ls -t dist)
