@@ -25,7 +25,7 @@ cp -r ${PWD}/doc/build/html/* ${PWD}/devel/
 echo "Add devel"
 git add devel/.
 echo "Change remote"
-git remote set-url origin https://bashtage:"${GH_PAGES_TOKEN}"@github.com/bashtage/linearmodels.git
+git remote set-url origin https://bashtage:"${GITHUB_TOKEN}"@github.com/bashtage/arch.git
 echo "Github Actions doc build after commit ${GITHUB_SHA::8}"
 git commit -a -m "Github Actions doc build after commit ${GITHUB_SHA::8}"
 echo "Push"
