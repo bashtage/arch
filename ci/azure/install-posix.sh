@@ -1,8 +1,20 @@
 #!/usr/bin/env bash
 
+if [[ ${USE_CONDA} == "true" ]]; then
+  conda config --set always_yes true
+  conda update --all --quiet
+  conda create -n arch-test python=${PYTHON_VERSION} -y
+  conda init
+  source activate arch-test
+  which python
+  CMD="conda install numpy"
+else
+  CMD="python -m pip install numpy"
+fi
+
+python -m pip install --upgrade pip setuptools wheel
 python -m pip install cython pytest pytest-xdist coverage pytest-cov ipython jupyter notebook nbconvert "property_cached>=1.6.3" black==20.8b1 isort flake8 nbconvert==5.6.1
 
-CMD="python -m pip install numpy"
 if [[ -n ${NUMPY} ]]; then CMD="$CMD==${NUMPY}"; fi;
 CMD="$CMD scipy"
 if [[ -n ${SCIPY} ]]; then CMD="$CMD==${SCIPY}"; fi;

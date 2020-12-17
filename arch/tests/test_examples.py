@@ -11,6 +11,7 @@ try:
     import matplotlib  # noqa: F401
     from nbconvert.preprocessors import ExecutePreprocessor
     import nbformat
+
     SKIP = False
     kernels = jupyter_client.kernelspec.find_kernel_specs()
 except ImportError:  # pragma: no cover
