@@ -13,6 +13,7 @@ variables:
   SETUPTOOLS_USE_DISTUTILS: "stdlib"
   TEST_INSTALL: false
   MPLBACKEND: agg
+  PYTEST_PATTERN: "(not slow)"
 
 jobs:
 - template: ci/azure/azure_template_posix.yml

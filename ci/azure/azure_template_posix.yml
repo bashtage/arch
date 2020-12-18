@@ -31,7 +31,7 @@ jobs:
         PANDAS: 0.23.4
       python_38_conda_numba:
         python.version: '3.8'
-        USE_CONDA: true
+        use.conda: 'true'
         USE_NUMBA: true
         MATPLOTLIB: 3.3.2
         PYTEST_PATTERN: "(slow or not slow)"
@@ -41,7 +41,7 @@ jobs:
         NUMPY: 1.17.5
       python_3.9:
         python.version: '3.9'
-        TEST_INSTALL: true
+        test.install: true
       python_38_no_numba:
         python.version: '3.8'
         USE_NUMBA: false
@@ -62,14 +62,15 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - bash: |
-      if [[ ${USE_CONDA} == "true" ]]; then
-        echo "##vso[task.prependpath]$CONDA/bin"
-      fi
-    displayName: 'Add conda to PATH if needed'
+      echo "##vso[task.prependpath]$CONDA/bin"
+      echo "##vso[task.prependpath]$CONDA/envs/arch-test"
+      echo "##vso[task.prependpath]$CONDA/envs/arch-test/condabin"
+      echo "##vso[task.prependpath]$CONDA/envs/arch-test/bin"
+    displayName: 'Add conda and env to PATH'
+    condition: eq(variables['use.conda'], 'true')
 
   - script: |
       source ci/azure/install-posix.sh
-      jupyter kernelspec list
     displayName: 'Install dependencies'
 
   - script: |
@@ -87,42 +88,42 @@ jobs:
      isort --check arch
     displayName: 'Check style and formatting'
 
-  - script: |
-      if [[ ${USE_CONDA} == "true" ]]; then
-        source ci/azure/update_path.sh
-        conda list
-      else
-        python -m pip list
-      fi
+  - script: python -m pip list
+    displayName: 'List Configuration (PyPI)'
+    condition: ne(variables['use.conda'], 'true')
 
-    displayName: 'List Configuration'
+  - script: conda list
+    displayName: 'List Configuration (conda)'
+    condition: eq(variables['use.conda'], 'true')
 
   - script: |
-      source ci/azure/update_path.sh
-      if [[ ${TEST_INSTALL} == "true" ]]; then
-        echo "Installing to site packages"
-        python setup.py bdist_wheel
-        WHL=$(ls -t dist)
-        pip install ./dist/${WHL}
-      else
-        echo "Editable install"
-        python -m pip install -e . -v --no-build-isolation
-      fi
-    displayName: 'Install arch'
+      echo "Installing to site packages"
+      python setup.py bdist_wheel
+      WHL=$(ls -t dist)
+      pip install ./dist/${WHL}
+    displayName: 'Install arch (site-packages)'
+    condition: eq(variables['test.install'], 'true')
 
   - script: |
-      source ci/azure/update_path.sh
-      if [[ ${TEST_INSTALL} == true ]]; then
-        echo "Testing site packages"
-        mkdir test_run_dir
-        pushd test_run_dir
-        python -c "import arch; arch.test()"
-        popd
-      else
-        echo "Testing editable install"
-        pytest arch --junitxml=junit/test-results.xml -n auto --durations=25
-      fi
-    displayName: 'Run tests'
+      python -m pip install -e . -v --no-build-isolation
+    displayName: 'Install arch (editable)'
+    condition: ne(variables['test.install'], 'true')
+
+  - script: |
+      echo "Testing site packages"
+      mkdir test_run_dir
+      pushd test_run_dir
+      python -c "import arch; arch.test(['-n', 'auto', '--junitxml=../junit/test-results.xml'])"
+      popd
+    displayName: 'Run tests (site-packages)'
+    condition: eq(variables['test.install'], 'true')
+
+  - script: |
+      echo "Testing editable install"
+      echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 arch/tests
+      pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 arch/tests
+    displayName: 'Run tests (editable)'
+    condition: ne(variables['test.install'], 'true')
 
   - task: PublishTestResults@2
     inputs:
