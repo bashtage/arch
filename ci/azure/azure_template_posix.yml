@@ -31,7 +31,7 @@ jobs:
         PANDAS: 0.23.4
       python_38_conda_numba:
         python.version: '3.8'
-        USE_CONDA: true
+        use.conda: 'true'
         USE_NUMBA: true
         MATPLOTLIB: 3.3.2
         PYTEST_PATTERN: "(slow or not slow)"
@@ -64,6 +64,8 @@ jobs:
   - bash: |
       if [[ ${USE_CONDA} == "true" ]]; then
         echo "##vso[task.prependpath]$CONDA/bin"
+        echo "##vso[task.prependpath]$CONDA/envs/arch-test"
+        echo ${PATH}
       fi
     displayName: 'Add conda to PATH if needed'
 
@@ -87,15 +89,13 @@ jobs:
      isort --check arch
     displayName: 'Check style and formatting'
 
-  - script: |
-      if [[ ${USE_CONDA} == "true" ]]; then
-        source ci/azure/update_path.sh
-        conda list
-      else
-        python -m pip list
-      fi
+  - script: python -m pip list
+    displayName: 'List Configuration (PyPI)'
+    condition: ne(variables['use.conda'], 'true')
 
-    displayName: 'List Configuration'
+  - script: conda list
+    displayName: 'List Configuration (conda)'
+    condition: eq(variables['use.conda'], 'true')
 
   - script: |
       source ci/azure/update_path.sh
