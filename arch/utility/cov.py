@@ -1,3 +1,5 @@
+from typing import Union
+
 from numpy import asarray
 
 from arch.typing import NDArray
@@ -5,7 +7,7 @@ from arch.typing import NDArray
 
 def cov_nw(
     y: NDArray, lags: int = 0, demean: bool = True, axis: int = 0, ddof: int = 0
-) -> NDArray:
+) -> Union[NDArray, float]:
     """
     Computes Newey-West covariance for 1-d and 2-d arrays
 
@@ -57,5 +59,5 @@ def cov_nw(
         cov += w * (gamma + gamma.T)
     cov = cov / (n - ddof)
     if is_1d:
-        cov = float(cov)
-    return cov
+        return float(cov)
+    return asarray(cov)

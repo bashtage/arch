@@ -188,9 +188,9 @@ def date_to_index(
     """
     if not is_datetime64_any_dtype(date_index):
         raise ValueError("date_index must be a datetime64 array")
-
-    if not np.all((np.diff(date_index.values).astype(dtype=np.int64)) > 0):
-        raise ValueError("date_index is not monotonic and unique")
+    if isinstance(date_index, DatetimeIndex):
+        if not np.all((np.diff(date_index.values).astype(dtype=np.int64)) > 0):
+            raise ValueError("date_index is not monotonic and unique")
     if not isinstance(date, (dt.datetime, np.datetime64, str)):
         raise ValueError("date must be a datetime, datetime64 or string")
     elif isinstance(date, Timestamp):
@@ -222,7 +222,7 @@ def date_to_index(
     if not in_array:
         loc += 1
 
-    return loc
+    return int(loc)
 
 
 def cutoff_to_index(
@@ -271,7 +271,7 @@ def find_index(s: AnyPandas, index: Union[int, DateLike]) -> int:
     int
         Integer location of index value
     """
-    if isinstance(index, (int, np.int, np.int64)):
+    if isinstance(index, (int, np.int64)):
         return int(index)
     date_index = to_datetime(index, errors="coerce")
 

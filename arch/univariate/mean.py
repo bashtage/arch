@@ -387,11 +387,13 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         """
 
         k_x = 0
-        if x is not None:
+        if x is None:
+            x = np.empty((nobs + burn, 0))
+        else:
             x = np.asarray(x)
-            k_x = x.shape[1]
-            if x.shape[0] != nobs + burn:
-                raise ValueError("x must have nobs + burn rows")
+        k_x = x.shape[1]
+        if x.shape[0] != nobs + burn:
+            raise ValueError("x must have nobs + burn rows")
         assert self._lags is not None
         mc = int(self.constant) + self._lags.shape[1] + k_x
         vc = self.volatility.num_params
@@ -572,15 +574,21 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def _r2(self, params: NDArray) -> float:
         y = self._fit_y
-        x = self._fit_regressors
         constant = False
+        x = self._fit_regressors
         if x is not None and x.shape[1] > 0:
             constant = self.constant or implicit_constant(x)
-        e = self.resids(params)
         if constant:
+            if x.shape[1] == 1:
+                # Shortcut for constant only
+                return 0.0
             y = y - np.mean(y)
+        tss = float(y.dot(y))
+        if tss <= 0.0:
+            return np.nan
+        e = self.resids(params)
 
-        return 1.0 - e.T.dot(e) / y.dot(y)
+        return 1.0 - float(e.T.dot(e)) / tss
 
     def _adjust_sample(
         self,
@@ -664,8 +672,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             scores = np.zeros((nobs, self.num_params + 1))
             scores[:, : self.num_params] = x * e[:, None]
             scores[:, -1] = e ** 2.0 - sigma2
-            score_cov = scores.T.dot(scores) / nobs
-            param_cov = hessian.dot(score_cov).dot(hessian) / nobs
+            score_cov = np.asarray(scores.T.dot(scores) / nobs)
+            param_cov = (hessian @ score_cov @ hessian) / nobs
             cov_type = COV_TYPES["white"]
         else:
             raise ValueError("Unknown cov_type")
