@@ -175,9 +175,9 @@ class ARCHModel(object, metaclass=ABCMeta):
         self._name = "ARCHModel"
         self._is_pandas = isinstance(y, (DataFrame, Series))
         if y is not None:
-            self._y_series = ensure1d(y, "y", series=True)
+            self._y_series = cast(Series, ensure1d(y, "y", series=True))
         else:
-            self._y_series = ensure1d(np.empty((0,)), "y", series=True)
+            self._y_series = cast(Series, ensure1d(np.empty((0,)), "y", series=True))
         self._y = np.asarray(self._y_series)
         self._y_original = y
 
@@ -579,7 +579,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         # 1. Check in ARCH or Non-normal dist.  If no ARCH and normal,
         # use closed form
         v, d = self.volatility, self.distribution
-        offsets = np.array((self.num_params, v.num_params, d.num_params))
+        offsets = np.array((self.num_params, v.num_params, d.num_params), dtype=int)
         total_params = sum(offsets)
 
         # Closed form is applicable when model has no parameters
@@ -631,10 +631,10 @@ class ARCHModel(object, metaclass=ABCMeta):
         for c in constraints:
             assert c is not None
             num_cons.append(c[0].shape[0])
-        num_constraints = np.array(num_cons)
+        num_constraints = np.array(num_cons, dtype=int)
         num_params = offsets.sum()
-        a = np.zeros((num_constraints.sum(), num_params))
-        b = np.zeros(num_constraints.sum())
+        a = np.zeros((int(num_constraints.sum()), int(num_params)))
+        b = np.zeros(int(num_constraints.sum()))
 
         for i, c in enumerate(constraints):
             assert c is not None

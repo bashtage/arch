@@ -5,6 +5,7 @@ same inputs.
 """
 from abc import ABCMeta, abstractmethod
 import itertools
+import operator
 from typing import List, Optional, Sequence, Tuple, Union, cast
 from warnings import warn
 
@@ -802,11 +803,11 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return backcast
 
     def backcast(self, resids: NDArray) -> Union[float, NDArray]:
-        return resids.var()
+        return float(resids.var())
 
     def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
-        v = resids.var()
-        return [(v / 100000.0, 10.0 * (v + resids.mean() ** 2.0))]
+        v = float(resids.var())
+        return [(v / 100000.0, 10.0 * (v + float(resids.mean()) ** 2.0))]
 
     def parameter_names(self) -> List[str]:
         return ["sigma2"]
@@ -976,7 +977,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
         v = np.mean(abs(resids) ** self.power)
 
-        bounds = [(0.0, 10.0 * v)]
+        bounds = [(0.0, 10.0 * float(v))]
         bounds.extend([(0.0, 1.0)] * self.p)
         for i in range(self.o):
             if i < self.p:
@@ -1255,7 +1256,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         forecast_paths = scaled_forecast_paths[:, m:] ** (2.0 / power)
 
-        return np.mean(forecast_paths, 0), forecast_paths, shock[:, m:]
+        return np.asarray(np.mean(forecast_paths, 0)), forecast_paths, shock[:, m:]
 
     def _simulation_forecast(
         self,
@@ -1370,7 +1371,8 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def __init__(self, lags: Union[int, Sequence[int]] = 1) -> None:
         super().__init__()
         if np.isscalar(lags):
-            lags = np.arange(1, np.int(lags) + 1)
+            lag_val = operator.index(lags)
+            lags = list(range(1, lag_val + 1))
         lags_arr = ensure1d(lags, "lags")
         self.lags = np.array(lags_arr, dtype=np.int32)
         self._num_lags = lags_arr.shape[0]
@@ -1388,7 +1390,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         lags = self.lags
         k_arch = lags.shape[0]
 
-        bounds = [(0.0, 10 * np.mean(resids ** 2.0))]
+        bounds = [(0.0, 10 * float(np.mean(resids ** 2.0)))]
         bounds.extend([(0.0, 1.0)] * k_arch)
 
         return bounds
@@ -1467,7 +1469,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return names
 
     def _harch_to_arch(self, params: NDArray) -> NDArray:
-        arch_params = np.zeros((1 + self.lags.max()))
+        arch_params = np.zeros((1 + int(self.lags.max())))
         arch_params[0] = params[0]
         for param, lag in zip(params[1:], self.lags):
             arch_params[1 : lag + 1] += param / lag
@@ -1483,7 +1485,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     ) -> Tuple[float, NDArray, NDArray]:
         arch_params = self._harch_to_arch(parameters)
         t = resids.shape[0]
-        m = self.lags.max()
+        m = int(self.lags.max())
         resids2 = np.empty((t, m + horizon))
         resids2[:m, :m] = backcast
         sq_resids = resids ** 2.0
@@ -1509,7 +1511,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         const, arch, resids2 = self._common_forecast_components(
             parameters, resids, backcast, horizon
         )
-        m = self.lags.max()
+        m = int(self.lags.max())
         resids2[:start] = np.nan
         arch_rev = arch[::-1]
         for i in range(horizon):
@@ -1531,7 +1533,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         const, arch, resids2 = self._common_forecast_components(
             parameters, resids, backcast, horizon
         )
-        t, m = resids.shape[0], self.lags.max()
+        t, m = resids.shape[0], int(self.lags.max())
 
         shocks = np.full((t, simulations, horizon), np.nan)
         paths = np.full((t, simulations, horizon), np.nan)
@@ -1546,7 +1548,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 shocks[i, :, j] = std_shocks[:, j] * np.sqrt(paths[i, :, j])
                 temp_resids2[:, m + j] = shocks[i, :, j] ** 2.0
 
-        return VarianceForecast(paths.mean(1), paths, shocks)
+        return VarianceForecast(np.asarray(paths.mean(1)), paths, shocks)
 
 
 class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
@@ -1621,7 +1623,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return descr
 
     def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
-        bounds = [(0.0, 10 * np.mean(resids ** 2.0))]  # omega
+        bounds = [(0.0, 10 * float(np.mean(resids ** 2.0)))]  # omega
         bounds.extend([(0.0, 1.0)])  # 0 <= alpha < 1
         if self._asym:
             bounds.extend([(-1.0, 2.0)])  # -1 <= gamma < 2
@@ -1874,7 +1876,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 temp_resids2[:, m + j] = shocks[i, :, j] ** 2.0
                 temp_indicator[:, m + j] = (shocks[i, :, j] < 0).astype(np.double)
 
-        return VarianceForecast(paths.mean(1), paths, shocks)
+        return VarianceForecast(np.asarray(paths.mean(1)), paths, shocks)
 
 
 class ARCH(GARCH):
@@ -2102,7 +2104,7 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 ]
                 shocks[i, :, h] = np.sqrt(paths[i, :, h]) * std_shocks[:, h]
 
-        return VarianceForecast(paths.mean(1), paths, shocks)
+        return VarianceForecast(np.asarray(paths.mean(1)), paths, shocks)
 
 
 class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
@@ -2381,7 +2383,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 paths[i, :, j] = w.dot(temp_paths[:, :, j])
                 shocks[i, :, j] = std_shocks[:, j] * np.sqrt(paths[i, :, j])
 
-        return VarianceForecast(paths.mean(1), paths, shocks)
+        return VarianceForecast(np.asarray(paths.mean(1)), paths, shocks)
 
 
 class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
@@ -2693,7 +2695,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             paths[i, :, :] = np.exp(_lnsigma2[:, m:])
             shocks[i, :, :] = np.sqrt(paths[i, :, :]) * std_shocks
 
-        return VarianceForecast(paths.mean(1), paths, shocks)
+        return VarianceForecast(np.asarray(paths.mean(1)), paths, shocks)
 
 
 class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
@@ -2951,7 +2953,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
         v = np.mean(abs(resids) ** self.power)
 
-        bounds = [(0.0, 10.0 * v)]
+        bounds = [(0.0, 10.0 * float(v))]
         bounds.extend([(0.0, 0.5)] * self.p)  # phi
         bounds.extend([(0.0, 1.0)])  # d
         bounds.extend([(0.0, 1.0)] * self.q)  # beta

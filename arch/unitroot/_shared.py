@@ -1,6 +1,7 @@
 from typing import Any, Dict, NamedTuple, Optional, Tuple, Type
 
 import pandas as pd
+from pandas.core.series import Series
 from statsmodels.iolib.summary import Summary
 from statsmodels.regression.linear_model import OLS, RegressionResults
 
@@ -53,6 +54,7 @@ def _check_cointegrating_regression(
         )
     if not isinstance(x, pd.DataFrame):
         cols = [f"x{i}" for i in range(1, x.shape[1] + 1)]
+        assert isinstance(y, Series)
         x_df = pd.DataFrame(x, columns=cols, index=y.index)
     else:
         x_df = x
@@ -71,6 +73,7 @@ def _cross_section(y: ArrayLike1D, x: ArrayLike2D, trend: str) -> RegressionResu
 
     if not isinstance(x, pd.DataFrame):
         cols = [f"x{i}" for i in range(1, x.shape[1] + 1)]
+        assert isinstance(y, Series)
         x = pd.DataFrame(x, columns=cols, index=y.index)
     x = add_trend(x, trend)
     res = OLS(y, x).fit()

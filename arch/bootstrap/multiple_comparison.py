@@ -209,7 +209,7 @@ class MCS(MultipleComparison):
         std_bs_mean_losses = bootstrapped_mean_losses / np.sqrt(variances)
         # 3. Using the models still in the set, compute the max (b,1)
         # Initialize the set
-        included = np.ones(self.k, dtype=np.bool)
+        included = np.ones(self.k, dtype=np.bool_)
         # Loop until there is only 1 model left
         eliminated = []
         while included.sum() > 1:
@@ -251,7 +251,7 @@ class MCS(MultipleComparison):
             avg_bs_errors -= avg_bs_errors.mean()
             bs_avg_loss_errors[i] = avg_bs_errors
             # Initialize the set
-        included = np.ones(self.k, dtype=np.bool)
+        included = np.ones(self.k, dtype=np.bool_)
         # Loop until there is only 1 model left
         eliminated = []
         while included.sum() > 1:
@@ -270,12 +270,12 @@ class MCS(MultipleComparison):
             test_stat = np.max(std_loss_diffs)
             pval = (test_stat < simulated_test_stat).mean()
             locs = np.argwhere(std_loss_diffs == test_stat)
-            eliminated.append((indices.flat[locs.squeeze()], pval))
+            eliminated.append((int(indices.flat[locs.squeeze()]), pval))
             included[indices.flat[locs]] = False
 
         indices = np.argwhere(included).flatten()
         for ind in indices:
-            eliminated.append((ind, 1.0))
+            eliminated.append((int(ind), 1.0))
         self._pvalues = self._format_pvalues(eliminated)
 
     @property
@@ -436,7 +436,7 @@ class StepM(MultipleComparison):
         # 3. Stop if nothing superior
         while better_models and (len(better_models) < self.k):
             # A. Use Selector to remove better models
-            selector = np.ones(self.k, dtype=np.bool)
+            selector = np.ones(self.k, dtype=np.bool_)
             if isinstance(self.models, pd.DataFrame):  # Columns
                 selector[self.models.columns.isin(all_better_models)] = False
             else:
@@ -447,7 +447,7 @@ class StepM(MultipleComparison):
             better_models = list(self.spa.better_models(self.size))
             all_better_models.extend(better_models)
         # Reset SPA
-        selector = np.ones(self.k, dtype=np.bool)
+        selector = np.ones(self.k, dtype=np.bool_)
         self.spa.subset(selector)
         all_better_models.sort()
         self._superior_models = all_better_models
@@ -563,7 +563,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self.bootstrap = bootstrap_inst
         self._pvalues: Dict[str, float] = {}
         self._simulated_vals: Optional[NDArray] = None
-        self._selector = np.ones(self.k, dtype=np.bool)
+        self._selector = np.ones(self.k, dtype=np.bool_)
         self._model = "SPA"
         if self.studentize:
             method = "bootstrap" if self.nested else "asymptotic"
