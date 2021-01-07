@@ -430,6 +430,7 @@ class TestMeanModel(object):
         assert_series_equal(res.std_resid, std_resid)
         # Smoke bootstrap
         summ = ar.fit(disp=DISPLAY).summary()
+        assert "Df Model:                            6" in str(summ)
         assert "Constant Variance" in str(summ)
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
         res = ar.fit(disp=DISPLAY, update_freq=5, cov_type="mle")
@@ -711,7 +712,9 @@ class TestMeanModel(object):
     def test_egarch(self):
         cm = ConstantMean(self.y)
         cm.volatility = EGARCH()
-        cm.fit(update_freq=0, disp=DISPLAY)
+        res = cm.fit(update_freq=0, disp=DISPLAY)
+        summ = res.summary()
+        assert "Df Model:                            1" in str(summ)
         cm.distribution = StudentsT()
         cm.fit(update_freq=0, disp=DISPLAY)
 

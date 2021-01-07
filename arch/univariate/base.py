@@ -1691,8 +1691,8 @@ class ARCHModelResult(ARCHModelFixedResult):
             ("AIC:", "%#10.6g" % self.aic),
             ("BIC:", "%#10.6g" % self.bic),
             ("No. Observations:", self._nobs),
-            ("Df Residuals:", self.nobs - self.num_params),
-            ("Df Model:", self.num_params),
+            ("Df Residuals:", self.nobs - self.model.num_params),
+            ("Df Model:", self.model.num_params),
         ]
 
         title = model_name + " Model Results"
