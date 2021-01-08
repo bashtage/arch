@@ -1175,3 +1175,6 @@ def test_harx_lag_spec(simulated_data):
     assert_almost_equal(harx_2.fit().rsquared, r2)
     assert_almost_equal(harx_3.fit().rsquared, r2)
     assert_almost_equal(harx_4.fit().rsquared, r2)
+
+def test_append():
+    pass

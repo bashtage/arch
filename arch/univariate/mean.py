@@ -6,7 +6,7 @@ import copy
 from typing import Callable, Dict, List, Optional, Sequence, Tuple, Union, cast
 
 import numpy as np
-from pandas import DataFrame, Index
+from pandas import Series, DataFrame, Index, concat
 from scipy.optimize import OptimizeResult
 from statsmodels.tsa.tsatools import lagmat
 
@@ -256,6 +256,42 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         """Gets the value of the exogenous regressors in the model"""
         return self._x
 
+    def append(self, y: ArrayLike, x: Optional[ArrayLike]=None):
+        if not isinstance(y, type(self._y_original)):
+            raise TypeError
+        new_y_series = cast(Series, ensure1d(y, "y", series=True))
+        self._y_series = cast(Series, concat((self._y_series, new_y_series)))
+        self._y = np.asarray(self._y_series)
+        if isinstance(y, (Series, DataFrame)):
+            self._y_original = concat((self._y_original, y))
+        elif isinstance(y, np.ndarray):
+            self._y_original = np.vstack((self._y_original, y))
+        else:
+            import warnings
+            warnings.warn(
+                "Unable to concatenate the new y to the original y since its type is "
+                "not a Series or ndarray. The model's ``y`` attribute no longer "
+                "contains the original data.",
+                UserWarning
+            )
+        if (x is not None and self._x is None) or (self._x is not None and x is None):
+            raise ValueError
+        if not isinstance(x, type(self._x)):
+            raise TypeError
+        if x is not None and self._x is not None:
+            if not isinstance(x, (DataFrame, np.ndarray)) or not isinstance(x, type(self._x)):
+                raise TypeError
+            if x.shape[1] != self._x.shape[1]:
+                raise ValueError
+            if isinstance(x, np.ndarray):
+                self._x = np.vstack((self._x, x))
+            else:
+                self._x = concat((self._x, x))
+        # TODO: Complete raised error messages
+        # TODO: Check rescaling
+        # TODO: Check variance bounds and forecasting
+        # TODO: Override for models that allow x values
+
     def parameter_names(self) -> List[str]:
         return self._generate_variable_names()
 
@@ -386,7 +422,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         >>> sim_data = harx.simulate(params, nobs=nobs, burn=burn, x=x)
         """
 
-        k_x = 0
         if x is None:
             x = np.empty((nobs + burn, 0))
         else:

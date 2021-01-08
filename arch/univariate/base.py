@@ -241,6 +241,42 @@ class ARCHModel(object, metaclass=ABCMeta):
         num_params = self.num_params
         return [(-np.inf, np.inf)] * num_params
 
+    @abstractmethod
+    def append(self, y: ArrayLike, x: Optional[ArrayLike]=None):
+        """
+        Append additional observations to the original y
+
+        Parameters
+        ----------
+        y : {ndarray, Series}
+            Additional observations to append to the original data. Must be
+            the same type of object that used used to construct the model.
+
+        Notes
+        -----
+        The new observations are appended to the end of the original data
+        so that the model's data is now (original, new).
+        """
+        if not isinstance(y, type(self._y_original)):
+            raise TypeError
+        new_y_series = cast(Series, ensure1d(y, "y", series=True))
+        self._y_series = cast(Series, pd.concat((self._y_series, new_y_series)))
+        self._y = np.asarray(self._y_series)
+        if isinstance(y, (Series, DataFrame)):
+            self._y_original = pd.concat((self._y_original, y))
+        elif isinstance(y, np.ndarray):
+            self._y_original = np.vstack((self._y_original, y))
+        else:
+            warnings.warn(
+                "Unable to concatenate the new y to the original y since its type is "
+                "not a Series or ndarray. The model's ``y`` attribute no longer "
+                "contains the original data.",
+                UserWarning
+            )
+        # TODO: Check rescaling
+        # TODO: Check variance bounds and forecasting
+        # TODO: Override for models that allow x values
+
     @property
     def y(self) -> Optional[ArrayLike]:
         """Returns the dependent variable"""
