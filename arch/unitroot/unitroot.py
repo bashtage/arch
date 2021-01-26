@@ -1615,14 +1615,12 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
     Examples
     --------
     >>> from arch.unitroot import VarianceRatio
-    >>> import datetime as dt
     >>> import pandas_datareader as pdr
-    >>> data = pdr.get_data_fred("DJIA")
-    >>> data = data.resample("M").last()  # End of month
-    >>> returns = data["DJIA"].pct_change().dropna()
-    >>> vr = VarianceRatio(returns, lags=12)
+    >>> data = pdr.get_data_fred("DJIA", start="2010-1-1", end="2020-12-31")
+    >>> data = np.log(data.resample("M").last())  # End of month
+    >>> vr = VarianceRatio(data, lags=12)
     >>> print("{0:0.4f}".format(vr.pvalue))
-    0.0000
+    0.1370
 
     References
     ----------
