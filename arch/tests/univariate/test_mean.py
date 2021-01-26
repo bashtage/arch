@@ -1175,3 +1175,19 @@ def test_harx_lag_spec(simulated_data):
     assert_almost_equal(harx_2.fit().rsquared, r2)
     assert_almost_equal(harx_3.fit().rsquared, r2)
     assert_almost_equal(harx_4.fit().rsquared, r2)
+
+
+def test_backcast_restricted(simulated_data):
+    # GH 440
+    mod = arch_model(simulated_data)
+    res = mod.fit(disp="off")
+    subset = (
+        simulated_data[100:600]
+        if isinstance(simulated_data, np.ndarray)
+        else simulated_data.iloc[100:600]
+    )
+    mod_restricted = arch_model(subset)
+    res_restricted = mod_restricted.fit(disp="off")
+    res_limited = mod.fit(first_obs=100, last_obs=600, disp="off")
+    assert_almost_equal(res_restricted.model._backcast, res_restricted.model._backcast)
+    assert np.abs(res.model._backcast - res_limited.model._backcast) > 1e-8
