@@ -1,9 +1,10 @@
 import os
 import platform
+from typing import Literal, Optional, Union
 
 from numpy import arange, array, cumsum, dot, ones, vstack
 from numpy.linalg import pinv
-from numpy.random import RandomState
+from numpy.random import Generator, RandomState
 
 # Storage Location
 if platform.system() == "Linux":
@@ -12,14 +13,14 @@ else:
     BASE_PATH = "C:\\\\"
 OUTPUT_PATH = os.path.join(BASE_PATH, "Users", "kevin", "Dropbox", "adf-z")
 
-PERCENTILES = (
+_PERCENTILES = (
     list(arange(1, 10))
     + list(arange(10, 50, 5))
     + list(arange(50, 950, 10))
     + list(arange(950, 990, 5))
     + list(arange(990, 999))
 )
-PERCENTILES = array(PERCENTILES) / 10.0
+PERCENTILES = array(_PERCENTILES) / 10.0
 
 TRENDS = ("n", "c", "ct", "ctt")
 TIME_SERIES_LENGTHS = array(
@@ -59,7 +60,12 @@ TIME_SERIES_LENGTHS = array(
 )
 
 
-def adf_simulation(n, trend, b, rng=None):
+def adf_simulation(
+    n: int,
+    trend: Literal["n", "c", "ct", "ctt"],
+    b: int,
+    rng: Optional[Union[RandomState, Generator]] = None,
+) -> float:
     """
     Simulates the empirical distribution of the ADF z-test statistic
     """

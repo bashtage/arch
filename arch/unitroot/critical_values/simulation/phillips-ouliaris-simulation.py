@@ -5,7 +5,7 @@ import os
 import pickle
 from random import shuffle
 import sys
-from typing import Optional, Tuple
+from typing import IO, Optional, Tuple, cast
 
 import colorama
 from joblib import Parallel, delayed
@@ -51,19 +51,19 @@ DF_Z_COLUMNS = DF_Z_COLUMNS.set_names(INDEX_NAMES)
 DF_P_COLUMNS = DF_P_COLUMNS.set_names(INDEX_NAMES)
 
 
-def demean(w: NDArray):
+def demean(w: NDArray) -> NDArray:
     return w - w.mean(1).reshape((w.shape[0], 1, w.shape[2]))
 
 
-def inner_prod(a: NDArray, b: Optional[NDArray] = None):
+def inner_prod(a: NDArray, b: Optional[NDArray] = None) -> NDArray:
     if b is None:
         b = a
     return a.transpose((0, 2, 1)) @ b
 
 
-def z_tests_vec(z: NDArray, lag: int, trend: str):
+def z_tests_vec(z: NDArray, lag: int, trend: str) -> Tuple[np.ndarray, np.ndarray]:
     assert z.ndim == 3
-    nobs = z.shape[1]
+    nobs = int(z.shape[1])
     if trend == "c":
         z = demean(z)
     elif trend in ("ct", "ctt"):
@@ -99,19 +99,19 @@ def z_tests_vec(z: NDArray, lag: int, trend: str):
     return z_a, z_t
 
 
-def z_tests(z: NDArray, lag: int, trend: str):
+def z_tests(z: NDArray, lag: int, trend: str) -> Tuple[float, float]:
     z = add_trend(z, trend=trend)
     u = z
     if z.shape[1] > 1:
         u = z[:, 0] - z[:, 1:] @ lstsq(z[:, 1:], z[:, 0], rcond=None)[0]
-    alpha = (u[:-1].T @ u[1:]) / (u[:-1].T @ u[:-1])
+    alpha = float((u[:-1].T @ u[1:]) / (u[:-1].T @ u[:-1]))
     k = u[1:] - alpha * u[:-1]
-    nobs = u.shape[0]
+    nobs = int(u.shape[0])
     one_sided_strict = 0.0
     for i in range(1, lag + 1):
         w = 1 - i / (lag + 1)
         one_sided_strict += 1 / nobs * w * k[i:].T @ k[:-i]
-    u2 = u[:-1].T @ u[:-1]
+    u2 = float(u[:-1].T @ u[:-1])
 
     z = (alpha - 1) - nobs * one_sided_strict / u2
     z_a = nobs * z
@@ -120,7 +120,7 @@ def z_tests(z: NDArray, lag: int, trend: str):
     return z_a, z_t
 
 
-def p_tests_vec(z: NDArray, lag: int, trend: str):
+def p_tests_vec(z: NDArray, lag: int, trend: str) -> Tuple[np.ndarray, np.ndarray]:
     assert z.ndim == 3
     z_lag, z_lead = z[:, :-1], z[:, 1:]
     nobs = z.shape[1]
@@ -167,9 +167,9 @@ def p_tests_vec(z: NDArray, lag: int, trend: str):
     return p_u, p_z
 
 
-def p_tests(z: NDArray, lag: int, trend: str):
+def p_tests(z: NDArray, lag: int, trend: str) -> Tuple[float, float]:
     x, y = z[:, 1:], z[:, 0]
-    nobs = x.shape[0]
+    nobs = int(x.shape[0])
     x = add_trend(x, trend=trend)
     beta = lstsq(x, y, rcond=None)[0]
     u = y - x @ beta
@@ -185,7 +185,7 @@ def p_tests(z: NDArray, lag: int, trend: str):
         omega += w * (gamma + gamma.T)
     omega21 = omega[0, 1:]
     omega22 = omega[1:, 1:]
-    omega112 = omega[0, 0] - np.squeeze(omega21.T @ inv(omega22) @ omega21)
+    omega112 = float(omega[0, 0] - np.squeeze(omega21.T @ inv(omega22) @ omega21))
     denom = u.T @ u / nobs
     p_u = nobs * omega112 / denom
 
@@ -195,7 +195,7 @@ def p_tests(z: NDArray, lag: int, trend: str):
     else:
         z = z - z[:1]  # Recenter on first
     m_zz = z.T @ z / nobs
-    p_z = nobs * (omega @ inv(m_zz)).trace()
+    p_z = nobs * float((omega @ inv(m_zz)).trace())
     return p_u, p_z
 
 
@@ -227,7 +227,7 @@ def block(gen: np.random.Generator, statistic: str, num: int, trend: str) -> NDA
     return results
 
 
-def temp_file_name(full_path: str, gzip=True):
+def temp_file_name(full_path: str, gzip: bool = True) -> str:
     base, file_name = list(os.path.split(full_path))
     extension = ".pkl" if not gzip else ".pkl.gz"
     temp_file = "partial-" + file_name.replace(".hdf", extension)
@@ -240,7 +240,7 @@ def save_partial(
     temp_file = temp_file_name(full_path)
     info = {"results": results, "remaining": remaining, "gen": gen}
     with gzip.open(temp_file, "wb", 4) as pkl:
-        pickle.dump(info, pkl)
+        pickle.dump(info, cast(IO[bytes], pkl))
 
 
 def load_partial(
@@ -250,7 +250,7 @@ def load_partial(
     if os.path.exists(temp_file):
         try:
             with gzip.open(temp_file, "rb") as pkl:
-                info = pickle.load(pkl)
+                info = pickle.load(cast(IO[bytes], pkl))
             gen = info["gen"]
             results = info["results"]
             remaining = info["remaining"]
@@ -263,7 +263,7 @@ def load_partial(
 
 def worker(
     gen: np.random.Generator, statistic: str, trend: str, idx: int, full_path: str
-):
+) -> None:
     print(
         f"Starting Index: {BLUE}{idx}{RESET}, Statistic: {RED}{statistic}{RESET},"
         f"Trend: {GREEN}{trend}{RESET}"

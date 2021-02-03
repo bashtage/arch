@@ -9,6 +9,7 @@ from arch.univariate.distribution import Normal, StudentsT
 from arch.univariate.mean import ConstantMean
 from arch.univariate.recursions import figarch_weights
 from arch.univariate.volatility import (
+    APARCH,
     EGARCH,
     FIGARCH,
     GARCH,
@@ -1840,6 +1841,87 @@ class TestVarianceForecasts(object):
                 horizon=10,
                 start=100,
                 method="bootstrap",
+            )
+
+    def test_aparch_one_step(self):
+        vol = APARCH()
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        params = np.array([0.1, 0.1, -0.5, 0.8, 1.5])
+        forecast = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=1, start=0
+        )
+        sigma2 = np.empty_like(resids)
+        vol.compute_variance(params, resids, sigma2, backcast, var_bounds)
+        assert_allclose(sigma2[1:], forecast.forecasts[:-1, 0])
+        delta = params[-1]
+        final = params[0]
+        final += params[1] * ((np.abs(resids[-1]) - params[2] * resids[-1]) ** delta)
+        final += params[3] * (sigma2[-1] ** (delta / 2.0))
+        final **= 2.0 / delta
+        assert_allclose(final, forecast.forecasts[-1, 0])
+
+        delta = 2.0
+        vol = APARCH(delta=delta)
+        params = np.array([0.1, 0.1, -0.5, 0.8])
+        sigma2 = np.empty_like(resids)
+        vol.compute_variance(params, resids, sigma2, backcast, var_bounds)
+        forecast = vol.forecast(
+            params, resids, backcast, var_bounds, horizon=1, start=0
+        )
+        assert_allclose(sigma2[1:], forecast.forecasts[:-1, 0])
+        final = params[0]
+        final += params[1] * ((np.abs(resids[-1]) - params[2] * resids[-1]) ** delta)
+        final += params[3] * (sigma2[-1] ** (delta / 2.0))
+        final **= 2.0 / delta
+        assert_allclose(final, forecast.forecasts[-1, 0])
+
+    @pytest.mark.parametrize("o", [0, 1])
+    @pytest.mark.parametrize("delta", [None, 1.5])
+    def test_aparch_simulation_smoke(self, o, delta):
+        dist = Normal(self.rng)
+        rng = dist.simulate([])
+        vol = APARCH(o=o, delta=delta)
+        resids = self.resid
+        backcast = vol.backcast(resids)
+        var_bounds = vol.variance_bounds(resids)
+        params = np.array([0.1, 0.1, -0.5, 0.8])
+        if o == 0:
+            params = np.array([0.1, 0.1, 0.8])
+        if delta is None:
+            params = np.r_[params, 1.5]
+        forecast = vol.forecast(
+            params,
+            resids,
+            backcast,
+            var_bounds,
+            horizon=10,
+            start=0,
+            method="simulation",
+            rng=rng,
+            simulations=100,
+        )
+        sigma2 = np.empty_like(resids)
+        vol.compute_variance(params, resids, sigma2, backcast, var_bounds)
+        assert_allclose(sigma2[1:], forecast.forecasts[:-1, 0])
+        delta = 1.5 if delta is None else delta
+        final = params[0]
+        gamma = 0.0 if o == 0 else params[2]
+        final += params[1] * ((np.abs(resids[-1]) - gamma * resids[-1]) ** delta)
+        beta = params[2 + int(o > 0)]
+        final += beta * (sigma2[-1] ** (delta / 2.0))
+        final **= 2.0 / delta
+        assert_allclose(final, forecast.forecasts[-1, 0])
+        with pytest.raises(ValueError, match="Analytic forecasts not"):
+            vol.forecast(
+                params,
+                resids,
+                backcast,
+                var_bounds,
+                horizon=10,
+                start=0,
+                method="analytic",
             )
 
     def test_midas_analytical(self):

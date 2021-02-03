@@ -17,6 +17,7 @@ __all__ = [
     "midas_recursion",
     "figarch_weights",
     "figarch_recursion",
+    "aparch_recursion",
 ]
 
 LNSIGMA_MAX = np.log(np.finfo(np.double).max) - 0.1
@@ -451,3 +452,70 @@ def figarch_recursion_python(
 
 
 figarch_recursion = jit(figarch_recursion_python, nopython=True)
+
+
+def aparch_recursion_python(
+    parameters: NDArray,
+    resids: NDArray,
+    abs_resids: NDArray,
+    sigma2: NDArray,
+    sigma_delta: NDArray,
+    p: int,
+    o: int,
+    q: int,
+    nobs: int,
+    backcast: float,
+    var_bounds: NDArray,
+) -> NDArray:
+    """
+    Compute variance recursion for GARCH and related models
+
+    Parameters
+    ----------
+    parameters : ndarray
+        Model parameters
+    resids : ndarray
+        Residuals.
+    aresids : ndarray
+        Absolute value of residuals.
+    sigma2 : ndarray
+        Conditional variances with same shape as resids
+    sigma_delta : ndarray
+        Conditional variance to the power delta with same shape as resids
+    p : int
+        Number of symmetric innovations in model
+    o : int
+        Number of asymmetric innovations in model
+    q : int
+        Number of lags of the (transformed) variance in the model
+    nobs : int
+        Length of resids
+    backcast : float
+        Value to use when initializing the recursion
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        transformed variances for each time period
+    """
+    delta = parameters[1 + p + o + q]
+    for t in range(nobs):
+        sigma_delta[t] = parameters[0]
+        for j in range(p):
+            if (t - 1 - j) < 0:
+                shock = backcast ** 0.5
+            else:
+                shock = abs_resids[t - 1 - j]
+                if o > j:
+                    shock -= parameters[1 + p + j] * resids[t - 1 - j]
+            sigma_delta[t] += parameters[1 + j] * (shock ** delta)
+        for j in range(q):
+            if (t - 1 - j) < 0:
+                sigma_delta[t] += parameters[1 + p + o + j] * backcast ** (delta / 2.0)
+            else:
+                sigma_delta[t] += parameters[1 + p + o + j] * sigma_delta[t - 1 - j]
+        sigma2[t] = sigma_delta[t] ** (2.0 / delta)
+        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+        sigma_delta[t] = sigma2[t] ** (delta / 2.0)
+    return sigma2
+
+
+aparch_recursion = jit(aparch_recursion_python, nopython=True)

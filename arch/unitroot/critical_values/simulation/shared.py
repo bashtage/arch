@@ -6,7 +6,7 @@ from scipy import stats
 from statsmodels.regression.linear_model import OLS, WLS
 
 
-def format_dict(d: Dict[Any, Any]):
+def format_dict(d: Dict[Any, Any]) -> str:
     return (
         str(d)
         .replace(" ", "")
@@ -24,7 +24,9 @@ class PvalueResult(NamedTuple):
     tau_min: float
 
 
-def estimate_cv_regression(results: pd.DataFrame, critical_values: Sequence[float]):
+def estimate_cv_regression(
+    results: pd.DataFrame, critical_values: Sequence[float]
+) -> Dict[float, List[float]]:
     """
     Parameters
     ----------
@@ -49,7 +51,12 @@ def estimate_cv_regression(results: pd.DataFrame, critical_values: Sequence[floa
     return out
 
 
-def fit_pval_model(quantiles, small_order=3, use_log=False, drop_insignif=True):
+def fit_pval_model(
+    quantiles: pd.DataFrame,
+    small_order: int = 3,
+    use_log: bool = False,
+    drop_insignif: bool = True,
+) -> PvalueResult:
     if small_order not in (3, 4):
         raise ValueError("Small order must be 3 or 4")
     quantiles = quantiles.sort_index(ascending=False)

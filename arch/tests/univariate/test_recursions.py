@@ -4,7 +4,7 @@ from typing import List
 
 import numpy as np
 from numpy.random import RandomState
-from numpy.testing import assert_almost_equal
+from numpy.testing import assert_allclose, assert_almost_equal
 import pytest
 from scipy.special import gamma
 
@@ -1065,6 +1065,132 @@ rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backca
         assert timer.ratio < 10.0
         if not (missing_numba or CYTHON_COVERAGE):
             assert 0.1 < timer.ratio
+
+    def test_garch_aparch_equiv(self):
+        parameters = np.array([0.1, 0.1, 0.8])
+        fresids = self.resids ** 2
+        sresids = np.sign(self.resids)
+        sigma2 = np.empty(1000)
+        p = q = 1
+        o = 0
+        recpy.garch_recursion_python(
+            parameters,
+            fresids,
+            sresids,
+            sigma2,
+            p,
+            o,
+            q,
+            self.nobs,
+            self.backcast,
+            self.var_bounds,
+        )
+        sigma2_garch = sigma2.copy()
+
+        parameters = np.array([0.1, 0.1, 0.8, 2])
+        sigma2[:] = np.nan
+        sigma2_delta = np.empty_like(sigma2)
+        recpy.aparch_recursion_python(
+            parameters,
+            self.resids,
+            np.abs(self.resids),
+            sigma2,
+            sigma2_delta,
+            p,
+            o,
+            q,
+            self.nobs,
+            self.backcast,
+            self.var_bounds,
+        )
+        assert_allclose(sigma2_garch, sigma2, atol=1e-6)
+
+        sigma2[:] = np.nan
+        recpy.aparch_recursion(
+            parameters,
+            self.resids,
+            np.abs(self.resids),
+            sigma2,
+            sigma2_delta,
+            p,
+            o,
+            q,
+            self.nobs,
+            self.backcast,
+            self.var_bounds,
+        )
+        assert_allclose(sigma2_garch, sigma2, atol=1e-6)
+
+        sigma2[:] = np.nan
+        rec.aparch_recursion(
+            parameters,
+            self.resids,
+            np.abs(self.resids),
+            sigma2,
+            sigma2_delta,
+            p,
+            o,
+            q,
+            self.nobs,
+            self.backcast,
+            self.var_bounds,
+        )
+        assert_allclose(sigma2_garch, sigma2, atol=1e-6)
+
+    def test_asym_aparch_smoke(self):
+        sigma2 = np.empty(1000)
+        p = o = q = 1
+        parameters = np.array([0.1, 0.1, 0.1, 0.8, 1.3])
+        sigma2[:] = np.nan
+        sigma2_delta = np.empty_like(sigma2)
+        recpy.aparch_recursion_python(
+            parameters,
+            self.resids,
+            np.abs(self.resids),
+            sigma2,
+            sigma2_delta,
+            p,
+            o,
+            q,
+            self.nobs,
+            self.backcast,
+            self.var_bounds,
+        )
+        assert np.all(np.isfinite(sigma2))
+        sigma2_py = sigma2.copy()
+        sigma2[:] = np.nan
+        recpy.aparch_recursion(
+            parameters,
+            self.resids,
+            np.abs(self.resids),
+            sigma2,
+            sigma2_delta,
+            p,
+            o,
+            q,
+            self.nobs,
+            self.backcast,
+            self.var_bounds,
+        )
+        assert np.all(np.isfinite(sigma2))
+        assert_allclose(sigma2_py, sigma2)
+
+        sigma2[:] = np.nan
+        rec.aparch_recursion(
+            parameters,
+            self.resids,
+            np.abs(self.resids),
+            sigma2,
+            sigma2_delta,
+            p,
+            o,
+            q,
+            self.nobs,
+            self.backcast,
+            self.var_bounds,
+        )
+        assert np.all(np.isfinite(sigma2))
+        assert_allclose(sigma2_py, sigma2)
 
 
 def test_bounds_check():

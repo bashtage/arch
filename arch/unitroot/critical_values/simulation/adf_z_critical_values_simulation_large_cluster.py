@@ -12,9 +12,10 @@ scale well with 128 or more engines.
 """
 import datetime
 import time
+from typing import Literal
 
-from ipyparallel import Client
-from numpy import array, nan, percentile, savez
+from ipyparallel import Client, DirectView
+from numpy import array, nan, ndarray, percentile, savez
 
 from .adf_simulation import adf_simulation
 
@@ -34,7 +35,7 @@ with dview.sync_imports():
     from numpy.random import RandomState
 
 
-def clear_cache(client, view):
+def clear_cache(client: Client, view: DirectView) -> None:
     """Cache-clearing function from mailing list"""
     assert not rc.outstanding, "don't clear history when tasks are outstanding"
     client.purge_results("all")  # clears controller
@@ -46,7 +47,9 @@ def clear_cache(client, view):
     client.session.digest_history.clear()
 
 
-def wrapper(n, trend, b, rng_seed=0):
+def wrapper(
+    n: int, trend: Literal["n", "c", "ct", "ctt"], b: int, rng_seed: int = 0
+) -> ndarray:
     """
     Wraps and blocks the main simulation so that the maximum amount of memory
     can be controlled on multi processor systems when executing in parallel

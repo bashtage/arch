@@ -131,11 +131,13 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         nobs by k element array containing exogenous regressors
     lags : {scalar, ndarray}, optional
         Description of lag structure of the HAR.
+
         * Scalar included all lags between 1 and the value.
         * A 1-d n-element array includes the HAR lags 1:lags[0]+1,
           1:lags[1]+1, ... 1:lags[n]+1.
         * A 2-d (2,n)-element array that includes the HAR lags of the form
           lags[0,j]:lags[1,j]+1 for all columns of lags.
+
     constant : bool, optional
         Flag whether the model should include a constant
     use_rotated : bool, optional
@@ -157,11 +159,16 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     Examples
     --------
+    Standard HAR with average lags 1, 5 and 22
+
     >>> import numpy as np
     >>> from arch.univariate import HARX
     >>> y = np.random.RandomState(1234).randn(100)
     >>> harx = HARX(y, lags=[1, 5, 22])
     >>> res = harx.fit()
+
+
+    A standard HAR with average lags 1 and 6 but holding back 10 observations
 
     >>> from pandas import Series, date_range
     >>> index = date_range('2000-01-01', freq='M', periods=y.shape[0])
@@ -170,18 +177,23 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     Models with equivalent parameteriations of lags. Thie first uses
     overlapping lags.
+
     >>> harx_1 = HARX(y, lags=[1,5,22])
 
     The next uses rotated lags so that they do not overlap.
+
     >>> harx_2 = HARX(y, lags=[1,5,22], use_rotated=True)
 
     The third manually specified overlapping lags.
+
     >>> harx_3 = HARX(y, lags=[[1, 1, 1], [1, 5, 22]])
 
     The final manually specified non-overlapping lags
+
     >>> harx_4 = HARX(y, lags=[[1, 2, 6], [1, 5, 22]])
 
     It is simple to verify that these are theequivalent by inspecting the R2.
+
     >>> models = [harx_1, harx_2, harx_3, harx_4]
     >>> print([mod.fit().rsquared for mod in models])
     0.085, 0.085, 0.085, 0.085
@@ -1160,6 +1172,7 @@ class ARX(HARX):
     >>> res = arx.fit()
 
     Estimating an AR with GARCH(1,1) errors
+
     >>> from arch.univariate import GARCH
     >>> arx.volatility = GARCH()
     >>> res = arx.fit(update_freq=0, disp='off')

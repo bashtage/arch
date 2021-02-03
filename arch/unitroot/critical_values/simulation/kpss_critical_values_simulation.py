@@ -3,6 +3,7 @@ Calculates quantiles of the KPSS test statistic for both the constant
 and constant plus trend scenarios.
 """
 import os
+from typing import Optional
 
 import numpy as np
 from numpy.random import RandomState
@@ -11,7 +12,12 @@ import pandas as pd
 from arch.utility.timeseries import add_trend
 
 
-def simulate_kpss(nobs, b, trend="c", rng=None):
+def simulate_kpss(
+    nobs: int,
+    b: int,
+    trend: str = "c",
+    rng: Optional[RandomState] = None,
+) -> float:
     """
     Simulated the KPSS test statistic for nobs observations,
     performing b replications.
@@ -35,7 +41,7 @@ def simulate_kpss(nobs, b, trend="c", rng=None):
     return kpss
 
 
-def wrapper(nobs, b, trend="c", max_memory=1024):
+def wrapper(nobs: int, b: int, trend: str = "c", max_memory: int = 1024) -> np.ndarray:
     """
     A wrapper around the main simulation that runs it in blocks so that large
     simulations can be run without constructing very large arrays and running
@@ -63,13 +69,13 @@ def wrapper(nobs, b, trend="c", max_memory=1024):
 
         m, s = divmod(int(elapsed), 60)
         h, m = divmod(m, 60)
-        elapsed = time_fmt.format(h, m, s)
+        elapsed_fmt = time_fmt.format(h, m, s)
 
         m, s = divmod(int(expected_remaining), 60)
         h, m = divmod(m, 60)
-        expected_remaining = time_fmt.format(h, m, s)
+        expected_remaining_fmt = time_fmt.format(h, m, s)
 
-        print(msg.format(trend, max(0, remaining), elapsed, expected_remaining))
+        print(msg.format(trend, max(0, remaining), elapsed_fmt, expected_remaining_fmt))
 
     return results
 

@@ -4,6 +4,7 @@ to MacKinnon (2010).  Makes use of parallel_fun in statsmodels which works
 best when joblib is installed.
 """
 import datetime
+from typing import Literal, Optional
 
 import numpy as np
 from numpy.linalg import pinv
@@ -17,7 +18,7 @@ EX_NUM = 500
 EX_SIZE = 200000
 
 
-def wrapper(n, trend, b, seed=0):
+def wrapper(n: int, trend: Literal["c", "ct"], b: int, seed: int = 0) -> np.ndarray:
     """
     Wraps and blocks the main simulation so that the maximum amount of memory
     can be controlled on multi processor systems when executing in parallel
@@ -42,7 +43,9 @@ def wrapper(n, trend, b, seed=0):
     return res
 
 
-def dfgsl_simulation(n, trend, b, rng=None):
+def dfgsl_simulation(
+    n: int, trend: Literal["c", "ct"], b: int, rng: Optional[RandomState] = None
+) -> float:
     """
     Simulates the empirical distribution of the DFGLS test statistic
     """

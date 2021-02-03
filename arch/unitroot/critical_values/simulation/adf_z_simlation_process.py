@@ -9,7 +9,6 @@ from shared import estimate_cv_regression, fit_pval_model, format_dict
 
 critical_values = (1.0, 5.0, 10.0)
 adf_z_cv_approx = {}
-adf_pvals = {}
 adf_z_max = {}
 adf_z_min = {}
 adf_z_star = {}
