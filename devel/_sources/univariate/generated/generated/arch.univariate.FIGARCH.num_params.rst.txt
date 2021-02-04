@@ -1,0 +1,6 @@
+arch.univariate.FIGARCH.num\_params
+===================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FIGARCH.num_params

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.APARCH.parameter\_names
+=======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: APARCH.parameter_names

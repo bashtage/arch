@@ -1,0 +1,43 @@
+﻿arch.univariate.APARCH
+======================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: APARCH
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~APARCH.backcast
+      ~APARCH.backcast_transform
+      ~APARCH.bounds
+      ~APARCH.compute_variance
+      ~APARCH.constraints
+      ~APARCH.forecast
+      ~APARCH.parameter_names
+      ~APARCH.simulate
+      ~APARCH.starting_values
+      ~APARCH.variance_bounds
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~APARCH.delta
+      ~APARCH.name
+      ~APARCH.num_params
+      ~APARCH.start
+      ~APARCH.stop
+   
+   
+   

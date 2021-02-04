@@ -34,6 +34,7 @@
       :toctree: generated/
 
       ~ARCH.name
+      ~ARCH.num_params
       ~ARCH.start
       ~ARCH.stop
    

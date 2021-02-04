@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.APARCH.constraints
+==================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: APARCH.constraints

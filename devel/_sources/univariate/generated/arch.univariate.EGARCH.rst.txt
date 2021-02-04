@@ -34,6 +34,7 @@
       :toctree: generated/
 
       ~EGARCH.name
+      ~EGARCH.num_params
       ~EGARCH.start
       ~EGARCH.stop
    

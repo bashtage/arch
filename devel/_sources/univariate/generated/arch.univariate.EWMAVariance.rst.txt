@@ -34,6 +34,7 @@
       :toctree: generated/
 
       ~EWMAVariance.name
+      ~EWMAVariance.num_params
       ~EWMAVariance.start
       ~EWMAVariance.stop
    

@@ -1,0 +1,6 @@
+arch.univariate.ConstantVariance.num\_params
+============================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ConstantVariance.num_params

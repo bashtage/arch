@@ -34,6 +34,7 @@
       :toctree: generated/
 
       ~VolatilityProcess.name
+      ~VolatilityProcess.num_params
       ~VolatilityProcess.start
       ~VolatilityProcess.stop
    

@@ -1,0 +1,6 @@
+arch.univariate.FixedVariance.num\_params
+=========================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FixedVariance.num_params

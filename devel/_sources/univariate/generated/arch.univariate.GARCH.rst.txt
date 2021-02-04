@@ -34,6 +34,7 @@
       :toctree: generated/
 
       ~GARCH.name
+      ~GARCH.num_params
       ~GARCH.start
       ~GARCH.stop
    

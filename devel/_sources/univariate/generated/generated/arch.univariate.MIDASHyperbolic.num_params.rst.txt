@@ -1,0 +1,6 @@
+arch.univariate.MIDASHyperbolic.num\_params
+===========================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: MIDASHyperbolic.num_params

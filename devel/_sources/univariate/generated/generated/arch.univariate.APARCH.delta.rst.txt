@@ -1,0 +1,6 @@
+arch.univariate.APARCH.delta
+============================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: APARCH.delta

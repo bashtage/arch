@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.APARCH.simulate
+===============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: APARCH.simulate

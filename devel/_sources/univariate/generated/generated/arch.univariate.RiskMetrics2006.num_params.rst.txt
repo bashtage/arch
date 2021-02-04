@@ -1,0 +1,6 @@
+arch.univariate.RiskMetrics2006.num\_params
+===========================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: RiskMetrics2006.num_params

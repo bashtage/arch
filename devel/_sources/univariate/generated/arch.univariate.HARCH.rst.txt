@@ -34,6 +34,7 @@
       :toctree: generated/
 
       ~HARCH.name
+      ~HARCH.num_params
       ~HARCH.start
       ~HARCH.stop
    

@@ -20,6 +20,7 @@ volatility.
    HARCH
    MIDASHyperbolic
    ARCH
+   APARCH
 
 Parameterless Variance Processes
 --------------------------------
