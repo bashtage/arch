@@ -12,8 +12,9 @@ from numpy.testing import (
 import pytest
 from scipy.special import gamma, gammaln
 
-from arch.univariate import recursions_python as recpy
+from arch.univariate import ZeroMean
 from arch.univariate.distribution import Normal, SkewStudent, StudentsT
+import arch.univariate.recursions_python as recpy
 from arch.univariate.volatility import (
     APARCH,
     ARCH,
@@ -1519,7 +1520,7 @@ def test_aparch(setup):
     assert_equal(sv.shape[0], aparch.num_params)
 
     bounds = aparch.bounds(setup.resids)
-    upper = max(np.mean(setup.resids ** 2.0), np.mean(setup.resids ** 0.5))
+    upper = max(np.mean(setup.resids ** 2.0), np.mean(np.abs(setup.resids) ** 0.5))
     assert_equal(bounds[0], (0.0, 10.0 * upper))
     assert_equal(bounds[1], (0.0, 1.0))
     assert_equal(bounds[2], (-0.999998, 0.999998))
@@ -1616,7 +1617,7 @@ def test_aparch_delta(setup):
     assert_equal(sv.shape[0], aparch.num_params)
 
     bounds = aparch.bounds(setup.resids)
-    upper = max(np.mean(setup.resids ** 2.0), np.mean(setup.resids ** 0.5))
+    upper = max(np.mean(setup.resids ** 2.0), np.mean(np.abs(setup.resids) ** 0.5))
     assert_equal(bounds[0], (0.0, 10.0 * upper))
     assert_equal(bounds[1], (0.0, 1.0))
     assert_equal(bounds[2], (-0.999998, 0.999998))
@@ -1630,9 +1631,9 @@ def test_aparch_delta(setup):
         parameters, setup.resids, setup.sigma2, backcast, var_bounds
     )
     cond_var_direct = np.zeros_like(setup.sigma2)
-    parameters = np.array([0.1, 0.1, -0.5, 0.8, delta])
+    rec_parameters = np.array([0.1, 0.1, -0.5, 0.8, delta])
     rec.aparch_recursion(
-        parameters,
+        rec_parameters,
         setup.resids,
         np.abs(setup.resids),
         cond_var_direct,
@@ -1694,7 +1695,7 @@ def test_aparch_delta(setup):
     assert str(hex(id(aparch))) in txt
 
     assert_equal(aparch.name, "APARCH")
-    assert not aparch.est_delta
+    assert not aparch._est_delta
     assert_equal(aparch.num_params, 4)
     assert_equal(aparch._delta, 0.7)
     assert aparch.p == aparch.o == aparch.q == 1
@@ -1729,6 +1730,34 @@ def test_aparch_exceptions(setup):
         APARCH(p=0)
     with pytest.raises(ValueError, match="o must be <= p"):
         APARCH(p=1, o=2)
+
+
+@pytest.mark.parametrize("p", [1, 2])
+@pytest.mark.parametrize("o", [0, 1, 2])
+@pytest.mark.parametrize("q", [0, 1, 2])
+@pytest.mark.parametrize("common_asym", [True, False])
+@pytest.mark.parametrize("delta", [1.7, None])
+def test_aparch_configs(p, o, q, delta, common_asym):
+    if o > p or p == 0:
+        pytest.skip("o < p or p is 0")
+    rs = np.random.RandomState(19992131)
+    rng = Normal(random_state=rs)
+
+    aparch = APARCH(p=p, o=o, q=q, delta=delta, common_asym=common_asym)
+    omega = 1
+    a = [0.15 / p] * p
+    o = 1 if (common_asym and o > 0) else o
+    g = [-0.6] * o
+    params = np.r_[omega, a, g]
+    if q > 0:
+        params = np.r_[params, [0.8 / q] * q]
+    if delta is None:
+        params = np.r_[params, 1.7]
+    data, _ = aparch.simulate(params, 2500, rng=rng.simulate([]))
+    mod = ZeroMean(data, volatility=aparch)
+    res = mod.fit(disp="off")
+    assert res.params.shape[0] == aparch.num_params
+    assert aparch.common_asym == (common_asym and o > 0)
 
 
 def test_figarch_weights():

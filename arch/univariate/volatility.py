@@ -3213,6 +3213,10 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         not provided, the value of delta is jointly estimated
         with other model parameters. User provided delta is restricted
         to lie in (0.05, 4.0).
+    common_asym : bool, optional
+        Restrict all asymmetry terms to share the same asymmetry
+        parameter. If False (default), then there are no restrictions
+        on the ``o`` asymmetry parameters.
 
     Examples
     --------
@@ -3241,18 +3245,27 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         \left(\left|\epsilon_{t-i}\right|
         -\gamma_{i}I_{[o\geq i]}\epsilon_{t-i}\right)^{\delta}
         +\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\delta}
+
+    If ``common_asym`` is ``True``, then all of :math:`\gamma_i`
+    are restricted to have a common value.
     """
 
     def __init__(
-        self, p: int = 1, o: int = 1, q: int = 1, delta: Optional[float] = None
+        self,
+        p: int = 1,
+        o: int = 1,
+        q: int = 1,
+        delta: Optional[float] = None,
+        common_asym: bool = False,
     ) -> None:
         super().__init__()
         self.p = int(p)
         self.o = int(o)
         self.q = int(q)
-        self.est_delta = delta is None
+        self._est_delta = delta is None
+        self._common_asym = bool(common_asym) and self.o > 0
         self._delta = float(np.nan)
-        if not self.est_delta:
+        if not self._est_delta:
             try:
                 assert delta is not None
                 self._delta = float(delta)
@@ -3260,20 +3273,42 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 raise TypeError("delta must be convertible to a float.")
             if not 0.05 < delta < 4:
                 raise ValueError("delta must be between 0.05 and 4")
-            self._parameters = np.empty(2 + self.p + self.q + self.o)
             self._delta = delta
-        self._num_params = 1 + p + o + q + int(self.est_delta)
         if p < 1 or o < 0 or q < 0:
             raise ValueError("All lags lengths must be non-negative, and p >= 1")
         if o > p:
             raise ValueError("o must be <= p.")
         self._name = "APARCH" if o > 0 else "Power ARCH"
         self._sigma_delta = np.empty(0)
+        self._parameters = np.empty(1 + self.p + self.o + self.q + 1)
+        o = 1 if self._common_asym else o
+        self._num_params = 1 + p + o + q + int(self._est_delta)
+        self._repack = self._common_asym or not self._est_delta
 
     @property
     def delta(self) -> float:
         """The value of delta in the model. NaN is delta is estimated."""
         return self._delta
+
+    @property
+    def common_asym(self) -> bool:
+        """The value of delta in the model. NaN is delta is estimated."""
+        return self._common_asym
+
+    def _repack_parameters(self, parameters: NDArray) -> NDArray:
+        if not self._repack:
+            return parameters
+        p, o, q = self.p, self.o, self.q
+        _parameters = self._parameters
+        if not self._common_asym:
+            # Must only have fixed delta
+            _parameters[: p + o + q + 1] = parameters
+        else:
+            _parameters[: p + 1] = parameters[: p + 1]
+            _parameters[p + 1 : p + o + 1] = parameters[p + 1]
+            _parameters[p + o + 1 : p + o + q + 1] = parameters[p + 2 : p + q + 2]
+        _parameters[-1] = parameters[-1] if self._est_delta else self.delta
+        return _parameters
 
     def compute_variance(
         self,
@@ -3289,13 +3324,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         sigma_delta = self._sigma_delta
         p, o, q = self.p, self.o, self.q
         nobs = resids.shape[0]
-        if not self.est_delta:
-            _parameters = self._parameters
-            _parameters[:-1] = parameters
-            _parameters[-1] = self._delta
-        else:
-            _parameters = parameters
-
+        _parameters = self._repack_parameters(parameters)
         aparch_recursion(
             _parameters,
             resids,
@@ -3313,13 +3342,14 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return sigma2
 
     def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
-        v = max(np.mean(abs(resids) ** 0.5), np.mean(abs(resids) ** 2))
+        v = max(np.mean(abs(resids) ** 0.5), np.mean(resids ** 2))
 
         bounds = [(0.0, 10.0 * float(v))]
         bounds.extend([(0.0, 1.0)] * self.p)
-        bounds.extend([(-0.999998, 0.999998)] * self.o)
+        o = 1 if self._common_asym else self.o
+        bounds.extend([(-0.999998, 0.999998)] * o)
         bounds.extend([(0.0, 1.0)] * self.q)
-        if self.est_delta:
+        if self._est_delta:
             bounds.append((0.05, 4.0))
 
         return bounds
@@ -3329,14 +3359,14 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         alphas = [0.03, 0.05, 0.08, 0.15]
         alpha_beta = [0.8, 0.9, 0.95, 0.975, 0.99]
         gammas = [-0.5, 0, 0.5] if self.o > 0 else [0]
-        deltas = [0.5, 1.2, 1.8] if self.est_delta else [self._delta]
+        deltas = [0.5, 1.2, 1.8] if self._est_delta else [self._delta]
         abgs = list(itertools.product(*[alphas, gammas, alpha_beta, deltas]))
 
         svs = []
         var_bounds = self.variance_bounds(resids)
         backcast = self.backcast(resids)
         llfs = np.zeros(len(abgs))
-        est_delta = int(self.est_delta)
+        est_delta = int(self._est_delta)
         for i, values in enumerate(abgs):
             alpha, gamma, ab, delta = values
 
@@ -3357,26 +3387,29 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             svs.append(sv)
             llfs[i] = self._gaussian_loglikelihood(sv, resids, backcast, var_bounds)
         loc = np.argmax(llfs)
-
-        return svs[int(loc)]
+        sv = svs[int(loc)]
+        if self._common_asym:
+            sv = np.r_[sv[: p + 1 + (o > 0)], sv[p + o + 1 :]]
+        return sv
 
     def constraints(self) -> Tuple[NDArray, NDArray]:
         p, o, q = self.p, self.o, self.q
+        o = 1 if self._common_asym else o
         k_arch = p + o + q
         # alpha[i] > 0, p
         # -1 < gamma[i] < 1, 2*o
         # beta[i] > 0, q
         # sum(alpha) + sum(beta) < 1, 1
-        ndelta = 2 * int(self.est_delta)
-        a = np.zeros((k_arch + o + 2 + ndelta, k_arch + 1 + int(self.est_delta)))
+        ndelta = 2 * int(self._est_delta)
+        a = np.zeros((k_arch + o + 2 + ndelta, self._num_params))
         for i in range(p + 1):
             a[i, i] = 1.0
-        for i in range(q):
+        for i in range(o):
             a[1 + p + i, 1 + p + i] = 1.0
             a[1 + p + o + i, 1 + p + i] = -1.0
         for i in range(q):
             a[1 + p + 2 * o, 1 + p + o + i] = 1.0
-        if self.est_delta:
+        if self._est_delta:
             a[1 + p + 2 * o + q, 1 + p + o + q] = 1.0
             a[1 + p + 2 * o + q + 1, 1 + p + o + q] = -1.0
 
@@ -3386,7 +3419,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         b = np.zeros(k_arch + o + 2 + ndelta)  # omega and alpha, > 0
         b[p + 1 : p + o + 1] = -0.999998  # gamma > -.999998
         b[p + o + 1 : p + 2 * o + 1] = -0.999998  # gamma < .999998
-        if self.est_delta:
+        if self._est_delta:
             b[-3] = 0.05  # delta > 0.05
             b[-2] = -4.0  # delta < 4
         b[-1] = -1.0  # sum < 1
@@ -3394,7 +3427,9 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def parameter_names(self) -> List[str]:
         names = _common_names(self.p, self.o, self.q)
-        if self.est_delta:
+        if self._common_asym:
+            names = names[: self.p + 1] + ["gamma"] + names[1 + self.p + self.o :]
+        if self._est_delta:
             names += ["delta"]
         return names
 
@@ -3407,6 +3442,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         initial_value: Optional[Union[float, NDArray]] = None,
     ) -> Tuple[NDArray, NDArray]:
         parameters = ensure1d(parameters, "parameters", False)
+        parameters = self._repack_parameters(parameters)
         p, o, q = self.p, self.o, self.q
         errors = rng(nobs + burn)
 
@@ -3415,13 +3451,11 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         data = np.zeros(nobs + burn)
         adata = np.zeros(nobs + burn)
         max_lag = np.max([p, q])
-        delta = parameters[-1] if self.est_delta else self._delta
+        delta = parameters[-1]
 
         if initial_value is None:
-            persistence = (
-                parameters[1 : p + 1].sum()
-                + parameters[1 + p + o : 1 + p + o + q].sum()
-            )
+            persistence = parameters[1 : p + 1].sum()
+            persistence += parameters[1 + p + o : 1 + p + o + q].sum()
             if (1.0 - persistence) > 0:
                 initial_value = parameters[0] / (1.0 - persistence)
             else:
@@ -3460,7 +3494,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         abs_shock: NDArray,
     ) -> Tuple[NDArray, NDArray, NDArray]:
 
-        if self.est_delta:
+        if self._est_delta:
             delta = parameters[-1]
         else:
             delta = self._delta
@@ -3504,13 +3538,11 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         sigma2, forecasts = self._one_step_forecast(
             parameters, resids, backcast, var_bounds, horizon
         )
+        parameters = self._repack_parameters(parameters)
         t = resids.shape[0]
         paths = np.full((t, simulations, horizon), np.nan)
         shocks = np.full((t, simulations, horizon), np.nan)
-        if self.est_delta:
-            delta = parameters[-1]
-        else:
-            delta = self._delta
+        delta = parameters[-1]
         m = np.max([self.p, self.q])
         sigma_delta = np.zeros((simulations, m + horizon))
         shock = np.zeros((simulations, m + horizon))
@@ -3576,8 +3608,10 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         for k, v in (("p", self.p), ("o", self.o), ("q", self.q)):
             if v > 0:
                 descr += f"{k}: {v}, "
-        if not self.est_delta:
+        if not self._est_delta:
             descr += f"delta: {self.delta:0.3f}, "
+        if self.o > 0:
+            descr += f"Common Asym: {self._common_asym}, "
         descr = descr[:-2] + ")"
 
         return descr

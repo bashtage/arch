@@ -4,6 +4,8 @@ import sys
 
 import pytest
 
+SKIP = True
+
 try:
     import jupyter_client
 
@@ -12,11 +14,10 @@ try:
     from nbconvert.preprocessors import ExecutePreprocessor
     import nbformat
 
-    SKIP = False
     kernels = jupyter_client.kernelspec.find_kernel_specs()
+    SKIP = False
 except ImportError:  # pragma: no cover
     pytestmark = pytest.mark.skip(reason="Required packages not available")
-    SKIP = True
 
 SLOW_NOTEBOOKS = ["multiple-comparison_examples.ipynb"]
 if bool(os.environ.get("ARCH_TEST_SLOW_NOTEBOOKS", False)):
