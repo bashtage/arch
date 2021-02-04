@@ -8,6 +8,7 @@ from arch.univariate.distribution import (
 )
 from arch.univariate.mean import ARX, HARX, LS, ConstantMean, ZeroMean, arch_model
 from arch.univariate.volatility import (
+    APARCH,
     ARCH,
     EGARCH,
     FIGARCH,
@@ -33,6 +34,7 @@ __all__ = [
     "arch_model",
     "LS",
     "GARCH",
+    "APARCH",
     "ARCH",
     "HARCH",
     "ConstantVariance",

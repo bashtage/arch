@@ -1,5 +1,6 @@
 from collections import defaultdict
 import glob
+from typing import Dict, List
 
 from black import FileMode, TargetVersion, format_file_contents
 import numpy as np
@@ -12,22 +13,21 @@ PERCENTILES = PERCENTILES[::-1]
 
 
 files = glob.glob("engle-granger/*.npz")
-data = defaultdict(list)
+input_data = defaultdict(list)
 for f in files:
     contents = np.load(f)
     temp = contents["quantiles"]
     temp.shape = temp.shape + (1,)
-    data[contents["trend"][0]].append(temp)
+    input_data[contents["trend"][0]].append(temp)
     sample_sizes = contents["sample_sizes"]
 
-final = {}
-for key in data:
-    final[key] = np.concatenate(data[key], -1)  # type: np.ndarray
+final: Dict[str, np.ndarray] = {}
+for key in input_data:
+    final[key] = np.concatenate(input_data[key], -1)
 
 trends = ("nc", "c", "ct", "ctt")
 critical_values = (1, 5, 10)
-cv_approx = {}
-final_cv = {}
+final_cv: Dict[str, Dict[int, List[float]]] = {}
 for trend in trends:
     print(trend)
     results = final[trend]

@@ -39,7 +39,7 @@ def block(
     cross_section_size: int,
     simulations: int,
     idx: int,
-):
+) -> None:
     filename = f"engle-granger-results-trend-{trend}-{idx:04d}.npz"
     fullfile = os.path.join(ROOT, filename)
     if os.path.exists(fullfile):

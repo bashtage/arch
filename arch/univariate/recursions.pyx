@@ -4,9 +4,10 @@
 import numpy as np
 
 cimport numpy as np
+from libc.math cimport sqrt
 
 __all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion', 'egarch_recursion',
-           'midas_recursion', 'figarch_recursion', 'figarch_weights']
+           'midas_recursion', 'figarch_recursion', 'figarch_weights', 'aparch_recursion']
 
 cdef extern from 'math.h':
     double log(double x)
@@ -21,7 +22,7 @@ cdef double LNSIGMA_MAX = log(DBL_MAX)
 
 np.import_array()
 
-cdef inline bounds_check(double* sigma2, double* var_bounds):
+cdef inline void bounds_check(double* sigma2, double* var_bounds):
     if sigma2[0] < var_bounds[0]:
         sigma2[0] = var_bounds[0]
     elif sigma2[0] > var_bounds[1]:
@@ -378,4 +379,69 @@ def figarch_recursion(double[::1] parameters,
             sigma2[t] += lam[i] * fresids[t - i - 1]
         bounds_check(&sigma2[t], &var_bounds[t, 0])
 
+    return np.asarray(sigma2)
+
+
+def aparch_recursion(double[::1] parameters,
+                    double[::1] resids,
+                    double[::1] abs_resids,
+                    double[::1] sigma2,
+                    double[::1] sigma_delta,
+                    int p,
+                    int o,
+                    int q,
+                    int nobs,
+                    double backcast,
+                    double[:, ::1] var_bounds):
+    """
+    Compute variance recursion for Asymmetric Power ARCH
+
+    Parameters
+    ----------
+    parameters : ndarray
+        Model parameters
+    resids : ndarray
+        Residuals.
+    aresids : ndarray
+        Absolute value of residuals.
+    sigma2 : ndarray
+        Conditional variances with same shape as resids
+    sigma_delta : ndarray
+        Conditional variance to the power delta with same shape as resids
+    p : int
+        Number of symmetric innovations in model
+    o : int
+        Number of asymmetric innovations in model
+    q : int
+        Number of lags of the (transformed) variance in the model
+    nobs : int
+        Length of resids
+    backcast : float
+        Value to use when initializing the recursion
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        transformed variances for each time period
+    """
+    cdef double delta, shock
+    cdef Py_ssize_t t, j
+
+    delta = parameters[1 + p + o + q]
+    for t in range(nobs):
+        sigma_delta[t] = parameters[0]
+        for j in range(p):
+            if (t - 1 - j) < 0:
+                shock = sqrt(backcast)
+            else:
+                shock = abs_resids[t - 1 - j]
+                if o > j:
+                    shock -= parameters[1 + p + j] * resids[t - 1 - j]
+            sigma_delta[t] += parameters[1 + j] * (shock ** delta)
+        for j in range(q):
+            if (t - 1 - j) < 0:
+                sigma_delta[t] += parameters[1 + p + o + j] * backcast ** (delta / 2.0)
+            else:
+                sigma_delta[t] += parameters[1 + p + o + j] * sigma_delta[t - 1 - j]
+        sigma2[t] = sigma_delta[t] ** (2.0 / delta)
+        bounds_check(&sigma2[t], &var_bounds[t, 0])
+        sigma_delta[t] = sigma2[t] ** (delta / 2.0)
     return np.asarray(sigma2)

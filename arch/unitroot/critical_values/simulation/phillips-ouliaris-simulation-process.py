@@ -2,7 +2,7 @@ from collections import defaultdict
 import glob
 from itertools import product
 import os
-from typing import List, NamedTuple
+from typing import Dict, List, NamedTuple, Tuple
 
 from black import FileMode, TargetVersion, format_file_contents
 import matplotlib.backends.backend_pdf
@@ -18,7 +18,7 @@ from statsmodels.regression.linear_model import OLS, WLS
 META = {"z_a": "negative", "z_t": "negative", "p_u": "positive", "p_z": "positive"}
 CRITICAL_VALUES = (1, 5, 10)
 PLOT = False
-WINS = defaultdict(lambda: 0)
+WINS: Dict[np.ndarray[int], int] = defaultdict(lambda: 0)
 # 1. Load data
 # 2. Compute critical values
 
@@ -31,7 +31,7 @@ class PvalueResult(NamedTuple):
     tau_min: float
 
 
-def xval(lhs, rhs, log=True, folds=5):
+def xval(lhs: np.ndarray, rhs: np.ndarray, log: bool = True, folds: int = 5) -> None:
     lhs = np.asarray(lhs)
     rhs = np.asarray(rhs)
     pcg = np.random.PCG64(849756746597530743027509)
@@ -71,7 +71,9 @@ def xval(lhs, rhs, log=True, folds=5):
     WINS[best] += 1
 
 
-def estimate_cv_regression(results, statistic):
+def estimate_cv_regression(
+    results: pd.DataFrame, statistic: str
+) -> Tuple[Dict[int, List[float]], float]:
     # For percentiles 1, 5 and 10, regress on a constant, and powers of 1/T
     out = {}
     quantiles = np.asarray(results.index)
@@ -92,7 +94,7 @@ def estimate_cv_regression(results, statistic):
     return out, tau.min()
 
 
-def fit_pval_model(quantiles):
+def fit_pval_model(quantiles: pd.DataFrame) -> PvalueResult:
     percentiles = quantiles.index.to_numpy()
     lhs = stats.norm.ppf(percentiles)
     data = np.asarray(quantiles)
@@ -179,15 +181,15 @@ final = {key: pd.concat(joined[key], axis=1) for key in joined}
 stat_names = {"p_z": "Pz", "p_u": "Pu", "z_t": "Zt", "z_a": "Za"}
 cv_params = {}
 cv_tau_min = {}
-for key in final:
-    final_key = (stat_names[key[0]],) + key[1:]
+for final_key in final:
+    final_key = (stat_names[final_key[0]],) + final_key[1:]
     cv_params[final_key], cv_tau_min[final_key] = estimate_cv_regression(
-        final[key], key[0]
+        final[final_key], final_key[0]
     )
 
 print("Best methods")
-for key in sorted(WINS):
-    print(f"{key}: {WINS[key]}")
+for wins_key in sorted(WINS):
+    print(f"{wins_key}: {WINS[wins_key]}")
 
 report = []
 for key in nsimulation:
@@ -198,16 +200,16 @@ for key in nsimulation:
 
 counts = "\n".join(report)
 
-STATISTICS = set(key[0] for key in final)
-TRENDS = set(key[1] for key in final)
-NSTOCHASTICS = set(key[-1] for key in final)
+STATISTICS = set(str(final_key[0]) for final_key in final)
+ALL_TRENDS = set(str(final_key[1]) for final_key in final)
+NSTOCHASTICS = set(int(final_key[-1]) for final_key in final)
 quantiles_d = defaultdict(list)
 pval_data = {}
-for key in product(STATISTICS, TRENDS, NSTOCHASTICS):
-    pval_data[key] = final[key].loc[:, 2000]
-    temp = final[key].loc[:, 2000].mean(1)
-    temp.name = key[-1]
-    quantiles_d[key[:-1]].append(temp)
+for multi_key in product(STATISTICS, ALL_TRENDS, NSTOCHASTICS):
+    pval_data[multi_key] = final[multi_key].loc[:, 2000]
+    temp = final[multi_key].loc[:, 2000].mean(1)
+    temp.name = multi_key[-1]
+    quantiles_d[multi_key[:-1]].append(temp)
 quantiles = {}
 for key in quantiles_d:
     quantiles[key] = pd.concat(quantiles_d[key], axis=1)
@@ -242,14 +244,14 @@ pval_small_p = {}
 pval_tau_star = {}
 pval_tau_min = {}
 pval_tau_max = {}
-for key in pval_data:
-    temp = pval_data[key].copy()
-    if key[0] in ("p_z", "p_u"):
+for pval_key in pval_data:
+    temp = pval_data[pval_key].copy()
+    if pval_key[0] in ("p_z", "p_u"):
         temp.index = 1 - temp.index
         temp = -1 * temp
     temp = temp.sort_index()
     res = fit_pval_model(temp)
-    out_key = (stat_names[key[0]],) + key[1:]
+    out_key = (stat_names[pval_key[0]],) + pval_key[1:]
     pval_results[out_key] = res
     pval_large_p[out_key] = res.large_p
     pval_small_p[out_key] = res.small_p

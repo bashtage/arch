@@ -4,6 +4,7 @@ Simulation of ADF z-test critical values.  Closely follows MacKinnon (2010).
 import argparse
 import os
 import random
+from typing import Literal
 
 from adf_simulation import (
     OUTPUT_PATH,
@@ -57,7 +58,7 @@ RAW = [
 ENTROPY = [(RAW[i] << 16) + RAW[i + 1] for i in range(0, len(RAW), 2)]
 
 
-def single_experiment(trend, gen: Generator, file_name: str):
+def single_experiment(trend: str, gen: Generator, file_name: str) -> None:
     """
     Wraps and blocks the main simulation so that the maximum amount of memory
     can be controlled on multi processor systems when executing in parallel
@@ -76,7 +77,16 @@ def single_experiment(trend, gen: Generator, file_name: str):
                 count = remaining
             st = finished
             en = finished + count
-            res[st:en] = adf_simulation(nobs, trend, count, gen)
+            _trend: Literal["n", "c", "ct", "ctt"]
+            if trend == "n":
+                _trend = "n"
+            elif trend == "c":
+                _trend = "c"
+            elif trend == "ct":
+                _trend = "ct"
+            else:
+                _trend = "ctt"
+            res[st:en] = adf_simulation(nobs, _trend, count, gen)
             finished += count
             remaining -= count
         output[:, col] = np.percentile(res, PERCENTILES)

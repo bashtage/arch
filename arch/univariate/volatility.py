@@ -20,6 +20,7 @@ from arch.utility.exceptions import InitialValueWarning, initial_value_warning
 
 try:
     from arch.univariate.recursions import (
+        aparch_recursion,
         egarch_recursion,
         figarch_recursion,
         figarch_weights,
@@ -29,6 +30,7 @@ try:
     )
 except ImportError:  # pragma: no cover
     from arch.univariate.recursions_python import (
+        aparch_recursion,
         egarch_recursion,
         figarch_recursion,
         figarch_weights,
@@ -181,7 +183,7 @@ class VolatilityProcess(object, metaclass=ABCMeta):
     """
 
     def __init__(self) -> None:
-        self.num_params = 0
+        self._num_params = 0
         self._name = ""
         self.closed_form = False
         self._normal = Normal()
@@ -217,6 +219,11 @@ class VolatilityProcess(object, metaclass=ABCMeta):
     @stop.setter
     def stop(self, value: int) -> None:
         self._stop = value
+
+    @property
+    def num_params(self) -> int:
+        """The number of parameters in the model"""
+        return self._num_params
 
     @abstractmethod
     def _check_forecasting_method(self, method: str, horizon: int) -> None:
@@ -761,7 +768,7 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self) -> None:
         super().__init__()
-        self.num_params = 1
+        self._num_params = 1
         self._name = "Constant Variance"
         self.closed_form = True
 
@@ -882,11 +889,6 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         and related models. Using 1.0 produces AVARCH and related models.  Other powers can be
         specified, although these should be strictly positive, and usually larger than 0.25.
 
-    Attributes
-    ----------
-    num_params : int
-        The number of parameters in the model
-
     Examples
     --------
     >>> from arch.univariate import GARCH
@@ -921,7 +923,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self.o = int(o)
         self.q = int(q)
         self.power = power
-        self.num_params = 1 + p + o + q
+        self._num_params = 1 + p + o + q
         if p < 0 or o < 0 or q < 0:
             raise ValueError("All lags lengths must be non-negative")
         if p == 0 and o == 0:
@@ -1290,6 +1292,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 scaled_shock[:, :m] = backcast ** (power / 2.0)
                 asym_scaled_shock[:, :m] = (0.5 * backcast) ** (power / 2.0)
 
+                # Use actual values where available
                 count = i + 1
                 scaled_forecast_paths[:, m - count : m] = sigma2[:count] ** (
                     power / 2.0
@@ -1329,11 +1332,6 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     ----------
     lags : {list, array, int}
         List of lags to include in the model, or if scalar, includes all lags up the value
-
-    Attributes
-    ----------
-    num_params : int
-        The number of parameters in the model
 
     Examples
     --------
@@ -1376,7 +1374,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         lags_arr = ensure1d(lags, "lags")
         self.lags = np.array(lags_arr, dtype=np.int32)
         self._num_lags = lags_arr.shape[0]
-        self.num_params = self._num_lags + 1
+        self._num_params = self._num_lags + 1
         self._name = "HARCH"
 
     def __str__(self) -> str:
@@ -1562,11 +1560,6 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     asym : bool
         Flag indicating whether to include an asymmetric term
 
-    Attributes
-    ----------
-    num_params : int
-        The number of parameters in the model
-
     Examples
     --------
     >>> from arch.univariate import MIDASHyperbolic
@@ -1613,7 +1606,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         super().__init__()
         self.m = m
         self._asym = bool(asym)
-        self.num_params = 3 + self._asym
+        self._num_params = 3 + self._asym
         self._name = "MIDAS Hyperbolic"
 
     def __str__(self) -> str:
@@ -1888,11 +1881,6 @@ class ARCH(GARCH):
     p : int
         Order of the symmetric innovation
 
-    Attributes
-    ----------
-    num_params : int
-        The number of parameters in the model
-
     Examples
     --------
     ARCH(1) process
@@ -1915,7 +1903,7 @@ class ARCH(GARCH):
 
     def __init__(self, p: int = 1) -> None:
         super().__init__(p, 0, 0, 2.0)
-        self.num_params = p + 1
+        self._num_params = p + 1
 
     def starting_values(self, resids: NDArray) -> NDArray:
         p = self.p
@@ -1944,11 +1932,6 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         Smoothing parameter. Default is 0.94. Set to None to estimate lam
         jointly with other model parameters
 
-    Attributes
-    ----------
-    num_params : int
-        The number of parameters in the model
-
     Examples
     --------
     Daily RiskMetrics EWMA process
@@ -1973,7 +1956,7 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         super().__init__()
         self.lam = lam
         self._estimate_lam = lam is None
-        self.num_params = 1 if self._estimate_lam else 0
+        self._num_params = 1 if self._estimate_lam else 0
         if lam is not None and not 0.0 < lam < 1.0:
             raise ValueError("lam must be strictly between 0 and 1")
         self._name = "EWMA/RiskMetrics"
@@ -2122,11 +2105,6 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     rho : float, optional
         Relative scale of adjacent cycles. Default is sqrt(2)
 
-    Attributes
-    ----------
-    num_params : int
-        The number of parameters in the model
-
     Examples
     --------
     Daily RiskMetrics 2006 process
@@ -2154,7 +2132,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self.tau1 = tau1
         self.kmax = kmax
         self.rho = rho
-        self.num_params = 0
+        self._num_params = 0
 
         if tau0 <= tau1 or tau1 <= 0:
             raise ValueError("tau0 must be greater than tau1 and tau1 > 0")
@@ -2399,11 +2377,6 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     q : int
         Order of the lagged (transformed) conditional variance
 
-    Attributes
-    ----------
-    num_params : int
-        The number of parameters in the model
-
     Examples
     --------
     >>> from arch.univariate import EGARCH
@@ -2440,15 +2413,14 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self.p = int(p)
         self.o = int(o)
         self.q = int(q)
-        self.num_params = 1 + p + o + q
+        self._num_params = 1 + p + o + q
         if p < 0 or o < 0 or q < 0:
             raise ValueError("All lags lengths must be non-negative")
         if p == 0 and o == 0:
             raise ValueError("One of p or o must be strictly positive")
         self._name = "EGARCH" if q > 0 else "EARCH"
-        self._arrays: Optional[
-            Tuple[NDArray, NDArray, NDArray]
-        ] = None  # Helpers for fitting variance
+        # Helpers for fitting variance
+        self._arrays: Optional[Tuple[NDArray, NDArray, NDArray]] = None
 
     def __str__(self) -> str:
         descr = self.name + "("
@@ -2720,7 +2692,7 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, variance: NDArray, unit_scale: bool = False) -> None:
         super().__init__()
-        self.num_params = 0 if unit_scale else 1
+        self._num_params = 0 if unit_scale else 1
         self._unit_scale = unit_scale
         self._name = "Fixed Variance"
         self._name += " (Unit Scale)" if unit_scale else ""
@@ -2836,11 +2808,6 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         Truncation point to use in ARCH(:math:`\infty`) representation.
         Default is 1000.
 
-    Attributes
-    ----------
-    num_params : int
-        The number of parameters in the model
-
     Examples
     --------
     >>> from arch.univariate import FIGARCH
@@ -2899,7 +2866,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self.p = int(p)
         self.q = int(q)
         self.power = power
-        self.num_params = 2 + p + q
+        self._num_params = 2 + p + q
         self._truncation = int(truncation)
         if p < 0 or q < 0 or p > 1 or q > 1:
             raise ValueError("p and q must be either 0 or 1.")
@@ -3227,3 +3194,390 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         forecasts[:start] = np.nan
         return VarianceForecast(forecasts, paths, shocks)
+
+
+class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
+    r"""
+    Asymmetric Power ARCH (APARCH) volatility process
+
+    Parameters
+    ----------
+    p : int
+        Order of the symmetric innovation. Must satisfy p>=o.
+    o : int
+        Order of the asymmetric innovation. Must satisfy o<=p.
+    q : int
+        Order of the lagged (transformed) conditional variance
+    delta : float, optional
+        Value to use for a fixed delta in the APARCH model. If
+        not provided, the value of delta is jointly estimated
+        with other model parameters. User provided delta is restricted
+        to lie in (0.05, 4.0).
+
+    Examples
+    --------
+    >>> from arch.univariate import APARCH
+
+    Symmetric Power ARCH(1,1)
+
+    >>> aparch = APARCH(p=1, q=1)
+
+    Standard APARCH process
+
+    >>> aparch = APARCH(p=1, o=1, q=1)
+
+    Fixed power parameters
+
+    >>> aparch = APARCH(p=1, o=1, q=1, delta=1.3)
+
+    Notes
+    -----
+    In this class of processes, the variance dynamics are
+
+    .. math::
+
+        \sigma_{t}^{\delta}=\omega
+        +\sum_{i=1}^{p}\alpha_{i}
+        \left(\left|\epsilon_{t-i}\right|
+        -\gamma_{i}I_{[o\geq i]}\epsilon_{t-i}\right)^{\delta}
+        +\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\delta}
+    """
+
+    def __init__(
+        self, p: int = 1, o: int = 1, q: int = 1, delta: Optional[float] = None
+    ) -> None:
+        super().__init__()
+        self.p = int(p)
+        self.o = int(o)
+        self.q = int(q)
+        self.est_delta = delta is None
+        self._delta = float(np.nan)
+        if not self.est_delta:
+            try:
+                assert delta is not None
+                self._delta = float(delta)
+            except (ValueError, TypeError):
+                raise TypeError("delta must be convertible to a float.")
+            if not 0.05 < delta < 4:
+                raise ValueError("delta must be between 0.05 and 4")
+            self._parameters = np.empty(2 + self.p + self.q + self.o)
+            self._delta = delta
+        self._num_params = 1 + p + o + q + int(self.est_delta)
+        if p < 1 or o < 0 or q < 0:
+            raise ValueError("All lags lengths must be non-negative, and p >= 1")
+        if o > p:
+            raise ValueError("o must be <= p.")
+        self._name = "APARCH" if o > 0 else "Power ARCH"
+        self._sigma_delta = np.empty(0)
+
+    @property
+    def delta(self) -> float:
+        """The value of delta in the model. NaN is delta is estimated."""
+        return self._delta
+
+    def compute_variance(
+        self,
+        parameters: NDArray,
+        resids: NDArray,
+        sigma2: NDArray,
+        backcast: Union[float, NDArray],
+        var_bounds: NDArray,
+    ) -> NDArray:
+        abs_resids = np.abs(resids)
+        if self._sigma_delta.shape[0] != resids.shape[0]:
+            self._sigma_delta = np.empty(resids.shape[0])
+        sigma_delta = self._sigma_delta
+        p, o, q = self.p, self.o, self.q
+        nobs = resids.shape[0]
+        if not self.est_delta:
+            _parameters = self._parameters
+            _parameters[:-1] = parameters
+            _parameters[-1] = self._delta
+        else:
+            _parameters = parameters
+
+        aparch_recursion(
+            _parameters,
+            resids,
+            abs_resids,
+            sigma2,
+            sigma_delta,
+            p,
+            o,
+            q,
+            nobs,
+            backcast,
+            var_bounds,
+        )
+
+        return sigma2
+
+    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+        v = max(np.mean(abs(resids) ** 0.5), np.mean(abs(resids) ** 2))
+
+        bounds = [(0.0, 10.0 * float(v))]
+        bounds.extend([(0.0, 1.0)] * self.p)
+        bounds.extend([(-0.999998, 0.999998)] * self.o)
+        bounds.extend([(0.0, 1.0)] * self.q)
+        if self.est_delta:
+            bounds.append((0.05, 4.0))
+
+        return bounds
+
+    def starting_values(self, resids: NDArray) -> NDArray:
+        p, o, q = self.p, self.o, self.q
+        alphas = [0.03, 0.05, 0.08, 0.15]
+        alpha_beta = [0.8, 0.9, 0.95, 0.975, 0.99]
+        gammas = [-0.5, 0, 0.5] if self.o > 0 else [0]
+        deltas = [0.5, 1.2, 1.8] if self.est_delta else [self._delta]
+        abgs = list(itertools.product(*[alphas, gammas, alpha_beta, deltas]))
+
+        svs = []
+        var_bounds = self.variance_bounds(resids)
+        backcast = self.backcast(resids)
+        llfs = np.zeros(len(abgs))
+        est_delta = int(self.est_delta)
+        for i, values in enumerate(abgs):
+            alpha, gamma, ab, delta = values
+
+            target = np.mean(abs(resids) ** delta)
+            scale = np.mean(resids ** 2) / (target ** (2.0 / delta))
+            target *= scale ** (delta / 2)
+
+            sv = (1.0 - ab) * target * np.ones(p + o + q + 1 + est_delta)
+            if p > 0:
+                sv[1 : 1 + p] = alpha / p
+                ab -= alpha
+            if o > 0:
+                sv[1 + p : 1 + p + o] = gamma
+            if q > 0:
+                sv[1 + p + o : 1 + p + o + q] = ab / q
+            if est_delta:
+                sv[-1] = delta
+            svs.append(sv)
+            llfs[i] = self._gaussian_loglikelihood(sv, resids, backcast, var_bounds)
+        loc = np.argmax(llfs)
+
+        return svs[int(loc)]
+
+    def constraints(self) -> Tuple[NDArray, NDArray]:
+        p, o, q = self.p, self.o, self.q
+        k_arch = p + o + q
+        # alpha[i] > 0, p
+        # -1 < gamma[i] < 1, 2*o
+        # beta[i] > 0, q
+        # sum(alpha) + sum(beta) < 1, 1
+        ndelta = 2 * int(self.est_delta)
+        a = np.zeros((k_arch + o + 2 + ndelta, k_arch + 1 + int(self.est_delta)))
+        for i in range(p + 1):
+            a[i, i] = 1.0
+        for i in range(q):
+            a[1 + p + i, 1 + p + i] = 1.0
+            a[1 + p + o + i, 1 + p + i] = -1.0
+        for i in range(q):
+            a[1 + p + 2 * o, 1 + p + o + i] = 1.0
+        if self.est_delta:
+            a[1 + p + 2 * o + q, 1 + p + o + q] = 1.0
+            a[1 + p + 2 * o + q + 1, 1 + p + o + q] = -1.0
+
+        a[-1, 1 : p + o + q + 1] = -1.0
+        a[-1, p + 1 : p + o + 1] = 0
+
+        b = np.zeros(k_arch + o + 2 + ndelta)  # omega and alpha, > 0
+        b[p + 1 : p + o + 1] = -0.999998  # gamma > -.999998
+        b[p + o + 1 : p + 2 * o + 1] = -0.999998  # gamma < .999998
+        if self.est_delta:
+            b[-3] = 0.05  # delta > 0.05
+            b[-2] = -4.0  # delta < 4
+        b[-1] = -1.0  # sum < 1
+        return a, b
+
+    def parameter_names(self) -> List[str]:
+        names = _common_names(self.p, self.o, self.q)
+        if self.est_delta:
+            names += ["delta"]
+        return names
+
+    def simulate(
+        self,
+        parameters: Union[Sequence[Union[int, float]], ArrayLike1D],
+        nobs: int,
+        rng: RNGType,
+        burn: int = 500,
+        initial_value: Optional[Union[float, NDArray]] = None,
+    ) -> Tuple[NDArray, NDArray]:
+        parameters = ensure1d(parameters, "parameters", False)
+        p, o, q = self.p, self.o, self.q
+        errors = rng(nobs + burn)
+
+        sigma2 = np.zeros(nobs + burn)
+        sigma_delta = np.zeros(nobs + burn)
+        data = np.zeros(nobs + burn)
+        adata = np.zeros(nobs + burn)
+        max_lag = np.max([p, q])
+        delta = parameters[-1] if self.est_delta else self._delta
+
+        if initial_value is None:
+            persistence = (
+                parameters[1 : p + 1].sum()
+                + parameters[1 + p + o : 1 + p + o + q].sum()
+            )
+            if (1.0 - persistence) > 0:
+                initial_value = parameters[0] / (1.0 - persistence)
+            else:
+                warn(initial_value_warning, InitialValueWarning)
+                initial_value = parameters[0]
+        sigma_delta[:max_lag] = initial_value
+        sigma2[:max_lag] = initial_value ** (2.0 / delta)
+
+        data[:max_lag] = np.sqrt(sigma2[:max_lag]) * errors[:max_lag]
+        adata[:max_lag] = np.abs(data[:max_lag])
+
+        for t in range(max_lag, nobs + burn):
+            sigma_delta[t] = parameters[0]
+            for j in range(p):
+                shock = adata[t - 1 - j]
+                if o > j:
+                    shock -= parameters[1 + p + j] * data[t - 1 - j]
+                sigma_delta[t] += parameters[1 + j] * shock ** delta
+            for j in range(q):
+                sigma_delta[t] += parameters[1 + p + o + j] * sigma_delta[t - 1 - j]
+
+            sigma2[t] = sigma_delta[t] ** (2.0 / delta)
+            data[t] = errors[t] * np.sqrt(sigma2[t])
+            adata[t] = np.abs(data[t])
+
+        return data[burn:], sigma2[burn:]
+
+    def _simulate_paths(
+        self,
+        m: int,
+        parameters: NDArray,
+        horizon: int,
+        std_shocks: NDArray,
+        sigma_delta: NDArray,
+        shock: NDArray,
+        abs_shock: NDArray,
+    ) -> Tuple[NDArray, NDArray, NDArray]:
+
+        if self.est_delta:
+            delta = parameters[-1]
+        else:
+            delta = self._delta
+        p, o, q = self.p, self.o, self.q
+        omega = parameters[0]
+        alpha = parameters[1 : p + 1]
+        gamma = parameters[p + 1 : p + o + 1]
+        beta = parameters[p + o + 1 : p + o + q + 1]
+
+        for h in range(horizon):
+            loc = h + m - 1
+
+            sigma_delta[:, h + m] = omega
+            for j in range(p):
+                _shock = abs_shock[:, loc - j]
+                if self.o > j:
+                    _shock -= gamma[j] * shock[:, loc - j]
+                sigma_delta[:, h + m] += alpha[j] * (_shock ** delta)
+
+            for j in range(q):
+                sigma_delta[:, h + m] += beta[j] * sigma_delta[:, loc - j]
+
+            shock[:, h + m] = std_shocks[:, h] * sigma_delta[:, h + m] ** (1.0 / delta)
+            abs_shock[:, h + m] = np.abs(shock[:, h + m])
+
+        forecast_paths = sigma_delta[:, m:] ** (2.0 / delta)
+
+        return np.asarray(np.mean(forecast_paths, 0)), forecast_paths, shock[:, m:]
+
+    def _simulation_forecast(
+        self,
+        parameters: NDArray,
+        resids: NDArray,
+        backcast: Union[float, NDArray],
+        var_bounds: NDArray,
+        start: int,
+        horizon: int,
+        simulations: int,
+        rng: RNGType,
+    ) -> VarianceForecast:
+        sigma2, forecasts = self._one_step_forecast(
+            parameters, resids, backcast, var_bounds, horizon
+        )
+        t = resids.shape[0]
+        paths = np.full((t, simulations, horizon), np.nan)
+        shocks = np.full((t, simulations, horizon), np.nan)
+        if self.est_delta:
+            delta = parameters[-1]
+        else:
+            delta = self._delta
+        m = np.max([self.p, self.q])
+        sigma_delta = np.zeros((simulations, m + horizon))
+        shock = np.zeros((simulations, m + horizon))
+        abs_shock = np.zeros((simulations, m + horizon))
+
+        for i in range(start, t):
+            std_shocks = rng((simulations, horizon))
+            if i - m < 0:
+                sigma_delta[:, :m] = backcast ** (delta / 2.0)
+                shock[:, :m] = 0
+                abs_shock[:, :m] = backcast ** (1.0 / 2.0)
+
+                # Use actual values where available
+                count = i + 1
+                sigma_delta[:, m - count : m] = sigma2[:count] ** (delta / 2.0)
+                shock[:, m - count : m] = resids[:count]
+                abs_shock[:, m - count : m] = np.abs(resids[:count])
+            else:
+                sigma_delta[:, :m] = sigma2[i - m + 1 : i + 1] ** (delta / 2.0)
+                shock[:, :m] = resids[i - m + 1 : i + 1]
+                abs_shock[:, :m] = np.abs(resids[i - m + 1 : i + 1])
+
+            f, p, s = self._simulate_paths(
+                m,
+                parameters,
+                horizon,
+                std_shocks,
+                sigma_delta,
+                shock,
+                abs_shock,
+            )
+            forecasts[i, :], paths[i], shocks[i] = f, p, s
+
+        forecasts[:start] = np.nan
+        return VarianceForecast(forecasts, paths, shocks)
+
+    def _analytic_forecast(
+        self,
+        parameters: NDArray,
+        resids: NDArray,
+        backcast: Union[float, NDArray],
+        var_bounds: NDArray,
+        start: int,
+        horizon: int,
+    ) -> VarianceForecast:
+        _, forecasts = self._one_step_forecast(
+            parameters, resids, backcast, var_bounds, horizon
+        )
+        forecasts[:start] = np.nan
+
+        return VarianceForecast(forecasts)
+
+    def _check_forecasting_method(self, method: str, horizon: int) -> None:
+        if horizon == 1:
+            return
+
+        if method == "analytic":
+            raise ValueError("Analytic forecasts not available for horizon > 1")
+        return
+
+    def __str__(self) -> str:
+        descr = self.name + "("
+        for k, v in (("p", self.p), ("o", self.o), ("q", self.q)):
+            if v > 0:
+                descr += f"{k}: {v}, "
+        if not self.est_delta:
+            descr += f"delta: {self.delta:0.3f}, "
+        descr = descr[:-2] + ")"
+
+        return descr

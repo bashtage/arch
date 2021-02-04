@@ -10,7 +10,7 @@ Remote clusters can be used by modifying the call to Client.
 import datetime
 
 from ipyparallel import Client
-from numpy import array, nan, percentile, savez
+from numpy import array, nan, ndarray, percentile, savez
 
 from .adf_simulation import adf_simulation
 
@@ -28,7 +28,7 @@ with dview.sync_imports():
     from numpy.random import RandomState
 
 
-def wrapper(n, trend, b, seed=0):
+def wrapper(n: int, trend: str, b: int, seed: int = 0) -> ndarray:
     """
     Wraps and blocks the main simulation so that the maximum amount of memory
     can be controlled on multi processor systems when executing in parallel
