@@ -1,4 +1,4 @@
-arch.bootstrap.IndependentSamplesBootstrap
+﻿arch.bootstrap.IndependentSamplesBootstrap
 ==========================================
 
 .. currentmodule:: arch.bootstrap

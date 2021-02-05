@@ -1,4 +1,4 @@
-arch.univariate.FixedVariance
+﻿arch.univariate.FixedVariance
 =============================
 
 .. currentmodule:: arch.univariate
@@ -34,6 +34,7 @@ arch.univariate.FixedVariance
       :toctree: generated/
 
       ~FixedVariance.name
+      ~FixedVariance.num_params
       ~FixedVariance.start
       ~FixedVariance.stop
    

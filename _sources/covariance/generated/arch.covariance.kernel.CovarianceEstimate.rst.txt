@@ -1,4 +1,4 @@
-arch.covariance.kernel.CovarianceEstimate
+﻿arch.covariance.kernel.CovarianceEstimate
 =========================================
 
 .. currentmodule:: arch.covariance.kernel

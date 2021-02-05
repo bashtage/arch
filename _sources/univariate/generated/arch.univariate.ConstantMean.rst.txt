@@ -1,4 +1,4 @@
-arch.univariate.ConstantMean
+﻿arch.univariate.ConstantMean
 ============================
 
 .. currentmodule:: arch.univariate

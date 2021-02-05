@@ -1,4 +1,4 @@
-arch.univariate.ARCH
+﻿arch.univariate.ARCH
 ====================
 
 .. currentmodule:: arch.univariate
@@ -34,6 +34,7 @@ arch.univariate.ARCH
       :toctree: generated/
 
       ~ARCH.name
+      ~ARCH.num_params
       ~ARCH.start
       ~ARCH.stop
    

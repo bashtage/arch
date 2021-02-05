@@ -1,4 +1,4 @@
-arch.univariate.volatility.VolatilityProcess
+﻿arch.univariate.volatility.VolatilityProcess
 ============================================
 
 .. currentmodule:: arch.univariate.volatility
@@ -34,6 +34,7 @@ arch.univariate.volatility.VolatilityProcess
       :toctree: generated/
 
       ~VolatilityProcess.name
+      ~VolatilityProcess.num_params
       ~VolatilityProcess.start
       ~VolatilityProcess.stop
    

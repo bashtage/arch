@@ -1,4 +1,4 @@
-arch.univariate.SkewStudent
+﻿arch.univariate.SkewStudent
 ===========================
 
 .. currentmodule:: arch.univariate

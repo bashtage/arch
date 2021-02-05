@@ -1,4 +1,4 @@
-arch.unitroot.VarianceRatio
+﻿arch.unitroot.VarianceRatio
 ===========================
 
 .. currentmodule:: arch.unitroot

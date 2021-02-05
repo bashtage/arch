@@ -1,4 +1,4 @@
-arch.covariance.kernel.QuadraticSpectral
+﻿arch.covariance.kernel.QuadraticSpectral
 ========================================
 
 .. currentmodule:: arch.covariance.kernel

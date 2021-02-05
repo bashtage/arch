@@ -1,4 +1,4 @@
-arch.covariance.kernel.Bartlett
+﻿arch.covariance.kernel.Bartlett
 ===============================
 
 .. currentmodule:: arch.covariance.kernel

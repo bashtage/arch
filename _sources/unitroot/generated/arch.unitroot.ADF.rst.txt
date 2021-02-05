@@ -1,4 +1,4 @@
-arch.unitroot.ADF
+﻿arch.unitroot.ADF
 =================
 
 .. currentmodule:: arch.unitroot

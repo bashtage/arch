@@ -1,4 +1,4 @@
-arch.univariate.EWMAVariance
+﻿arch.univariate.EWMAVariance
 ============================
 
 .. currentmodule:: arch.univariate
@@ -34,6 +34,7 @@ arch.univariate.EWMAVariance
       :toctree: generated/
 
       ~EWMAVariance.name
+      ~EWMAVariance.num_params
       ~EWMAVariance.start
       ~EWMAVariance.stop
    

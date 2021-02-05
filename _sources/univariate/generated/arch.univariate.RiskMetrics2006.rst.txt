@@ -1,4 +1,4 @@
-arch.univariate.RiskMetrics2006
+﻿arch.univariate.RiskMetrics2006
 ===============================
 
 .. currentmodule:: arch.univariate
@@ -34,6 +34,7 @@ arch.univariate.RiskMetrics2006
       :toctree: generated/
 
       ~RiskMetrics2006.name
+      ~RiskMetrics2006.num_params
       ~RiskMetrics2006.start
       ~RiskMetrics2006.stop
    

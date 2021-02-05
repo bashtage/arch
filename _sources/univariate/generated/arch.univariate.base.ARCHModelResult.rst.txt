@@ -1,4 +1,4 @@
-arch.univariate.base.ARCHModelResult
+﻿arch.univariate.base.ARCHModelResult
 ====================================
 
 .. currentmodule:: arch.univariate.base

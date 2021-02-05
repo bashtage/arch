@@ -1,4 +1,4 @@
-arch.unitroot.KPSS
+﻿arch.unitroot.KPSS
 ==================
 
 .. currentmodule:: arch.unitroot

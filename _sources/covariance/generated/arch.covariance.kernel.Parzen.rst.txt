@@ -1,4 +1,4 @@
-arch.covariance.kernel.Parzen
+﻿arch.covariance.kernel.Parzen
 =============================
 
 .. currentmodule:: arch.covariance.kernel

@@ -1,4 +1,4 @@
-arch.unitroot.cointegration.CanonicalCointegratingReg
+﻿arch.unitroot.cointegration.CanonicalCointegratingReg
 =====================================================
 
 .. currentmodule:: arch.unitroot.cointegration

@@ -1,4 +1,4 @@
-arch.unitroot.DFGLS
+﻿arch.unitroot.DFGLS
 ===================
 
 .. currentmodule:: arch.unitroot

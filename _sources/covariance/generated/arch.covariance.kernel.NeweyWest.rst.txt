@@ -1,4 +1,4 @@
-arch.covariance.kernel.NeweyWest
+﻿arch.covariance.kernel.NeweyWest
 ================================
 
 .. currentmodule:: arch.covariance.kernel

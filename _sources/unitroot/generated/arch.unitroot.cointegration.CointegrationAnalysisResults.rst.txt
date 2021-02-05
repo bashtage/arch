@@ -1,4 +1,4 @@
-arch.unitroot.cointegration.CointegrationAnalysisResults
+﻿arch.unitroot.cointegration.CointegrationAnalysisResults
 ========================================================
 
 .. currentmodule:: arch.unitroot.cointegration

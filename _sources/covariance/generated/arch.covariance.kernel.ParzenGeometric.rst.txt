@@ -1,4 +1,4 @@
-arch.covariance.kernel.ParzenGeometric
+﻿arch.covariance.kernel.ParzenGeometric
 ======================================
 
 .. currentmodule:: arch.covariance.kernel

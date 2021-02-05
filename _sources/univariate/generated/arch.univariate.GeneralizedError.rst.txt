@@ -1,4 +1,4 @@
-arch.univariate.GeneralizedError
+﻿arch.univariate.GeneralizedError
 ================================
 
 .. currentmodule:: arch.univariate

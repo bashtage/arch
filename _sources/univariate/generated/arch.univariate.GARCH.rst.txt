@@ -1,4 +1,4 @@
-arch.univariate.GARCH
+﻿arch.univariate.GARCH
 =====================
 
 .. currentmodule:: arch.univariate
@@ -34,6 +34,7 @@ arch.univariate.GARCH
       :toctree: generated/
 
       ~GARCH.name
+      ~GARCH.num_params
       ~GARCH.start
       ~GARCH.stop
    

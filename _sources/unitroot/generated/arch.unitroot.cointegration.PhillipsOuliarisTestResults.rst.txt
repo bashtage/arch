@@ -1,4 +1,4 @@
-arch.unitroot.cointegration.PhillipsOuliarisTestResults
+﻿arch.unitroot.cointegration.PhillipsOuliarisTestResults
 =======================================================
 
 .. currentmodule:: arch.unitroot.cointegration

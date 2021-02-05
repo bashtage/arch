@@ -1,4 +1,4 @@
-arch.univariate.MIDASHyperbolic
+﻿arch.univariate.MIDASHyperbolic
 ===============================
 
 .. currentmodule:: arch.univariate
@@ -34,6 +34,7 @@ arch.univariate.MIDASHyperbolic
       :toctree: generated/
 
       ~MIDASHyperbolic.name
+      ~MIDASHyperbolic.num_params
       ~MIDASHyperbolic.start
       ~MIDASHyperbolic.stop
    
