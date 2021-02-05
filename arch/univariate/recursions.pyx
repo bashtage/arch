@@ -4,8 +4,8 @@
 import numpy as np
 
 cimport numpy as np
-from libc.math cimport sqrt, log, exp, fabs
 from libc.float cimport DBL_MAX
+from libc.math cimport exp, fabs, log, sqrt
 
 __all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion', 'egarch_recursion',
            'midas_recursion', 'figarch_recursion', 'figarch_weights', 'aparch_recursion']
