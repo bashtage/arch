@@ -1,5 +1,5 @@
-numpy>=1.14
-scipy>=1.0.1
+numpy>=1.16
+scipy>=1.2.3
 pandas>=0.23
-statsmodels>=0.9
-property_cached>=1.6.3
+statsmodels>=0.11
+property_cached>=1.6.4

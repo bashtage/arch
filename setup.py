@@ -65,10 +65,10 @@ SETUP_REQUIREMENTS = {"numpy": "1.14", "cython": "0.29.14"}
 INSTALL_REQUIREMENTS = SETUP_REQUIREMENTS.copy()
 INSTALL_REQUIREMENTS.update(
     {
-        "scipy": "1.0.1",
+        "scipy": "1.2.3",
         "pandas": "0.23",
-        "statsmodels": "0.9",
-        "property_cached": "1.6.3",
+        "statsmodels": "0.10",
+        "property_cached": "1.6.4",
     }
 )
 
@@ -177,9 +177,9 @@ def run_setup(binary: bool = True) -> None:
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: End Users/Desktop",
             "Intended Audience :: Financial and Insurance Industry",
-            "Programming Language :: Python :: 3.6",
             "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
+            "Programming Language :: Python :: 3.9",
             "License :: OSI Approved",
             "Operating System :: MacOS :: MacOS X",
             "Operating System :: Microsoft :: Windows",

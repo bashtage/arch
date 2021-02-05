@@ -203,13 +203,13 @@ cov_est.cov.long_run
 These requirements reflect the testing environment. It is possible
 that arch will work with older versions.
 
-- Python (3.6+)
-- NumPy (1.14+)
-- SciPy (1.0.1+)
+- Python (3.7+)
+- NumPy (1.16+)
+- SciPy (1.2+)
 - Pandas (0.23+)
-- statsmodels (0.9+)
-- matplotlib (2.0+), optional
-- property-cached (1.6.3+), optional
+- statsmodels (0.11+)
+- matplotlib (2.2+), optional
+- property-cached (1.6.4+), optional
 
 ### Optional Requirements
 

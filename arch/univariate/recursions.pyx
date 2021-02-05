@@ -4,19 +4,11 @@
 import numpy as np
 
 cimport numpy as np
-from libc.math cimport sqrt
+from libc.math cimport sqrt, log, exp, fabs
+from libc.float cimport DBL_MAX
 
 __all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion', 'egarch_recursion',
            'midas_recursion', 'figarch_recursion', 'figarch_weights', 'aparch_recursion']
-
-cdef extern from 'math.h':
-    double log(double x)
-    double exp(double x)
-    double sqrt(double x)
-    double fabs(double x)
-
-cdef extern from 'float.h':
-    double DBL_MAX
 
 cdef double LNSIGMA_MAX = log(DBL_MAX)
 
