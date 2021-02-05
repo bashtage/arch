@@ -1,5 +1,5 @@
 # Performance
-cython>=0.29.14
+cython>=0.29.21
 numba>=0.49,!=0.50.*
 
 # Graphics
