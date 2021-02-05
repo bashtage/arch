@@ -1,0 +1,6 @@
+arch.univariate.GARCH.num\_params
+=================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: GARCH.num_params

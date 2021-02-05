@@ -1,0 +1,6 @@
+arch.univariate.APARCH.stop
+===========================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: APARCH.stop

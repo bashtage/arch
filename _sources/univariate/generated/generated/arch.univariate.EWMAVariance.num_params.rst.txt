@@ -1,0 +1,6 @@
+arch.univariate.EWMAVariance.num\_params
+========================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: EWMAVariance.num_params
