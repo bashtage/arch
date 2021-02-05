@@ -33,6 +33,7 @@
    .. autosummary::
       :toctree: generated/
 
+      ~APARCH.common_asym
       ~APARCH.delta
       ~APARCH.name
       ~APARCH.num_params

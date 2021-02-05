@@ -1,0 +1,6 @@
+arch.univariate.APARCH.common\_asym
+===================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: APARCH.common_asym
