@@ -113,10 +113,10 @@ def z_tests(z: NDArray, lag: int, trend: str) -> Tuple[float, float]:
         one_sided_strict += 1 / nobs * w * k[i:].T @ k[:-i]
     u2 = float(u[:-1].T @ u[:-1])
 
-    z = (alpha - 1) - nobs * one_sided_strict / u2
-    z_a = nobs * z
+    z_ = (alpha - 1) - nobs * one_sided_strict / u2
+    z_a = nobs * z_
     long_run = k.T @ k / nobs + 2 * one_sided_strict
-    z_t = np.sqrt(u2) * z / long_run
+    z_t = np.sqrt(u2) * z_ / long_run
     return z_a, z_t
 
 
