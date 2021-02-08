@@ -175,7 +175,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     >>> y = Series(y, name='y', index=index)
     >>> har = HARX(y, lags=[1, 6], hold_back=10)
 
-    Models with equivalent parameteriations of lags. Thie first uses
+    Models with equivalent parametrizations of lags. The first uses
     overlapping lags.
 
     >>> harx_1 = HARX(y, lags=[1,5,22])
@@ -192,7 +192,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     >>> harx_4 = HARX(y, lags=[[1, 2, 6], [1, 5, 22]])
 
-    It is simple to verify that these are theequivalent by inspecting the R2.
+    It is simple to verify that these are the equivalent by inspecting the R2.
 
     >>> models = [harx_1, harx_2, harx_3, harx_4]
     >>> print([mod.fit().rsquared for mod in models])

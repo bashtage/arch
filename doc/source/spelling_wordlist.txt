@@ -3,12 +3,14 @@ aic
 al
 andrews
 annualize
+APARCH
 arch
 ARCHModel
 ARCHModelFixedResult
 ARCHModelResult
 args
 arx
+asym
 autocorrelation
 autocorrelations
 autocovariance
@@ -128,6 +130,7 @@ ouliaris
 param
 parameterless
 params
+parametrizations
 parzen
 ParzenCauchy
 ParzenGeometric
@@ -142,6 +145,7 @@ Probit
 Pᵤ
 pvalue
 pvalues
+pyproject
 Pz
 qs
 QuadraticSpectral
@@ -183,6 +187,7 @@ studentized
 studentst
 StudentsT
 subclassing
+toml
 th
 TukeyHamming
 TukeyHanning
