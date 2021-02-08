@@ -14,7 +14,7 @@ data = {"c": c, "ct": ct}
 for k in ("c", "ct"):
     v = data[k]
     n = v.shape[0]
-    selected = np.zeros((n, 1), dtype=np.bool)
+    selected = np.zeros((n, 1), dtype=bool)
     selected[0] = True
     selected[-1] = True
     selected[v.index == 10.0] = True

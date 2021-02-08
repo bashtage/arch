@@ -18,7 +18,7 @@ from statsmodels.regression.linear_model import OLS, WLS
 META = {"z_a": "negative", "z_t": "negative", "p_u": "positive", "p_z": "positive"}
 CRITICAL_VALUES = (1, 5, 10)
 PLOT = False
-WINS: Dict[np.ndarray[int], int] = defaultdict(lambda: 0)
+WINS: Dict[int, int] = defaultdict(lambda: 0)
 # 1. Load data
 # 2. Compute critical values
 
@@ -67,7 +67,7 @@ def xval(lhs: np.ndarray, rhs: np.ndarray, log: bool = True, folds: int = 5) -> 
                 pred_rhs @ lg_log.params + sigma2 / 2
             )
     errors = lhs[:, None] - predictions
-    best = np.argmin(errors.var(0))
+    best = int(np.argmin(errors.var(0)))
     WINS[best] += 1
 
 
@@ -90,8 +90,8 @@ def estimate_cv_regression(
         params = res.params.copy()
         if res.pvalues[-1] > 0.05:
             params[-1] = 0.00
-        out[cv] = [round(val, 5) for val in params]
-    return out, tau.min()
+        out[cv] = [float(round(val, 5)) for val in params]
+    return out, float(tau.min())
 
 
 def fit_pval_model(quantiles: pd.DataFrame) -> PvalueResult:
