@@ -378,9 +378,16 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
         self._parameters: List[Union[int, ArrayLike]] = []
         self._seed: Optional[Union[int, List[int], NDArray]] = None
-        self.pos_data = args
-        self.kw_data = kwargs
-        self.data = (self.pos_data, self.kw_data)
+        self.pos_data: Tuple[
+            Union[np.ndarray[Any, Any], pd.Series, pd.DataFrame], ...
+        ] = args
+        self.kw_data: Dict[
+            str, Union[np.ndarray[Any, Any], pd.Series, pd.DataFrame]
+        ] = kwargs
+        self.data: Tuple[
+            Tuple[Union[np.ndarray[Any, Any], pd.Series, pd.DataFrame], ...],
+            Dict[str, Union[np.ndarray[Any, Any], pd.Series, pd.DataFrame]],
+        ] = (self.pos_data, self.kw_data)
 
         self._base: Optional[NDArray] = None
         self._results: Optional[NDArray] = None

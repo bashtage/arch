@@ -4,8 +4,14 @@ Core classes for ARCH models
 from abc import ABCMeta, abstractmethod
 from copy import deepcopy
 import datetime as dt
+import sys
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union, cast
 import warnings
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Literal
+else:
+    from typing import Literal
 
 import numpy as np
 import pandas as pd
@@ -50,7 +56,7 @@ __all__ = [
     "format_float_fixed",
 ]
 
-CONVERGENCE_WARNGING = """\
+CONVERGENCE_WARNGING: str = """\
 WARNING: The optimizer did not indicate successful convergence. The message was {msg}.
 See convergence_flag.
 """
@@ -184,11 +190,11 @@ class ARCHModel(object, metaclass=ABCMeta):
         self._fit_indices: List[int] = [0, int(self._y.shape[0])]
         self._fit_y = self._y
 
-        self.hold_back = hold_back
+        self.hold_back: Optional[int] = hold_back
         self._hold_back = 0 if hold_back is None else hold_back
 
-        self.rescale = rescale
-        self.scale = 1.0
+        self.rescale: Optional[bool] = rescale
+        self.scale: float = 1.0
 
         self._backcast: Optional[Union[float, NDArray]] = None
         self._var_bounds: Optional[NDArray] = None
@@ -303,7 +309,9 @@ class ARCHModel(object, metaclass=ABCMeta):
         raise NotImplementedError("Subclasses optionally may provide.")
 
     @abstractmethod
-    def _fit_no_arch_normal_errors(self, cov_type: str = "robust") -> "ARCHModelResult":
+    def _fit_no_arch_normal_errors(
+        self, cov_type: Literal["robust", "classic"] = "robust"
+    ) -> "ARCHModelResult":
         """
         Must be overridden with closed form estimator
         """
@@ -320,7 +328,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         return loglikelihood
 
     def _fit_parameterless_model(
-        self, cov_type: str, backcast: Union[float, NDArray]
+        self, cov_type: Literal["robust", "classic"], backcast: Union[float, NDArray]
     ) -> "ARCHModelResult":
         """
         When models have no parameters, fill return values
@@ -519,7 +527,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         update_freq: int = 1,
         disp: str = "final",
         starting_values: ArrayLike1D = None,
-        cov_type: str = "robust",
+        cov_type: Literal["robust", "classic"] = "robust",
         show_warning: bool = True,
         first_obs: Union[int, DateLike] = None,
         last_obs: Union[int, DateLike] = None,
@@ -1597,7 +1605,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         r2: float,
         resid: NDArray,
         volatility: NDArray,
-        cov_type: str,
+        cov_type: Literal["robust", "classic"],
         dep_var: Series,
         names: Sequence[str],
         loglikelihood: float,
@@ -1614,7 +1622,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         self._fit_indices = (fit_start, fit_stop)
         self._param_cov = param_cov
         self._r2 = r2
-        self.cov_type = cov_type
+        self.cov_type: Literal["robust", "classic"] = cov_type
         self._optim_output = optim_output
 
     @cached_property

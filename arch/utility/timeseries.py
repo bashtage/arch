@@ -10,7 +10,7 @@ class ColumnNameConflict(Warning):
     pass
 
 
-column_name_conflict_doc = """
+column_name_conflict_doc: str = """
 Some of the column named being added were not unique and have been renamed.
 
              {0}

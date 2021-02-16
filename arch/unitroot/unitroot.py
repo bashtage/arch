@@ -91,7 +91,7 @@ __all__ = [
     "SHORT_TREND_DESCRIPTION",
 ]
 
-MUTATING_WARNING = """\
+MUTATING_WARNING: str = """\
 Mutating unit root tests is deprecated and will raise an error in the first release \
 of arch 5.x after August 2020. Create new test objects to change test \
 parametrization.
@@ -175,7 +175,7 @@ def _select_best_ic(
     return icbest, lag
 
 
-singular_array_error = """\
+singular_array_error: str = """\
 The maximum lag you are considering ({max_lags}) results in an ADF regression with a
 singular regressor matrix after including {lag} lags, and so a specification test be
 run. This may occur if your series have little variation and so is locally constant,

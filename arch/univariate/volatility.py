@@ -919,9 +919,9 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, p: int = 1, o: int = 0, q: int = 1, power: float = 2.0) -> None:
         super().__init__()
-        self.p = int(p)
-        self.o = int(o)
-        self.q = int(q)
+        self.p: int = int(p)
+        self.o: int = int(o)
+        self.q: int = int(q)
         self.power = power
         self._num_params = 1 + p + o + q
         if p < 0 or o < 0 or q < 0:
@@ -2128,10 +2128,10 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         rho: float = 1.4142135623730951,
     ) -> None:
         super().__init__()
-        self.tau0 = tau0
-        self.tau1 = tau1
-        self.kmax = kmax
-        self.rho = rho
+        self.tau0: float = tau0
+        self.tau1: float = tau1
+        self.kmax: int = kmax
+        self.rho: float = rho
         self._num_params = 0
 
         if tau0 <= tau1 or tau1 <= 0:
@@ -2410,9 +2410,9 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, p: int = 1, o: int = 0, q: int = 1) -> None:
         super().__init__()
-        self.p = int(p)
-        self.o = int(o)
-        self.q = int(q)
+        self.p: int = int(p)
+        self.o: int = int(o)
+        self.q: int = int(q)
         self._num_params = 1 + p + o + q
         if p < 0 or o < 0 or q < 0:
             raise ValueError("All lags lengths must be non-negative")
@@ -2863,8 +2863,8 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self, p: int = 1, q: int = 1, power: float = 2.0, truncation: int = 1000
     ) -> None:
         super().__init__()
-        self.p = int(p)
-        self.q = int(q)
+        self.p: int = int(p)
+        self.q: int = int(q)
         self.power = power
         self._num_params = 2 + p + q
         self._truncation = int(truncation)
@@ -3259,9 +3259,9 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         common_asym: bool = False,
     ) -> None:
         super().__init__()
-        self.p = int(p)
-        self.o = int(o)
-        self.q = int(q)
+        self.p: int = int(p)
+        self.o: int = int(o)
+        self.q: int = int(q)
         self._est_delta = delta is None
         self._common_asym = bool(common_asym) and self.o > 0
         self._delta = float(np.nan)

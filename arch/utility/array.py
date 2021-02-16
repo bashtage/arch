@@ -24,7 +24,7 @@ __all__ = [
     "find_index",
 ]
 
-deprecation_doc = """
+deprecation_doc: str = """
 {func} has been moved.  Please use {new_location}.{func}.
 """
 

@@ -3,7 +3,7 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 :class:`ARCHModel` and provide the same methods with the same inputs.
 """
 import copy
-from typing import Callable, Dict, List, Optional, Sequence, Tuple, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union, cast
 
 import numpy as np
 from pandas import DataFrame, Index
@@ -235,11 +235,15 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self._x = x
         self._x_names: List[str] = []
         self._x_index: Optional[Union[NDArray, Index]] = None
-        self.lags = lags
+        self.lags: Optional[
+            Union[int, Sequence[int], Sequence[Sequence[int]], NDArray]
+        ] = lags
         self._lags = np.empty(0)
-        self.constant = constant
-        self.use_rotated = use_rotated
-        self.regressors = np.empty((0, 0))
+        self.constant: bool = constant
+        self.use_rotated: bool = use_rotated
+        self.regressors: np.ndarray[Any, np.dtype[np.float64]] = np.empty(
+            (0, 0), dtype=np.float64
+        )
 
         self._name = "HAR"
         if self._x is not None:
