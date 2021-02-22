@@ -96,6 +96,8 @@ def z_tests_vec(z: NDArray, lag: int, trend: str) -> Tuple[np.ndarray, np.ndarra
     z_a = nobs * z
     long_run = (k ** 2).sum(0) / nobs + 2 * one_sided_strict
     z_t = np.sqrt(u2) * z / np.sqrt(long_run)
+    assert isinstance(z_a, np.ndarray)
+    assert isinstance(z_t, np.ndarray)
     return z_a, z_t
 
 
@@ -152,7 +154,7 @@ def p_tests_vec(z: NDArray, lag: int, trend: str) -> Tuple[np.ndarray, np.ndarra
     for i in range(1, lag + 1):
         w = 1 - i / (lag + 1)
         gamma = inner_prod(xi[:, i:], xi[:, :-i]) / nobs
-        omega += w * (gamma + gamma.transpose((0, 2, 1)))
+        omega += w * (gamma + cast(np.ndarray, gamma).transpose((0, 2, 1)))
     omega21 = omega[:, :1, 1:]
     omega22 = omega[:, 1:, 1:]
     omega112 = omega[:, :1, :1] - omega21 @ inv(omega22) @ omega21.transpose((0, 2, 1))

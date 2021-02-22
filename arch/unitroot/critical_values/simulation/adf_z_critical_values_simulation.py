@@ -8,6 +8,7 @@ on the local machine.  This can be started using a command similar to
 Remote clusters can be used by modifying the call to Client.
 """
 import datetime
+from typing import cast
 
 from ipyparallel import Client
 from numpy import array, nan, ndarray, percentile, savez
@@ -103,7 +104,7 @@ rng = RandomState(0)
 seeds = rng.random_integers(0, 2 ** 31 - 2, size=EX_NUM)
 
 for tr in trends:
-    results = zeros((len(percentiles), len(T), EX_NUM)) * nan
+    results = cast(ndarray, zeros((len(percentiles), len(T), EX_NUM)) * nan)
     filename = "adf_z_" + tr + ".npz"
 
     for i in range(EX_NUM):
@@ -118,7 +119,7 @@ for tr in trends:
         rc.purge_everything()
         print(datetime.datetime.now() - now)
         quantiles = [percentile(x, percentiles) for x in out]
-        results[:, :, i] = array(quantiles).T
+        results[:, :, i] = cast(ndarray, array(quantiles).T)
 
         if i % 50 == 0:
             savez(filename, trend=tr, results=results, percentiles=percentiles, T=T)

@@ -11,13 +11,19 @@ This version has been optimized for execution on a large cluster and should
 scale well with 128 or more engines.
 """
 import datetime
+import sys
 import time
-from typing import Literal
+from typing import cast
 
 from ipyparallel import Client, DirectView
 from numpy import array, nan, ndarray, percentile, savez
 
 from .adf_simulation import adf_simulation
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
 
 # Time in seconds to sleep before checking if ready
 SLEEP = 10
@@ -124,7 +130,7 @@ rng = RandomState(0)
 seeds = list(rng.random_integers(0, 2 ** 31 - 2, size=EX_NUM))
 
 for tr in trends:
-    results = zeros((len(percentiles), m, EX_NUM)) * nan
+    results = cast(ndarray, zeros((len(percentiles), m, EX_NUM)) * nan)
     filename = "adf_z_" + tr + ".npz"
 
     for i, t in enumerate(T):
@@ -153,6 +159,6 @@ for tr in trends:
         elapsed = datetime.datetime.now() - now
         print("Total time {0} for T={1}".format(elapsed, t))
         quantiles = [percentile(x, percentiles) for x in out]
-        results[:, i, :] = array(quantiles).T
+        results[:, i, :] = cast(ndarray, array(quantiles).T)
 
         savez(filename, trend=tr, results=results, percentiles=percentiles, T=T)

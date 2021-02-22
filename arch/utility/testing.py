@@ -36,10 +36,10 @@ class WaldTestStatistic(object):
         self._stat = stat
         self._null = null
         self._alternative = alternative
-        self.df = df
+        self.df: int = df
         self._name = name
         self.dist = chi2(df)
-        self.dist_name = "chi2({0})".format(df)
+        self.dist_name: str = "chi2({0})".format(df)
 
     @property
     def stat(self) -> float:

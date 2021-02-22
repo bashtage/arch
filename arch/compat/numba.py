@@ -6,7 +6,7 @@ class PerformanceWarning(UserWarning):
     """Warning issued if recursions are run in CPython"""
 
 
-performance_warning = """
+performance_warning: str = """
 numba is not available, and this function is being executed without JIT
 compilation. Either install numba or reinstalling after installing Cython
 is strongly recommended."""

@@ -217,7 +217,7 @@ class TestMeanModel(object):
         assert_equal(harx.use_rotated, False)
         assert isinstance(harx.__repr__(), str)
         harx._repr_html_()
-        res = harx.fit(cov_type="mle", disp=DISPLAY)
+        res = harx.fit(cov_type="classic", disp=DISPLAY)
         assert isinstance(res.__repr__(), str)
 
     def test_harx_error(self):
@@ -433,7 +433,7 @@ class TestMeanModel(object):
         assert "Df Model:                            6" in str(summ)
         assert "Constant Variance" in str(summ)
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
-        res = ar.fit(disp=DISPLAY, update_freq=5, cov_type="mle")
+        res = ar.fit(disp=DISPLAY, update_freq=5, cov_type="classic")
         assert isinstance(res.param_cov, pd.DataFrame)
         sims = res.forecast(horizon=5, method="simulation")
         assert isinstance(sims.simulations.residual_variances, np.ndarray)
@@ -680,7 +680,7 @@ class TestMeanModel(object):
 
     def test_starting_values(self):
         am = arch_model(self.y, mean="ar", lags=[1, 3, 5])
-        res = am.fit(cov_type="mle", update_freq=0, disp=DISPLAY)
+        res = am.fit(cov_type="classic", update_freq=0, disp=DISPLAY)
         res2 = am.fit(starting_values=res.params, update_freq=0, disp=DISPLAY)
         assert isinstance(res, ARCHModelResult)
         assert isinstance(res2, ARCHModelResult)
@@ -983,8 +983,12 @@ class TestMeanModel(object):
         assert am.hold_back == 100
 
     def test_constant_mean_fixed_variance(self):
-        variance = 2 + self.rng.standard_normal(self.y.shape[0]) ** 2.0
-        mod = ConstantMean(self.y_series, volatility=FixedVariance(variance))
+        rng = RandomState(1234)
+        variance = 2 + rng.standard_normal(self.y.shape[0]) ** 2.0
+        std = np.sqrt(variance)
+        y = pd.Series(std* rng.standard_normal(self.y_series.shape[0]), index=self.y_series.index)
+
+        mod = ConstantMean(y, volatility=FixedVariance(variance))
         res = mod.fit(disp=DISPLAY)
         res.summary()
         assert len(res.params) == 2
@@ -1005,16 +1009,18 @@ class TestMeanModel(object):
         assert "scale" not in res.params.index
 
     def test_optimization_options(self):
+        norm = Normal(random_state=RandomState([12891298, 843084]))
         am = arch_model(None)
-        data = am.simulate([0.0, 0.1, 0.1, 0.85], 2500)
+        am.distribution = norm
+        data = am.simulate(np.array([0.0, 0.1, 0.1, 0.85]), 2500)
         am = arch_model(data.data)
         std = am.fit(disp=DISPLAY)
         loose = am.fit(tol=1e-2, disp=DISPLAY)
-        assert std.loglikelihood != loose.loglikelihood
+        assert std.loglikelihood >= loose.loglikelihood
         with warnings.catch_warnings(record=True) as w:
             short = am.fit(options={"maxiter": 3}, disp=DISPLAY)
         assert len(w) == 1
-        assert std.loglikelihood != short.loglikelihood
+        assert std.loglikelihood >= short.loglikelihood
         assert short.convergence_flag != 0
 
     def test_little_or_no_data(self):

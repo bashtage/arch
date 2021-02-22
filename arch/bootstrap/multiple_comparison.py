@@ -1,4 +1,10 @@
-from typing import Dict, Hashable, List, Optional, Sequence, Tuple, Union
+import sys
+from typing import Any, Dict, Hashable, List, Optional, Sequence, Tuple, Union, cast
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Literal
+else:
+    from typing import Literal
 
 import numpy as np
 import pandas as pd
@@ -36,7 +42,9 @@ class MultipleComparison(object):
     def __init__(self) -> None:
         self._model = ""
         self._info: Dict[str, str] = {}
-        self.bootstrap = CircularBlockBootstrap(10, np.ones(100))
+        self.bootstrap: CircularBlockBootstrap = CircularBlockBootstrap(
+            10, np.ones(100)
+        )
 
     def __str__(self) -> str:
         return _info_to_str(self._model, self._info, False)
@@ -107,16 +115,18 @@ class MCS(MultipleComparison):
         size: float,
         reps: int = 1000,
         block_size: Optional[int] = None,
-        method: str = "R",
-        bootstrap: str = "stationary",
+        method: Literal["R", "max"] = "R",
+        bootstrap: Literal[
+            "stationary", "sb", "circular", "cbb", "moving block", "mbb"
+        ] = "stationary",
     ) -> None:
         super().__init__()
-        self.losses = ensure2d(losses, "losses")
+        self.losses: np.ndarray[Any, np.dtype[np.float64]] = ensure2d(losses, "losses")
         self._losses_arr = np.asarray(self.losses)
         if self._losses_arr.shape[1] < 2:
             raise ValueError("losses must have at least two columns")
-        self.size = size
-        self.reps = reps
+        self.size: float = size
+        self.reps: int = reps
         if block_size is None:
             self.block_size = int(np.sqrt(losses.shape[0]))
         else:
@@ -124,20 +134,20 @@ class MCS(MultipleComparison):
 
         self.t: int = losses.shape[0]
         self.k: int = losses.shape[1]
-        self.method = method
+        self.method: Literal["R", "max"] = method
         # Bootstrap indices since the same bootstrap should be used in the
         # repeated steps
         indices = np.arange(self.t)
-        bootstrap = bootstrap.lower().replace(" ", "_")
-        if bootstrap in ("circular", "cbb"):
+        bootstrap_meth = bootstrap.lower().replace(" ", "_")
+        if bootstrap_meth in ("circular", "cbb"):
             bootstrap_inst = CircularBlockBootstrap(self.block_size, indices)
-        elif bootstrap in ("stationary", "sb"):
+        elif bootstrap_meth in ("stationary", "sb"):
             bootstrap_inst = StationaryBootstrap(self.block_size, indices)
-        elif bootstrap in ("moving_block", "mbb"):
+        elif bootstrap_meth in ("moving_block", "mbb"):
             bootstrap_inst = MovingBlockBootstrap(self.block_size, indices)
         else:
-            raise ValueError("Unknown bootstrap:" + bootstrap)
-        self.bootstrap = bootstrap_inst
+            raise ValueError(f"Unknown bootstrap: {bootstrap_meth}")
+        self.bootstrap: CircularBlockBootstrap = bootstrap_inst
         self._bootstrap_indices: List[NDArray] = []  # For testing
         self._model = "MCS"
         self._info = dict(
@@ -386,14 +396,18 @@ class StepM(MultipleComparison):
         size: float = 0.05,
         block_size: Optional[int] = None,
         reps: int = 1000,
-        bootstrap: str = "stationary",
+        bootstrap: Literal[
+            "stationary", "sb", "circular", "cbb", "moving block", "mbb"
+        ] = "stationary",
         studentize: bool = True,
         nested: bool = False,
     ) -> None:
         super(StepM, self).__init__()
-        self.benchmark = ensure2d(benchmark, "benchmark")
-        self.models = ensure2d(models, "models")
-        self.spa = SPA(
+        self.benchmark: np.ndarray[Any, np.dtype[np.float64]] = ensure2d(
+            benchmark, "benchmark"
+        )
+        self.models: np.ndarray[Any, np.dtype[np.float64]] = ensure2d(models, "models")
+        self.spa: SPA = SPA(
             benchmark,
             models,
             block_size=block_size,
@@ -402,13 +416,13 @@ class StepM(MultipleComparison):
             studentize=studentize,
             nested=nested,
         )
-        self.block_size = self.spa.block_size
-        self.t = self.models.shape[0]
-        self.k = self.models.shape[1]
-        self.reps = reps
-        self.size = size
+        self.block_size: int = self.spa.block_size
+        self.t: int = self.models.shape[0]
+        self.k: int = self.models.shape[1]
+        self.reps: int = reps
+        self.size: float = size
         self._superior_models: Optional[List[Hashable]] = None
-        self.bootstrap = self.spa.bootstrap
+        self.bootstrap: CircularBlockBootstrap = self.spa.bootstrap
 
         self._model = "StepM"
         if self.spa.studentize:
@@ -539,18 +553,21 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         nested: bool = False,
     ) -> None:
         super().__init__()
-        self.benchmark = ensure2d(benchmark, "benchmark")
-        self.models = ensure2d(models, "models")
-        self.reps = reps
+        self.benchmark: np.ndarray[Any, np.dtype[np.float64]] = ensure2d(
+            benchmark, "benchmark"
+        )
+        self.models: np.ndarray[Any, np.dtype[np.float64]] = ensure2d(models, "models")
+        self.reps: int = reps
         if block_size is None:
             self.block_size = int(np.sqrt(benchmark.shape[0]))
         else:
             self.block_size = block_size
-        self.studentize = studentize
-        self.nested = nested
+        self.studentize: bool = studentize
+        self.nested: bool = nested
         self._loss_diff = np.asarray(self.benchmark) - np.asarray(self.models)
-        self._loss_diff_var = None
-        self.t, self.k = self._loss_diff.shape
+        self._loss_diff_var = np.empty(0)
+        self.t: int = self._loss_diff.shape[0]
+        self.k: int = self._loss_diff.shape[1]
         bootstrap = bootstrap.lower().replace(" ", "_")
         if bootstrap in ("circular", "cbb"):
             bootstrap_inst = CircularBlockBootstrap(self.block_size, self._loss_diff)
@@ -560,7 +577,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             bootstrap_inst = MovingBlockBootstrap(self.block_size, self._loss_diff)
         else:
             raise ValueError("Unknown bootstrap:" + bootstrap)
-        self.bootstrap = bootstrap_inst
+        self.bootstrap: CircularBlockBootstrap = bootstrap_inst
         self._pvalues: Dict[str, float] = {}
         self._simulated_vals: Optional[NDArray] = None
         self._selector = np.ones(self.k, dtype=np.bool_)
@@ -670,7 +687,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
                 variances += (
                     2 * kappa * np.sum(demeaned[: (t - i), :] * demeaned[i:, :], 0) / t
                 )
-        self._loss_diff_var = variances
+        self._loss_diff_var = cast(np.ndarray, variances)
 
     def _check_column_validity(self) -> NDArray:
         """

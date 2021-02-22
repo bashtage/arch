@@ -4,7 +4,13 @@ Simulation of ADF z-test critical values.  Closely follows MacKinnon (2010).
 import argparse
 import os
 import random
-from typing import Literal
+import sys
+from typing import cast
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
 
 from adf_simulation import (
     OUTPUT_PATH,
@@ -65,7 +71,9 @@ def single_experiment(trend: str, gen: Generator, file_name: str) -> None:
     """
 
     res = np.zeros(EX_SIZE)
-    output = np.zeros((len(PERCENTILES), len(TIME_SERIES_LENGTHS)))
+    output: np.ndarray = np.zeros(
+        (len(cast(np.ndarray, PERCENTILES)), len(TIME_SERIES_LENGTHS))
+    )
     for col, nobs in enumerate(TIME_SERIES_LENGTHS):
         remaining = EX_SIZE
         finished = 0

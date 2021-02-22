@@ -3,7 +3,7 @@ Calculates quantiles of the KPSS test statistic for both the constant
 and constant plus trend scenarios.
 """
 import os
-from typing import Optional
+from typing import Optional, cast
 
 import numpy as np
 from numpy.random import RandomState
@@ -34,10 +34,10 @@ def simulate_kpss(
         z = add_trend(z, trend="t")
     zinv = np.linalg.pinv(z)
     trend_coef = zinv.dot(e)
-    resid = e - z.dot(trend_coef)
+    resid = e - cast(np.ndarray, z.dot(trend_coef))
     s = np.cumsum(resid, axis=0)
-    lam = np.mean(resid ** 2.0, axis=0)
-    kpss = 1 / (nobs ** 2.0) * np.sum(s ** 2.0, axis=0) / lam
+    lam = (resid ** 2.0).mean(axis=0)
+    kpss = 1 / (nobs ** 2.0) * (s ** 2.0).sum(axis=0) / lam
     return kpss
 
 
