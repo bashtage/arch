@@ -589,6 +589,7 @@ series = {
 }
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("series_name", series.keys())
 def test_zivot_andrews(series_name):
     # Test results from package urca.ur.za (1.13-0)

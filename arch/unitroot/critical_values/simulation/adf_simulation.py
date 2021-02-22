@@ -1,10 +1,16 @@
 import os
 import platform
-from typing import Literal, Optional, Union
+import sys
+from typing import Optional, Union
 
 from numpy import arange, array, cumsum, dot, ones, vstack
 from numpy.linalg import pinv
 from numpy.random import Generator, RandomState
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
 
 # Storage Location
 if platform.system() == "Linux":

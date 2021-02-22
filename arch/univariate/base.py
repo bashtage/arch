@@ -413,8 +413,11 @@ class ARCHModel(object, metaclass=ABCMeta):
         # 3. Compute log likelihood using Distribution
         llf = self.distribution.loglikelihood(dp, resids, sigma2, individual)
 
-        _callback_llf = -1.0 * llf
-        return -1.0 * llf
+        if not individual:
+            _callback_llf = llf_f = -float(llf)
+            return llf_f
+
+        return cast(np.ndarray, -llf)
 
     def _all_parameter_names(self) -> List[str]:
         """Returns a list containing all parameter names from the mean model,
@@ -473,6 +476,7 @@ class ARCHModel(object, metaclass=ABCMeta):
 
         params = ensure1d(params, "params", False)
         loglikelihood = -1.0 * self._loglikelihood(params, sigma2, backcast, var_bounds)
+        assert isinstance(loglikelihood, float)
 
         mp, vp, dp = self._parse_parameters(params)
 
@@ -602,7 +606,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         self._check_scale(resids)
         if self.scale != 1.0:
             # Scale changed, rescale data and reset model
-            self._y = self.scale * np.asarray(self._y_original)
+            self._y = cast(np.ndarray, self.scale * np.asarray(self._y_original))
             self._adjust_sample(first_obs, last_obs)
             resids = self.resids(self.starting_values())
 
@@ -894,7 +898,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         method: str = "analytic",
         simulations: int = 1000,
         rng: Optional[Callable[[Union[int, Tuple[int, ...]]], NDArray]] = None,
-        random_state: np.random.RandomState = None,
+        random_state: Optional[np.random.RandomState] = None,
     ) -> "ARCHModelForecast":
         """
         Construct forecasts from estimated model
@@ -1323,7 +1327,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         method: str = "analytic",
         simulations: int = 1000,
         rng: Optional[Callable[[Union[int, Tuple[int, ...]]], NDArray]] = None,
-        random_state: np.random.RandomState = None,
+        random_state: Optional[np.random.RandomState] = None,
     ) -> "ARCHModelForecast":
         """
         Construct forecasts from estimated model
@@ -1605,7 +1609,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         r2: float,
         resid: NDArray,
         volatility: NDArray,
-        cov_type: Literal["robust", "classic"],
+        cov_type: str,
         dep_var: Series,
         names: Sequence[str],
         loglikelihood: float,
@@ -1622,7 +1626,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         self._fit_indices = (fit_start, fit_stop)
         self._param_cov = param_cov
         self._r2 = r2
-        self.cov_type: Literal["robust", "classic"] = cov_type
+        self.cov_type: str = cov_type
         self._optim_output = optim_output
 
     @cached_property

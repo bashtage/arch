@@ -35,7 +35,7 @@ def z_tests(z: NDArray, lag: int, trend: str) -> Tuple[float, float]:
     se = np.sqrt(long_run / u2)
     z_t = z / se
     print(u2, long_run, one_sided_strict, z)
-    return z_a, z_t
+    return float(z_a), float(z_t)
 
 
 def p_tests(z: NDArray, lag: int, trend: str) -> Tuple[float, float]:

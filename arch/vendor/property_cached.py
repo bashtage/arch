@@ -34,7 +34,7 @@ import asyncio
 import functools
 import threading
 from time import time
-from typing import Any, Mapping
+from typing import Any, Callable, Mapping, Optional
 import weakref
 
 __author__ = "Martin Larralde"
@@ -56,7 +56,7 @@ class cached_property(property):
 
     def __init__(self, func) -> None:
         self.cache: Mapping[str, Any] = weakref.WeakKeyDictionary()
-        self.func = func
+        self.func: Callable[[], Any] = func
         self._update_wrapper(func)  # type: ignore
 
     def __get__(self, obj, cls):
@@ -73,7 +73,7 @@ class cached_property(property):
         return value
 
     def __set_name__(self, owner, name):
-        self.__name__ = name
+        self.__name__: str = name
 
     def __set__(self, obj, value):
         self.cache[obj] = value
@@ -101,7 +101,7 @@ class threaded_cached_property(cached_property):
 
     def __init__(self, func) -> None:
         super(threaded_cached_property, self).__init__(func)
-        self.lock = threading.RLock()
+        self.lock: threading.RLock = threading.RLock()
 
     def __get__(self, obj, cls):
         if obj is None:
@@ -131,7 +131,7 @@ class cached_property_with_ttl(cached_property):
             ttl = None
         else:
             func = None
-        self.ttl = ttl
+        self.ttl: Optional[int] = ttl
         super(cached_property_with_ttl, self).__init__(func)
 
     def __call__(self, func):
@@ -170,7 +170,7 @@ class threaded_cached_property_with_ttl(
 
     def __init__(self, ttl=None) -> None:
         super(threaded_cached_property_with_ttl, self).__init__(ttl)
-        self.lock = threading.RLock()
+        self.lock: threading.RLock = threading.RLock()
 
     def __get__(self, obj, cls):
         with self.lock:

@@ -15,6 +15,7 @@ from numpy import (
     isscalar,
     log,
     nan,
+    ndarray,
     ones_like,
     pi,
     sign,
@@ -38,7 +39,7 @@ class Distribution(object, metaclass=ABCMeta):
 
     def __init__(self, random_state: Optional[RandomState] = None) -> None:
         self._name = "Distribution"
-        self.num_params = 0
+        self.num_params: int = 0
         self._parameters: Optional[NDArray] = None
         if random_state is None:
             self._random_state = RandomState()
@@ -214,15 +215,15 @@ class Distribution(object, metaclass=ABCMeta):
     @abstractmethod
     def ppf(
         self,
-        pits: Union[Sequence[float], ArrayLike1D],
+        pits: Union[float, Sequence[float], ArrayLike1D],
         parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
-    ) -> NDArray:
+    ) -> Union[float, NDArray]:
         """
         Inverse cumulative density function (ICDF)
 
         Parameters
         ----------
-        pits : ndarray
+        pits : {float, ndarray}
             Probability-integral-transformed values in the interval (0, 1).
         parameters : ndarray, optional
             Distribution parameters. Use ``None`` for parameterless
@@ -230,7 +231,7 @@ class Distribution(object, metaclass=ABCMeta):
 
         Returns
         -------
-        i : ndarray
+        i : {float, ndarray}
             Inverse CDF values
         """
 
@@ -410,12 +411,20 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
 
     def ppf(
         self,
-        pits: Union[Sequence[float], ArrayLike1D],
+        pits: Union[float, Sequence[float], ArrayLike1D],
         parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
     ) -> NDArray:
         self._check_constraints(parameters)
-        pits = asarray(pits)
-        return stats.norm.ppf(pits)
+        scalar = isscalar(pits)
+        if scalar:
+            pits = array([pits])
+        else:
+            pits = asarray(pits)
+        ppf = stats.norm.ppf(pits)
+        if scalar:
+            return ppf[0]
+        else:
+            return ppf
 
     def moment(
         self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
@@ -451,7 +460,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
     def __init__(self, random_state: Optional[RandomState] = None) -> None:
         super().__init__(random_state=random_state)
         self._name = "Standardized Student's t"
-        self.num_params = 1
+        self.num_params: int = 1
 
     def constraints(self) -> Tuple[NDArray, NDArray]:
         return array([[1], [-1]]), array([2.05, -500.0])
@@ -668,7 +677,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def __init__(self, random_state: Optional[RandomState] = None) -> None:
         super().__init__(random_state=random_state)
         self._name = "Standardized Skew Student's t"
-        self.num_params = 2
+        self.num_params: int = 2
 
     def constraints(self) -> Tuple[NDArray, NDArray]:
         return array([[1, 0], [-1, 0], [0, 1], [0, -1]]), array([2.05, -300.0, -1, -1])
@@ -776,7 +785,9 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def _simulator(self, size: Union[int, Tuple[int, ...]]) -> NDArray:
         # No need to normalize since it is already done in parameterization
         assert self._parameters is not None
-        return self.ppf(self._random_state.random_sample(size=size), self._parameters)
+        ppf = self.ppf(self._random_state.random_sample(size=size), self._parameters)
+        assert isinstance(ppf, ndarray)
+        return ppf
 
     def simulate(
         self, parameters: Union[int, float, Sequence[Union[float, int]], ArrayLike1D]
@@ -880,7 +891,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         pits: Union[Sequence[float], ArrayLike1D],
         parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
-    ) -> NDArray:
+    ) -> Union[float, NDArray]:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(pits)
         if scalar:
@@ -896,13 +907,15 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         icdf1 = stats.t.ppf(pits[cond] / (1 - lam), eta)
         icdf2 = stats.t.ppf(0.5 + (pits[~cond] - (1 - lam) / 2) / (1 + lam), eta)
         icdf = -999.99 * ones_like(pits)
+        assert isinstance(icdf, ndarray)
         icdf[cond] = icdf1
         icdf[~cond] = icdf2
         icdf = icdf * (1 + sign(pits - (1 - lam) / 2) * lam) * (1 - 2 / eta) ** 0.5 - a
         icdf = icdf / b
 
         if scalar:
-            icdf = icdf[0]
+            return float(icdf[0])
+        assert isinstance(icdf, ndarray)
         return icdf
 
     def moment(
@@ -992,7 +1005,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
     def __init__(self, random_state: Optional[RandomState] = None) -> None:
         super().__init__(random_state=random_state)
         self._name = "Generalized Error Distribution"
-        self.num_params = 1
+        self.num_params: int = 1
 
     def constraints(self) -> Tuple[NDArray, NDArray]:
         return array([[1], [-1]]), array([1.01, -500.0])

@@ -343,14 +343,15 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
     _common_size_required = True
 
     def __init__(
-        self, *args: ArrayLike, **kwargs: Union[RandomState, ArrayLike]
+        self,
+        *args: ArrayLike,
+        random_state: Optional[RandomState] = None,
+        **kwargs: ArrayLike,
     ) -> None:
         self._args = list(args)
         self._kwargs = kwargs
-        random_state = self._kwargs.pop("random_state", None)
-
         if isinstance(random_state, RandomState):
-            self._random_state = random_state
+            self._random_state: RandomState = random_state
         elif random_state is None:
             self._random_state = RandomState()
         else:
@@ -446,24 +447,24 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         """
         return self._index
 
-    def get_state(self) -> Union[Dict[str, Any], Tuple[Any, ...]]:
+    def get_state(self) -> Dict[str, Any]:
         """
         Gets the state of the bootstrap's random number generator
 
         Returns
         -------
-        {dict, tuple}
-            Dictionary or tuple containing the state.
+        dict
+            Dictionary containing the state.
         """
         return self.random_state.get_state()
 
-    def set_state(self, state: Union[Dict[str, Any], Tuple[Any, ...]]) -> None:
+    def set_state(self, state: Dict[str, Any]) -> None:
         """
         Sets the state of the bootstrap's random number generator
 
         Parameters
         ----------
-        state : {dict, tuple}
+        state : dict
             Dictionary or tuple containing the state.
         """
         self.random_state.set_state(state)
@@ -797,7 +798,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
     def clone(self, *args: ArrayLike, **kwargs: ArrayLike) -> "IIDBootstrap":
         """
-        Clones the bootstrap using different data.
+        Clones the bootstrap using different data with a fresh RandomState.
 
         Parameters
         ----------
@@ -813,7 +814,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         """
         pos_arguments: List[Union[int, ArrayLike]] = copy.deepcopy(self._parameters)
         pos_arguments.extend(args)
-        bs = self.__class__(*pos_arguments, **kwargs)
+        bs = self.__class__(*pos_arguments, random_state=None, **kwargs)
         if self._seed is not None:
             bs.seed(self._seed)
         return bs
@@ -1210,9 +1211,12 @@ class IndependentSamplesBootstrap(IIDBootstrap):
     _name = "Heterogeneous IID Bootstrap"
 
     def __init__(
-        self, *args: ArrayLike, **kwargs: Union[RandomState, ArrayLike]
+        self,
+        *args: ArrayLike,
+        random_state: Optional[RandomState] = None,
+        **kwargs: ArrayLike,
     ) -> None:
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, random_state=random_state, **kwargs)
 
         self._num_args = len(args)
         self._num_arg_items = [len(arg) for arg in args]
@@ -1220,7 +1224,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
 
     def update_indices(
         self,
-    ) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:
+    ) -> Tuple[List[NDArray], Dict[str, NDArray]]:
         """
         Update indices for the next iteration of the bootstrap.  This must
         be overridden when creating new bootstraps.
@@ -1365,10 +1369,14 @@ class CircularBlockBootstrap(IIDBootstrap):
     _name = "Circular Block Bootstrap"
 
     def __init__(
-        self, block_size: int, *args: ArrayLike, **kwargs: Union[RandomState, ArrayLike]
+        self,
+        block_size: int,
+        *args: ArrayLike,
+        random_state: Optional[RandomState] = None,
+        **kwargs: ArrayLike,
     ) -> None:
-        super().__init__(*args, **kwargs)
-        self.block_size = block_size
+        super().__init__(*args, random_state=random_state, **kwargs)
+        self.block_size: int = block_size
         self._parameters = [block_size]
 
     def __str__(self) -> str:
@@ -1474,9 +1482,13 @@ class StationaryBootstrap(CircularBlockBootstrap):
     _name = "Stationary Bootstrap"
 
     def __init__(
-        self, block_size: int, *args: ArrayLike, **kwargs: Union[RandomState, ArrayLike]
+        self,
+        block_size: int,
+        *args: ArrayLike,
+        random_state: Optional[RandomState] = None,
+        **kwargs: ArrayLike,
     ) -> None:
-        super().__init__(block_size, *args, **kwargs)
+        super().__init__(block_size, *args, random_state=random_state, **kwargs)
         self._p = 1.0 / block_size
 
     def update_indices(
@@ -1561,9 +1573,13 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
     _name = "Moving Block Bootstrap"
 
     def __init__(
-        self, block_size: int, *args: ArrayLike, **kwargs: Union[RandomState, ArrayLike]
+        self,
+        block_size: int,
+        *args: ArrayLike,
+        random_state: Optional[RandomState] = None,
+        **kwargs: ArrayLike,
     ) -> None:
-        super().__init__(block_size, *args, **kwargs)
+        super().__init__(block_size, *args, random_state=random_state, **kwargs)
 
     def update_indices(
         self,
@@ -1584,10 +1600,14 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
 
 class MOONBootstrap(IIDBootstrap):  # pragma: no cover
     def __init__(
-        self, block_size: int, *args: ArrayLike, **kwargs: Union[RandomState, ArrayLike]
-    ) -> None:  # pragma: no cover
-        super().__init__(*args, **kwargs)
-        self.block_size = block_size
+        self,
+        block_size: int,
+        *args: ArrayLike,
+        random_state: Optional[RandomState] = None,
+        **kwargs: ArrayLike,
+    ) -> None:
+        super().__init__(*args, random_state=random_state, **kwargs)
+        self.block_size: int = block_size
 
     def update_indices(
         self,

@@ -625,7 +625,7 @@ class TestVarianceForecasts(object):
         shocks = np.zeros((1000, 10))
         for j in range(100, t):
             locs = self.rng.random_sample((1000, 10))
-            int_locs = np.floor(locs * (j + 1)).astype(np.int)
+            int_locs = np.floor(locs * (j + 1)).astype(np.int_)
             std_shocks = std_resids[int_locs]
 
             paths[:, 0] = one_step.forecasts[j, 0]
@@ -1747,7 +1747,7 @@ class TestVarianceForecasts(object):
         shocks.fill(np.nan)
         for i in range(131, t):
             locs = self.rng.random_sample((1000, 10))
-            int_locs = np.floor(locs * (i + 1)).astype(np.int)
+            int_locs = np.floor(locs * (i + 1)).astype(np.int_)
             std_shocks = std_resids[int_locs]
             paths[i, :, 0] = one_step[i]
             shocks[i, :, 0] = np.sqrt(paths[i, :, 0]) * std_shocks[:, 0]

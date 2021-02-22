@@ -3,6 +3,7 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 :class:`ARCHModel` and provide the same methods with the same inputs.
 """
 import copy
+import sys
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union, cast
 
 import numpy as np
@@ -41,6 +42,11 @@ from arch.utility.array import (
 )
 from arch.vendor import cached_property
 
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
 __all__ = ["HARX", "ConstantMean", "ZeroMean", "ARX", "arch_model", "LS"]
 
 COV_TYPES = {
@@ -48,6 +54,7 @@ COV_TYPES = {
     "classic_ols": "Homoskedastic (Classic)",
     "robust": "Bollerslev-Wooldridge (Robust) Estimator",
     "mle": "ML Estimator",
+    "classic": "ML Estimator",
 }
 
 
@@ -623,7 +630,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self._fit_regressors = reg[_first_obs_index:_last_obs_index]
         self.volatility.start, self.volatility.stop = self._fit_indices
 
-    def _fit_no_arch_normal_errors(self, cov_type: str = "robust") -> ARCHModelResult:
+    def _fit_no_arch_normal_errors(
+        self, cov_type: Literal["robust", "classic"] = "robust"
+    ) -> ARCHModelResult:
         """
         Estimates model parameters
 
@@ -631,9 +640,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         ----------
         cov_type : str, optional
             Covariance estimator to use when estimating parameter variances and
-            covariances.  One of 'hetero' or 'heteroskedastic' for Whites's
-            covariance estimator, or 'mle' for the classic
-            OLS estimator appropriate for homoskedastic data.  'hetero' is the
+            covariances.  'robust' for Whites's covariance estimator, or 'classic' for
+            the classic estimator appropriate for homoskedastic data.  'robust' is the
             the default.
 
         Returns
@@ -679,18 +687,18 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         hessian = np.zeros((self.num_params + 1, self.num_params + 1))
         hessian[: self.num_params, : self.num_params] = -xpxi
         hessian[-1, -1] = -1
-        if cov_type in ("mle",):
+        if cov_type in ("classic",):
             param_cov = sigma2 * -hessian
             param_cov[self.num_params, self.num_params] = 2 * sigma2 ** 2.0
             param_cov /= nobs
-            cov_type = COV_TYPES["classic_ols"]
+            cov_type_name = COV_TYPES["classic_ols"]
         elif cov_type in ("robust",):
             scores = np.zeros((nobs, self.num_params + 1))
             scores[:, : self.num_params] = x * e[:, None]
             scores[:, -1] = e ** 2.0 - sigma2
             score_cov = np.asarray(scores.T.dot(scores) / nobs)
             param_cov = (hessian @ score_cov @ hessian) / nobs
-            cov_type = COV_TYPES["white"]
+            cov_type_name = COV_TYPES["white"]
         else:
             raise ValueError("Unknown cov_type")
 
@@ -718,7 +726,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             r2,
             resids,
             vol,
-            cov_type,
+            cov_type_name,
             self._y_series,
             names,
             loglikelihood,

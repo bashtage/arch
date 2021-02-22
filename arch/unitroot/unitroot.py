@@ -237,6 +237,8 @@ def _autolag_ols_low_memory(
     m = rhs.shape[1]
     xpx = empty((m + maxlag, m + maxlag)) * nan
     xpy = empty((m + maxlag, 1)) * nan
+    assert isinstance(xpx, NDArray)
+    assert isinstance(xpy, NDArray)
     xpy[:m] = rhs.T @ lhs
     xpx[:m, :m] = rhs.T @ rhs
     for i in range(maxlag):
@@ -1325,7 +1327,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
             )
         lam = cov_nw(u, self._lags, demean=False)
         s = cumsum(u)
-        self._stat = 1 / (nobs ** 2.0) * sum(s ** 2.0) / lam
+        self._stat = 1 / (nobs ** 2.0) * (s ** 2.0).sum() / lam
         self._nobs = u.shape[0]
         assert self._stat is not None
         self._pvalue, critical_values = kpss_crit(self._stat, trend)

@@ -6,7 +6,7 @@ same inputs.
 from abc import ABCMeta, abstractmethod
 import itertools
 import operator
-from typing import List, Optional, Sequence, Tuple, Union, cast
+from typing import Any, List, Optional, Sequence, Tuple, Union, cast
 from warnings import warn
 
 import numpy as np
@@ -84,8 +84,8 @@ class BootstrapRng(object):
         if start <= 0 or start > std_resid.shape[0]:
             raise ValueError("start must be > 0 and <= len(std_resid).")
 
-        self.std_resid = std_resid
-        self.start = start
+        self.std_resid: np.ndarray[Any, np.dtype[np.float64]] = std_resid
+        self.start: int = start
         self._index = start
         if random_state is None:
             self._random_state = RandomState()
@@ -185,7 +185,7 @@ class VolatilityProcess(object, metaclass=ABCMeta):
     def __init__(self) -> None:
         self._num_params = 0
         self._name = ""
-        self.closed_form = False
+        self.closed_form: bool = False
         self._normal = Normal()
         self._min_bootstrap_obs = 100
         self._start = 0
@@ -378,7 +378,7 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         start: int,
         horizon: int,
         simulations: int,
-        random_state: RandomState,
+        random_state: Optional[RandomState],
     ) -> VarianceForecast:
         """
         Simulation-based volatility forecasts using model residuals
@@ -598,7 +598,7 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         method: str = "analytic",
         simulations: int = 1000,
         rng: Optional[RNGType] = None,
-        random_state: RandomState = None,
+        random_state: Optional[RandomState] = None,
     ) -> VarianceForecast:
         """
         Forecast volatility from the model
@@ -770,7 +770,7 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         super().__init__()
         self._num_params = 1
         self._name = "Constant Variance"
-        self.closed_form = True
+        self.closed_form: bool = True
 
     def compute_variance(
         self,
@@ -922,7 +922,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self.p: int = int(p)
         self.o: int = int(o)
         self.q: int = int(q)
-        self.power = power
+        self.power: float = power
         self._num_params = 1 + p + o + q
         if p < 0 or o < 0 or q < 0:
             raise ValueError("All lags lengths must be non-negative")
@@ -1188,7 +1188,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             else:  # Back-casting needed
                 _resids[: m - i - 1] = np.sqrt(backcast)
                 _resids[m - i - 1 : m] = resids[0 : i + 1]
-                _asym_resids = _resids * (_resids < 0)
+                _asym_resids = cast(np.ndarray, _resids * (_resids < 0))
                 _asym_resids[: m - i - 1] = np.sqrt(0.5 * backcast)
                 _sigma2[:m] = backcast
                 _sigma2[m - i - 1 : m] = sigma2[0 : i + 1]
@@ -1372,7 +1372,9 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             lag_val = operator.index(lags)
             lags = list(range(1, lag_val + 1))
         lags_arr = ensure1d(lags, "lags")
-        self.lags = np.array(lags_arr, dtype=np.int32)
+        self.lags: np.ndarray[Any, np.dtype[np.int32]] = np.array(
+            lags_arr, dtype=np.int32
+        )
         self._num_lags = lags_arr.shape[0]
         self._num_params = self._num_lags + 1
         self._name = "HARCH"
@@ -1604,7 +1606,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, m: int = 22, asym: bool = False) -> None:
         super().__init__()
-        self.m = m
+        self.m: int = m
         self._asym = bool(asym)
         self._num_params = 3 + self._asym
         self._name = "MIDAS Hyperbolic"
@@ -1954,7 +1956,7 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, lam: Optional[float] = 0.94) -> None:
         super().__init__()
-        self.lam = lam
+        self.lam: Optional[float] = lam
         self._estimate_lam = lam is None
         self._num_params = 1 if self._estimate_lam else 0
         if lam is not None and not 0.0 < lam < 1.0:
@@ -2209,7 +2211,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         mus = self._ewma_smoothing_parameters()
         backcast_arr = np.asarray(backcast)
         if backcast_arr.ndim == 0:
-            backcast_arr = backcast * np.ones(mus.shape[0])
+            backcast_arr = cast(np.ndarray, backcast * np.ones(mus.shape[0]))
         if backcast_arr.shape[0] != mus.shape[0] and backcast_arr.ndim != 0:
             raise ValueError(
                 "User backcast mut be either a scalar or an vector containing the "
@@ -2865,7 +2867,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         super().__init__()
         self.p: int = int(p)
         self.q: int = int(q)
-        self.power = power
+        self.power: float = power
         self._num_params = 2 + p + q
         self._truncation = int(truncation)
         if p < 0 or q < 0 or p > 1 or q > 1:
@@ -3342,7 +3344,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return sigma2
 
     def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
-        v = max(np.mean(abs(resids) ** 0.5), np.mean(resids ** 2))
+        v = max(float(np.mean(abs(resids) ** 0.5)), float(np.mean(resids ** 2)))
 
         bounds = [(0.0, 10.0 * float(v))]
         bounds.extend([(0.0, 1.0)] * self.p)
