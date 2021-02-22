@@ -9,7 +9,7 @@ to improve performance)
 | Metric                     |                                                                                                                                                                                                                                          |
 | :------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Latest Release**         | [![PyPI version](https://badge.fury.io/py/arch.svg)](https://badge.fury.io/py/arch)                                                                                                                                                      |
-|                            | [![Anaconda-Server Badge](https://anaconda.org/bashtage/arch/badges/version.svg)](https://anaconda.org/bashtage/arch)                                                                                                                    |
+|                            | [![conda-forge version](https://img.shields.io/badge/Anaconda.org-4.16.1-blue.svg?style=flat-square)](https://anaconda.org/conda-forge/arch-py)                                                                                                                    |
 | **Continuous Integration** | [![Build Status](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_apis/build/status/bashtage.arch?branchName=master)](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_build/latest?definitionId=1&branchName=master)    |
 |                            | [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/nmt02u7jwcgx7i2x?svg=true)](https://ci.appveyor.com/project/bashtage/arch/branch/master)                                                                           |
 | **Coverage**               | [![Coverage Status](https://coveralls.io/repos/github/bashtage/arch/badge.svg?branch=master)](https://coveralls.io/r/bashtage/arch?branch=master)                                                                                        |
@@ -253,11 +253,13 @@ disable compilation of the extensions.
 
 ### Anaconda
 
-`conda` users can install from my channel,
+`conda` users can install from conda-forge,
 
 ```bash
-conda install arch -c bashtage
+conda install arch-py -c conda-forge
 ```
+
+**Note**: The conda-forge name is `arch-py`.
 
 ### Windows
 
