@@ -19,9 +19,9 @@ jobs:
       python_38_coverage:
         python.version: '3.8'
         ARCH_CYTHON_COVERAGE: true
-      python_38_statsmodels_master:
+      python_38_statsmodels_main:
         python.version: '3.8'
-        STATSMODELS_MASTER: true
+        STATSMODELS_MAIN: true
         coverage: false
       python37:
         python.version: '3.7'
@@ -75,11 +75,11 @@ jobs:
 
   - script: |
       source ci/azure/update_path.sh
-      if [[ ${STATSMODELS_MASTER} == "true" ]]; then
-        echo "Installing statsmodels master"
-        source ci/install-statsmodels-master.sh
+      if [[ ${STATSMODELS_MAIN} == "true" ]]; then
+        echo "Installing statsmodels main"
+        source ci/install-statsmodels-main.sh
       fi
-    displayName: 'Install statsmodels master'
+    displayName: 'Install statsmodels main'
 
   - script: |
      source ci/azure/update_path.sh

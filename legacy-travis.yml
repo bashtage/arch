@@ -11,7 +11,7 @@ env:
     - COVERAGE=true
     - USE_NUMBA=true
     - USE_PIP=false
-    - STATSMODELS_MASTER=false
+    - STATSMODELS_MAIN=false
     - DOCBUILD=false
     - PYTEST_PATTERN="(not slow)"
     - PYTHONHASHSEED=0
@@ -36,7 +36,7 @@ matrix:
   - python: 3.8
     env:
       - PYTHON=3.8
-      - STATSMODELS_MASTER=true
+      - STATSMODELS_MAIN=true
       - USE_PIP=true
       - COVERAGE=false
   - python: 3.7
@@ -96,7 +96,7 @@ before_install:
       source ci/use-conda.sh
     fi
   - source ci/install-common.sh
-  - if [[ "$STATSMODELS_MASTER" == true ]]; then sh ./ci/install-statsmodels-master.sh; fi;
+  - if [[ "$STATSMODELS_MAIN" == true ]]; then sh ./ci/install-statsmodels-main.sh; fi;
   - pip list
   - export SRCDIR="$PWD"
   - export COVERAGE_OPTS="--cov-config .coveragerc --cov=arch --cov-report xml:coverage.xml --cov-report term"

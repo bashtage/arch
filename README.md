@@ -10,14 +10,14 @@ to improve performance)
 | :------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Latest Release**         | [![PyPI version](https://badge.fury.io/py/arch.svg)](https://badge.fury.io/py/arch)                                                                                                                                                      |
 |                            | [![conda-forge version](https://img.shields.io/badge/Anaconda.org-4.16.1-blue.svg?style=flat-square)](https://anaconda.org/conda-forge/arch-py)                                                                                                                    |
-| **Continuous Integration** | [![Build Status](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_apis/build/status/bashtage.arch?branchName=master)](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_build/latest?definitionId=1&branchName=master)    |
-|                            | [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/nmt02u7jwcgx7i2x?svg=true)](https://ci.appveyor.com/project/bashtage/arch/branch/master)                                                                           |
-| **Coverage**               | [![Coverage Status](https://coveralls.io/repos/github/bashtage/arch/badge.svg?branch=master)](https://coveralls.io/r/bashtage/arch?branch=master)                                                                                        |
-|                            | [![codecov](https://codecov.io/gh/bashtage/arch/branch/master/graph/badge.svg)](https://codecov.io/gh/bashtage/arch)                                                                                                                     |
+| **Continuous Integration** | [![Build Status](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_apis/build/status/bashtage.arch?branchName=main)](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_build/latest?definitionId=1&branchName=main)    |
+|                            | [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/nmt02u7jwcgx7i2x?svg=true)](https://ci.appveyor.com/project/bashtage/arch/branch/main)                                                                           |
+| **Coverage**               | [![Coverage Status](https://coveralls.io/repos/github/bashtage/arch/badge.svg?branch=main)](https://coveralls.io/r/bashtage/arch?branch=main)                                                                                        |
+|                            | [![codecov](https://codecov.io/gh/bashtage/arch/branch/main/graph/badge.svg)](https://codecov.io/gh/bashtage/arch)                                                                                                                     |
 | **Code Quality**           | [![Code Quality: Python](https://img.shields.io/lgtm/grade/python/g/bashtage/arch.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bashtage/arch/context:python)                                                                 |
 |                            | [![Total Alerts](https://img.shields.io/lgtm/alerts/g/bashtage/arch.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bashtage/arch/alerts)                                                                                       |
 |                            | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/93f6fd90209842bf97fd20fda8db70ef)](https://www.codacy.com/manual/bashtage/arch?utm_source=github.com&utm_medium=referral&utm_content=bashtage/arch&utm_campaign=Badge_Grade) |
-|                            | [![codebeat badge](https://codebeat.co/badges/18a78c15-d74b-4820-b56d-72f7e4087532)](https://codebeat.co/projects/github-com-bashtage-arch-master)                                                                                       |
+|                            | [![codebeat badge](https://codebeat.co/badges/18a78c15-d74b-4820-b56d-72f7e4087532)](https://codebeat.co/projects/github-com-bashtage-arch-main)                                                                                       |
 | **Citation**               | [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.3551028.svg)](https://doi.org/10.5281/zenodo.3551028)                                                                                                                                |
 | **Documentation**          | [![Documentation Status](https://readthedocs.org/projects/arch/badge/?version=latest)](http://arch.readthedocs.org/en/latest/)                                                                                                           |
 
@@ -38,7 +38,7 @@ to improve performance)
 
 Released documentation is hosted on
 [read the docs](http://arch.readthedocs.org/en/latest/).
-Current documentation from the master branch is hosted on
+Current documentation from the main branch is hosted on
 [my github pages](http://bashtage.github.io/arch/doc/index.html).
 
 ## More about ARCH
@@ -77,7 +77,7 @@ Contributions are welcome. There are opportunities at many levels to contribute:
   - Student's T
   - Generalized Error Distribution
 
-See the [univariate volatility example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/univariate_volatility_modeling.ipynb) for a more complete overview.
+See the [univariate volatility example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/univariate_volatility_modeling.ipynb) for a more complete overview.
 
 ```python
 import datetime as dt
@@ -103,7 +103,7 @@ res = am.fit()
 - Zivot-Andrews
 - Variance Ratio tests
 
-See the [unit root testing example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/unitroot_examples.ipynb)
+See the [unit root testing example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/unitroot_examples.ipynb)
 for examples of testing series for unit roots.
 
 <a id="unit-root"></a>
@@ -118,7 +118,7 @@ for examples of testing series for unit roots.
   - Dynamic OLS
   - Fully Modified OLS
 
-See the [cointegration testing example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/unitroot_cointegration_examples.ipynb)
+See the [cointegration testing example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/unitroot_cointegration_examples.ipynb)
 for examples of testing series for cointegration.
 
 <a id="bootstrap"></a>
@@ -136,7 +136,7 @@ for examples of testing series for cointegration.
   - Apply method to estimate model across bootstraps
   - Generic Bootstrap iterator
 
-See the [bootstrap example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/bootstrap_examples.ipynb)
+See the [bootstrap example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/bootstrap_examples.ipynb)
 for examples of bootstrapping the Sharpe ratio and a Probit model from statsmodels.
 
 ```python
@@ -174,7 +174,7 @@ ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 - Stepwise (StepM)
 - Model Confidence Set (MCS)
 
-See the [multiple comparison example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/master/examples/multiple-comparison_examples.ipynb)
+See the [multiple comparison example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/multiple-comparison_examples.ipynb)
 for examples of the multiple comparison procedures.
 
 
