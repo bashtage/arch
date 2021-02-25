@@ -10,20 +10,23 @@ rm -rf devel
 echo "Make a new devel"
 mkdir devel
 echo "Checking for tag"
-GIT_TAG=$(git name-rev --name-only --tags HEAD)
-if [[ ${GIT_TAG} == "undefined" ]]; then
-  echo "Tag is ${GIT_TAG}. Not updating main documents"
-else
+if [[ -n "${GIT_TAG}" ]]; then
   echo "Tag ${GIT_TAG} is defined"
   echo "Copy docs to root"
   echo cp -r ${PWD}/doc/build/html/* ${PWD}/
   cp -r ${PWD}/doc/build/html/* ${PWD}
+else
+  echo "Tag is ${GIT_TAG}. Not updating main documents"
 fi
 echo "Copy docs to devel"
 echo cp -r ${PWD}/doc/build/html/* ${PWD}/devel/
 cp -r ${PWD}/doc/build/html/* ${PWD}/devel/
-echo "Add devel"
-git add devel/.
+echo "Clean up docs"
+cd ${PWD}/doc
+make clean && git clean -xfd
+echo "Add files"
+cd ${PWD}
+git add .
 echo "Change remote"
 git remote set-url origin https://bashtage:"${GITHUB_TOKEN}"@github.com/bashtage/arch.git
 echo "Github Actions doc build after commit ${GITHUB_SHA::8}"
