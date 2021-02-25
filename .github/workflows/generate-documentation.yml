@@ -42,4 +42,6 @@ jobs:
         make html
         popd
     - name: Deploy documentation
+      env:
+        GIT_TAG: ${{ github.event.release.tag_name }}
       run: source ci/github-actions/push-docs-gh-pages.sh
