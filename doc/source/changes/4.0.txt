@@ -2,6 +2,10 @@
 Version 4
 =========
 
+Since 4.16
+==========
+- Fixed a bug that produced incorrect conditional volatility from EWMA models (:issue:`458`).
+
 Release 4.16
 ============
 - Added :class:`~arch.univariate.APARCH` volatilty process  (:issue:`443`).

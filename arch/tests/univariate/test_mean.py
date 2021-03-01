@@ -986,7 +986,9 @@ class TestMeanModel(object):
         rng = RandomState(1234)
         variance = 2 + rng.standard_normal(self.y.shape[0]) ** 2.0
         std = np.sqrt(variance)
-        y = pd.Series(std* rng.standard_normal(self.y_series.shape[0]), index=self.y_series.index)
+        y = pd.Series(
+            std * rng.standard_normal(self.y_series.shape[0]), index=self.y_series.index
+        )
 
         mod = ConstantMean(y, volatility=FixedVariance(variance))
         res = mod.fit(disp=DISPLAY)
