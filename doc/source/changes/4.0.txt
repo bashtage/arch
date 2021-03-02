@@ -2,8 +2,8 @@
 Version 4
 =========
 
-Since 4.16
-==========
+Release 4.17
+============
 - Fixed a bug that produced incorrect conditional volatility from EWMA models (:issue:`458`).
 
 Release 4.16
