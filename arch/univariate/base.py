@@ -352,6 +352,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         vol[first_obs:last_obs] = self.volatility.compute_variance(
             params, y, vol, backcast, var_bounds
         )
+        vol = np.sqrt(vol)
         names = self._all_parameter_names()
         loglikelihood = self._static_gaussian_loglikelihood(y)
         r2 = self._r2(params)
