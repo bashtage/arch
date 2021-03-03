@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import os
 import platform
 import sys
-from typing import Optional, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 from numpy import arange, array, cumsum, dot, ones, vstack
 from numpy.linalg import pinv
@@ -9,7 +11,7 @@ from numpy.random import Generator, RandomState
 
 if sys.version_info >= (3, 8):
     from typing import Literal
-else:
+elif TYPE_CHECKING:
     from typing_extensions import Literal
 
 # Storage Location

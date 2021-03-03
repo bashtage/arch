@@ -3,6 +3,8 @@ Pure Python implementations of the core recursions in the models. Only used for
 testing and if it is not possible to install the Cython version using
 python setup.py install --no-binary
 """
+from __future__ import annotations
+
 from arch.compat.numba import jit
 
 import numpy as np
@@ -20,7 +22,7 @@ __all__ = [
     "aparch_recursion",
 ]
 
-LNSIGMA_MAX = np.log(np.finfo(np.double).max) - 0.1
+LNSIGMA_MAX = float(np.log(np.finfo(np.double).max) - 0.1)
 
 
 def bounds_check_python(sigma2: float, var_bounds: NDArray) -> float:

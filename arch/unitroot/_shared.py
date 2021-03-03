@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, Dict, NamedTuple, Optional, Tuple, Type
 
 import pandas as pd
@@ -219,7 +221,7 @@ class ResidualCointegrationTestResult(CointegrationTestResult):
 
     def plot(
         self, axes: Optional["plt.Axes"] = None, title: Optional[str] = None
-    ) -> "plt.Figure":
+    ) -> plt.Figure:
         """
         Plot the cointegration residuals.
 

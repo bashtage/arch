@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import copy
 from typing import (
     Any,
@@ -796,7 +798,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         jk_params = _loo_jackknife(func, nobs, self._args, self._kwargs, extra_kwags)
         return _get_acceleration(jk_params)
 
-    def clone(self, *args: ArrayLike, **kwargs: ArrayLike) -> "IIDBootstrap":
+    def clone(self, *args: ArrayLike, **kwargs: ArrayLike) -> IIDBootstrap:
         """
         Clones the bootstrap using different data with a fresh RandomState.
 

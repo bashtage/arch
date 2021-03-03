@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABCMeta, abstractmethod
 from typing import Dict, List, Optional, Sequence, Tuple, Union
 import warnings
@@ -25,6 +27,7 @@ from numpy import (
     isnan,
     log,
     nan,
+    ndarray,
     ones,
     pi,
     polyval,
@@ -237,8 +240,8 @@ def _autolag_ols_low_memory(
     m = rhs.shape[1]
     xpx = empty((m + maxlag, m + maxlag)) * nan
     xpy = empty((m + maxlag, 1)) * nan
-    assert isinstance(xpx, NDArray)
-    assert isinstance(xpy, NDArray)
+    assert isinstance(xpx, ndarray)
+    assert isinstance(xpy, ndarray)
     xpy[:m] = rhs.T @ lhs
     xpx[:m, :m] = rhs.T @ rhs
     for i in range(maxlag):

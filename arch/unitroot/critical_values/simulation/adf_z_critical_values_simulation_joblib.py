@@ -1,15 +1,17 @@
 """
 Simulation of ADF z-test critical values.  Closely follows MacKinnon (2010).
 """
+from __future__ import annotations
+
 import argparse
 import os
 import random
 import sys
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 if sys.version_info >= (3, 8):
     from typing import Literal
-else:
+elif TYPE_CHECKING:
     from typing_extensions import Literal
 
 from adf_simulation import (

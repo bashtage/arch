@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from arch.univariate import recursions_python
 from arch.univariate.distribution import (
     Distribution,

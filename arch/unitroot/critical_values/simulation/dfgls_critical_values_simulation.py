@@ -3,13 +3,15 @@ Critical value simulation for the Dickey-Fuller GLS model.  Similar in design
 to MacKinnon (2010).  Makes use of parallel_fun in statsmodels which works
 best when joblib is installed.
 """
+from __future__ import annotations
+
 import datetime
 import sys
-from typing import Optional, cast
+from typing import TYPE_CHECKING, Optional, cast
 
 if sys.version_info >= (3, 8):
     from typing import Literal
-else:
+elif TYPE_CHECKING:
     from typing_extensions import Literal
 
 import numpy as np

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional
 
 import numpy as np
@@ -42,7 +44,7 @@ def _po_ptests(
     kernel: str,
     bandwidth: Optional[int],
     force_int: bool,
-) -> "PhillipsOuliarisTestResults":
+) -> PhillipsOuliarisTestResults:
     nobs = z.shape[0]
     z_lead = z.iloc[1:]
     z_lag = add_trend(z.iloc[:-1], trend=trend)
@@ -94,7 +96,7 @@ def _po_ztests(
     kernel: str,
     bandwidth: Optional[int],
     force_int: bool,
-) -> "PhillipsOuliarisTestResults":
+) -> PhillipsOuliarisTestResults:
     # Za and Zt tests
     u = np.asarray(xsection.resid)[:, None]
     nobs = u.shape[0]
@@ -139,7 +141,7 @@ def phillips_ouliaris(
     kernel: str = "bartlett",
     bandwidth: Optional[int] = None,
     force_int: bool = False,
-) -> "PhillipsOuliarisTestResults":
+) -> PhillipsOuliarisTestResults:
     r"""
     Test for cointegration within a set of time series.
 
