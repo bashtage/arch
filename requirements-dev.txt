@@ -1,9 +1,9 @@
 # Performance
-cython>=0.29.21
+cython>=0.29.22
 numba>=0.49,!=0.50.*
 
 # Graphics
-matplotlib>=2
+matplotlib>=3
 seaborn
 
 # Tests
@@ -16,8 +16,8 @@ isort
 flake8
 
 # Documentation
-ipython>=6
-sphinx>=1.8
+ipython>=7
+sphinx>=3
 sphinx_material
 nbsphinx
 jupyter
