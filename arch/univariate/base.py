@@ -1,17 +1,30 @@
 """
 Core classes for ARCH models
 """
+from __future__ import annotations
+
 from abc import ABCMeta, abstractmethod
 from copy import deepcopy
 import datetime as dt
 import sys
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+    cast,
+)
 import warnings
 
-if sys.version_info < (3, 8):
-    from typing_extensions import Literal
-else:
+if sys.version_info >= (3, 8):
     from typing import Literal
+elif TYPE_CHECKING:
+    from typing_extensions import Literal
 
 import numpy as np
 import pandas as pd
@@ -309,9 +322,15 @@ class ARCHModel(object, metaclass=ABCMeta):
         raise NotImplementedError("Subclasses optionally may provide.")
 
     @abstractmethod
+    def _fit_no_arch_normal_errors_params(self) -> NDArray:
+        """
+        Must be overridden with closed form estimator the return parameters ony
+        """
+
+    @abstractmethod
     def _fit_no_arch_normal_errors(
         self, cov_type: Literal["robust", "classic"] = "robust"
-    ) -> "ARCHModelResult":
+    ) -> ARCHModelResult:
         """
         Must be overridden with closed form estimator
         """
@@ -329,7 +348,7 @@ class ARCHModel(object, metaclass=ABCMeta):
 
     def _fit_parameterless_model(
         self, cov_type: Literal["robust", "classic"], backcast: Union[float, NDArray]
-    ) -> "ARCHModelResult":
+    ) -> ARCHModelResult:
         """
         When models have no parameters, fill return values
 
@@ -441,7 +460,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         params: Union[Sequence[float], ArrayLike1D],
         first_obs: Union[int, DateLike] = None,
         last_obs: Union[int, DateLike] = None,
-    ) -> "ARCHModelFixedResult":
+    ) -> ARCHModelFixedResult:
         """
         Allows an ARCHModelFixedResult to be constructed from fixed parameters.
 
@@ -539,7 +558,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         tol: Optional[float] = None,
         options: Optional[Dict[str, Any]] = None,
         backcast: Optional[Union[float, NDArray]] = None,
-    ) -> "ARCHModelResult":
+    ) -> ARCHModelResult:
         r"""
         Fits the model given a nobs by 1 vector of sigma2 values
 
@@ -789,11 +808,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         sv : ndarray
             Starting values
         """
-        params = np.asarray(self._fit_no_arch_normal_errors().params)
-        # Remove sigma2
-        if params.shape[0] == 1:
-            return np.empty(0)
-        return params[:-1]
+        return self._fit_no_arch_normal_errors_params()
 
     @cached_property
     @abstractmethod
@@ -900,7 +915,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         simulations: int = 1000,
         rng: Optional[Callable[[Union[int, Tuple[int, ...]]], NDArray]] = None,
         random_state: Optional[np.random.RandomState] = None,
-    ) -> "ARCHModelForecast":
+    ) -> ARCHModelForecast:
         """
         Construct forecasts from estimated model
 
@@ -1242,7 +1257,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
     def plot(
         self, annualize: Optional[str] = None, scale: Optional[float] = None
-    ) -> "Figure":
+    ) -> Figure:
         """
         Plot standardized residuals and conditional volatility
 
@@ -1329,7 +1344,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         simulations: int = 1000,
         rng: Optional[Callable[[Union[int, Tuple[int, ...]]], NDArray]] = None,
         random_state: Optional[np.random.RandomState] = None,
-    ) -> "ARCHModelForecast":
+    ) -> ARCHModelForecast:
         """
         Construct forecasts from estimated model
 
@@ -1420,7 +1435,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         plot_type: str = "volatility",
         method: str = "analytic",
         simulations: int = 1000,
-    ) -> "Figure":
+    ) -> Figure:
         """
         Plot forecasts from estimated model
 

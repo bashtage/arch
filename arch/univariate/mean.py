@@ -2,9 +2,22 @@
 Mean models to use with ARCH processes.  All mean models must inherit from
 :class:`ARCHModel` and provide the same methods with the same inputs.
 """
+from __future__ import annotations
+
 import copy
 import sys
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+    cast,
+)
 
 import numpy as np
 from pandas import DataFrame, Index
@@ -44,7 +57,7 @@ from arch.vendor import cached_property
 
 if sys.version_info >= (3, 8):
     from typing import Literal
-else:
+elif TYPE_CHECKING:
     from typing_extensions import Literal
 
 __all__ = ["HARX", "ConstantMean", "ZeroMean", "ARX", "arch_model", "LS"]
@@ -629,6 +642,31 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         reg = self.regressors
         self._fit_regressors = reg[_first_obs_index:_last_obs_index]
         self.volatility.start, self.volatility.stop = self._fit_indices
+
+    def _fit_no_arch_normal_errors_params(self) -> NDArray:
+        """
+        Estimates model parameters excluding sigma2
+
+        Returns
+        -------
+        params : ndarray
+            Array of estiamted parameters
+        """
+        assert self._fit_y is not None
+        nobs = self._fit_y.shape[0]
+
+        if nobs < self.num_params:
+            raise ValueError(
+                "Insufficient data, "
+                + str(self.num_params)
+                + " regressors, "
+                + str(nobs)
+                + " data points available"
+            )
+        x = self._fit_regressors
+        y = self._fit_y
+
+        return np.empty(0) if x.shape[1] == 0 else np.linalg.pinv(x).dot(y)
 
     def _fit_no_arch_normal_errors(
         self, cov_type: Literal["robust", "classic"] = "robust"

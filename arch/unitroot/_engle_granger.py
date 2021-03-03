@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional
 
 import numpy as np
@@ -32,7 +34,7 @@ def engle_granger(
     lags: Optional[int] = None,
     max_lags: Optional[int] = None,
     method: str = "bic",
-) -> "EngleGrangerTestResults":
+) -> EngleGrangerTestResults:
     r"""
     Test for cointegration within a set of time series.
 

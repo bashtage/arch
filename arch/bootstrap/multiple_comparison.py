@@ -1,10 +1,23 @@
-import sys
-from typing import Any, Dict, Hashable, List, Optional, Sequence, Tuple, Union, cast
+from __future__ import annotations
 
-if sys.version_info < (3, 8):
-    from typing_extensions import Literal
-else:
+import sys
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Hashable,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+    cast,
+)
+
+if sys.version_info >= (3, 8):
     from typing import Literal
+elif TYPE_CHECKING:
+    from typing_extensions import Literal
 
 import numpy as np
 import pandas as pd

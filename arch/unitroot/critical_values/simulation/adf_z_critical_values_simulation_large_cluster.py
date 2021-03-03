@@ -10,10 +10,12 @@ Remote clusters can be used by modifying the Client initiation.
 This version has been optimized for execution on a large cluster and should
 scale well with 128 or more engines.
 """
+from __future__ import annotations
+
 import datetime
 import sys
 import time
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from ipyparallel import Client, DirectView
 from numpy import array, nan, ndarray, percentile, savez
@@ -22,7 +24,7 @@ from .adf_simulation import adf_simulation
 
 if sys.version_info >= (3, 8):
     from typing import Literal
-else:
+elif TYPE_CHECKING:
     from typing_extensions import Literal
 
 # Time in seconds to sleep before checking if ready

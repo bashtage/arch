@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 
 __all__ = ["str_format", "pval_format"]

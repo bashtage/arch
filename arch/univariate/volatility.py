@@ -3,6 +3,8 @@ Volatility processes for ARCH model estimation.  All volatility processes must
 inherit from :class:`VolatilityProcess` and provide the same methods with the
 same inputs.
 """
+from __future__ import annotations
+
 from abc import ABCMeta, abstractmethod
 import itertools
 import operator
@@ -3443,8 +3445,8 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: Optional[Union[float, NDArray]] = None,
     ) -> Tuple[NDArray, NDArray]:
-        parameters = ensure1d(parameters, "parameters", False)
-        parameters = self._repack_parameters(parameters)
+        params = ensure1d(parameters, "parameters", False)
+        params = self._repack_parameters(params)
         p, o, q = self.p, self.o, self.q
         errors = rng(nobs + burn)
 
@@ -3453,16 +3455,16 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         data = np.zeros(nobs + burn)
         adata = np.zeros(nobs + burn)
         max_lag = np.max([p, q])
-        delta = parameters[-1]
+        delta = params[-1]
 
         if initial_value is None:
-            persistence = parameters[1 : p + 1].sum()
-            persistence += parameters[1 + p + o : 1 + p + o + q].sum()
+            persistence = params[1 : p + 1].sum()
+            persistence += params[1 + p + o : 1 + p + o + q].sum()
             if (1.0 - persistence) > 0:
-                initial_value = parameters[0] / (1.0 - persistence)
+                initial_value = params[0] / (1.0 - persistence)
             else:
                 warn(initial_value_warning, InitialValueWarning)
-                initial_value = parameters[0]
+                initial_value = params[0]
         sigma_delta[:max_lag] = initial_value
         sigma2[:max_lag] = initial_value ** (2.0 / delta)
 
@@ -3470,14 +3472,14 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         adata[:max_lag] = np.abs(data[:max_lag])
 
         for t in range(max_lag, nobs + burn):
-            sigma_delta[t] = parameters[0]
+            sigma_delta[t] = params[0]
             for j in range(p):
                 shock = adata[t - 1 - j]
                 if o > j:
-                    shock -= parameters[1 + p + j] * data[t - 1 - j]
-                sigma_delta[t] += parameters[1 + j] * shock ** delta
+                    shock -= params[1 + p + j] * data[t - 1 - j]
+                sigma_delta[t] += params[1 + j] * shock ** delta
             for j in range(q):
-                sigma_delta[t] += parameters[1 + p + o + j] * sigma_delta[t - 1 - j]
+                sigma_delta[t] += params[1 + p + o + j] * sigma_delta[t - 1 - j]
 
             sigma2[t] = sigma_delta[t] ** (2.0 / delta)
             data[t] = errors[t] * np.sqrt(sigma2[t])

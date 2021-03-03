@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from arch.compat.numba import jit
 
 from arch.typing import NDArray
