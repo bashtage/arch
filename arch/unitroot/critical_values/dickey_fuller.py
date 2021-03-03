@@ -6,6 +6,8 @@ Most values are from MacKinnon (1994) or (2010).  A small number of these
 did not appear in the original paper and have been computed using an identical
 simulation.
 """
+from __future__ import annotations
+
 from typing import Dict
 
 from numpy import array, asarray, inf

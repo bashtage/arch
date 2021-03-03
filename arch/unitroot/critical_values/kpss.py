@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from numpy import asarray
 
 kpss_critical_values = {}
