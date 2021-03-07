@@ -1278,9 +1278,9 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             parameters, resids, backcast, var_bounds, horizon
         )
         t = resids.shape[0]
-        paths = np.full((t, simulations, horizon), np.nan)
-        shocks = np.full((t, simulations, horizon), np.nan)
-
+        paths = np.full((t-start, simulations, horizon), np.nan)
+        shocks = np.full((t-start, simulations, horizon), np.nan)
+        forecasts = forecasts[start:]
         power = self.power
         m = np.max([self.p, self.o, self.q])
         scaled_forecast_paths = np.zeros((simulations, m + horizon))
@@ -1320,9 +1320,9 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 scaled_shock,
                 asym_scaled_shock,
             )
-            forecasts[i, :], paths[i], shocks[i] = f, p, s
+            loc = t - i - 1
+            forecasts[loc, :], paths[loc], shocks[loc] = f, p, s
 
-        forecasts[:start] = np.nan
         return VarianceForecast(forecasts, paths, shocks)
 
 

@@ -828,6 +828,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         )
         var_fcasts = vfcast.forecasts
         assert var_fcasts is not None
+        # TODO: Remove this
         var_fcasts = _forecast_pad(earliest, var_fcasts)
 
         arp = self._har_to_ar(mp)
