@@ -106,12 +106,14 @@ def _ar_forecast(
     """
     t = y.shape[0]
     p = arp.shape[0]
-    fcasts = np.empty((t, p + horizon))
+    fcasts = np.empty((t - start_index, p + horizon))
     for i in range(p):
-        fcasts[p - 1 :, i] = y[i : (-p + i + 1)] if i < p - 1 else y[i:]
+        first = start_index - p + i + 1
+        last = t - p + i + 1
+        fcasts[:, i] = y[first:last]
+    arp_rev = arp[::-1]
     for i in range(p, horizon + p):
-        fcasts[:, i] = constant + fcasts[:, i - p : i].dot(arp[::-1])
-    fcasts[:start_index] = np.nan
+        fcasts[:, i] = constant + fcasts[:, i - p : i].dot(arp_rev)
     fcasts = fcasts[:, p:]
     if x is not None:
         assert exogp is not None
@@ -828,8 +830,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         )
         var_fcasts = vfcast.forecasts
         assert var_fcasts is not None
-        # TODO: Remove this
-        var_fcasts = _forecast_pad(earliest, var_fcasts)
 
         arp = self._har_to_ar(mp)
         nexog = 0 if self._x is None else self._x.shape[1]
@@ -852,25 +852,26 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         if method.lower() in ("simulation", "bootstrap"):
             # TODO: This is not tested, but probably right
             assert isinstance(vfcast.forecast_paths, np.ndarray)
-            variance_paths = _forecast_pad(earliest, vfcast.forecast_paths)
+            variance_paths = vfcast.forecast_paths
             long_run_variance_paths = variance_paths.copy()
             assert isinstance(vfcast.shocks, np.ndarray)
-            shocks = _forecast_pad(earliest, vfcast.shocks)
+            shocks = vfcast.shocks
             for i in range(horizon):
                 _impulses = impulse[i::-1][:, None]
                 lrvp = variance_paths[start_index:, :, : (i + 1)].dot(_impulses ** 2)
                 long_run_variance_paths[start_index:, :, i] = np.squeeze(lrvp)
             t, m = self._y.shape[0], self._max_lags
-            mean_paths = np.full((t, simulations, m + horizon), np.nan)
+            mean_paths = np.empty(shocks.shape[:2] + (m + horizon,))
             dynp_rev = dynp[::-1]
             for i in range(start_index, t):
-                mean_paths[i, :, :m] = self._y[i - m + 1 : i + 1]
+                path_loc = i - start_index
+                mean_paths[path_loc, :, :m] = self._y[i - m + 1 : i + 1]
 
                 for j in range(horizon):
-                    mean_paths[i, :, m + j] = (
+                    mean_paths[path_loc, :, m + j] = (
                         constant
-                        + mean_paths[i, :, j : m + j].dot(dynp_rev)
-                        + shocks[i, :, j]
+                        + mean_paths[path_loc, :, j : m + j].dot(dynp_rev)
+                        + shocks[path_loc, :, j]
                     )
             mean_paths = mean_paths[:, :, m:]
 
