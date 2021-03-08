@@ -144,31 +144,31 @@ class TestVarianceForecasts(object):
         backcast = vol.backcast(self.resid)
         var_bounds = vol.variance_bounds(self.resid)
         forecast = vol.forecast(params, self.resid, backcast, var_bounds)
-        assert np.all(np.isnan(forecast.forecasts[:-1]))
+        assert np.all(np.isfinite(forecast.forecasts))
         assert forecast.forecasts[-1] == params[0]
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
 
         forecast = vol.forecast(params, self.resid, backcast, var_bounds, horizon=5)
-        assert forecast.forecasts.shape == (1000, 5)
-        assert np.all(np.isnan(forecast.forecasts[:-1]))
-        assert np.all(forecast.forecasts[-1] == params[0])
+        assert forecast.forecasts.shape == (1, 5)
+        assert np.all(np.isfinite(forecast.forecasts))
+        assert np.all(forecast.forecasts == params[0])
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
 
         forecast = vol.forecast(params, self.resid, backcast, var_bounds, start=100)
-        assert forecast.forecasts.shape == (1000, 1)
-        assert np.all(np.isnan(forecast.forecasts[:100]))
-        assert np.all(forecast.forecasts[100:] == params[0])
+        assert forecast.forecasts.shape == (900, 1)
+        assert np.all(np.isfinite(forecast.forecasts))
+        assert np.all(forecast.forecasts == params[0])
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
 
         forecast = vol.forecast(
             params, self.resid, backcast, var_bounds, start=100, horizon=3
         )
-        assert forecast.forecasts.shape == (1000, 3)
-        assert np.all(np.isnan(forecast.forecasts[:100]))
-        assert np.all(forecast.forecasts[100:] == params[0])
+        assert forecast.forecasts.shape == (900, 3)
+        assert np.all(np.isfinite(forecast.forecasts))
+        assert np.all(forecast.forecasts == params[0])
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
 
@@ -194,13 +194,13 @@ class TestVarianceForecasts(object):
         expected = np.empty((t, 1))
         expected.fill(np.nan)
         expected[-1] = params[0] + params[1] * self.resid[-1] ** 2
-        assert_allclose(forecast.forecasts, expected)
+        assert_allclose(forecast.forecasts, expected[-1:])
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
 
         forecast = vol.forecast(params, self.resid, backcast, var_bounds, horizon=5)
-        assert forecast.forecasts.shape == (1000, 5)
-        assert np.all(np.isnan(forecast.forecasts[:-1]))
+        assert forecast.forecasts.shape == (1, 5)
+        assert np.all(np.isfinite(forecast.forecasts))
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
         expected = np.zeros(5)
@@ -234,8 +234,7 @@ class TestVarianceForecasts(object):
         forecast = vol.forecast(
             params, self.resid, backcast, var_bounds, start=100, horizon=3
         )
-        expected[:100] = np.nan
-        assert_allclose(forecast.forecasts, expected)
+        assert_allclose(forecast.forecasts, expected[100:])
         with pytest.raises(ValueError, match="horizon must be an integer >= 1"):
             vol.forecast(params, self.resid, backcast, var_bounds, start=0, horizon=0)
 
@@ -257,11 +256,11 @@ class TestVarianceForecasts(object):
                 method="simulation",
                 rng=rng,
             )
-        assert forecast.forecasts.shape == (1000, 1)
-        assert forecast.forecast_paths.shape == (1000, 1000, 1)
-        assert forecast.shocks.shape == (1000, 1000, 1)
-        assert np.all(np.isnan(forecast.forecasts[:-1]))
-        assert np.all(np.isnan(forecast.forecast_paths[:-1]))
+        assert forecast.forecasts.shape == (1, 1)
+        assert forecast.forecast_paths.shape == (1, 1000, 1)
+        assert forecast.shocks.shape == (1, 1000, 1)
+        assert np.all(np.isfinite(forecast.forecasts))
+        assert np.all(np.isfinite(forecast.forecast_paths))
         expected = params[0] + params[1] * self.resid[-1] ** 2.0
         assert_allclose(forecast.forecasts[-1], expected)
         assert_allclose(forecast.forecast_paths[-1], expected * np.ones((1000, 1)))
@@ -287,12 +286,12 @@ class TestVarianceForecasts(object):
             paths[:, i] = params[0] + params[1] * shocks[:, i - 1] ** 2
             shocks[:, i] = np.sqrt(paths[:, i]) * std_shocks[:, i]
 
-        assert forecast.forecasts.shape == (1000, 5)
-        assert forecast.forecast_paths.shape == (1000, 1000, 5)
-        assert forecast.shocks.shape == (1000, 1000, 5)
-        assert np.all(np.isnan(forecast.forecasts[:-1]))
-        assert np.all(np.isnan(forecast.forecast_paths[:-1]))
-        assert np.all(np.isnan(forecast.shocks[:-1]))
+        assert forecast.forecasts.shape == (1, 5)
+        assert forecast.forecast_paths.shape == (1, 1000, 5)
+        assert forecast.shocks.shape == (1, 1000, 5)
+        assert np.all(np.isfinite(forecast.forecasts))
+        assert np.all(np.isfinite(forecast.forecast_paths))
+        assert np.all(np.isfinite(forecast.shocks))
         assert_allclose(forecast.forecasts[-1], paths.mean(0))
         assert_allclose(forecast.forecast_paths[-1], paths)
         assert_allclose(forecast.shocks[-1], shocks)
@@ -322,9 +321,9 @@ class TestVarianceForecasts(object):
                 paths[i, :, j] = params[0] + params[1] * shocks[i, :, j - 1] ** 2
                 shocks[i, :, j] = np.sqrt(paths[i, :, j]) * std_shocks[:, j]
 
-        assert_allclose(forecast.forecast_paths, paths)
-        assert_allclose(forecast.forecasts, paths.mean(1))
-        assert_allclose(forecast.shocks, shocks)
+        assert_allclose(forecast.shocks, shocks[100:])
+        assert_allclose(forecast.forecast_paths, paths[100:])
+        assert_allclose(forecast.forecasts, paths[100:].mean(1))
 
     def test_arch_1_forecast_bootstrap(self):
         vol = GARCH(p=1, o=0, q=0)
@@ -358,12 +357,12 @@ class TestVarianceForecasts(object):
             paths[:, i] = params[0] + params[1] * shocks[:, i - 1] ** 2
             shocks[:, i] = np.sqrt(paths[:, i]) * std_shocks[:, i]
 
-        assert forecast.forecasts.shape == (1000, 5)
-        assert forecast.forecast_paths.shape == (1000, 1000, 5)
-        assert forecast.shocks.shape == (1000, 1000, 5)
-        assert np.all(np.isnan(forecast.forecasts[:-1]))
-        assert np.all(np.isnan(forecast.forecast_paths[:-1]))
-        assert np.all(np.isnan(forecast.shocks[:-1]))
+        assert forecast.forecasts.shape == (1, 5)
+        assert forecast.forecast_paths.shape == (1, 1000, 5)
+        assert forecast.shocks.shape == (1, 1000, 5)
+        assert np.all(np.isfinite(forecast.forecasts))
+        assert np.all(np.isfinite(forecast.forecast_paths))
+        assert np.all(np.isfinite(forecast.shocks))
         assert_allclose(forecast.forecasts[-1], paths.mean(0))
         assert_allclose(forecast.forecast_paths[-1], paths)
         assert_allclose(forecast.shocks[-1], shocks)
@@ -395,9 +394,9 @@ class TestVarianceForecasts(object):
                 paths[i, :, j] = params[0] + params[1] * shocks[i, :, j - 1] ** 2
                 shocks[i, :, j] = np.sqrt(paths[i, :, j]) * std_shocks[:, j]
 
-        assert_allclose(forecast.forecast_paths, paths)
-        assert_allclose(forecast.forecasts, paths.mean(1))
-        assert_allclose(forecast.shocks, shocks)
+        assert_allclose(forecast.forecast_paths, paths[333:])
+        assert_allclose(forecast.forecasts, paths[333:].mean(1))
+        assert_allclose(forecast.shocks, shocks[333:])
 
     def test_arch_2_forecast(self):
         vol = GARCH(p=2, o=0, q=0)
@@ -628,7 +627,7 @@ class TestVarianceForecasts(object):
             int_locs = np.floor(locs * (j + 1)).astype(np.int_)
             std_shocks = std_resids[int_locs]
 
-            paths[:, 0] = one_step.forecasts[j, 0]
+            paths[:, 0] = one_step.forecasts[j - 100, 0]
             shocks[:, 0] = std_shocks[:, 0] * np.sqrt(paths[:, 0])
             sqrt_path = np.sqrt(paths[:, 0])
             for i in range(1, 10):
@@ -642,9 +641,9 @@ class TestVarianceForecasts(object):
                 )
                 paths[:, i] = sqrt_path ** 2
                 shocks[:, i] = sqrt_path * std_shocks[:, i]
-            assert_allclose(paths.mean(0), forecast.forecasts[j])
-            assert_allclose(paths, forecast.forecast_paths[j])
-            assert_allclose(shocks, forecast.shocks[j])
+            assert_allclose(shocks, forecast.shocks[j - 100])
+            assert_allclose(paths.mean(0), forecast.forecasts[j - 100])
+            assert_allclose(paths, forecast.forecast_paths[j - 100])
 
         with pytest.raises(ValueError):
             vol.forecast(
@@ -760,9 +759,9 @@ class TestVarianceForecasts(object):
 
         forecasts = paths.mean(1)
 
-        assert_allclose(forecast.forecasts, forecasts)
-        assert_allclose(forecast.forecast_paths, paths)
-        assert_allclose(forecast.shocks, shocks)
+        assert_allclose(forecast.forecasts, forecasts[100:])
+        assert_allclose(forecast.forecast_paths, paths[100:])
+        assert_allclose(forecast.shocks, shocks[100:])
 
     def test_egarch_111_forecast(self):
         t = self.t
@@ -792,7 +791,7 @@ class TestVarianceForecasts(object):
         expected = forecast.forecasts.copy()
         expected[:-1] = np.nan
         forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=1)
-        assert_allclose(forecast.forecasts, expected)
+        assert_allclose(forecast.forecasts, expected[-1:])
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
 
@@ -892,7 +891,7 @@ class TestVarianceForecasts(object):
         expected = forecast.forecasts.copy()
         expected[:-1] = np.nan
         forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=1)
-        assert_allclose(forecast.forecasts, expected)
+        assert_allclose(forecast.forecasts, expected[-1:])
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
 
@@ -987,7 +986,7 @@ class TestVarianceForecasts(object):
         expected = forecast.forecasts.copy()
         expected[:-1] = np.nan
         forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=1)
-        assert_allclose(forecast.forecasts, expected)
+        assert_allclose(forecast.forecasts, expected[-1:])
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
 
@@ -1105,7 +1104,7 @@ class TestVarianceForecasts(object):
         expected = forecast.forecasts.copy()
         expected[:-1] = np.nan
         forecast = vol.forecast(params, resids, backcast, var_bounds, horizon=1)
-        assert_allclose(forecast.forecasts, expected)
+        assert_allclose(forecast.forecasts, expected[-1:])
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
 
@@ -1223,14 +1222,14 @@ class TestVarianceForecasts(object):
                 method="simulation",
                 rng=rng,
             )
-        assert forecast.forecasts.shape == (1000, 1)
-        assert forecast.forecast_paths.shape == (1000, 1000, 1)
-        assert forecast.shocks.shape == (1000, 1000, 1)
-        assert np.all(np.isnan(forecast.forecasts[:-1]))
-        assert forecast.forecasts[-1] == params[0]
-        assert np.all(np.isnan(forecast.forecast_paths[:-1]))
-        assert np.all(forecast.forecast_paths[-1] == params[0])
-        assert np.all(np.isnan(forecast.shocks[:-1]))
+        assert forecast.forecasts.shape == (1, 1)
+        assert forecast.forecast_paths.shape == (1, 1000, 1)
+        assert forecast.shocks.shape == (1, 1000, 1)
+        assert np.all(np.isfinite(forecast.forecasts))
+        assert np.all(forecast.forecasts == params[0])
+        assert np.all(np.isfinite(forecast.forecast_paths))
+        assert np.all(forecast.forecast_paths == params[0])
+        assert np.all(np.isfinite(forecast.shocks))
         assert_allclose(forecast.shocks[-1], np.sqrt(params[0]) * rng((1000, 1)))
 
         with preserved_state(self.rng):
@@ -1243,12 +1242,12 @@ class TestVarianceForecasts(object):
                 method="simulation",
                 rng=rng,
             )
-        assert forecast.forecasts.shape == (1000, 5)
-        assert forecast.forecast_paths.shape == (1000, 1000, 5)
-        assert forecast.shocks.shape == (1000, 1000, 5)
-        assert np.all(np.isnan(forecast.forecasts[:-1]))
+        assert forecast.forecasts.shape == (1, 5)
+        assert forecast.forecast_paths.shape == (1, 1000, 5)
+        assert forecast.shocks.shape == (1, 1000, 5)
+        assert np.all(np.isfinite(forecast.forecasts))
         assert np.all(forecast.forecasts[-1] == params[0])
-        assert np.all(np.isnan(forecast.forecast_paths[:-1]))
+        assert np.all(np.isfinite(forecast.forecast_paths))
         assert np.all(forecast.forecast_paths[-1] == params[0])
         assert_allclose(forecast.shocks[-1], np.sqrt(params[0]) * rng((1000, 5)))
 
@@ -1264,17 +1263,17 @@ class TestVarianceForecasts(object):
                 simulations=2000,
                 rng=rng,
             )
-        assert forecast.forecasts.shape == (1000, 5)
-        assert forecast.forecast_paths.shape == (1000, 2000, 5)
-        assert forecast.shocks.shape == (1000, 2000, 5)
-        assert np.all(np.isnan(forecast.forecasts[:100]))
-        assert np.all(forecast.forecasts[100:] == params[0])
-        assert np.all(np.isnan(forecast.forecast_paths[:100]))
-        assert np.all(forecast.forecast_paths[100:] == params[0])
+        # TODO: This is not correct.  Should be (900,5)
+        assert forecast.forecasts.shape == (900, 5)
+        assert forecast.forecast_paths.shape == (900, 2000, 5)
+        assert forecast.shocks.shape == (900, 2000, 5)
+        assert np.all(np.isfinite(forecast.forecasts))
+        assert np.all(forecast.forecasts == params[0])
+        assert np.all(np.isfinite(forecast.forecast_paths))
+        assert np.all(forecast.forecast_paths == params[0])
         expected = np.sqrt(params[0]) * rng((t - 100, 2000, 5))
         expected = np.concatenate((np.empty((100, 2000, 5)), expected))
-        expected[:100] = np.nan
-        assert_allclose(forecast.shocks, expected)
+        assert_allclose(forecast.shocks, expected[100:])
 
     def test_constant_variance_bootstrap(self):
         t = self.t
@@ -1293,12 +1292,12 @@ class TestVarianceForecasts(object):
                 method="bootstrap",
                 random_state=self.rng,
             )
-        assert forecast.forecasts.shape == (1000, 5)
-        assert forecast.forecast_paths.shape == (1000, 1000, 5)
-        assert forecast.shocks.shape == (1000, 1000, 5)
-        assert np.all(np.isnan(forecast.forecasts[:-1]))
+        assert forecast.forecasts.shape == (1, 5)
+        assert forecast.forecast_paths.shape == (1, 1000, 5)
+        assert forecast.shocks.shape == (1, 1000, 5)
+        assert np.all(np.isfinite(forecast.forecasts))
         assert np.all(forecast.forecasts[-1] == params[0])
-        assert np.all(np.isnan(forecast.forecast_paths[:-1]))
+        assert np.all(np.isfinite(forecast.forecast_paths))
         assert np.all(forecast.forecast_paths[-1] == params[0])
         index = np.floor(self.rng.random_sample((1000, 5)) * t)
         index = index.astype(np.int64)
@@ -1316,20 +1315,20 @@ class TestVarianceForecasts(object):
                 simulations=2000,
                 random_state=self.rng,
             )
-        assert forecast.forecasts.shape == (1000, 5)
-        assert forecast.forecast_paths.shape == (1000, 2000, 5)
-        assert forecast.shocks.shape == (1000, 2000, 5)
-        assert np.all(np.isnan(forecast.forecasts[:100]))
-        assert np.all(forecast.forecasts[100:] == params[0])
-        assert np.all(np.isnan(forecast.forecast_paths[:100]))
-        assert np.all(forecast.forecast_paths[100:] == params[0])
+        assert forecast.forecasts.shape == (900, 5)
+        assert forecast.forecast_paths.shape == (900, 2000, 5)
+        assert forecast.shocks.shape == (900, 2000, 5)
+        assert np.all(np.isfinite(forecast.forecasts))
+        assert np.all(forecast.forecasts == params[0])
+        assert np.all(np.isfinite(forecast.forecast_paths))
+        assert np.all(forecast.forecast_paths == params[0])
         expected = np.empty((1000, 2000, 5))
         expected.fill(np.nan)
         for i in range(100, 1000):
             index = self.rng.random_sample((2000, 5))
             int_index = np.floor((i + 1) * index).astype(np.int64)
             expected[i] = self.resid[int_index]
-        assert_allclose(forecast.shocks, expected)
+        assert_allclose(forecast.shocks, expected[100:])
 
     def test_garch11_simulation(self):
         t = self.t
@@ -1349,12 +1348,12 @@ class TestVarianceForecasts(object):
                 method="simulation",
                 rng=rng,
             )
-        assert forecast.forecasts.shape == (t, 10)
-        assert forecast.forecast_paths.shape == (t, 1000, 10)
-        assert forecast.shocks.shape == (t, 1000, 10)
-        assert np.all(np.isnan(forecast.forecast_paths[:-1]))
-        assert np.all(np.isnan(forecast.forecasts[:-1]))
-        assert np.all(np.isnan(forecast.shocks[:-1]))
+        assert forecast.forecasts.shape == (1, 10)
+        assert forecast.forecast_paths.shape == (1, 1000, 10)
+        assert forecast.shocks.shape == (1, 1000, 10)
+        assert np.all(np.isfinite(forecast.forecast_paths))
+        assert np.all(np.isfinite(forecast.forecasts))
+        assert np.all(np.isfinite(forecast.shocks))
         std_shocks = rng((1000, 10))
         one_step = vol.forecast(
             params, self.resid, backcast, var_bounds, horizon=1, start=0
@@ -1384,12 +1383,12 @@ class TestVarianceForecasts(object):
                 simulations=2000,
                 rng=rng,
             )
-        assert np.all(np.isnan(forecast.forecast_paths[:-1]))
-        assert np.all(np.isnan(forecast.forecasts[:-1]))
-        assert np.all(np.isnan(forecast.shocks[:-1]))
-        assert forecast.forecasts.shape == (t, 10)
-        assert forecast.forecast_paths.shape == (t, 2000, 10)
-        assert forecast.shocks.shape == (t, 2000, 10)
+        assert np.all(np.isfinite(forecast.forecast_paths))
+        assert np.all(np.isfinite(forecast.forecasts))
+        assert np.all(np.isfinite(forecast.shocks))
+        assert forecast.forecasts.shape == (1, 10)
+        assert forecast.forecast_paths.shape == (1, 2000, 10)
+        assert forecast.shocks.shape == (1, 2000, 10)
         std_shocks = rng((2000, 10))
         paths = np.zeros((2000, 10))
         shocks = np.zeros((2000, 10))
@@ -1477,9 +1476,9 @@ class TestVarianceForecasts(object):
                 )
                 shocks[i, :, j] = np.sqrt(paths[i, :, j]) * std_shocks[:, j]
 
-        assert_allclose(forecast.forecasts, paths.mean(1))
-        assert_allclose(paths, forecast.forecast_paths)
-        assert_allclose(shocks, forecast.shocks)
+        assert_allclose(forecast.forecasts, paths[100:].mean(1))
+        assert_allclose(forecast.forecast_paths, paths[100:])
+        assert_allclose(forecast.shocks, shocks[100:])
 
         with preserved_state(self.rng):
             forecast = vol.forecast(
@@ -1493,13 +1492,13 @@ class TestVarianceForecasts(object):
                 start=100,
             )
 
-        assert forecast.forecasts.shape == (t, 10)
-        assert forecast.forecast_paths.shape == (t, 2000, 10)
-        assert forecast.shocks.shape == (t, 2000, 10)
+        assert forecast.forecasts.shape == (t - 100, 10)
+        assert forecast.forecast_paths.shape == (t - 100, 2000, 10)
+        assert forecast.shocks.shape == (t - 100, 2000, 10)
 
-        assert np.all(np.isnan(forecast.forecasts[:100]))
-        assert np.all(np.isnan(forecast.forecast_paths[:100]))
-        assert np.all(np.isnan(forecast.shocks[:100]))
+        assert np.all(np.isfinite(forecast.forecasts))
+        assert np.all(np.isfinite(forecast.forecast_paths))
+        assert np.all(np.isfinite(forecast.shocks))
 
     def test_gjrgarch222_simulation(self):
         vol = GARCH(p=2, o=2, q=2)
@@ -1702,13 +1701,13 @@ class TestVarianceForecasts(object):
             rng=rng,
         )
 
-        assert np.all(np.isnan(forecasts.forecasts[:252]))
-        assert np.all(np.isnan(forecasts.forecast_paths[:252]))
-        assert np.all(np.isnan(forecasts.shocks[:252]))
+        assert forecasts.forecasts.shape == (1000 - 252, 10)
+        assert forecasts.forecast_paths.shape == (1000 - 252, 1000, 10)
+        assert forecasts.shocks.shape == (1000 - 252, 1000, 10)
 
-        assert np.all(np.isfinite(forecasts.forecasts[252:]))
-        assert np.all(np.isfinite(forecasts.forecast_paths[252:]))
-        assert np.all(np.isfinite(forecasts.shocks[252:]))
+        assert np.all(np.isfinite(forecasts.forecasts))
+        assert np.all(np.isfinite(forecasts.forecast_paths))
+        assert np.all(np.isfinite(forecasts.shocks))
 
     def test_ewma_bootstrap(self):
         t = self.t
@@ -1758,9 +1757,9 @@ class TestVarianceForecasts(object):
                 )
                 shocks[i, :, j] = np.sqrt(paths[i, :, j]) * std_shocks[:, j]
 
-        assert_allclose(forecasts.forecasts, paths.mean(1))
-        assert_allclose(forecasts.forecast_paths, paths)
-        assert_allclose(forecasts.shocks, shocks)
+        assert_allclose(forecasts.shocks, shocks[131:])
+        assert_allclose(forecasts.forecasts, paths[131:].mean(1))
+        assert_allclose(forecasts.forecast_paths, paths[131:])
 
         forecasts = vol.forecast(
             params,
@@ -1773,14 +1772,12 @@ class TestVarianceForecasts(object):
             rng=rng,
             random_state=self.rng,
         )
-
-        assert np.all(np.isnan(forecasts.forecasts[:252]))
-        assert np.all(np.isnan(forecasts.forecast_paths[:252]))
-        assert np.all(np.isnan(forecasts.shocks[:252]))
-
-        assert np.all(np.isfinite(forecasts.forecasts[252:]))
-        assert np.all(np.isfinite(forecasts.forecast_paths[252:]))
-        assert np.all(np.isfinite(forecasts.shocks[252:]))
+        assert forecasts.forecasts.shape == (1000 - 252, 10)
+        assert forecasts.forecast_paths.shape == (1000 - 252, 1000, 10)
+        assert forecasts.shocks.shape == (1000 - 252, 1000, 10)
+        assert np.all(np.isfinite(forecasts.forecasts))
+        assert np.all(np.isfinite(forecasts.forecast_paths))
+        assert np.all(np.isfinite(forecasts.shocks))
 
     def test_rm2006_forecast(self):
         vol = RiskMetrics2006()

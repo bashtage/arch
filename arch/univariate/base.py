@@ -198,6 +198,10 @@ class ARCHModel(object, metaclass=ABCMeta):
         else:
             self._y_series = cast(Series, ensure1d(np.empty((0,)), "y", series=True))
         self._y = np.asarray(self._y_series)
+        if not np.all(np.isfinite(self._y)):
+            raise ValueError(
+                "NaN or inf values found in y. y must contains only finite values."
+            )
         self._y_original = y
 
         self._fit_indices: List[int] = [0, int(self._y.shape[0])]
@@ -689,7 +693,7 @@ class ARCHModel(object, metaclass=ABCMeta):
             sv = ensure1d(sv, "starting_values")
             valid = sv.shape[0] == num_params
             if a.shape[0] > 0:
-                satisfies_constraints = a.dot(sv) - b > 0
+                satisfies_constraints = a.dot(sv) - b >= 0
                 valid = valid and satisfies_constraints.all()
             for i, bound in enumerate(bounds):
                 valid = valid and bound[0] <= sv[i] <= bound[1]
@@ -1911,12 +1915,14 @@ def _align_forecast(f: DataFrame, align: str) -> DataFrame:
 
 
 def _format_forecasts(
-    values: NDArray, index: Union[List[Label], pd.Index]
+    values: NDArray, index: Union[List[Label], pd.Index], start_index: int
 ) -> DataFrame:
     horizon = values.shape[1]
     format_str = "{0:>0" + str(int(np.ceil(np.log10(horizon + 0.5)))) + "}"
     columns = ["h." + format_str.format(h + 1) for h in range(horizon)]
-    forecasts = DataFrame(values, index=index, columns=columns, dtype="float")
+    forecasts = DataFrame(
+        values, index=index[start_index:], columns=columns, dtype="float"
+    )
     return forecasts
 
 
@@ -1926,49 +1932,50 @@ class ARCHModelForecastSimulation(object):
 
     Parameters
     ----------
+    index
     values
     residuals
     variances
     residual_variances
-
-    Attributes
-    ----------
-    values : DataFrame
-        Simulated values of the process
-    residuals : DataFrame
-        Simulated residuals used to produce the values
-    variances : DataFrame
-        Simulated variances of the values
-    residual_variances : DataFrame
-        Simulated variance of the residuals
     """
 
     def __init__(
         self,
+        index: Union[List[Label], pd.Index],
         values: Optional[NDArray],
         residuals: Optional[NDArray],
         variances: Optional[NDArray],
         residual_variances: Optional[NDArray],
     ) -> None:
+        self._index = pd.Index(index)
         self._values = values
         self._residuals = residuals
         self._variances = variances
         self._residual_variances = residual_variances
 
     @property
+    def index(self) -> pd.Index:
+        """The index aligned to dimension 0 of the simulation paths"""
+        return self._index
+
+    @property
     def values(self) -> Optional[NDArray]:
+        """The values of the process"""
         return self._values
 
     @property
     def residuals(self) -> Optional[NDArray]:
+        """Simulated residuals used to produce the values"""
         return self._residuals
 
     @property
     def variances(self) -> Optional[NDArray]:
+        """Simulated variances of the values"""
         return self._variances
 
     @property
     def residual_variances(self) -> Optional[NDArray]:
+        """Simulated variance of the residuals"""
         return self._residual_variances
 
 
@@ -2001,6 +2008,7 @@ class ARCHModelForecast(object):
     def __init__(
         self,
         index: Union[List[Label], pd.Index],
+        start_index: int,
         mean: NDArray,
         variance: NDArray,
         residual_variance: NDArray,
@@ -2010,15 +2018,16 @@ class ARCHModelForecast(object):
         simulated_residuals: Optional[NDArray] = None,
         align: str = "origin",
     ) -> None:
-        mean = _format_forecasts(mean, index)
-        variance = _format_forecasts(variance, index)
-        residual_variance = _format_forecasts(residual_variance, index)
+        mean = _format_forecasts(mean, index, start_index)
+        variance = _format_forecasts(variance, index, start_index)
+        residual_variance = _format_forecasts(residual_variance, index, start_index)
 
         self._mean = _align_forecast(mean, align=align)
         self._variance = _align_forecast(variance, align=align)
         self._residual_variance = _align_forecast(residual_variance, align=align)
 
         self._sim = ARCHModelForecastSimulation(
+            index[start_index:],
             simulated_paths,
             simulated_residuals,
             simulated_variances,

@@ -1199,3 +1199,18 @@ def test_backcast_restricted(simulated_data):
     res_limited = mod.fit(first_obs=100, last_obs=600, disp="off")
     assert_almost_equal(res_restricted.model._backcast, res_restricted.model._backcast)
     assert np.abs(res.model._backcast - res_limited.model._backcast) > 1e-8
+
+
+def test_missing_data_exception():
+    y = np.random.standard_normal(1000)
+    y[::29] = np.nan
+    with pytest.raises(ValueError, match="NaN or inf values"):
+        arch_model(y)
+    y = np.random.standard_normal(1000)
+    y[::53] = np.inf
+    with pytest.raises(ValueError, match="NaN or inf values"):
+        arch_model(y)
+    y[::29] = np.nan
+    y[::53] = np.inf
+    with pytest.raises(ValueError, match="NaN or inf values"):
+        arch_model(y)

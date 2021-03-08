@@ -118,7 +118,9 @@ def _ar_forecast(
     if x is not None:
         assert exogp is not None
         exog_comp = np.dot(x, exogp[:, None])
-        fcasts[:-1] += exog_comp[1:]
+        if fcasts.shape[0] > 1:
+            n = fcasts.shape[0]
+            fcasts[:-1] += exog_comp[-(n - 1) :]
         fcasts[-1] = np.nan
         fcasts[:, 1:] = np.nan
 
@@ -830,6 +832,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         )
         var_fcasts = vfcast.forecasts
         assert var_fcasts is not None
+        if start_index < earliest:
+            # Pad if asking for variance forecast before earliest available
+            var_fcasts = _forecast_pad(earliest - start_index, var_fcasts)
 
         arp = self._har_to_ar(mp)
         nexog = 0 if self._x is None else self._x.shape[1]
@@ -853,9 +858,14 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             # TODO: This is not tested, but probably right
             assert isinstance(vfcast.forecast_paths, np.ndarray)
             variance_paths = vfcast.forecast_paths
-            long_run_variance_paths = variance_paths.copy()
             assert isinstance(vfcast.shocks, np.ndarray)
             shocks = vfcast.shocks
+            if start_index < earliest:
+                # Pad if asking for variance forecast before earliest available
+                variance_paths = _forecast_pad(earliest - start_index, variance_paths)
+                shocks = _forecast_pad(earliest - start_index, shocks)
+
+            long_run_variance_paths = variance_paths.copy()
             for i in range(horizon):
                 _impulses = impulse[i::-1][:, None]
                 lrvp = variance_paths[start_index:, :, : (i + 1)].dot(_impulses ** 2)
@@ -878,6 +888,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         index = self._y_series.index
         return ARCHModelForecast(
             index,
+            start_index,
             mean_fcast,
             longrun_var_fcasts,
             var_fcasts,
