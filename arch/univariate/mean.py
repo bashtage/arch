@@ -106,17 +106,21 @@ def _ar_forecast(
     """
     t = y.shape[0]
     p = arp.shape[0]
-    fcasts = np.empty((t, p + horizon))
+    fcasts = np.empty((t - start_index, p + horizon))
     for i in range(p):
-        fcasts[p - 1 :, i] = y[i : (-p + i + 1)] if i < p - 1 else y[i:]
+        first = start_index - p + i + 1
+        last = t - p + i + 1
+        fcasts[:, i] = y[first:last]
+    arp_rev = arp[::-1]
     for i in range(p, horizon + p):
-        fcasts[:, i] = constant + fcasts[:, i - p : i].dot(arp[::-1])
-    fcasts[:start_index] = np.nan
+        fcasts[:, i] = constant + fcasts[:, i - p : i].dot(arp_rev)
     fcasts = fcasts[:, p:]
     if x is not None:
         assert exogp is not None
         exog_comp = np.dot(x, exogp[:, None])
-        fcasts[:-1] += exog_comp[1:]
+        if fcasts.shape[0] > 1:
+            n = fcasts.shape[0]
+            fcasts[:-1] += exog_comp[-(n - 1) :]
         fcasts[-1] = np.nan
         fcasts[:, 1:] = np.nan
 
@@ -785,6 +789,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         simulations: int = 1000,
         rng: Optional[Callable[[Union[int, Tuple[int, ...]]], NDArray]] = None,
         random_state: Optional[np.random.RandomState] = None,
+        *,
+        reindex: Optional[bool] = None,
     ) -> ARCHModelForecast:
         if not isinstance(horizon, (int, np.integer)) or horizon < 1:
             raise ValueError("horizon must be an integer >= 1.")
@@ -828,7 +834,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         )
         var_fcasts = vfcast.forecasts
         assert var_fcasts is not None
-        var_fcasts = _forecast_pad(earliest, var_fcasts)
+        if start_index < earliest:
+            # Pad if asking for variance forecast before earliest available
+            var_fcasts = _forecast_pad(earliest - start_index, var_fcasts)
 
         arp = self._har_to_ar(mp)
         nexog = 0 if self._x is None else self._x.shape[1]
@@ -851,31 +859,39 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         if method.lower() in ("simulation", "bootstrap"):
             # TODO: This is not tested, but probably right
             assert isinstance(vfcast.forecast_paths, np.ndarray)
-            variance_paths = _forecast_pad(earliest, vfcast.forecast_paths)
-            long_run_variance_paths = variance_paths.copy()
+            variance_paths = vfcast.forecast_paths
             assert isinstance(vfcast.shocks, np.ndarray)
-            shocks = _forecast_pad(earliest, vfcast.shocks)
+            shocks = vfcast.shocks
+            if start_index < earliest:
+                # Pad if asking for variance forecast before earliest available
+                variance_paths = _forecast_pad(earliest - start_index, variance_paths)
+                shocks = _forecast_pad(earliest - start_index, shocks)
+
+            long_run_variance_paths = variance_paths.copy()
             for i in range(horizon):
                 _impulses = impulse[i::-1][:, None]
                 lrvp = variance_paths[start_index:, :, : (i + 1)].dot(_impulses ** 2)
                 long_run_variance_paths[start_index:, :, i] = np.squeeze(lrvp)
             t, m = self._y.shape[0], self._max_lags
-            mean_paths = np.full((t, simulations, m + horizon), np.nan)
+            mean_paths = np.empty(shocks.shape[:2] + (m + horizon,))
             dynp_rev = dynp[::-1]
             for i in range(start_index, t):
-                mean_paths[i, :, :m] = self._y[i - m + 1 : i + 1]
+                path_loc = i - start_index
+                mean_paths[path_loc, :, :m] = self._y[i - m + 1 : i + 1]
 
                 for j in range(horizon):
-                    mean_paths[i, :, m + j] = (
+                    mean_paths[path_loc, :, m + j] = (
                         constant
-                        + mean_paths[i, :, j : m + j].dot(dynp_rev)
-                        + shocks[i, :, j]
+                        + mean_paths[path_loc, :, j : m + j].dot(dynp_rev)
+                        + shocks[path_loc, :, j]
                     )
             mean_paths = mean_paths[:, :, m:]
 
         index = self._y_series.index
+        reindex = True if reindex is None else reindex
         return ARCHModelForecast(
             index,
+            start_index,
             mean_fcast,
             longrun_var_fcasts,
             var_fcasts,
@@ -884,6 +900,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             simulated_residuals=shocks,
             simulated_variances=long_run_variance_paths,
             simulated_residual_variances=variance_paths,
+            reindex=reindex,
         )
 
 

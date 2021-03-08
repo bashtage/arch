@@ -198,6 +198,10 @@ class ARCHModel(object, metaclass=ABCMeta):
         else:
             self._y_series = cast(Series, ensure1d(np.empty((0,)), "y", series=True))
         self._y = np.asarray(self._y_series)
+        if not np.all(np.isfinite(self._y)):
+            raise ValueError(
+                "NaN or inf values found in y. y must contains only finite values."
+            )
         self._y_original = y
 
         self._fit_indices: List[int] = [0, int(self._y.shape[0])]
@@ -689,7 +693,7 @@ class ARCHModel(object, metaclass=ABCMeta):
             sv = ensure1d(sv, "starting_values")
             valid = sv.shape[0] == num_params
             if a.shape[0] > 0:
-                satisfies_constraints = a.dot(sv) - b > 0
+                satisfies_constraints = a.dot(sv) - b >= 0
                 valid = valid and satisfies_constraints.all()
             for i, bound in enumerate(bounds):
                 valid = valid and bound[0] <= sv[i] <= bound[1]
@@ -915,6 +919,8 @@ class ARCHModel(object, metaclass=ABCMeta):
         simulations: int = 1000,
         rng: Optional[Callable[[Union[int, Tuple[int, ...]]], NDArray]] = None,
         random_state: Optional[np.random.RandomState] = None,
+        *,
+        reindex: Optional[bool] = None,
     ) -> ARCHModelForecast:
         """
         Construct forecasts from estimated model
@@ -954,6 +960,13 @@ class ARCHModel(object, metaclass=ABCMeta):
             the 2-element tuple (simulations, horizon).
         random_state : RandomState, optional
             NumPy RandomState instance to use when method is 'bootstrap'
+        reindex : bool, optional
+            Whether to reindex the forecasts to have the same dimension as the series
+            being forecast. Prior to 4.17 this was the default. As of 4.18 this is
+            now optional. If not provided, a warning is raised about the future
+            change in the default which will occur after September 2021.
+
+            .. versionadded:: 4.18
 
         Returns
         -------
@@ -1344,6 +1357,8 @@ class ARCHModelFixedResult(_SummaryRepr):
         simulations: int = 1000,
         rng: Optional[Callable[[Union[int, Tuple[int, ...]]], NDArray]] = None,
         random_state: Optional[np.random.RandomState] = None,
+        *,
+        reindex: Optional[bool] = None,
     ) -> ARCHModelForecast:
         """
         Construct forecasts from estimated model
@@ -1383,6 +1398,13 @@ class ARCHModelFixedResult(_SummaryRepr):
             the 2-element tuple (simulations, horizon).
         random_state : RandomState, optional
             NumPy RandomState instance to use when method is 'bootstrap'
+        reindex : bool, optional
+            Whether to reindex the forecasts to have the same dimension as the series
+            being forecast. Prior to 4.17 this was the default. As of 4.18 this is
+            now optional. If not provided, a warning is raised about the future
+            change in the default which will occur after September 2021.
+
+            .. versionadded:: 4.18
 
         Returns
         -------
@@ -1411,6 +1433,14 @@ class ARCHModelFixedResult(_SummaryRepr):
         [102, 2], so that it is aligned with the observation to use when
         evaluating, but still in the same column.
         """
+        if reindex is None:
+            warnings.warn(
+                "The default for reindex is True. After September 2021 this will "
+                "change to False. Set reindex to True or False to silence this "
+                "message.",
+                FutureWarning,
+            )
+            reindex = True
         if params is None:
             params = self._params
         else:
@@ -1422,7 +1452,15 @@ class ARCHModelFixedResult(_SummaryRepr):
         if not isinstance(horizon, (int, np.integer)) or horizon < 1:
             raise ValueError("horizon must be an integer >= 1.")
         return self.model.forecast(
-            params, horizon, start, align, method, simulations, rng, random_state
+            params,
+            horizon,
+            start,
+            align,
+            method,
+            simulations,
+            rng,
+            random_state,
+            reindex=reindex,
         )
 
     @deprecate_kwarg("type", "plot_type")
@@ -1492,14 +1530,24 @@ class ARCHModelFixedResult(_SummaryRepr):
             while invalid_start:
                 try:
                     forecasts = self.forecast(
-                        params, horizon, start, method=method, simulations=simulations
+                        params,
+                        horizon,
+                        start,
+                        method=method,
+                        simulations=simulations,
+                        reindex=False,
                     )
                     invalid_start = False
                 except ValueError:
                     start += 1
         else:
             forecasts = self.forecast(
-                params, horizon, start, method=method, simulations=simulations
+                params,
+                horizon,
+                start,
+                method=method,
+                simulations=simulations,
+                reindex=False,
             )
 
         fig, ax = plt.subplots(1, 1)
@@ -1911,12 +1959,14 @@ def _align_forecast(f: DataFrame, align: str) -> DataFrame:
 
 
 def _format_forecasts(
-    values: NDArray, index: Union[List[Label], pd.Index]
+    values: NDArray, index: Union[List[Label], pd.Index], start_index: int
 ) -> DataFrame:
     horizon = values.shape[1]
     format_str = "{0:>0" + str(int(np.ceil(np.log10(horizon + 0.5)))) + "}"
     columns = ["h." + format_str.format(h + 1) for h in range(horizon)]
-    forecasts = DataFrame(values, index=index, columns=columns, dtype="float")
+    forecasts = DataFrame(
+        values, index=index[start_index:], columns=columns, dtype="float"
+    )
     return forecasts
 
 
@@ -1926,50 +1976,63 @@ class ARCHModelForecastSimulation(object):
 
     Parameters
     ----------
+    index
     values
     residuals
     variances
     residual_variances
-
-    Attributes
-    ----------
-    values : DataFrame
-        Simulated values of the process
-    residuals : DataFrame
-        Simulated residuals used to produce the values
-    variances : DataFrame
-        Simulated variances of the values
-    residual_variances : DataFrame
-        Simulated variance of the residuals
     """
 
     def __init__(
         self,
+        index: Union[List[Label], pd.Index],
         values: Optional[NDArray],
         residuals: Optional[NDArray],
         variances: Optional[NDArray],
         residual_variances: Optional[NDArray],
     ) -> None:
+        self._index = pd.Index(index)
         self._values = values
         self._residuals = residuals
         self._variances = variances
         self._residual_variances = residual_variances
 
     @property
+    def index(self) -> pd.Index:
+        """The index aligned to dimension 0 of the simulation paths"""
+        return self._index
+
+    @property
     def values(self) -> Optional[NDArray]:
+        """The values of the process"""
         return self._values
 
     @property
     def residuals(self) -> Optional[NDArray]:
+        """Simulated residuals used to produce the values"""
         return self._residuals
 
     @property
     def variances(self) -> Optional[NDArray]:
+        """Simulated variances of the values"""
         return self._variances
 
     @property
     def residual_variances(self) -> Optional[NDArray]:
+        """Simulated variance of the residuals"""
         return self._residual_variances
+
+
+def _reindex(a: Optional[NDArray], idx: pd.Index) -> Optional[NDArray]:
+    if a is None:
+        return a
+    assert a is not None
+    actual = len(idx)
+    obs = a.shape[0]
+    if actual > obs:
+        addition = np.full((actual - obs,) + a.shape[1:], np.nan)
+        a = np.concatenate([addition, a])
+    return a
 
 
 class ARCHModelForecast(object):
@@ -2001,6 +2064,7 @@ class ARCHModelForecast(object):
     def __init__(
         self,
         index: Union[List[Label], pd.Index],
+        start_index: int,
         mean: NDArray,
         variance: NDArray,
         residual_variance: NDArray,
@@ -2009,16 +2073,31 @@ class ARCHModelForecast(object):
         simulated_residual_variances: Optional[NDArray] = None,
         simulated_residuals: Optional[NDArray] = None,
         align: str = "origin",
+        *,
+        reindex: bool = False,
     ) -> None:
-        mean = _format_forecasts(mean, index)
-        variance = _format_forecasts(variance, index)
-        residual_variance = _format_forecasts(residual_variance, index)
-
+        mean = _format_forecasts(mean, index, start_index)
+        variance = _format_forecasts(variance, index, start_index)
+        residual_variance = _format_forecasts(residual_variance, index, start_index)
+        if reindex:
+            mean = mean.reindex(index)
+            variance = variance.reindex(index)
+            residual_variance = residual_variance.reindex(index)
         self._mean = _align_forecast(mean, align=align)
         self._variance = _align_forecast(variance, align=align)
         self._residual_variance = _align_forecast(residual_variance, align=align)
 
+        if reindex:
+            sim_index = index
+            simulated_paths = _reindex(simulated_paths, index)
+            simulated_residuals = _reindex(simulated_residuals, index)
+            simulated_variances = _reindex(simulated_variances, index)
+            simulated_residual_variances = _reindex(simulated_residual_variances, index)
+        else:
+            sim_index = index[start_index:]
+
         self._sim = ARCHModelForecastSimulation(
+            sim_index,
             simulated_paths,
             simulated_residuals,
             simulated_variances,
