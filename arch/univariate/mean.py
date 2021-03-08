@@ -789,6 +789,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         simulations: int = 1000,
         rng: Optional[Callable[[Union[int, Tuple[int, ...]]], NDArray]] = None,
         random_state: Optional[np.random.RandomState] = None,
+        *,
+        reindex: Optional[bool] = None,
     ) -> ARCHModelForecast:
         if not isinstance(horizon, (int, np.integer)) or horizon < 1:
             raise ValueError("horizon must be an integer >= 1.")
@@ -886,6 +888,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             mean_paths = mean_paths[:, :, m:]
 
         index = self._y_series.index
+        reindex = True if reindex is None else reindex
         return ARCHModelForecast(
             index,
             start_index,
@@ -897,6 +900,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             simulated_residuals=shocks,
             simulated_variances=long_run_variance_paths,
             simulated_residual_variances=variance_paths,
+            reindex=reindex,
         )
 
 

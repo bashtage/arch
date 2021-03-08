@@ -2222,11 +2222,22 @@ def test_external_rng():
 
     rand_state.set_state(state)
     fcast_1 = res.forecast(
-        res.params, horizon=5, method="simulation", start=900, simulations=250
+        res.params,
+        horizon=5,
+        method="simulation",
+        start=900,
+        simulations=250,
+        reindex=False,
     )
     rand_state.set_state(state)
     rng = rand_state.standard_normal
     fcast_2 = res.forecast(
-        res.params, horizon=5, method="simulation", start=900, simulations=250, rng=rng
+        res.params,
+        horizon=5,
+        method="simulation",
+        start=900,
+        simulations=250,
+        rng=rng,
+        reindex=False,
     )
     assert_allclose(fcast_1.residual_variance, fcast_2.residual_variance)

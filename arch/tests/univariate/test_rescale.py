@@ -48,6 +48,6 @@ def test_rescale_fit(small_data, std_data):
     direct_mod = ZeroMean(10 * small_data, volatility=GARCH())
     direct_res = direct_mod.fit(disp="off")
     assert_allclose(small_res.loglikelihood, direct_res.loglikelihood)
-    small_fcast = small_res.forecast(start=0)
-    direct_fcast = direct_res.forecast(start=0)
+    small_fcast = small_res.forecast(start=0, reindex=False)
+    direct_fcast = direct_res.forecast(start=0, reindex=False)
     assert_allclose(small_fcast.variance, direct_fcast.variance)

@@ -119,7 +119,7 @@ class TestMeanModel(object):
         expected = np.array([self.y.mean(), self.y.var()])
         assert_almost_equal(res.params, expected)
 
-        forecasts = res.forecast(horizon=20, start=20)
+        forecasts = res.forecast(horizon=20, start=20, reindex=False)
         direct = pd.DataFrame(
             index=np.arange(self.y.shape[0]),
             columns=["h.{0:>02d}".format(i + 1) for i in range(20)],
@@ -133,7 +133,7 @@ class TestMeanModel(object):
         assert isinstance(cm.__str__(), str)
         assert "<strong>" in cm._repr_html_()
         with pytest.raises(ValueError, match="horizon must be an integer >= 1"):
-            res.forecast(horizon=0, start=20)
+            res.forecast(horizon=0, start=20, reindex=False)
 
     def test_zero_mean(self):
         zm = ZeroMean(self.y)
@@ -154,7 +154,7 @@ class TestMeanModel(object):
         res = zm.fit(disp=DISPLAY)
         assert_almost_equal(res.params, np.array([np.mean(self.y ** 2)]))
 
-        forecasts = res.forecast(horizon=99)
+        forecasts = res.forecast(horizon=99, reindex=False)
         direct = pd.DataFrame(
             index=np.arange(self.y.shape[0]),
             columns=["h.{0:>02d}".format(i + 1) for i in range(99)],
@@ -198,7 +198,7 @@ class TestMeanModel(object):
         assert_equal(b, np.empty(0))
         res = harx.fit(disp=DISPLAY)
         with pytest.raises(ValueError):
-            res.forecast(params=np.array([1.0, 1.0]))
+            res.forecast(params=np.array([1.0, 1.0]), reindex=False)
         nobs = self.T - 22
         rhs = np.ones((nobs, 5))
         y = self.y
@@ -267,8 +267,8 @@ class TestMeanModel(object):
         assert_almost_equal(params, res.params[:-1])
 
         with pytest.raises(ValueError):
-            res.forecast(horizon=6, start=0)
-        forecasts = res.forecast(horizon=6)
+            res.forecast(horizon=6, start=0, reindex=False)
+        forecasts = res.forecast(horizon=6, reindex=False)
         t = self.y.shape[0]
         direct = pd.DataFrame(
             index=np.arange(t),
@@ -290,7 +290,7 @@ class TestMeanModel(object):
         assert isinstance(forecasts, ARCHModelForecast)
         # TODO
         # assert_frame_equal(direct, forecasts)
-        forecasts = res.forecast(res.params, horizon=6)
+        forecasts = res.forecast(res.params, horizon=6, reindex=False)
         assert isinstance(forecasts, ARCHModelForecast)
         # TODO
         # assert_frame_equal(direct, forecasts)
@@ -307,7 +307,7 @@ class TestMeanModel(object):
             columns=["h." + str(i + 1) for i in range(6)],
             dtype="float64",
         )
-        forecasts = res.forecast(horizon=6)
+        forecasts = res.forecast(horizon=6, reindex=False)
         params = np.asarray(res.params)
         fcast = np.zeros(t + 6)
         for i in range(21, t):
@@ -391,7 +391,7 @@ class TestMeanModel(object):
         params = np.linalg.pinv(rhs).dot(lhs)
         assert_almost_equal(params, res.params[:-1])
 
-        forecasts = res.forecast(horizon=5)
+        forecasts = res.forecast(horizon=5, reindex=False)
         direct = pd.DataFrame(
             index=np.arange(y.shape[0]),
             columns=["h." + str(i + 1) for i in range(5)],
@@ -435,7 +435,7 @@ class TestMeanModel(object):
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
         res = ar.fit(disp=DISPLAY, update_freq=5, cov_type="classic")
         assert isinstance(res.param_cov, pd.DataFrame)
-        sims = res.forecast(horizon=5, method="simulation")
+        sims = res.forecast(horizon=5, method="simulation", reindex=False)
         assert isinstance(sims.simulations.residual_variances, np.ndarray)
         assert isinstance(sims.simulations.residuals, np.ndarray)
         assert isinstance(sims.simulations.values, np.ndarray)
