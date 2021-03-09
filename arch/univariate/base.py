@@ -368,14 +368,19 @@ class ARCHModel(object, metaclass=ABCMeta):
         params = np.empty(0)
         param_cov = np.empty((0, 0))
         first_obs, last_obs = self._fit_indices
-        resids = np.full_like(self._y, np.nan)
-        resids[first_obs:last_obs] = y
-        vol = np.full_like(resids, np.nan)
-        var_bounds = self.volatility.variance_bounds(resids)
-        vol[first_obs:last_obs] = self.volatility.compute_variance(
-            params, y, vol, backcast, var_bounds
-        )
-        vol = np.sqrt(vol)
+        resids_final = np.full_like(self._y, np.nan)
+        resids_final[first_obs:last_obs] = y
+
+        var_bounds = self.volatility.variance_bounds(y)
+        vol = np.zeros_like(y)
+        self.volatility.compute_variance(params, y, vol, backcast, var_bounds)
+        vol = cast(NDArray, np.sqrt(vol))
+
+        # Reshape resids vol
+        vol_final = np.empty_like(self._y, dtype=np.float64)
+        vol_final.fill(np.nan)
+        vol_final[first_obs:last_obs] = vol
+
         names = self._all_parameter_names()
         loglikelihood = self._static_gaussian_loglikelihood(y)
         r2 = self._r2(params)
@@ -386,8 +391,8 @@ class ARCHModel(object, metaclass=ABCMeta):
             params,
             param_cov,
             r2,
-            resids,
-            vol,
+            resids_final,
+            vol_final,
             cov_type,
             self._y_series,
             names,

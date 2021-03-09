@@ -29,8 +29,8 @@ except ImportError:
 
 
 def _compare_truncated_forecasts(full, trunc, start):
-    assert np.all(np.isnan(trunc.forecasts[:start]))
-    assert_allclose(trunc.forecasts[start:], full.forecasts[start:])
+    assert np.all(np.isfinite(trunc.forecasts[:start]))
+    assert_allclose(trunc.forecasts, full.forecasts[start:])
 
     if full.forecast_paths is None:
         assert trunc.forecast_paths is None
@@ -857,9 +857,9 @@ class TestVarianceForecasts(object):
                 )
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
-        assert_allclose(forecast.forecasts, paths.mean(1))
-        assert_allclose(forecast.forecast_paths, paths)
-        assert_allclose(forecast.shocks, shocks)
+        assert_allclose(forecast.forecasts, paths[100:].mean(1))
+        assert_allclose(forecast.forecast_paths, paths[100:])
+        assert_allclose(forecast.shocks, shocks[100:])
 
         with pytest.raises(ValueError):
             vol.forecast(params, resids, backcast, var_bounds, horizon=5)
@@ -955,9 +955,9 @@ class TestVarianceForecasts(object):
                 )
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
-        assert_allclose(forecast.forecasts, paths.mean(1))
-        assert_allclose(forecast.forecast_paths, paths)
-        assert_allclose(forecast.shocks, shocks)
+        assert_allclose(forecast.forecasts, paths[100:].mean(1))
+        assert_allclose(forecast.forecast_paths, paths[100:])
+        assert_allclose(forecast.shocks, shocks[100:])
 
     def test_egarch_211_forecast(self):
         t = self.t
@@ -1030,9 +1030,9 @@ class TestVarianceForecasts(object):
                 )
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
-        assert_allclose(forecast.forecasts, paths.mean(1))
-        assert_allclose(forecast.forecast_paths, paths)
-        assert_allclose(forecast.shocks, shocks)
+        assert_allclose(forecast.forecasts, paths[433:].mean(1))
+        assert_allclose(forecast.forecast_paths, paths[433:])
+        assert_allclose(forecast.shocks, shocks[433:])
 
         with preserved_state(self.rng):
             forecast = vol.forecast(
@@ -1073,9 +1073,9 @@ class TestVarianceForecasts(object):
                 )
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
-        assert_allclose(forecast.forecasts, paths.mean(1))
-        assert_allclose(forecast.forecast_paths, paths)
-        assert_allclose(forecast.shocks, shocks)
+        assert_allclose(forecast.forecasts, paths[731:].mean(1))
+        assert_allclose(forecast.forecast_paths, paths[731:])
+        assert_allclose(forecast.shocks, shocks[731:])
 
     def test_egarch_212_forecast_smoke(self):
         t = self.t
@@ -1152,9 +1152,9 @@ class TestVarianceForecasts(object):
                 )
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
-        assert_allclose(forecast.forecasts, paths.mean(1))
-        assert_allclose(forecast.forecast_paths, paths)
-        assert_allclose(forecast.shocks, shocks)
+        assert_allclose(forecast.forecasts, paths[433:].mean(1))
+        assert_allclose(forecast.forecast_paths, paths[433:])
+        assert_allclose(forecast.shocks, shocks[433:])
 
         with preserved_state(self.rng):
             forecast = vol.forecast(
@@ -1199,9 +1199,9 @@ class TestVarianceForecasts(object):
                 )
             shocks[i, :, :] = np.exp(paths[i, :, :] / 2) * std_shocks
         paths = np.exp(paths)
-        assert_allclose(forecast.forecasts, paths.mean(1))
-        assert_allclose(forecast.forecast_paths, paths)
-        assert_allclose(forecast.shocks, shocks)
+        assert_allclose(forecast.forecasts, paths[731:].mean(1))
+        assert_allclose(forecast.forecast_paths, paths[731:])
+        assert_allclose(forecast.shocks, shocks[731:])
 
     def test_constant_variance_simulation(self):
         t = self.t
