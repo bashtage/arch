@@ -149,7 +149,7 @@ if __name__ == "__main__":
                 wrapper, n_jobs=NUM_JOBS, verbose=2
             )
             out = parallel(p_func(t, tr, EX_SIZE, seed=seeds[i]) for t in T)
-            quantiles = map(lambda x: np.percentile(x, percentiles), out)
+            quantiles = [np.percentile(x, percentiles) for x in out]
             results[:, :, i] = np.array(quantiles).T
             print("Elapsed time {0} seconds".format(datetime.datetime.now() - now))
 

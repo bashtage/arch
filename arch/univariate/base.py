@@ -39,6 +39,7 @@ from statsmodels.tools.numdiff import approx_fprime, approx_hess
 from statsmodels.tools.tools import add_constant
 from statsmodels.tsa.tsatools import lagmat
 
+from arch.__future__._utility import check_reindex
 from arch.typing import ArrayLike, ArrayLike1D, DateLike, Label, NDArray
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
@@ -1438,14 +1439,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         [102, 2], so that it is aligned with the observation to use when
         evaluating, but still in the same column.
         """
-        if reindex is None:
-            warnings.warn(
-                "The default for reindex is True. After September 2021 this will "
-                "change to False. Set reindex to True or False to silence this "
-                "message.",
-                FutureWarning,
-            )
-            reindex = True
+        reindex = check_reindex(reindex)
         if params is None:
             params = self._params
         else:
