@@ -15,6 +15,7 @@ from scipy.optimize import OptimizeResult
 import statsmodels.regression.linear_model as smlm
 import statsmodels.tools as smtools
 
+from arch.data import sp500
 from arch.univariate.base import ARCHModelForecast, ARCHModelResult, _align_forecast
 from arch.univariate.distribution import (
     GeneralizedError,
@@ -59,6 +60,7 @@ except ImportError:
 
 DISPLAY = "off"
 SP_LT_14 = LooseVersion(scipy.__version__) < LooseVersion("1.4")
+SP500 = 100 * sp500.load()["Adj Close"].pct_change().dropna()
 
 
 @pytest.fixture(scope="module", params=[True, False])
@@ -1214,3 +1216,14 @@ def test_missing_data_exception():
     y[::53] = np.inf
     with pytest.raises(ValueError, match="NaN or inf values"):
         arch_model(y)
+
+
+@pytest.mark.parametrize("first_obs", [None, 250])
+@pytest.mark.parametrize("last_obs", [None, 2750])
+@pytest.mark.parametrize("vol", [RiskMetrics2006(), EWMAVariance()])
+def test_parameterless_fit(first_obs, last_obs, vol):
+    base = ConstantMean(SP500, volatility=vol)
+    base_res = base.fit(first_obs=first_obs, last_obs=last_obs, disp="off")
+    mod = ZeroMean(SP500, volatility=vol)
+    res = mod.fit(first_obs=first_obs, last_obs=last_obs, disp="off")
+    assert res.conditional_volatility.shape == base_res.conditional_volatility.shape

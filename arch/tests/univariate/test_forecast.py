@@ -1,4 +1,5 @@
 import datetime as dt
+from itertools import product
 
 import numpy as np
 from numpy.random import RandomState
@@ -7,9 +8,58 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 import pytest
 
+from arch.data import sp500
 from arch.tests.univariate.test_variance_forecasting import preserved_state
-from arch.univariate import HARX, arch_model
+from arch.univariate import (
+    APARCH,
+    ARX,
+    EGARCH,
+    FIGARCH,
+    GARCH,
+    HARCH,
+    HARX,
+    ConstantMean,
+    ConstantVariance,
+    EWMAVariance,
+    MIDASHyperbolic,
+    RiskMetrics2006,
+    ZeroMean,
+    arch_model,
+)
 from arch.univariate.mean import _ar_forecast, _ar_to_impulse
+
+SP500 = 100 * sp500.load()["Adj Close"].pct_change().dropna()
+
+MEAN_MODELS = [
+    HARX(SP500, lags=[1, 5]),
+    ARX(SP500, lags=2),
+    ConstantMean(SP500),
+    ZeroMean(SP500),
+]
+
+VOLATILITIES = [
+    ConstantVariance(),
+    GARCH(),
+    FIGARCH(),
+    EWMAVariance(lam=0.94),
+    MIDASHyperbolic(),
+    HARCH(lags=[1, 5, 22]),
+    RiskMetrics2006(),
+    APARCH(),
+    EGARCH(),
+]
+
+MODEL_SPECS = list(product(MEAN_MODELS, VOLATILITIES))
+IDS = [
+    f"{str(mean).split('(')[0]}-{str(vol).split('(')[0]}" for mean, vol in MODEL_SPECS
+]
+
+
+@pytest.fixture(params=MODEL_SPECS, ids=IDS)
+def model_spec(request):
+    mean, vol = request.param
+    mean.volatility = vol
+    return mean
 
 
 class TestForecasting(object):
@@ -554,3 +604,21 @@ class TestForecasting(object):
         assert fcasts2.mean.shape == (999, 2)
         assert fcasts2.mean.isnull().all()["h.2"]
         assert_frame_equal(fcasts.mean, fcasts2.mean[["h.1"]])
+
+
+@pytest.mark.parametrize("first_obs", [None, 250])
+@pytest.mark.parametrize("last_obs", [None, 2500, 2750])
+@pytest.mark.parametrize("reindex", [True, False])
+def test_reindex(model_spec, reindex, first_obs, last_obs):
+    reindex_dim = SP500.shape[0] - last_obs + 1 if last_obs is not None else 1
+    dim0 = SP500.shape[0] if reindex else reindex_dim
+    res = model_spec.fit(disp="off", first_obs=first_obs, last_obs=last_obs)
+    fcast = res.forecast(horizon=1, reindex=reindex)
+    assert fcast.mean.shape == (dim0, 1)
+    fcast = res.forecast(
+        horizon=2, method="simulation", simulations=25, reindex=reindex
+    )
+    assert fcast.mean.shape == (dim0, 2)
+    fcast = res.forecast(horizon=2, method="bootstrap", simulations=25, reindex=reindex)
+    assert fcast.mean.shape == (dim0, 2)
+    assert fcast.simulations.values.shape == (dim0, 25, 2)

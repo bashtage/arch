@@ -1515,7 +1515,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             parameters, resids, backcast, horizon
         )
         m = int(self.lags.max())
-        resids2[:start] = np.nan
+        resids2 = resids2[start:]
         arch_rev = arch[::-1]
         for i in range(horizon):
             resids2[:, m + i] = const + resids2[:, i : (m + i)].dot(arch_rev)
@@ -1826,7 +1826,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             parameters, resids, backcast, horizon
         )
         m = self.m
-        resids2[:start] = np.nan
+        resids2 = resids2[start:].copy()
         aw_rev = aw[::-1]
         gw_rev = gw[::-1]
 
@@ -2066,7 +2066,7 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self.compute_variance(parameters, _resids, sigma2, backcast, var_bounds)
         sigma2.shape = (t + 1, 1)
         forecasts = sigma2[1:]
-        forecasts[:start] = np.nan
+        forecasts = forecasts[start:]
         forecasts = np.tile(forecasts, (1, horizon))
         return VarianceForecast(forecasts)
 
@@ -2095,8 +2095,10 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         for i in range(start, t):
             std_shocks = rng((simulations, horizon))
             path_loc = i - start
-            paths[path_loc, :, 0] = one_step.forecasts[i]
-            shocks[path_loc, :, 0] = np.sqrt(one_step.forecasts[i]) * std_shocks[:, 0]
+            paths[path_loc, :, 0] = one_step.forecasts[path_loc]
+            shocks[path_loc, :, 0] = (
+                np.sqrt(one_step.forecasts[path_loc]) * std_shocks[:, 0]
+            )
             for h in range(1, horizon):
                 paths[path_loc, :, h] = (1 - lam) * shocks[
                     path_loc, :, h - 1
@@ -2328,7 +2330,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self.compute_variance(parameters, _resids, sigma2, backcast, var_bounds)
         sigma2.shape = (t + 1, 1)
         forecasts = sigma2[1:]
-        forecasts[:start] = np.nan
+        forecasts = forecasts[start:]
         forecasts = np.tile(forecasts, (1, horizon))
         return VarianceForecast(forecasts)
 
@@ -2653,8 +2655,8 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             e_mat[m - i - 1 :, i] = e[: (t - (m - 1) + i)]
             abs_e_mat[m - i - 1 :, i] = np.abs(e[: (t - (m - 1) + i)])
 
-        paths = np.full((t, simulations, horizon), np.nan)
-        shocks = np.full((t, simulations, horizon), np.nan)
+        paths = np.empty((t - start, simulations, horizon))
+        shocks = np.empty((t - start, simulations, horizon))
 
         sqrt2pi = np.sqrt(2 / np.pi)
         _lnsigma2 = np.empty((simulations, m + horizon))
@@ -2684,8 +2686,9 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 for k in range(q):
                     _lnsigma2[:, m + j] += parameters[loc] * _lnsigma2[:, m + j - 1 - k]
                     loc += 1
-            paths[i, :, :] = np.exp(_lnsigma2[:, m:])
-            shocks[i, :, :] = np.sqrt(paths[i, :, :]) * std_shocks
+            loc = i - start
+            paths[loc, :, :] = np.exp(_lnsigma2[:, m:])
+            shocks[loc, :, :] = np.sqrt(paths[loc, :, :]) * std_shocks
 
         return VarianceForecast(np.asarray(paths.mean(1)), paths, shocks)
 
@@ -3174,8 +3177,8 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             parameters, resids, backcast, var_bounds, horizon, start
         )
         t = resids.shape[0]
-        paths = np.full((t, simulations, horizon), np.nan)
-        shocks = np.full((t, simulations, horizon), np.nan)
+        paths = np.empty((t - start, simulations, horizon))
+        shocks = np.empty((t - start, simulations, horizon))
 
         power = self.power
 
@@ -3205,13 +3208,13 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 # 2. Transform variance
                 sigma2 = temp ** (2.0 / power)
                 # 3. Simulate new residual
-                shocks[i, :, h] = std_shocks[:, h] * np.sqrt(sigma2)
-                paths[i, :, h] = sigma2
-                forecasts[i, h] = sigma2.mean()
+                path_loc = i - start
+                shocks[path_loc, :, h] = std_shocks[:, h] * np.sqrt(sigma2)
+                paths[path_loc, :, h] = sigma2
+                forecasts[path_loc, h] = sigma2.mean()
                 # 4. Transform new residual
-                fpath[:, truncation + h] = np.abs(shocks[i, :, h]) ** power
+                fpath[:, truncation + h] = np.abs(shocks[path_loc, :, h]) ** power
 
-        forecasts[:start] = np.nan
         return VarianceForecast(forecasts, paths, shocks)
 
 
@@ -3559,8 +3562,8 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         )
         parameters = self._repack_parameters(parameters)
         t = resids.shape[0]
-        paths = np.full((t, simulations, horizon), np.nan)
-        shocks = np.full((t, simulations, horizon), np.nan)
+        paths = np.empty((t - start, simulations, horizon))
+        shocks = np.empty((t - start, simulations, horizon))
         delta = parameters[-1]
         m = np.max([self.p, self.q])
         sigma_delta = np.zeros((simulations, m + horizon))
@@ -3593,9 +3596,9 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 shock,
                 abs_shock,
             )
-            forecasts[i, :], paths[i], shocks[i] = f, p, s
+            loc = i - start
+            forecasts[loc, :], paths[loc], shocks[loc] = f, p, s
 
-        forecasts[:start] = np.nan
         return VarianceForecast(forecasts, paths, shocks)
 
     def _analytic_forecast(
