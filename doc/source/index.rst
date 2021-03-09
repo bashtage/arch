@@ -40,10 +40,10 @@ Citation
 ========
 This package should be cited using Zenodo. For example, for the 4.13 release,
 
-.. [*] Kevin Sheppard. (2020, June 24). bashtage/arch: Release 4.15 (Version 4.15).
+.. [*] Kevin Sheppard (2021, March 3). bashtage/arch: Release 4.18 (Version v4.18).
    Zenodo. https://doi.org/10.5281/zenodo.593254
 
-.. image:: https://zenodo.org/badge/doi/10.5281/zenodo.3551028.svg
+.. image:: https://zenodo.org/badge/doi/10.5281/zenodo.593254.svg
    :target: https://doi.org/10.5281/zenodo.593254
 
 Index

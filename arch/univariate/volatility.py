@@ -9,6 +9,7 @@ from abc import ABCMeta, abstractmethod
 import itertools
 import operator
 from typing import Any, List, Optional, Sequence, Tuple, Union, cast
+import warnings
 from warnings import warn
 
 import numpy as np
@@ -2008,7 +2009,11 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         var_bounds: NDArray,
     ) -> NDArray:
         lam = parameters[0] if self._estimate_lam else self.lam
-        return ewma_recursion(lam, resids, sigma2, resids.shape[0], float(backcast))
+        with warnings.catch_warnings(record=True) as w:
+            out = ewma_recursion(lam, resids, sigma2, resids.shape[0], float(backcast))
+        if len(w):
+            print(w)
+        return out
 
     def constraints(self) -> Tuple[NDArray, NDArray]:
         if self._estimate_lam:
@@ -2059,15 +2064,11 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         start: int,
         horizon: int,
     ) -> VarianceForecast:
-        t = resids.shape[0]
-        _resids = np.empty(t + 1)
-        _resids[:t] = resids
-        sigma2 = np.empty(t + 1)
-        self.compute_variance(parameters, _resids, sigma2, backcast, var_bounds)
-        sigma2.shape = (t + 1, 1)
-        forecasts = sigma2[1:]
-        forecasts = forecasts[start:]
-        forecasts = np.tile(forecasts, (1, horizon))
+        _, forecasts = self._one_step_forecast(
+            parameters, resids, backcast, var_bounds, horizon, start_index=start
+        )
+        for i in range(1, horizon):
+            forecasts[:, i] = forecasts[:, 0]
         return VarianceForecast(forecasts)
 
     def _simulation_forecast(
@@ -2322,16 +2323,11 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         start: int,
         horizon: int,
     ) -> VarianceForecast:
-        backcast = np.asarray(backcast)
-        t = resids.shape[0]
-        _resids = np.empty(t + 1)
-        _resids[:t] = resids
-        sigma2 = np.empty(t + 1)
-        self.compute_variance(parameters, _resids, sigma2, backcast, var_bounds)
-        sigma2.shape = (t + 1, 1)
-        forecasts = sigma2[1:]
-        forecasts = forecasts[start:]
-        forecasts = np.tile(forecasts, (1, horizon))
+        _, forecasts = self._one_step_forecast(
+            parameters, resids, backcast, var_bounds, horizon, start_index=start
+        )
+        for i in range(1, horizon):
+            forecasts[:, i] = forecasts[:, 0]
         return VarianceForecast(forecasts)
 
     def _simulation_forecast(

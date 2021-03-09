@@ -28,7 +28,7 @@ head, _ = os.path.split(__file__)
 NOTEBOOK_DIR = os.path.abspath(os.path.join(head, "..", "..", "examples"))
 
 nbs = sorted(glob.glob(os.path.join(NOTEBOOK_DIR, "*.ipynb")))
-ids = list(map(lambda s: os.path.split(s)[-1].split(".")[0], nbs))
+ids = [os.path.split(nb)[-1].split(".")[0] for nb in nbs]
 if not nbs:  # pragma: no cover
     pytest.mark.skip(reason="No notebooks found and so no tests run")
 

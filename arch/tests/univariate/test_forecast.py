@@ -1,5 +1,6 @@
 import datetime as dt
 from itertools import product
+import sys
 
 import numpy as np
 from numpy.random import RandomState
@@ -622,3 +623,34 @@ def test_reindex(model_spec, reindex, first_obs, last_obs):
     fcast = res.forecast(horizon=2, method="bootstrap", simulations=25, reindex=reindex)
     assert fcast.mean.shape == (dim0, 2)
     assert fcast.simulations.values.shape == (dim0, 25, 2)
+
+
+@pytest.mark.parametrize("reindex", [None, True, False])
+def test_reindex_warning(reindex):
+    res = arch_model(SP500).fit(disp="off")
+    warning = FutureWarning if reindex is None else None
+    match = "The default for reindex" if reindex is None else None
+    with pytest.warns(warning, match=match):
+        res.forecast(reindex=reindex)
+
+
+def test_reindex_future_import():
+    res = arch_model(SP500).fit(disp="off")
+    with pytest.warns(FutureWarning, match="The default for reindex"):
+        default = res.forecast()
+    with pytest.warns(None):
+        fcast = res.forecast(reindex=False)
+
+    from arch.__future__ import reindexing  # noqa: F401
+
+    future_name = "arch.__future__.reindexing"
+    assert future_name in sys.modules
+    with pytest.warns(None):
+        post = res.forecast()
+    assert post.mean.shape == fcast.mean.shape
+    assert post.mean.shape != default.mean.shape
+
+    del sys.modules[future_name]
+    assert future_name not in sys.modules
+    with pytest.warns(FutureWarning, match="The default for reindex"):
+        res.forecast()

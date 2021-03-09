@@ -95,7 +95,7 @@ if __name__ == "__main__":
     )
 
     critical_values = 100 - percentiles
-    critical_values_string = map("{0:0.1f}".format, critical_values)
+    critical_values_string = [f"{cv:0.1f}" for cv in critical_values]
 
     hdf_filename = "kpss_critical_values.h5"
     try:
