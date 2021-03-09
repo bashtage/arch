@@ -9,7 +9,6 @@ from abc import ABCMeta, abstractmethod
 import itertools
 import operator
 from typing import Any, List, Optional, Sequence, Tuple, Union, cast
-import warnings
 from warnings import warn
 
 import numpy as np
@@ -136,7 +135,6 @@ def ewma_recursion(
 
     # Throw away bounds
     var_bounds = np.ones((nobs, 2)) * np.array([-1.0, 1.7e308])
-
     garch_recursion(
         np.array([0.0, 1.0 - lam, lam]),
         resids ** 2.0,
@@ -2009,11 +2007,7 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         var_bounds: NDArray,
     ) -> NDArray:
         lam = parameters[0] if self._estimate_lam else self.lam
-        with warnings.catch_warnings(record=True) as w:
-            out = ewma_recursion(lam, resids, sigma2, resids.shape[0], float(backcast))
-        if len(w):
-            print(w)
-        return out
+        return ewma_recursion(lam, resids, sigma2, resids.shape[0], float(backcast))
 
     def constraints(self) -> Tuple[NDArray, NDArray]:
         if self._estimate_lam:
@@ -2353,8 +2347,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         temp_paths = np.empty((kmax, simulations, horizon))
         # We use the transpose here to get C-contiguous arrays
         component_one_step = np.empty((kmax, t + 1))
-        _resids = np.empty((t + 1))
-        _resids[:-1] = resids
+        _resids = np.ascontiguousarray(resids)
         for k in range(kmax):
             mu = mus[k]
             ewma_recursion(mu, _resids, component_one_step[k, :], t + 1, backcast[k])
@@ -3393,9 +3386,8 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             target *= scale ** (delta / 2)
 
             sv = (1.0 - ab) * target * np.ones(p + o + q + 1 + est_delta)
-            if p > 0:
-                sv[1 : 1 + p] = alpha / p
-                ab -= alpha
+            sv[1 : 1 + p] = alpha / p
+            ab -= alpha
             if o > 0:
                 sv[1 + p : 1 + p + o] = gamma
             if q > 0:

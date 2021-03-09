@@ -826,7 +826,6 @@ class ARCHModel(object, metaclass=ABCMeta):
         """
         Number of parameters in the model
         """
-        return 0
 
     @abstractmethod
     def simulate(
@@ -968,11 +967,11 @@ class ARCHModel(object, metaclass=ABCMeta):
             NumPy RandomState instance to use when method is 'bootstrap'
         reindex : bool, optional
             Whether to reindex the forecasts to have the same dimension as the series
-            being forecast. Prior to 4.17 this was the default. As of 4.18 this is
+            being forecast. Prior to 4.18 this was the default. As of 4.19 this is
             now optional. If not provided, a warning is raised about the future
             change in the default which will occur after September 2021.
 
-            .. versionadded:: 4.18
+            .. versionadded:: 4.19
 
         Returns
         -------
@@ -1289,7 +1288,7 @@ class ARCHModelFixedResult(_SummaryRepr):
             and 12, respectively.
         scale : float, optional
             Value to use when scaling returns to annualize.  If scale is
-            provides, annualize is ignored and the value in scale is used.
+            provided, annualize is ignored and the value in scale is used.
 
         Returns
         -------
@@ -1317,9 +1316,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         from matplotlib.axes import Axes
         from matplotlib.pyplot import figure
 
-        def _set_tight_x(
-            axis: Axes, index: Tuple[Union[float, DateLike], Union[float, DateLike]]
-        ) -> None:
+        def _set_tight_x(axis: Axes, index: pd.Index) -> None:
             try:
                 axis.set_xlim(index[0], index[-1])
             except ValueError:
@@ -1406,11 +1403,11 @@ class ARCHModelFixedResult(_SummaryRepr):
             NumPy RandomState instance to use when method is 'bootstrap'
         reindex : bool, optional
             Whether to reindex the forecasts to have the same dimension as the series
-            being forecast. Prior to 4.17 this was the default. As of 4.18 this is
+            being forecast. Prior to 4.18 this was the default. As of 4.19 this is
             now optional. If not provided, a warning is raised about the future
             change in the default which will occur after September 2021.
 
-            .. versionadded:: 4.18
+            .. versionadded:: 4.19
 
         Returns
         -------
