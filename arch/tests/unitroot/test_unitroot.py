@@ -178,11 +178,21 @@ class TestUnitRoot(object):
         dfgls.regression.summary()
         assert dfgls.trend == "c"
         with pytest.warns(FutureWarning, match="Mutating unit root"):
+            dfgls.trend = "c"
+        assert dfgls.trend == "c"
+        with pytest.warns(FutureWarning, match="Mutating unit root"):
             dfgls.trend = "ct"
         assert dfgls.trend == "ct"
         with pytest.warns(FutureWarning, match="Mutating unit root"):
             dfgls.trend = "c"
         assert dfgls.trend == "c"
+        dfgls_hm = DFGLS(self.inflation, trend="c", lags=0, low_memory=False)
+        assert_almost_equal(dfgls_hm.stat, -6.017304, DECIMAL_4)
+        dfgls_lm = DFGLS(self.inflation, trend="c", lags=0, low_memory=True)
+        assert_almost_equal(dfgls_lm.stat, -6.017304, DECIMAL_4)
+        ml = dfgls.max_lags
+        with pytest.warns(FutureWarning, match="Mutating unit root"):
+            dfgls.max_lags = ml
 
     def test_dfgls(self):
         dfgls = DFGLS(self.inflation, trend="ct", lags=0)
@@ -216,6 +226,18 @@ class TestUnitRoot(object):
         adf = ADF(self.inflation)
         with pytest.raises(ValueError):
             adf.lags = -1
+
+    def test_no_change_lags_trend(self):
+        adf = ADF(self.inflation)
+        lags = adf.lags
+        with pytest.warns(FutureWarning, match="Mutating unit root"):
+            adf.lags = lags
+        trend = adf.trend
+        with pytest.warns(FutureWarning, match="Mutating unit root"):
+            adf.trend = trend
+        ml = adf.max_lags
+        with pytest.warns(FutureWarning, match="Mutating unit root"):
+            adf.max_lags = ml
 
     def test_invalid_determinstic(self):
         adf = ADF(self.inflation)

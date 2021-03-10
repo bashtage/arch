@@ -660,6 +660,10 @@ def test_reindex_future_import():
 def test_invalid_horizon():
     res = arch_model(SP500).fit(disp="off")
     with pytest.raises(ValueError, match="horizon must be"):
+        res.forecast(horizon=-1, reindex=False)
+    with pytest.raises(ValueError, match="horizon must be"):
+        res.forecast(horizon=1.0, reindex=False)
+    with pytest.raises(ValueError, match="horizon must be"):
         res.forecast(horizon="5", reindex=False)
 
 
