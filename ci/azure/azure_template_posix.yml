@@ -19,6 +19,7 @@ jobs:
       python_38_coverage:
         python.version: '3.8'
         ARCH_CYTHON_COVERAGE: true
+        PYTEST_PATTERN: "(not slow)"
       python_38_statsmodels_main:
         python.version: '3.8'
         STATSMODELS_MAIN: true
