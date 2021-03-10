@@ -607,6 +607,7 @@ class TestForecasting(object):
         assert_frame_equal(fcasts.mean, fcasts2.mean[["h.1"]])
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("first_obs", [None, 250])
 @pytest.mark.parametrize("last_obs", [None, 2500, 2750])
 @pytest.mark.parametrize("reindex", [True, False])
