@@ -137,6 +137,16 @@ def test_bartlett_auto(data: ArrayLike):
         expected_cov += expected[i] * (gamma + gamma.T)
     assert_allclose(expected_oss, np.squeeze(nw.cov.one_sided_strict))
     assert_allclose(expected_cov, np.squeeze(nw.cov.long_run))
+    ce = CovarianceEstimate(
+        short_run=nw.cov.short_run,
+        one_sided_strict=nw.cov.one_sided_strict,
+        long_run=nw.cov.long_run,
+        one_sided=nw.cov.one_sided,
+    )
+    assert_allclose(ce.short_run, nw.cov.short_run)
+    assert_allclose(ce.one_sided_strict, nw.cov.one_sided_strict)
+    assert_allclose(ce.long_run, nw.cov.long_run)
+    assert_allclose(ce.one_sided, nw.cov.one_sided)
 
 
 def test_parzen_auto(data: ArrayLike):
