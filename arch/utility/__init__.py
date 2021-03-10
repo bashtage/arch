@@ -45,7 +45,6 @@ def test(
     pkg_loc = PKG
     if location:
         pkg_loc = os.path.abspath(os.path.join(PKG, location))
-    print(pkg_loc)
     if not os.path.exists(pkg_loc):
         raise RuntimeError(f"{pkg_loc} was not found. Unable to run tests")
     cmd = [pkg_loc] + cmd

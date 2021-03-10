@@ -121,8 +121,6 @@ def fit_pval_model(
     for j in range(m):
         abs_err[j] = np.abs(err_large[:j]).sum() + np.abs(err_small[j:]).sum()
     loc = np.argmin(abs_err)
-    print(loc)
-    print(np.amin(abs_err))
     tau_star = rhs_large[loc, 1]
     if use_log:
         assert tau_star < 0

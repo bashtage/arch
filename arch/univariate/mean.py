@@ -322,9 +322,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         descr = self._model_description()
         descr_str = self.name + "("
         for key, val in descr.items():
-            if val:
-                if key:
-                    descr_str += key + ": " + val + ", "
+            if val and key:
+                descr_str += key + ": " + val + ", "
         descr_str = descr_str[:-2]  # Strip final ', '
         descr_str += ")"
 

@@ -19,7 +19,6 @@ def test_block_length():
 
     df = pd.DataFrame([s, s]).T
     df.columns = ["x", "y"]
-    print(df)
     bl = optimal_block_length(df)
     for idx in ("x", "y"):
         sb, cb = bl.loc[idx]

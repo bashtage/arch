@@ -1,5 +1,7 @@
 from distutils.version import LooseVersion
 from io import StringIO
+from itertools import product
+from string import ascii_lowercase
 import sys
 import warnings
 
@@ -179,9 +181,10 @@ class TestMeanModel(object):
         params = np.array([1.0, 0.4, 0.3, 0.2, 1.0, 1.0])
         harx.simulate(params, self.T, x=self.rng.randn(self.T + 500, 1))
         iv = self.rng.randn(22, 1)
-        data = harx.simulate(
-            params, self.T, x=self.rng.randn(self.T + 500, 1), initial_value=iv
-        )
+        x = self.rng.randn(self.T + 500, 1)
+        alt_iv_data = harx.simulate(params, self.T, x=x, initial_value=1.0)
+        assert_equal(alt_iv_data.shape, (self.T, 3))
+        data = harx.simulate(params, self.T, x=x, initial_value=iv)
         assert_equal(data.shape, (self.T, 3))
         cols = ["data", "volatility", "errors"]
         for c in cols:
@@ -1227,3 +1230,43 @@ def test_parameterless_fit(first_obs, last_obs, vol):
     mod = ZeroMean(SP500, volatility=vol)
     res = mod.fit(first_obs=first_obs, last_obs=last_obs, disp="off")
     assert res.conditional_volatility.shape == base_res.conditional_volatility.shape
+
+
+def test_invalid_vol_dist():
+    with pytest.raises(TypeError, match="volatility must inherit"):
+        ConstantMean(SP500, volatility="GARCH")
+    with pytest.raises(TypeError, match="distribution must inherit"):
+        ConstantMean(SP500, distribution="Skew-t")
+
+
+def test_param_cov():
+    mod = ConstantMean(SP500)
+    res = mod.fit(disp="off")
+    mod._backcast = None
+    cov = mod.compute_param_cov(res.params)
+    k = res.params.shape[0]
+    assert cov.shape == (k, k)
+
+
+@pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
+def test_plot_bad_index():
+    import matplotlib.pyplot as plt
+
+    idx = sorted([f"{a}{b}{c}" for a, b, c, in product(*([ascii_lowercase] * 3))])
+    sp500_copy = SP500.copy()
+    sp500_copy.index = idx[: sp500_copy.shape[0]]
+    res = ConstantMean(sp500_copy).fit(disp=False)
+    fig = res.plot()
+    assert isinstance(fig, plt.Figure)
+
+
+def test_false_reindex():
+    res = ConstantMean(SP500, volatility=GARCH()).fit(disp="off")
+    fcast = res.forecast(start=0, reindex=True)
+    assert fcast.mean.shape[0] == SP500.shape[0]
+    assert_series_equal(pd.Series(fcast.mean.index), pd.Series(SP500.index))
+
+
+def test_invalid_arch_model():
+    with pytest.raises(TypeError, match="p must be"):
+        arch_model(SP500, p="3")

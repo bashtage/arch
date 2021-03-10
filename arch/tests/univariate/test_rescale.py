@@ -10,7 +10,7 @@ from arch.univariate import GARCH, Normal, ZeroMean
 def small_data():
     rs = np.random.RandomState([2389280, 238901, 382908031])
     mod = ZeroMean(None, volatility=GARCH(), distribution=Normal(random_state=rs))
-    sim = mod.simulate([1e-3, 0.05, 0.90], nobs=1000)
+    sim = mod.simulate([1e-3, 0.05, 0.90], initial_value_vol=1e-3 / 0.05, nobs=1000)
     return sim.data
 
 

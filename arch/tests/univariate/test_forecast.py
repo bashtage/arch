@@ -654,3 +654,16 @@ def test_reindex_future_import():
     assert future_name not in sys.modules
     with pytest.warns(FutureWarning, match="The default for reindex"):
         res.forecast()
+
+
+def test_invalid_horizon():
+    res = arch_model(SP500).fit(disp="off")
+    with pytest.raises(ValueError, match="horizon must be"):
+        res.forecast(horizon="5", reindex=False)
+
+
+def test_arx_no_lags():
+    mod = ARX(SP500, volatility=GARCH())
+    res = mod.fit(disp="off")
+    assert res.params.shape[0] == 4
+    assert "lags" not in mod._model_description(include_lags=False)

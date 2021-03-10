@@ -62,7 +62,8 @@ def setup():
     )
 
 
-def test_garch(setup):
+@pytest.mark.parametrize("initial_value", [None, 1.0])
+def test_garch(setup, initial_value):
     garch = GARCH()
 
     sv = garch.starting_values(setup.resids)
@@ -101,7 +102,9 @@ def test_garch(setup):
     state = setup.rng.get_state()
     rng = Normal()
     rng.random_state.set_state(state)
-    sim_data = garch.simulate(parameters, setup.t, rng.simulate([]))
+    sim_data = garch.simulate(
+        parameters, setup.t, rng.simulate([]), initial_value=initial_value
+    )
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
     initial_value = 1.0
@@ -198,7 +201,8 @@ def test_garch_power(setup):
     assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
 
 
-def test_arch(setup):
+@pytest.mark.parametrize("initial_value", [None, 1.0])
+def test_arch(setup, initial_value):
     arch = ARCH()
 
     sv = arch.starting_values(setup.resids)
@@ -229,7 +233,9 @@ def test_arch(setup):
     state = setup.rng.get_state()
     rng = Normal()
     rng.random_state.set_state(state)
-    sim_data = arch.simulate(parameters, setup.t, rng.simulate([]))
+    sim_data = arch.simulate(
+        parameters, setup.t, rng.simulate([]), initial_value=initial_value
+    )
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
     initial_value = 1.0
@@ -281,7 +287,8 @@ def test_arch_harch(setup):
     assert str(hex(id(arch))) in txt
 
 
-def test_harch(setup):
+@pytest.mark.parametrize("initial_value", [None, 1.0])
+def test_harch(setup, initial_value):
     harch = HARCH(lags=[1, 5, 22])
 
     sv = harch.starting_values(setup.resids)
@@ -321,7 +328,9 @@ def test_harch(setup):
     state = setup.rng.get_state()
     rng = Normal()
     rng.random_state.set_state(state)
-    sim_data = harch.simulate(parameters, setup.t, rng.simulate([]))
+    sim_data = harch.simulate(
+        parameters, setup.t, rng.simulate([]), initial_value=initial_value
+    )
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
     sigma2 = np.zeros(setup.t + 500)
@@ -781,7 +790,8 @@ def test_ewma(setup):
     assert str(hex(id(ewma))) in txt
 
 
-def test_ewma_estimated(setup):
+@pytest.mark.parametrize("initial_value", [None, 1.0])
+def test_ewma_estimated(setup, initial_value):
     ewma = EWMAVariance(lam=None)
 
     sv = ewma.starting_values(setup.resids)
@@ -840,7 +850,9 @@ def test_ewma_estimated(setup):
     rng = Normal()
     rng.random_state.set_state(state)
     lam = parameters[-1]
-    sim_data = ewma.simulate([lam], setup.t, rng.simulate([]))
+    sim_data = ewma.simulate(
+        [lam], setup.t, rng.simulate([]), initial_value=initial_value
+    )
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
     initial_value = 1.0
@@ -859,7 +871,8 @@ def test_ewma_estimated(setup):
     assert_almost_equal(sigma2 / sim_data[1], np.ones_like(sigma2))
 
 
-def test_riskmetrics(setup):
+@pytest.mark.parametrize("initial_value", [None, 1.0])
+def test_riskmetrics(setup, initial_value):
     rm06 = RiskMetrics2006()
 
     sv = rm06.starting_values(setup.resids)
@@ -890,7 +903,9 @@ def test_riskmetrics(setup):
     assert isinstance(state, tuple)
     rng = Normal()
     rng.random_state.set_state(state)
-    sim_data = rm06.simulate(parameters, setup.t, rng.simulate([]))
+    sim_data = rm06.simulate(
+        parameters, setup.t, rng.simulate([]), initial_value=initial_value
+    )
     assert isinstance(sim_data, tuple)
     assert len(sim_data) == 2
     assert isinstance(sim_data[0], np.ndarray)
@@ -900,7 +915,8 @@ def test_riskmetrics(setup):
     assert_equal(rm06.name, "RiskMetrics2006")
 
 
-def test_egarch(setup):
+@pytest.mark.parametrize("initial_value", [None, 2.0])
+def test_egarch(setup, initial_value):
     egarch = EGARCH(p=1, o=1, q=1)
 
     sv = egarch.starting_values(setup.resids)
@@ -954,7 +970,9 @@ def test_egarch(setup):
     state = setup.rng.get_state()
     rng = Normal()
     rng.random_state.set_state(state)
-    sim_data = egarch.simulate(parameters, setup.t, rng.simulate([]))
+    sim_data = egarch.simulate(
+        parameters, setup.t, rng.simulate([]), initial_value=initial_value
+    )
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
     initial_value = 0.1 / (1 - 0.95)
@@ -1126,7 +1144,8 @@ def test_fixed_variance(setup):
         fv.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
 
 
-def test_midas_symmetric(setup):
+@pytest.mark.parametrize("initial_value", [None, 1.0])
+def test_midas_symmetric(setup, initial_value):
     midas = MIDASHyperbolic()
 
     sv = midas.starting_values(setup.resids)
@@ -1176,7 +1195,9 @@ def test_midas_symmetric(setup):
     state = setup.rng.get_state()
     rng = Normal()
     rng.random_state.set_state(state)
-    sim_data = midas.simulate(parameters, setup.t, rng.simulate([]))
+    sim_data = midas.simulate(
+        parameters, setup.t, rng.simulate([]), initial_value=initial_value
+    )
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
     initial_value = 1.0
@@ -1308,7 +1329,8 @@ def test_midas_asymmetric(setup):
         midas.simulate(parameters, setup.t, rng.simulate([]))
 
 
-def test_figarch(setup):
+@pytest.mark.parametrize("initial_value", [None, 1.0])
+def test_figarch(setup, initial_value):
     trunc_lag = 750
     figarch = FIGARCH(truncation=trunc_lag)
 
@@ -1514,7 +1536,8 @@ def test_figarch_str(setup, p, q, power):
         assert "power: {0:0.1f}".format(power) in s
 
 
-def test_aparch(setup):
+@pytest.mark.parametrize("initial_value", [None, 1.0])
+def test_aparch(setup, initial_value):
     aparch = APARCH()
     sv = aparch.starting_values(setup.resids)
     assert_equal(sv.shape[0], aparch.num_params)
@@ -1569,7 +1592,9 @@ def test_aparch(setup):
     state = setup.rng.get_state()
     rng = Normal()
     rng.random_state.set_state(state)
-    sim_data = aparch.simulate(parameters, setup.t, rng.simulate([]))
+    sim_data = aparch.simulate(
+        parameters, setup.t, rng.simulate([]), initial_value=initial_value
+    )
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
     initial_value = 1.0
@@ -1704,6 +1729,8 @@ def test_aparch_delta(setup):
 def test_aparch_against_garch(setup):
     garch = GARCH()
     aparch = APARCH(o=0, delta=2.0)
+    assert "o:" not in str(aparch)
+    assert "Common Asym :" not in str(aparch)
 
     sv = garch.starting_values(setup.resids)
     assert_equal(sv.shape[0], aparch.num_params)
