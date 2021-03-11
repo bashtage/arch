@@ -845,6 +845,10 @@ def test_iid_unequal_equiv():
     v1 = bs1.var(np.mean)
     v2 = bs2.var(np.mean)
     assert_allclose(v1, v2)
+    assert isinstance(bs2.index, tuple)
+    assert isinstance(bs2.index[0], list)
+    assert isinstance(bs2.index[0][0], np.ndarray)
+    assert bs2.index[0][0].shape == x.shape
 
 
 def test_unequal_bs():
@@ -965,3 +969,24 @@ def test_set_randomstate_exception(bs_setup):
     rs = np.array([1, 2, 3, 4])
     with pytest.raises(TypeError, match="Value being set must be a RandomState"):
         bs.random_state = rs
+
+
+def test_iid_args_kwargs(bs_setup):
+    bs1 = IIDBootstrap(bs_setup.y)
+    bs1.seed(0)
+    bs2 = IIDBootstrap(y=bs_setup.y)
+    bs2.seed(0)
+    for a, b in zip(bs1.bootstrap(1), bs2.bootstrap(1)):
+        assert np.all(a[0][0] == b[1]["y"])
+
+
+def test_iid_semiparametric(bs_setup):
+    bs = IIDBootstrap(bs_setup.y)
+
+    def func(y, axis=0, params=None):
+        if params is not None:
+            return (y - params).mean(axis=axis)
+        return y.mean(axis=axis)
+
+    ci = bs.conf_int(func, reps=10, sampling="semiparametric")
+    assert ci.shape == (2, 1)

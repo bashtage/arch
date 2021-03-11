@@ -656,7 +656,14 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         if tail not in ("two", "lower", "upper"):
             raise ValueError("tail must be one of two-sided, lower or upper")
         studentize_reps = studentize_reps if method == studentized else 0
-
+        if sampling in ("semi", "semi-parametric", "semiparametric"):
+            sampling = "semiparametric"
+        else:
+            if sampling not in ("nonparametric", "parametric"):
+                raise ValueError(
+                    'sampling must be one of "nonparametric", "parametric", "semi", '
+                    '"semi-parametric", or "semiparametric"'
+                )
         _reuse = False
         if reuse:
             # check conditions for reuse
