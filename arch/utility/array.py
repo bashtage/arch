@@ -190,9 +190,13 @@ def date_to_index(
     """
     if not is_datetime64_any_dtype(date_index):
         raise ValueError("date_index must be a datetime64 array")
-    if isinstance(date_index, DatetimeIndex):
-        if not np.all((np.diff(date_index.values).astype(dtype=np.int64)) > 0):
-            raise ValueError("date_index is not monotonic and unique")
+    values = (
+        date_index.values
+        if isinstance(date_index, DatetimeIndex)
+        else np.asarray(date_index)
+    )
+    if not np.all((np.diff(values).astype(dtype=np.int64)) > 0):
+        raise ValueError("date_index is not monotonic and unique")
     if not isinstance(date, (dt.datetime, np.datetime64, str)):
         raise ValueError("date must be a datetime, datetime64 or string")
     elif isinstance(date, Timestamp):

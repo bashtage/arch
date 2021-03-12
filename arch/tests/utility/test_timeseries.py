@@ -117,3 +117,10 @@ def test_errors():
 def test_trend_n_nobs():
     assert add_trend(nobs=100, trend="n").shape == (100, 0)
     assert add_trend(np.empty((100, 2)), trend="n").shape == (100, 2)
+
+
+def test_addtrend_bad_nobs():
+    with pytest.raises(ValueError, match="nobs must"):
+        add_trend(None, trend="ct")
+    with pytest.raises(ValueError, match="nobs must"):
+        add_trend(None, trend="ct", nobs=-3)

@@ -50,7 +50,7 @@ def test(
     cmd = [pkg_loc] + cmd
     print("running: pytest {}".format(" ".join(cmd)))
     status = pytest.main(cmd)
-    if exit:
+    if exit:  # pragma: no cover
         sys.exit(status)
     return status
 

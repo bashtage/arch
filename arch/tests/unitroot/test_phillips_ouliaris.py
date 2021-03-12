@@ -150,6 +150,7 @@ def test_pval_exceptions():
 
 def test_pval_extremes():
     assert phillips_ouliaris_pval(3.0, "Zt", "n", 2) == 1.0
+    np.testing.assert_allclose(phillips_ouliaris_pval(2.1, "Zt", "n", 2), 0.996850543)
     assert phillips_ouliaris_pval(-3000.0, "Zt", "n", 2) == 0.0
     # Above and below tau-star
     above = phillips_ouliaris_pval(1.0, "Zt", "n", 2)
