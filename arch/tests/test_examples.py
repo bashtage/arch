@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover
     pytestmark = pytest.mark.skip(reason="Required packages not available")
 
 SLOW_NOTEBOOKS = ["multiple-comparison_examples.ipynb"]
-if bool(os.environ.get("ARCH_TEST_SLOW_NOTEBOOKS", False)):
+if bool(os.environ.get("ARCH_TEST_SLOW_NOTEBOOKS", False)):  # pragma: no cover
     SLOW_NOTEBOOKS = []
 kernel_name = "python%s" % sys.version_info.major
 

@@ -21,6 +21,7 @@ from arch.unitroot import ADF, DFGLS, KPSS, PhillipsPerron, VarianceRatio, Zivot
 from arch.unitroot.critical_values.dickey_fuller import tau_2010
 from arch.unitroot.unitroot import (
     _autolag_ols,
+    _autolag_ols_low_memory,
     _is_reduced_rank,
     auto_bandwidth,
     mackinnoncrit,
@@ -746,3 +747,20 @@ def test_wrong_exceptions_variance_ratio(nobs, trend, overlap, debiased):
         assert np.isfinite(vr.stat)
     except InfeasibleTestException:
         pass
+
+
+def test_low_memory_singular():
+    x = np.zeros(1000)
+    x[:3] = np.random.standard_normal()
+    x[-3:] = np.random.standard_normal()
+    match = "The maximum lag you are"
+    with pytest.raises(InfeasibleTestException, match=match):
+        ADF(x, max_lags=10, low_memory=True).stat
+
+
+@pytest.mark.parametrize("method", ["aic", "bic", "t-stat"])
+@pytest.mark.parametrize("trend", ["c", "t", "ct", "ctt"])
+def test_autolag_ols_low_memory_smoke(trend, method):
+    data = dataset_loader(macrodata)
+    realgdp = np.log(data["realgdp"])
+    _autolag_ols_low_memory(realgdp, maxlag=4, trend=trend, method=method)
