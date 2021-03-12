@@ -43,6 +43,11 @@ jobs:
       python_3.9:
         python.version: '3.9'
         test.install: true
+      python_3.8_no_binary:
+        python.version: '3.8'
+        SETUP_ARGS: '--no-binary'
+        use.conda: 'true'
+        USE_NUMBA: true
       python_38_no_numba:
         python.version: '3.8'
         USE_NUMBA: false
@@ -106,7 +111,13 @@ jobs:
     condition: eq(variables['test.install'], 'true')
 
   - script: |
-      python -m pip install -e . -v --no-build-isolation
+      if [ -z ${SETUP_ARGS} ]; then
+        echo python -m pip install -e . -v --no-build-isolation
+        python -m pip install -e . -v --no-build-isolation
+      else:
+        echo python setup.py develop ${SETUP_ARGS}
+        python setup.py develop ${SETUP_ARGS}
+      fi
     displayName: 'Install arch (editable)'
     condition: ne(variables['test.install'], 'true')
 
