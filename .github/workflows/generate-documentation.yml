@@ -40,6 +40,7 @@ jobs:
       run: |
         pushd doc
         make html
+        make html
         popd
     - name: Deploy documentation
       env:

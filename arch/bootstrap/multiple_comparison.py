@@ -379,11 +379,6 @@ class StepM(MultipleComparison):
         studentization.  Default is False.  Note that this can be slow since
         the procedure requires k extra bootstraps.
 
-    References
-    ----------
-    Romano, J. P., & Wolf, M. (2005). "Stepwise multiple testing as formalized
-    data snooping." Econometrica, 73(4), 1237-1282.
-
     Notes
     -----
     The size controls the Family Wise Error Rate (FWER) since this is a
@@ -525,14 +520,6 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         Flag indicating to use a nested bootstrap to compute variances for
         studentization.  Default is False.  Note that this can be slow since
         the procedure requires k extra bootstraps.
-
-    References
-    ----------
-    White, H. (2000). "A reality check for data snooping." Econometrica 68,
-    no. 5, 1097-1126.
-
-    Hansen, P. R. (2005). "A test for superior predictive ability."
-    Journal of Business & Economic Statistics, 23(4)
 
     Notes
     -----
