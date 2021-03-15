@@ -16,6 +16,7 @@ residual Bootstrap).
     Forecasting <forecasting>
     Forecasting Examples <univariate_volatility_forecasting.ipynb>
     Forecasting Scenarios <univariate_volatility_scenarios.ipynb>
+    Forecasting with Exogenous Variables <univariate_forecasting_with_exogenous_variables.ipynb>
     Mean Models <mean>
     Volatility Processes <volatility>
     Using the Fixed Variance Process <univariate_using_fixed_variance.ipynb>

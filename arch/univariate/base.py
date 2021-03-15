@@ -926,6 +926,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         random_state: Optional[np.random.RandomState] = None,
         *,
         reindex: Optional[bool] = None,
+        x: Union[None, Dict[Label, ArrayLike], ArrayLike] = None,
     ) -> ARCHModelForecast:
         """
         Construct forecasts from estimated model
@@ -973,11 +974,38 @@ class ARCHModel(object, metaclass=ABCMeta):
 
             .. versionadded:: 4.19
 
+        x : {dict[label, array_like], array_like}
+            Values to use for exogenous regressors if any are included in the
+            model. Three formats are accepted:
+
+            * 2-d array-like: This format can be used when there is a single
+              exogenous variable. The input must have shape (nforecast, horizon)
+              or (nobs, horzion) where nforecast is the number of forecasting
+              periods and nobs is the original shape of y. For example, if a
+              single series of forecasts are made from the end of the sample
+              with a horizon of 10, then the input can be (1, 10). Alternatively,
+              if the original data had 1000 observations, then the input can be
+              (1000, 10), and only the final row is used to produce forecasts.
+            * A dictionary of 2-d array-like: This format is identical to the
+              previous except that the dictionary keys must match the names of
+              the exog variables.  Requires that the exog variables were pass
+              as a pandas DataFrame.
+            * A 3-d NumPy array (or equivalent). In this format, each panel
+              (0th axis) is a 2-d array that must have shape (nforecast, horizon)
+              or (nobs,horizon). The array x[j] corresponds to the j-th column of
+              the exogenous variables.
+
+            Due to the complexity required to accommodate all scenarios, please
+            see the example notebook that demonstrates the valid formats for
+            x.
+
+            .. versionadded:: 4.19
+
         Returns
         -------
-        forecasts : ARCHModelForecast
-            t by h data frame containing the forecasts.  The alignment of the
-            forecasts is controlled by `align`.
+        arch.univariate.base.ARCHModelForecast
+            Container for forecasts. Key properties are ``mean``,
+            ``variance`` and ``residual_variance``.
 
         Examples
         --------
@@ -1362,6 +1390,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         random_state: Optional[np.random.RandomState] = None,
         *,
         reindex: Optional[bool] = None,
+        x: Union[None, Dict[Label, ArrayLike], ArrayLike] = None,
     ) -> ARCHModelForecast:
         """
         Construct forecasts from estimated model
@@ -1409,11 +1438,38 @@ class ARCHModelFixedResult(_SummaryRepr):
 
             .. versionadded:: 4.19
 
+        x : {dict[label, array_like], array_like}
+            Values to use for exogenous regressors if any are included in the
+            model. Three formats are accepted:
+
+            * 2-d array-like: This format can be used when there is a single
+              exogenous variable. The input must have shape (nforecast, horizon)
+              or (nobs, horzion) where nforecast is the number of forecasting
+              periods and nobs is the original shape of y. For example, if a
+              single series of forecasts are made from the end of the sample
+              with a horizon of 10, then the input can be (1, 10). Alternatively,
+              if the original data had 1000 observations, then the input can be
+              (1000, 10), and only the final row is used to produce forecasts.
+            * A dictionary of 2-d array-like: This format is identical to the
+              previous except that the dictionary keys must match the names of
+              the exog variables.  Requires that the exog variables were pass
+              as a pandas DataFrame.
+            * A 3-d NumPy array (or equivalent). In this format, each panel
+              (0th axis) is a 2-d array that must have shape (nforecast, horizon)
+              or (nobs,horizon). The array x[j] corresponds to the j-th column of
+              the exogenous variables.
+
+            Due to the complexity required to accommodate all scenarios, please
+            see the example notebook that demonstrates the valid formats for
+            x.
+
+            .. versionadded:: 4.19
+
         Returns
         -------
-        forecasts : ARCHModelForecast
-            t by h data frame containing the forecasts.  The alignment of the
-            forecasts is controlled by `align`.
+        arch.univariate.base.ARCHModelForecast
+            Container for forecasts. Key properties are ``mean``,
+            ``variance`` and ``residual_variance``.
 
         Notes
         -----
@@ -1457,6 +1513,7 @@ class ARCHModelFixedResult(_SummaryRepr):
             rng,
             random_state,
             reindex=reindex,
+            x=x,
         )
 
     @deprecate_kwarg("type", "plot_type")
@@ -2046,15 +2103,6 @@ class ARCHModelForecast(object):
     simulated_residual_variances : ndarray, optional
     simulated_residuals : ndarray, optional
     align : {'origin', 'target'}
-
-    Attributes
-    ----------
-    mean : DataFrame
-        Forecast values for the conditional mean of the process
-    variance : DataFrame
-        Forecast values for the conditional variance of the process
-    residual_variance : DataFrame
-        Forecast values for the conditional variance of the residuals
     """
 
     def __init__(
@@ -2102,19 +2150,27 @@ class ARCHModelForecast(object):
 
     @property
     def mean(self) -> DataFrame:
+        """Forecast values for the conditional mean of the process"""
         return self._mean
 
     @property
     def variance(self) -> DataFrame:
+        """Forecast values for the conditional variance of the process"""
         return self._variance
 
     @property
     def residual_variance(self) -> DataFrame:
+        """Forecast values for the conditional variance of the residuals"""
         return self._residual_variance
 
     @property
     def simulations(self) -> ARCHModelForecastSimulation:
         """
         Detailed simulation results if using a simulation-based method
+
+        Returns
+        -------
+        ARCHModelForecastSimulation
+            Container for simulation results
         """
         return self._sim

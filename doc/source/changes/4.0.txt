@@ -16,6 +16,10 @@ Release 4.19
 
    from arch.__future__ import reindexing
 
+- Fixed handling of exogenous regressors in :func:`~arch.univariate.HARX.forecast`.
+  It is now possible to pass values for :math:`E_t[X_{t+h}]` using the ``x`` argument.
+
+
 Release 4.18
 ============
 - Improved :func:`~arch.univariate.HARX.fit` performance of ARCH models.

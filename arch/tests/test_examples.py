@@ -16,6 +16,20 @@ try:
 
     kernels = jupyter_client.kernelspec.find_kernel_specs()
     SKIP = False
+
+    if sys.platform.startswith("win") and sys.version_info >= (3, 8):  # pragma: no cover
+        import asyncio
+
+        try:
+            from asyncio import WindowsSelectorEventLoopPolicy
+        except ImportError:
+            pass  # Can't assign a policy which doesn't exist.
+        else:
+            if not isinstance(
+                asyncio.get_event_loop_policy(), WindowsSelectorEventLoopPolicy
+            ):
+                asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
+
 except ImportError:  # pragma: no cover
     pytestmark = pytest.mark.skip(reason="Required packages not available")
 

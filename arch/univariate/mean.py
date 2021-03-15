@@ -12,6 +12,7 @@ from typing import (
     Callable,
     Dict,
     List,
+    Mapping,
     Optional,
     Sequence,
     Tuple,
@@ -25,7 +26,7 @@ from scipy.optimize import OptimizeResult
 from statsmodels.tsa.tsatools import lagmat
 
 from arch.__future__._utility import check_reindex
-from arch.typing import ArrayLike, ArrayLike1D, DateLike, NDArray
+from arch.typing import ArrayLike, ArrayLike1D, DateLike, Label, NDArray
 from arch.univariate.base import (
     ARCHModel,
     ARCHModelForecast,
@@ -85,8 +86,8 @@ def _ar_forecast(
     start_index: int,
     constant: float,
     arp: NDArray,
-    exogp: Optional[NDArray] = None,
-    x: Optional[NDArray] = None,
+    x: NDArray,
+    exogp: NDArray,
 ) -> NDArray:
     """
     Generate mean forecasts from an AR-X model
@@ -115,15 +116,9 @@ def _ar_forecast(
     arp_rev = arp[::-1]
     for i in range(p, horizon + p):
         fcasts[:, i] = constant + fcasts[:, i - p : i].dot(arp_rev)
+        if x.shape[0] > 0:
+            fcasts[:, i] += x[:, :, i - p].T @ exogp
     fcasts = fcasts[:, p:]
-    if x is not None:
-        assert exogp is not None
-        exog_comp = np.dot(x, exogp[:, None])
-        if fcasts.shape[0] > 1:
-            n = fcasts.shape[0]
-            fcasts[:-1] += exog_comp[-(n - 1) :]
-        fcasts[-1] = np.nan
-        fcasts[:, 1:] = np.nan
 
     return fcasts
 
@@ -779,6 +774,111 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             copy.deepcopy(self),
         )
 
+    def _reformat_forecast_x(
+        self,
+        x: Union[None, Dict[Label, ArrayLike], ArrayLike],
+        horizon: int,
+        start: int,
+    ) -> NDArray:
+        """
+        Always return a correctly formatted 3-d array
+
+        Parameters
+        ----------
+        x: Union[None, Dict[Label, ArrayLike], ArrayLike] = None
+            The input data to reformat
+
+        Returns
+        -------
+        ndarray
+            The 3-d array suitable for computing forecasts. Always has shape
+            (nx, nobs - start, horizon).
+        """
+        if x is None:
+            if self._x is None:
+                return np.empty(0)
+            else:
+                raise TypeError(
+                    "x is None but the model contains exogenous variables. You must "
+                    "provide expected values to use for the exogenous variables to "
+                    "construct forecasts."
+                )
+        elif self._x is None:
+            raise TypeError(
+                "x is not None but the model does not contain any exogenous "
+                "variables."
+            )
+        assert self._x is not None
+        nx = self._x.shape[1]
+        if isinstance(x, Mapping):
+            if len(x) != nx:
+                raise ValueError(
+                    "x must have the same number of entries as the number of x "
+                    f"variables included in the model ({nx})"
+                )
+            collected: List[NDArray] = []
+            for key in self._x_names:
+                if key not in x:
+                    keys = ", ".join([str(k) for k in x.keys()])
+                    raise KeyError(
+                        "The keys of x must exactly match the variable names of "
+                        f"the included exogenous regressors. {key} not found in: "
+                        f"{keys}"
+                    )
+                temp = np.asarray(x[key])
+                if temp.ndim == 1:
+                    temp = temp.reshape((1, -1))
+                collected.append(temp)
+            base_shape = collected[0].shape
+            shapes = [v.shape == base_shape for v in collected]
+            if not all(shapes):
+                raise ValueError(
+                    "The shapes of the arrays contained in the dictionary differ. "
+                    "These must all be the same and satisfy the requirement for "
+                    "expected x values."
+                )
+            if len(base_shape) != 2:
+                raise ValueError(
+                    "The arrays contained in the dictionary must be 1 or 2-dimensional."
+                )
+            arr: NDArray = np.array(collected)
+        else:
+            arr = np.asarray(x)
+
+            if arr.ndim == 1:
+                arr = arr.reshape((1, -1))
+            if arr.ndim == 2:
+                if nx != 1:
+                    raise ValueError(
+                        "1- and 2-dimensional x values can only be used when the "
+                        f"model has a single exogenous regressor.  The model has {nx} "
+                        "exogenous regressors, and so you must use either a "
+                        "dictionary or a 3-dimensional NumPy array."
+                    )
+                arr = arr.reshape((1,) + arr.shape)
+            if arr.shape[0] != self._x.shape[1]:
+                raise ValueError(
+                    "The leading dimension of x must match the number of x variables "
+                    f"included in the model ({nx})"
+                )
+        assert isinstance(arr, np.ndarray)
+        if arr.shape[2] != horizon:
+            raise ValueError(
+                f"The number of values passed {arr.shape[2]} does not match the "
+                f"horizon of the forecasts ({horizon})."
+            )
+        possible_nobs = (self._y.shape[0], self._y.shape[0] - start)
+        if arr.shape[1] not in possible_nobs:
+            raise ValueError(
+                "The shape of x does not satisfy the requirements for expected "
+                "exogenous regressors.  The number of values must either match "
+                f"the original sample size ({self._y.shape[0]}) or the number of "
+                f"forecasts ({self._y.shape[0] - start})."
+            )
+        if arr.shape[1] > (self._y.shape[0] - start):
+            arr = arr[:, start:]
+        return arr
+
     def forecast(
         self,
         params: ArrayLike1D,
@@ -791,6 +891,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         random_state: Optional[np.random.RandomState] = None,
         *,
         reindex: Optional[bool] = None,
+        x: Union[None, Dict[Label, ArrayLike], ArrayLike] = None,
     ) -> ARCHModelForecast:
         reindex = check_reindex(reindex)
         if not isinstance(horizon, (int, np.integer)) or horizon < 1:
@@ -844,8 +945,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         exog_p = np.empty([]) if self._x is None else mp[-nexog:]
         constant = arp[0] if self.constant else 0.0
         dynp = arp[int(self.constant) :]
+        expected_x = self._reformat_forecast_x(x, horizon, start_index)
         mean_fcast = _ar_forecast(
-            self._y, horizon, start_index, constant, dynp, exog_p, self._x
+            self._y, horizon, start_index, constant, dynp, expected_x, exog_p
         )
         # Compute total variance forecasts, which depend on model
         impulse = _ar_to_impulse(horizon, dynp)
@@ -871,8 +973,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             long_run_variance_paths = variance_paths.copy()
             for i in range(horizon):
                 _impulses = impulse[i::-1][:, None]
-                lrvp = variance_paths[start_index:, :, : (i + 1)].dot(_impulses ** 2)
-                long_run_variance_paths[start_index:, :, i] = np.squeeze(lrvp)
+                lrvp = variance_paths[:, :, : (i + 1)].dot(_impulses ** 2)
+                long_run_variance_paths[:, :, i] = np.squeeze(lrvp)
             t, m = self._y.shape[0], self._max_lags
             mean_paths = np.empty(shocks.shape[:2] + (m + horizon,))
             dynp_rev = dynp[::-1]
@@ -886,6 +988,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                         + mean_paths[path_loc, :, j : m + j].dot(dynp_rev)
                         + shocks[path_loc, :, j]
                     )
+                    if expected_x.shape[0] > 0:
+                        mean_paths[path_loc, :, m + j] += expected_x[:, :, j].T @ exog_p
+
             mean_paths = mean_paths[:, :, m:]
 
         index = self._y_series.index

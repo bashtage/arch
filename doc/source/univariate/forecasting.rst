@@ -239,6 +239,8 @@ Output Classes
 ~~~~~~~~~~~~~~
 .. currentmodule:: arch.univariate.base
 
-.. autoclass:: ARCHModelForecast
+.. autosummary::
+   :toctree: generated/
 
-.. autoclass:: ARCHModelForecastSimulation
+   ARCHModelForecast
+   ARCHModelForecastSimulation

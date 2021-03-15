@@ -94,7 +94,9 @@ class TestForecasting(object):
 
     def test_ar_forecasting(self):
         params = np.array([0.9])
-        forecasts = _ar_forecast(self.zero_mean, 5, 0, 0.0, params)
+        forecasts = _ar_forecast(
+            self.zero_mean, 5, 0, 0.0, params, np.empty(0), np.empty(0)
+        )
         expected = np.zeros((1000, 5))
         expected[:, 0] = 0.9 * self.zero_mean.values
         for i in range(1, 5):
@@ -102,7 +104,9 @@ class TestForecasting(object):
         assert_allclose(forecasts, expected)
 
         params = np.array([0.5, -0.3, 0.2])
-        forecasts = _ar_forecast(self.zero_mean, 5, 2, 0.0, params)
+        forecasts = _ar_forecast(
+            self.zero_mean, 5, 2, 0.0, params, np.empty(0), np.empty(0)
+        )
         expected = np.zeros((998, 8))
         expected[:, 0] = self.zero_mean.iloc[0:-2]
         expected[:, 1] = self.zero_mean.iloc[1:-1]
@@ -395,6 +399,15 @@ class TestForecasting(object):
         res = am.fit(first_obs=100)
         res.forecast(reindex=False)
 
+    def test_ar1_forecast_simulation_one(self):
+        # Bug found when simulation=1
+        am = arch_model(self.ar1, mean="AR", vol="GARCH", lags=[1])
+        res = am.fit(disp="off")
+        forecast = res.forecast(
+            horizon=10, method="simulation", reindex=False, simulations=1
+        )
+        assert forecast.simulations.variances.shape == (1, 1, 10)
+
     def test_ar1_forecast_simulation(self):
         am = arch_model(self.ar1, mean="AR", vol="GARCH", lags=[1])
         res = am.fit(disp="off")
@@ -584,28 +597,6 @@ class TestForecasting(object):
         res = mod.fit(disp="off")
         assert_allclose(res_holdback.params, res.params, rtol=1e-4, atol=1e-4)
 
-    def test_forecast_exogenous_regressors(self):
-        y = 10 * self.rng.randn(1000, 1)
-        x = self.rng.randn(1000, 2)
-        am = HARX(y=y, x=x, lags=[1, 2])
-        res = am.fit()
-        fcasts = res.forecast(horizon=1, start=1, reindex=False)
-
-        const, har01, har02, ex0, ex1, _ = res.params
-        y_01 = y[1:-1]
-        y_02 = (y[1:-1] + y[0:-2]) / 2
-        x0 = x[2:, :1]
-        x1 = x[2:, 1:2]
-        direct = const + har01 * y_01 + har02 * y_02 + ex0 * x0 + ex1 * x1
-        direct = np.vstack(([[np.nan]], direct, [[np.nan]]))
-        direct = pd.DataFrame(direct, columns=["h.1"])
-        assert_allclose(np.asarray(direct)[1:], fcasts.mean)
-
-        fcasts2 = res.forecast(horizon=2, start=1, reindex=False)
-        assert fcasts2.mean.shape == (999, 2)
-        assert fcasts2.mean.isnull().all()["h.2"]
-        assert_frame_equal(fcasts.mean, fcasts2.mean[["h.1"]])
-
 
 @pytest.mark.slow
 @pytest.mark.parametrize("first_obs", [None, 250])
@@ -672,3 +663,170 @@ def test_arx_no_lags():
     res = mod.fit(disp="off")
     assert res.params.shape[0] == 4
     assert "lags" not in mod._model_description(include_lags=False)
+
+
+EXOG_PARAMS = product(
+    ["pandas", "dict", "numpy"], [(10,), (1, 10), (1, 1, 10), (2, 1, 10)], [True, False]
+)
+
+
+@pytest.fixture(scope="function", params=EXOG_PARAMS)
+def exog_format(request):
+    xtyp, shape, full = request.param
+    rng = RandomState(123456)
+    x_fcast = rng.standard_normal(shape)
+    orig = x_fcast.copy()
+    nobs = SP500.shape[0]
+    if full:
+        if x_fcast.ndim == 2:
+            _x = np.full((nobs, shape[1]), np.nan)
+            _x[-1:] = x_fcast
+            x_fcast = _x
+        elif x_fcast.ndim == 3:
+            _x = np.full((shape[0], nobs, shape[-1]), np.nan)
+            _x[:, -1:] = x_fcast
+            x_fcast = _x
+        else:
+            # No full 1d
+            return None, None
+    if xtyp == "pandas":
+        if x_fcast.ndim == 3:
+            return None, None
+        if x_fcast.ndim == 1:
+            x_fcast = pd.Series(x_fcast)
+        else:
+            x_fcast = pd.DataFrame(x_fcast)
+        x_fcast.index = SP500.index[-x_fcast.shape[0] :]
+    elif xtyp == "dict":
+        if x_fcast.ndim == 3:
+            keys = [f"x{i}" for i in range(1, x_fcast.shape[0] + 1)]
+            x_fcast = {k: x_fcast[i] for i, k in enumerate(keys)}
+        else:
+            x_fcast = {"x1": x_fcast}
+    return x_fcast, orig
+
+
+def test_x_reformat_1var(exog_format):
+    # (10,)
+    # (1,10)
+    # (n, 10)
+    # (1,1,10)
+    # (1,n,10)
+    # {"x1"} : (10,)
+    # {"x1"} : (1,10)
+    # {"x1"} : (n,10)
+    exog, ref = exog_format
+    if exog is None:
+        return
+    if isinstance(exog, dict):
+        nexog = len(exog)
+    else:
+        if np.ndim(exog) == 3:
+            nexog = exog.shape[0]
+        else:
+            nexog = 1
+    cols = [f"x{i}" for i in range(1, nexog + 1)]
+    rng = RandomState(12345)
+    x = pd.DataFrame(
+        rng.standard_normal((SP500.shape[0], nexog)), columns=cols, index=SP500.index
+    )
+    mod = ARX(SP500, lags=1, x=x)
+    res = mod.fit()
+    fcasts = res.forecast(horizon=10, x=exog, reindex=False)
+    ref = res.forecast(horizon=10, x=ref, reindex=False)
+    assert_allclose(fcasts.mean, ref.mean)
+
+
+@pytest.mark.parametrize("nexog", [1, 2])
+def test_x_forecasting(nexog):
+    rng = RandomState(12345)
+    mod = arch_model(None, mean="ARX", lags=2)
+    data = mod.simulate([0.1, 1.2, -0.6, 0.1, 0.1, 0.8], nobs=1000)
+    cols = [f"x{i}" for i in range(1, nexog + 1)]
+    x = pd.DataFrame(
+        rng.standard_normal((data.data.shape[0], nexog)),
+        columns=cols,
+        index=data.data.index,
+    )
+    b = np.array([0.25, 0.5]) if x.shape[1] == 2 else np.array([0.25])
+    y = data.data + x @ b
+    y.name = "y"
+    mod = arch_model(y, x, mean="ARX", lags=2)
+    res = mod.fit(disp="off")
+    x_fcast = np.zeros((x.shape[1], 1, 10))
+    for i in range(x_fcast.shape[0]):
+        x_fcast[i] = np.arange(100 * i, 100 * i + 10)
+
+    forecasts = res.forecast(x=x_fcast, horizon=10, reindex=False)
+    direct = np.zeros(12)
+    direct[:2] = y.iloc[-2:]
+    p0, p1, p2 = res.params[:3]
+    b0 = res.params[3]
+    b1 = res.params[4] if x.shape[1] == 2 else 0.0
+    for i in range(10):
+        direct[i + 2] = p0 + p1 * direct[i + 1] + p2 * direct[i]
+        direct[i + 2] += b0 * (i)
+        direct[i + 2] += b1 * (100 + i)
+    assert_allclose(forecasts.mean.iloc[0], direct[2:])
+
+
+@pytest.mark.parametrize("nexog", [1, 2])
+def test_x_forecasting_simulation_smoke(nexog):
+    rng = RandomState(12345)
+    mod = arch_model(None, mean="ARX", lags=2)
+    data = mod.simulate([0.1, 1.2, -0.6, 0.1, 0.1, 0.8], nobs=1000)
+    cols = [f"x{i}" for i in range(1, nexog + 1)]
+    x = pd.DataFrame(
+        rng.standard_normal((data.data.shape[0], nexog)),
+        columns=cols,
+        index=data.data.index,
+    )
+    b = np.array([0.25, 0.5]) if x.shape[1] == 2 else np.array([0.25])
+    y = data.data + x @ b
+    y.name = "y"
+    mod = arch_model(y, x, mean="ARX", lags=2)
+    res = mod.fit(disp="off")
+    x_fcast = np.zeros((x.shape[1], 1, 10))
+    for i in range(x_fcast.shape[0]):
+        x_fcast[i] = np.arange(100 * i, 100 * i + 10)
+
+    res.forecast(
+        x=x_fcast, horizon=10, reindex=False, method="simulation", simulations=10
+    )
+
+
+def test_x_exceptions():
+    res = ARX(SP500, lags=1).fit(disp="off")
+    with pytest.raises(TypeError, match="x is not None but"):
+        res.forecast(reindex=False, x=SP500)
+    x = SP500.copy()
+    x[:] = np.random.standard_normal(SP500.shape)
+    res = ARX(SP500, lags=1, x=x).fit(disp="off")
+    with pytest.raises(TypeError, match="x is None but the model"):
+        res.forecast(reindex=False)
+    res = ARX(SP500, lags=1, x=x).fit(disp="off")
+    with pytest.raises(ValueError, match="x must have the same"):
+        res.forecast(reindex=False, x={})
+    with pytest.raises(ValueError, match="x must have the same"):
+        res.forecast(reindex=False, x={"x0": x, "x1": x})
+    with pytest.raises(KeyError, match="The keys of x must exactly"):
+        res.forecast(reindex=False, x={"z": x})
+    with pytest.raises(ValueError, match="The arrays contained in the dictionary"):
+        _x = np.asarray(x).reshape((1, x.shape[0], 1))
+        res.forecast(reindex=False, x={"x0": _x})
+    x2 = pd.concat([x, x], 1)
+    x2.columns = ["x0", "x1"]
+    x2.iloc[:, 1] = np.random.standard_normal(SP500.shape)
+    res = ARX(SP500, lags=1, x=x2).fit(disp="off")
+    with pytest.raises(ValueError, match="The shapes of the arrays contained"):
+        res.forecast(reindex=False, x={"x0": x2.iloc[:, 0], "x1": x2.iloc[10:, 1:]})
+    with pytest.raises(ValueError, match="1- and 2-dimensional x values"):
+        res.forecast(reindex=False, x=x2)
+    with pytest.raises(ValueError, match="The leading dimension of x"):
+        _x2 = np.asarray(x2)
+        _x2 = _x2.reshape((1, -1, 2))
+        res.forecast(reindex=False, x=_x2)
+    with pytest.raises(ValueError, match="The number of values passed"):
+        res.forecast(reindex=False, x=np.empty((2, SP500.shape[0], 3)))
+    with pytest.raises(ValueError, match="The shape of x does not satisfy the"):
+        res.forecast(reindex=False, x=np.empty((2, SP500.shape[0] // 2, 1)))
