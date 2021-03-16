@@ -37,6 +37,7 @@ git add **/*.txt
 git add _images/*
 git add _sources/**/*
 git add _modules/**/*
+git add _static/**/*
 echo "Change remote"
 git remote set-url origin https://bashtage:"${GITHUB_TOKEN}"@github.com/bashtage/arch.git
 echo "Github Actions doc build after commit ${GITHUB_SHA::8}"
