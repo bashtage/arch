@@ -35,6 +35,24 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
+    "## Future Forecast Shape Changes\n",
+    "\n",
+    "<div class=\"alert alert-warning\">\n",
+    "    <h3><b>WARNING</b></h3>\n",
+    "    The future behavior of `forecast` is changing.\n",
+    "</div>\n",
+    "\n",
+    "Versions of `arch` before 4.19 defaulted to returning forecast values with the same shape as the data used to fit the model.  While this is convenient it is also computationally wasteful. This is especially true when using `method` is `\"simulation\"` or `\"bootstrap\"`. In future version of `arch`, the default behavior will change to only returning the minimal `DataFrame` that is needed to contain the forecast results. In the current version of `arch`, calling `forecast()` without the `reindex` keyword argument produces a `FutureWarning`.  You can silence the future warning by:\n",
+    "\n",
+    "* Using `reindex=False` which uses the future behavior. \n",
+    "* Using `reindex=True` which uses the legacy behavior.\n",
+    "* Importing `from arch.__future__ import reindexing` which will set the default to `False` and silence the warning."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
     "## Data\n",
     "These examples make use of S&P 500 data from Yahoo! that is available from `arch.data.sp500`."
    ]
@@ -56,23 +74,6 @@
     "data = arch.data.sp500.load()\n",
     "market = data[\"Adj Close\"]\n",
     "returns = 100 * market.pct_change().dropna()"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "# Future Forecast Shape Changes\n",
-    "\n",
-    "<div class=\"alert alert-warning\">\n",
-    "<b>WARNING</b> The future behavior of `forecast` is changing.\n",
-    "</div>\n",
-    "\n",
-    "Versions of `arch` before 4.19 defaulted to returning forecast values with the same shape as the data used to fit the model.  While this is convenient it is also computationally wasteful. This is especially true when using `method` is `\"simulation\"` or `\"bootstrap\"`. In future version of `arch`, the default behavior will change to only returning the minimal `DataFrame` that is needed to contain the forecast results. In the current version of `arch`, calling `forecast()` without the `reindex` keyword argument produces a `FutureWarning`.  You can silence the future warning by:\n",
-    "\n",
-    "* Using `reindex=False` which uses the future behavior. \n",
-    "* Using `reindex=True` which uses the legacy behavior.\n",
-    "* Importing `from arch.__future__ import reindexing` which will set the default to `False` and silence the warning.\n"
    ]
   },
   {
