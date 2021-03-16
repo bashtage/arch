@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+export GIT_REPO_DIR=${PWD}
 echo "Set git email and name"
 git config user.email "kevin.k.sheppard@gmail.com"
 git config user.name "Kevin Sheppard"
@@ -22,10 +23,10 @@ echo "Copy docs to devel"
 echo cp -r ${PWD}/doc/build/html/* ${PWD}/devel/
 cp -r ${PWD}/doc/build/html/* ${PWD}/devel/
 echo "Clean up docs"
-cd ${PWD}/doc
+cd ${GIT_REPO_DIR}/doc
 make clean && git clean -xfd
 echo "Add files"
-cd ${PWD}
+cd ${GIT_REPO_DIR}
 git add .
 # Ensure key files are added
 git add devel/**/*
