@@ -29,14 +29,14 @@ echo "Add files"
 cd ${PWD}
 git add .
 # Ensure key files are added
-git add devel/**/*
-git add **/*.html
-git add **/*.ipynb
-git add **/*.txt
-git add _images/*
-git add _sources/**/*
-git add _modules/**/*
-git add _static/**/*
+git add devel/**/* || true
+git add **/*.html || true
+git add **/*.ipynb || true
+git add **/*.txt || true
+git add _images/* || true
+git add _sources/**/* || true
+git add _modules/**/* || true
+git add _static/**/* || true
 echo "Change remote"
 git remote set-url origin https://bashtage:"${GITHUB_TOKEN}"@github.com/bashtage/arch.git
 echo "Github Actions doc build after commit ${GITHUB_SHA::8}"
