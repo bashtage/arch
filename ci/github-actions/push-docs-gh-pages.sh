@@ -3,6 +3,7 @@
 echo "Set git email and name"
 git config user.email "kevin.k.sheppard@gmail.com"
 git config user.name "Kevin Sheppard"
+git config advice.addIgnoredFile false
 echo "Checkout pages"
 git checkout gh-pages
 echo "Remove devel"
