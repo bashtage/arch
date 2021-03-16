@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelForecast.mean
+===========================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelForecast.mean

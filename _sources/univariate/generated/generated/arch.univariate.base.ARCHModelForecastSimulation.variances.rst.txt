@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelForecastSimulation.variances
+==========================================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelForecastSimulation.variances
