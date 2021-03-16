@@ -3,3 +3,7 @@
 arch/_version.py
 arch.egg-info/
 dist
+doc/build
+build
+doc/source/**/*.ipynb
+
