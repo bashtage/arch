@@ -1,0 +1,32 @@
+﻿arch.univariate.base.ARCHModelForecast
+======================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoclass:: ARCHModelForecast
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ARCHModelForecast.mean
+      ~ARCHModelForecast.residual_variance
+      ~ARCHModelForecast.simulations
+      ~ARCHModelForecast.variance
+   
+   
+   

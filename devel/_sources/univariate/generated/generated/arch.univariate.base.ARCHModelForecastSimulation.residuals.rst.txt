@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelForecastSimulation.residuals
+==========================================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelForecastSimulation.residuals

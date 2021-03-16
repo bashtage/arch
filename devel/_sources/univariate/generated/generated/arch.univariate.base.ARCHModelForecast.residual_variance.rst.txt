@@ -1,0 +1,6 @@
+arch.univariate.base.ARCHModelForecast.residual\_variance
+=========================================================
+
+.. currentmodule:: arch.univariate.base
+
+.. autoproperty:: ARCHModelForecast.residual_variance
