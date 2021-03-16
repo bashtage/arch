@@ -234,7 +234,7 @@ This command should work whether you have a compiler installed or not.
 If you want to install with the `--no-binary` options, use
 
 ```bash
-pip install arch --install-option="--no-binary" --no-build-isoloation
+pip install arch --install-option="--no-binary" --no-build-isolation
 ```
 
 The `--no-build-isoloation` uses the existing NumPy when building the
@@ -263,8 +263,7 @@ conda install arch-py -c conda-forge
 ### Windows
 
 Building extension using the community edition of Visual Studio is
-well supported for Python 3.6+. Building on other combinations of
-Python/Windows is more difficult and is not necessary when numba
+simple when using Python 3.7 or later. Building is not necessary when numba
 is installed since just-in-time compiled code (numba) runs as fast as
 ahead-of-time compiled extensions.
 

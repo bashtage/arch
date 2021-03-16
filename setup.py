@@ -194,7 +194,7 @@ def run_setup(binary: bool = True) -> None:
         setup_requires=[
             key + ">=" + SETUP_REQUIREMENTS[key] for key in SETUP_REQUIREMENTS
         ],
-        python_requires=">=3.6",
+        python_requires=">=3.7",
     )
 
 
