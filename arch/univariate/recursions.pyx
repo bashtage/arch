@@ -7,8 +7,9 @@ cimport numpy as np
 from libc.float cimport DBL_MAX
 from libc.math cimport exp, fabs, log, sqrt
 
-__all__ = ['harch_recursion', 'arch_recursion', 'garch_recursion', 'egarch_recursion',
-           'midas_recursion', 'figarch_recursion', 'figarch_weights', 'aparch_recursion']
+__all__ = ["harch_recursion", "arch_recursion", "garch_recursion", "egarch_recursion",
+           "midas_recursion", "figarch_recursion", "figarch_weights", "aparch_recursion",
+           "harch_core", "garch_core"]
 
 cdef double LNSIGMA_MAX = log(DBL_MAX)
 
@@ -22,6 +23,59 @@ cdef inline void bounds_check(double* sigma2, double* var_bounds):
             sigma2[0] = var_bounds[1] + 1000
         else:
             sigma2[0] = var_bounds[1] + log(sigma2[0] / var_bounds[1])
+
+
+def harch_core(
+    Py_ssize_t t,
+    double[::1] parameters,
+    double[::1] resids,
+    double[::1] sigma2,
+    int[::1] lags,
+    double backcast,
+    double[:, ::1] var_bounds,
+):
+    """
+    Compute variance recursion step for HARCH model
+
+    Parameters
+    ----------
+    t: int
+        Location of variance to compute. Assumes variance has been computed
+        at times t-1, t-2, ...
+    parameters : 1-d array, float64
+        Model parameters
+    resids : 1-d array, float64
+        Residuals to use in the recursion
+    sigma2 : 1-d array, float64
+        Conditional variances with same shape as resids
+    lags : 1-d array, int
+        Lag lengths in the HARCH
+    backcast : float64
+        Value to use when initializing the recursion
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        variances for each time period
+
+    Returns
+    -------
+    float
+        Conditional variance at time t
+    """
+    cdef:
+        Py_ssize_t i,j
+        double param
+
+    sigma2[t] = parameters[0]
+    for i in range(lags.shape[0]):
+        param = parameters[i + 1] / lags[i]
+        for j in range(lags[i]):
+            if (t - j - 1) >= 0:
+                sigma2[t] += param * resids[t - j - 1] * resids[t - j - 1]
+            else:
+                sigma2[t] += param * backcast
+
+    bounds_check(&sigma2[t], &var_bounds[t, 0])
+    return sigma2[t]
 
 
 def harch_recursion(double[::1] parameters,
@@ -110,6 +164,78 @@ def arch_recursion(double[::1] parameters,
         bounds_check(&sigma2[t], &var_bounds[t, 0])
 
     return np.asarray(sigma2)
+
+def garch_core(
+    Py_ssize_t t,
+    double[::1] parameters,
+    double[::1] resids,
+    double[::1] sigma2,
+    double backcast: float,
+    double[:,::1] var_bounds,
+    int p,
+    int o,
+    int q,
+    double power,
+):
+    """
+    Compute variance recursion step for GARCH and related models
+
+    Parameters
+    ----------
+    t : int
+        The time perdiod to update
+    parameters : ndarray
+        Model parameters
+    resids : ndarray
+        Residuals
+    sigma2 : ndarray
+        Conditional variances with same shape as resids
+    backcast : float
+        Value to use when initializing the recursion
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        transformed variances for each time period
+    p : int
+        Number of symmetric innovations in model
+    o : int
+        Number of asymmetric innovations in model
+    q : int
+        Number of lags of the (transformed) variance in the model
+    power : float
+        The power used in the model
+    """
+    cdef:
+        Py_ssize_t j, loc
+
+    loc = 0
+    sigma2[t] = parameters[loc]
+    loc += 1
+    for j in range(p):
+        if (t - 1 - j) < 0:
+            sigma2[t] += parameters[loc] * backcast
+        else:
+            sigma2[t] += parameters[loc] * (fabs(resids[t - 1 - j]) ** power)
+        loc += 1
+    for j in range(o):
+        if (t - 1 - j) < 0:
+            sigma2[t] += parameters[loc] * 0.5 * backcast
+        else:
+            sigma2[t] += (
+                parameters[loc]
+                * (fabs(resids[t - 1 - j]) ** power)
+                * (resids[t - 1 - j] < 0)
+            )
+        loc += 1
+    for j in range(q):
+        if (t - 1 - j) < 0:
+            sigma2[t] += parameters[loc] * backcast
+        else:
+            sigma2[t] += parameters[loc] * sigma2[t - 1 - j]
+        loc += 1
+    bounds_check(&sigma2[t], &var_bounds[t, 0])
+
+    return sigma2[t]
+
 
 def garch_recursion(double[::1] parameters,
                     double[::1] fresids,
@@ -360,7 +486,7 @@ def figarch_recursion(double[::1] parameters,
 
     omega = parameters[0]
     beta = parameters[1 + p + q] if q else 0.0
-    omega_tilde = omega / (1-beta)
+    omega_tilde = omega / (1 - beta)
     lam = _figarch_weights(parameters[1:], p, q, trunc_lag)
     for t in range(nobs):
         bc_weight = 0.0

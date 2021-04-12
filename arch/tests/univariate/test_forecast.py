@@ -51,6 +51,7 @@ VOLATILITIES = [
 ]
 
 MODEL_SPECS = list(product(MEAN_MODELS, VOLATILITIES))
+
 IDS = [
     f"{str(mean).split('(')[0]}-{str(vol).split('(')[0]}" for mean, vol in MODEL_SPECS
 ]
@@ -156,6 +157,13 @@ class TestForecasting(object):
         assert_frame_equal(fcast.mean, alt_fcast.mean)
         assert_frame_equal(fcast.variance, alt_fcast.variance)
         assert_frame_equal(fcast.residual_variance, alt_fcast.residual_variance)
+
+        with pytest.raises(ValueError, match="horizon must"):
+            res.forecast(res.params, horizon=3.0, reindex=False)
+        with pytest.raises(ValueError, match="horizon must"):
+            res.forecast(res.params, horizon=-1, reindex=False)
+        with pytest.raises(ValueError, match="horizon must"):
+            res.forecast(res.params, horizon="3", reindex=False)
 
         fcast_reindex = res.forecast(res.params, horizon=3, reindex=True)
         assert_frame_equal(fcast.mean, fcast_reindex.mean.iloc[-1:])

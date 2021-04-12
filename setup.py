@@ -113,7 +113,7 @@ def run_setup(binary: bool = True) -> None:
         extensions = []
     else:
         directives = {"linetrace": CYTHON_COVERAGE}
-        macros = [("NPY_NO_DEPRECATED_API", "1"), ("NPY_1_7_API_VERSION", "1")]
+        macros = [("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]
         if CYTHON_COVERAGE:
             macros.append(("CYTHON_TRACE", "1"))
 

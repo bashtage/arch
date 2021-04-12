@@ -12,6 +12,7 @@ import numpy as np
 from arch.typing import NDArray
 
 __all__ = [
+    "bounds_check",
     "harch_recursion",
     "arch_recursion",
     "garch_recursion",
@@ -37,6 +38,31 @@ def bounds_check_python(sigma2: float, var_bounds: NDArray) -> float:
 
 
 bounds_check = jit(bounds_check_python, nopython=True)
+
+
+def harch_core_python(
+    t: int,
+    parameters: NDArray,
+    resids: NDArray,
+    sigma2: NDArray,
+    lags: NDArray,
+    backcast: float,
+    var_bounds: NDArray,
+) -> float:
+    sigma2[t] = parameters[0]
+    for i in range(lags.shape[0]):
+        param = parameters[i + 1] / lags[i]
+        for j in range(lags[i]):
+            if (t - j - 1) >= 0:
+                sigma2[t] += param * resids[t - j - 1] * resids[t - j - 1]
+            else:
+                sigma2[t] += param * backcast
+
+    sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+    return sigma2[t]
+
+
+harch_core = jit(harch_core_python, nopython=True, inline="always")
 
 
 def harch_recursion_python(
@@ -128,6 +154,79 @@ def arch_recursion_python(
 
 
 arch_recursion = jit(arch_recursion_python, nopython=True)
+
+
+def garch_core_python(
+    t: int,
+    parameters: NDArray,
+    resids: NDArray,
+    sigma2: NDArray,
+    backcast: float,
+    var_bounds: NDArray,
+    p: int,
+    o: int,
+    q: int,
+    power: float,
+) -> float:
+    """
+    Compute variance recursion for GARCH and related models
+
+    Parameters
+    ----------
+    t : int
+        The time perdiod to update
+    parameters : ndarray
+        Model parameters
+    resids : ndarray
+        Residuals
+    sigma2 : ndarray
+        Conditional variances with same shape as resids
+    backcast : float
+        Value to use when initializing the recursion
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        transformed variances for each time period
+    p : int
+        Number of symmetric innovations in model
+    o : int
+        Number of asymmetric innovations in model
+    q : int
+        Number of lags of the (transformed) variance in the model
+    power : float
+        The power used in the model
+    """
+
+    loc = 0
+    sigma2[t] = parameters[loc]
+    loc += 1
+    for j in range(p):
+        if (t - 1 - j) < 0:
+            sigma2[t] += parameters[loc] * backcast
+        else:
+            sigma2[t] += parameters[loc] * (np.abs(resids[t - 1 - j]) ** power)
+        loc += 1
+    for j in range(o):
+        if (t - 1 - j) < 0:
+            sigma2[t] += parameters[loc] * 0.5 * backcast
+        else:
+            sigma2[t] += (
+                parameters[loc]
+                * (np.abs(resids[t - 1 - j]) ** power)
+                * (resids[t - 1 - j] < 0)
+            )
+        loc += 1
+    for j in range(q):
+        if (t - 1 - j) < 0:
+            sigma2[t] += parameters[loc] * backcast
+        else:
+            sigma2[t] += parameters[loc] * sigma2[t - 1 - j]
+        loc += 1
+    sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+
+    return sigma2[t]
+
+
+garch_core = jit(garch_core_python, nopython=True)
 
 
 def garch_recursion_python(

@@ -1,0 +1,10 @@
+=========
+Version 5
+=========
+
+Release 5.0
+===========
+- Added :class:`~arch.univariate.ARCHInMean` mean process supporting (G)ARCH-in-mean models.
+- Extended :class:`~arch.univariate.volatility.VolatilityProcess` with
+  :func:`~arch.univariate.volatility.VolatilityProcess.update` to allow
+  :class:`~arch.univariate.ARCHInMean` to be created from different volatility processes.

@@ -1,10 +1,9 @@
 import os
 
 import pandas as pd
-from pandas import DataFrame
 
 
-def load_file(file_base: str, filename: str) -> DataFrame:
+def load_file(file_base: str, filename: str) -> pd.DataFrame:
     """
     Load data from a csv.gz file.
 

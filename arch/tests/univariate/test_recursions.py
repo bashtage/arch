@@ -1,5 +1,6 @@
 import os
 import timeit
+import types
 from typing import List
 
 import numpy as np
@@ -20,7 +21,7 @@ except ImportError:
     missing_extension = True
 
 if missing_extension:
-    rec = recpy
+    rec: types.ModuleType = recpy
 else:
     rec = rec_cython
 
@@ -232,6 +233,46 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert np.all(sigma2 >= self.var_bounds[:, 0])
         assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
 
+    def test_garch_update(self):
+        nobs, resids = self.nobs, self.resids
+        sigma2, backcast = self.sigma2, self.backcast
+
+        parameters = np.array([0.1, 0.4, 0.3, 0.2])
+        fresids = resids ** 2.0
+        sresids = np.sign(resids)
+
+        recpy.garch_recursion(
+            parameters,
+            fresids,
+            sresids,
+            sigma2,
+            1,
+            1,
+            1,
+            nobs,
+            backcast,
+            self.var_bounds,
+        )
+        sigma2_ref = sigma2.copy()
+        sigma2[:] = np.nan
+        for t in range(nobs):
+            sigma2[t] = recpy.garch_core_python(
+                t, parameters, resids, sigma2, backcast, self.var_bounds, 1, 1, 1, 2.0
+            )
+        assert_allclose(sigma2, sigma2_ref)
+        sigma2[:] = np.nan
+        for t in range(nobs):
+            sigma2[t] = recpy.garch_core(
+                t, parameters, resids, sigma2, backcast, self.var_bounds, 1, 1, 1, 2.0
+            )
+        assert_allclose(sigma2, sigma2_ref)
+
+        for t in range(nobs):
+            sigma2[t] = rec.garch_core(
+                t, parameters, resids, sigma2, backcast, self.var_bounds, 1, 1, 1, 2.0
+            )
+        assert_allclose(sigma2, sigma2_ref)
+
     def test_harch(self):
         nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
@@ -279,6 +320,35 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         )
         assert np.all(sigma2 >= self.var_bounds[:, 0])
         assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
+
+    def test_harch_update(self):
+        nobs, resids = self.nobs, self.resids
+        sigma2, backcast = self.sigma2, self.backcast
+
+        parameters = np.array([0.1, 0.4, 0.3, 0.2])
+        lags = np.array([1, 5, 22], dtype=np.int32)
+        rec.harch_recursion(
+            parameters, resids, sigma2, lags, nobs, backcast, self.var_bounds
+        )
+        sigma2_direct = sigma2.copy()
+        sigma2[:] = np.nan
+        for t in range(nobs):
+            recpy.harch_core_python(
+                t, parameters, resids, sigma2, lags, backcast, self.var_bounds
+            )
+        assert_allclose(sigma2, sigma2_direct)
+
+        for t in range(nobs):
+            recpy.harch_core(
+                t, parameters, resids, sigma2, lags, backcast, self.var_bounds
+            )
+        assert_allclose(sigma2, sigma2_direct)
+
+        for t in range(nobs):
+            rec.harch_core(
+                t, parameters, resids, sigma2, lags, backcast, self.var_bounds
+            )
+        assert_allclose(sigma2, sigma2_direct)
 
     def test_arch(self):
         nobs, resids = self.nobs, self.resids

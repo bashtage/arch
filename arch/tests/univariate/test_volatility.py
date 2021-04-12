@@ -1,3 +1,4 @@
+import types
 from typing import NamedTuple
 import warnings
 
@@ -30,12 +31,15 @@ from arch.univariate.volatility import (
 )
 from arch.utility.exceptions import InitialValueWarning
 
+rec: types.ModuleType
 try:
     from arch.univariate import recursions as rec
 except ImportError:
     rec = recpy
 
 pytestmark = pytest.mark.filterwarnings("ignore::arch.compat.numba.PerformanceWarning")
+
+EPS_HALF = np.sqrt(np.finfo(float).eps)
 
 
 class SetupInfo(NamedTuple):
@@ -1340,8 +1344,8 @@ def test_figarch(setup, initial_value):
     bounds = figarch.bounds(setup.resids)
     assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids ** 2.0)))
     assert_equal(bounds[1], (0.0, 0.5))
-    assert_equal(bounds[2], (0.0, 1.0))
-    assert_equal(bounds[3], (0.0, 1.0))
+    assert_allclose(np.array(bounds[2]), np.array([0.0, 1 - EPS_HALF]))
+    assert_allclose(np.array(bounds[3]), np.array([0.0, 1 - EPS_HALF]))
     assert len(bounds) == figarch.num_params
 
     backcast = figarch.backcast(setup.resids)
@@ -1435,8 +1439,8 @@ def test_figarch_no_phi(setup):
 
     bounds = figarch.bounds(setup.resids)
     assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids ** 2.0)))
-    assert_equal(bounds[1], (0.0, 1.0))
-    assert_equal(bounds[2], (0.0, 1.0))
+    assert_allclose(np.array(bounds[1]), np.array([0.0, 1 - EPS_HALF]))
+    assert_allclose(np.array(bounds[2]), np.array([0.0, 1 - EPS_HALF]))
     assert len(bounds) == figarch.num_params
 
     a, b = figarch.constraints()
@@ -1461,7 +1465,7 @@ def test_figarch_no_beta(setup):
     bounds = figarch.bounds(setup.resids)
     assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids ** 2.0)))
     assert_equal(bounds[1], (0.0, 0.5))
-    assert_equal(bounds[2], (0.0, 1.0))
+    assert_allclose(np.array(bounds[2]), np.array([0.0, 1 - EPS_HALF]))
     assert len(bounds) == figarch.num_params
 
     a, b = figarch.constraints()
@@ -1488,7 +1492,7 @@ def test_figarch_no_phi_beta(setup):
 
     bounds = figarch.bounds(setup.resids)
     assert_equal(bounds[0], (0.0, 10.0 * np.mean(np.abs(setup.resids) ** 0.7)))
-    assert_equal(bounds[1], (0.0, 1.0))
+    assert_allclose(np.array(bounds[1]), np.array([0.0, 1 - EPS_HALF]))
     assert len(bounds) == figarch.num_params
 
     a, b = figarch.constraints()

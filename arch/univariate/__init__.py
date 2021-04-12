@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import types
+
 from arch.univariate import recursions_python
 from arch.univariate.distribution import (
     Distribution,
@@ -8,7 +10,15 @@ from arch.univariate.distribution import (
     SkewStudent,
     StudentsT,
 )
-from arch.univariate.mean import ARX, HARX, LS, ConstantMean, ZeroMean, arch_model
+from arch.univariate.mean import (
+    ARX,
+    HARX,
+    LS,
+    ARCHInMean,
+    ConstantMean,
+    ZeroMean,
+    arch_model,
+)
 from arch.univariate.volatility import (
     APARCH,
     ARCH,
@@ -23,34 +33,36 @@ from arch.univariate.volatility import (
     RiskMetrics2006,
 )
 
+recursions: types.ModuleType
 try:
     from arch.univariate import recursions
 except ImportError:
     recursions = recursions_python
 
 __all__ = [
-    "HARX",
-    "ConstantMean",
-    "ZeroMean",
-    "ARX",
-    "arch_model",
-    "LS",
-    "GARCH",
     "APARCH",
     "ARCH",
-    "HARCH",
+    "ARCHInMean",
+    "ARX",
+    "ConstantMean",
     "ConstantVariance",
-    "EWMAVariance",
-    "RiskMetrics2006",
-    "EGARCH",
     "Distribution",
-    "Normal",
-    "StudentsT",
-    "SkewStudent",
-    "GeneralizedError",
-    "FixedVariance",
-    "MIDASHyperbolic",
+    "EGARCH",
+    "EWMAVariance",
     "FIGARCH",
+    "FixedVariance",
+    "GARCH",
+    "GeneralizedError",
+    "HARCH",
+    "HARX",
+    "LS",
+    "MIDASHyperbolic",
+    "Normal",
+    "RiskMetrics2006",
+    "SkewStudent",
+    "StudentsT",
+    "ZeroMean",
+    "arch_model",
     "recursions",
     "recursions_python",
 ]
