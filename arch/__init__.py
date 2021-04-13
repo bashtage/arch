@@ -9,7 +9,7 @@ del get_versions
 def doc() -> None:
     import webbrowser
 
-    webbrowser.open("http://arch.readthedocs.org/en/latest/")
+    webbrowser.open("https://bashtage.github.io/arch/")
 
 
 __all__ = ["arch_model", "__version__", "doc", "test"]

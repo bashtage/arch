@@ -745,7 +745,7 @@ def test_bca_against_bcajack():
     #     bcaboot = importr('bcaboot')
     # except Exception:
     #     utils.install_packages('bcaboot',
-    #                            repos='http://cran.us.r-project.org')
+    #                            repos='https://cran.us.r-project.org')
     #     bcaboot = importr('bcaboot')
 
     rng_seed_obs = 42

@@ -12,6 +12,7 @@ from numpy import (
     arange,
     argwhere,
     array,
+    asarray,
     ceil,
     cumsum,
     diag,
@@ -215,6 +216,7 @@ def _autolag_ols_low_memory(
     -----
     Minimizes creation of large arrays. Uses approx 6 * nobs temporary values
     """
+    y = asarray(y)
     method = method.lower()
     deltay = diff(y)
     deltay = deltay / sqrt(deltay @ deltay)

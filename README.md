@@ -18,7 +18,7 @@ to improve performance)
 |                            | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/93f6fd90209842bf97fd20fda8db70ef)](https://www.codacy.com/manual/bashtage/arch?utm_source=github.com&utm_medium=referral&utm_content=bashtage/arch&utm_campaign=Badge_Grade) |
 |                            | [![codebeat badge](https://codebeat.co/badges/18a78c15-d74b-4820-b56d-72f7e4087532)](https://codebeat.co/projects/github-com-bashtage-arch-main)                                                                                         |
 | **Citation**               | [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.593254.svg)](https://doi.org/10.5281/zenodo.593254)                                                                                                                                  |
-| **Documentation**          | [![Documentation Status](https://readthedocs.org/projects/arch/badge/?version=latest)](http://arch.readthedocs.org/en/latest/)                                                                                                           |
+| **Documentation**          | [![Documentation Status](https://readthedocs.org/projects/arch/badge/?version=latest)](https://arch.readthedocs.org/en/latest/)                                                                                                           |
 
 ## Module Contents
 
@@ -35,15 +35,16 @@ to improve performance)
 
 ## Documentation
 
+Documentation from the main branch is hosted on
+[my github pages](https://bashtage.github.io/arch/).
+
 Released documentation is hosted on
-[read the docs](http://arch.readthedocs.org/en/latest/).
-Current documentation from the main branch is hosted on
-[my github pages](http://bashtage.github.io/arch/doc/index.html).
+[read the docs](https://arch.readthedocs.org/en/latest/).
 
 ## More about ARCH
 
 More information about ARCH and related models is available in the notes and
-research available at [Kevin Sheppard's site](http://www.kevinsheppard.com).
+research available at [Kevin Sheppard's site](https://www.kevinsheppard.com).
 
 ## Contributing
 
@@ -76,7 +77,7 @@ Contributions are welcome. There are opportunities at many levels to contribute:
   - Student's T
   - Generalized Error Distribution
 
-See the [univariate volatility example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/univariate_volatility_modeling.ipynb) for a more complete overview.
+See the [univariate volatility example notebook](https://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/univariate_volatility_modeling.ipynb) for a more complete overview.
 
 ```python
 import datetime as dt
@@ -102,7 +103,7 @@ res = am.fit()
 - Zivot-Andrews
 - Variance Ratio tests
 
-See the [unit root testing example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/unitroot_examples.ipynb)
+See the [unit root testing example notebook](https://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/unitroot_examples.ipynb)
 for examples of testing series for unit roots.
 
 <a id="unit-root"></a>
@@ -117,7 +118,7 @@ for examples of testing series for unit roots.
   - Dynamic OLS
   - Fully Modified OLS
 
-See the [cointegration testing example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/unitroot_cointegration_examples.ipynb)
+See the [cointegration testing example notebook](https://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/unitroot_cointegration_examples.ipynb)
 for examples of testing series for cointegration.
 
 <a id="bootstrap"></a>
@@ -135,7 +136,7 @@ for examples of testing series for cointegration.
   - Apply method to estimate model across bootstraps
   - Generic Bootstrap iterator
 
-See the [bootstrap example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/bootstrap_examples.ipynb)
+See the [bootstrap example notebook](https://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/bootstrap_examples.ipynb)
 for examples of bootstrapping the Sharpe ratio and a Probit model from statsmodels.
 
 ```python
@@ -173,7 +174,7 @@ ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 - Stepwise (StepM)
 - Model Confidence Set (MCS)
 
-See the [multiple comparison example notebook](http://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/multiple-comparison_examples.ipynb)
+See the [multiple comparison example notebook](https://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/multiple-comparison_examples.ipynb)
 for examples of the multiple comparison procedures.
 
 

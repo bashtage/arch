@@ -21,7 +21,7 @@ from typing import (
 )
 
 import numpy as np
-from pandas import DataFrame, Index
+import pandas as pd
 from scipy.optimize import OptimizeResult
 from statsmodels.tsa.tsatools import lagmat
 
@@ -254,7 +254,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         )
         self._x = x
         self._x_names: List[str] = []
-        self._x_index: Optional[Union[NDArray, Index]] = None
+        self._x_index: Optional[Union[NDArray, pd.Index]] = None
         self.lags: Optional[
             Union[int, Sequence[int], Sequence[Sequence[int]], NDArray]
         ] = lags
@@ -365,7 +365,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         initial_value: Optional[Union[float, NDArray]] = None,
         x: Optional[ArrayLike] = None,
         initial_value_vol: Optional[Union[float, NDArray]] = None,
-    ) -> DataFrame:
+    ) -> pd.DataFrame:
         """
         Simulates data from a linear regression, AR or HAR models
 
@@ -473,7 +473,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             y[t] += errors[t]
 
         df = dict(data=y[burn:], volatility=vol[burn:], errors=errors[burn:])
-        df = DataFrame(df)
+        df = pd.DataFrame(df)
         return df
 
     def _generate_variable_names(self) -> List[str]:
@@ -502,7 +502,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     def _check_specification(self) -> None:
         """Checks the specification for obvious errors """
         if self._x is not None:
-            if self._x.ndim == 1:
+            if isinstance(self._x, pd.Series):
+                self._x = pd.DataFrame(self._x)
+            elif self._x.ndim == 1:
                 self._x = self._x[:, None]
             if self._x.ndim != 2 or self._x.shape[0] != self._y.shape[0]:
                 raise ValueError(
@@ -1084,7 +1086,7 @@ class ConstantMean(HARX):
         initial_value: Optional[Union[float, NDArray]] = None,
         x: Optional[ArrayLike] = None,
         initial_value_vol: Optional[Union[float, NDArray]] = None,
-    ) -> DataFrame:
+    ) -> pd.DataFrame:
         """
         Simulated data from a constant mean model
 
@@ -1142,7 +1144,7 @@ class ConstantMean(HARX):
         vol = np.sqrt(sim_values[1])
         assert isinstance(vol, np.ndarray)
         df = dict(data=y[burn:], volatility=vol[burn:], errors=errors[burn:])
-        df = DataFrame(df)
+        df = pd.DataFrame(df)
         return df
 
     def resids(
@@ -1232,7 +1234,7 @@ class ZeroMean(HARX):
         initial_value: Optional[Union[float, NDArray]] = None,
         x: Optional[ArrayLike] = None,
         initial_value_vol: Optional[Union[float, NDArray]] = None,
-    ) -> DataFrame:
+    ) -> pd.DataFrame:
         """
         Simulated data from a zero mean model
 
@@ -1293,7 +1295,7 @@ class ZeroMean(HARX):
         vol = np.sqrt(sim_values[1])
         assert isinstance(vol, np.ndarray)
         df = dict(data=y[burn:], volatility=vol[burn:], errors=errors[burn:])
-        df = DataFrame(df)
+        df = pd.DataFrame(df)
 
         return df
 
