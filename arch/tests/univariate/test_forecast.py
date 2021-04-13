@@ -801,6 +801,7 @@ def test_x_exceptions():
         res.forecast(reindex=False, x=SP500)
     x = SP500.copy()
     x[:] = np.random.standard_normal(SP500.shape)
+    x.name = "Exog"
     res = ARX(SP500, lags=1, x=x).fit(disp="off")
     with pytest.raises(TypeError, match="x is None but the model"):
         res.forecast(reindex=False)
@@ -813,7 +814,7 @@ def test_x_exceptions():
         res.forecast(reindex=False, x={"z": x})
     with pytest.raises(ValueError, match="The arrays contained in the dictionary"):
         _x = np.asarray(x).reshape((1, x.shape[0], 1))
-        res.forecast(reindex=False, x={"x0": _x})
+        res.forecast(reindex=False, x={"Exog": _x})
     x2 = pd.concat([x, x], 1)
     x2.columns = ["x0", "x1"]
     x2.iloc[:, 1] = np.random.standard_normal(SP500.shape)

@@ -729,17 +729,23 @@ class ARCHModel(object, metaclass=ABCMeta):
 
         options = {} if options is None else options
         options.setdefault("disp", disp_flag)
-        opt = minimize(
-            func,
-            sv,
-            args=args,
-            method="SLSQP",
-            bounds=bounds,
-            constraints=ineq_constraints,
-            tol=tol,
-            callback=_callback,
-            options=options,
-        )
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore",
+                "Values in x were outside bounds during a minimize step",
+                RuntimeWarning,
+            )
+            opt = minimize(
+                func,
+                sv,
+                args=args,
+                method="SLSQP",
+                bounds=bounds,
+                constraints=ineq_constraints,
+                tol=tol,
+                callback=_callback,
+                options=options,
+            )
 
         if show_warning:
             warnings.filterwarnings("always", "", ConvergenceWarning)

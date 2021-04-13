@@ -4,12 +4,13 @@ if [[ ${USE_CONDA} == "true" ]]; then
   conda config --set always_yes true
   conda update --all --quiet
   conda create -n arch-test python=${PYTHON_VERSION} -y
+  conda activate arch-test
   conda init
   echo ${PATH}
   source activate arch-test
   echo ${PATH}
   which python
-  CMD="conda install numpy"
+  CMD="conda install pytest numpy"
 else
   CMD="python -m pip install numpy"
 fi

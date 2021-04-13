@@ -4,7 +4,7 @@
 #
 # This file does only contain a selection of the most common options. For a
 # full list see the documentation:
-# http://www.sphinx-doc.org/en/master/config
+# https://www.sphinx-doc.org/en/master/config
 
 # -- Path setup --------------------------------------------------------------
 from distutils.version import LooseVersion
@@ -141,7 +141,7 @@ if not on_rtd:  # only import and set the theme if we"re building docs locally
 
     # sphinx_material theme options (see theme.conf for more information)
     html_theme_options = {
-        "base_url": "http://bashtage.github.io/arch/",
+        "base_url": "https://bashtage.github.io/arch/",
         "repo_url": "https://github.com/bashtage/arch/",
         "repo_name": "ARCH",
         # Set the name of the project to appear in the sidebar
