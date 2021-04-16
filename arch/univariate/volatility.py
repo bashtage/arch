@@ -17,6 +17,7 @@ from scipy.special import gammaln
 
 from arch.typing import ArrayLike1D, NDArray, RNGType
 from arch.univariate.distribution import Normal
+from arch.univariate.recursions_python import garch_core, harch_core
 from arch.utility.array import AbstractDocStringInheritor, ensure1d
 from arch.utility.exceptions import InitialValueWarning, initial_value_warning
 
@@ -183,6 +184,8 @@ class VolatilityProcess(object, metaclass=ABCMeta):
     separately from the conditional variance, even though parameters are estimated jointly.
     """
 
+    _updatable: bool = False
+
     def __init__(self) -> None:
         self._num_params = 0
         self._name = ""
@@ -225,6 +228,48 @@ class VolatilityProcess(object, metaclass=ABCMeta):
     def num_params(self) -> int:
         """The number of parameters in the model"""
         return self._num_params
+
+    @property
+    def updateable(self) -> bool:
+        """Flag indicating that the volatility process supports update"""
+        return self._updatable
+
+    def update(
+        self,
+        index: int,
+        parameters: NDArray,
+        resids: NDArray,
+        sigma2: NDArray,
+        backcast: Union[float, NDArray],
+        var_bounds: NDArray,
+    ) -> float:
+        """
+        Compute the variance for a single observation
+
+        Parameters
+        ----------
+        index : int
+            The numerical index of the variance to compute
+        variance_params : ndarray
+            The variance model parameters
+        resids :
+            The residual array. Only uses ``resids[:index]`` when computing
+            ``sigma2[index]``
+        sigma2 : ndarray
+            The array containing the variances. Only uses ``sigma2[:index]``
+            when computing ``sigma2[index]``. The computed value is stored
+            in ``sigma2[index]``.
+        backcast : {float, ndarray}
+            Value to use when initializing the recursion
+        var_bounds : ndarray
+            Array containing columns of lower and upper bounds
+
+        Returns
+        -------
+        float
+            The variance computed for location ``index``
+        """
+        raise NotImplementedError("Subclasses may optionally implement")
 
     @abstractmethod
     def _check_forecasting_method(self, method: str, horizon: int) -> None:
@@ -918,6 +963,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         +\sum_{j=1}^{o}\gamma_{j}\left|\epsilon_{t-j}\right|^{\lambda}
         I\left[\epsilon_{t-j}<0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}
     """
+    _updatable = True
 
     def __init__(self, p: int = 1, o: int = 0, q: int = 1, power: float = 2.0) -> None:
         super().__init__()
@@ -1012,6 +1058,28 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         b = np.zeros(k_arch + 2)
         b[k_arch + 1] = -1.0
         return a, b
+
+    def update(
+        self,
+        index: int,
+        parameters: NDArray,
+        resids: NDArray,
+        sigma2: NDArray,
+        backcast: Union[float, NDArray],
+        var_bounds: NDArray,
+    ) -> float:
+        return garch_core(
+            index,
+            parameters,
+            resids,
+            sigma2,
+            backcast,
+            var_bounds,
+            self.p,
+            self.o,
+            self.q,
+            self.power,
+        )
 
     def compute_variance(
         self,
@@ -1367,6 +1435,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     A HARCH process is a special case of an ARCH process where parameters in the more general
     ARCH process have been restricted.
     """
+    _updatable = True
 
     def __init__(self, lags: Union[int, Sequence[int]] = 1) -> None:
         super().__init__()
@@ -1420,6 +1489,45 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         harch_recursion(parameters, resids, sigma2, lags, nobs, backcast, var_bounds)
         return sigma2
+
+    def update(
+        self,
+        index: int,
+        parameters: NDArray,
+        resids: NDArray,
+        sigma2: NDArray,
+        backcast: Union[float, NDArray],
+        var_bounds: NDArray,
+    ) -> float:
+        """
+        Compute the variance for a single observation
+
+        Parameters
+        ----------
+        index : int
+            The numerical index of the variance to compute
+        parameters : ndarray
+            The variance model parameters
+        resids :
+            The residual array. Only uses ``resids[:index]`` when computing
+            ``sigma2[index]``
+        sigma2 : ndarray
+            The array containing the variances. Only uses ``sigma2[:index]``
+            when computing ``sigma2[index]``. The computed value is stored
+            in ``sigma2[index]``.
+        backcast : {float, ndarray}
+            Value to use when initializing the recursion
+        var_bounds : ndarray
+            Array containing columns of lower and upper bounds
+
+        Returns
+        -------
+        float
+            The variance computed for location ``index``
+        """
+        return harch_core(
+            index, parameters, resids, sigma2, self.lags, backcast, var_bounds
+        )
 
     def simulate(
         self,
@@ -1965,6 +2073,7 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     parameter is treated as fixed. Set lam to ``None`` to jointly estimate this
     parameter when fitting the model.
     """
+    _updatable = True
 
     def __init__(self, lam: Optional[float] = 0.94) -> None:
         super().__init__()
@@ -2008,6 +2117,30 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     ) -> NDArray:
         lam = parameters[0] if self._estimate_lam else self.lam
         return ewma_recursion(lam, resids, sigma2, resids.shape[0], float(backcast))
+
+    def update(
+        self,
+        index: int,
+        parameters: NDArray,
+        resids: NDArray,
+        sigma2: NDArray,
+        backcast: Union[float, NDArray],
+        var_bounds: NDArray,
+    ) -> float:
+        lam = parameters[0] if self._estimate_lam else self.lam
+        assert lam is not None
+        return garch_core(
+            index,
+            np.array([0.0, 1.0 - lam, lam]),
+            resids,
+            sigma2,
+            backcast,
+            var_bounds,
+            1,
+            0,
+            1,
+            2,
+        )
 
     def constraints(self) -> Tuple[NDArray, NDArray]:
         if self._estimate_lam:
@@ -2930,12 +3063,13 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 return "Power FIGARCH (power: {0:0.1f})".format(self.power)
 
     def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+        eps_half = np.sqrt(np.finfo(np.float64).eps)
         v = np.mean(abs(resids) ** self.power)
 
         bounds = [(0.0, 10.0 * float(v))]
         bounds.extend([(0.0, 0.5)] * self.p)  # phi
-        bounds.extend([(0.0, 1.0)])  # d
-        bounds.extend([(0.0, 1.0)] * self.q)  # beta
+        bounds.extend([(0.0, 1.0 - eps_half)])  # d
+        bounds.extend([(0.0, 1.0 - eps_half)] * self.q)  # beta
 
         return bounds
 

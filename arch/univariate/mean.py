@@ -31,6 +31,7 @@ from arch.univariate.base import (
     ARCHModel,
     ARCHModelForecast,
     ARCHModelResult,
+    _callback_info,
     implicit_constant,
 )
 from arch.univariate.distribution import (
@@ -62,7 +63,7 @@ if sys.version_info >= (3, 8):
 elif TYPE_CHECKING:
     from typing_extensions import Literal
 
-__all__ = ["HARX", "ConstantMean", "ZeroMean", "ARX", "arch_model", "LS"]
+__all__ = ["HARX", "ConstantMean", "ZeroMean", "ARX", "arch_model", "LS", "ARCHInMean"]
 
 COV_TYPES = {
     "white": "White's Heteroskedasticity Consistent Estimator",
@@ -230,6 +231,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     where :math:`\bar{y}_{t-L_{i,0}:L_{i,1}}` is the average value of
     :math:`y_t` between :math:`t-L_{i,0}` and :math:`t - L_{i,1}`.
     """
+    # To allow for addition mean parameters in simulation
+    _extra_simulation_params: int = 0
 
     def __init__(
         self,
@@ -258,7 +261,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self.lags: Optional[
             Union[int, Sequence[int], Sequence[Sequence[int]], NDArray]
         ] = lags
-        self._lags = np.empty(0)
+        self._lags = np.empty((0, 0))
         self.constant: bool = constant
         self.use_rotated: bool = use_rotated
         self.regressors: np.ndarray[Any, np.dtype[np.float64]] = np.empty(
@@ -357,6 +360,43 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         assert self.regressors is not None
         return int(self.regressors.shape[1])
 
+    def _simulate_mean(
+        self,
+        parameters: NDArray,
+        x: NDArray,
+        errors: NDArray,
+        initial_value: Optional[Union[float, NDArray]],
+        conditional_variance: NDArray,
+    ) -> NDArray:
+        max_lag = 0 if not self._lags.size else np.max(self._lags)
+        nobs_and_burn = errors.shape[0]
+        y = np.zeros(nobs_and_burn)
+        if initial_value is None:
+            initial_value = 0.0
+        elif not np.isscalar(initial_value):
+            initial_value = ensure1d(initial_value, "initial_value")
+            if initial_value.shape[0] != max_lag:
+                raise ValueError(
+                    f"initial_value has the wrong shape. Expected {max_lag} values"
+                )
+        y[:max_lag] = initial_value
+        k_x = x.shape[1]
+
+        for t in range(max_lag, nobs_and_burn):
+            ind = 0
+            if self.constant:
+                y[t] = parameters[ind]
+                ind += 1
+            for lag in self._lags.T:
+                y[t] += parameters[ind] * y[t - lag[1] : t - lag[0]].mean()
+                ind += 1
+            for i in range(k_x):
+                y[t] += parameters[ind] * x[t, i]
+                ind += 1
+            y[t] += errors[t]
+
+        return y
+
     def simulate(
         self,
         params: Union[NDArray, Sequence[float]],
@@ -421,7 +461,6 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         >>> sim_data = harx.simulate(params, nobs=nobs, burn=burn, x=x)
         """
 
-        k_x = 0
         if x is None:
             x = np.empty((nobs + burn, 0))
         else:
@@ -430,7 +469,12 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         if x.shape[0] != nobs + burn:
             raise ValueError("x must have nobs + burn rows")
         assert self._lags is not None
-        mc = int(self.constant) + self._lags.shape[1] + k_x
+        mc = (
+            int(self.constant)
+            + self._lags.shape[1]
+            + k_x
+            + self._extra_simulation_params
+        )
         vc = self.volatility.num_params
         dc = self.distribution.num_params
         num_params = mc + vc + dc
@@ -450,31 +494,10 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         errors = sim_data[0]
         vol = cast(NDArray, np.sqrt(sim_data[1]))
 
-        max_lag = np.max(self._lags)
-        y = np.zeros(nobs + burn)
-        if initial_value is None:
-            initial_value = 0.0
-        elif not np.isscalar(initial_value):
-            initial_value = ensure1d(initial_value, "initial_value")
-            if initial_value.shape[0] != max_lag:
-                raise ValueError("initial_value has the wrong shape")
-        y[:max_lag] = initial_value
-
-        for t in range(max_lag, nobs + burn):
-            ind = 0
-            if self.constant:
-                y[t] = params[ind]
-                ind += 1
-            for lag in self._lags.T:
-                y[t] += params[ind] * y[t - lag[1] : t - lag[0]].mean()
-                ind += 1
-            for i in range(k_x):
-                y[t] += params[ind] * x[t, i]
-            y[t] += errors[t]
+        y = self._simulate_mean(params[:mc], x, errors, initial_value, sim_data[1])
 
         df = dict(data=y[burn:], volatility=vol[burn:], errors=errors[burn:])
-        df = pd.DataFrame(df)
-        return df
+        return pd.DataFrame(df)
 
     def _generate_variable_names(self) -> List[str]:
         """Generates variable names or use in summaries"""
@@ -1332,6 +1355,10 @@ class ARX(HARX):
         Number of observations at the start of the sample to exclude when
         estimating model parameters.  Used when comparing models with different
         lag lengths to estimate on the common sample.
+    volatility : VolatilityProcess, optional
+        Volatility process to use in the model
+    distribution : Distribution, optional
+        Error distribution to use in the model
     rescale : bool, optional
         Flag indicating whether to automatically rescale data if the scale of the
         data is likely to produce convergence issues when estimating model parameters.
@@ -1482,7 +1509,7 @@ class LS(HARX):
         y_t = \mu + \gamma' x_t + \epsilon_t
 
     """
-    # TODO??
+
     def __init__(
         self,
         y: Optional[ArrayLike] = None,
@@ -1507,8 +1534,290 @@ class LS(HARX):
         )
         self._name = "Least Squares"
 
+
+class ARCHInMean(ARX):
+    r"""
+    (G)ARCH-in-mean model and simulation
+
+    Parameters
+    ----------
+    y : {ndarray, Series}
+        nobs element vector containing the dependent variable
+    x : {ndarray, DataFrame}, optional
+        nobs by k element array containing exogenous regressors
+    lags : {scalar, 1-d array}, optional
+        Description of lag structure of the HAR.  Scalar included all lags
+        between 1 and the value.  A 1-d array includes the AR lags lags[0],
+        lags[1], ...
+    constant : bool, optional
+        Flag whether the model should include a constant
+    hold_back : int, optional
+        Number of observations at the start of the sample to exclude when
+        estimating model parameters.  Used when comparing models with different
+        lag lengths to estimate on the common sample.
+    volatility : VolatilityProcess, optional
+        Volatility process to use in the model. ``volatility.updateable`` must
+        return ``True``.
+    distribution : Distribution, optional
+        Error distribution to use in the model
+    rescale : bool, optional
+        Flag indicating whether to automatically rescale data if the scale of the
+        data is likely to produce convergence issues when estimating model parameters.
+        If False, the model is estimated on the data without transformation.  If True,
+        than y is rescaled and the new scale is reported in the estimation results.
+    form : {"log", "vol", "var", int, float}
+        The form of the conditional variance that appears in the mean equation. The
+        string names use the log of the conditional variance ("log"), the square-root
+        of the conditional variance ("vol") or the conditional variance. When
+        specified using a float, interpreted as :math:`\sigma_t^{form}` so that
+        1 is equivalent to "vol" and 2 is equivalent to "var". When using a number,
+        must be different from 0.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from arch.univariate import ARCHInMean, GARCH
+    >>> from arch.data.sp500 import load
+    >>> sp500 = load()
+    >>> rets = 100 * sp500["Adj Close"].pct_change().dropna()
+    >>> gim = ARCHInMean(rets, lags=[1, 2], volatility=GARCH())
+    >>> res = gim.fit()
+
+    Notes
+    -----
+    The (G)arch-in-mean model with exogensous regressors (-X)  is described by
+
+    .. math::
+
+        y_t = \mu + \kappa f(\sigma^2_t)+ \sum_{i=1}^p \phi_{L_{i}} y_{t-L_{i}}
+              + \gamma' x_t +  \epsilon_t
+
+    where :math:`f(\cdot)` is the function specified by ``form``.
+    """
+    # To account for GIM param
+    _extra_simulation_params = 1
+
+    def __init__(
+        self,
+        y: Optional[ArrayLike] = None,
+        x: Optional[ArrayLike] = None,
+        lags: Optional[Union[int, List[int], NDArray]] = None,
+        constant: bool = True,
+        hold_back: Optional[int] = None,
+        volatility: Optional[VolatilityProcess] = None,
+        distribution: Optional[Distribution] = None,
+        rescale: Optional[bool] = None,
+        form: Union[int, float, Literal["log", "vol", "var"]] = "vol",
+    ) -> None:
+        super().__init__(
+            y, x, lags, constant, hold_back, volatility, distribution, rescale
+        )
+        self._name = "ARCH-in-mean"
+        form_err = (
+            "form must be a floating point number of one of 'log', 'vol' or 'var', got "
+        )
+        if not isinstance(form, (str, int, float, np.floating, np.integer)):
+            raise TypeError(form_err + f"{type(form)}")
+        if isinstance(form, str):
+            lower_form = form.lower()
+            if lower_form not in ("log", "vol", "var"):
+                raise ValueError(form_err + f"{form}")
+            self._form_id = {"log": 0, "vol": 1, "var": 2}[lower_form]
+            self._form_power = float(self._form_id)
+        else:
+            float_form = float(form)
+            if float_form == 0:
+                raise ValueError(
+                    "When using a floating point number for form, its value "
+                    "must be different from 0"
+                )
+            self._form_id = 3
+            self._form_power = float_form
+        self._form = form
+
+        if not self.volatility.updateable:
+            raise ValueError(
+                f"The volatility process {self.volatility.__class__} is not "
+                "updateable. Only processes that have implemented the "
+                "``update`` function and ``updateable`` returns True can be "
+                "used with ``ARCHInMean``."
+            )
+
+    @property
+    def form(self) -> Union[int, float, Literal["log", "vol", "var"]]:
+        return self._form
+
     def _model_description(self, include_lags: bool = False) -> Dict[str, str]:
-        return super()._model_description(include_lags)
+        base_descr = super()._model_description(include_lags)
+        keys = list(base_descr.keys())
+        descr = {key: base_descr[key] for key in keys[:-2]}
+        if not isinstance(self._form, str):
+            form = f"{float(self._form)} (numeric)"
+        else:
+            form = self._form
+        descr["form"] = str(form)
+        for key in keys[-2:]:
+            descr[key] = base_descr[key]
+        return descr
+
+    def _generate_variable_names(self) -> List[str]:
+        names = super()._generate_variable_names()
+        return names + ["kappa"]
+
+    @cached_property
+    def num_params(self) -> int:
+        assert self.regressors is not None
+        return int(self.regressors.shape[1]) + 1
+
+    def forecast(
+        self,
+        params: ArrayLike1D,
+        horizon: int = 1,
+        start: Optional[Union[int, DateLike]] = None,
+        align: str = "origin",
+        method: str = "analytic",
+        simulations: int = 1000,
+        rng: Optional[Callable[[Union[int, Tuple[int, ...]]], NDArray]] = None,
+        random_state: Optional[np.random.RandomState] = None,
+        *,
+        reindex: Optional[bool] = None,
+        x: Union[None, Dict[Label, ArrayLike], ArrayLike] = None,
+    ) -> ARCHModelForecast:
+        raise NotImplementedError(
+            "forecasts are not implemented for (G)ARCH-in-mean models"
+        )
+
+    def resids(
+        self,
+        params: NDArray,
+        y: Optional[ArrayLike] = None,
+        regressors: Optional[ArrayLike] = None,
+    ) -> ArrayLike:
+        return super().resids(params[:-1], y=y, regressors=regressors)
+
+    def starting_values(self) -> NDArray:
+        return np.r_[super().starting_values(), 0.0]
+
+    def _resids_in_mean(
+        self,
+        mean_params: NDArray,
+        variance_params: NDArray,
+        sigma2: NDArray,
+        backcast: Union[float, NDArray],
+        var_bounds: NDArray,
+    ) -> NDArray:
+        """
+        TODO: Finish
+
+        Parameters
+        ----------
+        mean_params
+        variance_params
+        sigma2
+        backcast
+        var_bounds
+
+        Returns
+        -------
+
+        """
+        resids = self._fit_y - self._fit_regressors @ mean_params[:-1]
+        nobs = self._fit_y.shape[0]
+        form_id = self._form_id
+        gamma = mean_params[-1]
+        # Map from natural power to power of sigma2
+        form_power = self._form_power / 2.0
+        for t in range(nobs):
+            sigma2[t] = self.volatility.update(
+                t, variance_params, resids, sigma2, backcast, var_bounds
+            )
+            if form_id == 0:
+                trans_var = np.log(sigma2[t])
+            else:
+                trans_var = sigma2[t] ** form_power
+            resids[t] -= gamma * trans_var
+
+        return resids
+
+    def _loglikelihood(
+        self,
+        parameters: NDArray,
+        sigma2: NDArray,
+        backcast: Union[float, NDArray],
+        var_bounds: NDArray,
+        individual: bool = False,
+    ) -> Union[float, NDArray]:
+        # Parse parameters
+        _callback_info["count"] += 1
+
+        # 1. Resids
+        mp, vp, dp = self._parse_parameters(parameters)
+        resids = self._resids_in_mean(mp, vp, sigma2, backcast, var_bounds)
+
+        # 3. Compute log likelihood using Distribution
+        llf = self.distribution.loglikelihood(dp, resids, sigma2, individual)
+
+        if not individual:
+            _callback_info["llf"] = llf_f = -float(llf)
+            return llf_f
+
+        return cast(np.ndarray, -llf)
+
+    def _simulate_mean(
+        self,
+        parameters: NDArray,
+        x: NDArray,
+        errors: NDArray,
+        initial_value: Optional[Union[float, NDArray]],
+        conditional_variance: NDArray,
+    ) -> NDArray:
+        """
+
+        Parameters
+        ----------
+        parameters
+        x
+        errors
+        initial_value
+        conditional_variance
+
+        Returns
+        -------
+
+        """
+        if self._form_id == 0:
+            trans_vol = np.log(conditional_variance)
+        else:
+            trans_vol = conditional_variance ** (self._form_power / 2)
+
+        max_lag = 0 if not self._lags.size else np.max(self._lags)
+        nobs_and_burn = errors.shape[0]
+        y = np.zeros(nobs_and_burn)
+        if initial_value is None:
+            initial_value = 0.0
+        elif not np.isscalar(initial_value):
+            initial_value = ensure1d(initial_value, "initial_value")
+            if initial_value.shape[0] != max_lag:
+                raise ValueError(
+                    f"initial_value has the wrong shape. Expected {max_lag} values"
+                )
+        y[:max_lag] = initial_value
+        k_x = x.shape[1]
+
+        for t in range(max_lag, nobs_and_burn):
+            ind = 0
+            if self.constant:
+                y[t] = parameters[ind]
+                ind += 1
+            for lag in self._lags.T:
+                y[t] += parameters[ind] * y[t - lag[1] : t - lag[0]].mean()
+                ind += 1
+            for i in range(k_x):
+                y[t] += parameters[ind] * x[t, i]
+                ind += 1
+            y[t] += parameters[ind] * trans_vol[t] + errors[t]
+
+        return y
 
 
 def arch_model(

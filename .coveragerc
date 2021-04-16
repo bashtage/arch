@@ -25,6 +25,7 @@ exclude_lines =
     except ImportError
     # Ignore type checking code
     if TYPE_CHECKING
+    elif TYPE_CHECKING
     # Cython function declarations
     cdef
 

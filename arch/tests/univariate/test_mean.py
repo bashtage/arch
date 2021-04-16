@@ -3,6 +3,7 @@ from io import StringIO
 from itertools import product
 from string import ascii_lowercase
 import sys
+import types
 import warnings
 
 import numpy as np
@@ -49,7 +50,7 @@ except ImportError:
     import arch.univariate.recursions_python  # noqa
 
 if USE_CYTHON:
-    rec = arch.univariate.recursions
+    rec: types.ModuleType = arch.univariate.recursions
 else:
     rec = arch.univariate.recursions_python
 
@@ -239,9 +240,12 @@ class TestMeanModel(object):
         with pytest.raises(ValueError):
             HARX(self.y, self.x, lags=[[[1], [3]]])
 
-    def test_har(self):
-        har = HARX(self.y, lags=[1, 5, 22])
+    @pytest.mark.parametrize("constant", [True, False])
+    def test_har(self, constant):
+        har = HARX(self.y, lags=[1, 5, 22], constant=constant)
         params = np.array([1.0, 0.4, 0.3, 0.2, 1.0])
+        if not constant:
+            params = params[1:]
         data = har.simulate(params, self.T)
         assert_equal(data.shape, (self.T, 3))
         cols = ["data", "volatility", "errors"]
@@ -252,12 +256,12 @@ class TestMeanModel(object):
         for b in bounds:
             assert_equal(b[0], -np.inf)
             assert_equal(b[1], np.inf)
-        assert_equal(len(bounds), 4)
+        assert_equal(len(bounds), 3 + int(constant))
 
-        assert_equal(har.num_params, 4)
-        assert_equal(har.constant, True)
+        assert_equal(har.num_params, 3 + int(constant))
+        assert_equal(har.constant, constant)
         a, b = har.constraints()
-        assert_equal(a, np.empty((0, 4)))
+        assert_equal(a, np.empty((0, 3 + int(constant))))
         assert_equal(b, np.empty(0))
         res = har.fit(disp=DISPLAY)
         nobs = self.T - 22
@@ -268,6 +272,8 @@ class TestMeanModel(object):
             rhs[i, 1] = y[i + 21]
             rhs[i, 2] = np.mean(y[i + 17 : i + 22])
             rhs[i, 3] = np.mean(y[i : i + 22])
+        if not constant:
+            rhs = rhs[:, 1:]
         params = np.linalg.pinv(rhs).dot(lhs)
         assert_almost_equal(params, res.params[:-1])
 
