@@ -14,10 +14,10 @@ from warnings import warn
 import numpy as np
 from numpy.random import RandomState
 from scipy.special import gammaln
+from property_cached import cached_property
 
 from arch.typing import ArrayLike1D, NDArray, RNGType
 from arch.univariate.distribution import Normal
-from arch.univariate.recursions_python import garch_core, harch_core
 from arch.utility.array import AbstractDocStringInheritor, ensure1d
 from arch.utility.exceptions import InitialValueWarning, initial_value_warning
 
@@ -27,8 +27,11 @@ try:
         egarch_recursion,
         figarch_recursion,
         figarch_weights,
+        garch_core,
         garch_recursion,
+        harch_core,
         harch_recursion,
+        midas_core,
         midas_recursion,
     )
 except ImportError:  # pragma: no cover
@@ -37,8 +40,11 @@ except ImportError:  # pragma: no cover
         egarch_recursion,
         figarch_recursion,
         figarch_weights,
+        garch_core,
         garch_recursion,
+        harch_core,
         harch_recursion,
+        midas_core,
         midas_recursion,
     )
 
@@ -56,6 +62,8 @@ __all__ = [
     "MIDASHyperbolic",
     "VolatilityProcess",
 ]
+
+DOUBLE_EPS = np.finfo(np.float64).eps
 
 
 def _common_names(p: int, o: int, q: int) -> List[str]:
@@ -1718,6 +1726,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
        Econometric Methods for Mixed-Frequency Data". Norges Bank. (2013).
     .. [*] Sheppard, Kevin. "Direct volatility modeling". Manuscript. (2018).
     """
+    _updatable = True
 
     def __init__(self, m: int = 22, asym: bool = False) -> None:
         super().__init__()
@@ -1725,6 +1734,8 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self._asym = bool(asym)
         self._num_params = 3 + self._asym
         self._name = "MIDAS Hyperbolic"
+        self._last_weights = np.empty(m)
+        self._last_theta = -9999.99
 
     def __str__(self) -> str:
         descr = self.name
@@ -1778,6 +1789,25 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         b[4] = -1.0
 
         return a, b
+
+    def update(
+        self,
+        index: int,
+        parameters: NDArray,
+        resids: NDArray,
+        sigma2: NDArray,
+        backcast: Union[float, NDArray],
+        var_bounds: NDArray,
+    ) -> float:
+        # TODO: Need a metter way to handle once a function call setup. Probably a new
+        #   function `update_setup` that would accept parameters and could create
+        #   transformed variables that con be used later
+        theta = max(parameters[-1], DOUBLE_EPS)
+        if self._last_theta != theta:
+            self._last_weights = self._weights(parameters)
+        return midas_core(
+            index, parameters, self._last_weights, resids, sigma2, backcast, var_bounds
+        )
 
     def compute_variance(
         self,
@@ -1882,7 +1912,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def _weights(self, params: NDArray) -> NDArray:
         m = self.m
         # Prevent 0
-        theta = max(params[-1], np.finfo(np.float64).eps)
+        theta = max(params[-1], DOUBLE_EPS)
         j = np.arange(1.0, m + 1)
         w = gammaln(theta + j) - gammaln(j + 1) - gammaln(theta)
         w = np.exp(w)
@@ -2301,6 +2331,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         descr += ")"
         return descr
 
+    @cached_property
     def _ewma_combination_weights(self) -> NDArray:
         """
         Returns
@@ -2315,6 +2346,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return w
 
+    @cached_property
     def _ewma_smoothing_parameters(self) -> NDArray:
         tau1, kmax, rho = self.tau1, self.kmax, self.rho
         taus = tau1 * (rho ** np.arange(kmax))
@@ -2337,7 +2369,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         """
 
         nobs = resids.shape[0]
-        mus = self._ewma_smoothing_parameters()
+        mus = self._ewma_smoothing_parameters
 
         resids2 = resids ** 2.0
         backcast = np.zeros(mus.shape[0])
@@ -2354,7 +2386,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self, backcast: Union[float, NDArray]
     ) -> Union[float, NDArray]:
         backcast = super().backcast_transform(backcast)
-        mus = self._ewma_smoothing_parameters()
+        mus = self._ewma_smoothing_parameters
         backcast_arr = np.asarray(backcast)
         if backcast_arr.ndim == 0:
             backcast_arr = cast(np.ndarray, backcast * np.ones(mus.shape[0]))
@@ -2394,8 +2426,8 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         nobs = resids.shape[0]
         kmax = self.kmax
-        w = self._ewma_combination_weights()
-        mus = self._ewma_smoothing_parameters()
+        w = self._ewma_combination_weights
+        mus = self._ewma_smoothing_parameters
 
         sigma2_temp = np.zeros_like(sigma2)
         backcast = cast(NDArray, backcast)
@@ -2420,8 +2452,8 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         errors = rng(nobs + burn)
 
         kmax = self.kmax
-        w = self._ewma_combination_weights()
-        mus = self._ewma_smoothing_parameters()
+        w = self._ewma_combination_weights
+        mus = self._ewma_smoothing_parameters
 
         if initial_value is None:
             initial_value = 1.0
@@ -2469,8 +2501,8 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         rng: RNGType,
     ) -> VarianceForecast:
         kmax = self.kmax
-        w = self._ewma_combination_weights()
-        mus = self._ewma_smoothing_parameters()
+        w = self._ewma_combination_weights
+        mus = self._ewma_smoothing_parameters
         backcast = cast(NDArray, np.asarray(backcast))
 
         t = resids.shape[0]

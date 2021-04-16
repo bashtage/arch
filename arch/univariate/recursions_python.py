@@ -387,6 +387,56 @@ def egarch_recursion_python(
 egarch_recursion = jit(egarch_recursion_python, nopython=True)
 
 
+def midas_core_python(
+    t: int,
+    parameters: NDArray,
+    weights: NDArray,
+    resids: NDArray,
+    sigma2: NDArray,
+    backcast: float,
+    var_bounds: NDArray,
+) -> float:
+    """
+    Parameters
+    ----------
+    t: int
+        Location of variance to compute. Assumes variance has been computed
+        at times t-1, t-2, ...
+    parameters : 1-d array, float64
+        Model parameters
+    weights : 1-d array, float64
+        Weights for MIDAS recursions
+    resids : 1-d array, float64
+        Residuals to use in the recursion
+    sigma2 : 1-d array, float64
+        Conditional variances with same shape as resids
+    backcast : float64
+        Value to use when initializing the recursion
+    var_bounds : 2-d array
+        nobs by 2-element array of upper and lower bounds for conditional
+        variances for each time period
+    """
+    m = weights.shape[0]
+    omega = parameters[0]
+    alpha = parameters[1]
+    gamma = parameters[2]
+
+    sigma2[t] = omega
+    for i in range(m):
+        if (t - i - 1) >= 0:
+            w = (alpha + gamma * (resids[t - i - 1] < 0)) * weights[i]
+            sigma2[t] += w * (resids[t - i - 1] * resids[t - i - 1])
+        else:
+            sigma2[t] += (alpha + gamma * 0.5) * weights[i] * backcast
+
+    sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+
+    return sigma2[t]
+
+
+midas_core = jit(midas_core_python, nopython=True)
+
+
 def midas_recursion_python(
     parameters: NDArray,
     weights: NDArray,

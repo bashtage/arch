@@ -21,8 +21,8 @@ X.columns = [0, 1]
 RANDOMSTATE = np.random.RandomState(12349876)
 X.loc[:, :] = RANDOMSTATE.standard_normal(X.shape)
 
-SUPPORTED = [HARCH, ARCH, GARCH, EWMAVariance]
-UNSUPPORTED = [RiskMetrics2006, FIGARCH, EGARCH, MIDASHyperbolic]
+SUPPORTED = [HARCH, ARCH, GARCH, EWMAVariance, MIDASHyperbolic]
+UNSUPPORTED = [RiskMetrics2006, FIGARCH, EGARCH]
 
 
 def test_exceptions():
@@ -32,8 +32,6 @@ def test_exceptions():
         ARCHInMean(SP500, form=0, volatility=GARCH())
     with pytest.raises(ValueError):
         ARCHInMean(SP500, form="unknown", volatility=GARCH())
-    with pytest.raises(ValueError):
-        ARCHInMean(SP500, volatility=MIDASHyperbolic())
 
 
 @pytest.mark.parametrize("form_and_id", [("vol", 1), ("var", 2), ("log", 0), (1.5, 3)])
@@ -110,7 +108,7 @@ def test_unsupported(bad_vol):
         ARCHInMean(SP500, volatility=bad_vol())
 
 
-@pytest.mark.parametrize("good_vol", SUPPORTED)
+@pytest.mark.parametrize("good_vol", [MIDASHyperbolic])
 def test_supported(good_vol):
     aim = ARCHInMean(SP500, volatility=good_vol())
     assert isinstance(aim, ARCHInMean)

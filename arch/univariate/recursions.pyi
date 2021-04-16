@@ -88,7 +88,7 @@ def harch_core(
     lags: NDArray,
     backcast: float,
     var_bounds: NDArray,
-) -> NDArray: ...
+) -> float: ...
 def garch_core(
     t: int,
     parameters: NDArray,
@@ -100,4 +100,13 @@ def garch_core(
     o: int,
     q: int,
     power: float,
-) -> NDArray: ...
+) -> float: ...
+def midas_core(
+    t: int,
+    parameters: NDArray,
+    weights: NDArray,
+    resids: NDArray,
+    sigma2: NDArray,
+    backcast: float,
+    var_bounds: NDArray,
+) -> float: ...

@@ -900,6 +900,36 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert np.all(sigma2 >= self.var_bounds[:, 0])
         assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
 
+    def test_midas_hyperbolic_update(self):
+        nobs, resids = self.nobs, self.resids
+        sigma2, backcast = self.sigma2, self.backcast
+
+        parameters = np.array([0.1, 0.8, 0])
+        j = np.arange(1, 22 + 1)
+        weights = gamma(j + 0.6) / (gamma(j + 1) * gamma(0.6))
+        weights = weights / weights.sum()
+        recpy.midas_recursion(
+            parameters, weights, resids, sigma2, nobs, backcast, self.var_bounds
+        )
+        sigma2_ref = sigma2.copy()
+        for t in range(nobs):
+            recpy.midas_core(
+                t, parameters, weights, resids, sigma2, backcast, self.var_bounds
+            )
+        assert_almost_equal(sigma2_ref, sigma2)
+
+        for t in range(nobs):
+            recpy.midas_core_python(
+                t, parameters, weights, resids, sigma2, backcast, self.var_bounds
+            )
+        assert_almost_equal(sigma2_ref, sigma2)
+
+        for t in range(nobs):
+            rec.midas_core(
+                t, parameters, weights, resids, sigma2, backcast, self.var_bounds
+            )
+        assert_almost_equal(sigma2_ref, sigma2)
+
     def test_figarch_recursion(self):
         nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast

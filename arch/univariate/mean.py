@@ -1593,6 +1593,14 @@ class ARCHInMean(ARX):
               + \gamma' x_t +  \epsilon_t
 
     where :math:`f(\cdot)` is the function specified by ``form``.
+
+    **Performance**
+
+    Estimating ARCH-in-mean models is slower than estimating other models
+    because the critical loop is compsed on code from multiple functions
+    and so is written in Python.  It is possible to accelerate this, and
+    performance may improve in the future, depending on whether there is
+    and expressed interest.
     """
     # To account for GIM param
     _extra_simulation_params = 1
