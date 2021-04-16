@@ -22,6 +22,7 @@
       ~GARCH.parameter_names
       ~GARCH.simulate
       ~GARCH.starting_values
+      ~GARCH.update
       ~GARCH.variance_bounds
    
    
@@ -37,6 +38,7 @@
       ~GARCH.num_params
       ~GARCH.start
       ~GARCH.stop
+      ~GARCH.updateable
    
    
    

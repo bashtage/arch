@@ -22,6 +22,7 @@
       ~ARCH.parameter_names
       ~ARCH.simulate
       ~ARCH.starting_values
+      ~ARCH.update
       ~ARCH.variance_bounds
    
    
@@ -37,6 +38,7 @@
       ~ARCH.num_params
       ~ARCH.start
       ~ARCH.stop
+      ~ARCH.updateable
    
    
    

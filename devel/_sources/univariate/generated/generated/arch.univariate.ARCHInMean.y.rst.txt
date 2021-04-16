@@ -1,0 +1,6 @@
+arch.univariate.ARCHInMean.y
+============================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ARCHInMean.y

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.GARCH.update
+============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: GARCH.update

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.EWMAVariance.update
+===================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: EWMAVariance.update

@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ARCHInMean.compute\_param\_cov
+==============================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ARCHInMean.compute_param_cov

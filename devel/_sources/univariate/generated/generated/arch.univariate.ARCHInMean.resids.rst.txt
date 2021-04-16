@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ARCHInMean.resids
+=================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ARCHInMean.resids

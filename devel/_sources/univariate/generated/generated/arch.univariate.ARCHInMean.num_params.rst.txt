@@ -1,0 +1,6 @@
+arch.univariate.ARCHInMean.num\_params
+======================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ARCHInMean.num_params

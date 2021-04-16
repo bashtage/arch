@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ARCHInMean.parameter\_names
+===========================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ARCHInMean.parameter_names

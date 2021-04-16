@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.volatility.VolatilityProcess.update
+===================================================
+
+.. currentmodule:: arch.univariate.volatility
+
+.. automethod:: VolatilityProcess.update

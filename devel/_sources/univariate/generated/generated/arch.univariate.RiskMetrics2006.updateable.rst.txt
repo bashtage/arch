@@ -1,0 +1,6 @@
+arch.univariate.RiskMetrics2006.updateable
+==========================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: RiskMetrics2006.updateable

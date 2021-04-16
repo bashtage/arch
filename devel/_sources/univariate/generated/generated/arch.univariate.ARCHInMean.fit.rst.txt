@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ARCHInMean.fit
+==============================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ARCHInMean.fit

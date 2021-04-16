@@ -22,6 +22,7 @@
       ~FIGARCH.parameter_names
       ~FIGARCH.simulate
       ~FIGARCH.starting_values
+      ~FIGARCH.update
       ~FIGARCH.variance_bounds
    
    
@@ -38,6 +39,7 @@
       ~FIGARCH.start
       ~FIGARCH.stop
       ~FIGARCH.truncation
+      ~FIGARCH.updateable
    
    
    

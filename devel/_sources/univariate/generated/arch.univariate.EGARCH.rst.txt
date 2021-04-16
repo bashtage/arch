@@ -22,6 +22,7 @@
       ~EGARCH.parameter_names
       ~EGARCH.simulate
       ~EGARCH.starting_values
+      ~EGARCH.update
       ~EGARCH.variance_bounds
    
    
@@ -37,6 +38,7 @@
       ~EGARCH.num_params
       ~EGARCH.start
       ~EGARCH.stop
+      ~EGARCH.updateable
    
    
    

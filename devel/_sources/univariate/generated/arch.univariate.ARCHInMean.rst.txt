@@ -1,0 +1,45 @@
+﻿arch.univariate.ARCHInMean
+==========================
+
+.. currentmodule:: arch.univariate
+
+.. autoclass:: ARCHInMean
+   :exclude-members:
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ARCHInMean.bounds
+      ~ARCHInMean.compute_param_cov
+      ~ARCHInMean.constraints
+      ~ARCHInMean.fit
+      ~ARCHInMean.fix
+      ~ARCHInMean.forecast
+      ~ARCHInMean.parameter_names
+      ~ARCHInMean.resids
+      ~ARCHInMean.simulate
+      ~ARCHInMean.starting_values
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~ARCHInMean.distribution
+      ~ARCHInMean.form
+      ~ARCHInMean.name
+      ~ARCHInMean.num_params
+      ~ARCHInMean.volatility
+      ~ARCHInMean.x
+      ~ARCHInMean.y
+   
+   
+   

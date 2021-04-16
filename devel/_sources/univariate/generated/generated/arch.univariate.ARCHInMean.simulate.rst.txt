@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ARCHInMean.simulate
+===================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ARCHInMean.simulate

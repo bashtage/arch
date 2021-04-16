@@ -1,0 +1,6 @@
+arch.univariate.ARCHInMean.distribution
+=======================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ARCHInMean.distribution

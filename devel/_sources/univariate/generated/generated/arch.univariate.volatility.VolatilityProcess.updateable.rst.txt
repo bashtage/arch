@@ -1,0 +1,6 @@
+arch.univariate.volatility.VolatilityProcess.updateable
+=======================================================
+
+.. currentmodule:: arch.univariate.volatility
+
+.. autoproperty:: VolatilityProcess.updateable

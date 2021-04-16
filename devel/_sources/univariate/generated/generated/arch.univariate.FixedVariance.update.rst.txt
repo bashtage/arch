@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.FixedVariance.update
+====================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: FixedVariance.update
