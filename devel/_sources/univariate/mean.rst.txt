@@ -31,7 +31,7 @@ to enter the conditional mean.
 
 Special Requirements
 ~~~~~~~~~~~~~~~~~~~~
-Not all volatlity processes support application to AIM modeling.
+Not all volatility processes support application to AIM modeling.
 Specifically, the property ``updateable`` must be ``True``.
 
 .. ipython::
