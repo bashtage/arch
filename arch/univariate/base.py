@@ -988,7 +988,7 @@ class ARCHModel(object, metaclass=ABCMeta):
 
             * 2-d array-like: This format can be used when there is a single
               exogenous variable. The input must have shape (nforecast, horizon)
-              or (nobs, horzion) where nforecast is the number of forecasting
+              or (nobs, horizon) where nforecast is the number of forecasting
               periods and nobs is the original shape of y. For example, if a
               single series of forecasts are made from the end of the sample
               with a horizon of 10, then the input can be (1, 10). Alternatively,
@@ -1452,7 +1452,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
             * 2-d array-like: This format can be used when there is a single
               exogenous variable. The input must have shape (nforecast, horizon)
-              or (nobs, horzion) where nforecast is the number of forecasting
+              or (nobs, horizon) where nforecast is the number of forecasting
               periods and nobs is the original shape of y. For example, if a
               single series of forecasts are made from the end of the sample
               with a horizon of 10, then the input can be (1, 10). Alternatively,

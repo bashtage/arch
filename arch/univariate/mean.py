@@ -1585,7 +1585,7 @@ class ARCHInMean(ARX):
 
     Notes
     -----
-    The (G)arch-in-mean model with exogensous regressors (-X)  is described by
+    The (G)arch-in-mean model with exogenous regressors (-X)  is described by
 
     .. math::
 
@@ -1645,6 +1645,7 @@ class ARCHInMean(ARX):
 
     @property
     def form(self) -> Union[int, float, Literal["log", "vol", "var"]]:
+        """The form of the conditional variance in the mean"""
         return self._form
 
     def _model_description(self, include_lags: bool = False) -> Dict[str, str]:
