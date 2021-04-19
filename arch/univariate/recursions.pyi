@@ -1,3 +1,5 @@
+from typing import Optional, Union
+
 import numpy as np
 
 from arch.typing import NDArray
@@ -101,3 +103,45 @@ def garch_core(
     q: int,
     power: float,
 ) -> NDArray: ...
+
+class VolatiltyUpdater:
+    def initialize_update(
+        self, parameters: NDArray, backcast: Union[float, NDArray], nobs: int
+    ) -> None: ...
+    def _update_tester(
+        self,
+        t: int,
+        parameters: NDArray,
+        resids: NDArray,
+        sigma2: NDArray,
+        var_bounds: NDArray,
+    ) -> None: ...
+
+class GARCHUpdater(VolatiltyUpdater):
+    def __init__(self, p: int, o: int, q: int, power: float) -> None: ...
+
+class EWMAUpdater(VolatiltyUpdater):
+    def __init__(self, lam: Optional[float]) -> None: ...
+
+class FIGARCHUpdater(VolatiltyUpdater):
+    def __init__(self, p: int, q: int, power: float, truncation: int) -> None: ...
+
+class HARCHUpdater(VolatiltyUpdater):
+    def __init__(self, lags: NDArray) -> None: ...
+
+class MIDASUpdater(VolatiltyUpdater):
+    def __init__(self, m: int, asym: bool) -> None: ...
+
+class ARCHInMeanRecursion:
+    def __init__(self, updater: VolatiltyUpdater) -> None: ...
+    def recursion(
+        self,
+        y: NDArray,
+        x: NDArray,
+        mean_parameters: NDArray,
+        variance_params: NDArray,
+        sigma2: NDArray,
+        backcast: float,
+        var_bounds: NDArray,
+        power: float,
+    ) -> NDArray: ...

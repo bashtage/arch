@@ -5,7 +5,6 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 from __future__ import annotations
 
 import copy
-import sys
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -41,6 +40,20 @@ from arch.univariate.distribution import (
     SkewStudent,
     StudentsT,
 )
+
+if TYPE_CHECKING:
+    # Fake path to satisfy mypy
+    from arch.univariate.recursions_python import ARCHInMeanRecursion, VolatiltyUpdater
+else:
+    try:
+        from arch.univariate.recursions import ARCHInMeanRecursion, VolatiltyUpdater
+    except ImportError:  # pragma: no cover
+        from arch.univariate.recursions_python import (
+            ARCHInMeanRecursion,
+            VolatiltyUpdater,
+        )
+
+from arch.typing import Literal
 from arch.univariate.volatility import (
     ARCH,
     EGARCH,
@@ -57,11 +70,6 @@ from arch.utility.array import (
     parse_dataframe,
 )
 from arch.vendor import cached_property
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-elif TYPE_CHECKING:
-    from typing_extensions import Literal
 
 __all__ = ["HARX", "ConstantMean", "ZeroMean", "ARX", "arch_model", "LS", "ARCHInMean"]
 
@@ -1642,6 +1650,8 @@ class ARCHInMean(ARX):
                 "``update`` function and ``updateable`` returns True can be "
                 "used with ``ARCHInMean``."
             )
+        self._volatility_updater: VolatiltyUpdater = self.volatility.volatility_updater
+        self._recursion = ARCHInMeanRecursion(self._volatility_updater)
 
     @property
     def form(self) -> Union[int, float, Literal["log", "vol", "var"]]:
@@ -1699,47 +1709,6 @@ class ARCHInMean(ARX):
     def starting_values(self) -> NDArray:
         return np.r_[super().starting_values(), 0.0]
 
-    def _resids_in_mean(
-        self,
-        mean_params: NDArray,
-        variance_params: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
-    ) -> NDArray:
-        """
-        TODO: Finish
-
-        Parameters
-        ----------
-        mean_params
-        variance_params
-        sigma2
-        backcast
-        var_bounds
-
-        Returns
-        -------
-
-        """
-        resids = self._fit_y - self._fit_regressors @ mean_params[:-1]
-        nobs = self._fit_y.shape[0]
-        form_id = self._form_id
-        gamma = mean_params[-1]
-        # Map from natural power to power of sigma2
-        form_power = self._form_power / 2.0
-        for t in range(nobs):
-            sigma2[t] = self.volatility.update(
-                t, variance_params, resids, sigma2, backcast, var_bounds
-            )
-            if form_id == 0:
-                trans_var = np.log(sigma2[t])
-            else:
-                trans_var = sigma2[t] ** form_power
-            resids[t] -= gamma * trans_var
-
-        return resids
-
     def _loglikelihood(
         self,
         parameters: NDArray,
@@ -1751,9 +1720,23 @@ class ARCHInMean(ARX):
         # Parse parameters
         _callback_info["count"] += 1
 
+        nobs = sigma2.shape[0]
         # 1. Resids
         mp, vp, dp = self._parse_parameters(parameters)
-        resids = self._resids_in_mean(mp, vp, sigma2, backcast, var_bounds)
+        # 2. Initialize volatility update
+        self._volatility_updater.initialize_update(vp, backcast, nobs)
+        # 3. Compute recusions
+        power = self._form_power / 2.0
+        resids = self._recursion.recursion(
+            self._fit_y,
+            self._fit_regressors,
+            mp,
+            vp,
+            sigma2,
+            backcast,
+            var_bounds,
+            power,
+        )
 
         # 3. Compute log likelihood using Distribution
         llf = self.distribution.loglikelihood(dp, resids, sigma2, individual)

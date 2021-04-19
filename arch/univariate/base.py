@@ -6,25 +6,8 @@ from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 from copy import deepcopy
 import datetime as dt
-import sys
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Dict,
-    List,
-    Optional,
-    Sequence,
-    Tuple,
-    Union,
-    cast,
-)
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union, cast
 import warnings
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-elif TYPE_CHECKING:
-    from typing_extensions import Literal
 
 import numpy as np
 import pandas as pd
@@ -39,7 +22,7 @@ from statsmodels.tools.tools import add_constant
 from statsmodels.tsa.tsatools import lagmat
 
 from arch.__future__._utility import check_reindex
-from arch.typing import ArrayLike, ArrayLike1D, DateLike, Label, NDArray
+from arch.typing import ArrayLike, ArrayLike1D, DateLike, Label, Literal, NDArray
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
 from arch.utility.array import ensure1d

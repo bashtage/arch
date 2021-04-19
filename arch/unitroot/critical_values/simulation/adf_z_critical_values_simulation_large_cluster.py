@@ -13,19 +13,15 @@ scale well with 128 or more engines.
 from __future__ import annotations
 
 import datetime
-import sys
 import time
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 from ipyparallel import Client, DirectView
 from numpy import array, nan, ndarray, percentile, savez
 
-from .adf_simulation import adf_simulation
+from arch.typing import Literal
 
-if sys.version_info >= (3, 8):
-    from typing import Literal
-elif TYPE_CHECKING:
-    from typing_extensions import Literal
+from .adf_simulation import adf_simulation
 
 # Time in seconds to sleep before checking if ready
 SLEEP = 10

@@ -8,7 +8,7 @@ from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 import itertools
 import operator
-from typing import Any, List, Optional, Sequence, Tuple, Union, cast
+from typing import TYPE_CHECKING, Any, List, Optional, Sequence, Tuple, Union, cast
 from warnings import warn
 
 import numpy as np
@@ -17,30 +17,16 @@ from scipy.special import gammaln
 
 from arch.typing import ArrayLike1D, NDArray, RNGType
 from arch.univariate.distribution import Normal
-from arch.univariate.recursions_python import garch_core, harch_core
 from arch.utility.array import AbstractDocStringInheritor, ensure1d
 from arch.utility.exceptions import InitialValueWarning, initial_value_warning
 
-try:
-    from arch.univariate.recursions import (
-        aparch_recursion,
-        egarch_recursion,
-        figarch_recursion,
-        figarch_weights,
-        garch_recursion,
-        harch_recursion,
-        midas_recursion,
-    )
-except ImportError:  # pragma: no cover
-    from arch.univariate.recursions_python import (
-        aparch_recursion,
-        egarch_recursion,
-        figarch_recursion,
-        figarch_weights,
-        garch_recursion,
-        harch_recursion,
-        midas_recursion,
-    )
+if TYPE_CHECKING:
+    from arch.univariate import recursions_python as rec
+else:
+    try:
+        from arch.univariate import recursions as rec
+    except ImportError:
+        from arch.univariate import recursions_python as rec
 
 __all__ = [
     "GARCH",
@@ -136,7 +122,7 @@ def ewma_recursion(
 
     # Throw away bounds
     var_bounds = np.ones((nobs, 2)) * np.array([-1.0, 1.7e308])
-    garch_recursion(
+    rec.garch_recursion(
         np.array([0.0, 1.0 - lam, lam]),
         resids ** 2.0,
         resids,
@@ -233,6 +219,10 @@ class VolatilityProcess(object, metaclass=ABCMeta):
     def updateable(self) -> bool:
         """Flag indicating that the volatility process supports update"""
         return self._updatable
+
+    @property
+    def volatility_updater(self) -> rec.VolatiltyUpdater:
+        raise NotImplementedError("Subclasses may optionally implement")
 
     def update(
         self,
@@ -981,6 +971,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 "power must be strictly positive, usually larger than 0.25"
             )
         self._name = self._generate_name()
+        self._volatility_updater = rec.GARCHUpdater(self.p, self.o, self.q, self.power)
 
     def __str__(self) -> str:
         descr = self.name
@@ -996,6 +987,10 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         descr = descr[:-2] + ")"
         return descr
+
+    @property
+    def volatility_updater(self) -> rec.VolatiltyUpdater:
+        return self._volatility_updater
 
     def variance_bounds(self, resids: NDArray, power: float = 2.0) -> NDArray:
         return super().variance_bounds(resids, self.power)
@@ -1025,9 +1020,9 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 return "Asym. Power GARCH (power: {0:0.1f})".format(self.power)
 
     def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
-        v = np.mean(abs(resids) ** self.power)
+        v = float(np.mean(abs(resids) ** self.power))
 
-        bounds = [(0.0, 10.0 * float(v))]
+        bounds = [(1e-8 * v, 10.0 * float(v))]
         bounds.extend([(0.0, 1.0)] * self.p)
         for i in range(self.o):
             if i < self.p:
@@ -1059,28 +1054,6 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         b[k_arch + 1] = -1.0
         return a, b
 
-    def update(
-        self,
-        index: int,
-        parameters: NDArray,
-        resids: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
-    ) -> float:
-        return garch_core(
-            index,
-            parameters,
-            resids,
-            sigma2,
-            backcast,
-            var_bounds,
-            self.p,
-            self.o,
-            self.q,
-            self.power,
-        )
-
     def compute_variance(
         self,
         parameters: NDArray,
@@ -1098,7 +1071,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         p, o, q = self.p, self.o, self.q
         nobs = resids.shape[0]
 
-        garch_recursion(
+        rec.garch_recursion(
             parameters, fresids, sresids, sigma2, p, o, q, nobs, backcast, var_bounds
         )
         inv_power = 2.0 / power
@@ -1449,6 +1422,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self._num_lags = lags_arr.shape[0]
         self._num_params = self._num_lags + 1
         self._name = "HARCH"
+        self._volatility_updater = rec.HARCHUpdater(self.lags)
 
     def __str__(self) -> str:
         descr = self.name + "(lags: "
@@ -1487,47 +1461,14 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         lags = self.lags
         nobs = resids.shape[0]
 
-        harch_recursion(parameters, resids, sigma2, lags, nobs, backcast, var_bounds)
+        rec.harch_recursion(
+            parameters, resids, sigma2, lags, nobs, backcast, var_bounds
+        )
         return sigma2
 
-    def update(
-        self,
-        index: int,
-        parameters: NDArray,
-        resids: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
-    ) -> float:
-        """
-        Compute the variance for a single observation
-
-        Parameters
-        ----------
-        index : int
-            The numerical index of the variance to compute
-        parameters : ndarray
-            The variance model parameters
-        resids :
-            The residual array. Only uses ``resids[:index]`` when computing
-            ``sigma2[index]``
-        sigma2 : ndarray
-            The array containing the variances. Only uses ``sigma2[:index]``
-            when computing ``sigma2[index]``. The computed value is stored
-            in ``sigma2[index]``.
-        backcast : {float, ndarray}
-            Value to use when initializing the recursion
-        var_bounds : ndarray
-            Array containing columns of lower and upper bounds
-
-        Returns
-        -------
-        float
-            The variance computed for location ``index``
-        """
-        return harch_core(
-            index, parameters, resids, sigma2, self.lags, backcast, var_bounds
-        )
+    @property
+    def volatility_updater(self) -> rec.VolatiltyUpdater:
+        return self._volatility_updater
 
     def simulate(
         self,
@@ -1718,13 +1659,15 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
        Econometric Methods for Mixed-Frequency Data". Norges Bank. (2013).
     .. [*] Sheppard, Kevin. "Direct volatility modeling". Manuscript. (2018).
     """
+    _updatable = True
 
     def __init__(self, m: int = 22, asym: bool = False) -> None:
         super().__init__()
-        self.m: int = m
+        self.m: int = int(m)
         self._asym = bool(asym)
         self._num_params = 3 + self._asym
         self._name = "MIDAS Hyperbolic"
+        self._volatility_updater = rec.MIDASUpdater(self.m, self._asym)
 
     def __str__(self) -> str:
         descr = self.name
@@ -1779,6 +1722,10 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return a, b
 
+    @property
+    def volatility_updater(self) -> rec.VolatiltyUpdater:
+        return self._volatility_updater
+
     def compute_variance(
         self,
         parameters: NDArray,
@@ -1795,7 +1742,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         else:
             params = parameters[:3]
 
-        midas_recursion(params, weights, resids, sigma2, nobs, backcast, var_bounds)
+        rec.midas_recursion(params, weights, resids, sigma2, nobs, backcast, var_bounds)
         return sigma2
 
     def simulate(
@@ -2083,6 +2030,7 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         if lam is not None and not 0.0 < lam < 1.0:
             raise ValueError("lam must be strictly between 0 and 1")
         self._name = "EWMA/RiskMetrics"
+        self._volatility_updater = rec.EWMAUpdater(self.lam)
 
     def __str__(self) -> str:
         if self._estimate_lam:
@@ -2118,29 +2066,9 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         lam = parameters[0] if self._estimate_lam else self.lam
         return ewma_recursion(lam, resids, sigma2, resids.shape[0], float(backcast))
 
-    def update(
-        self,
-        index: int,
-        parameters: NDArray,
-        resids: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
-    ) -> float:
-        lam = parameters[0] if self._estimate_lam else self.lam
-        assert lam is not None
-        return garch_core(
-            index,
-            np.array([0.0, 1.0 - lam, lam]),
-            resids,
-            sigma2,
-            backcast,
-            var_bounds,
-            1,
-            0,
-            1,
-            2,
-        )
+    @property
+    def volatility_updater(self) -> rec.VolatiltyUpdater:
+        return self._volatility_updater
 
     def constraints(self) -> Tuple[NDArray, NDArray]:
         if self._estimate_lam:
@@ -2615,7 +2543,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             std_resids = np.empty(nobs)
             self._arrays = (lnsigma2, abs_std_resids, std_resids)
 
-        egarch_recursion(
+        rec.egarch_recursion(
             parameters,
             resids,
             sigma2,
@@ -3003,6 +2931,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     where :math:`\epsilon_t^2` is replaced by :math:`|\epsilon_t|^p` and
     ``p`` is the power.
     """
+    _updatable = True
 
     def __init__(
         self, p: int = 1, q: int = 1, power: float = 2.0, truncation: int = 1000
@@ -3022,6 +2951,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 "power must be strictly positive, usually larger than 0.25"
             )
         self._name = self._generate_name()
+        self._volatility_updater = rec.FIGARCHUpdater(p, q, power, truncation)
 
     @property
     def truncation(self) -> int:
@@ -3102,6 +3032,10 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return a, b
 
+    @property
+    def volatility_updater(self) -> rec.VolatiltyUpdater:
+        return self._volatility_updater
+
     def compute_variance(
         self,
         parameters: NDArray,
@@ -3117,7 +3051,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         p, q, truncation = self.p, self.q, self.truncation
 
         nobs = resids.shape[0]
-        figarch_recursion(
+        rec.figarch_recursion(
             parameters, fresids, sigma2, p, q, nobs, truncation, backcast, var_bounds
         )
         inv_power = 2.0 / power
@@ -3151,7 +3085,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         parameters = ensure1d(parameters, "parameters", False)
         truncation = self.truncation
         p, q, power = self.p, self.q, self.power
-        lam = figarch_weights(parameters[1:], p, q, truncation)
+        lam = rec.figarch_weights(parameters[1:], p, q, truncation)
         lam_rev = lam[::-1]
         errors = rng(truncation + nobs + burn)
 
@@ -3205,7 +3139,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 for br in beta_ratio:
                     beta = (d + phi) * br
                     temp = [phi, d, beta]
-                    lam = figarch_weights(np.array(temp), 1, 1, truncation)
+                    lam = rec.figarch_weights(np.array(temp), 1, 1, truncation)
                     omega = (1 - beta) * target * (1 - np.sum(lam))
                     all_starting_vals.append((omega, phi, d, beta))
         distinct_svs = set(all_starting_vals)
@@ -3260,7 +3194,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         truncation = self.truncation
         p, q = self.p, self.q
-        lam = figarch_weights(parameters[1:], p, q, truncation)
+        lam = rec.figarch_weights(parameters[1:], p, q, truncation)
         lam_rev = lam[::-1]
         t = resids.shape[0]
         omega = parameters[0]
@@ -3307,7 +3241,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         truncation = self.truncation
         p, q = self.p, self.q
-        lam = figarch_weights(parameters[1:], p, q, truncation)
+        lam = rec.figarch_weights(parameters[1:], p, q, truncation)
         lam_rev = lam[::-1]
         t = resids.shape[0]
         omega = parameters[0]
@@ -3470,7 +3404,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         p, o, q = self.p, self.o, self.q
         nobs = resids.shape[0]
         _parameters = self._repack_parameters(parameters)
-        aparch_recursion(
+        rec.aparch_recursion(
             _parameters,
             resids,
             abs_resids,

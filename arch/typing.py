@@ -1,10 +1,23 @@
 from __future__ import annotations
 
 import datetime as dt
-from typing import Callable, Hashable, Optional, Tuple, TypeVar, Union
+import sys
+from typing import TYPE_CHECKING, Callable, Hashable, Optional, Tuple, TypeVar, Union
 
 import numpy as np
 from pandas import DataFrame, Series, Timestamp
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+elif TYPE_CHECKING:
+    from typing_extensions import Literal
+else:
+
+    class _Literal:
+        def __getitem__(self, item):
+            return
+
+    Literal = _Literal()
 
 __all__ = [
     "NDArray",
@@ -17,6 +30,7 @@ __all__ = [
     "Label",
     "FloatOrArray",
     "RNGType",
+    "Literal",
 ]
 NDArray = Union[np.ndarray]
 RNGType = Callable[[Union[int, Tuple[int, ...]]], NDArray]
