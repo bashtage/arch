@@ -623,6 +623,8 @@ def test_reindex(model_spec, reindex, first_obs, last_obs):
     fcast = res.forecast(horizon=2, method="bootstrap", simulations=25, reindex=reindex)
     assert fcast.mean.shape == (dim0, 2)
     assert fcast.simulations.values.shape == (dim0, 25, 2)
+    with pytest.raises(ValueError, match="horizon must be"):
+        res.forecast(horizon=0, reindex=reindex)
 
 
 @pytest.mark.parametrize("reindex", [None, True, False])
