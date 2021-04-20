@@ -1,0 +1,6 @@
+arch.univariate.FixedVariance.volatility\_updater
+=================================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FixedVariance.volatility_updater

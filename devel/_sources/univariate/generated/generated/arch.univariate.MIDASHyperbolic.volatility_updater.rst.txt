@@ -1,0 +1,6 @@
+arch.univariate.MIDASHyperbolic.volatility\_updater
+===================================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: MIDASHyperbolic.volatility_updater

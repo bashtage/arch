@@ -1,0 +1,6 @@
+arch.univariate.FIGARCH.volatility\_updater
+===========================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FIGARCH.volatility_updater

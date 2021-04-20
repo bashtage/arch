@@ -39,6 +39,7 @@
       ~VolatilityProcess.start
       ~VolatilityProcess.stop
       ~VolatilityProcess.updateable
+      ~VolatilityProcess.volatility_updater
    
    
    

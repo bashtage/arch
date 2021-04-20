@@ -39,6 +39,7 @@
       ~FixedVariance.start
       ~FixedVariance.stop
       ~FixedVariance.updateable
+      ~FixedVariance.volatility_updater
    
    
    

@@ -39,6 +39,7 @@
       ~RiskMetrics2006.start
       ~RiskMetrics2006.stop
       ~RiskMetrics2006.updateable
+      ~RiskMetrics2006.volatility_updater
    
    
    

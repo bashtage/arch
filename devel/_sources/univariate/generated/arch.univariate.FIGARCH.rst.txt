@@ -40,6 +40,7 @@
       ~FIGARCH.stop
       ~FIGARCH.truncation
       ~FIGARCH.updateable
+      ~FIGARCH.volatility_updater
    
    
    

@@ -1,0 +1,6 @@
+arch.univariate.EWMAVariance.volatility\_updater
+================================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: EWMAVariance.volatility_updater

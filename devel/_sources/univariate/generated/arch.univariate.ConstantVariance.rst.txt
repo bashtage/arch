@@ -39,6 +39,7 @@
       ~ConstantVariance.start
       ~ConstantVariance.stop
       ~ConstantVariance.updateable
+      ~ConstantVariance.volatility_updater
    
    
    

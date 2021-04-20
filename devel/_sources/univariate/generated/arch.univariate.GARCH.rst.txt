@@ -39,6 +39,7 @@
       ~GARCH.start
       ~GARCH.stop
       ~GARCH.updateable
+      ~GARCH.volatility_updater
    
    
    

@@ -39,6 +39,7 @@
       ~HARCH.start
       ~HARCH.stop
       ~HARCH.updateable
+      ~HARCH.volatility_updater
    
    
    

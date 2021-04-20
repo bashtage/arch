@@ -39,6 +39,7 @@
       ~EGARCH.start
       ~EGARCH.stop
       ~EGARCH.updateable
+      ~EGARCH.volatility_updater
    
    
    

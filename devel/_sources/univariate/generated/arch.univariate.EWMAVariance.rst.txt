@@ -39,6 +39,7 @@
       ~EWMAVariance.start
       ~EWMAVariance.stop
       ~EWMAVariance.updateable
+      ~EWMAVariance.volatility_updater
    
    
    

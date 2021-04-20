@@ -39,6 +39,7 @@
       ~MIDASHyperbolic.start
       ~MIDASHyperbolic.stop
       ~MIDASHyperbolic.updateable
+      ~MIDASHyperbolic.volatility_updater
    
    
    

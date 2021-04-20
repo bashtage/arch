@@ -39,6 +39,7 @@
       ~ARCH.start
       ~ARCH.stop
       ~ARCH.updateable
+      ~ARCH.volatility_updater
    
    
    
