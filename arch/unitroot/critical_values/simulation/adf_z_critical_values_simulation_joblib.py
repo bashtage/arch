@@ -6,13 +6,7 @@ from __future__ import annotations
 import argparse
 import os
 import random
-import sys
-from typing import TYPE_CHECKING, cast
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-elif TYPE_CHECKING:
-    from typing_extensions import Literal
+from typing import cast
 
 from adf_simulation import (
     OUTPUT_PATH,
@@ -26,6 +20,8 @@ from joblib import Parallel, delayed
 import numpy as np
 from numpy.random import PCG64, Generator, SeedSequence
 import psutil
+
+from arch.typing import Literal
 
 GREEN = colorama.Fore.GREEN
 BLUE = colorama.Fore.BLUE

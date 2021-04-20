@@ -16,13 +16,14 @@ from arch.univariate.volatility import (
 )
 
 SP500 = 100 * sp500.load()["Adj Close"].pct_change().dropna()
+SP500 = SP500.iloc[SP500.shape[0] // 2 :]
 X = pd.concat([SP500, SP500], axis=1, copy=True)
 X.columns = [0, 1]
 RANDOMSTATE = np.random.RandomState(12349876)
 X.loc[:, :] = RANDOMSTATE.standard_normal(X.shape)
 
-SUPPORTED = [HARCH, ARCH, GARCH, EWMAVariance]
-UNSUPPORTED = [RiskMetrics2006, FIGARCH, EGARCH, MIDASHyperbolic]
+SUPPORTED = [HARCH, ARCH, GARCH, EWMAVariance, MIDASHyperbolic, FIGARCH]
+UNSUPPORTED = [RiskMetrics2006, EGARCH]
 
 
 def test_exceptions():
@@ -32,8 +33,6 @@ def test_exceptions():
         ARCHInMean(SP500, form=0, volatility=GARCH())
     with pytest.raises(ValueError):
         ARCHInMean(SP500, form="unknown", volatility=GARCH())
-    with pytest.raises(ValueError):
-        ARCHInMean(SP500, volatility=MIDASHyperbolic())
 
 
 @pytest.mark.parametrize("form_and_id", [("vol", 1), ("var", 2), ("log", 0), (1.5, 3)])
@@ -138,3 +137,13 @@ def test_simulate_arx(form):
     assert "volatility" in sim
     assert "errors" in sim
     gim.simulate(res.params, 1000, x=X.iloc[:1500], initial_value=np.zeros(2))
+
+
+@pytest.mark.parametrize("m", [22, 33])
+@pytest.mark.parametrize("asym", [True, False])
+def test_alt_parameterizations(asym, m):
+    mod = ARCHInMean(SP500, volatility=MIDASHyperbolic(m=m, asym=asym))
+    res = mod.fit(disp=False)
+    assert res.params.shape[0] == 5 + asym
+    res2 = mod.fit(disp=False)
+    np.testing.assert_allclose(res.params, res2.params)

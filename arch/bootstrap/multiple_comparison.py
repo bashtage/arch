@@ -1,23 +1,6 @@
 from __future__ import annotations
 
-import sys
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Hashable,
-    List,
-    Optional,
-    Sequence,
-    Tuple,
-    Union,
-    cast,
-)
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-elif TYPE_CHECKING:
-    from typing_extensions import Literal
+from typing import Any, Dict, Hashable, List, Optional, Sequence, Tuple, Union, cast
 
 import numpy as np
 import pandas as pd
@@ -27,7 +10,7 @@ from arch.bootstrap.base import (
     MovingBlockBootstrap,
     StationaryBootstrap,
 )
-from arch.typing import ArrayLike, NDArray
+from arch.typing import ArrayLike, Literal, NDArray
 from arch.utility.array import DocStringInheritor, ensure2d
 
 __all__ = ["StepM", "SPA", "RealityCheck", "MCS"]

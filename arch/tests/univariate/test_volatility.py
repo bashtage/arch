@@ -74,7 +74,8 @@ def test_garch(setup, initial_value):
     assert_equal(sv.shape[0], garch.num_params)
 
     bounds = garch.bounds(setup.resids)
-    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids ** 2.0)))
+    v = np.mean(setup.resids ** 2.0)
+    assert_allclose(bounds[0], (1.0e-8 * v, 10.0 * v))
     assert_equal(bounds[1], (0.0, 1.0))
     assert_equal(bounds[2], (0.0, 1.0))
     backcast = garch.backcast(setup.resids)
@@ -152,7 +153,8 @@ def test_garch_power(setup):
     assert_equal(sv.shape[0], garch.num_params)
 
     bounds = garch.bounds(setup.resids)
-    assert_equal(bounds[0], (0.0, 10.0 * np.mean(np.abs(setup.resids))))
+    v = np.mean(np.abs(setup.resids))
+    assert_allclose(bounds[0], (1.0e-8 * v, 10.0 * v))
     assert_equal(bounds[1], (0.0, 1.0))
     assert_equal(bounds[2], (0.0, 1.0))
     var_bounds = garch.variance_bounds(setup.resids)
@@ -213,7 +215,8 @@ def test_arch(setup, initial_value):
     assert_equal(sv.shape[0], arch.num_params)
 
     bounds = arch.bounds(setup.resids)
-    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids ** 2.0)))
+    v = np.mean(setup.resids ** 2.0)
+    assert_allclose(bounds[0], (1.0e-8 * v, 10.0 * v))
     assert_equal(bounds[1], (0.0, 1.0))
 
     backcast = arch.backcast(setup.resids)
@@ -445,7 +448,8 @@ def test_garch_no_symmetric(setup):
     assert_equal(sv.shape[0], garch.num_params)
 
     bounds = garch.bounds(setup.resids)
-    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids ** 2.0)))
+    v = np.mean(setup.resids ** 2)
+    assert_allclose(bounds[0], (1.0e-8 * v, 10.0 * v))
     assert_equal(bounds[1], (0.0, 2.0))
     assert_equal(bounds[2], (0.0, 1.0))
     var_bounds = garch.variance_bounds(setup.resids)
@@ -513,7 +517,8 @@ def test_garch_no_lagged_vol(setup):
     assert_equal(sv.shape[0], garch.num_params)
 
     bounds = garch.bounds(setup.resids)
-    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids ** 2.0)))
+    v = np.mean(setup.resids ** 2)
+    assert_allclose(bounds[0], (1.0e-8 * v, 10.0 * v))
     assert_equal(bounds[1], (0.0, 1.0))
     assert_equal(bounds[2], (-1.0, 2.0))
 
@@ -580,7 +585,8 @@ def test_arch_multiple_lags(setup):
     assert_equal(sv.shape[0], arch.num_params)
 
     bounds = arch.bounds(setup.resids)
-    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids ** 2.0)))
+    v = np.mean(setup.resids ** 2)
+    assert_allclose(bounds[0], (1.0e-8 * v, 10.0 * v))
     for i in range(1, 6):
         assert_equal(bounds[i], (0.0, 1.0))
     var_bounds = arch.variance_bounds(setup.resids)

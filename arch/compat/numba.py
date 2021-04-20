@@ -1,5 +1,8 @@
 import functools
+import os
 from typing import Any, Callable
+
+DISABLE_NUMBA = os.environ.get("ARCH_DISABLE_NUMBA", False) in ("1", "true", "True")
 
 
 class PerformanceWarning(UserWarning):
@@ -12,6 +15,9 @@ compilation. Either install numba or reinstalling after installing Cython
 is strongly recommended."""
 
 try:
+    if DISABLE_NUMBA:
+        raise ImportError
+
     from numba import jit
 
     try:

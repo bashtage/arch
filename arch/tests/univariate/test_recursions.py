@@ -1,4 +1,5 @@
 import os
+import pickle
 import timeit
 import types
 from typing import List
@@ -273,6 +274,25 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
             )
         assert_allclose(sigma2, sigma2_ref)
 
+        sigma2[:] = np.nan
+        gu = recpy.GARCHUpdater(1, 1, 1, 2.0)
+        gu.initialize_update(parameters, backcast, nobs)
+        for t in range(nobs):
+            gu.update(t, parameters, resids, sigma2, self.var_bounds)
+            if t == nobs // 2:
+                gu = pickle.loads(pickle.dumps(gu))
+        assert_allclose(sigma2, sigma2_ref)
+
+        sigma2[:] = np.nan
+        gu = rec.GARCHUpdater(1, 1, 1, 2.0)
+        gu.initialize_update(parameters, backcast, nobs)
+        for t in range(nobs):
+            gu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
+            if t == nobs // 2:
+                gu = pickle.loads(pickle.dumps(gu))
+
+        assert_allclose(sigma2, sigma2_ref)
+
     def test_harch(self):
         nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
@@ -348,6 +368,24 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
             rec.harch_core(
                 t, parameters, resids, sigma2, lags, backcast, self.var_bounds
             )
+        assert_allclose(sigma2, sigma2_direct)
+
+        sigma2[:] = np.nan
+        hu = recpy.HARCHUpdater(lags)
+        hu.initialize_update(parameters, backcast, nobs)
+        for t in range(nobs):
+            hu.update(t, parameters, resids, sigma2, self.var_bounds)
+            if t == nobs // 2:
+                hu = pickle.loads(pickle.dumps(hu))
+        assert_allclose(sigma2, sigma2_direct)
+
+        sigma2[:] = np.nan
+        hu = rec.HARCHUpdater(lags)
+        hu.initialize_update(parameters, backcast, nobs)
+        for t in range(nobs):
+            hu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
+            if t == nobs // 2:
+                hu = pickle.loads(pickle.dumps(hu))
         assert_allclose(sigma2, sigma2_direct)
 
     def test_arch(self):
@@ -900,6 +938,38 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert np.all(sigma2 >= self.var_bounds[:, 0])
         assert np.all(sigma2 <= 2 * self.var_bounds[:, 1])
 
+    def test_midas_hyperbolic_update(self):
+        nobs, resids = self.nobs, self.resids
+        sigma2, backcast = self.sigma2, self.backcast
+
+        parameters = np.array([0.1, 0.6, 0.2])
+        j = np.arange(1, 22 + 1)
+        weights = gamma(j + 0.6) / (gamma(j + 1) * gamma(0.6))
+        weights = weights / weights.sum()
+        recpy.midas_recursion(
+            parameters, weights, resids, sigma2, nobs, backcast, self.var_bounds
+        )
+        sigma2_ref = sigma2.copy()
+
+        sigma2[:] = np.nan
+        parameters = np.array([0.1, 0.6, 0.2, 0.6])
+        mu = recpy.MIDASUpdater(22, True)
+        mu.initialize_update(parameters, backcast, nobs)
+        for t in range(nobs):
+            mu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
+            if t == nobs // 2:
+                mu = pickle.loads(pickle.dumps(mu))
+        assert_allclose(sigma2, sigma2_ref)
+
+        sigma2[:] = np.nan
+        mu = recpy.MIDASUpdater(22, True)
+        mu.initialize_update(parameters, backcast, nobs)
+        for t in range(nobs):
+            mu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
+            if t == nobs // 2:
+                mu = pickle.loads(pickle.dumps(mu))
+        assert_allclose(sigma2, sigma2_ref)
+
     def test_figarch_recursion(self):
         nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
@@ -1261,6 +1331,77 @@ rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backca
         )
         assert np.all(np.isfinite(sigma2))
         assert_allclose(sigma2_py, sigma2)
+
+    @pytest.mark.parametrize("lam", [None, 0.94])
+    def test_ewma_update(self, lam):
+        nobs, resids = self.nobs, self.resids
+        sigma2, backcast = self.sigma2, self.backcast
+        if lam is None:
+            parameters = np.array([0.9])
+        else:
+            parameters = np.empty(0)
+        sigma2[:] = np.nan
+        eu = recpy.EWMAUpdater(lam)
+        eu.initialize_update(parameters, backcast, nobs)
+        for t in range(nobs):
+            eu.update(t, parameters, resids, sigma2, self.var_bounds)
+            if t == nobs // 2:
+                eu = pickle.loads(pickle.dumps(eu))
+        sigma2_ref = sigma2.copy()
+
+        sigma2[:] = np.nan
+        eu = rec.EWMAUpdater(lam)
+        eu.initialize_update(parameters, backcast, nobs)
+        for t in range(nobs):
+            eu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
+            if t == nobs // 2:
+                eu = pickle.loads(pickle.dumps(eu))
+        assert_allclose(sigma2, sigma2_ref)
+
+        sigma2[:] = np.nan
+        gu = rec.GARCHUpdater(1, 0, 1, 2.0)
+        _lam = 0.9 if lam is None else lam
+        parameters = np.array([0, 1 - _lam, _lam])
+        gu.initialize_update(parameters, backcast, nobs)
+        for t in range(nobs):
+            gu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
+        assert_allclose(sigma2, sigma2_ref)
+
+    def test_figarch_update(self):
+        nobs, resids = self.nobs, self.resids
+        sigma2, backcast = self.sigma2, self.backcast
+        parameters = np.array([1.0, 0.2, 0.4, 0.3])
+        fresids = resids ** 2
+        p = q = 1
+        trunc_lag = 1000
+        rec.figarch_recursion(
+            parameters,
+            fresids,
+            sigma2,
+            p,
+            q,
+            nobs,
+            trunc_lag,
+            backcast,
+            self.var_bounds,
+        )
+        sigma2_ref = sigma2.copy()
+
+        fu = recpy.FIGARCHUpdater(p, q, 2.0, trunc_lag)
+        fu.initialize_update(parameters, backcast, nobs)
+        for t in range(nobs):
+            fu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
+            if t == nobs // 2:
+                fu = pickle.loads(pickle.dumps(fu))
+        assert_allclose(sigma2, sigma2_ref)
+
+        fu = rec.FIGARCHUpdater(p, q, 2.0, trunc_lag)
+        fu.initialize_update(parameters, backcast, nobs)
+        for t in range(nobs):
+            fu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
+            if t == nobs // 2:
+                fu = pickle.loads(pickle.dumps(fu))
+        assert_allclose(sigma2, sigma2_ref)
 
 
 def test_bounds_check():

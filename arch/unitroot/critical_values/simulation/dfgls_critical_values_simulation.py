@@ -6,18 +6,14 @@ best when joblib is installed.
 from __future__ import annotations
 
 import datetime
-import sys
-from typing import TYPE_CHECKING, Optional, cast
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-elif TYPE_CHECKING:
-    from typing_extensions import Literal
+from typing import Optional, cast
 
 import numpy as np
 from numpy.linalg import pinv
 from numpy.random import RandomState
 from statsmodels.tools.parallel import parallel_func
+
+from arch.typing import Literal
 
 # Controls memory use, in MiB
 MAX_MEMORY_SIZE = 100
