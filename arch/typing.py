@@ -15,7 +15,7 @@ else:
 
     class _Literal:
         def __getitem__(self, item):
-            return
+            pass
 
     Literal = _Literal()
 
