@@ -132,6 +132,11 @@ class HARCHUpdater(VolatiltyUpdater):
 class MIDASUpdater(VolatiltyUpdater):
     def __init__(self, m: int, asym: bool) -> None: ...
 
+class RiskMetrics2006Updater(VolatiltyUpdater):
+    def __init__(
+        self, kmax: int, combination_weights: NDArray, smoothing_parameters: NDArray
+    ) -> None: ...
+
 class ARCHInMeanRecursion:
     def __init__(self, updater: VolatiltyUpdater) -> None: ...
     def recursion(
@@ -141,7 +146,6 @@ class ARCHInMeanRecursion:
         mean_parameters: NDArray,
         variance_params: NDArray,
         sigma2: NDArray,
-        backcast: float,
         var_bounds: NDArray,
         power: float,
     ) -> NDArray: ...

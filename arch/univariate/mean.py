@@ -1733,7 +1733,6 @@ class ARCHInMean(ARX):
             mp,
             vp,
             sigma2,
-            backcast,
             var_bounds,
             power,
         )

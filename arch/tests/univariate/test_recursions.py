@@ -11,6 +11,7 @@ import pytest
 from scipy.special import gamma
 
 import arch.univariate.recursions_python as recpy
+from arch.univariate.volatility import RiskMetrics2006
 
 CYTHON_COVERAGE = os.environ.get("ARCH_CYTHON_COVERAGE", "0") in ("true", "1", "True")
 
@@ -1439,6 +1440,38 @@ rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backca
             if t == nobs // 2:
                 fu = pickle.loads(pickle.dumps(fu))
         assert_allclose(sigma2, sigma2_ref)
+
+    def test_rm_2006(self):
+        rm2006 = RiskMetrics2006()
+        params = np.empty(0)
+        resids = self.resids
+        sigma2 = self.sigma2
+        nobs = self.nobs
+        backcast = rm2006.backcast(self.resids)
+        rm2006.compute_variance(params, resids, sigma2, backcast, self.var_bounds)
+
+        sigma2_ref = sigma2.copy()
+        sigma2[:] = np.nan
+        cw = rm2006._ewma_combination_weights()
+        sp = rm2006._ewma_smoothing_parameters()
+        ru = recpy.RiskMetrics2006Updater(rm2006.kmax, cw, sp)
+        ru.initialize_update(None, backcast, None)
+        for t in range(nobs):
+            ru._update_tester(t, params, resids, sigma2, self.var_bounds)
+            if t == nobs // 2:
+                ru = pickle.loads(pickle.dumps(ru))
+
+        assert_allclose(sigma2, sigma2_ref)
+        sigma2_py = sigma2.copy()
+
+        sigma2[:] = np.nan
+        ru = rec.RiskMetrics2006Updater(rm2006.kmax, cw, sp)
+        ru.initialize_update(None, backcast, None)
+        for t in range(nobs):
+            ru._update_tester(t, params, resids, sigma2, self.var_bounds)
+            if t == nobs // 2:
+                ru = pickle.loads(pickle.dumps(ru))
+        assert_allclose(sigma2, sigma2_py)
 
 
 def test_bounds_check():

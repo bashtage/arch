@@ -589,12 +589,12 @@ cdef class VolatiltyUpdater:
         pass
 
     cdef void update(self,
-                       Py_ssize_t t,
-                       double[::1] parameters,
-                       double[::1] resids,
-                       double[::1] sigma2,
-                       double[:,::1] var_bounds
-                       ):
+                     Py_ssize_t t,
+                     double[::1] parameters,
+                     double[::1] resids,
+                     double[::1] sigma2,
+                     double[:,::1] var_bounds
+                     ):
         pass
 
     def _update_tester(self,
@@ -914,6 +914,73 @@ cdef class FIGARCHUpdater(VolatiltyUpdater):
         bounds_check(&sigma2[t], &var_bounds[t, 0])
 
 
+cdef class RiskMetrics2006Updater(VolatiltyUpdater):
+    cdef:
+        int kmax
+        double[::1] backcast
+        double[::1] combination_weights
+        double[::1] smoothing_parameters
+        double[::1] last_sigma2s
+
+    def __init__(self, int kmax, combination_weights, smoothing_parameters):
+        super().__init__()
+        self.kmax = kmax
+        self.combination_weights = combination_weights
+        self.smoothing_parameters = smoothing_parameters
+        self.backcast = np.empty(kmax)
+        self.last_sigma2s = np.empty(kmax)
+
+    def __setstate__(self, state):
+        cdef Py_ssize_t i
+        for i in range(self.kmax):
+            self.backcast[i] = state[0][i]
+            self.last_sigma2s[i] = state[1][i]
+
+    def __reduce__(self):
+        return (
+            RiskMetrics2006Updater,
+            (
+                self.kmax,
+                np.asarray(self.combination_weights),
+                np.asarray(self.smoothing_parameters)
+            ),
+            (
+                np.asarray(self.backcast),
+                np.asarray(self.last_sigma2s)
+            )
+        )
+
+    def initialize_update(self, parameters, backcast, nobs) -> None:
+        if isinstance(backcast, (float, np.floating)):
+            for i in range(self.kmax):
+                self.backcast[i] = backcast
+        else:
+            for i in range(self.kmax):
+                self.backcast[i] = backcast[i]
+
+    cdef void update(self,
+                     Py_ssize_t t,
+                     double[::1] parameters,
+                     double[::1] resids,
+                     double[::1] sigma2,
+                     double[:,::1] var_bounds
+                     ):
+        cdef:
+            Py_ssize_t i
+
+
+        sigma2[t] = 0.0
+        if t > 0:
+            for i in range(self.kmax):
+                self.last_sigma2s[i] = ((1 - self.smoothing_parameters[i]) * resids[t - 1] ** 2 +
+                                        self.smoothing_parameters[i] * self.last_sigma2s[i])
+                sigma2[t] += self.last_sigma2s[i] * self.combination_weights[i]
+        else:
+            for i in range(self.kmax):
+                self.last_sigma2s[i] = self.backcast[i]
+                sigma2[t] += self.last_sigma2s[i] * self.combination_weights[i]
+        bounds_check(&sigma2[t], &var_bounds[t, 0])
+
 cdef class ARCHInMeanRecursion:
     cdef:
         VolatiltyUpdater volatility_updater
@@ -927,7 +994,6 @@ cdef class ARCHInMeanRecursion:
                   double[::1] mean_parameters,
                   double[::1] variance_params,
                   double[::1] sigma2,
-                  double backcast,
                   double[:,::1] var_bounds,
                   double power):
         cdef:
