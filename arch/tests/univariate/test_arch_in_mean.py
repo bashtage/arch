@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 
 from arch.data import sp500
-from arch.univariate import ARCHInMean, ConstantMean, Normal
+from arch.univariate import ARCHInMean, Normal
 from arch.univariate.volatility import (
     ARCH,
     EGARCH,
@@ -111,17 +111,15 @@ def test_simulate():
         gim.simulate(res.params, 1000, initial_value=np.array([0.0, 0.0]))
 
 
-@pytest.mark.parametrize("good_vol", [EGARCH])
+@pytest.mark.parametrize("good_vol", SUPPORTED)
 def test_supported(good_vol):
-    cm = ConstantMean(SP500, volatility=good_vol())
-    cm_fit = cm.fit(disp=False)
     aim = ARCHInMean(SP500, volatility=good_vol(), form="log")
     assert isinstance(aim, ARCHInMean)
-    cp = np.asarray(cm_fit.params)
-    sv = np.array([cp[0], 0, cp[1], cp[2], cp[3]])
-    res = aim.fit(disp=False, starting_values=sv)
+    res = aim.fit(disp=False)
     n = res.params.shape[0]
     assert res.param_cov.shape == (n, n)
+    res2 = aim.fit(disp=False, starting_values=res.params)
+    assert res2.params.shape == (n,)
 
 
 @pytest.mark.parametrize("form", ["log", "vol", 1.5])
@@ -153,3 +151,18 @@ def test_alt_parameterizations(asym, m):
     assert res.params.shape[0] == 5 + asym
     res2 = mod.fit(disp=False)
     np.testing.assert_allclose(res.params, res2.params)
+
+
+def test_not_updateable():
+    class NonUpdateableGARCH(GARCH):
+        _updatable = False
+
+        def __init__(self):
+            super().__init__()
+            self._volatility_updater = None
+
+    nug = NonUpdateableGARCH()
+    with pytest.raises(NotImplementedError):
+        nug.volatility_updater
+    with pytest.raises(ValueError, match="The volatility process"):
+        ARCHInMean(SP500, volatility=nug)
