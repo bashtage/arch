@@ -990,3 +990,30 @@ def test_iid_semiparametric(bs_setup):
 
     ci = bs.conf_int(func, reps=10, sampling="semiparametric")
     assert ci.shape == (2, 1)
+
+
+def test_bc_extremum_error():
+    # GH 496
+
+    def profile_function(scores):
+        tau = np.linspace(-0.1, 1.0, 10)
+        comparisons = np.expand_dims(scores.flatten(), axis=0) >= tau[:, np.newaxis]
+        return np.mean(comparisons, axis=-1)
+
+    val = np.array(
+        [
+            0.14333333,
+            0.6576,
+            0.35882353,
+            0.48982389,
+            0.35660377,
+            0.7,
+            -0.00457143,
+            0.87817109,
+            -0.01538462,
+            0.54444444,
+        ]
+    )
+    bs = IIDBootstrap(val, random_state=np.random.RandomState(0))
+    with pytest.raises(RuntimeError, match="Empirical probability used"):
+        bs.conf_int(profile_function, 100, method="bc")
