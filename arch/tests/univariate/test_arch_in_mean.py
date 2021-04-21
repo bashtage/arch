@@ -22,8 +22,16 @@ X.columns = [0, 1]
 RANDOMSTATE = np.random.RandomState(12349876)
 X.loc[:, :] = RANDOMSTATE.standard_normal(X.shape)
 
-SUPPORTED = [HARCH, ARCH, GARCH, EWMAVariance, MIDASHyperbolic, FIGARCH]
-UNSUPPORTED = [RiskMetrics2006, EGARCH]
+SUPPORTED = [
+    HARCH,
+    ARCH,
+    GARCH,
+    EWMAVariance,
+    MIDASHyperbolic,
+    FIGARCH,
+    RiskMetrics2006,
+]
+UNSUPPORTED = [EGARCH]
 
 
 def test_exceptions():
@@ -111,7 +119,7 @@ def test_unsupported(bad_vol):
 
 @pytest.mark.parametrize("good_vol", SUPPORTED)
 def test_supported(good_vol):
-    aim = ARCHInMean(SP500, volatility=good_vol())
+    aim = ARCHInMean(SP500, volatility=good_vol(), form="log")
     assert isinstance(aim, ARCHInMean)
     res = aim.fit(disp=False)
     n = res.params.shape[0]

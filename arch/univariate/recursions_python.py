@@ -900,6 +900,41 @@ class FIGARCHUpdater(VolatiltyUpdater):
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
 
 
+class RiskMetrics2006Updater(VolatiltyUpdater):
+    def __init__(
+        self, kmax: int, combination_weights: NDArray, smoothing_parameters: NDArray
+    ) -> None:
+        super().__init__()
+        self.kmax = kmax
+        self.combination_weights = combination_weights
+        self.smoothing_parameters = smoothing_parameters
+        self.backcast = np.empty(kmax)
+        self.last_sigma2s = np.empty((1, kmax))
+
+    def initialize_update(
+        self, parameters: NDArray, backcast: Union[float, NDArray], nobs: int
+    ) -> None:
+        self.backcast = backcast
+
+    def update(
+        self,
+        t: int,
+        parameters: NDArray,
+        resids: NDArray,
+        sigma2: NDArray,
+        var_bounds: NDArray,
+    ) -> None:
+
+        w = self.combination_weights
+        mus = self.smoothing_parameters
+        if t == 0:
+            self.last_sigma2s = self.backcast
+        else:
+            self.last_sigma2s = (1 - mus) * resids[t - 1] ** 2 + mus * self.last_sigma2s
+        sigma2[t] = self.last_sigma2s @ w
+        sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+
+
 class ARCHInMeanRecursion:
     def __init__(self, updater: VolatiltyUpdater):
         self.volatility_updater = updater
@@ -911,7 +946,6 @@ class ARCHInMeanRecursion:
         mean_parameters: NDArray,
         variance_params: NDArray,
         sigma2: NDArray,
-        backcast: float,
         var_bounds: NDArray,
         power: float,
     ) -> NDArray:

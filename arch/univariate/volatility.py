@@ -2196,6 +2196,8 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     This model has no parameters since the smoothing parameter is fixed.
     """
 
+    _updatable = True
+
     def __init__(
         self,
         tau0: float = 1560,
@@ -2219,6 +2221,11 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         if not rho > 1:
             raise ValueError("rho must be a positive number larger than 1")
         self._name = "RiskMetrics2006"
+        self._volatility_updater = rec.RiskMetrics2006Updater(
+            self.kmax,
+            self._ewma_combination_weights(),
+            self._ewma_smoothing_parameters(),
+        )
 
     def __str__(self) -> str:
         descr = self.name
@@ -2288,7 +2295,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             backcast_arr = cast(np.ndarray, backcast * np.ones(mus.shape[0]))
         if backcast_arr.shape[0] != mus.shape[0] and backcast_arr.ndim != 0:
             raise ValueError(
-                "User backcast mut be either a scalar or an vector containing the "
+                "User backcast must be either a scalar or an vector containing the "
                 "number of\ncomponent EWMAs in the model."
             )
 
@@ -2310,6 +2317,10 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def constraints(self) -> Tuple[NDArray, NDArray]:
         return np.empty((0, 0)), np.empty((0,))
+
+    @property
+    def volatility_updater(self) -> rec.VolatiltyUpdater:
+        return self._volatility_updater
 
     def compute_variance(
         self,
