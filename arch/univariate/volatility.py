@@ -170,7 +170,7 @@ class VolatilityProcess(object, metaclass=ABCMeta):
     separately from the conditional variance, even though parameters are estimated jointly.
     """
 
-    _updatable: bool = False
+    _updatable: bool = True
 
     def __init__(self) -> None:
         self._num_params = 0
@@ -180,6 +180,7 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         self._min_bootstrap_obs = 100
         self._start = 0
         self._stop = -1
+        self._volatility_updater: Optional[rec.VolatiltyUpdater] = None
 
     def __str__(self) -> str:
         return self.name
@@ -222,7 +223,10 @@ class VolatilityProcess(object, metaclass=ABCMeta):
 
     @property
     def volatility_updater(self) -> rec.VolatiltyUpdater:
-        raise NotImplementedError("Subclasses may optionally implement")
+        if self._volatility_updater is None:
+            raise NotImplementedError("Subclasses may optionally implement")
+        assert self._volatility_updater is not None
+        return self._volatility_updater
 
     def update(
         self,
@@ -953,7 +957,6 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         +\sum_{j=1}^{o}\gamma_{j}\left|\epsilon_{t-j}\right|^{\lambda}
         I\left[\epsilon_{t-j}<0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}
     """
-    _updatable = True
 
     def __init__(self, p: int = 1, o: int = 0, q: int = 1, power: float = 2.0) -> None:
         super().__init__()
@@ -987,10 +990,6 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         descr = descr[:-2] + ")"
         return descr
-
-    @property
-    def volatility_updater(self) -> rec.VolatiltyUpdater:
-        return self._volatility_updater
 
     def variance_bounds(self, resids: NDArray, power: float = 2.0) -> NDArray:
         return super().variance_bounds(resids, self.power)
@@ -1408,7 +1407,6 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     A HARCH process is a special case of an ARCH process where parameters in the more general
     ARCH process have been restricted.
     """
-    _updatable = True
 
     def __init__(self, lags: Union[int, Sequence[int]] = 1) -> None:
         super().__init__()
@@ -1465,10 +1463,6 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             parameters, resids, sigma2, lags, nobs, backcast, var_bounds
         )
         return sigma2
-
-    @property
-    def volatility_updater(self) -> rec.VolatiltyUpdater:
-        return self._volatility_updater
 
     def simulate(
         self,
@@ -1659,7 +1653,6 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
        Econometric Methods for Mixed-Frequency Data". Norges Bank. (2013).
     .. [*] Sheppard, Kevin. "Direct volatility modeling". Manuscript. (2018).
     """
-    _updatable = True
 
     def __init__(self, m: int = 22, asym: bool = False) -> None:
         super().__init__()
@@ -1721,10 +1714,6 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         b[4] = -1.0
 
         return a, b
-
-    @property
-    def volatility_updater(self) -> rec.VolatiltyUpdater:
-        return self._volatility_updater
 
     def compute_variance(
         self,
@@ -2020,7 +2009,6 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     parameter is treated as fixed. Set lam to ``None`` to jointly estimate this
     parameter when fitting the model.
     """
-    _updatable = True
 
     def __init__(self, lam: Optional[float] = 0.94) -> None:
         super().__init__()
@@ -2065,10 +2053,6 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     ) -> NDArray:
         lam = parameters[0] if self._estimate_lam else self.lam
         return ewma_recursion(lam, resids, sigma2, resids.shape[0], float(backcast))
-
-    @property
-    def volatility_updater(self) -> rec.VolatiltyUpdater:
-        return self._volatility_updater
 
     def constraints(self) -> Tuple[NDArray, NDArray]:
         if self._estimate_lam:
@@ -2196,8 +2180,6 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     This model has no parameters since the smoothing parameter is fixed.
     """
 
-    _updatable = True
-
     def __init__(
         self,
         tau0: float = 1560,
@@ -2317,10 +2299,6 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def constraints(self) -> Tuple[NDArray, NDArray]:
         return np.empty((0, 0)), np.empty((0,))
-
-    @property
-    def volatility_updater(self) -> rec.VolatiltyUpdater:
-        return self._volatility_updater
 
     def compute_variance(
         self,
@@ -2505,6 +2483,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self._name = "EGARCH" if q > 0 else "EARCH"
         # Helpers for fitting variance
         self._arrays: Optional[Tuple[NDArray, NDArray, NDArray]] = None
+        self._volatility_updater = rec.EGARCHUpdater(self.p, self.o, self.q)
 
     def __str__(self) -> str:
         descr = self.name + "("
@@ -2942,7 +2921,6 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     where :math:`\epsilon_t^2` is replaced by :math:`|\epsilon_t|^p` and
     ``p`` is the power.
     """
-    _updatable = True
 
     def __init__(
         self, p: int = 1, q: int = 1, power: float = 2.0, truncation: int = 1000
@@ -3042,10 +3020,6 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             b = np.delete(b, (1, 2))
 
         return a, b
-
-    @property
-    def volatility_updater(self) -> rec.VolatiltyUpdater:
-        return self._volatility_updater
 
     def compute_variance(
         self,

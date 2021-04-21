@@ -813,6 +813,24 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert_almost_equal(sigma2_numba, sigma2)
         assert_almost_equal(sigma2_python, sigma2)
 
+        sigma2[:] = np.nan
+        eu = recpy.EGARCHUpdater(p, o, q)
+        eu.initialize_update(parameters, backcast, nobs)
+        for t in range(nobs):
+            eu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
+            if t == nobs // 2:
+                eu = pickle.loads(pickle.dumps(eu))
+        assert_allclose(sigma2, sigma2_python)
+
+        sigma2[:] = np.nan
+        eu = rec.EGARCHUpdater(p, o, q)
+        eu.initialize_update(parameters, backcast, nobs)
+        for t in range(nobs):
+            eu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
+            if t == nobs // 2:
+                eu = pickle.loads(pickle.dumps(eu))
+        assert_allclose(sigma2, sigma2_python)
+
         norm_const = np.sqrt(2 / np.pi)
         for t in range(nobs):
             lnsigma2[t] = parameters[0]

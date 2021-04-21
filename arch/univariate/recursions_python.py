@@ -29,11 +29,13 @@ __all__ = [
     "EWMAUpdater",
     "HARCHUpdater",
     "MIDASUpdater",
+    "EGARCHUpdater",
     "VolatiltyUpdater",
     "ARCHInMeanRecursion",
 ]
 
 LNSIGMA_MAX = float(np.log(np.finfo(np.double).max) - 0.1)
+SQRT2_OV_PI = 0.79788456080286541  # E[abs(e)], e~N(0,1)
 
 
 def bounds_check_python(sigma2: float, var_bounds: NDArray) -> float:
@@ -357,7 +359,6 @@ def egarch_recursion_python(
     abs_std_resids : ndarray
         Temporary array (overwritten) with same shape as resids
     """
-    norm_const = 0.79788456080286541  # E[abs(e)], e~N(0,1)
 
     for t in range(nobs):
         loc = 0
@@ -366,7 +367,7 @@ def egarch_recursion_python(
         for j in range(p):
             if (t - 1 - j) >= 0:
                 lnsigma2[t] += parameters[loc] * (
-                    abs_std_resids[t - 1 - j] - norm_const
+                    abs_std_resids[t - 1 - j] - SQRT2_OV_PI
                 )
             loc += 1
         for j in range(o):
@@ -933,6 +934,70 @@ class RiskMetrics2006Updater(VolatiltyUpdater):
             self.last_sigma2s = (1 - mus) * resids[t - 1] ** 2 + mus * self.last_sigma2s
         sigma2[t] = self.last_sigma2s @ w
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
+
+
+class EGARCHUpdater(VolatiltyUpdater):
+    def __init__(self, p: int, o: int, q: int) -> None:
+        super().__init__()
+        self.p = p
+        self.o = o
+        self.q = q
+        self.backcast = 9999.99
+        self.lnsigma2 = np.empty(0)
+        self.std_resids = np.empty(0)
+        self.abs_std_resids = np.empty(0)
+
+    def _resize(self, nobs: int) -> None:
+        if self.lnsigma2.shape[0] < nobs:
+            self.lnsigma2 = np.empty(nobs)
+            self.abs_std_resids = np.empty(nobs)
+            self.std_resids = np.empty(nobs)
+
+    def initialize_update(
+        self, parameters: NDArray, backcast: Union[float, NDArray], nobs: int
+    ) -> None:
+        self.backcast = backcast
+        self._resize(nobs)
+
+    def update(
+        self,
+        t: int,
+        parameters: NDArray,
+        resids: NDArray,
+        sigma2: NDArray,
+        var_bounds: NDArray,
+    ) -> None:
+        if t > 0:
+            self.std_resids[t - 1] = resids[t - 1] / np.sqrt(sigma2[t - 1])
+            self.abs_std_resids[t - 1] = abs(self.std_resids[t - 1])
+
+        self.lnsigma2[t] = parameters[0]
+        loc = 1
+        for j in range(self.p):
+            if (t - 1 - j) >= 0:
+                self.lnsigma2[t] += parameters[loc] * (
+                    self.abs_std_resids[t - 1 - j] - SQRT2_OV_PI
+                )
+            loc += 1
+        for j in range(self.o):
+            if (t - 1 - j) >= 0:
+                self.lnsigma2[t] += parameters[loc] * self.std_resids[t - 1 - j]
+            loc += 1
+        for j in range(self.q):
+            if (t - 1 - j) < 0:
+                self.lnsigma2[t] += parameters[loc] * self.backcast
+            else:
+                self.lnsigma2[t] += parameters[loc] * self.lnsigma2[t - 1 - j]
+            loc += 1
+        if self.lnsigma2[t] > LNSIGMA_MAX:
+            self.lnsigma2[t] = LNSIGMA_MAX
+        sigma2[t] = np.exp(self.lnsigma2[t])
+        if sigma2[t] < var_bounds[t, 0]:
+            sigma2[t] = var_bounds[t, 0]
+            self.lnsigma2[t] = np.log(sigma2[t])
+        elif sigma2[t] > var_bounds[t, 1]:
+            sigma2[t] = var_bounds[t, 1] + np.log(sigma2[t]) - np.log(var_bounds[t, 1])
+            self.lnsigma2[t] = np.log(sigma2[t])
 
 
 class ARCHInMeanRecursion:

@@ -7,6 +7,8 @@ cimport numpy as np
 from libc.float cimport DBL_MAX
 from libc.math cimport exp, fabs, lgamma, log, sqrt
 
+DEF SQRT2_OV_PI = 0.79788456080286535587989211
+
 __all__ = [
     "harch_recursion",
     "arch_recursion",
@@ -20,6 +22,7 @@ __all__ = [
     "garch_core",
     "GARCHUpdater",
     "HARCHUpdater",
+    "EGARCHUpdater",
     "EWMAUpdater",
     "ARCHInMeanRecursion",
     "VolatiltyUpdater",
@@ -365,7 +368,6 @@ def egarch_recursion(double[::1] parameters,
         Temporary array (overwritten) with same shape as resids
     """
 
-    cdef double norm_const = 0.79788456080286541  # E[abs(e)], e~N(0,1)
     cdef Py_ssize_t t
     cdef int j, loc
 
@@ -375,7 +377,7 @@ def egarch_recursion(double[::1] parameters,
         loc += 1
         for j in range(p):
             if (t - 1 - j) >= 0:
-                lnsigma2[t] += parameters[loc] * (abs_std_resids[t - 1 - j] - norm_const)
+                lnsigma2[t] += parameters[loc] * (abs_std_resids[t - 1 - j] - SQRT2_OV_PI)
             loc += 1
         for j in range(o):
             if (t - 1 - j) >= 0:
@@ -392,8 +394,10 @@ def egarch_recursion(double[::1] parameters,
         sigma2[t] = exp(lnsigma2[t])
         if sigma2[t] < var_bounds[t, 0]:
             sigma2[t] = var_bounds[t, 0]
+            lnsigma2[t] = log(sigma2[t])
         elif sigma2[t] > var_bounds[t, 1]:
             sigma2[t] = var_bounds[t, 1] + log(sigma2[t]) - log(var_bounds[t, 1])
+            lnsigma2[t] = log(sigma2[t])
         std_resids[t] = resids[t] / sqrt(sigma2[t])
         abs_std_resids[t] = fabs(std_resids[t])
 
@@ -914,6 +918,7 @@ cdef class FIGARCHUpdater(VolatiltyUpdater):
         bounds_check(&sigma2[t], &var_bounds[t, 0])
 
 
+
 cdef class RiskMetrics2006Updater(VolatiltyUpdater):
     cdef:
         int kmax
@@ -968,7 +973,6 @@ cdef class RiskMetrics2006Updater(VolatiltyUpdater):
         cdef:
             Py_ssize_t i
 
-
         sigma2[t] = 0.0
         if t > 0:
             for i in range(self.kmax):
@@ -980,6 +984,108 @@ cdef class RiskMetrics2006Updater(VolatiltyUpdater):
                 self.last_sigma2s[i] = self.backcast[i]
                 sigma2[t] += self.last_sigma2s[i] * self.combination_weights[i]
         bounds_check(&sigma2[t], &var_bounds[t, 0])
+
+cdef class EGARCHUpdater(VolatiltyUpdater):
+    cdef:
+        double[::1] std_resids
+        double[::1] abs_std_resids
+        double[::1] lnsigma2
+        double backcast
+        int p, o, q
+
+    def __init__(self, int p, int o, int q):
+        super().__init__()
+        self.p = p
+        self.o = o
+        self.q = q
+        self.backcast = 9999.99
+        self.lnsigma2 = np.empty(0)
+        self.std_resids = np.empty(0)
+        self.abs_std_resids = np.empty(0)
+
+    def __setstate__(self, state):
+        cdef Py_ssize_t i
+        cdef double[::1] s1
+        cdef double[::1] s2
+        cdef double[::1] s3
+
+        self.backcast = state[0]
+
+        s1 = state[1]
+        s2 = state[2]
+        s3 = state[3]
+
+        self._resize(s1.shape[0])
+        for i in range(s1.shape[0]):
+            self.lnsigma2[i] = s1[i]
+            self.std_resids[i] = s2[i]
+            self.abs_std_resids[i] = s3[i]
+
+    def __reduce__(self):
+        return (
+            EGARCHUpdater,
+            (
+                self.p,
+                self.o,
+                self.q
+            ),
+            (
+                self.backcast,
+                np.asarray(self.lnsigma2),
+                np.asarray(self.std_resids),
+                np.asarray(self.abs_std_resids)
+            )
+        )
+
+    cdef void _resize(self, Py_ssize_t nobs):
+        if self.lnsigma2.shape[0] < nobs:
+            self.lnsigma2 = np.empty(nobs)
+            self.abs_std_resids = np.empty(nobs)
+            self.std_resids = np.empty(nobs)
+
+    def initialize_update(self, double[::1] parameters, object backcast, Py_ssize_t nobs):
+        self.backcast = backcast
+        self._resize(nobs)
+
+    cdef void update(self,
+                     Py_ssize_t t,
+                     double[::1] parameters,
+                     double[::1] resids,
+                     double[::1] sigma2,
+                     double[:,::1] var_bounds
+                     ):
+        cdef Py_ssize_t j, loc
+
+        if t > 0:
+            self.std_resids[t-1] = resids[t-1] / sqrt(sigma2[t-1])
+            self.abs_std_resids[t-1] = fabs(self.std_resids[t-1])
+
+        self.lnsigma2[t] = parameters[0]
+        loc = 1
+        for j in range(self.p):
+            if (t - 1 - j) >= 0:
+                self.lnsigma2[t] += parameters[loc] * (self.abs_std_resids[t - 1 - j] - SQRT2_OV_PI)
+            loc += 1
+        for j in range(self.o):
+            if (t - 1 - j) >= 0:
+                self.lnsigma2[t] += parameters[loc] * self.std_resids[t - 1 - j]
+            loc += 1
+        for j in range(self.q):
+            if (t - 1 - j) < 0:
+                self.lnsigma2[t] += parameters[loc] * self.backcast
+            else:
+                self.lnsigma2[t] += parameters[loc] * self.lnsigma2[t - 1 - j]
+            loc += 1
+        if self.lnsigma2[t] > LNSIGMA_MAX:
+            self.lnsigma2[t] = LNSIGMA_MAX
+        sigma2[t] = exp(self.lnsigma2[t])
+        if sigma2[t] < var_bounds[t, 0]:
+            sigma2[t] = var_bounds[t, 0]
+            self.lnsigma2[t] = log(sigma2[t])
+        elif sigma2[t] > var_bounds[t, 1]:
+            sigma2[t] = var_bounds[t, 1] + log(sigma2[t]) - log(var_bounds[t, 1])
+            self.lnsigma2[t] = log(sigma2[t])
+
 
 cdef class ARCHInMeanRecursion:
     cdef:
