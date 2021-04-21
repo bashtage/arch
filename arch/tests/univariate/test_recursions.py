@@ -282,6 +282,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
             gu.update(t, parameters, resids, sigma2, self.var_bounds)
             if t == nobs // 2:
                 gu = pickle.loads(pickle.dumps(gu))
+        gu.initialize_update(parameters, backcast, nobs)
         assert_allclose(sigma2, sigma2_ref)
 
         sigma2[:] = np.nan
@@ -291,7 +292,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
             gu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
             if t == nobs // 2:
                 gu = pickle.loads(pickle.dumps(gu))
-
+        gu.initialize_update(parameters, backcast, nobs)
         assert_allclose(sigma2, sigma2_ref)
 
     def test_harch(self):
@@ -378,6 +379,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
             hu.update(t, parameters, resids, sigma2, self.var_bounds)
             if t == nobs // 2:
                 hu = pickle.loads(pickle.dumps(hu))
+        hu.initialize_update(parameters, backcast, nobs)
         assert_allclose(sigma2, sigma2_direct)
 
         sigma2[:] = np.nan
@@ -387,6 +389,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
             hu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
             if t == nobs // 2:
                 hu = pickle.loads(pickle.dumps(hu))
+        hu.initialize_update(parameters, backcast, nobs)
         assert_allclose(sigma2, sigma2_direct)
 
     def test_arch(self):
@@ -820,6 +823,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
             eu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
             if t == nobs // 2:
                 eu = pickle.loads(pickle.dumps(eu))
+        eu.initialize_update(parameters, backcast, nobs)
         assert_allclose(sigma2, sigma2_python)
 
         sigma2[:] = np.nan
@@ -829,6 +833,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
             eu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
             if t == nobs // 2:
                 eu = pickle.loads(pickle.dumps(eu))
+        eu.initialize_update(parameters, backcast, nobs)
         assert_allclose(sigma2, sigma2_python)
 
         norm_const = np.sqrt(2 / np.pi)
@@ -1015,6 +1020,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
             mu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
             if t == nobs // 2:
                 mu = pickle.loads(pickle.dumps(mu))
+        mu.initialize_update(parameters, backcast, nobs)
         assert_allclose(sigma2, sigma2_ref)
 
         sigma2[:] = np.nan
@@ -1024,6 +1030,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
             mu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
             if t == nobs // 2:
                 mu = pickle.loads(pickle.dumps(mu))
+        mu.initialize_update(parameters, backcast, nobs)
         assert_allclose(sigma2, sigma2_ref)
 
     def test_figarch_recursion(self):
@@ -1403,6 +1410,7 @@ rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backca
             eu.update(t, parameters, resids, sigma2, self.var_bounds)
             if t == nobs // 2:
                 eu = pickle.loads(pickle.dumps(eu))
+        eu.initialize_update(parameters, backcast, nobs)
         sigma2_ref = sigma2.copy()
 
         sigma2[:] = np.nan
@@ -1412,6 +1420,7 @@ rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backca
             eu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
             if t == nobs // 2:
                 eu = pickle.loads(pickle.dumps(eu))
+        eu.initialize_update(parameters, backcast, nobs)
         assert_allclose(sigma2, sigma2_ref)
 
         sigma2[:] = np.nan
@@ -1421,6 +1430,7 @@ rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backca
         gu.initialize_update(parameters, backcast, nobs)
         for t in range(nobs):
             gu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
+        gu.initialize_update(parameters, backcast, nobs)
         assert_allclose(sigma2, sigma2_ref)
 
     def test_figarch_update(self):
@@ -1449,6 +1459,7 @@ rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backca
             fu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
             if t == nobs // 2:
                 fu = pickle.loads(pickle.dumps(fu))
+        fu.initialize_update(parameters, backcast, nobs)
         assert_allclose(sigma2, sigma2_ref)
 
         fu = rec.FIGARCHUpdater(p, q, 2.0, trunc_lag)
@@ -1457,6 +1468,7 @@ rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backca
             fu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
             if t == nobs // 2:
                 fu = pickle.loads(pickle.dumps(fu))
+        fu.initialize_update(parameters, backcast, nobs)
         assert_allclose(sigma2, sigma2_ref)
 
     def test_rm_2006(self):
@@ -1478,7 +1490,7 @@ rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backca
             ru._update_tester(t, params, resids, sigma2, self.var_bounds)
             if t == nobs // 2:
                 ru = pickle.loads(pickle.dumps(ru))
-
+        ru.initialize_update(None, backcast, None)
         assert_allclose(sigma2, sigma2_ref)
         sigma2_py = sigma2.copy()
 
@@ -1489,6 +1501,8 @@ rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backca
             ru._update_tester(t, params, resids, sigma2, self.var_bounds)
             if t == nobs // 2:
                 ru = pickle.loads(pickle.dumps(ru))
+        ru.initialize_update(None, backcast, None)
+        ru.initialize_update(None, 3.0, None)
         assert_allclose(sigma2, sigma2_py)
 
 
