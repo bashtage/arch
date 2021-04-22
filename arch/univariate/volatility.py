@@ -164,7 +164,7 @@ class VarianceForecast(object):
         return self._shocks
 
 
-class VolatilityProcess(object, metaclass=ABCMeta):
+class VolatilityProcess(metaclass=ABCMeta):
     """
     Abstract base class for ARCH models.  Allows the conditional mean model to be specified
     separately from the conditional variance, even though parameters are estimated jointly.
@@ -180,7 +180,7 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         self._min_bootstrap_obs = 100
         self._start = 0
         self._stop = -1
-        self._volatility_updater: Optional[rec.VolatiltyUpdater] = None
+        self._volatility_updater: Optional[rec.VolatilityUpdater] = None
 
     def __str__(self) -> str:
         return self.name
@@ -222,8 +222,21 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         return self._updatable
 
     @property
-    def volatility_updater(self) -> rec.VolatiltyUpdater:
-        if self._volatility_updater is None:
+    def volatility_updater(self) -> rec.VolatilityUpdater:
+        """
+        Get the volatility updater associated with the volatility process
+
+        Returns
+        -------
+        VolatilityUpdater
+            The updater class
+
+        Raises
+        ------
+        NotImplementedError
+            If the process is not updateable
+        """
+        if not self._updatable or self._volatility_updater is None:
             raise NotImplementedError("Subclasses may optionally implement")
         assert self._volatility_updater is not None
         return self._volatility_updater

@@ -104,7 +104,7 @@ def garch_core(
     power: float,
 ) -> NDArray: ...
 
-class VolatiltyUpdater:
+class VolatilityUpdater:
     def initialize_update(
         self, parameters: NDArray, backcast: Union[float, NDArray], nobs: int
     ) -> None: ...
@@ -117,28 +117,28 @@ class VolatiltyUpdater:
         var_bounds: NDArray,
     ) -> None: ...
 
-class GARCHUpdater(VolatiltyUpdater):
+class GARCHUpdater(VolatilityUpdater):
     def __init__(self, p: int, o: int, q: int, power: float) -> None: ...
 
-class EWMAUpdater(VolatiltyUpdater):
+class EWMAUpdater(VolatilityUpdater):
     def __init__(self, lam: Optional[float]) -> None: ...
 
-class FIGARCHUpdater(VolatiltyUpdater):
+class FIGARCHUpdater(VolatilityUpdater):
     def __init__(self, p: int, q: int, power: float, truncation: int) -> None: ...
 
-class HARCHUpdater(VolatiltyUpdater):
+class HARCHUpdater(VolatilityUpdater):
     def __init__(self, lags: NDArray) -> None: ...
 
-class MIDASUpdater(VolatiltyUpdater):
+class MIDASUpdater(VolatilityUpdater):
     def __init__(self, m: int, asym: bool) -> None: ...
 
-class RiskMetrics2006Updater(VolatiltyUpdater):
+class RiskMetrics2006Updater(VolatilityUpdater):
     def __init__(
         self, kmax: int, combination_weights: NDArray, smoothing_parameters: NDArray
     ) -> None: ...
 
 class ARCHInMeanRecursion:
-    def __init__(self, updater: VolatiltyUpdater) -> None: ...
+    def __init__(self, updater: VolatilityUpdater) -> None: ...
     def recursion(
         self,
         y: NDArray,
