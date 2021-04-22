@@ -795,6 +795,12 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         assert self._results is not None
         assert self._base is not None
         p = (self._results < self._base).mean(axis=0)
+        if p.min() <= 0.0 or p.max() >= 1.0:
+            raise RuntimeError(
+                "Empirical probability used in bias correction is 0 or 1, and so"
+                "bias cannot be corrected. This may occur in extremum statistics "
+                "that are not well approximated by a normal in a finite sample."
+            )
         b = stats.norm.ppf(p)
         return b[:, None]
 
