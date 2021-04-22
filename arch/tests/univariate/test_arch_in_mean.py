@@ -166,3 +166,10 @@ def test_not_updateable():
         nug.volatility_updater
     with pytest.raises(ValueError, match="The volatility process"):
         ARCHInMean(SP500, volatility=nug)
+
+
+def test_wrong_process():
+    from arch.univariate.recursions_python import ARCHInMeanRecursion
+
+    with pytest.raises(TypeError, match="updater must be a VolatilityUpdater"):
+        ARCHInMeanRecursion(updater=object())

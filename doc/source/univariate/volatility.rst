@@ -45,7 +45,7 @@ the so-called zig-zag algorithm to be used.  See the example for usage.
 
 Writing New Volatility Processes
 --------------------------------
-All volatility processes must inherit from :class:VolatilityProcess and provide
+All volatility processes must inherit from :class:`~arch.univariate.volatility.VolatilityProcess` and provide
 all public methods.
 
 .. currentmodule:: arch.univariate.volatility
@@ -54,3 +54,14 @@ all public methods.
    :toctree: generated/
 
    VolatilityProcess
+
+They may optionally expose a
+:class:`~arch.univariate.recursions_python.VolatilityUpdater` class
+that can be used in :class:`~arch.univariate.ARCHInMean` estimation.
+
+.. currentmodule:: arch.univariate.recursions_python
+
+.. autosummary::
+   :toctree: generated/
+
+   VolatilityUpdater

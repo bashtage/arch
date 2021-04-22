@@ -43,14 +43,14 @@ from arch.univariate.distribution import (
 
 if TYPE_CHECKING:
     # Fake path to satisfy mypy
-    from arch.univariate.recursions_python import ARCHInMeanRecursion, VolatiltyUpdater
+    from arch.univariate.recursions_python import ARCHInMeanRecursion, VolatilityUpdater
 else:
     try:
-        from arch.univariate.recursions import ARCHInMeanRecursion, VolatiltyUpdater
+        from arch.univariate.recursions import ARCHInMeanRecursion, VolatilityUpdater
     except ImportError:  # pragma: no cover
         from arch.univariate.recursions_python import (
             ARCHInMeanRecursion,
-            VolatiltyUpdater,
+            VolatilityUpdater,
         )
 
 from arch.typing import Literal
@@ -1650,7 +1650,7 @@ class ARCHInMean(ARX):
                 "``update`` function and ``updateable`` returns True can be "
                 "used with ``ARCHInMean``."
             )
-        self._volatility_updater: VolatiltyUpdater = self.volatility.volatility_updater
+        self._volatility_updater: VolatilityUpdater = self.volatility.volatility_updater
         self._recursion = ARCHInMeanRecursion(self._volatility_updater)
 
     @property

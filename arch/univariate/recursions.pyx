@@ -25,7 +25,7 @@ __all__ = [
     "EGARCHUpdater",
     "EWMAUpdater",
     "ARCHInMeanRecursion",
-    "VolatiltyUpdater",
+    "VolatilityUpdater",
     "FIGARCHUpdater",
     "MIDASUpdater",
 ]
@@ -585,7 +585,7 @@ def aparch_recursion(double[::1] parameters,
     return np.asarray(sigma2)
 
 
-cdef class VolatiltyUpdater:
+cdef class VolatilityUpdater:
     def __init__(self):
         pass
 
@@ -609,7 +609,7 @@ cdef class VolatiltyUpdater:
                        double[:,::1] var_bounds):
         self.update(t, parameters, resids, sigma2, var_bounds)
 
-cdef class GARCHUpdater(VolatiltyUpdater):
+cdef class GARCHUpdater(VolatilityUpdater):
     cdef:
         int p, o, q
         double power, backcast
@@ -663,7 +663,7 @@ cdef class GARCHUpdater(VolatiltyUpdater):
             loc += 1
         bounds_check(&sigma2[t], &var_bounds[t, 0])
 
-cdef class HARCHUpdater(VolatiltyUpdater):
+cdef class HARCHUpdater(VolatilityUpdater):
     cdef:
         np.int32_t[::1] lags
         double backcast
@@ -704,7 +704,7 @@ cdef class HARCHUpdater(VolatiltyUpdater):
 
         bounds_check(&sigma2[t], &var_bounds[t, 0])
 
-cdef class EWMAUpdater(VolatiltyUpdater):
+cdef class EWMAUpdater(VolatilityUpdater):
     cdef:
         bint estimate_lam
         double[::1] params
@@ -750,7 +750,7 @@ cdef class EWMAUpdater(VolatiltyUpdater):
                           self.params[2] * sigma2[t-1])
         bounds_check(&sigma2[t], &var_bounds[t, 0])
 
-cdef class MIDASUpdater(VolatiltyUpdater):
+cdef class MIDASUpdater(VolatilityUpdater):
     cdef:
         int m
         bint asym
@@ -851,7 +851,7 @@ cdef class MIDASUpdater(VolatiltyUpdater):
 
             bounds_check(&sigma2[t], &var_bounds[t, 0])
 
-cdef class FIGARCHUpdater(VolatiltyUpdater):
+cdef class FIGARCHUpdater(VolatilityUpdater):
     cdef:
         int p, q, truncation
         double power
@@ -919,7 +919,7 @@ cdef class FIGARCHUpdater(VolatiltyUpdater):
 
 
 
-cdef class RiskMetrics2006Updater(VolatiltyUpdater):
+cdef class RiskMetrics2006Updater(VolatilityUpdater):
     cdef:
         int kmax
         double[::1] backcast
@@ -985,7 +985,7 @@ cdef class RiskMetrics2006Updater(VolatiltyUpdater):
                 sigma2[t] += self.last_sigma2s[i] * self.combination_weights[i]
         bounds_check(&sigma2[t], &var_bounds[t, 0])
 
-cdef class EGARCHUpdater(VolatiltyUpdater):
+cdef class EGARCHUpdater(VolatilityUpdater):
     cdef:
         double[::1] std_resids
         double[::1] abs_std_resids
@@ -1089,9 +1089,9 @@ cdef class EGARCHUpdater(VolatiltyUpdater):
 
 cdef class ARCHInMeanRecursion:
     cdef:
-        VolatiltyUpdater volatility_updater
+        VolatilityUpdater volatility_updater
 
-    def __init__(self, VolatiltyUpdater updater):
+    def __init__(self, VolatilityUpdater updater):
         self.volatility_updater = updater
 
     def recursion(self,

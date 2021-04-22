@@ -7,12 +7,14 @@ from __future__ import annotations
 
 from arch.compat.numba import jit
 
+from abc import ABCMeta, abstractmethod
 from typing import Optional, Union
 
 import numpy as np
 from scipy.special import gammaln
 
 from arch.typing import NDArray
+from arch.utility.array import AbstractDocStringInheritor
 
 __all__ = [
     "bounds_check",
@@ -30,7 +32,7 @@ __all__ = [
     "HARCHUpdater",
     "MIDASUpdater",
     "EGARCHUpdater",
-    "VolatiltyUpdater",
+    "VolatilityUpdater",
     "ARCHInMeanRecursion",
 ]
 
@@ -633,15 +635,53 @@ def aparch_recursion_python(
 aparch_recursion = jit(aparch_recursion_python, nopython=True)
 
 
-class VolatiltyUpdater:
+class VolatilityUpdater(metaclass=ABCMeta):
+    """
+    Base class that all volatility updaters must inherit from.
+
+    Notes
+    -----
+    See the implementation available for information on modifying ``__init__``
+    to capture model-specific parameters and how ``initialize_update`` is
+    used to precompute values that change in each likelihood but not
+    each iteration of the recursion.
+
+    When writing a volatility updater, it is recommended to follow the
+    examples in recursions.pyx which use Cython to produce a C-callable
+    update function that can then be used to improve performance. The
+    subclasses of this abstract metaclass are all pure Python and
+    model estimation performance is poor since loops are written
+    in Python.
+    """
+
     def __init__(self) -> None:
         pass
 
+    @abstractmethod
     def initialize_update(
         self, parameters: NDArray, backcast: Union[float, NDArray], nobs: int
     ) -> None:
+        """
+        Initialize the recursion prior to calling update
+
+        Parameters
+        ----------
+        parameters : ndarray
+            The model parameters.
+        backcast : {float, ndarray}
+            The backcast value(s).
+        nobs : int
+            The number of observations in the sample.
+
+        Notes
+        -----
+        This function is called once per likelihood evaluation and can be used
+        to pre-compute expensive parameter transformations that do not change
+        with each call to ``update``.
+        """
         pass
 
+    @abstractmethod
     def update(
         self,
         t: int,
@@ -650,6 +690,28 @@ class VolatiltyUpdater:
         sigma2: NDArray,
         var_bounds: NDArray,
     ) -> None:
+        """
+        Update the current variance at location t
+
+        Parameters
+        ----------
+        t : int
+            The index of the value of sigma2 to update. Assumes but does not check
+            that update has been called recursively for 0,1,...,t-1.
+        parameters : ndarray
+            Model parameters
+        resids : ndarray
+            Residuals to use in the recursion
+        sigma2 : ndarray
+            Conditional variances with same shape as resids
+        var_bounds : ndarray
+            nobs by 2-element array of upper and lower bounds for conditional
+            variances for each time period
+
+        Notes
+        -----
+        The update to sigma2 occurs inplace.
+        """
         pass
 
     def _update_tester(
@@ -660,10 +722,28 @@ class VolatiltyUpdater:
         sigma2: NDArray,
         var_bounds: NDArray,
     ) -> None:
+        """
+        Testing shim for update with compatibility with the Cythonized version
+
+        Parameters
+        ----------
+        t : int
+            The index of the value of sigma2 to update. Assumes but does not check
+            that update has been called recursively for 0,1,...,t-1.
+        parameters : ndarray
+            Model parameters
+        resids : ndarray
+            Residuals to use in the recursion
+        sigma2 : ndarray
+            Conditional variances with same shape as resids
+        var_bounds : ndarray
+            nobs by 2-element array of upper and lower bounds for conditional
+            variances for each time period
+        """
         self.update(t, parameters, resids, sigma2, var_bounds)
 
 
-class GARCHUpdater(VolatiltyUpdater):
+class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, p: int, o: int, q: int, power: float) -> None:
         super().__init__()
         self.p = p
@@ -714,7 +794,7 @@ class GARCHUpdater(VolatiltyUpdater):
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
 
 
-class HARCHUpdater(VolatiltyUpdater):
+class HARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, lags: NDArray) -> None:
         super().__init__()
         self.lags = lags
@@ -748,7 +828,7 @@ class HARCHUpdater(VolatiltyUpdater):
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
 
 
-class EWMAUpdater(VolatiltyUpdater):
+class EWMAUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, lam: Optional[float]) -> None:
         super().__init__()
         self.estimate_lam = lam is None
@@ -785,7 +865,7 @@ class EWMAUpdater(VolatiltyUpdater):
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
 
 
-class MIDASUpdater(VolatiltyUpdater):
+class MIDASUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, m: int, asym: bool) -> None:
         super().__init__()
         self.m = m
@@ -855,7 +935,7 @@ class MIDASUpdater(VolatiltyUpdater):
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
 
 
-class FIGARCHUpdater(VolatiltyUpdater):
+class FIGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, p: int, q: int, power: float, truncation: int) -> None:
         super().__init__()
         self.p = p
@@ -901,7 +981,7 @@ class FIGARCHUpdater(VolatiltyUpdater):
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
 
 
-class RiskMetrics2006Updater(VolatiltyUpdater):
+class RiskMetrics2006Updater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(
         self, kmax: int, combination_weights: NDArray, smoothing_parameters: NDArray
     ) -> None:
@@ -936,7 +1016,7 @@ class RiskMetrics2006Updater(VolatiltyUpdater):
         sigma2[t] = bounds_check(sigma2[t], var_bounds[t])
 
 
-class EGARCHUpdater(VolatiltyUpdater):
+class EGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def __init__(self, p: int, o: int, q: int) -> None:
         super().__init__()
         self.p = p
@@ -1001,7 +1081,9 @@ class EGARCHUpdater(VolatiltyUpdater):
 
 
 class ARCHInMeanRecursion:
-    def __init__(self, updater: VolatiltyUpdater):
+    def __init__(self, updater: VolatilityUpdater):
+        if not isinstance(updater, VolatilityUpdater):
+            raise TypeError("updater must be a VolatilityUpdater")
         self.volatility_updater = updater
 
     def recursion(
