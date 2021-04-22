@@ -386,7 +386,10 @@ class VolatilityProcess(object, metaclass=ABCMeta):
         resids : ndarray
             Residuals to use in the recursion
         backcast : float
-            Value to use when initializing the recursion
+            Value to use when initializing the recursion. The backcast is
+            assumed to be appropriately transformed so that it can be
+            used without modification, e.g., log of the variance backcast
+            in an EGARCH model.
         var_bounds : ndarray
             Array containing columns of lower and upper bounds
         start : int
@@ -2686,7 +2689,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         lnsigma2 = cast(NDArray, np.log(sigma2))
         e = resids / np.sqrt(sigma2)
 
-        lnsigma2_mat = np.full((t, m), np.log(backcast))
+        lnsigma2_mat = np.full((t, m), backcast)
         e_mat = np.zeros((t, m))
         abs_e_mat = np.full((t, m), np.sqrt(2 / np.pi))
 
