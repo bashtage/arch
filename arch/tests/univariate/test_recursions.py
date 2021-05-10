@@ -1024,7 +1024,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert_allclose(sigma2, sigma2_ref)
 
         sigma2[:] = np.nan
-        mu = recpy.MIDASUpdater(22, True)
+        mu = rec.MIDASUpdater(22, True)
         mu.initialize_update(parameters, backcast, nobs)
         for t in range(nobs):
             mu._update_tester(t, parameters, resids, sigma2, self.var_bounds)
