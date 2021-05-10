@@ -31,6 +31,8 @@ __all__ = [
     "FloatOrArray",
     "RNGType",
     "Literal",
+    "UnitRootTrend",
+    "ForecastingMethod",
 ]
 NDArray = Union[np.ndarray]
 RNGType = Callable[[Union[int, Tuple[int, ...]]], NDArray]
@@ -42,3 +44,5 @@ AnyPandas = Union[Series, DataFrame]
 DateLike = Union[str, dt.datetime, np.datetime64, Timestamp]
 Label = Optional[Hashable]
 FloatOrArray = TypeVar("FloatOrArray", float, np.ndarray)
+UnitRootTrend = Literal["n", "c", "ct", "ctt"]
+ForecastingMethod = Literal["analytic", "simulation", "bootstrap"]

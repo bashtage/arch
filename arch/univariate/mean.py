@@ -25,7 +25,14 @@ from scipy.optimize import OptimizeResult
 from statsmodels.tsa.tsatools import lagmat
 
 from arch.__future__._utility import check_reindex
-from arch.typing import ArrayLike, ArrayLike1D, DateLike, Label, NDArray
+from arch.typing import (
+    ArrayLike,
+    ArrayLike1D,
+    DateLike,
+    ForecastingMethod,
+    Label,
+    NDArray,
+)
 from arch.univariate.base import (
     ARCHModel,
     ARCHModelForecast,
@@ -917,8 +924,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         params: ArrayLike1D,
         horizon: int = 1,
         start: Optional[Union[int, DateLike]] = None,
-        align: str = "origin",
-        method: str = "analytic",
+        align: Literal["origin", "target"] = "origin",
+        method: ForecastingMethod = "analytic",
         simulations: int = 1000,
         rng: Optional[Callable[[Union[int, Tuple[int, ...]]], NDArray]] = None,
         random_state: Optional[np.random.RandomState] = None,
@@ -1685,8 +1692,8 @@ class ARCHInMean(ARX):
         params: ArrayLike1D,
         horizon: int = 1,
         start: Optional[Union[int, DateLike]] = None,
-        align: str = "origin",
-        method: str = "analytic",
+        align: Literal["origin", "target"] = "origin",
+        method: ForecastingMethod = "analytic",
         simulations: int = 1000,
         rng: Optional[Callable[[Union[int, Tuple[int, ...]]], NDArray]] = None,
         random_state: Optional[np.random.RandomState] = None,
@@ -1806,14 +1813,25 @@ class ARCHInMean(ARX):
 def arch_model(
     y: Optional[ArrayLike],
     x: Optional[ArrayLike] = None,
-    mean: str = "Constant",
+    mean: Literal[
+        "Constant", "Zero", "LS", "AR", "ARX", "HAR", "HARX", "constant", "zero"
+    ] = "Constant",
     lags: Optional[Union[int, List[int], NDArray]] = 0,
-    vol: str = "Garch",
+    vol: Literal["GARCH", "ARCH", "EGARCH", "FIARCH", "HARCH"] = "GARCH",
     p: Union[int, List[int]] = 1,
     o: int = 0,
     q: int = 1,
     power: float = 2.0,
-    dist: str = "Normal",
+    dist: Literal[
+        "normal",
+        "gaussian",
+        "t",
+        "studentst",
+        "skewstudent",
+        "skewt",
+        "ged",
+        "generalized error",
+    ] = "normal",
     hold_back: Optional[int] = None,
     rescale: Optional[bool] = None,
 ) -> HARX:
@@ -1896,6 +1914,8 @@ def arch_model(
     Input that are not relevant for a particular specification, such as `lags`
     when `mean='zero'`, are silently ignored.
     """
+    am: ARCHModel
+
     known_mean = ("zero", "constant", "harx", "har", "ar", "arx", "ls")
     known_vol = ("arch", "figarch", "garch", "harch", "constant", "egarch")
     known_dist = (
@@ -1908,27 +1928,27 @@ def arch_model(
         "ged",
         "generalized error",
     )
-    mean = mean.lower()
-    vol = vol.lower()
-    dist = dist.lower()
-    if mean not in known_mean:
+    mean_model = mean.lower()
+    vol_model = vol.lower()
+    dist_name = dist.lower()
+    if mean_model not in known_mean:
         raise ValueError("Unknown model type in mean")
-    if vol.lower() not in known_vol:
+    if vol_model not in known_vol:
         raise ValueError("Unknown model type in vol")
-    if dist.lower() not in known_dist:
+    if dist_name not in known_dist:
         raise ValueError("Unknown model type in dist")
 
-    if mean == "harx":
+    if mean_model == "harx":
         am = HARX(y, x, lags, hold_back=hold_back, rescale=rescale)
-    elif mean == "har":
+    elif mean_model == "har":
         am = HARX(y, None, lags, hold_back=hold_back, rescale=rescale)
-    elif mean == "arx":
+    elif mean_model == "arx":
         am = ARX(y, x, lags, hold_back=hold_back, rescale=rescale)
-    elif mean == "ar":
+    elif mean_model == "ar":
         am = ARX(y, None, lags, hold_back=hold_back, rescale=rescale)
-    elif mean == "ls":
+    elif mean_model == "ls":
         am = LS(y, x, hold_back=hold_back, rescale=rescale)
-    elif mean == "constant":
+    elif mean_model == "constant":
         am = ConstantMean(y, hold_back=hold_back, rescale=rescale)
     else:  # mean == "zero"
         am = ZeroMean(y, hold_back=hold_back, rescale=rescale)
@@ -1938,28 +1958,28 @@ def arch_model(
             "p must be a scalar int for all volatility processes except HARCH."
         )
 
-    if vol == "constant":
+    if vol_model == "constant":
         v: VolatilityProcess = ConstantVariance()
-    elif vol == "arch":
+    elif vol_model == "arch":
         assert isinstance(p, int)
         v = ARCH(p=p)
-    elif vol == "figarch":
+    elif vol_model == "figarch":
         assert isinstance(p, int)
         v = FIGARCH(p=p, q=q)
-    elif vol == "garch":
+    elif vol_model == "garch":
         assert isinstance(p, int)
         v = GARCH(p=p, o=o, q=q, power=power)
-    elif vol == "egarch":
+    elif vol_model == "egarch":
         assert isinstance(p, int)
         v = EGARCH(p=p, o=o, q=q)
     else:  # vol == 'harch'
         v = HARCH(lags=p)
 
-    if dist in ("skewstudent", "skewt"):
+    if dist_name in ("skewstudent", "skewt"):
         d: Distribution = SkewStudent()
-    elif dist in ("studentst", "t"):
+    elif dist_name in ("studentst", "t"):
         d = StudentsT()
-    elif dist in ("ged", "generalized error"):
+    elif dist_name in ("ged", "generalized error"):
         d = GeneralizedError()
     else:  # ('gaussian', 'normal')
         d = Normal()

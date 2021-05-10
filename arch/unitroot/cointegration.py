@@ -11,7 +11,7 @@ from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import OLS, RegressionResults
 
 import arch.covariance.kernel as lrcov
-from arch.typing import ArrayLike1D, ArrayLike2D, NDArray
+from arch.typing import ArrayLike1D, ArrayLike2D, Literal, NDArray, UnitRootTrend
 from arch.unitroot._engle_granger import EngleGrangerTestResults, engle_granger
 from arch.unitroot._phillips_ouliaris import (
     CriticalValueWarning,
@@ -50,7 +50,7 @@ class _CommonCointegrationResults(object):
         resid: pd.Series,
         kernel_est: lrcov.CovarianceEstimator,
         num_x: int,
-        trend: str,
+        trend: UnitRootTrend,
         df_adjust: bool,
         r2: float,
         adj_r2: float,
@@ -333,7 +333,7 @@ class DynamicOLSResults(_CommonCointegrationResults):
         cov_type: str,
         kernel_est: lrcov.CovarianceEstimator,
         num_x: int,
-        trend: str,
+        trend: UnitRootTrend,
         reg_results: RegressionResults,
         df_adjust: bool,
     ) -> None:
@@ -526,13 +526,13 @@ class DynamicOLS(object):
         self,
         y: ArrayLike1D,
         x: ArrayLike2D,
-        trend: str = "c",
+        trend: UnitRootTrend = "c",
         lags: Optional[int] = None,
         leads: Optional[int] = None,
         common: bool = False,
         max_lag: Optional[int] = None,
         max_lead: Optional[int] = None,
-        method: str = "bic",
+        method: Literal["aic", "bic", "hqic"] = "bic",
     ) -> None:
         setup = _check_cointegrating_regression(y, x, trend)
         self._y = setup.y
@@ -674,7 +674,9 @@ class DynamicOLS(object):
 
     def fit(
         self,
-        cov_type: str = "unadjusted",
+        cov_type: Literal[
+            "unadjusted", "homoskedastic", "robust", "kernel"
+        ] = "unadjusted",
         kernel: str = "bartlett",
         bandwidth: Optional[int] = None,
         force_int: bool = False,
@@ -772,7 +774,7 @@ class DynamicOLS(object):
 
     @staticmethod
     def _cov(
-        cov_type: str,
+        cov_type: Literal["unadjusted", "homoskedastic", "robust", "kernel"],
         kernel: str,
         bandwidth: Optional[int],
         force_int: bool,
@@ -815,7 +817,7 @@ class CointegrationAnalysisResults(_CommonCointegrationResults):
         omega_112: float,
         kernel_est: lrcov.CovarianceEstimator,
         num_x: int,
-        trend: str,
+        trend: UnitRootTrend,
         df_adjust: bool,
         rsquared: float,
         rsquared_adj: float,
@@ -972,8 +974,8 @@ class FullyModifiedOLS(object):
         self,
         y: ArrayLike1D,
         x: ArrayLike2D,
-        trend: str = "c",
-        x_trend: Optional[str] = None,
+        trend: UnitRootTrend = "c",
+        x_trend: Optional[UnitRootTrend] = None,
     ) -> None:
         setup = _check_cointegrating_regression(y, x, trend)
         self._y = setup.y
@@ -989,7 +991,10 @@ class FullyModifiedOLS(object):
         res = _cross_section(self._y, self._x, self._trend)
         x = np.asarray(self._x)
         eta_1 = np.asarray(res.resid)
-        x_trend = self._trend if self._x_trend is None else self._x_trend
+        if self._x_trend is not None:
+            x_trend = self._x_trend
+        else:
+            x_trend = self._trend
         tr = add_trend(nobs=x.shape[0], trend=x_trend)
         if tr.shape[1] > 1 and diff:
             delta_tr = np.diff(tr[:, 1:], axis=0)
@@ -1125,8 +1130,8 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         self,
         y: ArrayLike1D,
         x: ArrayLike2D,
-        trend: str = "c",
-        x_trend: Optional[str] = None,
+        trend: UnitRootTrend = "c",
+        x_trend: Optional[UnitRootTrend] = None,
     ) -> None:
         super().__init__(y, x, trend, x_trend)
 

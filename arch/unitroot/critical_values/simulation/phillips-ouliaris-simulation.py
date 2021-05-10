@@ -5,7 +5,7 @@ import os
 import pickle
 from random import shuffle
 import sys
-from typing import IO, Optional, Tuple, cast
+from typing import IO, List, Optional, Tuple, cast
 
 import colorama
 from joblib import Parallel, delayed
@@ -15,7 +15,7 @@ import pandas as pd
 from phillips_ouliaris import QUANTILES, ROOT, SAMPLE_SIZES, TRENDS
 import psutil
 
-from arch.typing import NDArray
+from arch.typing import Literal, NDArray, UnitRootTrend
 from arch.utility.timeseries import add_trend
 
 GREEN = colorama.Fore.GREEN
@@ -61,7 +61,9 @@ def inner_prod(a: NDArray, b: Optional[NDArray] = None) -> NDArray:
     return a.transpose((0, 2, 1)) @ b
 
 
-def z_tests_vec(z: NDArray, lag: int, trend: str) -> Tuple[np.ndarray, np.ndarray]:
+def z_tests_vec(
+    z: NDArray, lag: int, trend: UnitRootTrend
+) -> Tuple[np.ndarray, np.ndarray]:
     assert z.ndim == 3
     nobs = int(z.shape[1])
     if trend == "c":
@@ -101,7 +103,7 @@ def z_tests_vec(z: NDArray, lag: int, trend: str) -> Tuple[np.ndarray, np.ndarra
     return z_a, z_t
 
 
-def z_tests(z: NDArray, lag: int, trend: str) -> Tuple[float, float]:
+def z_tests(z: NDArray, lag: int, trend: UnitRootTrend) -> Tuple[float, float]:
     z = add_trend(z, trend=trend)
     u = z
     if z.shape[1] > 1:
@@ -122,7 +124,9 @@ def z_tests(z: NDArray, lag: int, trend: str) -> Tuple[float, float]:
     return z_a, z_t
 
 
-def p_tests_vec(z: NDArray, lag: int, trend: str) -> Tuple[np.ndarray, np.ndarray]:
+def p_tests_vec(
+    z: NDArray, lag: int, trend: UnitRootTrend
+) -> Tuple[np.ndarray, np.ndarray]:
     assert z.ndim == 3
     z_lag, z_lead = z[:, :-1], z[:, 1:]
     nobs = z.shape[1]
@@ -169,7 +173,7 @@ def p_tests_vec(z: NDArray, lag: int, trend: str) -> Tuple[np.ndarray, np.ndarra
     return p_u, p_z
 
 
-def p_tests(z: NDArray, lag: int, trend: str) -> Tuple[float, float]:
+def p_tests(z: NDArray, lag: int, trend: UnitRootTrend) -> Tuple[float, float]:
     x, y = z[:, 1:], z[:, 0]
     nobs = int(x.shape[0])
     x = add_trend(x, trend=trend)
@@ -201,7 +205,12 @@ def p_tests(z: NDArray, lag: int, trend: str) -> Tuple[float, float]:
     return p_u, p_z
 
 
-def block(gen: np.random.Generator, statistic: str, num: int, trend: str) -> NDArray:
+def block(
+    gen: np.random.Generator,
+    statistic: str,
+    num: int,
+    trend: UnitRootTrend,
+) -> NDArray:
     max_sample = max(SAMPLE_SIZES)
     e = gen.standard_normal((num, max_sample, MAX_STOCHASTIC_TRENDS))
     z = e.cumsum(axis=1)
@@ -264,7 +273,11 @@ def load_partial(
 
 
 def worker(
-    gen: np.random.Generator, statistic: str, trend: str, idx: int, full_path: str
+    gen: np.random.Generator,
+    statistic: str,
+    trend: UnitRootTrend,
+    idx: int,
+    full_path: str,
 ) -> None:
     print(
         f"Starting Index: {BLUE}{idx}{RESET}, Statistic: {RED}{statistic}{RESET},"
@@ -342,7 +355,9 @@ if __name__ == "__main__":
 
     ss = np.random.SeedSequence(entropy)
     children = ss.spawn(len(TRENDS) * EX_NUM * len(STATISTICS))
-    jobs = []
+    jobs: List[
+        Tuple[np.random.Generator, Literal["z", "p"], UnitRootTrend, int, str]
+    ] = []
     loc = 0
     from itertools import product
 
@@ -353,7 +368,15 @@ if __name__ == "__main__":
         full_file = os.path.join(ROOT, filename)
         if os.path.exists(full_file):
             continue
-        jobs.append((gen, statistic, trend, idx, full_file))
+        jobs.append(
+            (
+                gen,
+                cast(Literal["z", "p"], statistic),
+                cast(UnitRootTrend, trend),
+                idx,
+                full_file,
+            )
+        )
         loc += 1
     shuffle(jobs)
     if args.z_only:
@@ -377,7 +400,7 @@ if __name__ == "__main__":
     print(f"Running on {BLUE}{njobs}{RESET} CPUs")
     if njobs == 1:
         for job in jobs:
-            worker(*job)
+            worker(*job)  # type: ignore[misc]
     else:
         Parallel(verbose=50, n_jobs=njobs)(
             delayed(worker)(gen, statistic, trend, idx, fullfile)

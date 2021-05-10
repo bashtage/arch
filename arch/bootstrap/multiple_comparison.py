@@ -531,7 +531,9 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         models: ArrayLike,
         block_size: Optional[int] = None,
         reps: int = 1000,
-        bootstrap: str = "stationary",
+        bootstrap: Literal[
+            "stationary", "sb", "circular", "cbb", "moving block", "mbb"
+        ] = "stationary",
         studentize: bool = True,
         nested: bool = False,
     ) -> None:
@@ -551,15 +553,15 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self._loss_diff_var = np.empty(0)
         self.t: int = self._loss_diff.shape[0]
         self.k: int = self._loss_diff.shape[1]
-        bootstrap = bootstrap.lower().replace(" ", "_")
-        if bootstrap in ("circular", "cbb"):
+        bootstrap_name = bootstrap.lower().replace(" ", "_")
+        if bootstrap_name in ("circular", "cbb"):
             bootstrap_inst = CircularBlockBootstrap(self.block_size, self._loss_diff)
-        elif bootstrap in ("stationary", "sb"):
+        elif bootstrap_name in ("stationary", "sb"):
             bootstrap_inst = StationaryBootstrap(self.block_size, self._loss_diff)
-        elif bootstrap in ("moving_block", "mbb"):
+        elif bootstrap_name in ("moving_block", "mbb"):
             bootstrap_inst = MovingBlockBootstrap(self.block_size, self._loss_diff)
         else:
-            raise ValueError("Unknown bootstrap:" + bootstrap)
+            raise ValueError(f"Unknown bootstrap: {bootstrap_name}")
         self.bootstrap: CircularBlockBootstrap = bootstrap_inst
         self._pvalues: Dict[str, float] = {}
         self._simulated_vals: Optional[NDArray] = None
@@ -729,7 +731,9 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         return pd.Series(crit_vals, index=list(self._pvalues.keys()))
 
     def better_models(
-        self, pvalue: float = 0.05, pvalue_type: str = "consistent"
+        self,
+        pvalue: float = 0.05,
+        pvalue_type: Literal["lower", "consistent", "upper"] = "consistent",
     ) -> Union[NDArray, List[Hashable]]:
         """
         Returns set of models rejected as being equal-or-worse than the

@@ -111,6 +111,7 @@ def test_simulate():
         gim.simulate(res.params, 1000, initial_value=np.array([0.0, 0.0]))
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("good_vol", SUPPORTED)
 def test_supported(good_vol):
     aim = ARCHInMean(SP500, volatility=good_vol(), form="log")
@@ -143,6 +144,7 @@ def test_simulate_arx(form):
     gim.simulate(res.params, 1000, x=X.iloc[:1500], initial_value=np.zeros(2))
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("m", [22, 33])
 @pytest.mark.parametrize("asym", [True, False])
 def test_alt_parameterizations(asym, m):

@@ -15,7 +15,7 @@ import numpy as np
 from numpy.random import RandomState
 from scipy.special import gammaln
 
-from arch.typing import ArrayLike1D, NDArray, RNGType
+from arch.typing import ArrayLike1D, ForecastingMethod, NDArray, RNGType
 from arch.univariate.distribution import Normal
 from arch.utility.array import AbstractDocStringInheritor, ensure1d
 from arch.utility.exceptions import InitialValueWarning, initial_value_warning
@@ -279,7 +279,9 @@ class VolatilityProcess(metaclass=ABCMeta):
         raise NotImplementedError("Subclasses may optionally implement")
 
     @abstractmethod
-    def _check_forecasting_method(self, method: str, horizon: int) -> None:
+    def _check_forecasting_method(
+        self, method: ForecastingMethod, horizon: int
+    ) -> None:
         """
         Verify the requested forecasting method as valid for the specification
 
@@ -652,7 +654,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         var_bounds: NDArray,
         start: Optional[int] = None,
         horizon: int = 1,
-        method: str = "analytic",
+        method: ForecastingMethod = "analytic",
         simulations: int = 1000,
         rng: Optional[RNGType] = None,
         random_state: Optional[RandomState] = None,
@@ -707,14 +709,14 @@ class VolatilityProcess(metaclass=ABCMeta):
         to use this method when not available will raise a ValueError.
         """
         parameters = np.asarray(parameters)
-        method = method.lower()
-        if method not in ("analytic", "simulation", "bootstrap"):
+        method_name = method.lower()
+        if method_name not in ("analytic", "simulation", "bootstrap"):
             raise ValueError("{0} is not a known forecasting method".format(method))
         if not isinstance(horizon, (int, np.integer)) or horizon < 1:
             raise ValueError("horizon must be an integer >= 1.")
-        self._check_forecasting_method(method, horizon)
+        self._check_forecasting_method(cast(ForecastingMethod, method_name), horizon)
         start = len(resids) - 1 if start is None else start
-        if method == "analytic":
+        if method_name == "analytic":
             return self._analytic_forecast(
                 parameters, resids, backcast, var_bounds, start, horizon
             )
@@ -876,7 +878,9 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def parameter_names(self) -> List[str]:
         return ["sigma2"]
 
-    def _check_forecasting_method(self, method: str, horizon: int) -> None:
+    def _check_forecasting_method(
+        self, method: ForecastingMethod, horizon: int
+    ) -> None:
         return
 
     def _analytic_forecast(
@@ -1199,7 +1203,9 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def parameter_names(self) -> List[str]:
         return _common_names(self.p, self.o, self.q)
 
-    def _check_forecasting_method(self, method: str, horizon: int) -> None:
+    def _check_forecasting_method(
+        self, method: ForecastingMethod, horizon: int
+    ) -> None:
         if horizon == 1:
             return
 
@@ -1557,7 +1563,9 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return const, arch, resids2
 
-    def _check_forecasting_method(self, method: str, horizon: int) -> None:
+    def _check_forecasting_method(
+        self, method: ForecastingMethod, horizon: int
+    ) -> None:
         return
 
     def _analytic_forecast(
@@ -1869,7 +1877,9 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return omega, aw, gw, resids2, indicator
 
-    def _check_forecasting_method(self, method: str, horizon: int) -> None:
+    def _check_forecasting_method(
+        self, method: ForecastingMethod, horizon: int
+    ) -> None:
         return
 
     def _analytic_forecast(
@@ -2107,7 +2117,9 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return data[burn:], sigma2[burn:]
 
-    def _check_forecasting_method(self, method: str, horizon: int) -> None:
+    def _check_forecasting_method(
+        self, method: ForecastingMethod, horizon: int
+    ) -> None:
         return
 
     def _analytic_forecast(
@@ -2371,7 +2383,9 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return data[burn:], sigma2[burn:]
 
-    def _check_forecasting_method(self, method: str, horizon: int) -> None:
+    def _check_forecasting_method(
+        self, method: ForecastingMethod, horizon: int
+    ) -> None:
         return
 
     def _analytic_forecast(
@@ -2660,7 +2674,9 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def parameter_names(self) -> List[str]:
         return _common_names(self.p, self.o, self.q)
 
-    def _check_forecasting_method(self, method: str, horizon: int) -> None:
+    def _check_forecasting_method(
+        self, method: ForecastingMethod, horizon: int
+    ) -> None:
         if method == "analytic" and horizon > 1:
             raise ValueError("Analytic forecasts not available for horizon > 1")
         return
@@ -2831,7 +2847,9 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             return ["scale"]
         return []
 
-    def _check_forecasting_method(self, method: str, horizon: int) -> None:
+    def _check_forecasting_method(
+        self, method: ForecastingMethod, horizon: int
+    ) -> None:
         return
 
     def _analytic_forecast(
@@ -3168,7 +3186,9 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             names += ["beta"]
         return names
 
-    def _check_forecasting_method(self, method: str, horizon: int) -> None:
+    def _check_forecasting_method(
+        self, method: ForecastingMethod, horizon: int
+    ) -> None:
         if horizon == 1:
             return
 
@@ -3673,7 +3693,9 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return VarianceForecast(forecasts)
 
-    def _check_forecasting_method(self, method: str, horizon: int) -> None:
+    def _check_forecasting_method(
+        self, method: ForecastingMethod, horizon: int
+    ) -> None:
         if horizon == 1:
             return
 

@@ -19,7 +19,7 @@ from typing import cast
 from ipyparallel import Client, DirectView
 from numpy import array, nan, ndarray, percentile, savez
 
-from arch.typing import Literal
+from arch.typing import UnitRootTrend
 
 from .adf_simulation import adf_simulation
 
@@ -51,9 +51,7 @@ def clear_cache(client: Client, view: DirectView) -> None:
     client.session.digest_history.clear()
 
 
-def wrapper(
-    n: int, trend: Literal["n", "c", "ct", "ctt"], b: int, rng_seed: int = 0
-) -> ndarray:
+def wrapper(n: int, trend: UnitRootTrend, b: int, rng_seed: int = 0) -> ndarray:
     """
     Wraps and blocks the main simulation so that the maximum amount of memory
     can be controlled on multi processor systems when executing in parallel

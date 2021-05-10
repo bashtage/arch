@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from typing import Any, Dict, NamedTuple, Optional, Tuple, Type
+from typing import Any, Dict, NamedTuple, Optional, Tuple, Type, cast
 
 import pandas as pd
 from statsmodels.iolib.summary import Summary
 from statsmodels.regression.linear_model import OLS, RegressionResults
 
 import arch.covariance.kernel as lrcov
-from arch.typing import ArrayLike1D, ArrayLike2D
+from arch.typing import ArrayLike1D, ArrayLike2D, UnitRootTrend
 from arch.utility.array import ensure1d, ensure2d
 from arch.utility.timeseries import add_trend
 
@@ -27,7 +27,7 @@ KERNEL_ERR = f"kernel is not a known estimator. Must be one of:\n {KNOWN_KERNELS
 class CointegrationSetup(NamedTuple):
     y: pd.Series
     x: pd.DataFrame
-    trend: str
+    trend: UnitRootTrend
 
 
 def _check_kernel(kernel: str) -> str:
@@ -43,7 +43,7 @@ def _check_kernel(kernel: str) -> str:
 def _check_cointegrating_regression(
     y: ArrayLike1D,
     x: ArrayLike2D,
-    trend: str,
+    trend: UnitRootTrend,
     supported_trends: Tuple[str, ...] = ("n", "c", "ct", "ctt"),
 ) -> CointegrationSetup:
     y = ensure1d(y, "y", True)
@@ -59,14 +59,16 @@ def _check_cointegrating_regression(
         x_df = pd.DataFrame(x, columns=cols, index=y.index)
     else:
         x_df = x
-    trend = trend.lower()
-    if trend.lower() not in supported_trends:
+    trend_name = trend.lower()
+    if trend_name.lower() not in supported_trends:
         trends = ",".join([f'"{st}"' for st in supported_trends])
         raise ValueError(f"Unknown trend. Must be one of {{{trends}}}")
-    return CointegrationSetup(y, x_df, trend)
+    return CointegrationSetup(y, x_df, cast(UnitRootTrend, trend_name))
 
 
-def _cross_section(y: ArrayLike1D, x: ArrayLike2D, trend: str) -> RegressionResults:
+def _cross_section(
+    y: ArrayLike1D, x: ArrayLike2D, trend: UnitRootTrend
+) -> RegressionResults:
     if trend not in ("n", "c", "ct", "ctt"):
         raise ValueError('trend must be one of "n", "c", "ct" or "ctt"')
     y = ensure1d(y, "y", True)

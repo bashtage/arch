@@ -5,7 +5,7 @@ from typing import Optional, Sequence, Tuple
 import numpy as np
 import pandas as pd
 
-from arch.typing import NDArrayOrFrame
+from arch.typing import Literal, NDArrayOrFrame
 
 
 class ColumnNameConflict(Warning):
@@ -45,10 +45,10 @@ def _enforce_unique_col_name(
 
 def add_trend(
     x: Optional[NDArrayOrFrame] = None,
-    trend: str = "c",
+    trend: Literal["n", "c", "t", "ct", "ctt"] = "c",
     prepend: bool = False,
     nobs: Optional[int] = None,
-    has_constant: str = "skip",
+    has_constant: Literal["raise", "add", "skip"] = "skip",
 ) -> NDArrayOrFrame:
     """
     Adds a trend and/or constant to an array.
@@ -81,22 +81,23 @@ def add_trend(
     Returns columns as ["ctt","ct","t","c"] whenever applicable. There is
     currently no checking for an existing trend.
     """
-    trend = trend.lower()
+    if trend not in ("n", "c", "ct", "ctt", "t"):
+        raise ValueError(f"trend {trend} not understood")
+    trend_name = trend.lower()
     if (x is None and nobs is None) or (x is not None and nobs is not None):
         raise ValueError("One and only one of x or nobs must be provided.")
-    if trend == "n":
+    if trend_name == "n":
         if x is not None:
             return x
         assert nobs is not None
         return np.empty((nobs, 0))
-    elif trend == "c":
+    elif trend_name == "c":
         trend_order = 0
-    elif trend == "ct" or trend == "t":
+    elif trend_name == "ct" or trend_name == "t":
         trend_order = 1
-    elif trend == "ctt":
+    else:  # trend_name == "ctt":
         trend_order = 2
-    else:
-        raise ValueError("trend %s not understood" % trend)
+
     if x is not None:
         nobs = len(np.asanyarray(x))
     elif nobs is None or nobs <= 0:
@@ -104,13 +105,13 @@ def add_trend(
     trend_array = np.vander(np.arange(1, nobs + 1, dtype=np.float64), trend_order + 1)
     # put in order ctt
     trend_array = np.fliplr(trend_array)
-    if trend == "t":
+    if trend_name == "t":
         trend_array = trend_array[:, 1:]
         # check for constant
     if x is None:
         return trend_array
     x_array = np.asarray(x)
-    if "c" in trend and np.any(
+    if "c" in trend_name and np.any(
         np.logical_and(np.ptp(x_array, axis=0) == 0, np.all(x_array != 0, axis=0))
     ):
         if has_constant == "raise":
@@ -121,7 +122,7 @@ def add_trend(
             trend_array = trend_array[:, 1:]
     if isinstance(x, pd.DataFrame):
         columns: Tuple[str, ...] = ("const", "trend", "quadratic_trend")
-        if trend == "t":
+        if trend_name == "t":
             columns = (columns[1],)
         else:
             columns = columns[0 : trend_order + 1]
