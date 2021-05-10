@@ -21,7 +21,7 @@ import numpy as np
 from numpy.random import PCG64, Generator, SeedSequence
 import psutil
 
-from arch.typing import Literal
+from arch.typing import UnitRootTrend
 
 GREEN = colorama.Fore.GREEN
 BLUE = colorama.Fore.BLUE
@@ -83,7 +83,7 @@ def single_experiment(trend: str, gen: Generator, file_name: str) -> None:
                 count = remaining
             st = finished
             en = finished + count
-            _trend: Literal["n", "c", "ct", "ctt"]
+            _trend: UnitRootTrend
             if trend == "n":
                 _trend = "n"
             elif trend == "c":

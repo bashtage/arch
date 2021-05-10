@@ -213,7 +213,29 @@ that arch will work with older versions.
 
 ### Optional Requirements
 
-- Numba (0.35+) will be used if available **and** when installed using the --no-binary option
+- Numba (0.35+) will be used if available **and** when installed without building the binary modules. In order to ensure that these are not built, you must set the environment variable ``ARCH_NO_BINARY=1`` and install without the wheel.
+  
+```shell
+export ARCH_NO_BINARY=1
+pip install arch --no-binary arch
+```
+
+or if using Powershell on windows
+
+```powershell
+$env:ARCH_NO_BINARY=1
+pip install arch --no-binary arch
+```
+
+If you have locally cloned the repo, you can install without building the binary modules
+by running
+
+```shell
+python setup.py install --no-binary
+```
+
+or by setting the environment variable ``ARCH_NO_BINARY=1``.
+
 - jupyter and notebook are required to run the notebooks
 
 ## Installing
@@ -227,20 +249,14 @@ see a warning but this can be ignored. If you don't have a compiler,
 
 Releases are available PyPI and can be installed with `pip`.
 
-```bash
+```shell
 pip install arch
 ```
 
-This command should work whether you have a compiler installed or not.
-If you want to install with the `--no-binary` options, use
-
-```bash
-pip install arch --install-option="--no-binary" --no-build-isolation
+```shell
+export ARCH_NO_BINARY=1
+pip install arch --no-binary arch
 ```
-
-The `--no-build-isoloation` uses the existing NumPy when building the
-source. This is usually needed since pip will attempt to build all
-dependencies from source when `--install-option` is used.
 
 You can alternatively install the latest version from GitHub
 
@@ -248,7 +264,7 @@ You can alternatively install the latest version from GitHub
 pip install git+https://github.com/bashtage/arch.git
 ```
 
-`--install-option="--no-binary" --no-build-isoloation` can be used to
+Setting the environment variable `ARCH_NO_BINARY=1` can be used to
 disable compilation of the extensions.
 
 ### Anaconda

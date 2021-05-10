@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
-from typing import Dict, List, Optional, Sequence, Tuple, Union
+from typing import Dict, List, Optional, Sequence, Tuple, Union, cast
 import warnings
 
 from numpy import (
@@ -46,7 +46,14 @@ from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import OLS, RegressionResults
 from statsmodels.tsa.tsatools import lagmat
 
-from arch.typing import ArrayLike, ArrayLike1D, ArrayLike2D, NDArray
+from arch.typing import (
+    ArrayLike,
+    ArrayLike1D,
+    ArrayLike2D,
+    Literal,
+    NDArray,
+    UnitRootTrend,
+)
 from arch.unitroot.critical_values.dfgls import (
     dfgls_cv_approx,
     dfgls_large_p,
@@ -189,7 +196,7 @@ maximum lag length to consider smaller models.\
 
 
 def _autolag_ols_low_memory(
-    y: NDArray, maxlag: int, trend: str, method: str
+    y: NDArray, maxlag: int, trend: UnitRootTrend, method: str
 ) -> Tuple[float, int]:
     """
     Computes the lag length that minimizes an info criterion .
@@ -348,7 +355,7 @@ def _autolag_ols(
 
 def _df_select_lags(
     y: NDArray,
-    trend: str,
+    trend: Literal["n", "c", "ct", "ctt"],
     max_lags: Optional[int],
     method: str,
     low_memory: bool = False,
@@ -418,7 +425,9 @@ def _add_column_names(rhs: ArrayLike, lags: int) -> DataFrame:
     return DataFrame(rhs, columns=["Level.L1"] + lag_names)
 
 
-def _estimate_df_regression(y: NDArray, trend: str, lags: int) -> RegressionResults:
+def _estimate_df_regression(
+    y: NDArray, trend: Literal["n", "c", "ct", "ctt"], lags: int
+) -> RegressionResults:
     """Helper function that estimates the core (A)DF regression
 
     Parameters
@@ -458,15 +467,18 @@ class UnitRootTest(object, metaclass=ABCMeta):
     """Base class to be used for inheritance in unit root bootstrap"""
 
     def __init__(
-        self, y: ArrayLike, lags: Optional[int], trend: str, valid_trends: Sequence[str]
+        self,
+        y: ArrayLike,
+        lags: Optional[int],
+        trend: Union[UnitRootTrend, Literal["t"]],
+        valid_trends: Sequence[str],
     ) -> None:
         self._y = ensure1d(y, "y")
         self._delta_y = diff(y)
         self._nobs = self._y.shape[0]
         self._lags = lags
         self._valid_trends = valid_trends
-        self._trend = ""
-        if trend == "nc":
+        if trend == "nc":  # type: ignore
             warnings.warn(
                 'Trend "nc" is deprecated and has been replaced with "n" (for none).',
                 FutureWarning,
@@ -646,7 +658,7 @@ class UnitRootTest(object, metaclass=ABCMeta):
         return self._trend
 
     @trend.setter
-    def trend(self, value: str) -> None:
+    def trend(self, value: Union[UnitRootTrend, Literal["t"]]) -> None:
         if value not in self.valid_trends:
             raise ValueError("trend not understood")
         warnings.warn(MUTATING_WARNING, FutureWarning)
@@ -747,7 +759,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self,
         y: ArrayLike,
         lags: Optional[int] = None,
-        trend: str = "c",
+        trend: UnitRootTrend = "c",
         max_lags: Optional[int] = None,
         method: str = "AIC",
         low_memory: Optional[bool] = None,
@@ -765,7 +777,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
     def _select_lag(self) -> None:
         ic_best, best_lag = _df_select_lags(
             self._y,
-            self._trend,
+            cast(UnitRootTrend, self._trend),
             self._max_lags,
             self._method,
             low_memory=self._low_memory,
@@ -788,7 +800,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
             self._select_lag()
         assert self._lags is not None
         y, trend, lags = self._y, self._trend, self._lags
-        resols = _estimate_df_regression(y, trend, lags)
+        resols = _estimate_df_regression(y, cast(UnitRootTrend, trend), lags)
         self._regression = resols
         self._stat = stat = resols.tvalues[0]
         self._nobs = int(resols.nobs)
@@ -893,7 +905,7 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self,
         y: ArrayLike,
         lags: Optional[int] = None,
-        trend: str = "c",
+        trend: Literal["c", "ct"] = "c",
         max_lags: Optional[int] = None,
         method: str = "AIC",
         low_memory: Optional[bool] = None,
@@ -971,7 +983,7 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         return self._trend
 
     @trend.setter
-    def trend(self, value: str) -> None:
+    def trend(self, value: Literal["c", "ct"]) -> None:
         if value not in self.valid_trends:
             raise ValueError("trend not understood")
         warnings.warn(MUTATING_WARNING, FutureWarning)
@@ -1095,7 +1107,7 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self,
         y: ArrayLike,
         lags: Optional[int] = None,
-        trend: str = "c",
+        trend: Literal["n", "c", "ct"] = "c",
         test_type: str = "tau",
     ) -> None:
         valid_trends = ("n", "c", "ct")
@@ -1282,7 +1294,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     """
 
     def __init__(
-        self, y: ArrayLike, lags: Optional[int] = None, trend: str = "c"
+        self, y: ArrayLike, lags: Optional[int] = None, trend: Literal["c", "ct"] = "c"
     ) -> None:
         valid_trends = ("c", "ct")
         if lags is None:
@@ -1443,7 +1455,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self,
         y: ArrayLike,
         lags: Optional[int] = None,
-        trend: str = "c",
+        trend: Literal["c", "ct", "t"] = "c",
         trim: float = 0.15,
         max_lags: Optional[int] = None,
         method: str = "AIC",
@@ -1640,7 +1652,7 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self,
         y: ArrayLike,
         lags: int = 2,
-        trend: str = "c",
+        trend: Literal["n", "c"] = "c",
         debiased: bool = True,
         robust: bool = True,
         overlap: bool = True,

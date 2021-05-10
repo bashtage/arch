@@ -48,6 +48,13 @@ jobs:
         SETUP_ARGS: '--no-binary'
         use.conda: 'true'
         USE_NUMBA: true
+        PYTEST_OPTS: '--skip-slow'
+      python_3.8_no_binary_environment:
+        python.version: '3.8'
+        ARCH_NO_BINARY: true
+        use.conda: 'true'
+        USE_NUMBA: true
+        PYTEST_OPTS: '--skip-slow'
       python_38_no_numba:
         python.version: '3.8'
         USE_NUMBA: false
@@ -98,7 +105,9 @@ jobs:
     displayName: 'List Configuration (PyPI)'
     condition: ne(variables['use.conda'], 'true')
 
-  - script: conda list
+  - script: |
+     source ci/azure/update_path.sh
+     conda list
     displayName: 'List Configuration (conda)'
     condition: eq(variables['use.conda'], 'true')
 
@@ -122,6 +131,7 @@ jobs:
     condition: ne(variables['test.install'], 'true')
 
   - script: |
+      set -e
       echo "Testing site packages"
       mkdir test_run_dir
       pushd test_run_dir
@@ -135,8 +145,8 @@ jobs:
       if [[ ${COVERAGE} == "true" ]]; then
         export COVERAGE_OPTS="--cov-config .coveragerc --cov=arch --cov-report xml:coverage.xml --cov-report term"
       fi
-      echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} arch/tests
-      pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} arch/tests
+      echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} ${PYTEST_OPTS} arch/tests
+      pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} ${PYTEST_OPTS} arch/tests
     displayName: 'Run tests (editable)'
     condition: ne(variables['test.install'], 'true')
 

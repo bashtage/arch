@@ -19,7 +19,7 @@ from numpy.random import RandomState
 import pandas as pd
 import scipy.stats as stats
 
-from arch.typing import ArrayLike, NDArray
+from arch.typing import ArrayLike, Literal, NDArray
 from arch.utility.array import DocStringInheritor, ensure2d
 from arch.utility.exceptions import (
     StudentizationError,
@@ -547,12 +547,16 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         self,
         func: Callable[..., ArrayLike],
         reps: int = 1000,
-        method: str = "basic",
+        method: Literal[
+            "basic", "percentile", "studentized", "norm", "bc", "bca"
+        ] = "basic",
         size: float = 0.95,
-        tail: str = "two",
+        tail: Literal["two", "upper", "lower"] = "two",
         extra_kwargs: Optional[Dict[str, Any]] = None,
         reuse: bool = False,
-        sampling: str = "nonparametric",
+        sampling: Literal[
+            "nonparametric", "semi-parametric", "semi", "parametric", "semiparametric"
+        ] = "nonparametric",
         std_err_func: Optional[Callable[..., ArrayLike]] = None,
         studentize_reps: int = 1000,
     ) -> NDArray:
@@ -652,8 +656,8 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         studentized = "studentized"
         if not 0.0 < size < 1.0:
             raise ValueError("size must be strictly between 0 and 1")
-        tail = tail.lower()
-        if tail not in ("two", "lower", "upper"):
+        tail_name = tail.lower()
+        if tail_name not in ("two", "lower", "upper"):
             raise ValueError("tail must be one of two-sided, lower or upper")
         studentize_reps = studentize_reps if method == studentized else 0
         if sampling in ("semi", "semi-parametric", "semiparametric"):
@@ -702,7 +706,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
             errors = results - results.mean(axis=0)
             std_err = np.asarray(np.sqrt(np.diag(errors.T.dot(errors) / reps)))
 
-        if tail == "two":
+        if tail_name == "two":
             alpha = (1.0 - size) / 2
         else:
             alpha = 1.0 - size
@@ -772,10 +776,10 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         else:
             raise ValueError("Unknown method")
 
-        if tail == "lower":
+        if tail_name == "lower":
             upper = np.zeros_like(base)
             upper.fill(np.inf)
-        elif tail == "upper":
+        elif tail_name == "upper":
             lower = np.zeros_like(base)
             lower.fill(-1 * np.inf)
 
@@ -902,7 +906,9 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         extra_kwargs: Optional[Dict[str, Any]] = None,
         std_err_func: Optional[Callable[..., ArrayLike]] = None,
         studentize_reps: int = 0,
-        sampling: str = "nonparametric",
+        sampling: Literal[
+            "nonparametric", "semi-parametric", "semi", "parametric", "semiparametric"
+        ] = "nonparametric",
     ) -> None:
         eps = np.finfo(np.double).eps
         # Private, more complicated version of apply

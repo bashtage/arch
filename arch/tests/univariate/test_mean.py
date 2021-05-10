@@ -19,6 +19,7 @@ import statsmodels.regression.linear_model as smlm
 import statsmodels.tools as smtools
 
 from arch.data import sp500
+from arch.typing import Literal
 from arch.univariate.base import ARCHModelForecast, ARCHModelResult, _align_forecast
 from arch.univariate.distribution import (
     GeneralizedError,
@@ -61,7 +62,7 @@ try:
 except ImportError:
     HAS_MATPLOTLIB = False
 
-DISPLAY = "off"
+DISPLAY: Literal["off"] = "off"
 SP_LT_14 = LooseVersion(scipy.__version__) < LooseVersion("1.4")
 SP500 = 100 * sp500.load()["Adj Close"].pct_change().dropna()
 
@@ -1274,5 +1275,5 @@ def test_false_reindex():
 
 
 def test_invalid_arch_model():
-    with pytest.raises(TypeError, match="p must be"):
+    with pytest.raises(AssertionError):
         arch_model(SP500, p="3")

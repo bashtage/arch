@@ -111,6 +111,18 @@ package_data["arch"].append("py.typed")
 def run_setup(binary: bool = True) -> None:
     if not binary:
         extensions = []
+        import logging
+
+        logging.warning(
+            """
+##############################################################################
+
+Building arch WITHOUT compiling the binary. You should ensure that numba is
+installed.
+
+##############################################################################
+"""
+        )
     else:
         directives = {"linetrace": CYTHON_COVERAGE}
         macros = [("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]
@@ -200,9 +212,9 @@ def run_setup(binary: bool = True) -> None:
 
 try:
     build_binary = "--no-binary" not in sys.argv and CYTHON_INSTALLED
+    build_binary &= os.environ.get("ARCH_NO_BINARY", None) not in ("1", "True", "true")
     if "--no-binary" in sys.argv:
         sys.argv.remove("--no-binary")
-
     run_setup(binary=build_binary)
 except (
     CCompilerError,

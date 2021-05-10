@@ -8,7 +8,7 @@ from __future__ import annotations
 from arch.compat.numba import jit
 
 from abc import ABCMeta, abstractmethod
-from typing import Optional, Union
+from typing import Optional, Union, cast
 
 import numpy as np
 from scipy.special import gammaln
@@ -755,7 +755,7 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def initialize_update(
         self, parameters: NDArray, backcast: Union[float, NDArray], nobs: int
     ) -> None:
-        self.backcast = backcast
+        self.backcast = cast(float, backcast)
 
     def update(
         self,
@@ -803,7 +803,7 @@ class HARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def initialize_update(
         self, parameters: NDArray, backcast: Union[float, NDArray], nobs: int
     ) -> None:
-        self.backcast = backcast
+        self.backcast = cast(float, backcast)
 
     def update(
         self,
@@ -995,7 +995,7 @@ class RiskMetrics2006Updater(VolatilityUpdater, metaclass=AbstractDocStringInher
     def initialize_update(
         self, parameters: NDArray, backcast: Union[float, NDArray], nobs: int
     ) -> None:
-        self.backcast = backcast
+        self.backcast = cast(NDArray, backcast)
 
     def update(
         self,
@@ -1036,7 +1036,7 @@ class EGARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def initialize_update(
         self, parameters: NDArray, backcast: Union[float, NDArray], nobs: int
     ) -> None:
-        self.backcast = backcast
+        self.backcast = cast(float, backcast)
         self._resize(nobs)
 
     def update(

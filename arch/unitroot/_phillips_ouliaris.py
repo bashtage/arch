@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, cast
 
 import numpy as np
 import pandas as pd
@@ -10,7 +10,7 @@ from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import RegressionResults
 
 import arch.covariance.kernel as lrcov
-from arch.typing import ArrayLike1D, ArrayLike2D
+from arch.typing import ArrayLike1D, ArrayLike2D, Literal, UnitRootTrend
 from arch.unitroot._shared import (
     KERNEL_ERR,
     KERNEL_ESTIMATORS,
@@ -39,8 +39,8 @@ class CriticalValueWarning(RuntimeWarning):
 def _po_ptests(
     z: pd.DataFrame,
     xsection: RegressionResults,
-    test_type: str,
-    trend: str,
+    test_type: Literal["Pu", "Pz"],
+    trend: UnitRootTrend,
     kernel: str,
     bandwidth: Optional[int],
     force_int: bool,
@@ -58,7 +58,7 @@ def _po_ptests(
     omega = (nobs - 1) / nobs * np.asarray(cov.long_run)
 
     u = np.asarray(xsection.resid)
-    if test_type == "pu":
+    if test_type.lower() == "pu":
         denom = u.T @ u / nobs
         omega21 = omega[0, 1:]
         omega22 = omega[1:, 1:]
@@ -91,8 +91,8 @@ def _po_ptests(
 def _po_ztests(
     yx: pd.DataFrame,
     xsection: RegressionResults,
-    test_type: str,
-    trend: str,
+    test_type: Literal["Za", "Zt"],
+    trend: UnitRootTrend,
     kernel: str,
     bandwidth: Optional[int],
     force_int: bool,
@@ -111,7 +111,7 @@ def _po_ztests(
     one_sided_strict = k_scale * cov.one_sided_strict
 
     z = float(np.squeeze((alpha - 1) - nobs * one_sided_strict / u2))
-    if test_type == "za":
+    if test_type.lower() == "za":
         test_stat = nobs * z
     else:
         long_run = k_scale * np.squeeze(cov.long_run)
@@ -135,9 +135,9 @@ def _po_ztests(
 def phillips_ouliaris(
     y: ArrayLike1D,
     x: ArrayLike2D,
-    trend: str = "c",
+    trend: UnitRootTrend = "c",
     *,
-    test_type: str = "Zt",
+    test_type: Literal["Za", "Zt", "Pu", "Pz"] = "Zt",
     kernel: str = "bartlett",
     bandwidth: Optional[int] = None,
     force_int: bool = False,
@@ -285,8 +285,8 @@ def phillips_ouliaris(
        residual based tests for cointegration. Econometrica: Journal of the
        Econometric Society, 165-193.
     """
-    test_type = test_type.lower()
-    if test_type not in ("za", "zt", "pu", "pz"):
+    test_type_key = test_type.lower()
+    if test_type_key not in ("za", "zt", "pu", "pz"):
         raise ValueError(
             f"Unknown test_type: {test_type}. Only Za, Zt, Pu and Pz are supported."
         )
@@ -299,9 +299,25 @@ def phillips_ouliaris(
     data = xsection.model.data
     x_df = data.orig_exog.iloc[:, : x.shape[1]]
     z = pd.concat([data.orig_endog, x_df], axis=1)
-    if test_type in ("pu", "pz"):
-        return _po_ptests(z, xsection, test_type, trend, kernel, bandwidth, force_int)
-    return _po_ztests(z, xsection, test_type, trend, kernel, bandwidth, force_int)
+    if test_type_key in ("pu", "pz"):
+        return _po_ptests(
+            z,
+            xsection,
+            cast(Literal["Pu", "Pz"], test_type),
+            trend,
+            kernel,
+            bandwidth,
+            force_int,
+        )
+    return _po_ztests(
+        z,
+        xsection,
+        cast(Literal["Za", "Zt"], test_type),
+        trend,
+        kernel,
+        bandwidth,
+        force_int,
+    )
 
 
 class PhillipsOuliarisTestResults(ResidualCointegrationTestResult):
@@ -393,7 +409,12 @@ class PhillipsOuliarisTestResults(ResidualCointegrationTestResult):
         return smry
 
 
-def phillips_ouliaris_cv(test_type: str, trend: str, num: int, nobs: int) -> pd.Series:
+def phillips_ouliaris_cv(
+    test_type: Literal["Za", "Zt", "Pu", "Pz"],
+    trend: UnitRootTrend,
+    num: int,
+    nobs: int,
+) -> pd.Series:
     """
     Critical Values for Phillips-Ouliaris tests
 
@@ -415,8 +436,8 @@ def phillips_ouliaris_cv(test_type: str, trend: str, num: int, nobs: int) -> pd.
         The critical values for 1, 5 and 10%
     """
     test_types = ("Za", "Zt", "Pu", "Pz")
-    test_type = test_type.capitalize()
-    if test_type not in test_types:
+    test_type_key = test_type.capitalize()
+    if test_type_key not in test_types:
         raise ValueError(f"test_type must be one of: {', '.join(test_types)}")
     trends = ("n", "c", "ct", "ctt")
     if trend not in trends:
@@ -426,7 +447,7 @@ def phillips_ouliaris_cv(test_type: str, trend: str, num: int, nobs: int) -> pd.
         raise ValueError(
             "The number of stochastic trends must be between 2 and 12 (inclusive)"
         )
-    key = (test_type, trend, num)
+    key = (test_type_key, trend, num)
     tbl = CV_PARAMETERS[key]
     min_size = CV_TAU_MIN[key]
     if nobs < min_size:
@@ -447,7 +468,12 @@ def phillips_ouliaris_cv(test_type: str, trend: str, num: int, nobs: int) -> pd.
     return pd.Series(crit_vals)
 
 
-def phillips_ouliaris_pval(stat: float, test_type: str, trend: str, num: int) -> float:
+def phillips_ouliaris_pval(
+    stat: float,
+    test_type: Literal["Za", "Zt", "Pu", "Pz"],
+    trend: UnitRootTrend,
+    num: int,
+) -> float:
     """
     Asymptotic P-values for Phillips-Ouliaris t-tests
 
@@ -469,8 +495,8 @@ def phillips_ouliaris_pval(stat: float, test_type: str, trend: str, num: int) ->
         The asymptotic p-value
     """
     test_types = ("Za", "Zt", "Pu", "Pz")
-    test_type = test_type.capitalize()
-    if test_type not in test_types:
+    test_type_key = test_type.capitalize()
+    if test_type_key not in test_types:
         raise ValueError(f"test_type must be one of: {', '.join(test_types)}")
     trends = ("n", "c", "ct", "ctt")
     if trend not in trends:
@@ -480,8 +506,8 @@ def phillips_ouliaris_pval(stat: float, test_type: str, trend: str, num: int) ->
         raise ValueError(
             "The number of stochastic trends must be between 2 and 12 (inclusive)"
         )
-    key = (test_type, trend, num)
-    if test_type in ("Pu", "Pz"):
+    key = (test_type_key, trend, num)
+    if test_type_key in ("Pu", "Pz"):
         # These are upper tail, so we multiply by -1 to make lower tail
         stat = -1 * stat
     tau_max = PVAL_TAU_MAX[key]

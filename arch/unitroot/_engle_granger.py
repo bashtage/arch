@@ -9,7 +9,7 @@ from statsmodels.iolib.summary import Summary
 from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import RegressionResults
 
-from arch.typing import ArrayLike1D, ArrayLike2D
+from arch.typing import ArrayLike1D, ArrayLike2D, UnitRootTrend
 from arch.unitroot._shared import (
     ResidualCointegrationTestResult,
     _check_cointegrating_regression,
@@ -29,7 +29,7 @@ from arch.unitroot.unitroot import ADF, TREND_DESCRIPTION
 def engle_granger(
     y: ArrayLike1D,
     x: ArrayLike2D,
-    trend: str = "c",
+    trend: UnitRootTrend = "c",
     *,
     lags: Optional[int] = None,
     max_lags: Optional[int] = None,

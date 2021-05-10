@@ -8,7 +8,7 @@ from numpy import arange, array, cumsum, dot, ones, vstack
 from numpy.linalg import pinv
 from numpy.random import Generator, RandomState
 
-from arch.typing import Literal
+from arch.typing import UnitRootTrend
 
 # Storage Location
 if platform.system() == "Linux":
@@ -66,7 +66,7 @@ TIME_SERIES_LENGTHS = array(
 
 def adf_simulation(
     n: int,
-    trend: Literal["n", "c", "ct", "ctt"],
+    trend: UnitRootTrend,
     b: int,
     rng: Optional[Union[RandomState, Generator]] = None,
 ) -> float:

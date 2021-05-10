@@ -22,7 +22,15 @@ from statsmodels.tools.tools import add_constant
 from statsmodels.tsa.tsatools import lagmat
 
 from arch.__future__._utility import check_reindex
-from arch.typing import ArrayLike, ArrayLike1D, DateLike, Label, Literal, NDArray
+from arch.typing import (
+    ArrayLike,
+    ArrayLike1D,
+    DateLike,
+    ForecastingMethod,
+    Label,
+    Literal,
+    NDArray,
+)
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
 from arch.utility.array import ensure1d
@@ -910,8 +918,8 @@ class ARCHModel(object, metaclass=ABCMeta):
         params: NDArray,
         horizon: int = 1,
         start: Union[int, DateLike] = None,
-        align: str = "origin",
-        method: str = "analytic",
+        align: Literal["origin", "target"] = "origin",
+        method: ForecastingMethod = "analytic",
         simulations: int = 1000,
         rng: Optional[Callable[[Union[int, Tuple[int, ...]]], NDArray]] = None,
         random_state: Optional[np.random.RandomState] = None,
@@ -1374,8 +1382,8 @@ class ARCHModelFixedResult(_SummaryRepr):
         params: Optional[ArrayLike1D] = None,
         horizon: int = 1,
         start: Union[int, DateLike] = None,
-        align: str = "origin",
-        method: str = "analytic",
+        align: Literal["origin", "target"] = "origin",
+        method: ForecastingMethod = "analytic",
         simulations: int = 1000,
         rng: Optional[Callable[[Union[int, Tuple[int, ...]]], NDArray]] = None,
         random_state: Optional[np.random.RandomState] = None,
@@ -1514,8 +1522,8 @@ class ARCHModelFixedResult(_SummaryRepr):
         horizon: int = 10,
         step: int = 10,
         start: Union[int, DateLike] = None,
-        plot_type: str = "volatility",
-        method: str = "analytic",
+        plot_type: Literal["volatility", "mean"] = "volatility",
+        method: ForecastingMethod = "analytic",
         simulations: int = 1000,
     ) -> Figure:
         """
@@ -1621,8 +1629,8 @@ class ARCHModelFixedResult(_SummaryRepr):
         color = spines[0][0].get_color()
         for spine in spines[1:]:
             spine[0].set_color(color)
-        plot_type = "Mean" if plot_mean else "Volatility"
-        ax.set_title(self._dep_name + " " + plot_type + " Forecast Hedgehog Plot")
+        plot_title = "Mean" if plot_mean else "Volatility"
+        ax.set_title(self._dep_name + " " + plot_title + " Forecast Hedgehog Plot")
 
         return fig
 
@@ -1991,7 +1999,9 @@ class ARCHModelResult(ARCHModelFixedResult):
         return self._optim_output
 
 
-def _align_forecast(f: pd.DataFrame, align: str) -> pd.DataFrame:
+def _align_forecast(
+    f: pd.DataFrame, align: Literal["origin", "target"]
+) -> pd.DataFrame:
     if align == "origin":
         return f
     elif align in ("target", "horizon"):
@@ -2107,20 +2117,20 @@ class ARCHModelForecast(object):
         simulated_variances: Optional[NDArray] = None,
         simulated_residual_variances: Optional[NDArray] = None,
         simulated_residuals: Optional[NDArray] = None,
-        align: str = "origin",
+        align: Literal["origin", "target"] = "origin",
         *,
         reindex: bool = False,
     ) -> None:
-        mean = _format_forecasts(mean, index, start_index)
-        variance = _format_forecasts(variance, index, start_index)
-        residual_variance = _format_forecasts(residual_variance, index, start_index)
+        mean_df = _format_forecasts(mean, index, start_index)
+        variance_df = _format_forecasts(variance, index, start_index)
+        residual_variance_df = _format_forecasts(residual_variance, index, start_index)
         if reindex:
-            mean = mean.reindex(index)
-            variance = variance.reindex(index)
-            residual_variance = residual_variance.reindex(index)
-        self._mean = _align_forecast(mean, align=align)
-        self._variance = _align_forecast(variance, align=align)
-        self._residual_variance = _align_forecast(residual_variance, align=align)
+            mean_df = mean_df.reindex(index)
+            variance_df = variance_df.reindex(index)
+            residual_variance_df = residual_variance_df.reindex(index)
+        self._mean = _align_forecast(mean_df, align=align)
+        self._variance = _align_forecast(variance_df, align=align)
+        self._residual_variance = _align_forecast(residual_variance_df, align=align)
 
         if reindex:
             sim_index = index
