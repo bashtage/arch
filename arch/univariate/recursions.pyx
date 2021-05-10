@@ -777,8 +777,8 @@ cdef class MIDASUpdater(VolatilityUpdater):
         aw, gw, weights = state[1:4]
         for i in range(self.m):
             self.aw[i] = aw[i]
-            self.gw[i] = gw[2]
-            self.weights[i] = weights[3]
+            self.gw[i] = gw[i]
+            self.weights[i] = weights[i]
         resids2 = state[4]
         self.resids2 = np.empty_like(resids2)
         for i in range(self.resids2.shape[0]):
