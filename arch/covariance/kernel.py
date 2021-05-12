@@ -7,7 +7,7 @@ import numpy as np
 from pandas import DataFrame
 from pandas.util._decorators import Substitution
 
-from arch.typing import ArrayLike, NDArray, NDArrayOrFrame
+from arch.typing import ArrayLike, Float64Array, NDArrayOrFrame
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
 from arch.vendor import cached_property
 
@@ -82,11 +82,11 @@ class CovarianceEstimate(object):
 
     def __init__(
         self,
-        short_run: NDArray,
-        one_sided_strict: NDArray,
+        short_run: Float64Array,
+        one_sided_strict: Float64Array,
         columns: Optional[List[str]] = None,
-        long_run: Optional[NDArray] = None,
-        one_sided: Optional[NDArray] = None,
+        long_run: Optional[Float64Array] = None,
+        one_sided: Optional[Float64Array] = None,
     ) -> None:
         self._sr = short_run
         self._oss = one_sided_strict
@@ -94,7 +94,7 @@ class CovarianceEstimate(object):
         self._long_run = long_run
         self._one_sided = one_sided
 
-    def _wrap(self, value: NDArray) -> NDArrayOrFrame:
+    def _wrap(self, value: Float64Array) -> NDArrayOrFrame:
         if self._columns is not None:
             return DataFrame(value, columns=self._columns, index=self._columns)
         return value
@@ -356,13 +356,13 @@ class CovarianceEstimator(ABC):
         return min(bw, nobs - 1.0)
 
     @abstractmethod
-    def _weights(self) -> NDArray:
+    def _weights(self) -> Float64Array:
         """
         Compute the kernel's weights
         """
 
     @cached_property
-    def kernel_weights(self) -> NDArray:
+    def kernel_weights(self) -> Float64Array:
         """
         Weights used in covariance calculation.
 
@@ -432,7 +432,7 @@ class Bartlett(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     def rate(self) -> float:
         return 2 / 9
 
-    def _weights(self) -> NDArray:
+    def _weights(self) -> Float64Array:
         bw = self.bandwidth
         return (bw + 1 - np.arange(int(bw + 1), dtype="double")) / (bw + 1)
 
@@ -460,7 +460,7 @@ class Parzen(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     def rate(self) -> float:
         return 4 / 25
 
-    def _weights(self) -> NDArray:
+    def _weights(self) -> Float64Array:
         bw = self.bandwidth
         x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
         w = np.empty_like(x)
@@ -492,7 +492,7 @@ class ParzenRiesz(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     def rate(self) -> float:
         return 4 / 25
 
-    def _weights(self) -> NDArray:
+    def _weights(self) -> Float64Array:
         bw = self.bandwidth
         x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
         return 1 - x ** 2
@@ -520,7 +520,7 @@ class ParzenGeometric(CovarianceEstimator, metaclass=AbstractDocStringInheritor)
     def rate(self) -> float:
         return 2 / 9
 
-    def _weights(self) -> NDArray:
+    def _weights(self) -> Float64Array:
         bw = self.bandwidth
         x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
         return 1 / (1 + x)
@@ -548,7 +548,7 @@ class ParzenCauchy(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     def rate(self) -> float:
         return 4 / 25
 
-    def _weights(self) -> NDArray:
+    def _weights(self) -> Float64Array:
         bw = self.bandwidth
         x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
         return 1 / (1 + x ** 2)
@@ -576,7 +576,7 @@ class TukeyHamming(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     def rate(self) -> float:
         return 4 / 25
 
-    def _weights(self) -> NDArray:
+    def _weights(self) -> Float64Array:
         bw = self.bandwidth
         x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
         return 0.54 + 0.46 * np.cos(np.pi * x)
@@ -604,7 +604,7 @@ class TukeyHanning(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     def rate(self) -> float:
         return 4 / 25
 
-    def _weights(self) -> NDArray:
+    def _weights(self) -> Float64Array:
         bw = self.bandwidth
         x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
         return 0.5 + 0.5 * np.cos(np.pi * x)
@@ -632,7 +632,7 @@ class TukeyParzen(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     def rate(self) -> float:
         return 4 / 25
 
-    def _weights(self) -> NDArray:
+    def _weights(self) -> Float64Array:
         bw = self.bandwidth
         x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
         return 0.436 + 0.564 * np.cos(np.pi * x)
@@ -661,7 +661,7 @@ class QuadraticSpectral(CovarianceEstimator, metaclass=AbstractDocStringInherito
     def rate(self) -> float:
         return 2 / 25
 
-    def _weights(self) -> NDArray:
+    def _weights(self) -> Float64Array:
         bw = self.bandwidth
         nobs = self._x.shape[0]
         w = np.zeros(nobs)

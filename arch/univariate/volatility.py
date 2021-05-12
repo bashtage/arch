@@ -8,14 +8,20 @@ from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 import itertools
 import operator
-from typing import TYPE_CHECKING, Any, List, Optional, Sequence, Tuple, Union, cast
+from typing import TYPE_CHECKING, List, Optional, Sequence, Tuple, Union, cast
 from warnings import warn
 
 import numpy as np
 from numpy.random import RandomState
 from scipy.special import gammaln
 
-from arch.typing import ArrayLike1D, ForecastingMethod, NDArray, RNGType
+from arch.typing import (
+    ArrayLike1D,
+    Float64Array,
+    ForecastingMethod,
+    Int32Array,
+    RNGType,
+)
 from arch.univariate.distribution import Normal
 from arch.utility.array import AbstractDocStringInheritor, ensure1d
 from arch.utility.exceptions import InitialValueWarning, initial_value_warning
@@ -68,12 +74,15 @@ class BootstrapRng(object):
     """
 
     def __init__(
-        self, std_resid: NDArray, start: int, random_state: Optional[RandomState] = None
+        self,
+        std_resid: Float64Array,
+        start: int,
+        random_state: Optional[RandomState] = None,
     ) -> None:
         if start <= 0 or start > std_resid.shape[0]:
             raise ValueError("start must be > 0 and <= len(std_resid).")
 
-        self.std_resid: np.ndarray[Any, np.dtype[np.float64]] = std_resid
+        self.std_resid: Float64Array = std_resid
         self.start: int = start
         self._index = start
         if random_state is None:
@@ -88,7 +97,7 @@ class BootstrapRng(object):
         return self._random_state
 
     def rng(self) -> RNGType:
-        def _rng(size: Union[int, Tuple[int, ...]]) -> NDArray:
+        def _rng(size: Union[int, Tuple[int, ...]]) -> Float64Array:
             if self._index >= self.std_resid.shape[0]:
                 raise IndexError("not enough data points.")
             index = self._random_state.random_sample(size)
@@ -101,8 +110,8 @@ class BootstrapRng(object):
 
 
 def ewma_recursion(
-    lam: float, resids: NDArray, sigma2: NDArray, nobs: int, backcast: float
-) -> NDArray:
+    lam: float, resids: Float64Array, sigma2: Float64Array, nobs: int, backcast: float
+) -> Float64Array:
     """
     Compute variance recursion for EWMA/RiskMetrics Variance
 
@@ -143,24 +152,24 @@ class VarianceForecast(object):
 
     def __init__(
         self,
-        forecasts: NDArray,
-        forecast_paths: Optional[NDArray] = None,
-        shocks: Optional[NDArray] = None,
+        forecasts: Float64Array,
+        forecast_paths: Optional[Float64Array] = None,
+        shocks: Optional[Float64Array] = None,
     ) -> None:
         self._forecasts = forecasts
         self._forecast_paths = forecast_paths
         self._shocks = shocks
 
     @property
-    def forecasts(self) -> Optional[NDArray]:
+    def forecasts(self) -> Optional[Float64Array]:
         return self._forecasts
 
     @property
-    def forecast_paths(self) -> Optional[NDArray]:
+    def forecast_paths(self) -> Optional[Float64Array]:
         return self._forecast_paths
 
     @property
-    def shocks(self) -> Optional[NDArray]:
+    def shocks(self) -> Optional[Float64Array]:
         return self._shocks
 
 
@@ -244,11 +253,11 @@ class VolatilityProcess(metaclass=ABCMeta):
     def update(
         self,
         index: int,
-        parameters: NDArray,
-        resids: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
     ) -> float:
         """
         Compute the variance for a single observation
@@ -300,13 +309,13 @@ class VolatilityProcess(metaclass=ABCMeta):
 
     def _one_step_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         horizon: int,
         start_index: int,
-    ) -> Tuple[NDArray, NDArray]:
+    ) -> Tuple[Float64Array, Float64Array]:
         """
         One-step ahead forecast
 
@@ -345,10 +354,10 @@ class VolatilityProcess(metaclass=ABCMeta):
     @abstractmethod
     def _analytic_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
@@ -382,10 +391,10 @@ class VolatilityProcess(metaclass=ABCMeta):
     @abstractmethod
     def _simulation_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
         simulations: int,
@@ -430,10 +439,10 @@ class VolatilityProcess(metaclass=ABCMeta):
 
     def _bootstrap_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
         simulations: int,
@@ -483,7 +492,7 @@ class VolatilityProcess(metaclass=ABCMeta):
             parameters, resids, backcast, var_bounds, start, horizon, simulations, rng
         )
 
-    def variance_bounds(self, resids: NDArray, power: float = 2.0) -> NDArray:
+    def variance_bounds(self, resids: Float64Array, power: float = 2.0) -> Float64Array:
         """
         Construct loose bounds for conditional variances.
 
@@ -528,7 +537,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         return np.ascontiguousarray(var_bounds)
 
     @abstractmethod
-    def starting_values(self, resids: NDArray) -> NDArray:
+    def starting_values(self, resids: Float64Array) -> Float64Array:
         """
         Returns starting values for the ARCH model
 
@@ -544,7 +553,7 @@ class VolatilityProcess(metaclass=ABCMeta):
             Array of starting values
         """
 
-    def backcast(self, resids: NDArray) -> Union[float, NDArray]:
+    def backcast(self, resids: Float64Array) -> Union[float, Float64Array]:
         """
         Construct values for backcasting to start the recursion
 
@@ -565,8 +574,8 @@ class VolatilityProcess(metaclass=ABCMeta):
         return float(np.sum((resids[:tau] ** 2.0) * w))
 
     def backcast_transform(
-        self, backcast: Union[float, NDArray]
-    ) -> Union[float, NDArray]:
+        self, backcast: Union[float, Float64Array]
+    ) -> Union[float, Float64Array]:
         """
         Transformation to apply to user-provided backcast values
 
@@ -585,7 +594,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         return backcast
 
     @abstractmethod
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         """
         Returns bounds for parameters
 
@@ -603,12 +612,12 @@ class VolatilityProcess(metaclass=ABCMeta):
     @abstractmethod
     def compute_variance(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
-    ) -> NDArray:
+        parameters: Float64Array,
+        resids: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+    ) -> Float64Array:
         """
         Compute the variance for the ARCH model
 
@@ -628,7 +637,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
         """
         Construct parameter constraints arrays for parameter estimation
 
@@ -649,9 +658,9 @@ class VolatilityProcess(metaclass=ABCMeta):
     def forecast(
         self,
         parameters: ArrayLike1D,
-        resids: NDArray,
-        backcast: Union[NDArray, float],
-        var_bounds: NDArray,
+        resids: Float64Array,
+        backcast: Union[Float64Array, float],
+        var_bounds: Float64Array,
         start: Optional[int] = None,
         horizon: int = 1,
         method: ForecastingMethod = "analytic",
@@ -760,8 +769,8 @@ class VolatilityProcess(metaclass=ABCMeta):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, NDArray]] = None,
-    ) -> Tuple[NDArray, NDArray]:
+        initial_value: Optional[Union[float, Float64Array]] = None,
+    ) -> Tuple[Float64Array, Float64Array]:
         """
         Simulate data from the model
 
@@ -791,10 +800,10 @@ class VolatilityProcess(metaclass=ABCMeta):
 
     def _gaussian_loglikelihood(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
     ) -> float:
         """
         Private implementation of a Gaussian log-likelihood for use in constructing starting
@@ -833,16 +842,16 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def compute_variance(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
-    ) -> NDArray:
+        parameters: Float64Array,
+        resids: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+    ) -> Float64Array:
         sigma2[:] = parameters[0]
         return sigma2
 
-    def starting_values(self, resids: NDArray) -> NDArray:
+    def starting_values(self, resids: Float64Array) -> Float64Array:
         return np.array([resids.var()])
 
     def simulate(
@@ -851,27 +860,27 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, NDArray]] = None,
-    ) -> Tuple[NDArray, NDArray]:
+        initial_value: Optional[Union[float, Float64Array]] = None,
+    ) -> Tuple[Float64Array, Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         errors = rng(nobs + burn)
         sigma2 = np.ones(nobs + burn) * parameters[0]
         data = np.sqrt(sigma2) * errors
         return data[burn:], sigma2[burn:]
 
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
         return np.ones((1, 1)), np.zeros(1)
 
     def backcast_transform(
-        self, backcast: Union[float, NDArray]
-    ) -> Union[float, NDArray]:
+        self, backcast: Union[float, Float64Array]
+    ) -> Union[float, Float64Array]:
         backcast = super().backcast_transform(backcast)
         return backcast
 
-    def backcast(self, resids: NDArray) -> Union[float, NDArray]:
+    def backcast(self, resids: Float64Array) -> Union[float, Float64Array]:
         return float(resids.var())
 
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         v = float(resids.var())
         return [(v / 100000.0, 10.0 * (v + float(resids.mean()) ** 2.0))]
 
@@ -885,10 +894,10 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _analytic_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
@@ -901,10 +910,10 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _simulation_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
         simulations: int,
@@ -1011,7 +1020,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         descr = descr[:-2] + ")"
         return descr
 
-    def variance_bounds(self, resids: NDArray, power: float = 2.0) -> NDArray:
+    def variance_bounds(self, resids: Float64Array, power: float = 2.0) -> Float64Array:
         return super().variance_bounds(resids, self.power)
 
     def _generate_name(self) -> str:
@@ -1038,7 +1047,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             else:
                 return "Asym. Power GARCH (power: {0:0.1f})".format(self.power)
 
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         v = float(np.mean(abs(resids) ** self.power))
 
         bounds = [(1e-8 * v, 10.0 * float(v))]
@@ -1053,7 +1062,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return bounds
 
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
         p, o, q = self.p, self.o, self.q
         k_arch = p + o + q
         # alpha[i] >0
@@ -1075,12 +1084,12 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def compute_variance(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
-    ) -> NDArray:
+        parameters: Float64Array,
+        resids: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+    ) -> Float64Array:
         # fresids is abs(resids) ** power
         # sresids is I(resids<0)
         power = self.power
@@ -1099,12 +1108,12 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return sigma2
 
     def backcast_transform(
-        self, backcast: Union[float, NDArray]
-    ) -> Union[float, NDArray]:
+        self, backcast: Union[float, Float64Array]
+    ) -> Union[float, Float64Array]:
         backcast = super().backcast_transform(backcast)
         return np.sqrt(backcast) ** self.power
 
-    def backcast(self, resids: NDArray) -> Union[float, NDArray]:
+    def backcast(self, resids: Float64Array) -> Union[float, Float64Array]:
         power = self.power
         tau = min(75, resids.shape[0])
         w = 0.94 ** np.arange(tau)
@@ -1119,8 +1128,8 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, NDArray]] = None,
-    ) -> Tuple[NDArray, NDArray]:
+        initial_value: Optional[Union[float, Float64Array]] = None,
+    ) -> Tuple[Float64Array, Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         p, o, q, power = self.p, self.o, self.q, self.power
         errors = rng(nobs + burn)
@@ -1167,7 +1176,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return data[burn:], sigma2[burn:]
 
-    def starting_values(self, resids: NDArray) -> NDArray:
+    def starting_values(self, resids: Float64Array) -> Float64Array:
         p, o, q = self.p, self.o, self.q
         power = self.power
         alphas = [0.01, 0.05, 0.1, 0.2]
@@ -1217,10 +1226,10 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _analytic_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
@@ -1281,13 +1290,13 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def _simulate_paths(
         self,
         m: int,
-        parameters: NDArray,
+        parameters: Float64Array,
         horizon: int,
-        std_shocks: NDArray,
-        scaled_forecast_paths: NDArray,
-        scaled_shock: NDArray,
-        asym_scaled_shock: NDArray,
-    ) -> Tuple[NDArray, NDArray, NDArray]:
+        std_shocks: Float64Array,
+        scaled_forecast_paths: Float64Array,
+        scaled_shock: Float64Array,
+        asym_scaled_shock: Float64Array,
+    ) -> Tuple[Float64Array, Float64Array, Float64Array]:
 
         power = self.power
         p, o, q = self.p, self.o, self.q
@@ -1327,10 +1336,10 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _simulation_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
         simulations: int,
@@ -1436,9 +1445,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             lag_val = operator.index(lags)
             lags = list(range(1, lag_val + 1))
         lags_arr = ensure1d(lags, "lags")
-        self.lags: np.ndarray[Any, np.dtype[np.int32]] = np.array(
-            lags_arr, dtype=np.int32
-        )
+        self.lags: Int32Array = np.array(lags_arr, dtype=np.int32)
         self._num_lags = lags_arr.shape[0]
         self._num_params = self._num_lags + 1
         self._name = "HARCH"
@@ -1451,7 +1458,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return descr
 
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         lags = self.lags
         k_arch = lags.shape[0]
 
@@ -1460,7 +1467,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return bounds
 
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
         k_arch = self._num_lags
         a = np.zeros((k_arch + 2, k_arch + 1))
         for i in range(k_arch + 1):
@@ -1472,12 +1479,12 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def compute_variance(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
-    ) -> NDArray:
+        parameters: Float64Array,
+        resids: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+    ) -> Float64Array:
         lags = self.lags
         nobs = resids.shape[0]
 
@@ -1492,8 +1499,8 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, NDArray]] = None,
-    ) -> Tuple[NDArray, NDArray]:
+        initial_value: Optional[Union[float, Float64Array]] = None,
+    ) -> Tuple[Float64Array, Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         lags = self.lags
         errors = rng(nobs + burn)
@@ -1520,7 +1527,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return data[burn:], sigma2[burn:]
 
-    def starting_values(self, resids: NDArray) -> NDArray:
+    def starting_values(self, resids: Float64Array) -> Float64Array:
         k_arch = self._num_lags
 
         alpha = 0.9
@@ -1535,7 +1542,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         names.extend(["alpha[" + str(lags[i]) + "]" for i in range(self._num_lags)])
         return names
 
-    def _harch_to_arch(self, params: NDArray) -> NDArray:
+    def _harch_to_arch(self, params: Float64Array) -> Float64Array:
         arch_params = np.zeros((1 + int(self.lags.max())))
         arch_params[0] = params[0]
         for param, lag in zip(params[1:], self.lags):
@@ -1545,11 +1552,11 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _common_forecast_components(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
         horizon: int,
-    ) -> Tuple[float, NDArray, NDArray]:
+    ) -> Tuple[float, Float64Array, Float64Array]:
         arch_params = self._harch_to_arch(parameters)
         t = resids.shape[0]
         m = int(self.lags.max())
@@ -1570,10 +1577,10 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _analytic_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
@@ -1590,10 +1597,10 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _simulation_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
         simulations: int,
@@ -1692,7 +1699,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return descr
 
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         bounds = [(0.0, 10 * float(np.mean(resids ** 2.0)))]  # omega
         bounds.extend([(0.0, 1.0)])  # 0 <= alpha < 1
         if self._asym:
@@ -1701,7 +1708,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return bounds
 
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
         """
         Constraints
 
@@ -1741,12 +1748,12 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def compute_variance(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
-    ) -> NDArray:
+        parameters: Float64Array,
+        resids: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+    ) -> Float64Array:
         nobs = resids.shape[0]
         weights = self._weights(parameters)
         if not self._asym:
@@ -1764,8 +1771,8 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, NDArray]] = None,
-    ) -> Tuple[NDArray, NDArray]:
+        initial_value: Optional[Union[float, Float64Array]] = None,
+    ) -> Tuple[Float64Array, Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         if self._asym:
             omega, alpha, gamma = parameters[:3]
@@ -1804,7 +1811,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return data[burn:], sigma2[burn:]
 
-    def starting_values(self, resids: NDArray) -> NDArray:
+    def starting_values(self, resids: Float64Array) -> Float64Array:
         theta = [0.1, 0.5, 0.8, 0.9]
         alpha = [0.8, 0.9, 0.95, 0.98]
         var = (resids ** 2).mean()
@@ -1839,7 +1846,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return names
 
-    def _weights(self, params: NDArray) -> NDArray:
+    def _weights(self, params: Float64Array) -> Float64Array:
         m = self.m
         # Prevent 0
         theta = max(params[-1], np.finfo(np.float64).eps)
@@ -1850,11 +1857,11 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _common_forecast_components(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
         horizon: int,
-    ) -> Tuple[int, NDArray, NDArray, NDArray, NDArray]:
+    ) -> Tuple[int, Float64Array, Float64Array, Float64Array, Float64Array]:
         if self._asym:
             omega, alpha, gamma = parameters[:3]
         else:
@@ -1884,10 +1891,10 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _analytic_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
@@ -1910,10 +1917,10 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _simulation_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
         simulations: int,
@@ -1989,7 +1996,7 @@ class ARCH(GARCH):
         super().__init__(p, 0, 0, 2.0)
         self._num_params = p + 1
 
-    def starting_values(self, resids: NDArray) -> NDArray:
+    def starting_values(self, resids: Float64Array) -> Float64Array:
         p = self.p
 
         alphas = np.arange(0.1, 0.95, 0.05)
@@ -2054,7 +2061,7 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             descr = self.name + "(lam: " + "{0:0.2f}".format(self.lam) + ")"
         return descr
 
-    def starting_values(self, resids: NDArray) -> NDArray:
+    def starting_values(self, resids: Float64Array) -> Float64Array:
         if self._estimate_lam:
             return np.array([0.94])
         return np.array([])
@@ -2064,23 +2071,23 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             return ["lam"]
         return []
 
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         if self._estimate_lam:
             return [(0, 1)]
         return []
 
     def compute_variance(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
-    ) -> NDArray:
+        parameters: Float64Array,
+        resids: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+    ) -> Float64Array:
         lam = parameters[0] if self._estimate_lam else self.lam
         return ewma_recursion(lam, resids, sigma2, resids.shape[0], float(backcast))
 
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
         if self._estimate_lam:
             a = np.ones((1, 1))
             b = np.zeros((1,))
@@ -2093,8 +2100,8 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, NDArray]] = None,
-    ) -> Tuple[NDArray, NDArray]:
+        initial_value: Optional[Union[float, Float64Array]] = None,
+    ) -> Tuple[Float64Array, Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         errors = rng(nobs + burn)
 
@@ -2124,10 +2131,10 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _analytic_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
@@ -2140,10 +2147,10 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _simulation_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
         simulations: int,
@@ -2246,7 +2253,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         descr += ")"
         return descr
 
-    def _ewma_combination_weights(self) -> NDArray:
+    def _ewma_combination_weights(self) -> Float64Array:
         """
         Returns
         -------
@@ -2260,13 +2267,13 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return w
 
-    def _ewma_smoothing_parameters(self) -> NDArray:
+    def _ewma_smoothing_parameters(self) -> Float64Array:
         tau1, kmax, rho = self.tau1, self.kmax, self.rho
         taus = tau1 * (rho ** np.arange(kmax))
-        mus = cast(NDArray, np.exp(-1.0 / taus))
+        mus = cast(Float64Array, np.exp(-1.0 / taus))
         return mus
 
-    def backcast(self, resids: NDArray) -> Union[float, NDArray]:
+    def backcast(self, resids: Float64Array) -> Union[float, Float64Array]:
         """
         Construct values for backcasting to start the recursion
 
@@ -2296,8 +2303,8 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return backcast
 
     def backcast_transform(
-        self, backcast: Union[float, NDArray]
-    ) -> Union[float, NDArray]:
+        self, backcast: Union[float, Float64Array]
+    ) -> Union[float, Float64Array]:
         backcast = super().backcast_transform(backcast)
         mus = self._ewma_smoothing_parameters()
         backcast_arr = np.asarray(backcast)
@@ -2311,31 +2318,31 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return backcast_arr
 
-    def starting_values(self, resids: NDArray) -> NDArray:
+    def starting_values(self, resids: Float64Array) -> Float64Array:
         return np.empty((0,))
 
     def parameter_names(self) -> List[str]:
         return []
 
-    def variance_bounds(self, resids: NDArray, power: float = 2.0) -> NDArray:
+    def variance_bounds(self, resids: Float64Array, power: float = 2.0) -> Float64Array:
         return np.ones((resids.shape[0], 1)) * np.array(
             [-1.0, np.finfo(np.float64).max]
         )
 
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         return []
 
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
         return np.empty((0, 0)), np.empty((0,))
 
     def compute_variance(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
-    ) -> NDArray:
+        parameters: Float64Array,
+        resids: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+    ) -> Float64Array:
 
         nobs = resids.shape[0]
         kmax = self.kmax
@@ -2343,7 +2350,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         mus = self._ewma_smoothing_parameters()
 
         sigma2_temp = np.zeros_like(sigma2)
-        backcast = cast(NDArray, backcast)
+        backcast = cast(Float64Array, backcast)
         for k in range(kmax):
             mu = mus[k]
             ewma_recursion(mu, resids, sigma2_temp, nobs, backcast[k])
@@ -2360,8 +2367,8 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, NDArray]] = None,
-    ) -> Tuple[NDArray, NDArray]:
+        initial_value: Optional[Union[float, Float64Array]] = None,
+    ) -> Tuple[Float64Array, Float64Array]:
         errors = rng(nobs + burn)
 
         kmax = self.kmax
@@ -2390,10 +2397,10 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _analytic_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
@@ -2406,10 +2413,10 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _simulation_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
         simulations: int,
@@ -2418,7 +2425,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         kmax = self.kmax
         w = self._ewma_combination_weights()
         mus = self._ewma_smoothing_parameters()
-        backcast = cast(NDArray, np.asarray(backcast))
+        backcast = cast(Float64Array, np.asarray(backcast))
 
         t = resids.shape[0]
         paths = np.empty((t - start, simulations, horizon))
@@ -2512,7 +2519,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             raise ValueError("One of p or o must be strictly positive")
         self._name = "EGARCH" if q > 0 else "EARCH"
         # Helpers for fitting variance
-        self._arrays: Optional[Tuple[NDArray, NDArray, NDArray]] = None
+        self._arrays: Optional[Tuple[Float64Array, Float64Array, Float64Array]] = None
         self._volatility_updater = rec.EGARCHUpdater(self.p, self.o, self.q)
 
     def __str__(self) -> str:
@@ -2523,10 +2530,10 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         descr = descr[:-2] + ")"
         return descr
 
-    def variance_bounds(self, resids: NDArray, power: float = 2.0) -> NDArray:
+    def variance_bounds(self, resids: Float64Array, power: float = 2.0) -> Float64Array:
         return super().variance_bounds(resids, 2.0)
 
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         v = np.mean(resids ** 2.0)
         log_const = np.log(10000.0)
         lnv = np.log(v)
@@ -2536,7 +2543,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return bounds
 
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
         p, o, q = self.p, self.o, self.q
         k_arch = p + o + q
         a = np.zeros((1, k_arch + 1))
@@ -2547,12 +2554,12 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def compute_variance(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
-    ) -> NDArray:
+        parameters: Float64Array,
+        resids: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+    ) -> Float64Array:
         p, o, q = self.p, self.o, self.q
         nobs = resids.shape[0]
         if (self._arrays is not None) and (self._arrays[0].shape[0] == nobs):
@@ -2581,12 +2588,12 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return sigma2
 
     def backcast_transform(
-        self, backcast: Union[float, NDArray]
-    ) -> Union[float, NDArray]:
+        self, backcast: Union[float, Float64Array]
+    ) -> Union[float, Float64Array]:
         backcast = super().backcast_transform(backcast)
         return float(np.log(backcast))
 
-    def backcast(self, resids: NDArray) -> Union[float, NDArray]:
+    def backcast(self, resids: Float64Array) -> Union[float, Float64Array]:
         return float(np.log(super().backcast(resids)))
 
     def simulate(
@@ -2595,8 +2602,8 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, NDArray]] = None,
-    ) -> Tuple[NDArray, NDArray]:
+        initial_value: Optional[Union[float, Float64Array]] = None,
+    ) -> Tuple[Float64Array, Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         p, o, q = self.p, self.o, self.q
         errors = rng(nobs + burn)
@@ -2616,7 +2623,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         sigma2 = np.zeros(nobs + burn)
         data = np.zeros(nobs + burn)
         lnsigma2 = np.zeros(nobs + burn)
-        abserrors = cast(NDArray, np.abs(errors))
+        abserrors = cast(Float64Array, np.abs(errors))
 
         norm_const = np.sqrt(2 / np.pi)
         max_lag = np.max([p, o, q])
@@ -2638,12 +2645,12 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 lnsigma2[t] += parameters[loc] * lnsigma2[t - 1 - j]
                 loc += 1
 
-        sigma2 = cast(NDArray, np.exp(lnsigma2))
+        sigma2 = cast(Float64Array, np.exp(lnsigma2))
         data = errors * np.sqrt(sigma2)
 
         return data[burn:], sigma2[burn:]
 
-    def starting_values(self, resids: NDArray) -> NDArray:
+    def starting_values(self, resids: Float64Array) -> Float64Array:
         p, o, q = self.p, self.o, self.q
         alphas = [0.01, 0.05, 0.1, 0.2]
         gammas = [-0.1, 0.0, 0.1]
@@ -2683,10 +2690,10 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _analytic_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
@@ -2699,10 +2706,10 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _simulation_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
         simulations: int,
@@ -2715,7 +2722,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         p, o, q = self.p, self.o, self.q
         m = np.max([p, o, q])
 
-        lnsigma2 = cast(NDArray, np.log(sigma2))
+        lnsigma2 = cast(Float64Array, np.log(sigma2))
         e = resids / np.sqrt(sigma2)
 
         lnsigma2_mat = np.full((t, m), backcast)
@@ -2785,7 +2792,7 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     estimation.
     """
 
-    def __init__(self, variance: NDArray, unit_scale: bool = False) -> None:
+    def __init__(self, variance: Float64Array, unit_scale: bool = False) -> None:
         super().__init__()
         self._num_params = 0 if unit_scale else 1
         self._unit_scale = unit_scale
@@ -2796,12 +2803,12 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def compute_variance(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
-    ) -> NDArray:
+        parameters: Float64Array,
+        resids: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+    ) -> Float64Array:
         if self._stop - self._start != sigma2.shape[0]:
             raise ValueError("start and stop do not have the correct values.")
         sigma2[:] = self._variance[self._start : self._stop]
@@ -2809,7 +2816,7 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             sigma2 *= parameters[0]
         return sigma2
 
-    def starting_values(self, resids: NDArray) -> NDArray:
+    def starting_values(self, resids: Float64Array) -> Float64Array:
         if not self._unit_scale:
             _resids = resids / np.sqrt(self._variance[self._start : self._stop])
             return np.array([_resids.var()])
@@ -2821,20 +2828,20 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, NDArray]] = None,
-    ) -> Tuple[NDArray, NDArray]:
+        initial_value: Optional[Union[float, Float64Array]] = None,
+    ) -> Tuple[Float64Array, Float64Array]:
         raise NotImplementedError("Fixed Variance processes do not support simulation")
 
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
         if not self._unit_scale:
             return np.ones((1, 1)), np.zeros(1)
         else:
             return np.ones((0, 0)), np.zeros(0)
 
-    def backcast(self, resids: NDArray) -> Union[float, NDArray]:
+    def backcast(self, resids: Float64Array) -> Union[float, Float64Array]:
         return 1.0
 
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         if not self._unit_scale:
             v = float(np.squeeze(self.starting_values(resids)))
             _resids = resids / np.sqrt(self._variance[self._start : self._stop])
@@ -2854,10 +2861,10 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _analytic_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
@@ -2868,10 +2875,10 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _simulation_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
         simulations: int,
@@ -2994,7 +3001,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return descr
 
-    def variance_bounds(self, resids: NDArray, power: float = 2.0) -> NDArray:
+    def variance_bounds(self, resids: Float64Array, power: float = 2.0) -> Float64Array:
         return super().variance_bounds(resids, self.power)
 
     def _generate_name(self) -> str:
@@ -3015,7 +3022,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             else:
                 return "Power FIGARCH (power: {0:0.1f})".format(self.power)
 
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         eps_half = np.sqrt(np.finfo(np.float64).eps)
         v = np.mean(abs(resids) ** self.power)
 
@@ -3026,7 +3033,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return bounds
 
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
 
         # omega > 0 <- 1
         # 0 <= d <= 1 <- 2
@@ -3057,12 +3064,12 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def compute_variance(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
-    ) -> NDArray:
+        parameters: Float64Array,
+        resids: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+    ) -> Float64Array:
         # fresids is abs(resids) ** power
         power = self.power
         fresids = np.abs(resids) ** power
@@ -3079,12 +3086,12 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return sigma2
 
     def backcast_transform(
-        self, backcast: Union[float, NDArray]
-    ) -> Union[float, NDArray]:
+        self, backcast: Union[float, Float64Array]
+    ) -> Union[float, Float64Array]:
         backcast = super().backcast_transform(backcast)
         return np.sqrt(backcast) ** self.power
 
-    def backcast(self, resids: NDArray) -> Union[float, NDArray]:
+    def backcast(self, resids: Float64Array) -> Union[float, Float64Array]:
         power = self.power
         tau = min(75, resids.shape[0])
         w = 0.94 ** np.arange(tau)
@@ -3099,8 +3106,8 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, NDArray]] = None,
-    ) -> Tuple[NDArray, NDArray]:
+        initial_value: Optional[Union[float, Float64Array]] = None,
+    ) -> Tuple[Float64Array, Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         truncation = self.truncation
         p, q, power = self.p, self.q, self.power
@@ -3140,7 +3147,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return data[truncation + burn :], sigma2[truncation + burn :]
 
-    def starting_values(self, resids: NDArray) -> NDArray:
+    def starting_values(self, resids: Float64Array) -> Float64Array:
         truncation = self.truncation
         ds = [0.2, 0.5, 0.7]
         phi_ratio = [0.2, 0.5, 0.8] if self.p else [0]
@@ -3200,10 +3207,10 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _analytic_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
     ) -> VarianceForecast:
@@ -3242,10 +3249,10 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _simulation_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
         simulations: int,
@@ -3395,7 +3402,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         """The value of delta in the model. NaN is delta is estimated."""
         return self._common_asym
 
-    def _repack_parameters(self, parameters: NDArray) -> NDArray:
+    def _repack_parameters(self, parameters: Float64Array) -> Float64Array:
         if not self._repack:
             return parameters
         p, o, q = self.p, self.o, self.q
@@ -3412,12 +3419,12 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def compute_variance(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        sigma2: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
-    ) -> NDArray:
+        parameters: Float64Array,
+        resids: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+    ) -> Float64Array:
         abs_resids = np.abs(resids)
         if self._sigma_delta.shape[0] != resids.shape[0]:
             self._sigma_delta = np.empty(resids.shape[0])
@@ -3441,7 +3448,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return sigma2
 
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         v = max(float(np.mean(abs(resids) ** 0.5)), float(np.mean(resids ** 2)))
 
         bounds = [(0.0, 10.0 * float(v))]
@@ -3454,7 +3461,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         return bounds
 
-    def starting_values(self, resids: NDArray) -> NDArray:
+    def starting_values(self, resids: Float64Array) -> Float64Array:
         p, o, q = self.p, self.o, self.q
         alphas = [0.03, 0.05, 0.08, 0.15]
         alpha_beta = [0.8, 0.9, 0.95, 0.975, 0.99]
@@ -3491,7 +3498,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             sv = np.r_[sv[: p + 1 + (o > 0)], sv[p + o + 1 :]]
         return sv
 
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
         p, o, q = self.p, self.o, self.q
         o = 1 if self._common_asym else o
         k_arch = p + o + q
@@ -3538,8 +3545,8 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, NDArray]] = None,
-    ) -> Tuple[NDArray, NDArray]:
+        initial_value: Optional[Union[float, Float64Array]] = None,
+    ) -> Tuple[Float64Array, Float64Array]:
         params = ensure1d(parameters, "parameters", False)
         params = self._repack_parameters(params)
         p, o, q = self.p, self.o, self.q
@@ -3585,13 +3592,13 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def _simulate_paths(
         self,
         m: int,
-        parameters: NDArray,
+        parameters: Float64Array,
         horizon: int,
-        std_shocks: NDArray,
-        sigma_delta: NDArray,
-        shock: NDArray,
-        abs_shock: NDArray,
-    ) -> Tuple[NDArray, NDArray, NDArray]:
+        std_shocks: Float64Array,
+        sigma_delta: Float64Array,
+        shock: Float64Array,
+        abs_shock: Float64Array,
+    ) -> Tuple[Float64Array, Float64Array, Float64Array]:
 
         if self._est_delta:
             delta = parameters[-1]
@@ -3625,10 +3632,10 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _simulation_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
         simulations: int,
@@ -3680,10 +3687,10 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def _analytic_forecast(
         self,
-        parameters: NDArray,
-        resids: NDArray,
-        backcast: Union[float, NDArray],
-        var_bounds: NDArray,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
         start: int,
         horizon: int,
     ) -> VarianceForecast:

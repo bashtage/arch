@@ -19,7 +19,7 @@ from numpy.random import RandomState
 import pandas as pd
 import scipy.stats as stats
 
-from arch.typing import ArrayLike, Literal, NDArray
+from arch.typing import AnyArray, ArrayLike, Float64Array, Int32Array, IntArray, Literal
 from arch.utility.array import DocStringInheritor, ensure2d
 from arch.utility.exceptions import (
     StudentizationError,
@@ -43,7 +43,7 @@ except ImportError:  # pragma: no cover
     from arch.bootstrap._samplers_python import stationary_bootstrap_sample
 
 
-def _single_optimal_block(x: NDArray) -> Tuple[float, float]:
+def _single_optimal_block(x: Float64Array) -> Tuple[float, float]:
     """
     Compute the optimal window length for a single series
 
@@ -172,7 +172,7 @@ def optimal_block_length(x: ArrayLike) -> pd.DataFrame:
     return pd.DataFrame(opt, index=idx, columns=["stationary", "circular"])
 
 
-def _get_acceleration(jk_params: NDArray) -> float:
+def _get_acceleration(jk_params: Float64Array) -> float:
     """
     Estimates the BCa acceleration parameter using jackknife estimates
     of theta.
@@ -201,12 +201,12 @@ def _get_acceleration(jk_params: NDArray) -> float:
 
 
 def _loo_jackknife(
-    func: Callable[..., NDArray],
+    func: Callable[..., Float64Array],
     nobs: int,
     args: Sequence[ArrayLike],
     kwargs: Dict[str, ArrayLike],
     extra_kwargs: Optional[Dict[str, ArrayLike]] = None,
-) -> NDArray:
+) -> Float64Array:
     """
     Leave one out jackknife estimation
 
@@ -380,21 +380,17 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         self._index = np.arange(self._num_items)
 
         self._parameters: List[Union[int, ArrayLike]] = []
-        self._seed: Optional[Union[int, List[int], NDArray]] = None
-        self.pos_data: Tuple[
-            Union[np.ndarray[Any, Any], pd.Series, pd.DataFrame], ...
-        ] = args
-        self.kw_data: Dict[
-            str, Union[np.ndarray[Any, Any], pd.Series, pd.DataFrame]
-        ] = kwargs
+        self._seed: Optional[Union[int, List[int], Int32Array]] = None
+        self.pos_data: Tuple[Union[AnyArray, pd.Series, pd.DataFrame], ...] = args
+        self.kw_data: Dict[str, Union[AnyArray, pd.Series, pd.DataFrame]] = kwargs
         self.data: Tuple[
-            Tuple[Union[np.ndarray[Any, Any], pd.Series, pd.DataFrame], ...],
-            Dict[str, Union[np.ndarray[Any, Any], pd.Series, pd.DataFrame]],
+            Tuple[Union[AnyArray, pd.Series, pd.DataFrame], ...],
+            Dict[str, Union[AnyArray, pd.Series, pd.DataFrame]],
         ] = (self.pos_data, self.kw_data)
 
-        self._base: Optional[NDArray] = None
-        self._results: Optional[NDArray] = None
-        self._studentized_results: Optional[NDArray] = None
+        self._base: Optional[Float64Array] = None
+        self._results: Optional[Float64Array] = None
+        self._studentized_results: Optional[Float64Array] = None
         self._last_func: Optional[Callable[..., ArrayLike]] = None
         for key, value in kwargs.items():
             attr = getattr(self, key, None)
@@ -443,7 +439,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         self._random_state = random_state
 
     @property
-    def index(self) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:
+    def index(self) -> Union[IntArray, Tuple[List[IntArray], Dict[str, IntArray]]]:
         """
         The current index of the bootstrap
         """
@@ -471,7 +467,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         """
         self.random_state.set_state(state)
 
-    def seed(self, value: Union[int, List[int], NDArray]) -> None:
+    def seed(self, value: Union[int, List[int], Int32Array]) -> None:
         """
         Seeds the bootstrap's random number generator
 
@@ -559,7 +555,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         ] = "nonparametric",
         std_err_func: Optional[Callable[..., ArrayLike]] = None,
         studentize_reps: int = 1000,
-    ) -> NDArray:
+    ) -> Float64Array:
         """
         Parameters
         ----------
@@ -730,7 +726,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
             values = results
             if method == studentized:
                 # studentized uses studentized parameter estimates
-                values = cast(NDArray, studentized_results)
+                values = cast(Float64Array, studentized_results)
 
             if method in ("debiased", "bc", "bias-corrected", "bca"):
                 # bias corrected uses modified percentiles, but is
@@ -795,7 +791,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
                 arg_type = type(self._kwargs[key])
                 raise TypeError(kwarg_type_error.format(key=key, arg_type=arg_type))
 
-    def _bca_bias(self) -> NDArray:
+    def _bca_bias(self) -> Float64Array:
         assert self._results is not None
         assert self._base is not None
         p = (self._results < self._base).mean(axis=0)
@@ -843,7 +839,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         func: Callable[..., ArrayLike],
         reps: int = 1000,
         extra_kwargs: Optional[Dict[str, Any]] = None,
-    ) -> NDArray:
+    ) -> Float64Array:
         """
         Applies a function to bootstrap replicated data
 
@@ -968,7 +964,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         reps: int = 1000,
         recenter: bool = True,
         extra_kwargs: Optional[Dict[str, Any]] = None,
-    ) -> Union[float, NDArray]:
+    ) -> Union[float, Float64Array]:
         """
         Compute parameter covariance using bootstrap
 
@@ -1049,7 +1045,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
         reps: int = 1000,
         recenter: bool = True,
         extra_kwargs: Optional[Dict[str, Any]] = None,
-    ) -> Union[float, NDArray]:
+    ) -> Union[float, Float64Array]:
         """
         Compute parameter variance using bootstrap
 
@@ -1126,7 +1122,7 @@ class IIDBootstrap(object, metaclass=DocStringInheritor):
 
     def update_indices(
         self,
-    ) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:
+    ) -> Union[IntArray, Tuple[List[IntArray], Dict[str, IntArray]]]:
         """
         Update indices for the next iteration of the bootstrap.  This must
         be overridden when creating new bootstraps.
@@ -1245,7 +1241,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
 
     def update_indices(
         self,
-    ) -> Tuple[List[NDArray], Dict[str, NDArray]]:
+    ) -> Tuple[List[IntArray], Dict[str, IntArray]]:
         """
         Update indices for the next iteration of the bootstrap.  This must
         be overridden when creating new bootstraps.
@@ -1262,7 +1258,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         return pos_indices, kw_indices
 
     @property
-    def index(self) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:
+    def index(self) -> Union[IntArray, Tuple[List[IntArray], Dict[str, IntArray]]]:
         """
         Returns the current index of the bootstrap
 
@@ -1417,7 +1413,7 @@ class CircularBlockBootstrap(IIDBootstrap):
 
     def update_indices(
         self,
-    ) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:
+    ) -> Union[IntArray, Tuple[List[IntArray], Dict[str, IntArray]]]:
         num_blocks = self._num_items // self.block_size
         if num_blocks * self.block_size < self._num_items:
             num_blocks += 1
@@ -1514,7 +1510,7 @@ class StationaryBootstrap(CircularBlockBootstrap):
 
     def update_indices(
         self,
-    ) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:
+    ) -> Union[IntArray, Tuple[List[IntArray], Dict[str, IntArray]]]:
         indices = self.random_state.randint(self._num_items, size=self._num_items)
         indices = indices.astype(np.int64)
         u = self.random_state.random_sample(self._num_items)
@@ -1604,7 +1600,7 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
 
     def update_indices(
         self,
-    ) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:
+    ) -> Union[IntArray, Tuple[List[IntArray], Dict[str, IntArray]]]:
         num_blocks = self._num_items // self.block_size
         if num_blocks * self.block_size < self._num_items:
             num_blocks += 1
@@ -1632,5 +1628,7 @@ class MOONBootstrap(IIDBootstrap):  # pragma: no cover
 
     def update_indices(
         self,
-    ) -> Union[NDArray, Tuple[List[NDArray], Dict[str, NDArray]]]:  # pragma: no cover
+    ) -> Union[
+        IntArray, Tuple[List[IntArray], Dict[str, IntArray]]
+    ]:  # pragma: no cover
         raise NotImplementedError

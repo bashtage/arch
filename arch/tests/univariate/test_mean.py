@@ -666,7 +666,7 @@ class TestMeanModel(object):
             assert_equal(len(w), 1)
 
     def test_har_lag_specifications(self):
-        """ Test equivalence of alternative lag specifications"""
+        """Test equivalence of alternative lag specifications"""
         har = HARX(self.y, lags=[1, 2, 3])
         har_r = HARX(self.y, lags=[1, 2, 3], use_rotated=True)
         har_r_v2 = HARX(self.y, lags=3, use_rotated=True)

@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from arch.compat.numba import jit
 
-from arch.typing import NDArray
+from arch.typing import Float64Array, Int64Array
 
 
 def stationary_bootstrap_sample_python(
-    indices: NDArray, u: NDArray, p: float
-) -> NDArray:
+    indices: Int64Array, u: Float64Array, p: float
+) -> Int64Array:
     """
     Generate indices for sampling from the stationary bootstrap.
 

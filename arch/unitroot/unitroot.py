@@ -50,8 +50,8 @@ from arch.typing import (
     ArrayLike,
     ArrayLike1D,
     ArrayLike2D,
+    Float64Array,
     Literal,
-    NDArray,
     UnitRootTrend,
 )
 from arch.unitroot.critical_values.dfgls import (
@@ -127,7 +127,7 @@ SHORT_TREND_DESCRIPTION = {
 }
 
 
-def _is_reduced_rank(x: NDArray) -> Tuple[bool, Optional[int]]:
+def _is_reduced_rank(x: Float64Array) -> Tuple[bool, Optional[int]]:
     """
     Check if a matrix has reduced rank preferring quick checks
     """
@@ -143,7 +143,7 @@ def _is_reduced_rank(x: NDArray) -> Tuple[bool, Optional[int]]:
 
 
 def _select_best_ic(
-    method: str, nobs: float, sigma2: NDArray, tstat: NDArray
+    method: str, nobs: float, sigma2: Float64Array, tstat: Float64Array
 ) -> Tuple[float, int]:
     """
     Computes the best information criteria
@@ -196,7 +196,7 @@ maximum lag length to consider smaller models.\
 
 
 def _autolag_ols_low_memory(
-    y: NDArray, maxlag: int, trend: UnitRootTrend, method: str
+    y: Float64Array, maxlag: int, trend: UnitRootTrend, method: str
 ) -> Tuple[float, int]:
     """
     Computes the lag length that minimizes an info criterion .
@@ -230,7 +230,7 @@ def _autolag_ols_low_memory(
     lhs = deltay[maxlag:][:, None]
     level = y[maxlag:-1]
     level = level / sqrt(level @ level)
-    trendx: List[NDArray] = []
+    trendx: List[Float64Array] = []
     nobs = lhs.shape[0]
     if trend == "n":
         trendx.append(empty((nobs, 0)))
@@ -354,7 +354,7 @@ def _autolag_ols(
 
 
 def _df_select_lags(
-    y: NDArray,
+    y: Float64Array,
     trend: Literal["n", "c", "ct", "ctt"],
     max_lags: Optional[int],
     method: str,
@@ -426,7 +426,7 @@ def _add_column_names(rhs: ArrayLike, lags: int) -> DataFrame:
 
 
 def _estimate_df_regression(
-    y: NDArray, trend: Literal["n", "c", "ct", "ctt"], lags: int
+    y: Float64Array, trend: Literal["n", "c", "ct", "ctt"], lags: int
 ) -> RegressionResults:
     """Helper function that estimates the core (A)DF regression
 
@@ -1474,7 +1474,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._alternative_hypothesis = "The process is trend and break stationary."
 
     @staticmethod
-    def _quick_ols(endog: NDArray, exog: NDArray) -> NDArray:
+    def _quick_ols(endog: Float64Array, exog: Float64Array) -> Float64Array:
         """
         Minimal implementation of LS estimator for internal use
         """
@@ -1877,7 +1877,7 @@ def mackinnoncrit(
     regression: str = "c",
     nobs: float = inf,
     dist_type: str = "ADF-t",
-) -> NDArray:
+) -> Float64Array:
     """
     Returns the critical values for cointegrating and the ADF test.
 
@@ -1950,7 +1950,7 @@ def mackinnoncrit(
         return polyval(poly_coef[::-1], 1.0 / nobs)
 
 
-def kpss_crit(stat: float, trend: str = "c") -> Tuple[float, NDArray]:
+def kpss_crit(stat: float, trend: str = "c") -> Tuple[float, Float64Array]:
     """
     Linear interpolation for KPSS p-values and critical values
 
