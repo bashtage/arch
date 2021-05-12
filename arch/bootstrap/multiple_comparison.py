@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Hashable, List, Optional, Sequence, Tuple, Union, cast
+from typing import Dict, Hashable, List, Optional, Sequence, Tuple, Union, cast
 
 import numpy as np
 import pandas as pd
@@ -10,7 +10,14 @@ from arch.bootstrap.base import (
     MovingBlockBootstrap,
     StationaryBootstrap,
 )
-from arch.typing import ArrayLike, Literal, NDArray
+from arch.typing import (
+    ArrayLike,
+    BoolArray,
+    Float64Array,
+    Int32Array,
+    IntArray,
+    Literal,
+)
 from arch.utility.array import DocStringInheritor, ensure2d
 
 __all__ = ["StepM", "SPA", "RealityCheck", "MCS"]
@@ -57,7 +64,7 @@ class MultipleComparison(object):
         """
         self.bootstrap.reset()
 
-    def seed(self, value: Union[int, List[int], NDArray]) -> None:
+    def seed(self, value: Union[int, List[int], Int32Array]) -> None:
         """
         Seed the bootstrap's random number generator
 
@@ -117,7 +124,7 @@ class MCS(MultipleComparison):
         ] = "stationary",
     ) -> None:
         super().__init__()
-        self.losses: np.ndarray[Any, np.dtype[np.float64]] = ensure2d(losses, "losses")
+        self.losses: Float64Array = ensure2d(losses, "losses")
         self._losses_arr = np.asarray(self.losses)
         if self._losses_arr.shape[1] < 2:
             raise ValueError("losses must have at least two columns")
@@ -144,7 +151,7 @@ class MCS(MultipleComparison):
         else:
             raise ValueError(f"Unknown bootstrap: {bootstrap_meth}")
         self.bootstrap: CircularBlockBootstrap = bootstrap_inst
-        self._bootstrap_indices: List[NDArray] = []  # For testing
+        self._bootstrap_indices: List[IntArray] = []  # For testing
         self._model = "MCS"
         self._info = dict(
             [
@@ -394,10 +401,8 @@ class StepM(MultipleComparison):
         nested: bool = False,
     ) -> None:
         super(StepM, self).__init__()
-        self.benchmark: np.ndarray[Any, np.dtype[np.float64]] = ensure2d(
-            benchmark, "benchmark"
-        )
-        self.models: np.ndarray[Any, np.dtype[np.float64]] = ensure2d(models, "models")
+        self.benchmark: Float64Array = ensure2d(benchmark, "benchmark")
+        self.models: Float64Array = ensure2d(models, "models")
         self.spa: SPA = SPA(
             benchmark,
             models,
@@ -538,10 +543,8 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         nested: bool = False,
     ) -> None:
         super().__init__()
-        self.benchmark: np.ndarray[Any, np.dtype[np.float64]] = ensure2d(
-            benchmark, "benchmark"
-        )
-        self.models: np.ndarray[Any, np.dtype[np.float64]] = ensure2d(models, "models")
+        self.benchmark: Float64Array = ensure2d(benchmark, "benchmark")
+        self.models: Float64Array = ensure2d(models, "models")
         self.reps: int = reps
         if block_size is None:
             self.block_size = int(np.sqrt(benchmark.shape[0]))
@@ -564,7 +567,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             raise ValueError(f"Unknown bootstrap: {bootstrap_name}")
         self.bootstrap: CircularBlockBootstrap = bootstrap_inst
         self._pvalues: Dict[str, float] = {}
-        self._simulated_vals: Optional[NDArray] = None
+        self._simulated_vals: Optional[Float64Array] = None
         self._selector = np.ones(self.k, dtype=np.bool_)
         self._model = "SPA"
         if self.studentize:
@@ -586,7 +589,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         super(SPA, self).reset()
         self._pvalues = {}
 
-    def subset(self, selector: NDArray) -> None:
+    def subset(self, selector: BoolArray) -> None:
         """
         Sets a list of active models to run the SPA on.  Primarily for
         internal use.
@@ -643,7 +646,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             loss_diff_star = pos_arg[0]
             for j, mean in enumerate(means):
                 simulated_vals[:, i, j] = loss_diff_star.mean(0) - mean
-        self._simulated_vals = np.array(simulated_vals)
+        self._simulated_vals = simulated_vals
 
     def _compute_variance(self) -> None:
         """
@@ -674,7 +677,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
                 )
         self._loss_diff_var = cast(np.ndarray, variances)
 
-    def _check_column_validity(self) -> NDArray:
+    def _check_column_validity(self) -> BoolArray:
         """
         Checks whether the loss from the model is too low relative to its mean
         to be asymptotically relevant.
@@ -734,7 +737,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self,
         pvalue: float = 0.05,
         pvalue_type: Literal["lower", "consistent", "upper"] = "consistent",
-    ) -> Union[NDArray, List[Hashable]]:
+    ) -> Union[IntArray, List[Hashable]]:
         """
         Returns set of models rejected as being equal-or-worse than the
         benchmark

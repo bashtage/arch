@@ -4,11 +4,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from arch.typing import ArrayLike2D, NDArray
+from arch.typing import ArrayLike2D, Float64Array
 
 
 @pytest.fixture(scope="module", params=[True, False])
-def data(request) -> Tuple[NDArray, NDArray]:
+def data(request) -> Tuple[Float64Array, Float64Array]:
     g = np.random.RandomState([12839028, 3092183, 902813])
     e = g.standard_normal((2000, 2))
     phi = g.random_sample((3, 2, 2))

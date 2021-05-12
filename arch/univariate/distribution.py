@@ -28,7 +28,7 @@ from numpy.random import RandomState
 from scipy.special import comb, gamma, gammainc, gammaincc, gammaln
 import scipy.stats as stats
 
-from arch.typing import ArrayLike, ArrayLike1D, NDArray
+from arch.typing import ArrayLike, ArrayLike1D, Float64Array
 from arch.utility.array import AbstractDocStringInheritor, ensure1d
 
 __all__ = ["Distribution", "Normal", "StudentsT", "SkewStudent", "GeneralizedError"]
@@ -42,7 +42,7 @@ class Distribution(object, metaclass=ABCMeta):
     def __init__(self, random_state: Optional[RandomState] = None) -> None:
         self._name = "Distribution"
         self.num_params: int = 0
-        self._parameters: Optional[NDArray] = None
+        self._parameters: Optional[Float64Array] = None
         if random_state is None:
             self._random_state = RandomState()
         elif isinstance(random_state, RandomState):
@@ -57,7 +57,7 @@ class Distribution(object, metaclass=ABCMeta):
 
     def _check_constraints(
         self, parameters: Optional[Union[Sequence[float], ArrayLike1D]]
-    ) -> NDArray:
+    ) -> Float64Array:
         bounds = self.bounds(empty(0))
         if parameters is not None:
             params = ensure1d(parameters, "parameters", False)
@@ -82,7 +82,7 @@ class Distribution(object, metaclass=ABCMeta):
         return self._random_state
 
     @abstractmethod
-    def _simulator(self, size: Union[int, Tuple[int, ...]]) -> NDArray:
+    def _simulator(self, size: Union[int, Tuple[int, ...]]) -> Float64Array:
         """
         Simulate i.i.d. draws from the distribution
 
@@ -104,7 +104,7 @@ class Distribution(object, metaclass=ABCMeta):
     @abstractmethod
     def simulate(
         self, parameters: Union[int, float, Sequence[Union[float, int]], ArrayLike1D]
-    ) -> Callable[[Union[int, Tuple[int, ...]]], NDArray]:
+    ) -> Callable[[Union[int, Tuple[int, ...]]], Float64Array]:
         """
         Simulates i.i.d. draws from the distribution
 
@@ -121,7 +121,7 @@ class Distribution(object, metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
         """
         Construct arrays to use in constrained optimization.
 
@@ -138,7 +138,7 @@ class Distribution(object, metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         """
         Parameter bounds for use in optimization.
 
@@ -160,7 +160,7 @@ class Distribution(object, metaclass=ABCMeta):
         resids: ArrayLike,
         sigma2: ArrayLike,
         individual: bool = False,
-    ) -> Union[float, NDArray]:
+    ) -> Union[float, Float64Array]:
         """
         Loglikelihood evaluation.
 
@@ -183,7 +183,7 @@ class Distribution(object, metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def starting_values(self, std_resid: NDArray) -> NDArray:
+    def starting_values(self, std_resid: Float64Array) -> Float64Array:
         """
         Construct starting values for use in optimization.
 
@@ -219,7 +219,7 @@ class Distribution(object, metaclass=ABCMeta):
         self,
         pits: Union[float, Sequence[float], ArrayLike1D],
         parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
-    ) -> Union[float, NDArray]:
+    ) -> Union[float, Float64Array]:
         """
         Inverse cumulative density function (ICDF)
 
@@ -242,7 +242,7 @@ class Distribution(object, metaclass=ABCMeta):
         self,
         resids: Union[Sequence[float], ArrayLike1D],
         parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
-    ) -> NDArray:
+    ) -> Float64Array:
         """
         Cumulative distribution function
 
@@ -339,10 +339,10 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         super().__init__(random_state=random_state)
         self._name = "Normal"
 
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
         return empty(0), empty(0)
 
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         return []
 
     def loglikelihood(
@@ -351,7 +351,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike,
         sigma2: ArrayLike,
         individual: bool = False,
-    ) -> Union[float, NDArray]:
+    ) -> Union[float, Float64Array]:
         r"""Computes the log-likelihood of assuming residuals are normally
         distributed, conditional on the variance
 
@@ -389,15 +389,15 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid: ArrayLike1D) -> NDArray:
+    def starting_values(self, std_resid: Float64Array) -> Float64Array:
         return empty(0)
 
-    def _simulator(self, size: Union[int, Tuple[int, ...]]) -> NDArray:
+    def _simulator(self, size: Union[int, Tuple[int, ...]]) -> Float64Array:
         return self._random_state.standard_normal(size)
 
     def simulate(
         self, parameters: Union[int, float, Sequence[Union[float, int]], ArrayLike1D]
-    ) -> Callable[[Union[int, Tuple[int, ...]]], NDArray]:
+    ) -> Callable[[Union[int, Tuple[int, ...]]], Float64Array]:
         return self._simulator
 
     def parameter_names(self) -> List[str]:
@@ -407,7 +407,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         resids: Union[Sequence[float], ArrayLike1D],
         parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
-    ) -> NDArray:
+    ) -> Float64Array:
         self._check_constraints(parameters)
         return stats.norm.cdf(asarray(resids))
 
@@ -415,7 +415,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         pits: Union[float, Sequence[float], ArrayLike1D],
         parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
-    ) -> NDArray:
+    ) -> Float64Array:
         self._check_constraints(parameters)
         scalar = isscalar(pits)
         if scalar:
@@ -464,10 +464,10 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         self._name = "Standardized Student's t"
         self.num_params: int = 1
 
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
         return array([[1], [-1]]), array([2.05, -500.0])
 
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         return [(2.05, 500.0)]
 
     def loglikelihood(
@@ -476,7 +476,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike,
         sigma2: ArrayLike,
         individual: bool = False,
-    ) -> Union[float, NDArray]:
+    ) -> Union[float, Float64Array]:
         r"""Computes the log-likelihood of assuming residuals are have a
         standardized (to have unit variance) Student's t distribution,
         conditional on the variance.
@@ -521,7 +521,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid: ArrayLike1D) -> NDArray:
+    def starting_values(self, std_resid: Float64Array) -> Float64Array:
         """
         Construct starting values for use in optimization.
 
@@ -545,7 +545,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv])
 
-    def _simulator(self, size: Union[int, Tuple[int, ...]]) -> NDArray:
+    def _simulator(self, size: Union[int, Tuple[int, ...]]) -> Float64Array:
         assert self._parameters is not None
         parameters = self._parameters
         std_dev = sqrt(parameters[0] / (parameters[0] - 2))
@@ -553,7 +553,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
 
     def simulate(
         self, parameters: Union[int, float, Sequence[Union[float, int]], ArrayLike1D]
-    ) -> Callable[[Union[int, Tuple[int, ...]]], NDArray]:
+    ) -> Callable[[Union[int, Tuple[int, ...]]], Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         if parameters[0] <= 2.0:
             raise ValueError("The shape parameter must be larger than 2")
@@ -567,7 +567,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         resids: Union[Sequence[float], ArrayLike1D],
         parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
-    ) -> NDArray:
+    ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = nu / (nu - 2)
@@ -577,7 +577,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         pits: Union[Sequence[float], ArrayLike1D],
         parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
-    ) -> NDArray:
+    ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         pits = asarray(pits)
         nu = parameters[0]
@@ -681,10 +681,10 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         self._name = "Standardized Skew Student's t"
         self.num_params: int = 2
 
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
         return array([[1, 0], [-1, 0], [0, 1], [0, -1]]), array([2.05, -300.0, -1, -1])
 
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         return [(2.05, 300.0), (-1, 1)]
 
     def loglikelihood(
@@ -693,7 +693,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike,
         sigma2: ArrayLike,
         individual: bool = False,
-    ) -> NDArray:
+    ) -> Float64Array:
         r"""
         Computes the log-likelihood of assuming residuals are have a
         standardized (to have unit variance) Skew Student's t distribution,
@@ -760,7 +760,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid: ArrayLike1D) -> NDArray:
+    def starting_values(self, std_resid: Float64Array) -> Float64Array:
         """
         Construct starting values for use in optimization.
 
@@ -784,7 +784,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         sv = max((4.0 * k - 6.0) / (k - 3.0) if k > 3.75 else 12.0, 4.0)
         return array([sv, 0.0])
 
-    def _simulator(self, size: Union[int, Tuple[int, ...]]) -> NDArray:
+    def _simulator(self, size: Union[int, Tuple[int, ...]]) -> Float64Array:
         # No need to normalize since it is already done in parameterization
         assert self._parameters is not None
         ppf = self.ppf(self._random_state.random_sample(size=size), self._parameters)
@@ -793,7 +793,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
     def simulate(
         self, parameters: Union[int, float, Sequence[Union[float, int]], ArrayLike1D]
-    ) -> Callable[[Union[int, Tuple[int, ...]]], NDArray]:
+    ) -> Callable[[Union[int, Tuple[int, ...]]], Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         if parameters[0] <= 2.0:
             raise ValueError("The shape parameter must be larger than 2")
@@ -807,7 +807,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def parameter_names(self) -> List[str]:
         return ["nu", "lambda"]
 
-    def __const_a(self, parameters: Union[NDArray, Sequence[float]]) -> float:
+    def __const_a(self, parameters: Union[Float64Array, Sequence[float]]) -> float:
         """
         Compute a constant.
 
@@ -826,7 +826,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         c = self.__const_c(parameters)
         return float(4 * lam * exp(c) * (eta - 2) / (eta - 1))
 
-    def __const_b(self, parameters: Union[NDArray, Sequence[float]]) -> float:
+    def __const_b(self, parameters: Union[Float64Array, Sequence[float]]) -> float:
         """
         Compute b constant.
 
@@ -845,7 +845,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         return (1 + 3 * lam ** 2 - a ** 2) ** 0.5
 
     @staticmethod
-    def __const_c(parameters: Union[NDArray, Sequence[float]]) -> float:
+    def __const_c(parameters: Union[Float64Array, Sequence[float]]) -> float:
         """
         Compute c constant.
 
@@ -867,7 +867,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         resids: ArrayLike,
         parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
-    ) -> NDArray:
+    ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(resids)
         if scalar:
@@ -893,7 +893,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         pits: Union[Sequence[float], ArrayLike1D],
         parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
-    ) -> Union[float, NDArray]:
+    ) -> Union[float, Float64Array]:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(pits)
         if scalar:
@@ -1009,10 +1009,10 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         self._name = "Generalized Error Distribution"
         self.num_params: int = 1
 
-    def constraints(self) -> Tuple[NDArray, NDArray]:
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
         return array([[1], [-1]]), array([1.01, -500.0])
 
-    def bounds(self, resids: NDArray) -> List[Tuple[float, float]]:
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
         return [(1.01, 500.0)]
 
     def loglikelihood(
@@ -1021,7 +1021,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike,
         sigma2: ArrayLike,
         individual: bool = False,
-    ) -> NDArray:
+    ) -> Float64Array:
         r"""
         Computes the log-likelihood of assuming residuals are have a
         Generalized Error Distribution, conditional on the variance.
@@ -1072,7 +1072,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid: ArrayLike1D) -> NDArray:
+    def starting_values(self, std_resid: Float64Array) -> Float64Array:
         """
         Construct starting values for use in optimization.
 
@@ -1093,7 +1093,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         """
         return array([1.5])
 
-    def _simulator(self, size: Union[int, Tuple[int, ...]]) -> NDArray:
+    def _simulator(self, size: Union[int, Tuple[int, ...]]) -> Float64Array:
         assert self._parameters is not None
         parameters = self._parameters
         nu = parameters[0]
@@ -1105,7 +1105,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
 
     def simulate(
         self, parameters: Union[int, float, Sequence[Union[float, int]], ArrayLike1D]
-    ) -> Callable[[Union[int, Tuple[int, ...]]], NDArray]:
+    ) -> Callable[[Union[int, Tuple[int, ...]]], Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         if parameters[0] <= 1.0:
             raise ValueError("The shape parameter must be larger than 1")
@@ -1119,7 +1119,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         pits: Union[Sequence[float], ArrayLike1D],
         parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
-    ) -> NDArray:
+    ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         pits = asarray(pits)
         nu = parameters[0]
@@ -1130,7 +1130,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         resids: ArrayLike,
         parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
-    ) -> NDArray:
+    ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = stats.gennorm(nu).var()

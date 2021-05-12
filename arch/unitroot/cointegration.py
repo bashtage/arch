@@ -11,7 +11,7 @@ from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import OLS, RegressionResults
 
 import arch.covariance.kernel as lrcov
-from arch.typing import ArrayLike1D, ArrayLike2D, Literal, NDArray, UnitRootTrend
+from arch.typing import ArrayLike1D, ArrayLike2D, Float64Array, Literal, UnitRootTrend
 from arch.unitroot._engle_granger import EngleGrangerTestResults, engle_granger
 from arch.unitroot._phillips_ouliaris import (
     CriticalValueWarning,
@@ -227,10 +227,10 @@ class _CommonCointegrationResults(object):
 
     @staticmethod
     def _param_table(
-        params: NDArray,
-        se: NDArray,
-        tstats: NDArray,
-        pvalues: NDArray,
+        params: Float64Array,
+        se: Float64Array,
+        tstats: Float64Array,
+        pvalues: Float64Array,
         stubs: Sequence[str],
         title: str,
     ) -> SimpleTable:
@@ -612,7 +612,7 @@ class DynamicOLS(object):
             )
         return lhs, rhs
 
-    def _ic(self, resids: NDArray, nparam: int) -> float:
+    def _ic(self, resids: Float64Array, nparam: int) -> float:
         """Compute an info criterion"""
         nobs = resids.shape[0]
         sigma2 = resids.T @ resids / nobs
@@ -986,7 +986,7 @@ class FullyModifiedOLS(object):
 
     def _common_fit(
         self, kernel: str, bandwidth: Optional[float], force_int: bool, diff: bool
-    ) -> Tuple[lrcov.CovarianceEstimator, NDArray, NDArray]:
+    ) -> Tuple[lrcov.CovarianceEstimator, Float64Array, Float64Array]:
         kernel = _check_kernel(kernel)
         res = _cross_section(self._y, self._x, self._trend)
         x = np.asarray(self._x)

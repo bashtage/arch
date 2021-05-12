@@ -15,7 +15,7 @@ import pandas as pd
 from phillips_ouliaris import QUANTILES, ROOT, SAMPLE_SIZES, TRENDS
 import psutil
 
-from arch.typing import Literal, NDArray, UnitRootTrend
+from arch.typing import Float64Array, Literal, UnitRootTrend
 from arch.utility.timeseries import add_trend
 
 GREEN = colorama.Fore.GREEN
@@ -51,18 +51,18 @@ DF_Z_COLUMNS = DF_Z_COLUMNS.set_names(INDEX_NAMES)
 DF_P_COLUMNS = DF_P_COLUMNS.set_names(INDEX_NAMES)
 
 
-def demean(w: NDArray) -> NDArray:
+def demean(w: Float64Array) -> Float64Array:
     return w - w.mean(1).reshape((w.shape[0], 1, w.shape[2]))
 
 
-def inner_prod(a: NDArray, b: Optional[NDArray] = None) -> NDArray:
+def inner_prod(a: Float64Array, b: Optional[Float64Array] = None) -> Float64Array:
     if b is None:
         b = a
     return a.transpose((0, 2, 1)) @ b
 
 
 def z_tests_vec(
-    z: NDArray, lag: int, trend: UnitRootTrend
+    z: Float64Array, lag: int, trend: UnitRootTrend
 ) -> Tuple[np.ndarray, np.ndarray]:
     assert z.ndim == 3
     nobs = int(z.shape[1])
@@ -103,7 +103,7 @@ def z_tests_vec(
     return z_a, z_t
 
 
-def z_tests(z: NDArray, lag: int, trend: UnitRootTrend) -> Tuple[float, float]:
+def z_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> Tuple[float, float]:
     z = add_trend(z, trend=trend)
     u = z
     if z.shape[1] > 1:
@@ -125,7 +125,7 @@ def z_tests(z: NDArray, lag: int, trend: UnitRootTrend) -> Tuple[float, float]:
 
 
 def p_tests_vec(
-    z: NDArray, lag: int, trend: UnitRootTrend
+    z: Float64Array, lag: int, trend: UnitRootTrend
 ) -> Tuple[np.ndarray, np.ndarray]:
     assert z.ndim == 3
     z_lag, z_lead = z[:, :-1], z[:, 1:]
@@ -173,7 +173,7 @@ def p_tests_vec(
     return p_u, p_z
 
 
-def p_tests(z: NDArray, lag: int, trend: UnitRootTrend) -> Tuple[float, float]:
+def p_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> Tuple[float, float]:
     x, y = z[:, 1:], z[:, 0]
     nobs = int(x.shape[0])
     x = add_trend(x, trend=trend)
@@ -210,7 +210,7 @@ def block(
     statistic: str,
     num: int,
     trend: UnitRootTrend,
-) -> NDArray:
+) -> Float64Array:
     max_sample = max(SAMPLE_SIZES)
     e = gen.standard_normal((num, max_sample, MAX_STOCHASTIC_TRENDS))
     z = e.cumsum(axis=1)
