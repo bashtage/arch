@@ -4,6 +4,22 @@ Version 5
 
 Release 5.0
 ===========
+
+Bootstrap
+~~~~~~~~~
+- Added ``seed`` keyword argument to all bootstraps (e.g., :class:`arch.bootstrap.IIDBootstrap`
+  and :class:`arch.bootstrap.StationaryBootstrap`) that allows a NumPy :class:`numpy.random.Generator`
+  to be used. The ``seed`` keyword argument also accepts legacy :class:`numpy.random.RandomState`
+  instances and integers.  If an integer is passed, the random number generator is constructed by
+  calling :func:`numpy.random.default_rng` The ``seed`` keyword argument replaces the
+  ``random_state`` keyword argument.
+- The :func:`arch.bootstrap.IIDBootstrap.random_state` property has also been deprecated in favor
+  of :func:`arch.bootstrap.IIDBootstrap.generator`.
+- The :func:`arch.bootstrap.IIDBootstrap.get_state` and :func:`arch.bootstrap.IIDBootstrap.set_state`
+  methods have been replaced by the :func:`arch.bootstrap.IIDBootstrap.state` property.
+
+Volatility Modeling
+~~~~~~~~~~~~~~~~~~~
 - Added :class:`~arch.univariate.ARCHInMean` mean process supporting (G)ARCH-in-mean models.
 - Extended :class:`~arch.univariate.volatility.VolatilityProcess` with
   :func:`~arch.univariate.volatility.VolatilityProcess.volatility_updater` that contains a

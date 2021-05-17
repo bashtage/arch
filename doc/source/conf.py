@@ -36,7 +36,7 @@ for example in examples:
 # -- Project information -----------------------------------------------------
 
 project = "arch"
-copyright = "2019, Kevin Sheppard"
+copyright = "2021, Kevin Sheppard"
 author = "Kevin Sheppard"
 
 # The short X.Y version

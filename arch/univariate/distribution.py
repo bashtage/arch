@@ -56,7 +56,7 @@ class Distribution(object, metaclass=ABCMeta):
         return self._name
 
     def _check_constraints(
-        self, parameters: Optional[Union[Sequence[float], ArrayLike1D]]
+        self, parameters: Union[None, Sequence[float], ArrayLike1D]
     ) -> Float64Array:
         bounds = self.bounds(empty(0))
         if parameters is not None:
@@ -218,7 +218,7 @@ class Distribution(object, metaclass=ABCMeta):
     def ppf(
         self,
         pits: Union[float, Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Union[float, Float64Array]:
         """
         Inverse cumulative density function (ICDF)
@@ -241,7 +241,7 @@ class Distribution(object, metaclass=ABCMeta):
     def cdf(
         self,
         resids: Union[Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         """
         Cumulative distribution function
@@ -262,7 +262,7 @@ class Distribution(object, metaclass=ABCMeta):
 
     @abstractmethod
     def moment(
-        self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
+        self, n: int, parameters: Union[None, Sequence[float], ArrayLike1D] = None
     ) -> float:
         """
         Moment of order n
@@ -285,7 +285,7 @@ class Distribution(object, metaclass=ABCMeta):
         self,
         n: int,
         z: float = 0.0,
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> float:
         r"""
         Order n lower partial moment from -inf to z
@@ -406,7 +406,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
     def cdf(
         self,
         resids: Union[Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         self._check_constraints(parameters)
         return stats.norm.cdf(asarray(resids))
@@ -414,7 +414,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
     def ppf(
         self,
         pits: Union[float, Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         self._check_constraints(parameters)
         scalar = isscalar(pits)
@@ -429,7 +429,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
             return ppf
 
     def moment(
-        self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
+        self, n: int, parameters: Union[None, Sequence[float], ArrayLike1D] = None
     ) -> float:
         if n < 0:
             return nan
@@ -440,7 +440,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         n: int,
         z: float = 0.0,
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> float:
         if n < 0:
             return nan
@@ -566,7 +566,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
     def cdf(
         self,
         resids: Union[Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
@@ -576,7 +576,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
     def ppf(
         self,
         pits: Union[Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         pits = asarray(pits)
@@ -585,7 +585,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         return stats.t(nu, scale=1.0 / sqrt(var)).ppf(pits)
 
     def moment(
-        self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
+        self, n: int, parameters: Union[None, Sequence[float], ArrayLike1D] = None
     ) -> float:
         if n < 0:
             return nan
@@ -598,7 +598,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         n: int,
         z: float = 0.0,
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> float:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
@@ -866,7 +866,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def cdf(
         self,
         resids: ArrayLike,
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(resids)
@@ -892,7 +892,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def ppf(
         self,
         pits: Union[Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Union[float, Float64Array]:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(pits)
@@ -921,7 +921,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         return icdf
 
     def moment(
-        self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
+        self, n: int, parameters: Union[None, Sequence[float], ArrayLike1D] = None
     ) -> float:
         parameters = self._check_constraints(parameters)
         eta, lam = parameters
@@ -956,7 +956,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         n: int,
         z: float = 0.0,
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> float:
         parameters = self._check_constraints(parameters)
         eta, lam = parameters
@@ -1118,7 +1118,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
     def ppf(
         self,
         pits: Union[Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         pits = asarray(pits)
@@ -1129,7 +1129,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
     def cdf(
         self,
         resids: ArrayLike,
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
@@ -1138,7 +1138,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).cdf(resids)
 
     def moment(
-        self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
+        self, n: int, parameters: Union[None, Sequence[float], ArrayLike1D] = None
     ) -> float:
         if n < 0:
             return nan
@@ -1152,7 +1152,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         n: int,
         z: float = 0.0,
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> float:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]

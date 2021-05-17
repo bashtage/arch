@@ -207,7 +207,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         self.rescale: Optional[bool] = rescale
         self.scale: float = 1.0
 
-        self._backcast: Optional[Union[float, Float64Array]] = None
+        self._backcast: Union[None, float, Float64Array] = None
         self._var_bounds: Optional[Float64Array] = None
 
         if isinstance(volatility, VolatilityProcess):
@@ -563,7 +563,7 @@ class ARCHModel(object, metaclass=ABCMeta):
         last_obs: Union[int, DateLike] = None,
         tol: Optional[float] = None,
         options: Optional[Dict[str, Any]] = None,
-        backcast: Optional[Union[float, Float64Array]] = None,
+        backcast: Union[None, float, Float64Array] = None,
     ) -> ARCHModelResult:
         r"""
         Estimate model parameters
@@ -870,7 +870,7 @@ class ARCHModel(object, metaclass=ABCMeta):
     def compute_param_cov(
         self,
         params: Float64Array,
-        backcast: Optional[Union[float, Float64Array]] = None,
+        backcast: Union[None, float, Float64Array] = None,
         robust: bool = True,
     ) -> Float64Array:
         """

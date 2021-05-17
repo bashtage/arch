@@ -204,11 +204,11 @@ These requirements reflect the testing environment. It is possible
 that arch will work with older versions.
 
 - Python (3.7+)
-- NumPy (1.16+)
-- SciPy (1.2+)
-- Pandas (0.23+)
+- NumPy (1.17+)
+- SciPy (1.3+)
+- Pandas (0.25+)
 - statsmodels (0.11+)
-- matplotlib (2.2+), optional
+- matplotlib (3+), optional
 - property-cached (1.6.4+), optional
 
 ### Optional Requirements

@@ -232,7 +232,7 @@ def date_to_index(
 
 
 def cutoff_to_index(
-    cutoff: Optional[Union[int, DateLike]], index: DatetimeIndex, default: int
+    cutoff: Union[None, int, DateLike], index: DatetimeIndex, default: int
 ) -> int:
     """
     Converts a cutoff to a numerical index

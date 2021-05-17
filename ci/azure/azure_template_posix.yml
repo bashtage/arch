@@ -26,20 +26,20 @@ jobs:
         coverage: false
       python37:
         python.version: '3.7'
-        NUMPY: 1.16.6
-        SCIPY: 1.2.3
-        MATPLOTLIB: 2.2.5
-        PANDAS: 0.23.4
+        NUMPY: 1.17.5
+        SCIPY: 1.3.3
+        MATPLOTLIB: 3.0.3
+        PANDAS: 0.25.3
       python_38_conda_numba:
         python.version: '3.8'
         use.conda: 'true'
         USE_NUMBA: true
-        MATPLOTLIB: 3.3.2
+        MATPLOTLIB: 3.2.2
         PYTEST_PATTERN: "(slow or not slow)"
       python37_numpy117:
         python.version: '3.7'
-        MATPLOTLIB: 3.0.3
-        NUMPY: 1.17.5
+        MATPLOTLIB: 3.1.3
+        NUMPY: 1.18.5
       python_3.9:
         python.version: '3.9'
         test.install: true
@@ -58,11 +58,11 @@ jobs:
       python_38_no_numba:
         python.version: '3.8'
         USE_NUMBA: false
-        MATPLOTLIB: 3.3.3
+        MATPLOTLIB: 3.3.4
         PYTEST_PATTERN: "(slow or not slow)"
       python_38_numpy_118:
         python.version: '3.8'
-        NUMPY: 1.18.5
+        NUMPY: 1.19.5
         USE_NUMBA: false
         PYTEST_PATTERN: "(slow or not slow)"
     maxParallel: 10

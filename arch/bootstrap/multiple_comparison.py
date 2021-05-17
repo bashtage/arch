@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from typing import Dict, Hashable, List, Optional, Sequence, Tuple, Union, cast
 
 import numpy as np
@@ -14,9 +15,9 @@ from arch.typing import (
     ArrayLike,
     BoolArray,
     Float64Array,
-    Int32Array,
     IntArray,
     Literal,
+    Uint32Array,
 )
 from arch.utility.array import DocStringInheritor, ensure2d
 
@@ -64,7 +65,7 @@ class MultipleComparison(object):
         """
         self.bootstrap.reset()
 
-    def seed(self, value: Union[int, List[int], Int32Array]) -> None:
+    def seed(self, value: Union[int, List[int], Uint32Array]) -> None:
         """
         Seed the bootstrap's random number generator
 
@@ -101,6 +102,10 @@ class MCS(MultipleComparison):
         'stationary' or 'sb': Stationary bootstrap (Default)
         'circular' or 'cbb': Circular block bootstrap
         'moving block' or 'mbb': Moving block bootstrap
+    seed : {int, Generator, RandomState}, optional
+        Seed value to use when creating the bootstrap used in the comparison.
+        If an integer or None, the NumPy default_rng is used with the seed
+        value.  If a Generator or a RandomState, the argument is used.
 
     Notes
     -----
@@ -122,6 +127,8 @@ class MCS(MultipleComparison):
         bootstrap: Literal[
             "stationary", "sb", "circular", "cbb", "moving block", "mbb"
         ] = "stationary",
+        *,
+        seed: Union[None, int, np.random.Generator, np.random.RandomState] = None,
     ) -> None:
         super().__init__()
         self.losses: Float64Array = ensure2d(losses, "losses")
@@ -143,13 +150,14 @@ class MCS(MultipleComparison):
         indices = np.arange(self.t)
         bootstrap_meth = bootstrap.lower().replace(" ", "_")
         if bootstrap_meth in ("circular", "cbb"):
-            bootstrap_inst = CircularBlockBootstrap(self.block_size, indices)
+            bootstrap_inst = CircularBlockBootstrap(self.block_size, indices, seed=seed)
         elif bootstrap_meth in ("stationary", "sb"):
-            bootstrap_inst = StationaryBootstrap(self.block_size, indices)
+            bootstrap_inst = StationaryBootstrap(self.block_size, indices, seed=seed)
         elif bootstrap_meth in ("moving_block", "mbb"):
-            bootstrap_inst = MovingBlockBootstrap(self.block_size, indices)
+            bootstrap_inst = MovingBlockBootstrap(self.block_size, indices, seed=seed)
         else:
             raise ValueError(f"Unknown bootstrap: {bootstrap_meth}")
+        self._seed = seed
         self.bootstrap: CircularBlockBootstrap = bootstrap_inst
         self._bootstrap_indices: List[IntArray] = []  # For testing
         self._model = "MCS"
@@ -368,6 +376,10 @@ class StepM(MultipleComparison):
         Flag indicating to use a nested bootstrap to compute variances for
         studentization.  Default is False.  Note that this can be slow since
         the procedure requires k extra bootstraps.
+    seed : {int, Generator, RandomState}, optional
+        Seed value to use when creating the bootstrap used in the comparison.
+        If an integer or None, the NumPy default_rng is used with the seed
+        value.  If a Generator or a RandomState, the argument is used.
 
     Notes
     -----
@@ -399,6 +411,8 @@ class StepM(MultipleComparison):
         ] = "stationary",
         studentize: bool = True,
         nested: bool = False,
+        *,
+        seed: Union[None, int, np.random.Generator, np.random.RandomState] = None,
     ) -> None:
         super(StepM, self).__init__()
         self.benchmark: Float64Array = ensure2d(benchmark, "benchmark")
@@ -411,6 +425,7 @@ class StepM(MultipleComparison):
             bootstrap=bootstrap,
             studentize=studentize,
             nested=nested,
+            seed=seed,
         )
         self.block_size: int = self.spa.block_size
         self.t: int = self.models.shape[0]
@@ -508,6 +523,10 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         Flag indicating to use a nested bootstrap to compute variances for
         studentization.  Default is False.  Note that this can be slow since
         the procedure requires k extra bootstraps.
+    seed : {int, Generator, RandomState}, optional
+        Seed value to use when creating the bootstrap used in the comparison.
+        If an integer or None, the NumPy default_rng is used with the seed
+        value.  If a Generator or a RandomState, the argument is used.
 
     Notes
     -----
@@ -541,6 +560,8 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         ] = "stationary",
         studentize: bool = True,
         nested: bool = False,
+        *,
+        seed: Union[None, int, np.random.Generator, np.random.RandomState] = None,
     ) -> None:
         super().__init__()
         self.benchmark: Float64Array = ensure2d(benchmark, "benchmark")
@@ -558,13 +579,20 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self.k: int = self._loss_diff.shape[1]
         bootstrap_name = bootstrap.lower().replace(" ", "_")
         if bootstrap_name in ("circular", "cbb"):
-            bootstrap_inst = CircularBlockBootstrap(self.block_size, self._loss_diff)
+            bootstrap_inst = CircularBlockBootstrap(
+                self.block_size, self._loss_diff, seed=seed
+            )
         elif bootstrap_name in ("stationary", "sb"):
-            bootstrap_inst = StationaryBootstrap(self.block_size, self._loss_diff)
+            bootstrap_inst = StationaryBootstrap(
+                self.block_size, self._loss_diff, seed=seed
+            )
         elif bootstrap_name in ("moving_block", "mbb"):
-            bootstrap_inst = MovingBlockBootstrap(self.block_size, self._loss_diff)
+            bootstrap_inst = MovingBlockBootstrap(
+                self.block_size, self._loss_diff, seed=seed
+            )
         else:
             raise ValueError(f"Unknown bootstrap: {bootstrap_name}")
+        self._seed = seed
         self.bootstrap: CircularBlockBootstrap = bootstrap_inst
         self._pvalues: Dict[str, float] = {}
         self._simulated_vals: Optional[Float64Array] = None
@@ -661,7 +689,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         demeaned = ld - ld.mean(axis=0)
         if self.nested:
             # Use bootstrap to estimate variances
-            bs = self.bootstrap.clone(demeaned)
+            bs = self.bootstrap.clone(demeaned, seed=copy.deepcopy(self._seed))
             means = bs.apply(lambda x: x.mean(0), reps=self.reps)
             variances = self.t * means.var(axis=0)
         else:

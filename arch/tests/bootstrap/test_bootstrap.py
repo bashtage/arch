@@ -1,3 +1,4 @@
+import copy
 from typing import Callable, NamedTuple, Union
 import warnings
 
@@ -44,6 +45,15 @@ class BSData(NamedTuple):
     func: Callable[[np.ndarray, int], Union[float, np.ndarray]]
 
 
+@pytest.fixture(scope="function", params=[1234, "gen", "rs"])
+def seed(request):
+    if request.param == "gen":
+        return np.random.default_rng(1234)
+    elif request.param == "rs":
+        return RandomState(1234)
+    return request.param
+
+
 @pytest.fixture(scope="function")
 def bs_setup():
     rng = RandomState(1234)
@@ -61,10 +71,9 @@ def bs_setup():
     return BSData(rng, x, y, z, x_df, y_series, z_df, func)
 
 
-def test_numpy(bs_setup):
+def test_numpy(bs_setup, seed):
     x, y, z = bs_setup.x, bs_setup.y, bs_setup.z
-    bs = IIDBootstrap(y)
-    bs.seed(23456)
+    bs = IIDBootstrap(y, seed=seed)
     for data, kwdata in bs.bootstrap(10):
         index = bs.index
         assert_equal(len(kwdata.keys()), 0)
@@ -72,8 +81,7 @@ def test_numpy(bs_setup):
     # Ensure no changes to original data
     assert_equal(bs._args[0], y)
 
-    bs = IIDBootstrap(y=y)
-    bs.seed(23456)
+    bs = IIDBootstrap(y=y, seed=seed)
     for data, kwdata in bs.bootstrap(10):
         index = bs.index
         assert_equal(len(data), 0)
@@ -82,8 +90,7 @@ def test_numpy(bs_setup):
     # Ensure no changes to original data
     assert_equal(bs._kwargs["y"], y)
 
-    bs = IIDBootstrap(x, y, z)
-    bs.seed(23456)
+    bs = IIDBootstrap(x, y, z, seed=seed)
     for data, kwdata in bs.bootstrap(10):
         index = bs.index
         assert_equal(len(data), 3)
@@ -92,8 +99,7 @@ def test_numpy(bs_setup):
         assert_equal(y[index], data[1])
         assert_equal(z[index], data[2])
 
-    bs = IIDBootstrap(x, y=y, z=z)
-    bs.seed(23456)
+    bs = IIDBootstrap(x, y=y, z=z, seed=seed)
     for data, kwdata in bs.bootstrap(10):
         index = bs.index
         assert_equal(len(data), 1)
@@ -105,10 +111,9 @@ def test_numpy(bs_setup):
         assert_equal(z[index], bs.z)
 
 
-def test_pandas(bs_setup):
+def test_pandas(bs_setup, seed):
     x, y, z = bs_setup.x_df, bs_setup.y_series, bs_setup.z_df
-    bs = IIDBootstrap(y)
-    bs.seed(23456)
+    bs = IIDBootstrap(y, seed=seed)
     for data, kwdata in bs.bootstrap(10):
         index = bs.index
         assert_equal(len(kwdata.keys()), 0)
@@ -116,8 +121,7 @@ def test_pandas(bs_setup):
     # Ensure no changes to original data
     assert_series_equal(bs._args[0], y)
 
-    bs = IIDBootstrap(y=y)
-    bs.seed(23456)
+    bs = IIDBootstrap(y=y, seed=seed)
     for data, kwdata in bs.bootstrap(10):
         index = bs.index
         assert_equal(len(data), 0)
@@ -126,8 +130,7 @@ def test_pandas(bs_setup):
     # Ensure no changes to original data
     assert_series_equal(bs._kwargs["y"], y)
 
-    bs = IIDBootstrap(x, y, z)
-    bs.seed(23456)
+    bs = IIDBootstrap(x, y, z, seed=seed)
     for data, kwdata in bs.bootstrap(10):
         index = bs.index
         assert_equal(len(data), 3)
@@ -136,8 +139,7 @@ def test_pandas(bs_setup):
         assert_series_equal(y.iloc[index], data[1])
         assert_frame_equal(z.iloc[index], data[2])
 
-    bs = IIDBootstrap(x, y=y, z=z)
-    bs.seed(23456)
+    bs = IIDBootstrap(x, y=y, z=z, seed=seed)
     for data, kwdata in bs.bootstrap(10):
         index = bs.index
         assert_equal(len(data), 1)
@@ -149,10 +151,9 @@ def test_pandas(bs_setup):
         assert_frame_equal(z.iloc[index], bs.z)
 
 
-def test_mixed_types(bs_setup):
+def test_mixed_types(bs_setup, seed):
     x, y, z = bs_setup.x_df, bs_setup.y_series, bs_setup.z
-    bs = IIDBootstrap(y, x=x, z=z)
-    bs.seed(23456)
+    bs = IIDBootstrap(y, x=x, z=z, seed=seed)
     for data, kwdata in bs.bootstrap(10):
         index = bs.index
         assert_equal(len(data), 1)
@@ -322,9 +323,9 @@ def test_conf_int_norm(bs_setup):
     assert_equal(-1 * inf, ci_u[0, :])
 
 
-def test_reuse(bs_setup):
+def test_reuse(bs_setup, seed):
     num_bootstrap = 100
-    bs = IIDBootstrap(bs_setup.x)
+    bs = IIDBootstrap(bs_setup.x, seed=seed)
 
     ci = bs.conf_int(bs_setup.func, reps=num_bootstrap)
     old_results = bs._results.copy()
@@ -339,10 +340,9 @@ def test_reuse(bs_setup):
         assert_equal(len(w), 1)
 
 
-def test_studentized(bs_setup):
+def test_studentized(bs_setup, seed):
     num_bootstrap = 20
-    bs = IIDBootstrap(bs_setup.x)
-    bs.seed(23456)
+    bs = IIDBootstrap(bs_setup.x, seed=seed)
 
     def std_err_func(mu, y):
         errors = y - mu
@@ -388,9 +388,11 @@ def test_studentized(bs_setup):
     count = 0
     for pos, _ in bs.bootstrap(reps=num_bootstrap):
         results[count] = bs_setup.func(*pos)
-        inner_bs = IIDBootstrap(*pos)
-        seed = bs.random_state.randint(2 ** 31 - 1)
-        inner_bs.seed(seed)
+        if isinstance(bs._generator, RandomState):
+            seed = bs._generator.randint(2 ** 31 - 1)
+        else:
+            seed = bs._generator.integers(2 ** 31 - 1)
+        inner_bs = IIDBootstrap(*pos, seed=seed)
         cov = inner_bs.cov(bs_setup.func, reps=50)
         std_err = np.sqrt(np.diag(cov))
         stud_results[count] = (results[count] - base) / std_err
@@ -422,7 +424,6 @@ def test_studentized(bs_setup):
 def test_conf_int_bias_corrected(bs_setup):
     num_bootstrap = 20
     bs = IIDBootstrap(bs_setup.x)
-    bs.seed(23456)
 
     ci = bs.conf_int(bs_setup.func, reps=num_bootstrap, method="bc")
     bs.reset()
@@ -447,7 +448,6 @@ def test_conf_int_bias_corrected(bs_setup):
 def test_conf_int_bca_scaler(bs_setup):
     num_bootstrap = 100
     bs = IIDBootstrap(bs_setup.y)
-    bs.seed(23456)
 
     ci = bs.conf_int(np.mean, reps=num_bootstrap, method="bca")
     msg = (
@@ -476,7 +476,6 @@ def test_conf_int_parametric(bs_setup):
 
     reps = 100
     bs = IIDBootstrap(bs_setup.x)
-    bs.seed(23456)
 
     ci = bs.conf_int(func=param_func, reps=reps, sampling="parametric")
     assert len(ci) == 2
@@ -486,7 +485,7 @@ def test_conf_int_parametric(bs_setup):
     count = 0
     mu = bs_setup.x.mean(0)
     for pos, _ in bs.bootstrap(100):
-        results[count] = param_func(*pos, params=mu, state=bs.random_state)
+        results[count] = param_func(*pos, params=mu, state=bs.generator)
         count += 1
     assert_equal(bs._results, results)
 
@@ -502,17 +501,18 @@ def test_conf_int_parametric(bs_setup):
         count += 1
     assert_allclose(bs._results, results)
 
+    with pytest.raises(ValueError, match="sampling must be one"):
+        bs.conf_int(func=semi_func, reps=100, sampling="other")
+
 
 def test_extra_kwargs(bs_setup):
     extra_kwargs = {"axis": 0}
     bs = IIDBootstrap(bs_setup.x)
-    bs.seed(23456)
     num_bootstrap = 100
 
     bs.cov(bs_setup.func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
 
     bs = IIDBootstrap(axis=bs_setup.x)
-    bs.seed(23456)
     with pytest.raises(ValueError):
         bs.cov(bs_setup.func, reps=num_bootstrap, extra_kwargs=extra_kwargs)
 
@@ -561,8 +561,7 @@ def test_jackknife(bs_setup):
 
 def test_bca(bs_setup):
     num_bootstrap = 20
-    bs = IIDBootstrap(bs_setup.x)
-    bs.seed(23456)
+    bs = IIDBootstrap(bs_setup.x, seed=23456)
 
     ci_direct = bs.conf_int(bs_setup.func, reps=num_bootstrap, method="bca")
     bs.reset()
@@ -590,14 +589,11 @@ def test_bca(bs_setup):
     ci = ci.T
     assert_allclose(ci_direct, ci)
 
-    bs = IIDBootstrap(y=bs_setup.x)
-    bs.seed(23456)
-
+    bs = IIDBootstrap(y=bs_setup.x, seed=23456)
     ci_kwarg = bs.conf_int(bs_setup.func, reps=num_bootstrap, method="bca")
     assert_allclose(ci_kwarg, ci)
 
-    bs = IIDBootstrap(y=bs_setup.x_df)
-    bs.seed(23456)
+    bs = IIDBootstrap(y=bs_setup.x_df, seed=23456)
     ci_kwarg_pandas = bs.conf_int(bs_setup.func, reps=num_bootstrap, method="bca")
     assert_allclose(ci_kwarg_pandas, ci)
 
@@ -606,16 +602,13 @@ def test_pandas_integer_index(bs_setup):
     x = bs_setup.x
     x_int = bs_setup.x_df.copy()
     x_int.index = 10 + np.arange(x.shape[0])
-    bs = IIDBootstrap(x, x_int)
-    bs.seed(23456)
+    bs = IIDBootstrap(x, x_int, seed=23456)
     for pdata, _ in bs.bootstrap(10):
         assert_equal(pdata[0], np.asarray(pdata[1]))
 
 
-def test_apply(bs_setup):
-    bs = IIDBootstrap(bs_setup.x)
-    bs.seed(23456)
-
+def test_apply(bs_setup, seed):
+    bs = IIDBootstrap(bs_setup.x, seed=seed)
     results = bs.apply(bs_setup.func, 1000)
     bs.reset(True)
     direct_results = []
@@ -625,10 +618,8 @@ def test_apply(bs_setup):
     assert_equal(results, direct_results)
 
 
-def test_apply_series(bs_setup):
-    bs = IIDBootstrap(bs_setup.y_series)
-    bs.seed(23456)
-
+def test_apply_series(bs_setup, seed):
+    bs = IIDBootstrap(bs_setup.y_series, seed=seed)
     results = bs.apply(bs_setup.func, 1000)
     bs.reset(True)
     direct_results = []
@@ -639,8 +630,8 @@ def test_apply_series(bs_setup):
     assert_equal(results, direct_results)
 
 
-def test_str(bs_setup):
-    bs = IIDBootstrap(bs_setup.y_series)
+def test_str(bs_setup, seed):
+    bs = IIDBootstrap(bs_setup.y_series, seed=seed)
     expected = "IID Bootstrap(no. pos. inputs: 1, no. keyword inputs: 0)"
     assert_equal(str(bs), expected)
     expected = expected[:-1] + ", ID: " + hex(id(bs)) + ")"
@@ -655,7 +646,7 @@ def test_str(bs_setup):
     )
     assert_equal(bs._repr_html(), expected)
 
-    bs = StationaryBootstrap(10, bs_setup.y_series, bs_setup.x_df)
+    bs = StationaryBootstrap(10, bs_setup.y_series, bs_setup.x_df, seed=seed)
     expected = (
         "Stationary Bootstrap(block size: 10, no. pos. "
         "inputs: 2, no. keyword inputs: 0)"
@@ -664,7 +655,9 @@ def test_str(bs_setup):
     expected = expected[:-1] + ", ID: " + hex(id(bs)) + ")"
     assert_equal(bs.__repr__(), expected)
 
-    bs = CircularBlockBootstrap(block_size=20, y=bs_setup.y_series, x=bs_setup.x_df)
+    bs = CircularBlockBootstrap(
+        block_size=20, y=bs_setup.y_series, x=bs_setup.x_df, seed=seed
+    )
     expected = (
         "Circular Block Bootstrap(block size: 20, no. pos. "
         "inputs: 0, no. keyword inputs: 2)"
@@ -683,7 +676,9 @@ def test_str(bs_setup):
     )
     assert_equal(bs._repr_html(), expected)
 
-    bs = MovingBlockBootstrap(block_size=20, y=bs_setup.y_series, x=bs_setup.x_df)
+    bs = MovingBlockBootstrap(
+        block_size=20, y=bs_setup.y_series, x=bs_setup.x_df, seed=seed
+    )
     expected = (
         "Moving Block Bootstrap(block size: 20, no. pos. "
         "inputs: 0, no. keyword inputs: 2)"
@@ -703,12 +698,16 @@ def test_str(bs_setup):
     assert_equal(bs._repr_html(), expected)
 
 
-def test_uneven_sampling(bs_setup):
-    bs = MovingBlockBootstrap(block_size=31, y=bs_setup.y_series, x=bs_setup.x_df)
+def test_uneven_sampling(bs_setup, seed):
+    bs = MovingBlockBootstrap(
+        block_size=31, y=bs_setup.y_series, x=bs_setup.x_df, seed=seed
+    )
     for _, kw in bs.bootstrap(10):
         assert kw["y"].shape == bs_setup.y_series.shape
         assert kw["x"].shape == bs_setup.x_df.shape
-    bs = CircularBlockBootstrap(block_size=31, y=bs_setup.y_series, x=bs_setup.x_df)
+    bs = CircularBlockBootstrap(
+        block_size=31, y=bs_setup.y_series, x=bs_setup.x_df, seed=seed
+    )
     for _, kw in bs.bootstrap(10):
         assert kw["y"].shape == bs_setup.y_series.shape
         assert kw["x"].shape == bs_setup.x_df.shape
@@ -754,7 +753,7 @@ def test_bca_against_bcajack():
     b = 2000
     rng_seed = 123
     rs = np.random.RandomState(rng_seed)
-    arch_bs = IIDBootstrap(observations, random_state=rs)
+    arch_bs = IIDBootstrap(observations, seed=rs)
     confidence_interval_size = 0.90
 
     def func(x):
@@ -794,15 +793,14 @@ def test_state():
     final = 0
     final_seed = 1
     final_state = 2
-    bs = IIDBootstrap(np.arange(100))
-    bs.seed(23456)
-    state = bs.get_state()
+    bs = IIDBootstrap(np.arange(100), seed=23456)
+    state = bs.state
     for data, _ in bs.bootstrap(10):
         final = data[0]
-    bs.seed(23456)
+    bs.state = state
     for data, _ in bs.bootstrap(10):
         final_seed = data[0]
-    bs.set_state(state)
+    bs.state = state
     for data, _ in bs.bootstrap(10):
         final_state = data[0]
     assert_equal(final, final_seed)
@@ -813,11 +811,12 @@ def test_reset():
     final = 0
     final_reset = 1
     bs = IIDBootstrap(np.arange(100))
-    state = bs.get_state()
+    with pytest.warns(FutureWarning):
+        state = bs.get_state()
     for data, _ in bs.bootstrap(10):
         final = data[0]
     bs.reset()
-    state_reset = bs.get_state()
+    state_reset = bs.state
     for data, _ in bs.bootstrap(10):
         final_reset = data[0]
     assert_equal(final, final_reset)
@@ -827,20 +826,21 @@ def test_reset():
 def test_pass_random_state():
     x = np.arange(1000)
     rs = RandomState(0)
-    IIDBootstrap(x, random_state=rs)
+    with pytest.warns(FutureWarning):
+        IIDBootstrap(x, random_state=rs)
 
     with pytest.raises(TypeError):
-        IIDBootstrap(x, random_state=0)
+        IIDBootstrap(x, random_state="0")
 
 
 def test_iid_unequal_equiv():
     rs = RandomState(0)
     x = rs.standard_normal(500)
     rs1 = RandomState(0)
-    bs1 = IIDBootstrap(x, random_state=rs1)
+    bs1 = IIDBootstrap(x, seed=rs1)
 
     rs2 = RandomState(0)
-    bs2 = IndependentSamplesBootstrap(x, random_state=rs2)
+    bs2 = IndependentSamplesBootstrap(x, seed=rs2)
 
     v1 = bs1.var(np.mean)
     v2 = bs2.var(np.mean)
@@ -859,7 +859,7 @@ def test_unequal_bs():
     x = rs.standard_normal(800)
     y = rs.standard_normal(200)
 
-    bs = IndependentSamplesBootstrap(x, y, random_state=rs)
+    bs = IndependentSamplesBootstrap(x, y, seed=rs)
     variance = bs.var(mean_diff)
     assert variance > 0
     ci = bs.conf_int(mean_diff)
@@ -885,7 +885,7 @@ def test_unequal_bs_kwargs():
     x = rs.standard_normal(800)
     y = rs.standard_normal(200)
 
-    bs = IndependentSamplesBootstrap(x=x, y=y, random_state=rs)
+    bs = IndependentSamplesBootstrap(x=x, y=y, seed=rs)
     variance = bs.var(mean_diff)
     assert variance > 0
     ci = bs.conf_int(mean_diff)
@@ -894,7 +894,7 @@ def test_unequal_bs_kwargs():
 
     x = pd.Series(x)
     y = pd.Series(y)
-    bs = IndependentSamplesBootstrap(x=x, y=y, random_state=rs)
+    bs = IndependentSamplesBootstrap(x=x, y=y, seed=rs)
     variance = bs.var(mean_diff)
     assert variance > 0
 
@@ -909,19 +909,21 @@ def test_unequal_reset():
     x = rs.standard_normal(800)
     y = rs.standard_normal(200)
     orig_state = rs.get_state()
-    bs = IndependentSamplesBootstrap(x, y, random_state=rs)
+    bs = IndependentSamplesBootstrap(x, y, seed=rs)
     variance = bs.var(mean_diff)
     assert variance > 0
     bs.reset()
-    state = bs.get_state()
+    with pytest.warns(FutureWarning):
+        state = bs.get_state()
     assert_equal(state[1], orig_state[1])
 
-    bs = IndependentSamplesBootstrap(x, y)
-    bs.seed(0)
-    orig_state = bs.get_state()
+    rs = RandomState(1234)
+    bs = IndependentSamplesBootstrap(x, y, seed=rs)
+    bs.seed = RandomState(1234)
+    orig_state = bs.state
     bs.var(mean_diff)
     bs.reset(use_seed=True)
-    state = bs.get_state()
+    state = bs.state
     assert_equal(state[1], orig_state[1])
 
 
@@ -958,30 +960,31 @@ def test_bca_extra_kwarg():
 
 
 def test_set_randomstate(bs_setup):
-    bs = IIDBootstrap(bs_setup.x)
     rs = np.random.RandomState([12345])
-    bs.random_state = rs
-    assert bs.random_state is rs
+    bs = IIDBootstrap(bs_setup.x, seed=rs)
+    bs.generator = rs
+    assert bs.generator is rs
 
 
 def test_set_randomstate_exception(bs_setup):
     bs = IIDBootstrap(bs_setup.x)
     rs = np.array([1, 2, 3, 4])
-    with pytest.raises(TypeError, match="Value being set must be a RandomState"):
-        bs.random_state = rs
+    with pytest.raises(
+        TypeError, match="Value being set must be a Generator or a RandomState"
+    ):
+        with pytest.warns(FutureWarning):
+            bs.random_state = rs
 
 
 def test_iid_args_kwargs(bs_setup):
-    bs1 = IIDBootstrap(bs_setup.y)
-    bs1.seed(0)
-    bs2 = IIDBootstrap(y=bs_setup.y)
-    bs2.seed(0)
+    bs1 = IIDBootstrap(bs_setup.y, seed=0)
+    bs2 = IIDBootstrap(y=bs_setup.y, seed=0)
     for a, b in zip(bs1.bootstrap(1), bs2.bootstrap(1)):
         assert np.all(a[0][0] == b[1]["y"])
 
 
-def test_iid_semiparametric(bs_setup):
-    bs = IIDBootstrap(bs_setup.y)
+def test_iid_semiparametric(bs_setup, seed):
+    bs = IIDBootstrap(bs_setup.y, seed=seed)
 
     def func(y, axis=0, params=None):
         if params is not None:
@@ -1014,6 +1017,63 @@ def test_bc_extremum_error():
             0.54444444,
         ]
     )
-    bs = IIDBootstrap(val, random_state=np.random.RandomState(0))
+    bs = IIDBootstrap(val, seed=np.random.RandomState(0))
     with pytest.raises(RuntimeError, match="Empirical probability used"):
         bs.conf_int(profile_function, 100, method="bc")
+
+
+def test_invalid_random_state_generator():
+    rs = RandomState(1234)
+    with pytest.raises(ValueError):
+        IIDBootstrap(np.empty(100), random_state=rs, seed=123)
+    with pytest.raises(TypeError, match="generator keyword argument"):
+        IIDBootstrap(np.empty(100), seed="123")
+    bs = IIDBootstrap(np.empty(100))
+    with pytest.raises(TypeError):
+        with pytest.warns(FutureWarning):
+            bs.seed("1234")
+
+
+def test_generator(seed):
+    bs = IIDBootstrap(np.empty(100), seed=seed)
+    typ = RandomState if isinstance(seed, RandomState) else np.random.Generator
+    assert isinstance(bs.generator, typ)
+    gen_copy = copy.deepcopy(bs.generator)
+    bs.generator = gen_copy
+    with pytest.raises(TypeError):
+        bs.generator = 3
+    assert isinstance(bs.generator, typ)
+    assert bs.generator is gen_copy
+    state = bs.state
+    if isinstance(bs.generator, np.random.Generator):
+        assert isinstance(state, dict)
+    else:
+        assert isinstance(state, tuple)
+    bs.state = state
+    with pytest.warns(FutureWarning):
+        bs.set_state(state)
+    with pytest.warns(FutureWarning):
+        state = bs.get_state()
+    if isinstance(bs.generator, np.random.Generator):
+        assert isinstance(state, dict)
+    else:
+        assert isinstance(state, tuple)
+    with pytest.warns(FutureWarning):
+        assert isinstance(bs.random_state, typ)
+        bs.random_state = bs.random_state
+
+
+def test_staionary_seed(bs_setup, seed):
+    sb = StationaryBootstrap(10, bs_setup.y, seed=seed)
+    for pos, _ in sb.bootstrap(10):
+        assert pos[0].shape[0] == bs_setup.y.shape[0]
+
+
+def test_seed(bs_setup, seed):
+    bs = IIDBootstrap(bs_setup.y, seed=seed)
+    with pytest.warns(FutureWarning):
+        bs.seed(1234)
+    with pytest.warns(FutureWarning):
+        bs.seed([1234, 5678])
+    with pytest.warns(FutureWarning):
+        bs.seed(np.array([1234, 5678], dtype=np.uint32))

@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional, Union
+from typing import List, Union
 
 from arch.utility.cov import cov_nw
 
@@ -7,7 +7,7 @@ PKG = os.path.dirname(os.path.dirname(__file__))
 
 
 def test(
-    extra_args: Optional[Union[str, List[str]]] = None,
+    extra_args: Union[None, str, List[str]] = None,
     exit: bool = True,
     append: bool = True,
     location: str = "",

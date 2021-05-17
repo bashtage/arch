@@ -255,8 +255,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self,
         y: Optional[ArrayLike] = None,
         x: Optional[ArrayLike] = None,
-        lags: Optional[
-            Union[int, Sequence[int], Sequence[Sequence[int]], Int32Array, Int64Array]
+        lags: Union[
+            None, int, Sequence[int], Sequence[Sequence[int]], Int32Array, Int64Array
         ] = None,
         constant: bool = True,
         use_rotated: bool = False,
@@ -274,9 +274,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         )
         self._x = x
         self._x_names: List[str] = []
-        self._x_index: Optional[Union[NDArray, pd.Index]] = None
-        self.lags: Optional[
-            Union[int, Sequence[int], Sequence[Sequence[int]], Int32Array, Int64Array]
+        self._x_index: Union[None, NDArray, pd.Index] = None
+        self.lags: Union[
+            None, int, Sequence[int], Sequence[Sequence[int]], Int32Array, Int64Array
         ] = lags
         self._lags = np.empty((0, 0))
         self.constant: bool = constant
@@ -380,7 +380,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         parameters: Float64Array,
         x: Float64Array,
         errors: Float64Array,
-        initial_value: Optional[Union[float, Float64Array]],
+        initial_value: Union[None, float, Float64Array],
         conditional_variance: Float64Array,
     ) -> Float64Array:
         max_lag = 0 if not self._lags.size else np.max(self._lags)
@@ -417,9 +417,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         params: Union[Float64Array, Sequence[float]],
         nobs: int,
         burn: int = 500,
-        initial_value: Optional[Union[float, Float64Array]] = None,
+        initial_value: Union[None, float, Float64Array] = None,
         x: Optional[ArrayLike] = None,
-        initial_value_vol: Optional[Union[float, Float64Array]] = None,
+        initial_value_vol: Union[None, float, Float64Array] = None,
     ) -> pd.DataFrame:
         """
         Simulates data from a linear regression, AR or HAR models
@@ -667,8 +667,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def _adjust_sample(
         self,
-        first_obs: Optional[Union[int, DateLike]],
-        last_obs: Optional[Union[int, DateLike]],
+        first_obs: Union[None, int, DateLike],
+        last_obs: Union[None, int, DateLike],
     ) -> None:
         index = self._y_series.index
         _first_obs_index = cutoff_to_index(first_obs, index, 0)
@@ -923,7 +923,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self,
         params: ArrayLike1D,
         horizon: int = 1,
-        start: Optional[Union[int, DateLike]] = None,
+        start: Union[None, int, DateLike] = None,
         align: Literal["origin", "target"] = "origin",
         method: ForecastingMethod = "analytic",
         simulations: int = 1000,
@@ -1121,9 +1121,9 @@ class ConstantMean(HARX):
         params: ArrayLike,
         nobs: int,
         burn: int = 500,
-        initial_value: Optional[Union[float, Float64Array]] = None,
+        initial_value: Union[None, float, Float64Array] = None,
         x: Optional[ArrayLike] = None,
-        initial_value_vol: Optional[Union[float, Float64Array]] = None,
+        initial_value_vol: Union[None, float, Float64Array] = None,
     ) -> pd.DataFrame:
         """
         Simulated data from a constant mean model
@@ -1269,9 +1269,9 @@ class ZeroMean(HARX):
         params: Union[Sequence[float], ArrayLike1D],
         nobs: int,
         burn: int = 500,
-        initial_value: Optional[Union[float, Float64Array]] = None,
+        initial_value: Union[None, float, Float64Array] = None,
         x: Optional[ArrayLike] = None,
-        initial_value_vol: Optional[Union[float, Float64Array]] = None,
+        initial_value_vol: Union[None, float, Float64Array] = None,
     ) -> pd.DataFrame:
         """
         Simulated data from a zero mean model
@@ -1409,7 +1409,7 @@ class ARX(HARX):
         self,
         y: Optional[ArrayLike] = None,
         x: Optional[ArrayLike] = None,
-        lags: Optional[Union[int, List[int], Int32Array, Int64Array]] = None,
+        lags: Union[None, int, List[int], Int32Array, Int64Array] = None,
         constant: bool = True,
         hold_back: Optional[int] = None,
         volatility: Optional[VolatilityProcess] = None,
@@ -1616,7 +1616,7 @@ class ARCHInMean(ARX):
         self,
         y: Optional[ArrayLike] = None,
         x: Optional[ArrayLike] = None,
-        lags: Optional[Union[int, List[int], Int32Array, Int64Array]] = None,
+        lags: Union[None, int, List[int], Int32Array, Int64Array] = None,
         constant: bool = True,
         hold_back: Optional[int] = None,
         volatility: Optional[VolatilityProcess] = None,
@@ -1691,7 +1691,7 @@ class ARCHInMean(ARX):
         self,
         params: ArrayLike1D,
         horizon: int = 1,
-        start: Optional[Union[int, DateLike]] = None,
+        start: Union[None, int, DateLike] = None,
         align: Literal["origin", "target"] = "origin",
         method: ForecastingMethod = "analytic",
         simulations: int = 1000,
@@ -1758,7 +1758,7 @@ class ARCHInMean(ARX):
         parameters: Float64Array,
         x: Float64Array,
         errors: Float64Array,
-        initial_value: Optional[Union[float, Float64Array]],
+        initial_value: Union[None, float, Float64Array],
         conditional_variance: Float64Array,
     ) -> Float64Array:
         """
@@ -1816,7 +1816,7 @@ def arch_model(
     mean: Literal[
         "Constant", "Zero", "LS", "AR", "ARX", "HAR", "HARX", "constant", "zero"
     ] = "Constant",
-    lags: Optional[Union[int, List[int], Int32Array, Int64Array]] = 0,
+    lags: Union[None, int, List[int], Int32Array, Int64Array] = 0,
     vol: Literal["GARCH", "ARCH", "EGARCH", "FIARCH", "HARCH"] = "GARCH",
     p: Union[int, List[int]] = 1,
     o: int = 0,
