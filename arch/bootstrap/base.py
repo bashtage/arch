@@ -326,8 +326,8 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
         .. deprecated:: 5.0
 
-           The ``random_state`` keyword argument has been deprecated. Use
-           ``seed`` instead.
+           The random_state keyword argument has been deprecated. Use seed instead.
+
     kwargs
         Keyword arguments to bootstrap
 
@@ -1493,8 +1493,8 @@ class CircularBlockBootstrap(IIDBootstrap):
 
         .. deprecated:: 5.0
 
-           The ``random_state`` keyword argument has been deprecated. Use
-           ``seed`` instead.
+           The random_state keyword argument has been deprecated. Use seed instead.
+
     kwargs
         Keyword arguments to bootstrap
 
@@ -1621,8 +1621,8 @@ class StationaryBootstrap(CircularBlockBootstrap):
 
         .. deprecated:: 5.0
 
-           The ``random_state`` keyword argument has been deprecated. Use
-           ``seed`` instead.
+           The random_state keyword argument has been deprecated. Use seed instead.
+
     kwargs
         Keyword arguments to bootstrap
 
@@ -1731,8 +1731,8 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
 
         .. deprecated:: 5.0
 
-           The ``random_state`` keyword argument has been deprecated. Use
-           ``seed`` instead.
+           The random_state keyword argument has been deprecated. Use seed instead.
+
     kwargs
         Keyword arguments to bootstrap
 

@@ -94,7 +94,7 @@ def test_exog_smoke(x):
 
 
 def test_simulate():
-    normal = Normal(random_state=np.random.RandomState(0))
+    normal = Normal(seed=np.random.RandomState(0))
     gim = ARCHInMean(SP500, volatility=GARCH(), distribution=normal)
     res = gim.fit(disp="off")
     sim = gim.simulate(res.params, 1000)
@@ -125,7 +125,7 @@ def test_supported(good_vol):
 
 @pytest.mark.parametrize("form", ["log", "vol", 1.5])
 def test_simulate_arx(form):
-    normal = Normal(random_state=np.random.RandomState(0))
+    normal = Normal(seed=np.random.RandomState(0))
     gim = ARCHInMean(
         SP500,
         constant=False,

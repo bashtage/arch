@@ -1,0 +1,10 @@
+div.deprecated {
+  background-color: rgba(255, 0, 0, 0.2);
+  padding: 0.1em 0.5em;
+  border: #c00 solid 2px;
+}
+
+span.versionmodified.deprecated {
+  color: #c00;
+  font-weight: bold;
+}
