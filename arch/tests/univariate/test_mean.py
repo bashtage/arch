@@ -70,7 +70,7 @@ SP500 = 100 * sp500.load()["Adj Close"].pct_change().dropna()
 @pytest.fixture(scope="module", params=[True, False])
 def simulated_data(request):
     rs = np.random.RandomState(1)
-    zm = ZeroMean(volatility=GARCH(), distribution=Normal(rs))
+    zm = ZeroMean(volatility=GARCH(), distribution=Normal(seed=rs))
     sim_data = zm.simulate(np.array([0.1, 0.1, 0.88]), 1000)
     return np.asarray(sim_data.data) if request.param else sim_data.data
 
@@ -85,7 +85,7 @@ class TestMeanModel(object):
         zm.volatility = GARCH()
         seed = 12345
         random_state = np.random.RandomState(seed)
-        zm.distribution = Normal(random_state=random_state)
+        zm.distribution = Normal(seed=random_state)
         sim_data = zm.simulate(np.array([0.1, 0.1, 0.8]), 1000)
         with pytest.raises(ValueError):
             zm.simulate(np.array([0.1, 0.1, 0.8]), 1000, initial_value=3.0)
@@ -1023,7 +1023,7 @@ class TestMeanModel(object):
         assert "scale" not in res.params.index
 
     def test_optimization_options(self):
-        norm = Normal(random_state=RandomState([12891298, 843084]))
+        norm = Normal(seed=RandomState([12891298, 843084]))
         am = arch_model(None)
         am.distribution = norm
         data = am.simulate(np.array([0.0, 0.1, 0.1, 0.85]), 2500)
@@ -1143,7 +1143,7 @@ def test_arch_lm(simulated_data):
 
 def test_autoscale():
     rs = np.random.RandomState(34254321)
-    dist = Normal(random_state=rs)
+    dist = Normal(seed=rs)
     am = arch_model(None)
     am.distribution = dist
     data = am.simulate([0, 0.0001, 0.05, 0.94], nobs=1000)

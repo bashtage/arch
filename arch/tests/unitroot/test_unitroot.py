@@ -92,9 +92,9 @@ class TestUnitRoot(object):
         adf.summary()
 
     def test_adf_auto_bic(self):
-        adf = ADF(self.inflation, method="BIC")
+        adf = ADF(self.inflation, method="bic")
         assert_equal(adf.lags, 2)
-        adf2 = ADF(self.inflation, method="BIC", low_memory=True)
+        adf2 = ADF(self.inflation, method="bic", low_memory=True)
         assert_equal(adf2.lags, 2)
 
     def test_adf_critical_value(self):
@@ -111,13 +111,11 @@ class TestUnitRoot(object):
         adf2 = ADF(self.inflation, method="t-stat", low_memory=True)
         assert_equal(adf2.lags, 11)
         old_stat = adf.stat
-        with pytest.warns(FutureWarning, match="Mutating unit root"):
-            adf.lags += 1
+        adf = ADF(self.inflation, method="t-stat", lags=adf.lags + 1)
         assert adf.stat != old_stat
         old_stat = adf.stat
         assert_equal(adf.y, self.inflation)
-        with pytest.warns(FutureWarning, match="Mutating unit root"):
-            adf.trend = "ctt"
+        adf = ADF(self.inflation, method="t-stat", trend="ctt", lags=adf.lags)
         assert adf.stat != old_stat
         assert adf.trend == "ctt"
         assert len(adf.valid_trends) == len(("n", "c", "ct", "ctt"))
@@ -146,8 +144,7 @@ class TestUnitRoot(object):
         pp = PhillipsPerron(self.inflation, lags=12)
         assert_almost_equal(pp.stat, -7.8076512, DECIMAL_4)
         assert pp.test_type == "tau"
-        with pytest.warns(FutureWarning, match="Mutating unit root"):
-            pp.test_type = "rho"
+        pp = PhillipsPerron(self.inflation, lags=12, test_type="rho")
         assert_almost_equal(pp.stat, -108.1552688, DECIMAL_2)
         pp.summary()
 
@@ -159,8 +156,7 @@ class TestUnitRoot(object):
 
     def test_pp_bad_type(self):
         pp = PhillipsPerron(self.inflation, lags=12)
-        with pytest.raises(ValueError):
-            pp.test_type = "unknown"
+        assert isinstance(pp.test_type, str)
 
     def test_pp_auto(self):
         pp = PhillipsPerron(self.inflation)
@@ -168,8 +164,7 @@ class TestUnitRoot(object):
         lags = ceil(12.0 * ((n / 100.0) ** (1.0 / 4.0)))
         assert_equal(pp.lags, lags)
         assert_almost_equal(pp.stat, -8.135547778, DECIMAL_4)
-        with pytest.warns(FutureWarning, match="Mutating unit root"):
-            pp.test_type = "rho"
+        pp = PhillipsPerron(self.inflation, test_type="rho")
         assert_almost_equal(pp.stat, -118.7746451, DECIMAL_2)
 
     def test_dfgls_c(self):
@@ -178,22 +173,14 @@ class TestUnitRoot(object):
         dfgls.summary()
         dfgls.regression.summary()
         assert dfgls.trend == "c"
-        with pytest.warns(FutureWarning, match="Mutating unit root"):
-            dfgls.trend = "c"
-        assert dfgls.trend == "c"
-        with pytest.warns(FutureWarning, match="Mutating unit root"):
-            dfgls.trend = "ct"
+        dfgls = DFGLS(self.inflation, trend="ct", lags=0)
         assert dfgls.trend == "ct"
-        with pytest.warns(FutureWarning, match="Mutating unit root"):
-            dfgls.trend = "c"
+        dfgls = DFGLS(self.inflation, trend="c")
         assert dfgls.trend == "c"
         dfgls_hm = DFGLS(self.inflation, trend="c", lags=0, low_memory=False)
         assert_almost_equal(dfgls_hm.stat, -6.017304, DECIMAL_4)
         dfgls_lm = DFGLS(self.inflation, trend="c", lags=0, low_memory=True)
         assert_almost_equal(dfgls_lm.stat, -6.017304, DECIMAL_4)
-        ml = dfgls.max_lags
-        with pytest.warns(FutureWarning, match="Mutating unit root"):
-            dfgls.max_lags = ml
 
     def test_dfgls(self):
         dfgls = DFGLS(self.inflation, trend="ct", lags=0)
@@ -202,48 +189,33 @@ class TestUnitRoot(object):
         dfgls.regression.summary()
 
     def test_dfgls_auto(self):
-        dfgls = DFGLS(self.inflation, trend="ct", method="BIC", max_lags=3)
+        dfgls = DFGLS(self.inflation, trend="ct", method="bic", max_lags=3)
         assert_equal(dfgls.lags, 2)
         assert_equal(dfgls.max_lags, 3)
         assert_almost_equal(dfgls.stat, -2.9035369, DECIMAL_4)
-        with pytest.warns(FutureWarning, match="Mutating unit root"):
-            dfgls.max_lags = 1
+        dfgls = DFGLS(self.inflation, trend="ct", method="bic", max_lags=1)
         assert_equal(dfgls.lags, 1)
 
     def test_dfgls_bad_trend(self):
-        dfgls = DFGLS(self.inflation, trend="ct", method="BIC", max_lags=3)
+        dfgls = DFGLS(self.inflation, trend="ct", method="bic", max_lags=3)
         with pytest.raises(ValueError):
-            dfgls.trend = "n"
+            DFGLS(self.inflation, method="bic", max_lags=3, trend="n")
 
         assert dfgls != 0.0
 
     def test_dfgls_auto_low_memory(self):
         y = np.cumsum(self.rng.standard_normal(200000))
-        dfgls = DFGLS(y, trend="c", method="BIC", low_memory=None)
+        dfgls = DFGLS(y, trend="c", method="bic", low_memory=None)
         assert isinstance(dfgls.stat, float)
         assert dfgls._low_memory
 
     def test_negative_lag(self):
-        adf = ADF(self.inflation)
         with pytest.raises(ValueError):
-            adf.lags = -1
-
-    def test_no_change_lags_trend(self):
-        adf = ADF(self.inflation)
-        lags = adf.lags
-        with pytest.warns(FutureWarning, match="Mutating unit root"):
-            adf.lags = lags
-        trend = adf.trend
-        with pytest.warns(FutureWarning, match="Mutating unit root"):
-            adf.trend = trend
-        ml = adf.max_lags
-        with pytest.warns(FutureWarning, match="Mutating unit root"):
-            adf.max_lags = ml
+            ADF(self.inflation, lags=-1)
 
     def test_invalid_determinstic(self):
-        adf = ADF(self.inflation)
         with pytest.raises(ValueError):
-            adf.trend = "bad-value"
+            ADF(self.inflation, trend="bad-value")
 
     def test_variance_ratio(self):
         vr = VarianceRatio(self.inflation, debiased=False)
@@ -258,8 +230,7 @@ class TestUnitRoot(object):
 
         assert_almost_equal(ratio, vr.vr)
         assert "Variance-Ratio Test" in str(vr)
-        with pytest.warns(FutureWarning, match="Mutating unit root"):
-            vr.debiased = True
+        vr = VarianceRatio(self.inflation, debiased=True)
         assert vr.debiased is True
 
     def test_variance_ratio_no_overlap(self):
@@ -281,8 +252,7 @@ class TestUnitRoot(object):
         ratio = num / denom
         assert_equal(ratio, computed_value)
 
-        with pytest.warns(FutureWarning, match="Mutating unit root"):
-            vr.overlap = True
+        vr = VarianceRatio(self.inflation, overlap=True)
         assert_equal(vr.overlap, True)
         vr2 = VarianceRatio(self.inflation)
         assert_almost_equal(vr.stat, vr2.stat)
@@ -301,8 +271,7 @@ class TestUnitRoot(object):
         stat = np.sqrt(nq) * (ratio - 1) / np.sqrt(variance)
         assert_almost_equal(stat, vr.stat)
         orig_stat = vr.stat
-        with pytest.warns(FutureWarning, match="Mutating unit root"):
-            vr.robust = True
+        vr = VarianceRatio(self.inflation, robust=True, debiased=False)
         assert_equal(vr.robust, True)
         assert vr.stat != orig_stat
 
@@ -436,8 +405,7 @@ def test_trends_low_memory(trend):
     adf2 = ADF(y, trend=trend, low_memory=True, max_lags=16)
     assert adf.lags == adf2.lags
     assert adf.max_lags == 16
-    with pytest.warns(FutureWarning, match="Mutating unit root"):
-        adf.max_lags = 1
+    adf = ADF(y, trend=trend, max_lags=1)
     assert_equal(adf.lags, 1)
     assert_equal(adf.max_lags, 1)
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 import platform
-from typing import Optional, Union
+from typing import Union
 
 from numpy import arange, array, cumsum, dot, ones, vstack
 from numpy.linalg import pinv
@@ -68,7 +68,7 @@ def adf_simulation(
     n: int,
     trend: UnitRootTrend,
     b: int,
-    rng: Optional[Union[RandomState, Generator]] = None,
+    rng: Union[None, RandomState, Generator] = None,
 ) -> float:
     """
     Simulates the empirical distribution of the ADF z-test statistic

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
 from typing import Callable, List, Optional, Sequence, Tuple, Union
+import warnings
 
 from numpy import (
     abs,
@@ -14,6 +15,7 @@ from numpy import (
     asarray,
     empty,
     exp,
+    integer,
     isscalar,
     log,
     nan,
@@ -24,7 +26,7 @@ from numpy import (
     sqrt,
     sum,
 )
-from numpy.random import RandomState
+from numpy.random import Generator, RandomState, default_rng
 from scipy.special import comb, gamma, gammainc, gammaincc, gammaln
 import scipy.stats as stats
 
@@ -39,16 +41,43 @@ class Distribution(object, metaclass=ABCMeta):
     Template for subclassing only
     """
 
-    def __init__(self, random_state: Optional[RandomState] = None) -> None:
+    def __init__(
+        self,
+        random_state: Optional[RandomState] = None,
+        *,
+        seed: Union[None, int, RandomState, Generator] = None,
+    ) -> None:
         self._name = "Distribution"
         self.num_params: int = 0
         self._parameters: Optional[Float64Array] = None
-        if random_state is None:
-            self._random_state = RandomState()
-        elif isinstance(random_state, RandomState):
-            self._random_state = random_state
-        else:  # not isinstance(self._random_state, RandomState):
-            raise TypeError("random_state must by a NumPy RandomState instance")
+        if random_state is not None:
+            if seed is not None:
+                raise ValueError(
+                    "seed cannot be simultantoulsy used with random_state. Use "
+                    "seed to future proof your code."
+                )
+            if not isinstance(random_state, RandomState):
+                raise TypeError(
+                    "random_state must contain a RandomState instance when not None."
+                )
+            warnings.warn(
+                "random_state is deprecated and will be removed in a future update. "
+                "Use seed instead.",
+                FutureWarning,
+            )
+            _seed: Union[None, RandomState, Generator, int] = random_state
+        else:
+            _seed = seed
+        if _seed is None:
+            self._generator: Union[Generator, RandomState] = default_rng()
+        elif isinstance(_seed, (int, integer)):
+            self._generator = default_rng((_seed))
+        elif isinstance(_seed, (RandomState, Generator)):
+            self._generator = _seed
+        else:
+            raise TypeError(
+                "seed must by a NumPy Generator or RandomState or int, if not None."
+            )
 
     @property
     def name(self) -> str:
@@ -56,7 +85,7 @@ class Distribution(object, metaclass=ABCMeta):
         return self._name
 
     def _check_constraints(
-        self, parameters: Optional[Union[Sequence[float], ArrayLike1D]]
+        self, parameters: Union[None, Sequence[float], ArrayLike1D]
     ) -> Float64Array:
         bounds = self.bounds(empty(0))
         if parameters is not None:
@@ -77,9 +106,25 @@ class Distribution(object, metaclass=ABCMeta):
         return params
 
     @property
-    def random_state(self) -> RandomState:
-        """The NumPy RandomState attached to the distribution"""
-        return self._random_state
+    def generator(self) -> Union[RandomState, Generator]:
+        """The NumPy Generator or RandomState attached to the distribution"""
+        return self._generator
+
+    @property
+    def random_state(self) -> Union[RandomState, Generator]:
+        """
+        The NumPy RandomState attached to the distribution
+
+        .. deprecated:: 5.0
+
+           random_state is deprecated. Use generator instead.
+        """
+        warnings.warn(
+            "random_state is deprecated and will be removed in a future "
+            "update. Use generator instead.",
+            FutureWarning,
+        )
+        return self._generator
 
     @abstractmethod
     def _simulator(self, size: Union[int, Tuple[int, ...]]) -> Float64Array:
@@ -218,7 +263,7 @@ class Distribution(object, metaclass=ABCMeta):
     def ppf(
         self,
         pits: Union[float, Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Union[float, Float64Array]:
         """
         Inverse cumulative density function (ICDF)
@@ -241,7 +286,7 @@ class Distribution(object, metaclass=ABCMeta):
     def cdf(
         self,
         resids: Union[Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         """
         Cumulative distribution function
@@ -262,7 +307,7 @@ class Distribution(object, metaclass=ABCMeta):
 
     @abstractmethod
     def moment(
-        self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
+        self, n: int, parameters: Union[None, Sequence[float], ArrayLike1D] = None
     ) -> float:
         """
         Moment of order n
@@ -285,7 +330,7 @@ class Distribution(object, metaclass=ABCMeta):
         self,
         n: int,
         z: float = 0.0,
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> float:
         r"""
         Order n lower partial moment from -inf to z
@@ -333,10 +378,28 @@ class Distribution(object, metaclass=ABCMeta):
 class Normal(Distribution, metaclass=AbstractDocStringInheritor):
     """
     Standard normal distribution for use with ARCH models
+
+    Parameters
+    ----------
+    random_state : RandomState, optional
+        .. deprecated:: 5.0
+
+           random_state is deprecated. Use seed instead.
+
+    seed : {int, Generator, RandomState}, optional
+        Random number generator instance or int to use. Set to ensure
+        reproducibility. If using an int, the argument is passed to
+        ``np.random.default_rng``.  If not provided, ``default_rng``
+        is used with system-provided entropy.
     """
 
-    def __init__(self, random_state: Optional[RandomState] = None) -> None:
-        super().__init__(random_state=random_state)
+    def __init__(
+        self,
+        random_state: Optional[RandomState] = None,
+        *,
+        seed: Union[None, int, RandomState, Generator] = None,
+    ) -> None:
+        super().__init__(random_state=random_state, seed=seed)
         self._name = "Normal"
 
     def constraints(self) -> Tuple[Float64Array, Float64Array]:
@@ -393,7 +456,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         return empty(0)
 
     def _simulator(self, size: Union[int, Tuple[int, ...]]) -> Float64Array:
-        return self._random_state.standard_normal(size)
+        return self._generator.standard_normal(size)
 
     def simulate(
         self, parameters: Union[int, float, Sequence[Union[float, int]], ArrayLike1D]
@@ -406,7 +469,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
     def cdf(
         self,
         resids: Union[Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         self._check_constraints(parameters)
         return stats.norm.cdf(asarray(resids))
@@ -414,7 +477,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
     def ppf(
         self,
         pits: Union[float, Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         self._check_constraints(parameters)
         scalar = isscalar(pits)
@@ -429,7 +492,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
             return ppf
 
     def moment(
-        self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
+        self, n: int, parameters: Union[None, Sequence[float], ArrayLike1D] = None
     ) -> float:
         if n < 0:
             return nan
@@ -440,7 +503,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         n: int,
         z: float = 0.0,
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> float:
         if n < 0:
             return nan
@@ -457,10 +520,28 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
 class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
     """
     Standardized Student's distribution for use with ARCH models
+
+    Parameters
+    ----------
+    random_state : RandomState, optional
+        .. deprecated:: 5.0
+
+           random_state is deprecated. Use seed instead.
+
+    seed : {int, Generator, RandomState}, optional
+        Random number generator instance or int to use. Set to ensure
+        reproducibility. If using an int, the argument is passed to
+        ``np.random.default_rng``.  If not provided, ``default_rng``
+        is used with system-provided entropy.
     """
 
-    def __init__(self, random_state: Optional[RandomState] = None) -> None:
-        super().__init__(random_state=random_state)
+    def __init__(
+        self,
+        random_state: Optional[RandomState] = None,
+        *,
+        seed: Union[None, int, RandomState, Generator] = None,
+    ) -> None:
+        super().__init__(random_state=random_state, seed=seed)
         self._name = "Standardized Student's t"
         self.num_params: int = 1
 
@@ -549,7 +630,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         assert self._parameters is not None
         parameters = self._parameters
         std_dev = sqrt(parameters[0] / (parameters[0] - 2))
-        return self._random_state.standard_t(self._parameters[0], size=size) / std_dev
+        return self._generator.standard_t(self._parameters[0], size=size) / std_dev
 
     def simulate(
         self, parameters: Union[int, float, Sequence[Union[float, int]], ArrayLike1D]
@@ -566,7 +647,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
     def cdf(
         self,
         resids: Union[Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
@@ -576,7 +657,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
     def ppf(
         self,
         pits: Union[Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         pits = asarray(pits)
@@ -585,7 +666,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         return stats.t(nu, scale=1.0 / sqrt(var)).ppf(pits)
 
     def moment(
-        self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
+        self, n: int, parameters: Union[None, Sequence[float], ArrayLike1D] = None
     ) -> float:
         if n < 0:
             return nan
@@ -598,7 +679,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         n: int,
         z: float = 0.0,
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> float:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
@@ -660,6 +741,19 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     r"""
     Standardized Skewed Student's distribution for use with ARCH models
 
+    Parameters
+    ----------
+    random_state : RandomState, optional
+        .. deprecated:: 5.0
+
+           random_state is deprecated. Use seed instead.
+
+    seed : {int, Generator, RandomState}, optional
+        Random number generator instance or int to use. Set to ensure
+        reproducibility. If using an int, the argument is passed to
+        ``np.random.default_rng``.  If not provided, ``default_rng``
+        is used with system-provided entropy.
+
     Notes
     -----
     The Standardized Skewed Student's distribution ([1]_) takes two parameters,
@@ -676,8 +770,13 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
     """
 
-    def __init__(self, random_state: Optional[RandomState] = None) -> None:
-        super().__init__(random_state=random_state)
+    def __init__(
+        self,
+        random_state: Optional[RandomState] = None,
+        *,
+        seed: Union[None, int, RandomState, Generator] = None,
+    ) -> None:
+        super().__init__(random_state=random_state, seed=seed)
         self._name = "Standardized Skew Student's t"
         self.num_params: int = 2
 
@@ -787,7 +886,11 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def _simulator(self, size: Union[int, Tuple[int, ...]]) -> Float64Array:
         # No need to normalize since it is already done in parameterization
         assert self._parameters is not None
-        ppf = self.ppf(self._random_state.random_sample(size=size), self._parameters)
+        if isinstance(self._generator, Generator):
+            uniforms = self._generator.random(size=size)
+        else:
+            uniforms = self._generator.random_sample(size=size)
+        ppf = self.ppf(uniforms, self._parameters)
         assert isinstance(ppf, ndarray)
         return ppf
 
@@ -861,12 +964,14 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         """
         eta = parameters[0]
         # return gamma((eta+1)/2) / ((pi*(eta-2))**.5 * gamma(eta/2))
-        return float(gammaln((eta + 1) / 2) - gammaln(eta / 2) - log(pi * (eta - 2)) / 2)
+        return float(
+            gammaln((eta + 1) / 2) - gammaln(eta / 2) - log(pi * (eta - 2)) / 2
+        )
 
     def cdf(
         self,
         resids: ArrayLike,
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(resids)
@@ -892,7 +997,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def ppf(
         self,
         pits: Union[Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Union[float, Float64Array]:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(pits)
@@ -921,7 +1026,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         return icdf
 
     def moment(
-        self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
+        self, n: int, parameters: Union[None, Sequence[float], ArrayLike1D] = None
     ) -> float:
         parameters = self._check_constraints(parameters)
         eta, lam = parameters
@@ -956,7 +1061,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         n: int,
         z: float = 0.0,
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> float:
         parameters = self._check_constraints(parameters)
         eta, lam = parameters
@@ -1002,10 +1107,28 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
     """
     Generalized Error distribution for use with ARCH models
+
+    Parameters
+    ----------
+    random_state : RandomState, optional
+        .. deprecated:: 5.0
+
+           random_state is deprecated. Use seed instead.
+
+    seed : {int, Generator, RandomState}, optional
+        Random number generator instance or int to use. Set to ensure
+        reproducibility. If using an int, the argument is passed to
+        ``np.random.default_rng``.  If not provided, ``default_rng``
+        is used with system-provided entropy.
     """
 
-    def __init__(self, random_state: Optional[RandomState] = None) -> None:
-        super().__init__(random_state=random_state)
+    def __init__(
+        self,
+        random_state: Optional[RandomState] = None,
+        *,
+        seed: Union[None, int, RandomState, Generator] = None,
+    ) -> None:
+        super().__init__(random_state=random_state, seed=seed)
         self._name = "Generalized Error Distribution"
         self.num_params: int = 1
 
@@ -1097,8 +1220,12 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         assert self._parameters is not None
         parameters = self._parameters
         nu = parameters[0]
-        randoms = self._random_state.standard_gamma(1 / nu, size) ** (1.0 / nu)
-        randoms *= 2 * self._random_state.randint(0, 2, size) - 1
+        randoms = self._generator.standard_gamma(1 / nu, size) ** (1.0 / nu)
+        if isinstance(self._generator, Generator):
+            random_ints = self._generator.integers(0, 2, size)
+        else:
+            random_ints = self._generator.randint(0, 2, size)
+        randoms *= 2 * random_ints - 1
         scale = sqrt(gamma(3.0 / nu) / gamma(1.0 / nu))
 
         return randoms / scale
@@ -1118,7 +1245,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
     def ppf(
         self,
         pits: Union[Sequence[float], ArrayLike1D],
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         pits = asarray(pits)
@@ -1129,7 +1256,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
     def cdf(
         self,
         resids: ArrayLike,
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
@@ -1138,7 +1265,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).cdf(resids)
 
     def moment(
-        self, n: int, parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None
+        self, n: int, parameters: Union[None, Sequence[float], ArrayLike1D] = None
     ) -> float:
         if n < 0:
             return nan
@@ -1152,7 +1279,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         n: int,
         z: float = 0.0,
-        parameters: Optional[Union[Sequence[float], ArrayLike1D]] = None,
+        parameters: Union[None, Sequence[float], ArrayLike1D] = None,
     ) -> float:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]

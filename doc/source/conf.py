@@ -36,7 +36,7 @@ for example in examples:
 # -- Project information -----------------------------------------------------
 
 project = "arch"
-copyright = "2019, Kevin Sheppard"
+copyright = "2021, Kevin Sheppard"
 author = "Kevin Sheppard"
 
 # The short X.Y version
@@ -176,6 +176,7 @@ html_logo = "images/bw-logo.svg"
 # so a file named "default.css" will overwrite the builtin "default.css".
 if not on_rtd:
     html_static_path = ["_static"]
+    html_css_files = ['css/small_fixes.css']
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.

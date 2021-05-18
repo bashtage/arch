@@ -50,6 +50,8 @@ __all__ = [
     "BoolArray",
     "AnyArray",
     "IntArray",
+    "RandomStateState",
+    "Uint32Array",
 ]
 
 NDArray = Union[np.ndarray]
@@ -60,8 +62,13 @@ if NP_GTE_121:
     IntArray = np.ndarray[Any, np.dtype[np.int_]]
     BoolArray = np.ndarray[Any, np.dtype[np.bool_]]
     AnyArray = np.ndarray[Any, Any]
+    Uint32Array = np.ndarray[Any, np.dtype[np.uint32]]
 else:
-    IntArray = Float64Array = Int64Array = Int32Array = BoolArray = AnyArray = NDArray
+    Uint32Array = (
+        IntArray
+    ) = Float64Array = Int64Array = Int32Array = BoolArray = AnyArray = NDArray
+
+RandomStateState = Tuple[str, Uint32Array, int, int, float]
 
 RNGType = Callable[[Union[int, Tuple[int, ...]]], Float64Array]
 ArrayLike1D = Union[NDArray, Series]

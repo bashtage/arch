@@ -47,12 +47,12 @@ def spa_data():
 
 
 def test_equivalence(spa_data):
-    spa = SPA(spa_data.benchmark, spa_data.models, block_size=10, reps=100)
-    spa.seed(23456)
+    spa = SPA(spa_data.benchmark, spa_data.models, block_size=10, reps=100, seed=23456)
     spa.compute()
     numpy_pvalues = spa.pvalues
-    spa = SPA(spa_data.benchmark_df, spa_data.models_df, block_size=10, reps=100)
-    spa.seed(23456)
+    spa = SPA(
+        spa_data.benchmark_df, spa_data.models_df, block_size=10, reps=100, seed=23456
+    )
     spa.compute()
     pandas_pvalues = spa.pvalues
     assert_series_equal(numpy_pvalues, pandas_pvalues)
@@ -61,7 +61,8 @@ def test_equivalence(spa_data):
 def test_variances_and_selection(spa_data):
     adj_models = spa_data.models + linspace(-2, 0.5, spa_data.k)
     spa = SPA(spa_data.benchmark, adj_models, block_size=10, reps=10)
-    spa.seed(23456)
+    with pytest.warns(FutureWarning):
+        spa.seed(23456)
     spa.compute()
     variances = spa._loss_diff_var
     loss_diffs = spa._loss_diff
@@ -85,20 +86,25 @@ def test_variances_and_selection(spa_data):
     assert_equal(valid, spa._valid_columns)
 
     # Bootstrap variances
-    spa = SPA(spa_data.benchmark, spa_data.models, block_size=10, reps=100, nested=True)
-    spa.seed(23456)
+    spa = SPA(
+        spa_data.benchmark,
+        spa_data.models,
+        block_size=10,
+        reps=100,
+        nested=True,
+        seed=23456,
+    )
     spa.compute()
     spa.reset()
-    bs = spa.bootstrap.clone(demeaned)
+    bs = spa.bootstrap.clone(demeaned, seed=23456)
     variances = spa._loss_diff_var
     bootstrap_variances = t * bs.var(lambda x: x.mean(0), reps=100, recenter=True)
     assert_allclose(bootstrap_variances, variances)
 
 
 def test_pvalues_and_critvals(spa_data):
-    spa = SPA(spa_data.benchmark, spa_data.models, reps=100)
+    spa = SPA(spa_data.benchmark, spa_data.models, reps=100, seed=23456)
     spa.compute()
-    spa.seed(23456)
     simulated_vals = spa._simulated_vals
     max_stats = np.max(simulated_vals, 0)
     max_loss_diff = np.max(spa._loss_diff.mean(0), 0)
@@ -161,14 +167,15 @@ def test_str_repr(spa_data):
 
 
 def test_seed_reset(spa_data):
-    spa = SPA(spa_data.benchmark, spa_data.models, reps=10)
-    spa.seed(23456)
-    initial_state = spa.bootstrap.random_state
-    assert_equal(spa.bootstrap._seed, 23456)
+    spa = SPA(spa_data.benchmark, spa_data.models, reps=10, seed=23456)
+    initial_state = spa.bootstrap.state
     spa.compute()
     spa.reset()
     assert spa._pvalues == {}
-    assert_equal(spa.bootstrap.random_state, initial_state)
+    assert_equal(spa.bootstrap.state["state"]["state"], initial_state["state"]["state"])
+    assert_equal(spa.bootstrap.state["state"]["inc"], initial_state["state"]["inc"])
+    assert_equal(spa.bootstrap.state["has_uint32"], initial_state["has_uint32"])
+    assert_equal(spa.bootstrap.state["uinteger"], initial_state["uinteger"])
 
 
 def test_spa_nested(spa_data):
@@ -214,13 +221,13 @@ class TestStepM(object):
 
     def test_equivalence(self):
         adj_models = self.models - linspace(-2.0, 2.0, self.k)
-        stepm = StepM(self.benchmark, adj_models, size=0.20, reps=200)
-        stepm.seed(23456)
+        stepm = StepM(self.benchmark, adj_models, size=0.20, reps=200, seed=23456)
         stepm.compute()
 
         adj_models = self.models_df - linspace(-2.0, 2.0, self.k)
-        stepm_pandas = StepM(self.benchmark_series, adj_models, size=0.20, reps=200)
-        stepm_pandas.seed(23456)
+        stepm_pandas = StepM(
+            self.benchmark_series, adj_models, size=0.20, reps=200, seed=23456
+        )
         stepm_pandas.compute()
         assert isinstance(stepm_pandas.superior_models, list)
         members = adj_models.columns.isin(stepm_pandas.superior_models)
@@ -350,8 +357,7 @@ class TestMCS(object):
             return pval, drop_index
 
         losses = self.losses[:, :10]  # Limit size
-        mcs = MCS(losses, 0.05, reps=200)
-        mcs.seed(23456)
+        mcs = MCS(losses, 0.05, reps=200, seed=23456)
         mcs.compute()
         m = 5  # Number of direct
         pvals = np.zeros(m) * np.nan
@@ -394,8 +400,7 @@ class TestMCS(object):
             return pval, drop_index, std_devs
 
         losses = self.losses[:, :10]  # Limit size
-        mcs = MCS(losses, 0.05, reps=200, method="max")
-        mcs.seed(23456)
+        mcs = MCS(losses, 0.05, reps=200, method="max", seed=23456)
         mcs.compute()
         m = 8  # Number of direct
         pvals = np.zeros(m) * np.nan
@@ -471,8 +476,7 @@ class TestMCS(object):
 
     def test_all_models_have_pval(self):
         losses = self.losses_df.iloc[:, :20]
-        mcs = MCS(losses, 0.05, reps=200)
-        mcs.seed(23456)
+        mcs = MCS(losses, 0.05, reps=200, seed=23456)
         mcs.compute()
         nan_locs = np.isnan(mcs.pvalues.iloc[:, 0])
         assert not nan_locs.any()
@@ -482,15 +486,13 @@ class TestMCS(object):
         tied_mean = losses.mean().median()
         losses.iloc[:, 10:] -= losses.iloc[:, 10:].mean()
         losses.iloc[:, 10:] += tied_mean
-        mcs = MCS(losses, 0.05, reps=200)
-        mcs.seed(23456)
+        mcs = MCS(losses, 0.05, reps=200, seed=23456)
         mcs.compute()
 
     def test_missing_included_max(self):
         losses = self.losses_df.iloc[:, :20].copy()
         losses = losses.values + 5 * np.arange(20)[None, :]
-        mcs = MCS(losses, 0.05, reps=200, method="max")
-        mcs.seed(23456)
+        mcs = MCS(losses, 0.05, reps=200, method="max", seed=23456)
         mcs.compute()
         assert len(mcs.included) > 0
         assert (len(mcs.included) + len(mcs.excluded)) == 20

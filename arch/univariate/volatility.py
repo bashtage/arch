@@ -769,7 +769,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, Float64Array]] = None,
+        initial_value: Union[None, float, Float64Array] = None,
     ) -> Tuple[Float64Array, Float64Array]:
         """
         Simulate data from the model
@@ -860,7 +860,7 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, Float64Array]] = None,
+        initial_value: Union[None, float, Float64Array] = None,
     ) -> Tuple[Float64Array, Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         errors = rng(nobs + burn)
@@ -1128,7 +1128,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, Float64Array]] = None,
+        initial_value: Union[None, float, Float64Array] = None,
     ) -> Tuple[Float64Array, Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         p, o, q, power = self.p, self.o, self.q, self.power
@@ -1499,7 +1499,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, Float64Array]] = None,
+        initial_value: Union[None, float, Float64Array] = None,
     ) -> Tuple[Float64Array, Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         lags = self.lags
@@ -1771,7 +1771,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, Float64Array]] = None,
+        initial_value: Union[None, float, Float64Array] = None,
     ) -> Tuple[Float64Array, Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         if self._asym:
@@ -2100,7 +2100,7 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, Float64Array]] = None,
+        initial_value: Union[None, float, Float64Array] = None,
     ) -> Tuple[Float64Array, Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         errors = rng(nobs + burn)
@@ -2367,7 +2367,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, Float64Array]] = None,
+        initial_value: Union[None, float, Float64Array] = None,
     ) -> Tuple[Float64Array, Float64Array]:
         errors = rng(nobs + burn)
 
@@ -2602,7 +2602,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, Float64Array]] = None,
+        initial_value: Union[None, float, Float64Array] = None,
     ) -> Tuple[Float64Array, Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         p, o, q = self.p, self.o, self.q
@@ -2828,7 +2828,7 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, Float64Array]] = None,
+        initial_value: Union[None, float, Float64Array] = None,
     ) -> Tuple[Float64Array, Float64Array]:
         raise NotImplementedError("Fixed Variance processes do not support simulation")
 
@@ -3106,7 +3106,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, Float64Array]] = None,
+        initial_value: Union[None, float, Float64Array] = None,
     ) -> Tuple[Float64Array, Float64Array]:
         parameters = ensure1d(parameters, "parameters", False)
         truncation = self.truncation
@@ -3545,7 +3545,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs: int,
         rng: RNGType,
         burn: int = 500,
-        initial_value: Optional[Union[float, Float64Array]] = None,
+        initial_value: Union[None, float, Float64Array] = None,
     ) -> Tuple[Float64Array, Float64Array]:
         params = ensure1d(parameters, "parameters", False)
         params = self._repack_parameters(params)

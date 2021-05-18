@@ -9,7 +9,7 @@ from arch.univariate import GARCH, Normal, ZeroMean
 @pytest.fixture(scope="module")
 def small_data():
     rs = np.random.RandomState([2389280, 238901, 382908031])
-    mod = ZeroMean(None, volatility=GARCH(), distribution=Normal(random_state=rs))
+    mod = ZeroMean(None, volatility=GARCH(), distribution=Normal(seed=rs))
     sim = mod.simulate([1e-3, 0.05, 0.90], initial_value_vol=1e-3 / 0.05, nobs=1000)
     return sim.data
 
@@ -17,7 +17,7 @@ def small_data():
 @pytest.fixture(scope="module")
 def small_data2():
     rs = np.random.RandomState([2389280, 238901, 382908031])
-    mod = ZeroMean(None, volatility=GARCH(), distribution=Normal(random_state=rs))
+    mod = ZeroMean(None, volatility=GARCH(), distribution=Normal(seed=rs))
     sim = mod.simulate([1e-3, 0.05, 0.90], nobs=1000)
     return sim.data
 
@@ -25,7 +25,7 @@ def small_data2():
 @pytest.fixture(scope="module")
 def std_data():
     rs = np.random.RandomState([2389280, 238901, 382908031])
-    mod = ZeroMean(None, volatility=GARCH(), distribution=Normal(random_state=rs))
+    mod = ZeroMean(None, volatility=GARCH(), distribution=Normal(seed=rs))
     sim = mod.simulate([1.0, 0.05, 0.90], nobs=1000)
     return sim.data
 

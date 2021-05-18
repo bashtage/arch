@@ -244,7 +244,7 @@ class TestVarianceForecasts(object):
             vol.forecast(params, self.resid, backcast, var_bounds, start=0, horizon=0)
 
     def test_arch_1_forecast_simulation(self):
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         vol = GARCH(p=1, o=0, q=0)
         params = np.array([10.0, 0.4])
@@ -553,7 +553,7 @@ class TestVarianceForecasts(object):
     def test_tarch_111_forecast_simulation(self):
         t = self.t
         vol = GARCH(p=1, o=1, q=1, power=1.0)
-        dist = StudentsT(self.rng)
+        dist = StudentsT(seed=self.rng)
         rng = dist.simulate([8.0])
         params = np.array([3.0, 0.1, 0.1, 0.80])
         resids = self.resid
@@ -599,7 +599,7 @@ class TestVarianceForecasts(object):
     def test_tarch_111_forecast_bootstrap(self):
         t = self.t
         vol = GARCH(p=1, o=1, q=1, power=1.0)
-        dist = StudentsT(self.rng)
+        dist = StudentsT(seed=self.rng)
         rng = dist.simulate([8.0])
         params = np.array([3.0, 0.1, 0.1, 0.80])
         resids = self.resid
@@ -668,7 +668,7 @@ class TestVarianceForecasts(object):
     def test_harch_forecast_simulation(self):
         t = self.t
         vol = HARCH(lags=[1, 5, 22])
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         params = np.array([3.0, 0.4, 0.3, 0.2])
         resids = self.resid
@@ -715,7 +715,7 @@ class TestVarianceForecasts(object):
     def test_harch_forecast_bootstrap(self):
         t = self.t
         vol = HARCH(lags=[1, 5, 22])
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         params = np.array([3.0, 0.4, 0.3, 0.2])
         resids = self.resid
@@ -770,7 +770,7 @@ class TestVarianceForecasts(object):
 
     def test_egarch_111_forecast(self):
         t = self.t
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         vol = EGARCH(p=1, o=1, q=1)
         params = np.array([0.0, 0.1, 0.1, 0.95])
@@ -871,7 +871,7 @@ class TestVarianceForecasts(object):
 
     def test_egarch_101_forecast(self):
         t = self.t
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         vol = EGARCH(p=1, o=0, q=1)
         params = np.array([0.0, 0.1, 0.95])
@@ -966,7 +966,7 @@ class TestVarianceForecasts(object):
 
     def test_egarch_211_forecast(self):
         t = self.t
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         vol = EGARCH(p=2, o=1, q=1)
         params = np.array([0.0, 0.15, 0.05, 0.1, 0.95])
@@ -1084,7 +1084,7 @@ class TestVarianceForecasts(object):
 
     def test_egarch_212_forecast_smoke(self):
         t = self.t
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         vol = EGARCH(p=2, o=1, q=2)
         params = np.array([0.0, 0.15, 0.05, 0.1, 0.55, 0.4])
@@ -1210,7 +1210,7 @@ class TestVarianceForecasts(object):
 
     def test_constant_variance_simulation(self):
         t = self.t
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         vol = ConstantVariance()
         params = np.array([10.0])
@@ -1338,7 +1338,7 @@ class TestVarianceForecasts(object):
     def test_garch11_simulation(self):
         t = self.t
         vol = GARCH(p=1, o=0, q=1)
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         params = np.array([10.0, 0.1, 0.85])
         backcast = vol.backcast(self.resid)
@@ -1508,7 +1508,7 @@ class TestVarianceForecasts(object):
     def test_gjrgarch222_simulation(self):
         vol = GARCH(p=2, o=2, q=2)
         params = np.array([10.0, 0.05, 0.03, 0.1, 0.05, 0.3, 0.2])
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         backcast = vol.backcast(self.resid)
         var_bounds = vol.variance_bounds(self.resid)
@@ -1639,7 +1639,7 @@ class TestVarianceForecasts(object):
         vol = EWMAVariance()
         params = np.array([])
         resids = self.resid
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
@@ -1719,7 +1719,7 @@ class TestVarianceForecasts(object):
         vol = EWMAVariance()
         params = np.array([])
         resids = self.resid
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         backcast = vol.backcast(resids)
         var_bounds = vol.variance_bounds(resids)
@@ -1809,7 +1809,7 @@ class TestVarianceForecasts(object):
         _compare_truncated_forecasts(forecasts, alt_forecasts, 500)
 
     def test_rm2006_simulation_smoke(self):
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         vol = RiskMetrics2006()
         params = np.array([])
@@ -1882,7 +1882,7 @@ class TestVarianceForecasts(object):
     @pytest.mark.parametrize("o", [0, 1])
     @pytest.mark.parametrize("delta", [None, 1.5])
     def test_aparch_simulation_smoke(self, o, delta):
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         vol = APARCH(o=o, delta=delta)
         resids = self.resid
@@ -1959,7 +1959,7 @@ class TestVarianceForecasts(object):
         assert_allclose(forecast.forecasts, expected)
 
     def test_midas_simulation(self):
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         vol = MIDASHyperbolic()
         resids = self.resid
@@ -2025,7 +2025,7 @@ class TestVarianceForecasts(object):
             )
 
     def test_figarch_simulation(self):
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         vol = FIGARCH(truncation=51)
         resids = self.resid
@@ -2064,7 +2064,7 @@ class TestVarianceForecasts(object):
         assert_allclose(forecast.shocks, arch_forecast.shocks)
 
     def test_midas_asym_simulation(self):
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         vol = MIDASHyperbolic(asym=True)
         resids = self.resid
@@ -2138,7 +2138,7 @@ class TestVarianceForecasts(object):
         assert forecasts.forecast_paths is None
         assert forecasts.shocks is None
 
-        dist = Normal(self.rng)
+        dist = Normal(seed=self.rng)
         rng = dist.simulate([])
         forecasts = vol.forecast(
             parameters,
@@ -2221,7 +2221,7 @@ def test_external_rng():
     rand_state = np.random.RandomState(1)
     state = rand_state.get_state()
     volatility = GARCH(1, 0, 1)
-    distribution = Normal(rand_state)
+    distribution = Normal(seed=rand_state)
     mod = ConstantMean(data.data, volatility=volatility, distribution=distribution)
     res = mod.fit(disp="off")
 

@@ -105,8 +105,8 @@ def test_garch(setup, initial_value):
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = garch.simulate(
         parameters, setup.t, rng.simulate([]), initial_value=initial_value
     )
@@ -186,8 +186,8 @@ def test_garch_power(setup):
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = garch.simulate(parameters, setup.t, rng.simulate([]))
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
@@ -238,8 +238,8 @@ def test_arch(setup, initial_value):
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = arch.simulate(
         parameters, setup.t, rng.simulate([]), initial_value=initial_value
     )
@@ -333,8 +333,8 @@ def test_harch(setup, initial_value):
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = harch.simulate(
         parameters, setup.t, rng.simulate([]), initial_value=initial_value
     )
@@ -415,8 +415,8 @@ def test_constant_variance(setup):
     assert_array_equal(b, b_target)
 
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = cv.simulate(parameters, setup.t, rng.simulate([]))
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
@@ -482,8 +482,8 @@ def test_garch_no_symmetric(setup):
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = garch.simulate(parameters, setup.t, rng.simulate([]))
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
@@ -549,8 +549,8 @@ def test_garch_no_lagged_vol(setup):
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = garch.simulate(parameters, setup.t, rng.simulate([]))
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
@@ -605,8 +605,8 @@ def test_arch_multiple_lags(setup):
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = arch.simulate(parameters, setup.t, rng.simulate([]))
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
@@ -773,8 +773,8 @@ def test_ewma(setup):
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = ewma.simulate(parameters, setup.t, rng.simulate([]))
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
@@ -857,8 +857,8 @@ def test_ewma_estimated(setup, initial_value):
     assert str(hex(id(ewma))) in txt
 
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     lam = parameters[-1]
     sim_data = ewma.simulate(
         [lam], setup.t, rng.simulate([]), initial_value=initial_value
@@ -911,8 +911,8 @@ def test_riskmetrics(setup, initial_value):
     # TODO: Test RM06 Simulation
     state = setup.rng.get_state()
     assert isinstance(state, tuple)
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = rm06.simulate(
         parameters, setup.t, rng.simulate([]), initial_value=initial_value
     )
@@ -978,8 +978,8 @@ def test_egarch(setup, initial_value):
     assert_array_equal(b, b_target)
 
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = egarch.simulate(
         parameters, setup.t, rng.simulate([]), initial_value=initial_value
     )
@@ -1067,8 +1067,8 @@ def test_egarch_100(setup):
     assert_allclose(setup.sigma2, cond_var_direct)
 
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = egarch.simulate(parameters, setup.t, rng.simulate([]))
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
@@ -1203,8 +1203,8 @@ def test_midas_symmetric(setup, initial_value):
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = midas.simulate(
         parameters, setup.t, rng.simulate([]), initial_value=initial_value
     )
@@ -1295,8 +1295,8 @@ def test_midas_asymmetric(setup):
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     burn = wlen
     sim_data = midas.simulate(parameters, setup.t, rng.simulate([]), burn=burn)
     setup.rng.set_state(state)
@@ -1397,8 +1397,8 @@ def test_figarch(setup, initial_value):
     assert_array_equal(b, b_target)
 
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = figarch.simulate(parameters, setup.t, rng.simulate([]))
     setup.rng.set_state(state)
     lam = rec.figarch_weights(parameters[1:], p, q, trunc_lag)
@@ -1600,8 +1600,8 @@ def test_aparch(setup, initial_value):
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = aparch.simulate(
         parameters, setup.t, rng.simulate([]), initial_value=initial_value
     )
@@ -1697,8 +1697,8 @@ def test_aparch_delta(setup):
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
     state = setup.rng.get_state()
-    rng = Normal()
-    rng.random_state.set_state(state)
+    rng = Normal(seed=RandomState())
+    rng.generator.set_state(state)
     sim_data = aparch.simulate(parameters, setup.t, rng.simulate([]))
     setup.rng.set_state(state)
     e = setup.rng.standard_normal(setup.t + 500)
@@ -1778,7 +1778,7 @@ def test_aparch_configs(p, o, q, delta, common_asym):
     if o > p or p == 0:
         pytest.skip("o < p or p is 0")
     rs = np.random.RandomState(19992131)
-    rng = Normal(random_state=rs)
+    rng = Normal(seed=rs)
 
     aparch = APARCH(p=p, o=o, q=q, delta=delta, common_asym=common_asym)
     omega = 1
