@@ -34,8 +34,10 @@
    .. autosummary::
       :toctree: generated/
 
+      ~CircularBlockBootstrap.generator
       ~CircularBlockBootstrap.index
       ~CircularBlockBootstrap.random_state
+      ~CircularBlockBootstrap.state
    
    
    

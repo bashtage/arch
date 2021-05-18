@@ -33,6 +33,7 @@
    .. autosummary::
       :toctree: generated/
 
+      ~GeneralizedError.generator
       ~GeneralizedError.name
       ~GeneralizedError.random_state
    

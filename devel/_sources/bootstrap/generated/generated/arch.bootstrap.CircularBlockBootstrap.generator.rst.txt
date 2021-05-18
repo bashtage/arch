@@ -1,0 +1,6 @@
+arch.bootstrap.CircularBlockBootstrap.generator
+===============================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: CircularBlockBootstrap.generator

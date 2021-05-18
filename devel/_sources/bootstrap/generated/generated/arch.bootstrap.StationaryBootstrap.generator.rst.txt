@@ -1,0 +1,6 @@
+arch.bootstrap.StationaryBootstrap.generator
+============================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: StationaryBootstrap.generator

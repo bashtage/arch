@@ -34,8 +34,10 @@
    .. autosummary::
       :toctree: generated/
 
+      ~StationaryBootstrap.generator
       ~StationaryBootstrap.index
       ~StationaryBootstrap.random_state
+      ~StationaryBootstrap.state
    
    
    

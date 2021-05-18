@@ -33,6 +33,7 @@
    .. autosummary::
       :toctree: generated/
 
+      ~Distribution.generator
       ~Distribution.name
       ~Distribution.random_state
    

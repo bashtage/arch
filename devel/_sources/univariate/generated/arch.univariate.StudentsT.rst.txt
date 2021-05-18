@@ -33,6 +33,7 @@
    .. autosummary::
       :toctree: generated/
 
+      ~StudentsT.generator
       ~StudentsT.name
       ~StudentsT.random_state
    

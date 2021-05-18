@@ -1,0 +1,6 @@
+arch.univariate.distribution.Distribution.generator
+===================================================
+
+.. currentmodule:: arch.univariate.distribution
+
+.. autoproperty:: Distribution.generator

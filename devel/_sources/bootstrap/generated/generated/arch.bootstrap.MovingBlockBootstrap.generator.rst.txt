@@ -1,0 +1,6 @@
+arch.bootstrap.MovingBlockBootstrap.generator
+=============================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: MovingBlockBootstrap.generator
