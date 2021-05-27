@@ -38,3 +38,11 @@ Volatility Modeling
   :func:`~arch.univariate.volatility.VolatilityProcess.volatility_updater` that contains a
   :class:`~arch.univariate.recursions_python.VolatilityUpdater` to allow
   :class:`~arch.univariate.ARCHInMean` to be created from different volatility processes.
+
+Setup
+~~~~~
+- Added support for using an environmental variable to disable C-extension compilation.
+
+  * Linux and OSX: ``export ARCH_NO_BINARY=1``
+  * PowerShell: ``$env:ARCH_NO_BINARY=1``
+  * cmd: ``set ARCH_NO_BINARY=1``

@@ -55,7 +55,7 @@ __all__ = [
 ]
 
 NDArray = Union[np.ndarray]
-if NP_GTE_121:
+if NP_GTE_121 and TYPE_CHECKING:
     Float64Array = np.ndarray[Any, np.dtype[np.float64]]
     Int64Array = np.ndarray[Any, np.dtype[np.int64]]
     Int32Array = np.ndarray[Any, np.dtype[np.int32]]
