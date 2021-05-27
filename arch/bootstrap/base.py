@@ -195,8 +195,10 @@ def optimal_block_length(x: ArrayLike) -> pd.DataFrame:
     """
     x_arr = ensure2d(np.asarray(x), "x")
     opt = [_single_optimal_block(col) for col in x_arr.T]
-    if isinstance(x, (pd.DataFrame, pd.Series)):
-        idx = [x.name] if isinstance(x, pd.Series) else list(x.columns)
+    if isinstance(x, pd.DataFrame):
+        idx = x.columns
+    elif isinstance(x, pd.Series):
+        idx = [x.name]
     else:
         idx = [i for i in range(x_arr.shape[1])]
     return pd.DataFrame(opt, index=idx, columns=["stationary", "circular"])
