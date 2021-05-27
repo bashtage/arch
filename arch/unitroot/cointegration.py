@@ -615,7 +615,7 @@ class DynamicOLS(object):
     def _ic(self, resids: Float64Array, nparam: int) -> float:
         """Compute an info criterion"""
         nobs = resids.shape[0]
-        sigma2 = resids.T @ resids / nobs
+        sigma2 = float(resids.T @ resids / nobs)
         if self._method == "aic":
             penalty = 2.0
         elif self._method == "hqic":
