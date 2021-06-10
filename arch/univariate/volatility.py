@@ -3722,3 +3722,414 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         descr = descr[:-2] + ")"
 
         return descr
+
+class ComponentGARCH(GARCH, metaclass=AbstractDocStringInheritor):
+    r"""
+    Component GARCH and TARCH
+
+    Parameters
+    ----------
+    power : float, optional
+        Power to use with the innovations, abs(e) ** power.  Default is 2.0,
+        which produces Component GARCH. Using 1.0 produces Component AVARCH.
+        Other powers can be specified, although these should be strictly
+        positive, and usually larger than 0.25.
+
+    Examples
+    --------
+    >>> from arch.univariate import ComponentGARCH
+
+    Standard Component GARCH
+
+    >>> cgarch = ComponentGARCH()
+
+    Component AVGARCH
+
+    >>> cavgarch = ComponentGARCH(power=1.0)
+
+    Notes
+    -----
+    In this class of processes, the variance dynamics follow a (2,2)
+    specification
+
+    #TODO
+
+    .. math::
+
+        \sigma_{t}^{\lambda}=\omega
+        + \sum_{i=1}^{p}\alpha_{i}\left|\epsilon_{t-i}\right|^{\lambda}
+        +\sum_{j=1}^{o}\gamma_{j}\left|\epsilon_{t-j}\right|^{\lambda}
+        I\left[\epsilon_{t-j}<0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}
+    """
+    def __init__(self, power:float=2.0):
+        super().__init__(p=2,o=0,q=2,power=float(power))
+
+        self._name = self._generate_name()
+        # TODO: Might need work
+        self._volatility_updater = rec.GARCHUpdater(self.p, self.o, self.q, self.power)
+
+    def __str__(self) -> str:
+        return self._name
+
+    def variance_bounds(self, resids: Float64Array, power: float = 2.0) -> Float64Array:
+        return super().variance_bounds(resids, self.power)
+
+    def _generate_name(self) -> str:
+        if self.power == 2.0:
+            return "Component GARCH"
+        elif self.power == 1.0:
+            return "Component AVARCH"
+        else:
+            return "Power Component GARCH (power: {0:0.1f})".format(self.power)
+
+    def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
+        # Parameters
+        # 0 < omega
+        # 0 <= alpha1 <= 1
+        # 0 <= alpha2 <= 1
+        # 0 <= rho1 <= 1
+        # 0 <= rho2 <= 1
+        v = float(np.mean(abs(resids) ** self.power))
+
+        bounds = [(1e-8 * v, 10.0 * float(v))] + ([(0.0, 1.0)] * 4)
+        return bounds
+
+    def constraints(self) -> Tuple[Float64Array, Float64Array]:
+        # omega > 0
+        # alpha1, alpha2 > 0
+        # rho2 > alpha1 + alpha2
+        # 1 > rho1 > rho2 > 0
+        a = np.zeros(7,5)
+
+        p, o, q = self.p, self.o, self.q
+        k_arch = p + o + q
+        # alpha[i] >0
+        # alpha[i] + gamma[i] > 0 for i<=p, otherwise gamma[i]>0
+        # beta[i] >0
+        # sum(alpha) + 0.5 sum(gamma) + sum(beta) < 1
+        a = np.zeros((k_arch + 2, k_arch + 1))
+        for i in range(k_arch + 1):
+            a[i, i] = 1.0
+        for i in range(o):
+            if i < p:
+                a[i + p + 1, i + 1] = 1.0
+
+        a[k_arch + 1, 1:] = -1.0
+        a[k_arch + 1, p + 1 : p + o + 1] = -0.5
+        b = np.zeros(k_arch + 2)
+        b[k_arch + 1] = -1.0
+        return a, b
+
+    def compute_variance(
+        self,
+        parameters: Float64Array,
+        resids: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+    ) -> Float64Array:
+        # fresids is abs(resids) ** power
+        # sresids is I(resids<0)
+        power = self.power
+        fresids = np.abs(resids) ** power
+        sresids = np.sign(resids)
+
+        p, o, q = self.p, self.o, self.q
+        nobs = resids.shape[0]
+
+        rec.garch_recursion(
+            parameters, fresids, sresids, sigma2, p, o, q, nobs, backcast, var_bounds
+        )
+        inv_power = 2.0 / power
+        sigma2 **= inv_power
+
+        return sigma2
+
+    def backcast_transform(
+        self, backcast: Union[float, Float64Array]
+    ) -> Union[float, Float64Array]:
+        backcast = super().backcast_transform(backcast)
+        return np.sqrt(backcast) ** self.power
+
+    def backcast(self, resids: Float64Array) -> Union[float, Float64Array]:
+        power = self.power
+        tau = min(75, resids.shape[0])
+        w = 0.94 ** np.arange(tau)
+        w = w / sum(w)
+        backcast = np.sum((abs(resids[:tau]) ** power) * w)
+
+        return float(backcast)
+
+    def simulate(
+        self,
+        parameters: Union[Sequence[Union[int, float]], ArrayLike1D],
+        nobs: int,
+        rng: RNGType,
+        burn: int = 500,
+        initial_value: Union[None, float, Float64Array] = None,
+    ) -> Tuple[Float64Array, Float64Array]:
+        parameters = ensure1d(parameters, "parameters", False)
+        p, o, q, power = self.p, self.o, self.q, self.power
+        errors = rng(nobs + burn)
+
+        if initial_value is None:
+            scale = np.ones_like(parameters)
+            scale[p + 1 : p + o + 1] = 0.5
+
+            persistence = np.sum(parameters[1:] * scale[1:])
+            if (1.0 - persistence) > 0:
+                initial_value = parameters[0] / (1.0 - persistence)
+            else:
+                warn(initial_value_warning, InitialValueWarning)
+                initial_value = parameters[0]
+
+        sigma2 = np.zeros(nobs + burn)
+        data = np.zeros(nobs + burn)
+        fsigma = np.zeros(nobs + burn)
+        fdata = np.zeros(nobs + burn)
+
+        max_lag = np.max([p, o, q])
+        fsigma[:max_lag] = initial_value
+        sigma2[:max_lag] = initial_value ** (2.0 / power)
+        data[:max_lag] = np.sqrt(sigma2[:max_lag]) * errors[:max_lag]
+        fdata[:max_lag] = abs(data[:max_lag]) ** power
+
+        for t in range(max_lag, nobs + burn):
+            loc = 0
+            fsigma[t] = parameters[loc]
+            loc += 1
+            for j in range(p):
+                fsigma[t] += parameters[loc] * fdata[t - 1 - j]
+                loc += 1
+            for j in range(o):
+                fsigma[t] += parameters[loc] * fdata[t - 1 - j] * (data[t - 1 - j] < 0)
+                loc += 1
+            for j in range(q):
+                fsigma[t] += parameters[loc] * fsigma[t - 1 - j]
+                loc += 1
+
+            sigma2[t] = fsigma[t] ** (2.0 / power)
+            data[t] = errors[t] * np.sqrt(sigma2[t])
+            fdata[t] = abs(data[t]) ** power
+
+        return data[burn:], sigma2[burn:]
+
+    def starting_values(self, resids: Float64Array) -> Float64Array:
+        p, o, q = self.p, self.o, self.q
+        power = self.power
+        alphas = [0.01, 0.05, 0.1, 0.2]
+        gammas = alphas
+        abg = [0.5, 0.7, 0.9, 0.98]
+        abgs = list(itertools.product(*[alphas, gammas, abg]))
+
+        target = np.mean(abs(resids) ** power)
+        scale = np.mean(resids ** 2) / (target ** (2.0 / power))
+        target *= scale ** (power / 2)
+
+        svs = []
+        var_bounds = self.variance_bounds(resids)
+        backcast = self.backcast(resids)
+        llfs = np.zeros(len(abgs))
+        for i, values in enumerate(abgs):
+            alpha, gamma, agb = values
+            sv = (1.0 - agb) * target * np.ones(p + o + q + 1)
+            if p > 0:
+                sv[1 : 1 + p] = alpha / p
+                agb -= alpha
+            if o > 0:
+                sv[1 + p : 1 + p + o] = gamma / o
+                agb -= gamma / 2.0
+            if q > 0:
+                sv[1 + p + o : 1 + p + o + q] = agb / q
+            svs.append(sv)
+            llfs[i] = self._gaussian_loglikelihood(sv, resids, backcast, var_bounds)
+        loc = np.argmax(llfs)
+
+        return svs[int(loc)]
+
+    def parameter_names(self) -> List[str]:
+        return _common_names(self.p, self.o, self.q)
+
+    def _check_forecasting_method(
+        self, method: ForecastingMethod, horizon: int
+    ) -> None:
+        if horizon == 1:
+            return
+
+        if method == "analytic" and self.power != 2.0:
+            raise ValueError(
+                "Analytic forecasts not available for horizon > 1 when power != 2"
+            )
+        return
+
+    def _analytic_forecast(
+        self,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+        start: int,
+        horizon: int,
+    ) -> VarianceForecast:
+
+        sigma2, forecasts = self._one_step_forecast(
+            parameters, resids, backcast, var_bounds, horizon, start
+        )
+        if horizon == 1:
+            return VarianceForecast(forecasts)
+
+        t = resids.shape[0]
+        p, o, q = self.p, self.o, self.q
+        omega = parameters[0]
+        alpha = parameters[1 : p + 1]
+        gamma = parameters[p + 1 : p + o + 1]
+        beta = parameters[p + o + 1 :]
+
+        m = np.max([p, o, q])
+        _resids = np.zeros(m + horizon)
+        _asym_resids = np.zeros(m + horizon)
+        _sigma2 = np.zeros(m + horizon)
+
+        for i in range(start, t):
+            if i - m + 1 >= 0:
+                _resids[:m] = resids[i - m + 1 : i + 1]
+                _asym_resids[:m] = _resids[:m] * (_resids[:m] < 0)
+                _sigma2[:m] = sigma2[i - m + 1 : i + 1]
+            else:  # Back-casting needed
+                _resids[: m - i - 1] = np.sqrt(backcast)
+                _resids[m - i - 1 : m] = resids[0 : i + 1]
+                _asym_resids = cast(np.ndarray, _resids * (_resids < 0))
+                _asym_resids[: m - i - 1] = np.sqrt(0.5 * backcast)
+                _sigma2[:m] = backcast
+                _sigma2[m - i - 1 : m] = sigma2[0 : i + 1]
+
+            for h in range(0, horizon):
+                fcast_loc = i - start
+                forecasts[fcast_loc, h] = omega
+                start_loc = h + m - 1
+
+                for j in range(p):
+                    forecasts[fcast_loc, h] += alpha[j] * _resids[start_loc - j] ** 2
+
+                for j in range(o):
+                    forecasts[fcast_loc, h] += (
+                        gamma[j] * _asym_resids[start_loc - j] ** 2
+                    )
+
+                for j in range(q):
+                    forecasts[fcast_loc, h] += beta[j] * _sigma2[start_loc - j]
+
+                _resids[h + m] = np.sqrt(forecasts[fcast_loc, h])
+                _asym_resids[h + m] = np.sqrt(0.5 * forecasts[fcast_loc, h])
+                _sigma2[h + m] = forecasts[fcast_loc, h]
+
+        return VarianceForecast(forecasts)
+
+    def _simulate_paths(
+        self,
+        m: int,
+        parameters: Float64Array,
+        horizon: int,
+        std_shocks: Float64Array,
+        scaled_forecast_paths: Float64Array,
+        scaled_shock: Float64Array,
+        asym_scaled_shock: Float64Array,
+    ) -> Tuple[Float64Array, Float64Array, Float64Array]:
+
+        power = self.power
+        p, o, q = self.p, self.o, self.q
+        omega = parameters[0]
+        alpha = parameters[1 : p + 1]
+        gamma = parameters[p + 1 : p + o + 1]
+        beta = parameters[p + o + 1 :]
+        shock = np.empty_like(scaled_forecast_paths)
+
+        for h in range(horizon):
+            loc = h + m - 1
+
+            scaled_forecast_paths[:, h + m] = omega
+            for j in range(p):
+                scaled_forecast_paths[:, h + m] += alpha[j] * scaled_shock[:, loc - j]
+
+            for j in range(o):
+                scaled_forecast_paths[:, h + m] += (
+                    gamma[j] * asym_scaled_shock[:, loc - j]
+                )
+
+            for j in range(q):
+                scaled_forecast_paths[:, h + m] += (
+                    beta[j] * scaled_forecast_paths[:, loc - j]
+                )
+
+            shock[:, h + m] = std_shocks[:, h] * scaled_forecast_paths[:, h + m] ** (
+                1.0 / power
+            )
+            lt_zero = shock[:, h + m] < 0
+            scaled_shock[:, h + m] = np.abs(shock[:, h + m]) ** power
+            asym_scaled_shock[:, h + m] = scaled_shock[:, h + m] * lt_zero
+
+        forecast_paths = scaled_forecast_paths[:, m:] ** (2.0 / power)
+
+        return np.asarray(np.mean(forecast_paths, 0)), forecast_paths, shock[:, m:]
+
+    def _simulation_forecast(
+        self,
+        parameters: Float64Array,
+        resids: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+        start: int,
+        horizon: int,
+        simulations: int,
+        rng: RNGType,
+    ) -> VarianceForecast:
+
+        sigma2, forecasts = self._one_step_forecast(
+            parameters, resids, backcast, var_bounds, horizon, start
+        )
+        t = resids.shape[0]
+        paths = np.empty((t - start, simulations, horizon))
+        shocks = np.empty((t - start, simulations, horizon))
+        power = self.power
+        m = np.max([self.p, self.o, self.q])
+        scaled_forecast_paths = np.zeros((simulations, m + horizon))
+        scaled_shock = np.zeros((simulations, m + horizon))
+        asym_scaled_shock = np.zeros((simulations, m + horizon))
+
+        for i in range(start, t):
+            std_shocks = rng((simulations, horizon))
+            if i - m < 0:
+                scaled_forecast_paths[:, :m] = backcast ** (power / 2.0)
+                scaled_shock[:, :m] = backcast ** (power / 2.0)
+                asym_scaled_shock[:, :m] = (0.5 * backcast) ** (power / 2.0)
+
+                # Use actual values where available
+                count = i + 1
+                scaled_forecast_paths[:, m - count : m] = sigma2[:count] ** (
+                    power / 2.0
+                )
+                scaled_shock[:, m - count : m] = np.abs(resids[:count]) ** power
+                asym = np.abs(resids[:count]) ** power * (resids[:count] < 0)
+                asym_scaled_shock[:, m - count : m] = asym
+            else:
+                scaled_forecast_paths[:, :m] = sigma2[i - m + 1 : i + 1] ** (
+                    power / 2.0
+                )
+                scaled_shock[:, :m] = np.abs(resids[i - m + 1 : i + 1]) ** power
+                asym_scaled_shock[:, :m] = scaled_shock[:, :m] * (
+                    resids[i - m + 1 : i + 1] < 0
+                )
+
+            f, p, s = self._simulate_paths(
+                m,
+                parameters,
+                horizon,
+                std_shocks,
+                scaled_forecast_paths,
+                scaled_shock,
+                asym_scaled_shock,
+            )
+            loc = i - start
+            forecasts[loc, :], paths[loc], shocks[loc] = f, p, s
+
+        return VarianceForecast(forecasts, paths, shocks)
