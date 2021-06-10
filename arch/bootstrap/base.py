@@ -25,7 +25,7 @@ from arch.typing import (
     AnyArray,
     ArrayLike,
     Float64Array,
-    IntArray,
+    Int64Array,
     Literal,
     RandomStateState,
     Uint32Array,
@@ -65,12 +65,12 @@ def _get_prng_state(
 
 def _get_random_integers(
     prng: Union[Generator, RandomState], upper: int, *, size: int = 1
-) -> IntArray:
+) -> Int64Array:
     if isinstance(prng, Generator):
-        return prng.integers(upper, size=size)
+        return prng.integers(upper, size=size, dtype=np.int64)
     else:
         assert isinstance(prng, RandomState)
-        return prng.randint(upper, size=size)
+        return prng.randint(upper, size=size, dtype=np.int64)
 
 
 def _single_optimal_block(x: Float64Array) -> Tuple[float, float]:
@@ -543,7 +543,9 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         self._generator = random_state
 
     @property
-    def index(self) -> Union[IntArray, Tuple[List[IntArray], Dict[str, IntArray]]]:
+    def index(
+        self,
+    ) -> Union[Int64Array, Tuple[List[Int64Array], Dict[str, Int64Array]]]:
         """
         The current index of the bootstrap
         """
@@ -1278,7 +1280,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
     def update_indices(
         self,
-    ) -> Union[IntArray, Tuple[List[IntArray], Dict[str, IntArray]]]:
+    ) -> Union[Int64Array, Tuple[List[Int64Array], Dict[str, Int64Array]]]:
         """
         Update indices for the next iteration of the bootstrap.  This must
         be overridden when creating new bootstraps.
@@ -1400,7 +1402,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
 
     def update_indices(
         self,
-    ) -> Tuple[List[IntArray], Dict[str, IntArray]]:
+    ) -> Tuple[List[Int64Array], Dict[str, Int64Array]]:
         """
         Update indices for the next iteration of the bootstrap.  This must
         be overridden when creating new bootstraps.
@@ -1420,7 +1422,9 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         return pos_indices, kw_indices
 
     @property
-    def index(self) -> Union[IntArray, Tuple[List[IntArray], Dict[str, IntArray]]]:
+    def index(
+        self,
+    ) -> Union[Int64Array, Tuple[List[Int64Array], Dict[str, Int64Array]]]:
         """
         Returns the current index of the bootstrap
 
@@ -1586,7 +1590,7 @@ class CircularBlockBootstrap(IIDBootstrap):
 
     def update_indices(
         self,
-    ) -> Union[IntArray, Tuple[List[IntArray], Dict[str, IntArray]]]:
+    ) -> Union[Int64Array, Tuple[List[Int64Array], Dict[str, Int64Array]]]:
         num_blocks = self._num_items // self.block_size
         if num_blocks * self.block_size < self._num_items:
             num_blocks += 1
@@ -1700,7 +1704,7 @@ class StationaryBootstrap(CircularBlockBootstrap):
 
     def update_indices(
         self,
-    ) -> Union[IntArray, Tuple[List[IntArray], Dict[str, IntArray]]]:
+    ) -> Union[Int64Array, Tuple[List[Int64Array], Dict[str, Int64Array]]]:
         indices = _get_random_integers(
             self._generator, self._num_items, size=self._num_items
         )
@@ -1811,7 +1815,7 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
 
     def update_indices(
         self,
-    ) -> Union[IntArray, Tuple[List[IntArray], Dict[str, IntArray]]]:
+    ) -> Union[Int64Array, Tuple[List[Int64Array], Dict[str, Int64Array]]]:
         num_blocks = self._num_items // self.block_size
         if num_blocks * self.block_size < self._num_items:
             num_blocks += 1
@@ -1841,6 +1845,6 @@ class MOONBootstrap(IIDBootstrap):  # pragma: no cover
     def update_indices(
         self,
     ) -> Union[
-        IntArray, Tuple[List[IntArray], Dict[str, IntArray]]
+        Int64Array, Tuple[List[Int64Array], Dict[str, Int64Array]]
     ]:  # pragma: no cover
         raise NotImplementedError

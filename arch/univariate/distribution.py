@@ -15,6 +15,7 @@ from numpy import (
     asarray,
     empty,
     exp,
+    int64,
     integer,
     isscalar,
     log,
@@ -1222,10 +1223,10 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         nu = parameters[0]
         randoms = self._generator.standard_gamma(1 / nu, size) ** (1.0 / nu)
         if isinstance(self._generator, Generator):
-            random_ints = self._generator.integers(0, 2, size)
+            random_ints = self._generator.integers(0, 2, size, dtype=int64)
         else:
-            random_ints = self._generator.randint(0, 2, size)
-        randoms *= 2 * random_ints - 1
+            random_ints = self._generator.randint(0, 2, size, dtype=int64)
+        randoms *= 2.0 * random_ints - 1.0
         scale = sqrt(gamma(3.0 / nu) / gamma(1.0 / nu))
 
         return randoms / scale
