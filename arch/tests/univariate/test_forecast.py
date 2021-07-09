@@ -841,3 +841,26 @@ def test_x_exceptions():
         res.forecast(reindex=False, x=np.empty((2, SP500.shape[0], 3)))
     with pytest.raises(ValueError, match="The shape of x does not satisfy the"):
         res.forecast(reindex=False, x=np.empty((2, SP500.shape[0] // 2, 1)))
+
+
+def test_model_forecast():
+    mod = arch_model(SP500)
+    res = mod.fit(disp=False)
+    res_fcast = res.forecast(horizon=10)
+    params = np.asarray(res.params, dtype=float)
+    mod_fcast = mod.forecast(params, horizon=10)
+    new_mod = arch_model(SP500)
+    new_mod_fcast = new_mod.forecast(params, horizon=10)
+    assert_allclose(res_fcast.variance, mod_fcast.variance)
+    assert_allclose(res_fcast.variance, new_mod_fcast.variance)
+
+
+def test_model_forecast_recursive():
+    vol = GARCH()
+    base = ConstantMean(SP500.iloc[:-10], volatility=vol).fit(disp=False)
+    params = base.params
+    fcasts = {}
+    for i in range(11):
+        end = SP500.shape[0] - 10 + i
+        mod = ConstantMean(SP500.iloc[:end], volatility=vol)
+        fcasts[i] = mod.forecast(params)
