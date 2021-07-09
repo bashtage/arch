@@ -2,13 +2,19 @@ from distutils.version import LooseVersion
 from io import StringIO
 from itertools import product
 from string import ascii_lowercase
+import struct
 import sys
 import types
 import warnings
 
 import numpy as np
 from numpy.random import RandomState
-from numpy.testing import assert_almost_equal, assert_array_almost_equal, assert_equal
+from numpy.testing import (
+    assert_allclose,
+    assert_almost_equal,
+    assert_array_almost_equal,
+    assert_equal,
+)
 import pandas as pd
 from pandas.testing import assert_frame_equal, assert_series_equal
 import pytest
@@ -62,6 +68,7 @@ try:
 except ImportError:
     HAS_MATPLOTLIB = False
 
+RTOL = 1e-4 if struct.calcsize("P") < 8 else 1e-6
 DISPLAY: Literal["off"] = "off"
 SP_LT_14 = LooseVersion(scipy.__version__) < LooseVersion("1.4")
 SP500 = 100 * sp500.load()["Adj Close"].pct_change().dropna()
@@ -1277,3 +1284,35 @@ def test_false_reindex():
 def test_invalid_arch_model():
     with pytest.raises(AssertionError):
         arch_model(SP500, p="3")
+
+
+def test_last_obs_equiv():
+    y = SP500.iloc[:-100]
+    res1 = arch_model(y).fit(disp=False)
+    res2 = arch_model(SP500).fit(last_obs=SP500.index[-100], disp=False)
+    assert_allclose(res1.model._backcast, res2.model._backcast, rtol=1e-6)
+    assert_allclose(res1.params, res2.params, rtol=1e-6)
+
+
+@pytest.mark.parametrize("first", [0, 250])
+@pytest.mark.parametrize("last", [0, 250])
+@pytest.mark.parametrize("mean", ["Constant", "AR"])
+def test_last_obs_equiv_param(first, last, mean):
+    lags = None if mean == "constant" else 2
+    nobs = SP500.shape[0]
+    last_obs = SP500.index[-last] if last else None
+    y = SP500.iloc[first : nobs - last]
+    res1 = arch_model(y, mean=mean, lags=lags).fit(disp=False)
+    res2 = arch_model(SP500, mean=mean, lags=lags).fit(
+        first_obs=y.index[0], last_obs=last_obs, disp=False
+    )
+    cv1 = res1.conditional_volatility
+    cv2 = res2.conditional_volatility
+    assert np.isfinite(cv1).sum() == np.isfinite(cv2).sum()
+    r1 = res1.resid
+    r2 = res2.resid
+    assert np.isfinite(r1).sum() == np.isfinite(r2).sum()
+
+    assert_allclose(res1.model._backcast, res2.model._backcast, rtol=RTOL)
+    assert_allclose(res1.params, res2.params, rtol=RTOL)
+    assert_allclose(cv1[np.isfinite(cv1)], cv2[np.isfinite(cv2)], rtol=RTOL)
