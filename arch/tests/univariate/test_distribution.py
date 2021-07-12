@@ -81,6 +81,7 @@ class TestDistributions(object):
 
     def test_skewstudent(self, seed):
         dist = SkewStudent(seed=seed)
+        assert dist.parameter_names() == ["eta", "lambda"]
         eta, lam = 4.0, 0.5
         ll1 = dist.loglikelihood(np.array([eta, lam]), self.resids, self.sigma2)
         # Direct calculation of PDF, then log

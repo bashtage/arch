@@ -846,11 +846,11 @@ def test_x_exceptions():
 def test_model_forecast():
     mod = arch_model(SP500)
     res = mod.fit(disp=False)
-    res_fcast = res.forecast(horizon=10)
+    res_fcast = res.forecast(horizon=10, reindex=True)
     params = np.asarray(res.params, dtype=float)
-    mod_fcast = mod.forecast(params, horizon=10)
+    mod_fcast = mod.forecast(params, horizon=10, reindex=True)
     new_mod = arch_model(SP500)
-    new_mod_fcast = new_mod.forecast(params, horizon=10)
+    new_mod_fcast = new_mod.forecast(params, horizon=10, reindex=True)
     assert_allclose(res_fcast.variance, mod_fcast.variance)
     assert_allclose(res_fcast.variance, new_mod_fcast.variance)
 
@@ -863,4 +863,4 @@ def test_model_forecast_recursive():
     for i in range(11):
         end = SP500.shape[0] - 10 + i
         mod = ConstantMean(SP500.iloc[:end], volatility=vol)
-        fcasts[i] = mod.forecast(params)
+        fcasts[i] = mod.forecast(params, reindex=True)

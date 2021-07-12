@@ -909,7 +909,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         return self._simulator
 
     def parameter_names(self) -> List[str]:
-        return ["nu", "lambda"]
+        return ["eta", "lambda"]
 
     def __const_a(self, parameters: Union[Float64Array, Sequence[float]]) -> float:
         """
