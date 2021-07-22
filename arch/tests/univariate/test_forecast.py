@@ -864,3 +864,51 @@ def test_model_forecast_recursive():
         end = SP500.shape[0] - 10 + i
         mod = ConstantMean(SP500.iloc[:end], volatility=vol)
         fcasts[i] = mod.forecast(params, reindex=True)
+
+
+@pytest.mark.parametrize("lags", [0, 1, 2, [2]])
+@pytest.mark.parametrize("constant", [True, False])
+def test_forecast_ar0(constant, lags):
+    burn = 250
+
+    x_mod = ARX(None, lags=1)
+    x0 = x_mod.simulate([1, 0.8, 1], nobs=1000 + burn).data
+    x1 = x_mod.simulate([2.5, 0.5, 1], nobs=1000 + burn).data
+
+    resid_mod = ZeroMean(volatility=GARCH())
+    resids = resid_mod.simulate([0.1, 0.1, 0.8], nobs=1000 + burn).data
+
+    phi1 = 0.7
+    phi0 = 3
+    y = 10 + resids.copy()
+    for i in range(1, y.shape[0]):
+        y[i] = phi0 + phi1 * y[i - 1] + 2 * x0[i] - 2 * x1[i] + resids[i]
+
+    x0 = x0.iloc[-1000:]
+    x1 = x1.iloc[-1000:]
+    y = y.iloc[-1000:]
+    y.index = x0.index = x1.index = np.arange(1000)
+
+    x0_oos = np.empty((1000, 10))
+    x1_oos = np.empty((1000, 10))
+    for i in range(10):
+        if i == 0:
+            last = x0
+        else:
+            last = x0_oos[:, i - 1]
+        x0_oos[:, i] = 1 + 0.8 * last
+        if i == 0:
+            last = x1
+        else:
+            last = x1_oos[:, i - 1]
+        x1_oos[:, i] = 2.5 + 0.5 * last
+
+    exog = pd.DataFrame({"x0": x0, "x1": x1})
+    mod = ARX(y, x=exog, lags=lags, constant=constant, volatility=GARCH())
+    res = mod.fit(disp="off")
+    exog_fcast = {"x0": x0_oos[-1:], "x1": x1_oos[-1:]}
+    forecasts = res.forecast(
+        horizon=10, x=exog_fcast, method="simulation", simulations=100, reindex=False
+    )
+    assert forecasts.mean.shape == (1, 10)
+    assert forecasts.simulations.values.shape == (1, 100, 10)
