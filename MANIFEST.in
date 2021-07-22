@@ -1,8 +1,11 @@
 include README.md
 include LICENSE.md
+include versioneer.py
+include pyproject.toml
+include requirements.txt
+include setup.cfg
 include arch/bootstrap/_samplers.pyx
 include arch/univariate/recursions.pyx
-include versioneer.py
 include arch/_version.py
 recursive-include arch/tests *.csv
 recursive-include arch/data *.csv.gz
