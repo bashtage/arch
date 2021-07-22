@@ -611,7 +611,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def _har_to_ar(self, params: Float64Array) -> Float64Array:
         if self._max_lags == 0:
-            return params
+            return params[: int(self.constant)]
         har = params[int(self.constant) :]
         ar = np.zeros(self._max_lags)
         for value, lag in zip(har, self._lags.T):
