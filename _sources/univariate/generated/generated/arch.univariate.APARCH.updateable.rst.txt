@@ -1,0 +1,6 @@
+arch.univariate.APARCH.updateable
+=================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: APARCH.updateable

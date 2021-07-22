@@ -1,0 +1,6 @@
+arch.univariate.GARCH.volatility\_updater
+=========================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: GARCH.volatility_updater

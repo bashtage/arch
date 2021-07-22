@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ARCHInMean.forecast
+===================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ARCHInMean.forecast

@@ -1,0 +1,6 @@
+arch.univariate.Normal.generator
+================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: Normal.generator

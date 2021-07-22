@@ -1,0 +1,6 @@
+arch.bootstrap.IIDBootstrap.generator
+=====================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: IIDBootstrap.generator

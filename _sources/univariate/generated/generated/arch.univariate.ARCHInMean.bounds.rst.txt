@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ARCHInMean.bounds
+=================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ARCHInMean.bounds

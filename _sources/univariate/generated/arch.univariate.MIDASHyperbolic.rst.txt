@@ -22,6 +22,7 @@
       ~MIDASHyperbolic.parameter_names
       ~MIDASHyperbolic.simulate
       ~MIDASHyperbolic.starting_values
+      ~MIDASHyperbolic.update
       ~MIDASHyperbolic.variance_bounds
    
    
@@ -37,6 +38,8 @@
       ~MIDASHyperbolic.num_params
       ~MIDASHyperbolic.start
       ~MIDASHyperbolic.stop
+      ~MIDASHyperbolic.updateable
+      ~MIDASHyperbolic.volatility_updater
    
    
    

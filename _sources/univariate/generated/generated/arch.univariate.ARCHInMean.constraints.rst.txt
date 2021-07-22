@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.ARCHInMean.constraints
+======================================
+
+.. currentmodule:: arch.univariate
+
+.. automethod:: ARCHInMean.constraints

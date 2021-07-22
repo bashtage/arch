@@ -22,6 +22,7 @@
       ~HARCH.parameter_names
       ~HARCH.simulate
       ~HARCH.starting_values
+      ~HARCH.update
       ~HARCH.variance_bounds
    
    
@@ -37,6 +38,8 @@
       ~HARCH.num_params
       ~HARCH.start
       ~HARCH.stop
+      ~HARCH.updateable
+      ~HARCH.volatility_updater
    
    
    

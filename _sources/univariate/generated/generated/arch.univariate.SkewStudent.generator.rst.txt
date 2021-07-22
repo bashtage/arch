@@ -1,0 +1,6 @@
+arch.univariate.SkewStudent.generator
+=====================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: SkewStudent.generator

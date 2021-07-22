@@ -1,0 +1,6 @@
+arch.univariate.HARCH.updateable
+================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: HARCH.updateable

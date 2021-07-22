@@ -1,0 +1,6 @@
+arch.univariate.ConstantVariance.updateable
+===========================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: ConstantVariance.updateable

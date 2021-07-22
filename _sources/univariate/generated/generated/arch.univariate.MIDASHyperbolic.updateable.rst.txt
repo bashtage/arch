@@ -1,0 +1,6 @@
+arch.univariate.MIDASHyperbolic.updateable
+==========================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: MIDASHyperbolic.updateable

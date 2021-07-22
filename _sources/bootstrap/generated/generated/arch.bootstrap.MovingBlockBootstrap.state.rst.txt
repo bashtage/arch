@@ -1,0 +1,6 @@
+arch.bootstrap.MovingBlockBootstrap.state
+=========================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: MovingBlockBootstrap.state

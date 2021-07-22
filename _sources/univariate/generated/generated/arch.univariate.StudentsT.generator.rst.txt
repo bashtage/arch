@@ -1,0 +1,6 @@
+arch.univariate.StudentsT.generator
+===================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: StudentsT.generator

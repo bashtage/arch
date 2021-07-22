@@ -1,0 +1,6 @@
+arch.univariate.FIGARCH.updateable
+==================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: FIGARCH.updateable

@@ -1,0 +1,6 @@
+arch.univariate.EGARCH.volatility\_updater
+==========================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: EGARCH.volatility_updater

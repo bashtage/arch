@@ -34,8 +34,10 @@
    .. autosummary::
       :toctree: generated/
 
+      ~IIDBootstrap.generator
       ~IIDBootstrap.index
       ~IIDBootstrap.random_state
+      ~IIDBootstrap.state
    
    
    

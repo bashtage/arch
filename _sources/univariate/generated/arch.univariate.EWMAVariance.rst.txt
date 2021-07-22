@@ -22,6 +22,7 @@
       ~EWMAVariance.parameter_names
       ~EWMAVariance.simulate
       ~EWMAVariance.starting_values
+      ~EWMAVariance.update
       ~EWMAVariance.variance_bounds
    
    
@@ -37,6 +38,8 @@
       ~EWMAVariance.num_params
       ~EWMAVariance.start
       ~EWMAVariance.stop
+      ~EWMAVariance.updateable
+      ~EWMAVariance.volatility_updater
    
    
    

@@ -33,6 +33,7 @@
    .. autosummary::
       :toctree: generated/
 
+      ~SkewStudent.generator
       ~SkewStudent.name
       ~SkewStudent.random_state
    

@@ -1,0 +1,6 @@
+arch.bootstrap.StationaryBootstrap.state
+========================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: StationaryBootstrap.state

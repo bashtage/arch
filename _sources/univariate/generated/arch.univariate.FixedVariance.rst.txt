@@ -22,6 +22,7 @@
       ~FixedVariance.parameter_names
       ~FixedVariance.simulate
       ~FixedVariance.starting_values
+      ~FixedVariance.update
       ~FixedVariance.variance_bounds
    
    
@@ -37,6 +38,8 @@
       ~FixedVariance.num_params
       ~FixedVariance.start
       ~FixedVariance.stop
+      ~FixedVariance.updateable
+      ~FixedVariance.volatility_updater
    
    
    

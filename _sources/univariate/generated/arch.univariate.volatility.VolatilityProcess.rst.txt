@@ -22,6 +22,7 @@
       ~VolatilityProcess.parameter_names
       ~VolatilityProcess.simulate
       ~VolatilityProcess.starting_values
+      ~VolatilityProcess.update
       ~VolatilityProcess.variance_bounds
    
    
@@ -37,6 +38,8 @@
       ~VolatilityProcess.num_params
       ~VolatilityProcess.start
       ~VolatilityProcess.stop
+      ~VolatilityProcess.updateable
+      ~VolatilityProcess.volatility_updater
    
    
    

@@ -1,0 +1,6 @@
+arch.univariate.EGARCH.updateable
+=================================
+
+.. currentmodule:: arch.univariate
+
+.. autoproperty:: EGARCH.updateable

@@ -1,0 +1,6 @@
+arch.bootstrap.IndependentSamplesBootstrap.generator
+====================================================
+
+.. currentmodule:: arch.bootstrap
+
+.. autoproperty:: IndependentSamplesBootstrap.generator

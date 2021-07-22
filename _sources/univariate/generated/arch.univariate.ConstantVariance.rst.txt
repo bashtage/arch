@@ -22,6 +22,7 @@
       ~ConstantVariance.parameter_names
       ~ConstantVariance.simulate
       ~ConstantVariance.starting_values
+      ~ConstantVariance.update
       ~ConstantVariance.variance_bounds
    
    
@@ -37,6 +38,8 @@
       ~ConstantVariance.num_params
       ~ConstantVariance.start
       ~ConstantVariance.stop
+      ~ConstantVariance.updateable
+      ~ConstantVariance.volatility_updater
    
    
    

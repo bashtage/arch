@@ -22,6 +22,7 @@
       ~RiskMetrics2006.parameter_names
       ~RiskMetrics2006.simulate
       ~RiskMetrics2006.starting_values
+      ~RiskMetrics2006.update
       ~RiskMetrics2006.variance_bounds
    
    
@@ -37,6 +38,8 @@
       ~RiskMetrics2006.num_params
       ~RiskMetrics2006.start
       ~RiskMetrics2006.stop
+      ~RiskMetrics2006.updateable
+      ~RiskMetrics2006.volatility_updater
    
    
    
