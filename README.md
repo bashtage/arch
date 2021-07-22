@@ -206,14 +206,14 @@ that arch will work with older versions.
 - Python (3.7+)
 - NumPy (1.17+)
 - SciPy (1.3+)
-- Pandas (0.25+)
+- Pandas (1.0+)
 - statsmodels (0.11+)
 - matplotlib (3+), optional
 - property-cached (1.6.4+), optional
 
 ### Optional Requirements
 
-- Numba (0.35+) will be used if available **and** when installed without building the binary modules. In order to ensure that these are not built, you must set the environment variable ``ARCH_NO_BINARY=1`` and install without the wheel.
+- Numba (0.49+) will be used if available **and** when installed without building the binary modules. In order to ensure that these are not built, you must set the environment variable ``ARCH_NO_BINARY=1`` and install without the wheel.
   
 ```shell
 export ARCH_NO_BINARY=1

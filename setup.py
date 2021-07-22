@@ -1,6 +1,6 @@
 from setuptools import Command, Extension, find_packages, setup
 from setuptools.dist import Distribution
-
+import pathlib
 from collections import defaultdict
 from distutils.errors import CCompilerError, DistutilsExecError, DistutilsPlatformError
 import fnmatch
@@ -61,16 +61,13 @@ class build_ext(_build_ext):
         _build_ext.build_extensions(self)
 
 
-SETUP_REQUIREMENTS = {"numpy": "1.14", "cython": "0.29.14"}
-INSTALL_REQUIREMENTS = SETUP_REQUIREMENTS.copy()
-INSTALL_REQUIREMENTS.update(
-    {
-        "scipy": "1.2.3",
-        "pandas": "0.23",
-        "statsmodels": "0.10",
-        "property_cached": "1.6.4",
-    }
-)
+with pathlib.Path('requirements.txt').open() as requirements_txt:
+    install_requires = [
+        str(requirement)
+        for requirement
+        in pkg_resources.parse_requirements(requirements_txt)
+    ]
+
 
 cmdclass["build_ext"] = build_ext
 
@@ -200,12 +197,7 @@ installed.
             "Programming Language :: Cython",
             "Topic :: Scientific/Engineering",
         ],
-        install_requires=[
-            key + ">=" + INSTALL_REQUIREMENTS[key] for key in INSTALL_REQUIREMENTS
-        ],
-        setup_requires=[
-            key + ">=" + SETUP_REQUIREMENTS[key] for key in SETUP_REQUIREMENTS
-        ],
+        install_requires=install_requires,
         python_requires=">=3.7",
     )
 
