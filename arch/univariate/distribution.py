@@ -1173,7 +1173,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
 
         .. math::
 
-            \ln\nu-\ln c-\ln\Gamma(\frac{1}{\nu})+(1+\frac{1}{\nu})\ln2
+            \ln\nu-\ln c-\ln\Gamma(\frac{1}{\nu})-(1+\frac{1}{\nu})\ln2
             -\frac{1}{2}\ln\sigma^{2}
             -\frac{1}{2}\left|\frac{x}{c\sigma}\right|^{\nu}
 
