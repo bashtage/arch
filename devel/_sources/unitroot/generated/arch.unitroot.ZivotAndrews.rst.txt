@@ -4,7 +4,7 @@
 .. currentmodule:: arch.unitroot
 
 .. autoclass:: ZivotAndrews
-   :exclude-members:
+   :exclude-members: summary,
 
    
    

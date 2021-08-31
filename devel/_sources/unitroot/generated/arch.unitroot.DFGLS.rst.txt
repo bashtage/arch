@@ -4,7 +4,7 @@
 .. currentmodule:: arch.unitroot
 
 .. autoclass:: DFGLS
-   :exclude-members:
+   :exclude-members: summary,
 
    
    

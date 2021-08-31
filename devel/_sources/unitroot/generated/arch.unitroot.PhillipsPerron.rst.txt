@@ -4,7 +4,7 @@
 .. currentmodule:: arch.unitroot
 
 .. autoclass:: PhillipsPerron
-   :exclude-members:
+   :exclude-members: summary,
 
    
    

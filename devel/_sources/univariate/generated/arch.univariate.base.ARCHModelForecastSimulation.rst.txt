@@ -4,7 +4,7 @@
 .. currentmodule:: arch.univariate.base
 
 .. autoclass:: ARCHModelForecastSimulation
-   :exclude-members:
+   :exclude-members: 
 
    
    

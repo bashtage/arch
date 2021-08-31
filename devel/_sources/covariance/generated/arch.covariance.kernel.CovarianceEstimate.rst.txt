@@ -4,7 +4,7 @@
 .. currentmodule:: arch.covariance.kernel
 
 .. autoclass:: CovarianceEstimate
-   :exclude-members:
+   :exclude-members: 
 
    
    

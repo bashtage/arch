@@ -4,7 +4,7 @@
 .. currentmodule:: arch.univariate
 
 .. autoclass:: ConstantMean
-   :exclude-members:
+   :exclude-members: bounds,compute_param_cov,constraints,fit,fix,forecast,parameter_names,resids,simulate,starting_values,
 
    
    

@@ -4,7 +4,7 @@
 .. currentmodule:: arch.univariate
 
 .. autoclass:: StudentsT
-   :exclude-members:
+   :exclude-members: bounds,cdf,constraints,loglikelihood,moment,parameter_names,partial_moment,ppf,simulate,starting_values,
 
    
    
