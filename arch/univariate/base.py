@@ -936,9 +936,8 @@ class ARCHModel(object, metaclass=ABCMeta):
 
         Parameters
         ----------
-        params : {ndarray, Series}, optional
-            Alternative parameters to use.  If not provided, the parameters
-            estimated when fitting the model are used.  Must be identical in
+        params : {ndarray, Series}
+            Parameters required to forecast. Must be identical in
             shape to the parameters computed by fitting the model.
         horizon : int, optional
            Number of steps to forecast
