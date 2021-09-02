@@ -1128,7 +1128,7 @@ def test_arch_lm(simulated_data):
 
     resids2 = pd.Series(res.resid ** 2)
     data = [resids2.shift(i) for i in range(df + 1)]
-    data = pd.concat(data, 1).dropna()
+    data = pd.concat(data, axis=1).dropna()
     lhs = data.iloc[:, 0]
     rhs = smtools.add_constant(data.iloc[:, 1:])
     ols_res = smlm.OLS(lhs, rhs).fit()
