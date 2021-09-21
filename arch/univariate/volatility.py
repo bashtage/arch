@@ -3454,7 +3454,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         bounds = [(0.0, 10.0 * float(v))]
         bounds.extend([(0.0, 1.0)] * self.p)
         o = 1 if self._common_asym else self.o
-        bounds.extend([(-0.999998, 0.999998)] * o)
+        bounds.extend([(-0.9997, 0.9997)] * o)
         bounds.extend([(0.0, 1.0)] * self.q)
         if self._est_delta:
             bounds.append((0.05, 4.0))
@@ -3523,8 +3523,8 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         a[-1, p + 1 : p + o + 1] = 0
 
         b = np.zeros(k_arch + o + 2 + ndelta)  # omega and alpha, > 0
-        b[p + 1 : p + o + 1] = -0.999998  # gamma > -.999998
-        b[p + o + 1 : p + 2 * o + 1] = -0.999998  # gamma < .999998
+        b[p + 1 : p + o + 1] = -0.9997  # gamma > -.9997
+        b[p + o + 1 : p + 2 * o + 1] = -0.9997  # gamma < .9997
         if self._est_delta:
             b[-3] = 0.05  # delta > 0.05
             b[-2] = -4.0  # delta < 4

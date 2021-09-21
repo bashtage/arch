@@ -1556,7 +1556,7 @@ def test_aparch(setup, initial_value):
     upper = max(np.mean(setup.resids ** 2.0), np.mean(np.abs(setup.resids) ** 0.5))
     assert_equal(bounds[0], (0.0, 10.0 * upper))
     assert_equal(bounds[1], (0.0, 1.0))
-    assert_equal(bounds[2], (-0.999998, 0.999998))
+    assert_equal(bounds[2], (-0.9997, 0.9997))
     assert_equal(bounds[3], (0.0, 1.0))
     assert_equal(bounds[4], (0.05, 4.0))
     backcast = aparch.backcast(setup.resids)
@@ -1596,7 +1596,7 @@ def test_aparch(setup, initial_value):
             [0, -1, 0, -1, 0],
         ]
     )
-    b_target = np.array([0.0, 0.0, -0.999998, -0.999998, 0.0, 0.05, -4.0, -1.0])
+    b_target = np.array([0.0, 0.0, -0.9997, -0.9997, 0.0, 0.05, -4.0, -1.0])
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
     state = setup.rng.get_state()
@@ -1655,7 +1655,7 @@ def test_aparch_delta(setup):
     upper = max(np.mean(setup.resids ** 2.0), np.mean(np.abs(setup.resids) ** 0.5))
     assert_equal(bounds[0], (0.0, 10.0 * upper))
     assert_equal(bounds[1], (0.0, 1.0))
-    assert_equal(bounds[2], (-0.999998, 0.999998))
+    assert_equal(bounds[2], (-0.9997, 0.9997))
     assert_equal(bounds[3], (0.0, 1.0))
     backcast = aparch.backcast(setup.resids)
     w = 0.94 ** np.arange(75)
@@ -1693,7 +1693,7 @@ def test_aparch_delta(setup):
             [0, -1, 0, -1],
         ]
     )
-    b_target = np.array([0.0, 0.0, -0.999998, -0.999998, 0.0, -1.0])
+    b_target = np.array([0.0, 0.0, -0.9997, -0.9997, 0.0, -1.0])
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
     state = setup.rng.get_state()
