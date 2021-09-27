@@ -18,11 +18,11 @@ CYTHON_COVERAGE = os.environ.get("ARCH_CYTHON_COVERAGE", "0") in ("true", "1", "
 try:
     import arch.univariate.recursions as rec_cython
 
-    missing_extension = False
+    MISSING_EXTENSION = False
 except ImportError:
-    missing_extension = True
+    MISSING_EXTENSION = True
 
-if missing_extension:
+if MISSING_EXTENSION:
     rec: types.ModuleType = recpy
 else:
     rec = rec_cython
@@ -30,9 +30,9 @@ else:
 try:
     import numba  # noqa
 
-    missing_numba = False
+    MISSING_NUMBA = False
 except ImportError:
-    missing_numba = True
+    MISSING_NUMBA = True
 
 pytestmark = pytest.mark.filterwarnings("ignore::arch.compat.numba.PerformanceWarning")
 
@@ -1112,7 +1112,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert_almost_equal(lam, lam_direct)
 
     @pytest.mark.skipif(
-        missing_numba or missing_extension, reason="numba not installed"
+        MISSING_NUMBA or MISSING_EXTENSION, reason="numba not installed"
     )
     def test_garch_performance(self):
         garch_setup = """
@@ -1139,11 +1139,11 @@ var_bounds)
         )
         timer.display()
         assert timer.ratio < 10.0
-        if not (missing_numba or CYTHON_COVERAGE):
+        if not (MISSING_NUMBA or CYTHON_COVERAGE):
             assert 0.1 < timer.ratio
 
     @pytest.mark.skipif(
-        missing_numba or missing_extension, reason="numba not installed"
+        MISSING_NUMBA or MISSING_EXTENSION, reason="numba not installed"
     )
     def test_harch_performance(self):
         harch_setup = """
@@ -1170,11 +1170,11 @@ rec.harch_recursion(parameters, resids, sigma2, lags, nobs, backcast, var_bounds
         )
         timer.display()
         assert timer.ratio < 10.0
-        if not (missing_numba or CYTHON_COVERAGE):
+        if not (MISSING_NUMBA or CYTHON_COVERAGE):
             assert 0.1 < timer.ratio
 
     @pytest.mark.skipif(
-        missing_numba or missing_extension, reason="numba not installed"
+        MISSING_NUMBA or MISSING_EXTENSION, reason="numba not installed"
     )
     def test_egarch_performance(self):
         egarch_setup = """
@@ -1205,11 +1205,11 @@ var_bounds, lnsigma2, std_resids, abs_std_resids)
         )
         timer.display()
         assert timer.ratio < 10.0
-        if not (missing_numba or CYTHON_COVERAGE):
+        if not (MISSING_NUMBA or CYTHON_COVERAGE):
             assert 0.1 < timer.ratio
 
     @pytest.mark.skipif(
-        missing_numba or missing_extension, reason="numba not installed"
+        MISSING_NUMBA or MISSING_EXTENSION, reason="numba not installed"
     )
     def test_midas_performance(self):
         midas_setup = """
@@ -1236,11 +1236,11 @@ rec.midas_recursion(parameters, weights, resids, sigma2, nobs, backcast, var_bou
         )
         timer.display()
         assert timer.ratio < 10.0
-        if not (missing_numba or CYTHON_COVERAGE):
+        if not (MISSING_NUMBA or CYTHON_COVERAGE):
             assert 0.1 < timer.ratio
 
     @pytest.mark.skipif(
-        missing_numba or missing_extension, reason="numba not installed"
+        MISSING_NUMBA or MISSING_EXTENSION, reason="numba not installed"
     )
     def test_figarch_performance(self):
         midas_setup = """
@@ -1266,7 +1266,7 @@ rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backca
         )
         timer.display()
         assert timer.ratio < 10.0
-        if not (missing_numba or CYTHON_COVERAGE):
+        if not (MISSING_NUMBA or CYTHON_COVERAGE):
             assert 0.1 < timer.ratio
 
     def test_garch_aparch_equiv(self):

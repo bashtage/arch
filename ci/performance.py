@@ -4,12 +4,10 @@ Script to run performance tests to show speed.
 
 import sys
 
-from arch.tests.univariate.test_recursions import TestRecursions
+from arch.tests.univariate.test_recursions import MISSING_NUMBA, TestRecursions
 
 if __name__ == "__main__":
-    try:
-        import numba  # noqa: F401
-    except ImportError:
+    if MISSING_NUMBA:
         print("numba not available -- skipping performance tests")
         sys.exit(0)
 
