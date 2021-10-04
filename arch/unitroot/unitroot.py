@@ -36,7 +36,7 @@ from numpy import (
     squeeze,
     sum,
 )
-from numpy.linalg import LinAlgError, inv, matrix_rank, pinv, qr, solve
+from numpy.linalg import LinAlgError, inv, lstsq, matrix_rank, pinv, qr, solve
 from pandas import DataFrame
 from scipy.stats import norm
 from statsmodels.iolib.summary import Summary
@@ -811,7 +811,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
 class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     """
-    Elliott, Rothenberg and Stock's GLS version of the Dickey-Fuller test
+    Elliott, Rothenberg and Stock's ([1]_) GLS detrended Dickey-Fuller
 
     Parameters
     ----------
@@ -828,7 +828,9 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         - "ct" - Include a constant and linear time trend
 
     max_lags : int, optional
-        The maximum number of lags to use when selecting lag length
+        The maximum number of lags to use when selecting lag length. When using
+        automatic lag length selection, the lag is selected using OLS
+        detrending rather than GLS detrending ([2]_).
     method : {"AIC", "BIC", "t-stat"}, optional
         The method to use when selecting the lag length
 
@@ -871,8 +873,11 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
 
     References
     ----------
-    .. [*] Elliott, G. R., T. J. Rothenberg, and J. H. Stock. 1996. Efficient
+    .. [1] Elliott, G. R., T. J. Rothenberg, and J. H. Stock. 1996. Efficient
            bootstrap for an autoregressive unit root. Econometrica 64: 813-836
+    .. [2] Perron, P., & Qu, Z. (2007). A simple modification to improve the
+           finite sample properties of Ng and Perron's unit root tests.
+           Economics letters, 94(1), 12-19.
     """
 
     def __init__(
@@ -929,8 +934,11 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         if self._lags is None:
             max_lags, method = self._max_lags, self._method
             assert self._low_memory is not None
+            self._lags = ADF(self._y, method=method, max_lags=max_lags).lags
+            ols_detrend_coef = lstsq(z, y, rcond=None)[0]
+            y_ols_detrend = y - z @ ols_detrend_coef
             icbest, bestlag = _df_select_lags(
-                y_detrended, "n", max_lags, method, low_memory=self._low_memory
+                y_ols_detrend, "n", max_lags, method, low_memory=self._low_memory
             )
             self._lags = bestlag
 

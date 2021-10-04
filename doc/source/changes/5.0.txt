@@ -2,6 +2,16 @@
 Version 5
 =========
 
+Release 5.1
+===========
+
+Unit Root
+~~~~~~~~~
+
+- Improved automatic lag length selection in :class:`~arch.unitroot.DFGLS`
+  by using OLS rather than GLS detrended data when selecting the lag length.
+  This problem was studied by Perron, P., & Qu, Z. (2007).
+
 Release 5.0
 ===========
 
