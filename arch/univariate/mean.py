@@ -1817,7 +1817,7 @@ def arch_model(
         "Constant", "Zero", "LS", "AR", "ARX", "HAR", "HARX", "constant", "zero"
     ] = "Constant",
     lags: Union[None, int, List[int], Int32Array, Int64Array] = 0,
-    vol: Literal["GARCH", "ARCH", "EGARCH", "FIARCH", "HARCH"] = "GARCH",
+    vol: Literal["GARCH", "ARCH", "EGARCH", "FIARCH", "APARCH", "HARCH"] = "GARCH",
     p: Union[int, List[int]] = 1,
     o: int = 0,
     q: int = 1,
@@ -1853,7 +1853,7 @@ def arch_model(
         integers specifying lag locations.
     vol : str, optional
         Name of the volatility model.  Currently supported options are:
-        'GARCH' (default), 'ARCH', 'EGARCH', 'FIARCH' and 'HARCH'
+        'GARCH' (default), 'ARCH', 'EGARCH', 'FIARCH', 'APARCH' and 'HARCH'
     p : int, optional
         Lag order of the symmetric innovation
     o : int, optional
@@ -1917,7 +1917,8 @@ def arch_model(
     am: ARCHModel
 
     known_mean = ("zero", "constant", "harx", "har", "ar", "arx", "ls")
-    known_vol = ("arch", "figarch", "garch", "harch", "constant", "egarch")
+    known_vol = ("arch", "figarch", "garch", "harch", "constant", "egarch",
+                 "aparch")
     known_dist = (
         "normal",
         "gaussian",
@@ -1953,7 +1954,7 @@ def arch_model(
     else:  # mean == "zero"
         am = ZeroMean(y, hold_back=hold_back, rescale=rescale)
 
-    if vol in ("arch", "garch", "figarch", "egarch") and not isinstance(p, int):
+    if vol in ("arch", "garch", "figarch", "egarch", "aparch") and not isinstance(p, int):
         raise TypeError(
             "p must be a scalar int for all volatility processes except HARCH."
         )
@@ -1972,6 +1973,9 @@ def arch_model(
     elif vol_model == "egarch":
         assert isinstance(p, int)
         v = EGARCH(p=p, o=o, q=q)
+    elif vol_model == "aparch":
+        assert isinstance(p, int)
+        v = APARCH(p=p, o=o, q=q)
     else:  # vol == 'harch'
         v = HARCH(lags=p)
 
