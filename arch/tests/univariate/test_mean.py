@@ -38,6 +38,7 @@ from arch.univariate.volatility import (
     ARCH,
     EGARCH,
     FIGARCH,
+    APARCH,
     GARCH,
     HARCH,
     ConstantVariance,
@@ -596,6 +597,10 @@ class TestMeanModel(object):
 
         am = arch_model(self.y, vol="figarch")
         assert isinstance(am.volatility, FIGARCH)
+        
+        am = arch_model(self.y, vol="aparch")
+        assert isinstance(am.volatility, APARCH)
+
 
         with pytest.raises(ValueError):
             arch_model(self.y, mean="unknown")
@@ -1103,6 +1108,7 @@ def test_backcast_error(simulated_data):
         GARCH,
         EGARCH,
         FIGARCH,
+        APARCH,
         HARCH,
         MIDASHyperbolic,
         RiskMetrics2006,
