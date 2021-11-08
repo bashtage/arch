@@ -1918,8 +1918,15 @@ def arch_model(
     am: ARCHModel
 
     known_mean = ("zero", "constant", "harx", "har", "ar", "arx", "ls")
-    known_vol = ("arch", "figarch", "garch", "harch", "constant", "egarch",
-                 "aparch")
+    known_vol = (
+        "arch", 
+        "figarch", 
+        "garch", 
+        "harch", 
+        "constant", 
+        "egarch",
+        "aparch"
+    )
     known_dist = (
         "normal",
         "gaussian",
