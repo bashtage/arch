@@ -69,6 +69,7 @@ from arch.univariate.volatility import (
     FIGARCH,
     GARCH,
     HARCH,
+    APARCH,
     ConstantVariance,
     VolatilityProcess,
 )
