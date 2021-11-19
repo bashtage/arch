@@ -64,12 +64,12 @@ else:
 
 from arch.typing import Literal
 from arch.univariate.volatility import (
+    APARCH,
     ARCH,
     EGARCH,
     FIGARCH,
     GARCH,
     HARCH,
-    APARCH,
     ConstantVariance,
     VolatilityProcess,
 )
@@ -1919,12 +1919,12 @@ def arch_model(
 
     known_mean = ("zero", "constant", "harx", "har", "ar", "arx", "ls")
     known_vol = (
-        "arch", 
+        "arch",
         "figarch",
         "aparch",
-        "garch", 
-        "harch", 
-        "constant", 
+        "garch",
+        "harch",
+        "constant",
         "egarch",
     )
     known_dist = (
@@ -1962,7 +1962,9 @@ def arch_model(
     else:  # mean == "zero"
         am = ZeroMean(y, hold_back=hold_back, rescale=rescale)
 
-    if vol in ("arch", "garch", "figarch", "egarch", "aparch") and not isinstance(p, int):
+    if vol in ("arch", "garch", "figarch", "egarch", "aparch") and not isinstance(
+        p, int
+    ):
         raise TypeError(
             "p must be a scalar int for all volatility processes except HARCH."
         )
