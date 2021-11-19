@@ -4,7 +4,7 @@
 .. currentmodule:: arch.covariance.kernel
 
 .. autoclass:: Parzen
-   :exclude-members:
+   :exclude-members: 
 
    
    

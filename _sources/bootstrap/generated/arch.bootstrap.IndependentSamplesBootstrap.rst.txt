@@ -4,7 +4,7 @@
 .. currentmodule:: arch.bootstrap
 
 .. autoclass:: IndependentSamplesBootstrap
-   :exclude-members:
+   :exclude-members: apply,bootstrap,clone,conf_int,cov,get_state,reset,seed,set_state,update_indices,var,
 
    
    

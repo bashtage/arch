@@ -4,7 +4,7 @@
 .. currentmodule:: arch.univariate.base
 
 .. autoclass:: ARCHModelResult
-   :exclude-members:
+   :exclude-members: arch_lm_test,conf_int,forecast,hedgehog_plot,plot,summary,
 
    
    

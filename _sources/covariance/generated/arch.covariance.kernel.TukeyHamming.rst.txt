@@ -4,7 +4,7 @@
 .. currentmodule:: arch.covariance.kernel
 
 .. autoclass:: TukeyHamming
-   :exclude-members:
+   :exclude-members: 
 
    
    

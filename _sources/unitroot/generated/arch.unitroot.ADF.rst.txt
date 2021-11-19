@@ -4,7 +4,7 @@
 .. currentmodule:: arch.unitroot
 
 .. autoclass:: ADF
-   :exclude-members:
+   :exclude-members: summary,
 
    
    

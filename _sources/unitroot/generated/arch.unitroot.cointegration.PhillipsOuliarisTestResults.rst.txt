@@ -4,7 +4,7 @@
 .. currentmodule:: arch.unitroot.cointegration
 
 .. autoclass:: PhillipsOuliarisTestResults
-   :exclude-members:
+   :exclude-members: plot,summary,
 
    
    

@@ -4,7 +4,7 @@
 .. currentmodule:: arch.univariate
 
 .. autoclass:: HARCH
-   :exclude-members:
+   :exclude-members: backcast,backcast_transform,bounds,compute_variance,constraints,forecast,parameter_names,simulate,starting_values,update,variance_bounds,
 
    
    

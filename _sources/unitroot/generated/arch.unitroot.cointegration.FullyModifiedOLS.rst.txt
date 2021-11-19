@@ -4,7 +4,7 @@
 .. currentmodule:: arch.unitroot.cointegration
 
 .. autoclass:: FullyModifiedOLS
-   :exclude-members:
+   :exclude-members: fit,
 
    
    

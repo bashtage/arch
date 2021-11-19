@@ -4,7 +4,7 @@
 .. currentmodule:: arch.unitroot.cointegration
 
 .. autoclass:: DynamicOLS
-   :exclude-members:
+   :exclude-members: fit,
 
    
    

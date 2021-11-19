@@ -4,7 +4,7 @@
 .. currentmodule:: arch.univariate.recursions_python
 
 .. autoclass:: VolatilityUpdater
-   :exclude-members:
+   :exclude-members: initialize_update,update,
 
    
    
