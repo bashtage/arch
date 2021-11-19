@@ -35,10 +35,10 @@ from arch.univariate.distribution import (
 )
 from arch.univariate.mean import ARX, HARX, LS, ConstantMean, ZeroMean, arch_model
 from arch.univariate.volatility import (
+    APARCH,
     ARCH,
     EGARCH,
     FIGARCH,
-    APARCH,
     GARCH,
     HARCH,
     ConstantVariance,
@@ -597,10 +597,9 @@ class TestMeanModel(object):
 
         am = arch_model(self.y, vol="figarch")
         assert isinstance(am.volatility, FIGARCH)
-        
+
         am = arch_model(self.y, vol="aparch")
         assert isinstance(am.volatility, APARCH)
-
 
         with pytest.raises(ValueError):
             arch_model(self.y, mean="unknown")
