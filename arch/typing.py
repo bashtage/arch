@@ -52,6 +52,7 @@ __all__ = [
     "IntArray",
     "RandomStateState",
     "Uint32Array",
+    "BootstrapIndexT",
 ]
 
 NDArray = Union[np.ndarray]
@@ -68,6 +69,7 @@ else:
         IntArray
     ) = Float64Array = Int64Array = Int32Array = BoolArray = AnyArray = NDArray
 
+BootstrapIndexT = Union[Int64Array, Tuple[list[Int64Array], dict[str, Int64Array]]]
 RandomStateState = Tuple[str, Uint32Array, int, int, float]
 
 RNGType = Callable[[Union[int, Tuple[int, ...]]], Float64Array]

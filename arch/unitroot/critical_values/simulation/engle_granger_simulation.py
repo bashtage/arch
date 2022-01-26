@@ -103,7 +103,6 @@ def block(
                 xpx = np.matmul(xp, x)
                 coefs = xpy / xpx
                 errors[:, :, i : (i + 1)] = y - coefs * x
-            x = y = None
             del orth, x, y
             # Compute ADF statistics for each of the error series
             err_lag = errors[:, :-1]

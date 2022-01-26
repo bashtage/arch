@@ -24,6 +24,7 @@ import scipy.stats as stats
 from arch.typing import (
     AnyArray,
     ArrayLike,
+    BootstrapIndexT,
     Float64Array,
     Int64Array,
     Literal,
@@ -447,7 +448,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
                     raise ValueError(
                         "All inputs must have the same number of elements in axis 0"
                     )
-        self._index = np.arange(self._num_items)
+        self._index: BootstrapIndexT = np.arange(self._num_items)
 
         self._parameters: List[Union[int, ArrayLike]] = []
         self.pos_data: Tuple[Union[AnyArray, pd.Series, pd.DataFrame], ...] = args
@@ -543,9 +544,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         self._generator = random_state
 
     @property
-    def index(
-        self,
-    ) -> Union[Int64Array, Tuple[List[Int64Array], Dict[str, Int64Array]]]:
+    def index(self) -> BootstrapIndexT:
         """
         The current index of the bootstrap
         """
@@ -1278,9 +1277,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
         return (errors ** 2).sum(0) / reps
 
-    def update_indices(
-        self,
-    ) -> Union[Int64Array, Tuple[List[Int64Array], Dict[str, Int64Array]]]:
+    def update_indices(self) -> BootstrapIndexT:
         """
         Update indices for the next iteration of the bootstrap.  This must
         be overridden when creating new bootstraps.
@@ -1294,11 +1291,13 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         Resample all data using the values in _index
         """
         indices = self._index
+        assert isinstance(indices, np.ndarray)
         pos_data = []
         for values in self._args:
             if isinstance(values, (pd.Series, pd.DataFrame)):
                 pos_data.append(values.iloc[indices])
             else:
+                assert isinstance(values, np.ndarray)
                 pos_data.append(values[indices])
         named_data = {}
         for key, values in self._kwargs.items():
@@ -1422,9 +1421,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         return pos_indices, kw_indices
 
     @property
-    def index(
-        self,
-    ) -> Union[Int64Array, Tuple[List[Int64Array], Dict[str, Int64Array]]]:
+    def index(self) -> BootstrapIndexT:
         """
         Returns the current index of the bootstrap
 
@@ -1588,9 +1585,7 @@ class CircularBlockBootstrap(IIDBootstrap):
         html += ", <strong>ID</strong>: " + hex(id(self)) + ")"
         return html
 
-    def update_indices(
-        self,
-    ) -> Union[Int64Array, Tuple[List[Int64Array], Dict[str, Int64Array]]]:
+    def update_indices(self) -> Int64Array:
         num_blocks = self._num_items // self.block_size
         if num_blocks * self.block_size < self._num_items:
             num_blocks += 1
@@ -1702,9 +1697,7 @@ class StationaryBootstrap(CircularBlockBootstrap):
         )
         self._p = 1.0 / block_size
 
-    def update_indices(
-        self,
-    ) -> Union[Int64Array, Tuple[List[Int64Array], Dict[str, Int64Array]]]:
+    def update_indices(self) -> Int64Array:
         indices = _get_random_integers(
             self._generator, self._num_items, size=self._num_items
         )
@@ -1813,9 +1806,7 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
             block_size, *args, random_state=random_state, seed=seed, **kwargs
         )
 
-    def update_indices(
-        self,
-    ) -> Union[Int64Array, Tuple[List[Int64Array], Dict[str, Int64Array]]]:
+    def update_indices(self) -> Int64Array:
         num_blocks = self._num_items // self.block_size
         if num_blocks * self.block_size < self._num_items:
             num_blocks += 1
