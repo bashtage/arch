@@ -6,7 +6,9 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
+    Dict,
     Hashable,
+    List,
     Optional,
     Tuple,
     TypeVar,
@@ -52,6 +54,7 @@ __all__ = [
     "IntArray",
     "RandomStateState",
     "Uint32Array",
+    "BootstrapIndexT",
 ]
 
 NDArray = Union[np.ndarray]
@@ -68,6 +71,7 @@ else:
         IntArray
     ) = Float64Array = Int64Array = Int32Array = BoolArray = AnyArray = NDArray
 
+BootstrapIndexT = Union[Int64Array, Tuple[List[Int64Array], Dict[str, Int64Array]]]
 RandomStateState = Tuple[str, Uint32Array, int, int, float]
 
 RNGType = Callable[[Union[int, Tuple[int, ...]]], Float64Array]

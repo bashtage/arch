@@ -109,7 +109,7 @@ def add_trend(
         trend_array = trend_array[:, 1:]
         # check for constant
     if x is None:
-        return trend_array
+        return np.asarray(trend_array, dtype=float)
     x_array = np.asarray(x)
     if "c" in trend_name and np.any(
         np.logical_and(np.ptp(x_array, axis=0) == 0, np.all(x_array != 0, axis=0))
@@ -127,11 +127,11 @@ def add_trend(
         else:
             columns = columns[0 : trend_order + 1]
         columns = _enforce_unique_col_name(x.columns, columns)
-        trend_array = pd.DataFrame(trend_array, index=x.index, columns=columns)
+        trend_array_df = pd.DataFrame(trend_array, index=x.index, columns=columns)
         if prepend:
-            x = trend_array.join(x)
+            x = trend_array_df.join(x)
         else:
-            x = x.join(trend_array)
+            x = x.join(trend_array_df)
     else:
         if prepend:
             x = np.column_stack((trend_array, x))

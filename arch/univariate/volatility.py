@@ -341,8 +341,10 @@ class VolatilityProcess(metaclass=ABCMeta):
             t by horizon array containing the one-step ahead forecasts in the first location
         """
         t = resids.shape[0]
-        _resids = np.concatenate((resids, [0]))
-        _var_bounds = np.concatenate((var_bounds, [[0, np.inf]]))
+        _resids: Float64Array = np.concatenate((resids, np.array([0.0])))
+        _var_bounds: Float64Array = np.concatenate(
+            (var_bounds, np.array([[0, np.inf]]))
+        )
         sigma2 = np.zeros(t + 1)
         self.compute_variance(parameters, _resids, sigma2, backcast, _var_bounds)
         forecasts = np.zeros((t - start_index, horizon))

@@ -27,7 +27,7 @@ def z_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> Tuple[float, flo
     one_sided_strict = 0.0
     for i in range(1, lag + 1):
         w = 1 - i / (lag + 1)
-        one_sided_strict += 1 / nobs * w * k[i:].T @ k[:-i]
+        one_sided_strict += float(1 / nobs * w * k[i:].T @ k[:-i])
     u2 = u[:-1].T @ u[:-1]
     z = (alpha - 1) - nobs * one_sided_strict / u2
     z_a = nobs * z
