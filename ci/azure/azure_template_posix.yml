@@ -16,53 +16,56 @@ jobs:
     vmImage: ${{ parameters.vmImage }}
   strategy:
     matrix:
-      python_38_coverage:
-        python.version: '3.8'
+      python_39_coverage:
+        python.version: '3.9'
         ARCH_CYTHON_COVERAGE: true
         PYTEST_PATTERN: "(not slow)"
-      python_38_statsmodels_main:
-        python.version: '3.8'
+      python_39_statsmodels_main:
+        python.version: '3.9'
         STATSMODELS_MAIN: true
         coverage: false
-      python37:
-        python.version: '3.7'
-        NUMPY: 1.17.5
-        SCIPY: 1.3.3
-        MATPLOTLIB: 3.0.3
-        PANDAS: 0.25.3
-      python_38_conda_numba:
+      python38:
         python.version: '3.8'
+        NUMPY: 1.18.0
+        SCIPY: 1.3.0
+        MATPLOTLIB: 3.2.0
+        PANDAS: 1.0.0
+      python_39_conda_numba:
+        python.version: '3.9'
         use.conda: 'true'
         USE_NUMBA: true
-        MATPLOTLIB: 3.2.2
+        MATPLOTLIB: 3.4.0
         PYTEST_PATTERN: "(slow or not slow)"
-      python37_numpy117:
-        python.version: '3.7'
-        MATPLOTLIB: 3.1.3
-        NUMPY: 1.18.5
-      python_3.9:
-        python.version: '3.9'
-        test.install: true
-      python_3.8_no_binary:
+      python38_numpy118:
         python.version: '3.8'
+        MATPLOTLIB: 3.3.0
+        NUMPY: 1.19.0
+        PANDAS: 1.1.0
+      python_310:
+        python.version: '3.10'
+        test.install: true
+      python_39_no_binary:
+        python.version: '3.9'
         SETUP_ARGS: '--no-binary'
         use.conda: 'true'
         USE_NUMBA: true
         PYTEST_OPTS: '--skip-slow'
-      python_3.8_no_binary_environment:
-        python.version: '3.8'
+        PANDAS: 1.2.0
+      python_39_no_binary_environment:
+        python.version: '3.9'
         ARCH_NO_BINARY: true
         use.conda: 'true'
         USE_NUMBA: true
         PYTEST_OPTS: '--skip-slow'
-      python_38_no_numba:
-        python.version: '3.8'
+      python_39_no_numba:
+        python.version: '3.9'
+        NUMPY: 1.21.0
         USE_NUMBA: false
-        MATPLOTLIB: 3.3.4
+        MATPLOTLIB: 3.3.0
         PYTEST_PATTERN: "(slow or not slow)"
-      python_38_numpy_118:
-        python.version: '3.8'
-        NUMPY: 1.19.5
+      python_39_numpy_118:
+        python.version: '3.9'
+        NUMPY: 1.20.0
         USE_NUMBA: false
         PYTEST_PATTERN: "(slow or not slow)"
     maxParallel: 10

@@ -16,20 +16,20 @@ else
 fi
 
 python -m pip install --upgrade pip setuptools wheel
-python -m pip install cython pytest pytest-xdist coverage pytest-cov ipython jupyter notebook nbconvert "property_cached>=1.6.3" black==20.8b1 isort flake8 nbconvert
+python -m pip install cython pytest pytest-xdist coverage pytest-cov ipython jupyter notebook nbconvert "property_cached>=1.6.3" black isort flake8 nbconvert
 
-if [[ -n ${NUMPY} ]]; then CMD="$CMD==${NUMPY}"; fi;
+if [[ -n ${NUMPY} ]]; then CMD="$CMD~=${NUMPY}"; fi;
 CMD="$CMD scipy"
-if [[ -n ${SCIPY} ]]; then CMD="$CMD==${SCIPY}"; fi;
+if [[ -n ${SCIPY} ]]; then CMD="$CMD~=${SCIPY}"; fi;
 CMD="$CMD pandas"
-if [[ -n ${PANDAS} ]]; then CMD="$CMD==${PANDAS}"; fi;
+if [[ -n ${PANDAS} ]]; then CMD="$CMD~=${PANDAS}"; fi;
 CMD="$CMD statsmodels"
-if [[ -n ${STATSMODELS} ]]; then CMD="$CMD==${STATSMODELS}"; fi
-if [[ -n ${MATPLOTLIB} ]]; then CMD="$CMD matplotlib==${MATPLOTLIB} seaborn"; fi
+if [[ -n ${STATSMODELS} ]]; then CMD="$CMD~=${STATSMODELS}"; fi
+if [[ -n ${MATPLOTLIB} ]]; then CMD="$CMD matplotlib~=${MATPLOTLIB} seaborn"; fi
 if [[ ${USE_NUMBA} = true ]]; then
   CMD="${CMD} numba";
   if [[ -n ${NUMBA} ]]; then
-    CMD="${CMD}==${NUMBA}"
+    CMD="${CMD}~=${NUMBA}"
   fi;
 fi;
 CMD="$CMD $EXTRA"
