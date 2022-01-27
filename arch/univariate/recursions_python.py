@@ -874,7 +874,7 @@ class MIDASUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         self.gw = np.empty(m)
         self.weights = np.empty(m)
         self.resids2 = np.empty(0)
-        self.DOUBLE_EPS = np.finfo(np.float64).eps
+        self.DOUBLE_EPS = float(np.finfo(np.float64).eps)
 
     def update_weights(self, theta: float) -> None:
         sum_w = 0.0

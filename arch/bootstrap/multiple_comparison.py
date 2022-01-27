@@ -15,6 +15,7 @@ from arch.typing import (
     ArrayLike,
     BoolArray,
     Float64Array,
+    Int64Array,
     IntArray,
     Literal,
     Uint32Array,
@@ -765,7 +766,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self,
         pvalue: float = 0.05,
         pvalue_type: Literal["lower", "consistent", "upper"] = "consistent",
-    ) -> Union[IntArray, List[Hashable]]:
+    ) -> Union[Int64Array, List[Hashable]]:
         """
         Returns set of models rejected as being equal-or-worse than the
         benchmark

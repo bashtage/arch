@@ -1550,7 +1550,7 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         y = table[:, 0]
         x = table[:, 1]
         # ZA cv table contains quantiles multiplied by 100
-        self._pvalue = interp(self.stat, x, y) / 100.0
+        self._pvalue = float(interp(self.stat, x, y)) / 100.0
         cv = [1.0, 5.0, 10.0]
         crit_value = interp(cv, y, x)
         self._critical_values = {
@@ -1924,7 +1924,7 @@ def kpss_crit(
     y = table[:, 0]
     x = table[:, 1]
     # kpss.py contains quantiles multiplied by 100
-    pvalue = interp(stat, x, y) / 100.0
+    pvalue = float(interp(stat, x, y)) / 100.0
     cv = [1.0, 5.0, 10.0]
     crit_value = interp(cv, y[::-1], x[::-1])
 

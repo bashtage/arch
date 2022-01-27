@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import List, Optional, SupportsInt, cast
 
 import numpy as np
 from pandas import DataFrame
@@ -186,13 +186,14 @@ class CovarianceEstimator(ABC):
         self._center = center
         if self._center:
             self._x = self._x - self._x.mean(0)
-        if bandwidth is not None and (not np.isscalar(bandwidth) or bandwidth < 0):
-            raise ValueError("bandwidth must be a non-negative scalar.")
+        if bandwidth is not None:
+            if not np.isscalar(bandwidth) or (cast(float, bandwidth) < 0.0):
+                raise ValueError("bandwidth must be a non-negative scalar.")
         self._bandwidth = bandwidth
         self._auto_bandwidth = bandwidth is None
-        if not np.isscalar(df_adjust) or df_adjust < 0:
+        if not np.isscalar(df_adjust) or (cast(int, df_adjust) < 0):
             raise ValueError("df_adjust must be a non-negative integer.")
-        self._df_adjust = int(df_adjust)
+        self._df_adjust = int(cast(SupportsInt, df_adjust))
         self._df = self._x.shape[0] - self._df_adjust
         if self._df <= 0:
             raise ValueError(
@@ -319,7 +320,7 @@ class CovarianceEstimator(ABC):
         f_0s = 0.0
         f_qs = 0.0
         for j in range(n + 1):
-            sig_j = np.squeeze(v[j:].T @ v[: (nobs - j)]) / nobs
+            sig_j = float(np.squeeze(v[j:].T @ v[: (nobs - j)])) / nobs
             scale = 1 + (j != 0)
             f_0s += scale * sig_j
             f_qs += scale * j ** q * sig_j
