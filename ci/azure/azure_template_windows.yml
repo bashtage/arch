@@ -20,8 +20,8 @@ jobs:
         python.version: '3.7'
       python38_win_latest:
         python.version: '3.8'
-      # python39_win_latest:
-      #   python.version: '3.9'
+      python39_win_latest:
+        python.version: '3.9'
     maxParallel: 10
 
   steps:
