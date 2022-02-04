@@ -302,7 +302,7 @@ class ARCHModel(object, metaclass=ABCMeta):
                 rescale *= 10
             else:
                 rescale /= 10
-            scale = orig_scale * rescale ** 2
+            scale = orig_scale * rescale**2
         if rescale == 1.0:
             return
         if self.rescale is None:
@@ -712,7 +712,7 @@ class ARCHModel(object, metaclass=ABCMeta):
             disp = bool(disp)
             disp = "off" if not disp else "final"
         if update_freq <= 0 or disp == "off":
-            _callback_info["display"] = 2 ** 31
+            _callback_info["display"] = 2**31
 
         else:
             _callback_info["display"] = update_freq
@@ -990,8 +990,8 @@ class ARCHModel(object, metaclass=ABCMeta):
               (1000, 10), and only the final row is used to produce forecasts.
             * A dictionary of 2-d array-like: This format is identical to the
               previous except that the dictionary keys must match the names of
-              the exog variables.  Requires that the exog variables were pass
-              as a pandas DataFrame.
+              the exog variables.  Requires that the exog variables were
+              passed as a pandas DataFrame.
             * A 3-d NumPy array (or equivalent). In this format, each panel
               (0th axis) is a 2-d array that must have shape (nforecast, horizon)
               or (nobs,horizon). The array x[j] corresponds to the j-th column of
@@ -1661,7 +1661,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         nobs = resids.shape[0]
         if standardized:
             resids = resids / np.asarray(self.conditional_volatility)
-        resid2 = resids ** 2
+        resid2 = resids**2
         lags = (
             int(np.ceil(12.0 * np.power(nobs / 100.0, 1 / 4.0)))
             if lags is None

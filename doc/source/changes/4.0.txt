@@ -31,7 +31,7 @@ Release 4.17
 
 Release 4.16
 ============
-- Added :class:`~arch.univariate.APARCH` volatilty process  (:issue:`443`).
+- Added :class:`~arch.univariate.APARCH` volatilty process (:issue:`443`).
 - Added support for Python 3.9 in pyproject.toml (:issue:`438`).
 - Fixed a bug in model degree-of-freedom calculation (:issue:`437`).
 - Improved HARX initialization (:issue:`417`).

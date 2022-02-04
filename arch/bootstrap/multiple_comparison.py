@@ -223,7 +223,7 @@ class MCS(MultipleComparison):
             bootstrapped_mean_losses[j] = mean_losses_star - mean_losses_star.T
         # Recenter
         bootstrapped_mean_losses -= loss_diffs
-        variances = (bootstrapped_mean_losses ** 2).mean(0)
+        variances = (bootstrapped_mean_losses**2).mean(0)
         variances += np.eye(self.k)  # Prevent division by 0
         self._variances = variances
         # Standardize everything
@@ -283,7 +283,7 @@ class MCS(MultipleComparison):
             incl_bs_grand_loss = incl_bs_avg_loss_err.mean(1)
             # Reshape for broadcast
             incl_bs_avg_loss_err -= incl_bs_grand_loss[:, None]
-            std_devs = np.sqrt((incl_bs_avg_loss_err ** 2).mean(0))
+            std_devs = np.sqrt((incl_bs_avg_loss_err**2).mean(0))
             simulated_test_stat = incl_bs_avg_loss_err / std_devs
             simulated_test_stat = np.max(simulated_test_stat, 1)
             loss_diffs = incl_losses.mean(0)
@@ -696,7 +696,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         else:
             t = self.t
             p = 1.0 / self.block_size
-            variances = np.sum(demeaned ** 2, 0) / t
+            variances = np.sum(demeaned**2, 0) / t
             for i in range(1, t):
                 kappa = ((1.0 - (i / t)) * ((1 - p) ** i)) + (
                     (i / t) * ((1 - p) ** (t - i))

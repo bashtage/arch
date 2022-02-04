@@ -1127,7 +1127,7 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         s = sqrt(s2)
         gamma0 = s2 * (n - k) / n
         sigma = resols.bse[0]
-        sigma2 = sigma ** 2.0
+        sigma2 = sigma**2.0
         if sigma <= 0:
             raise InfeasibleTestException(
                 "The estimated variance of the coefficient in the Phillips-Perron "
@@ -1139,7 +1139,7 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._stat_tau = sqrt(gamma0 / lam2) * ((rho - 1) / sigma) - 0.5 * (
             (lam2 - gamma0) / lam
         ) * (n * sigma / s)
-        self._stat_rho = n * (rho - 1) - 0.5 * (n ** 2.0 * sigma2 / s2) * (
+        self._stat_rho = n * (rho - 1) - 0.5 * (n**2.0 * sigma2 / s2) * (
             lam2 - gamma0
         )
 
@@ -1301,7 +1301,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
             )
         lam = cov_nw(u, self._lags, demean=False)
         s = cumsum(u)
-        self._stat = 1 / (nobs ** 2.0) * (s ** 2.0).sum() / lam
+        self._stat = 1 / (nobs**2.0) * (s**2.0).sum() / lam
         self._nobs = u.shape[0]
         assert self._stat is not None
         if trend == "c":
@@ -1327,7 +1327,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         resids = self._resids
         assert resids is not None
         covlags = int(power(self._nobs, 2.0 / 9.0))
-        s0 = sum(resids ** 2) / self._nobs
+        s0 = sum(resids**2) / self._nobs
         s1 = 0
         for i in range(1, covlags + 1):
             resids_prod = resids[i:] @ resids[: self._nobs - i]

@@ -74,7 +74,7 @@ def test_variances_and_selection(spa_data):
         kernel_weights[i] = ((1.0 - (i / t)) * ((1 - p) ** i)) + (
             (i / t) * ((1 - p) ** (t - i))
         )
-    direct_vars = (demeaned ** 2).sum(0) / t
+    direct_vars = (demeaned**2).sum(0) / t
     for i in range(1, t):
         direct_vars += (
             2 * kernel_weights[i] * (demeaned[: t - i, :] * demeaned[i:, :]).sum(0) / t
@@ -344,7 +344,7 @@ class TestMCS(object):
                     for n in range(b):
                         # Compute bootstrapped versions
                         bs_diffs[n] = loss_diffs_vec[indices[n]].mean()
-                    variances[j, i] = variances[i, j] = (bs_diffs ** 2).mean()
+                    variances[j, i] = variances[i, j] = (bs_diffs**2).mean()
                     std_diffs = np.abs(bs_diffs) / np.sqrt(variances[i, j])
                     stat_candidates.append(std_diffs)
             stat_candidates = np.array(stat_candidates).T
@@ -388,7 +388,7 @@ class TestMCS(object):
                 # Compute bootstrapped versions
                 bs_loss_errors = loss_errors[indices[n]]
                 stats[n] = bs_loss_errors.mean(0) - bs_loss_errors.mean()
-            variances = (stats ** 2).mean(0)
+            variances = (stats**2).mean(0)
             std_devs = np.sqrt(variances)
             stat_dist = np.max(stats / std_devs, 1)
 

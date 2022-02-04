@@ -11,7 +11,7 @@ pytest>=5
 pytest-xdist
 
 # formatting
-black==20.8b1
+black[jupyter]==22.1.0
 isort
 flake8
 

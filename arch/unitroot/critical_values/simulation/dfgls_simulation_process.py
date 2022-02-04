@@ -94,8 +94,8 @@ for t in trends:
     m = lhs.shape[0]
     rhs = np.ones((m, 1))
     rhs = np.hstack((rhs, avg_test_stats))
-    rhs = np.hstack((rhs, avg_test_stats ** 2.0))
-    rhs = np.hstack((rhs, avg_test_stats ** 3.0))
+    rhs = np.hstack((rhs, avg_test_stats**2.0))
+    rhs = np.hstack((rhs, avg_test_stats**3.0))
     rhs_large = rhs
     res_large = WLS(lhs, rhs, weights=1.0 / avg_test_std).fit()
     dfgls_large_p[t] = res_large.params
@@ -113,7 +113,7 @@ for t in trends:
     m = lhs.shape[0]
     rhs = np.ones((m, 1))
     rhs = np.hstack((rhs, avg_test_stats))
-    rhs = np.hstack((rhs, avg_test_stats ** 2.0))
+    rhs = np.hstack((rhs, avg_test_stats**2.0))
     res_small = WLS(lhs, rhs, weights=1.0 / avg_test_std).fit()
     dfgls_small_p[t] = res_small.params
 

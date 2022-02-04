@@ -61,7 +61,7 @@ def wrapper(n: int, trend: UnitRootTrend, b: int, rng_seed: int = 0) -> ndarray:
     remaining = b
     res = zeros(b)
     finished = 0
-    block_size = int(2 ** 20.0 * MAX_MEMORY_SIZE / (8.0 * n))
+    block_size = int(2**20.0 * MAX_MEMORY_SIZE / (8.0 * n))
     for _ in range(0, b, block_size):
         if block_size < remaining:
             count = block_size
@@ -123,7 +123,7 @@ T = T[::-1]
 m = T.shape[0]
 percentiles = list(arange(0.5, 100.0, 0.5))
 rng = RandomState(0)
-seeds = list(rng.random_integers(0, 2 ** 31 - 2, size=EX_NUM))
+seeds = list(rng.random_integers(0, 2**31 - 2, size=EX_NUM))
 
 for tr in trends:
     results = cast(ndarray, zeros((len(percentiles), m, EX_NUM)) * nan)

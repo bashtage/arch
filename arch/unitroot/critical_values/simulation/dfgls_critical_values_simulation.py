@@ -32,7 +32,7 @@ def wrapper(n: int, trend: Literal["c", "ct"], b: int, seed: int = 0) -> np.ndar
     remaining = b
     res = np.zeros(b)
     finished = 0
-    block_size = int(2 ** 20.0 * MAX_MEMORY_SIZE / (8.0 * n))
+    block_size = int(2**20.0 * MAX_MEMORY_SIZE / (8.0 * n))
     for _ in range(0, b, block_size):
         if block_size < remaining:
             count = block_size
@@ -83,10 +83,10 @@ def dfgsl_simulation(
     lhs = delta_y_detrended
 
     xpy = np.sum(rhs * lhs, 0)
-    xpx = np.sum(rhs ** 2.0, 0)
+    xpx = np.sum(rhs**2.0, 0)
     gamma = xpy / xpx
     e = lhs - rhs * gamma
-    sigma2 = np.sum(e ** 2.0, axis=0) / (n - 1)  # DOF correction?
+    sigma2 = np.sum(e**2.0, axis=0) / (n - 1)  # DOF correction?
     gamma_var = sigma2 / xpx
 
     stat = gamma / np.sqrt(gamma_var)
@@ -132,7 +132,7 @@ if __name__ == "__main__":
     )
     T = T[::-1]
     percentiles = list(np.arange(0.5, 100.0, 0.5))
-    seeds = np.arange(0, 2 ** 32, step=2 ** 23)
+    seeds = np.arange(0, 2**32, step=2**23)
     for tr in trends:
         results = np.zeros((len(percentiles), len(T), EX_NUM))
 

@@ -615,12 +615,12 @@ def aparch_recursion_python(
         sigma_delta[t] = parameters[0]
         for j in range(p):
             if (t - 1 - j) < 0:
-                shock = backcast ** 0.5
+                shock = backcast**0.5
             else:
                 shock = abs_resids[t - 1 - j]
                 if o > j:
                     shock -= parameters[1 + p + j] * resids[t - 1 - j]
-            sigma_delta[t] += parameters[1 + j] * (shock ** delta)
+            sigma_delta[t] += parameters[1 + j] * (shock**delta)
         for j in range(q):
             if (t - 1 - j) < 0:
                 sigma_delta[t] += parameters[1 + p + o + j] * backcast ** (delta / 2.0)

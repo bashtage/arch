@@ -127,7 +127,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([0.1, 0.4, 0.3, 0.2])
-        fresids = resids ** 2.0
+        fresids = resids**2.0
         sresids = np.sign(resids)
 
         recpy.garch_recursion(
@@ -240,7 +240,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([0.1, 0.4, 0.3, 0.2])
-        fresids = resids ** 2.0
+        fresids = resids**2.0
         sresids = np.sign(resids)
 
         recpy.garch_recursion(
@@ -519,7 +519,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([0.1, 0.4, 0.3])
-        fresids = resids ** 2.0
+        fresids = resids**2.0
         sresids = np.sign(resids)
 
         recpy.garch_recursion(
@@ -554,7 +554,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([0.1, 0.4, 0.3])
-        fresids = resids ** 2.0
+        fresids = resids**2.0
         sresids = np.sign(resids)
 
         recpy.garch_recursion(
@@ -589,7 +589,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         sigma2, backcast = self.sigma2, self.backcast
 
         parameters = np.array([0.1, 0.4, 0.3, 0.2])
-        fresids = resids ** 2.0
+        fresids = resids**2.0
         sresids = np.sign(resids)
 
         recpy.garch_recursion(
@@ -624,7 +624,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         nobs, resids, sigma2 = self.nobs, self.resids, self.sigma2
 
         parameters = np.array([0.1, 0.4, 0.3, 0.2])
-        fresids = resids ** 2.0
+        fresids = resids**2.0
         sresids = np.sign(resids)
 
         rec.garch_recursion(
@@ -675,7 +675,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         assert_almost_equal(sigma2, self.var_bounds[:, 0])
 
         parameters = np.array([1e100, 0.4, 0.3, 0.2])
-        fresids = resids ** 2.0
+        fresids = resids**2.0
         sresids = np.sign(resids)
 
         recpy.garch_recursion(
@@ -1037,7 +1037,7 @@ var_bounds = np.ones((nobs, 2)) * var_bounds
         nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
         parameters = np.array([1.0, 0.2, 0.4, 0.3])
-        fresids = resids ** 2
+        fresids = resids**2
         p = q = 1
         trunc_lag = 1000
         rec.figarch_recursion(
@@ -1271,7 +1271,7 @@ rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backca
 
     def test_garch_aparch_equiv(self):
         parameters = np.array([0.1, 0.1, 0.8])
-        fresids = self.resids ** 2
+        fresids = self.resids**2
         sresids = np.sign(self.resids)
         sigma2 = np.empty(1000)
         p = q = 1
@@ -1437,7 +1437,7 @@ rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backca
         nobs, resids = self.nobs, self.resids
         sigma2, backcast = self.sigma2, self.backcast
         parameters = np.array([1.0, 0.2, 0.4, 0.3])
-        fresids = resids ** 2
+        fresids = resids**2
         p = q = 1
         trunc_lag = 1000
         rec.figarch_recursion(

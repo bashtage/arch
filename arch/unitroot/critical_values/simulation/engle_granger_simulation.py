@@ -26,7 +26,7 @@ EX_NUM = 500
 PERCENTILES = list(np.arange(0.1, 1.0, 0.1)) + list(np.arange(1.0, 100.0, 0.5))
 PERCENTILES = PERCENTILES[::-1]
 # Maximum memory of the main simulated data
-MAX_MEMORY = 2 ** 21
+MAX_MEMORY = 2**21
 
 if sys.platform.lower() == "win32":
     os.system("color")
@@ -75,7 +75,7 @@ def block(
                 tau = np.arange(float(sub_size + 1))
                 tau -= tau.mean()
                 tau.shape = (sub_size + 1, 1)
-                coefs = (tau * sub).sum(1) / (tau ** 2).sum()
+                coefs = (tau * sub).sum(1) / (tau**2).sum()
                 coefs.shape = (this_block, 1, cross_section_size)
                 sub -= coefs * tau
             if trend == "ctt":
@@ -83,9 +83,9 @@ def block(
                 tau -= tau.mean()
                 tau2 = np.arange(float(sub_size + 1)) ** 2
                 tau2 -= tau2.mean()
-                tau2 -= (tau * tau2).sum() / (tau ** 2).sum() * tau
+                tau2 -= (tau * tau2).sum() / (tau**2).sum() * tau
                 tau2.shape = (sub_size + 1, 1)
-                coefs = (tau2 * sub).sum(1) / (tau2 ** 2).sum()
+                coefs = (tau2 * sub).sum(1) / (tau2**2).sum()
                 coefs.shape = (this_block, 1, cross_section_size)
                 sub -= coefs * tau2
             errors = np.empty((this_block, sub_size + 1, max_k))
@@ -114,7 +114,7 @@ def block(
             del errors, err_lag, derrors
 
             coefs = xpy / xpx
-            sse = ypy - coefs ** 2 * xpx
+            sse = ypy - coefs**2 * xpx
             sigma2 = sse / sub_size
             se = np.sqrt(sigma2 / xpx)
             tstats[j, completed : (completed + this_block)] = coefs / se

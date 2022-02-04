@@ -180,7 +180,7 @@ def test_kernels_eviews(trivariate_data, config):
     lrvar = config[2]
     bw = 9 if kernel == "parzen" else 10
     res = DynamicOLS(y, x).fit(kernel=kernel, bandwidth=bw, df_adjust=True)
-    assert_allclose(res.residual_variance, ser ** 2.0, rtol=1e-5)
+    assert_allclose(res.residual_variance, ser**2.0, rtol=1e-5)
     assert_allclose(res.long_run_variance, lrvar, rtol=1e-5)
 
 

@@ -133,7 +133,7 @@ def ewma_recursion(
     var_bounds = np.ones((nobs, 2)) * np.array([-1.0, 1.7e308])
     rec.garch_recursion(
         np.array([0.0, 1.0 - lam, lam]),
-        resids ** 2.0,
+        resids**2.0,
         resids,
         sigma2,
         1,
@@ -527,8 +527,8 @@ class VolatilityProcess(metaclass=ABCMeta):
 
         var_bounds = np.vstack((var_bound / 1e6, var_bound * 1e6)).T
         var = resids.var()
-        min_upper_bound = 1 + (resids ** 2.0).max()
-        lower_bound, upper_bound = var / 1e8, 1e7 * (1 + (resids ** 2.0).max())
+        min_upper_bound = 1 + (resids**2.0).max()
+        lower_bound, upper_bound = var / 1e8, 1e7 * (1 + (resids**2.0).max())
         var_bounds[var_bounds[:, 0] < lower_bound, 0] = lower_bound
         var_bounds[var_bounds[:, 1] < min_upper_bound, 1] = min_upper_bound
         var_bounds[var_bounds[:, 1] > upper_bound, 1] = upper_bound
@@ -1187,7 +1187,7 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         abgs = list(itertools.product(*[alphas, gammas, abg]))
 
         target = np.mean(abs(resids) ** power)
-        scale = np.mean(resids ** 2) / (target ** (2.0 / power))
+        scale = np.mean(resids**2) / (target ** (2.0 / power))
         target *= scale ** (power / 2)
 
         svs = []
@@ -1464,7 +1464,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         lags = self.lags
         k_arch = lags.shape[0]
 
-        bounds = [(0.0, 10 * float(np.mean(resids ** 2.0)))]
+        bounds = [(0.0, 10 * float(np.mean(resids**2.0)))]
         bounds.extend([(0.0, 1.0)] * k_arch)
 
         return bounds
@@ -1564,7 +1564,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         m = int(self.lags.max())
         resids2 = np.empty((t, m + horizon))
         resids2[:m, :m] = backcast
-        sq_resids = resids ** 2.0
+        sq_resids = resids**2.0
         for i in range(m):
             resids2[m - i - 1 :, i] = sq_resids[: (t - (m - i - 1))]
         const = arch_params[0]
@@ -1702,7 +1702,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return descr
 
     def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
-        bounds = [(0.0, 10 * float(np.mean(resids ** 2.0)))]  # omega
+        bounds = [(0.0, 10 * float(np.mean(resids**2.0)))]  # omega
         bounds.extend([(0.0, 1.0)])  # 0 <= alpha < 1
         if self._asym:
             bounds.extend([(-1.0, 2.0)])  # -1 <= gamma < 2
@@ -1816,7 +1816,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     def starting_values(self, resids: Float64Array) -> Float64Array:
         theta = [0.1, 0.5, 0.8, 0.9]
         alpha = [0.8, 0.9, 0.95, 0.98]
-        var = (resids ** 2).mean()
+        var = (resids**2).mean()
         var_bounds = self.variance_bounds(resids)
         backcast = self.backcast(resids)
         llfs = []
@@ -1879,7 +1879,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         resids2[:m, :m] = backcast
         indicator = np.empty((t, m + horizon))
         indicator[:m, :m] = 0.5
-        sq_resids = resids ** 2.0
+        sq_resids = resids**2.0
         for i in range(m):
             resids2[m - i - 1 :, i] = sq_resids[: (t - (m - i - 1))]
             indicator[m - i - 1 :, i] = resids[: (t - (m - i - 1))] < 0
@@ -2293,7 +2293,7 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs = resids.shape[0]
         mus = self._ewma_smoothing_parameters()
 
-        resids2 = resids ** 2.0
+        resids2 = resids**2.0
         backcast = np.zeros(mus.shape[0])
         for k in range(int(self.kmax)):
             mu = mus[k]
@@ -2536,7 +2536,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return super().variance_bounds(resids, 2.0)
 
     def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
-        v = np.mean(resids ** 2.0)
+        v = np.mean(resids**2.0)
         log_const = np.log(10000.0)
         lnv = np.log(v)
         bounds = [(lnv - log_const, lnv + log_const)]
@@ -2659,7 +2659,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         betas = [0.5, 0.7, 0.9, 0.98]
         agbs = list(itertools.product(*[alphas, gammas, betas]))
 
-        target = np.log(np.mean(resids ** 2))
+        target = np.log(np.mean(resids**2))
 
         svs = []
         var_bounds = self.variance_bounds(resids)
@@ -2848,7 +2848,7 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             v = float(np.squeeze(self.starting_values(resids)))
             _resids = resids / np.sqrt(self._variance[self._start : self._stop])
             mu = _resids.mean()
-            return [(v / 100000.0, 10.0 * (v + mu ** 2.0))]
+            return [(v / 100000.0, 10.0 * (v + mu**2.0))]
         return []
 
     def parameter_names(self) -> List[str]:
@@ -3157,7 +3157,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         power = self.power
         target = np.mean(abs(resids) ** power)
-        scale = np.mean(resids ** 2) / (target ** (2.0 / power))
+        scale = np.mean(resids**2) / (target ** (2.0 / power))
         target *= scale ** (power / 2)
 
         all_starting_vals = []
@@ -3231,7 +3231,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         beta = parameters[-1] if q else 0.0
         omega_tilde = omega / (1 - beta)
         temp_forecasts = np.empty(truncation + horizon)
-        resids2 = resids ** 2
+        resids2 = resids**2
         for i in range(start, t):
             available = i + 1 - max(0, i - truncation + 1)
             temp_forecasts[truncation - available : truncation] = resids2[
@@ -3451,7 +3451,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return sigma2
 
     def bounds(self, resids: Float64Array) -> List[Tuple[float, float]]:
-        v = max(float(np.mean(abs(resids) ** 0.5)), float(np.mean(resids ** 2)))
+        v = max(float(np.mean(abs(resids) ** 0.5)), float(np.mean(resids**2)))
 
         bounds = [(0.0, 10.0 * float(v))]
         bounds.extend([(0.0, 1.0)] * self.p)
@@ -3480,7 +3480,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
             alpha, gamma, ab, delta = values
 
             target = np.mean(abs(resids) ** delta)
-            scale = np.mean(resids ** 2) / (target ** (2.0 / delta))
+            scale = np.mean(resids**2) / (target ** (2.0 / delta))
             target *= scale ** (delta / 2)
 
             sv = (1.0 - ab) * target * np.ones(p + o + q + 1 + est_delta)
@@ -3581,7 +3581,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 shock = adata[t - 1 - j]
                 if o > j:
                     shock -= params[1 + p + j] * data[t - 1 - j]
-                sigma_delta[t] += params[1 + j] * shock ** delta
+                sigma_delta[t] += params[1 + j] * shock**delta
             for j in range(q):
                 sigma_delta[t] += params[1 + p + o + j] * sigma_delta[t - 1 - j]
 
@@ -3620,7 +3620,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 _shock = abs_shock[:, loc - j]
                 if self.o > j:
                     _shock -= gamma[j] * shock[:, loc - j]
-                sigma_delta[:, h + m] += alpha[j] * (_shock ** delta)
+                sigma_delta[:, h + m] += alpha[j] * (_shock**delta)
 
             for j in range(q):
                 sigma_delta[:, h + m] += beta[j] * sigma_delta[:, loc - j]

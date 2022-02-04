@@ -118,10 +118,10 @@ def _single_optimal_block(x: Float64Array) -> Tuple[float, float]:
         lam = 1 if k / m <= 1 / 2 else 2 * (1 - k / m)
         g += 2 * lam * k * acv[k]
         lr_acv += 2 * lam * acv[k]
-    d_sb = 2 * lr_acv ** 2
-    d_cb = 4 / 3 * lr_acv ** 2
-    b_sb = ((2 * g ** 2) / d_sb) ** (1 / 3) * nobs ** (1 / 3)
-    b_cb = ((2 * g ** 2) / d_cb) ** (1 / 3) * nobs ** (1 / 3)
+    d_sb = 2 * lr_acv**2
+    d_cb = 4 / 3 * lr_acv**2
+    b_sb = ((2 * g**2) / d_sb) ** (1 / 3) * nobs ** (1 / 3)
+    b_cb = ((2 * g**2) / d_cb) ** (1 / 3) * nobs ** (1 / 3)
     b_sb = min(b_sb, b_max)
     b_cb = min(b_cb, b_max)
     return b_sb, b_cb
@@ -222,8 +222,8 @@ def _get_acceleration(jk_params: Float64Array) -> float:
         Value of the acceleration parameter "a" used in the BCa bootstrap.
     """
     u = jk_params.mean() - jk_params
-    numer = np.sum(u ** 3, 0)
-    denom = 6 * (np.sum(u ** 2, 0) ** (3.0 / 2.0))
+    numer = np.sum(u**3, 0)
+    denom = 6 * (np.sum(u**2, 0) ** (3.0 / 2.0))
     small = denom < (np.abs(numer) * np.finfo(np.float64).eps)
     if small.any():
         message = "Jackknife variance estimate {jk_var} is too small to use BCa"
@@ -1100,7 +1100,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
                 studentized_results[count] = (results[count] - base) / std_err
             elif studentize_reps > 0:
                 # Set the seed to ensure reproducibility
-                seed = _get_random_integers(self._generator, 2 ** 31 - 1, size=1)
+                seed = _get_random_integers(self._generator, 2**31 - 1, size=1)
                 # Need new bootstrap of same type
                 nested_bs = self.clone(*pos_data, **kw_data, seed=seed[0])
                 cov = nested_bs.cov(func, studentize_reps, extra_kwargs=extra_kwargs)
@@ -1275,7 +1275,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         else:
             errors = results - base
 
-        return (errors ** 2).sum(0) / reps
+        return (errors**2).sum(0) / reps
 
     def update_indices(self) -> BootstrapIndexT:
         """
