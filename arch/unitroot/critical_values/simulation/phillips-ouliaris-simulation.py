@@ -30,7 +30,7 @@ EX_SIZE = 250000
 # Number of experiments
 EX_NUM = 100
 # Maximum memory of the main simulated data
-MAX_MEMORY = 2 ** 21
+MAX_MEMORY = 2**21
 # Number of iterations between display
 DISP_ITERATIONS = 25000
 
@@ -70,7 +70,7 @@ def z_tests_vec(
         z = demean(z)
     elif trend in ("ct", "ctt"):
         tr = add_trend(nobs=nobs, trend=trend)
-        tr /= np.sqrt((tr ** 2).mean(0) * nobs)
+        tr /= np.sqrt((tr**2).mean(0) * nobs)
         trptr = tr.T @ tr
         trpz = tr.T @ z
         z = z - tr @ solve(trptr, trpz)
@@ -86,7 +86,7 @@ def z_tests_vec(
     u = u.reshape((nseries, -1)).T
     ulag = u[:-1]
     ulead = u[1:]
-    alpha = (ulead * ulag).mean(0) / (ulag ** 2).mean(0)
+    alpha = (ulead * ulag).mean(0) / (ulag**2).mean(0)
     one_sided_strict = np.zeros_like(alpha)
     k = ulead - ulag * alpha
     for i in range(1, lag + 1):
@@ -96,7 +96,7 @@ def z_tests_vec(
     u2 = (u[:-1] * u[:-1]).sum(0)
     z = (alpha - 1) - nobs * one_sided_strict / u2
     z_a = nobs * z
-    long_run = (k ** 2).sum(0) / nobs + 2 * one_sided_strict
+    long_run = (k**2).sum(0) / nobs + 2 * one_sided_strict
     z_t = np.sqrt(u2) * z / np.sqrt(long_run)
     assert isinstance(z_a, np.ndarray)
     assert isinstance(z_t, np.ndarray)
@@ -138,7 +138,7 @@ def p_tests_vec(
         post = []
         for v in (z, z_lag, z_lead):
             tr = add_trend(nobs=v.shape[1], trend=trend)
-            tr /= np.sqrt((tr ** 2).mean(0) * nobs)
+            tr /= np.sqrt((tr**2).mean(0) * nobs)
             trptr = tr.T @ tr
             trpv = tr.T @ v
             post.append(v - tr @ solve(trptr, trpv))

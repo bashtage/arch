@@ -91,7 +91,7 @@ def _simple_direct_gjrgarch_forecaster(
     _sigma2 = np.empty(t)
     garch_recursion(
         params,
-        resids ** 2.0,
+        resids**2.0,
         np.sign(resids),
         _sigma2,
         p,
@@ -219,7 +219,7 @@ class TestVarianceForecasts(object):
         assert np.all(np.isfinite(forecast.forecasts))
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
-        expected = params[0] + params[1] * self.resid ** 2
+        expected = params[0] + params[1] * self.resid**2
         expected.shape = (1000, 1)
         assert_allclose(forecast.forecasts, expected)
 
@@ -231,7 +231,7 @@ class TestVarianceForecasts(object):
         assert forecast.forecast_paths is None
         assert forecast.shocks is None
         expected = np.zeros((1000, 3))
-        expected[:, 0] = params[0] + params[1] * self.resid ** 2
+        expected[:, 0] = params[0] + params[1] * self.resid**2
         for i in range(1, 3):
             expected[:, i] = params[0] + params[1] * expected[:, i - 1]
         assert_allclose(forecast.forecasts, expected)
@@ -590,7 +590,7 @@ class TestVarianceForecasts(object):
                     + params[2] * abs_err * err_neg
                     + params[3] * sqrt_path
                 )
-                paths[:, i] = sqrt_path ** 2
+                paths[:, i] = sqrt_path**2
                 shocks[:, i] = sqrt_path * std_shocks[:, i]
             assert_allclose(paths.mean(0), forecast.forecasts[j])
             assert_allclose(paths, forecast.forecast_paths[j])
@@ -644,7 +644,7 @@ class TestVarianceForecasts(object):
                     + params[2] * abs_err * err_neg
                     + params[3] * sqrt_path
                 )
-                paths[:, i] = sqrt_path ** 2
+                paths[:, i] = sqrt_path**2
                 shocks[:, i] = sqrt_path * std_shocks[:, i]
             assert_allclose(shocks, forecast.shocks[j - 100])
             assert_allclose(paths.mean(0), forecast.forecasts[j - 100])
@@ -1551,10 +1551,10 @@ class TestVarianceForecasts(object):
 
             fcast = (
                 params[0]
-                + params[1] * r1 ** 2
-                + params[2] * r2 ** 2
-                + params[3] * a1 ** 2
-                + params[4] * a2 ** 2
+                + params[1] * r1**2
+                + params[2] * r2**2
+                + params[3] * a1**2
+                + params[4] * a2**2
                 + params[5] * s21
                 + params[6] * s22
             )
@@ -1567,10 +1567,10 @@ class TestVarianceForecasts(object):
             s21, s22 = paths[:, 0], _sigma2[tau - 1]
             fcast = (
                 params[0]
-                + params[1] * r1 ** 2
-                + params[2] * r2 ** 2
-                + params[3] * a1 ** 2
-                + params[4] * a2 ** 2
+                + params[1] * r1**2
+                + params[2] * r2**2
+                + params[3] * a1**2
+                + params[4] * a2**2
                 + params[5] * s21
                 + params[6] * s22
             )
@@ -1586,10 +1586,10 @@ class TestVarianceForecasts(object):
             s21, s22 = paths[:, 1], paths[:, 0]
             fcast = (
                 params[0]
-                + params[1] * r1 ** 2
-                + params[2] * r2 ** 2
-                + params[3] * a1 ** 2
-                + params[4] * a2 ** 2
+                + params[1] * r1**2
+                + params[2] * r2**2
+                + params[3] * a1**2
+                + params[4] * a2**2
                 + params[5] * s21
                 + params[6] * s22
             )

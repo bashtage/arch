@@ -323,7 +323,7 @@ class CovarianceEstimator(ABC):
             sig_j = float(np.squeeze(v[j:].T @ v[: (nobs - j)])) / nobs
             scale = 1 + (j != 0)
             f_0s += scale * sig_j
-            f_qs += scale * j ** q * sig_j
+            f_qs += scale * j**q * sig_j
         return (f_qs / f_0s) ** 2
 
     @cached_property
@@ -496,7 +496,7 @@ class ParzenRiesz(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     def _weights(self) -> Float64Array:
         bw = self.bandwidth
         x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
-        return 1 - x ** 2
+        return 1 - x**2
 
 
 _parzen_geometric_formula = """\
@@ -552,7 +552,7 @@ class ParzenCauchy(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
     def _weights(self) -> Float64Array:
         bw = self.bandwidth
         x = np.arange(int(bw + 1), dtype="double") / (bw + 1)
-        return 1 / (1 + x ** 2)
+        return 1 / (1 + x**2)
 
 
 _tukey_hamming_formula = """\
@@ -670,7 +670,7 @@ class QuadraticSpectral(CovarianceEstimator, metaclass=AbstractDocStringInherito
         if bw > 0:
             x = np.arange(1, nobs) / bw
             z = 6 * np.pi * x / 5
-            w[1:] = 3 / z ** 2 * (np.sin(z) / z - np.cos(z))
+            w[1:] = 3 / z**2 * (np.sin(z) / z - np.cos(z))
         return w
 
 

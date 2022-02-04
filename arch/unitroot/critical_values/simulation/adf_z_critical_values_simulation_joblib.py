@@ -75,7 +75,7 @@ def single_experiment(trend: str, gen: Generator, file_name: str) -> None:
     for col, nobs in enumerate(TIME_SERIES_LENGTHS):
         remaining = EX_SIZE
         finished = 0
-        block_size = int(2 ** 20.0 * MAX_MEMORY_SIZE / (8.0 * nobs))
+        block_size = int(2**20.0 * MAX_MEMORY_SIZE / (8.0 * nobs))
         for _ in range(0, EX_SIZE, block_size):
             if block_size < remaining:
                 count = block_size

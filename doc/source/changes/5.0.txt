@@ -2,6 +2,12 @@
 Version 5
 =========
 
+Since 5.1
+=========
+- Fix a bug in :func:`~arch.univariate.base.ARCHModelResult.forecast` and related
+  ``forecast`` methods when producing multi-step forecasts usign simulation with
+  exogenous variables (:issue:`551`).
+
 Release 5.1
 ===========
 

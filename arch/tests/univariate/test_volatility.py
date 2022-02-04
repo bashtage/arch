@@ -74,7 +74,7 @@ def test_garch(setup, initial_value):
     assert_equal(sv.shape[0], garch.num_params)
 
     bounds = garch.bounds(setup.resids)
-    v = np.mean(setup.resids ** 2.0)
+    v = np.mean(setup.resids**2.0)
     assert_allclose(bounds[0], (1.0e-8 * v, 10.0 * v))
     assert_equal(bounds[1], (0.0, 1.0))
     assert_equal(bounds[2], (0.0, 1.0))
@@ -87,7 +87,7 @@ def test_garch(setup, initial_value):
     cond_var_direct = np.zeros_like(setup.sigma2)
     rec.garch_recursion(
         parameters,
-        setup.resids ** 2.0,
+        setup.resids**2.0,
         np.sign(setup.resids),
         cond_var_direct,
         1,
@@ -215,7 +215,7 @@ def test_arch(setup, initial_value):
     assert_equal(sv.shape[0], arch.num_params)
 
     bounds = arch.bounds(setup.resids)
-    v = np.mean(setup.resids ** 2.0)
+    v = np.mean(setup.resids**2.0)
     assert_allclose(bounds[0], (1.0e-8 * v, 10.0 * v))
     assert_equal(bounds[1], (0.0, 1.0))
 
@@ -302,7 +302,7 @@ def test_harch(setup, initial_value):
     assert_equal(sv.shape[0], harch.num_params)
 
     bounds = harch.bounds(setup.resids)
-    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids ** 2.0)))
+    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids**2.0)))
     assert_equal(bounds[1], (0.0, 1.0))
     assert_equal(bounds[2], (0.0, 1.0))
     assert_equal(bounds[3], (0.0, 1.0))
@@ -396,7 +396,7 @@ def test_constant_variance(setup):
     assert_equal(sv.shape[0], cv.num_params)
 
     bounds = cv.bounds(setup.resids)
-    mean_square = np.mean(setup.resids ** 2.0)
+    mean_square = np.mean(setup.resids**2.0)
     assert_almost_equal(bounds[0], (setup.resid_var / 100000.0, 10.0 * mean_square))
 
     backcast = cv.backcast(setup.resids)
@@ -448,7 +448,7 @@ def test_garch_no_symmetric(setup):
     assert_equal(sv.shape[0], garch.num_params)
 
     bounds = garch.bounds(setup.resids)
-    v = np.mean(setup.resids ** 2)
+    v = np.mean(setup.resids**2)
     assert_allclose(bounds[0], (1.0e-8 * v, 10.0 * v))
     assert_equal(bounds[1], (0.0, 2.0))
     assert_equal(bounds[2], (0.0, 1.0))
@@ -464,7 +464,7 @@ def test_garch_no_symmetric(setup):
     cond_var_direct = np.zeros_like(setup.sigma2)
     rec.garch_recursion(
         parameters,
-        setup.resids ** 2.0,
+        setup.resids**2.0,
         np.sign(setup.resids),
         cond_var_direct,
         0,
@@ -517,7 +517,7 @@ def test_garch_no_lagged_vol(setup):
     assert_equal(sv.shape[0], garch.num_params)
 
     bounds = garch.bounds(setup.resids)
-    v = np.mean(setup.resids ** 2)
+    v = np.mean(setup.resids**2)
     assert_allclose(bounds[0], (1.0e-8 * v, 10.0 * v))
     assert_equal(bounds[1], (0.0, 1.0))
     assert_equal(bounds[2], (-1.0, 2.0))
@@ -530,7 +530,7 @@ def test_garch_no_lagged_vol(setup):
     cond_var_direct = np.zeros_like(setup.sigma2)
     rec.garch_recursion(
         parameters,
-        setup.resids ** 2.0,
+        setup.resids**2.0,
         np.sign(setup.resids),
         cond_var_direct,
         1,
@@ -585,7 +585,7 @@ def test_arch_multiple_lags(setup):
     assert_equal(sv.shape[0], arch.num_params)
 
     bounds = arch.bounds(setup.resids)
-    v = np.mean(setup.resids ** 2)
+    v = np.mean(setup.resids**2)
     assert_allclose(bounds[0], (1.0e-8 * v, 10.0 * v))
     for i in range(1, 6):
         assert_equal(bounds[i], (0.0, 1.0))
@@ -754,7 +754,7 @@ def test_ewma(setup):
     parameters = np.array([0.0, 0.06, 0.94])
     rec.garch_recursion(
         parameters,
-        setup.resids ** 2.0,
+        setup.resids**2.0,
         np.sign(setup.resids),
         cond_var_direct,
         1,
@@ -827,7 +827,7 @@ def test_ewma_estimated(setup, initial_value):
     parameters = np.array([0, 1 - parameters[0], parameters[0]])
     rec.garch_recursion(
         parameters,
-        setup.resids ** 2.0,
+        setup.resids**2.0,
         np.sign(setup.resids),
         cond_var_direct,
         1,
@@ -935,7 +935,7 @@ def test_egarch(setup, initial_value):
     bounds = egarch.bounds(setup.resids)
     assert_equal(len(bounds), egarch.num_params)
     const = np.log(10000.0)
-    lnv = np.log(np.mean(setup.resids ** 2.0))
+    lnv = np.log(np.mean(setup.resids**2.0))
     assert_equal(bounds[0], (lnv - const, lnv + const))
     assert_equal(bounds[1], (-np.inf, np.inf))
     assert_equal(bounds[2], (-np.inf, np.inf))
@@ -1162,7 +1162,7 @@ def test_midas_symmetric(setup, initial_value):
     assert_equal(sv.shape[0], midas.num_params)
 
     bounds = midas.bounds(setup.resids)
-    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids ** 2.0)))
+    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids**2.0)))
     assert_equal(bounds[1], (0.0, 1.0))
     assert_equal(bounds[2], (0.0, 1.0))
     backcast = midas.backcast(setup.resids)
@@ -1250,7 +1250,7 @@ def test_midas_asymmetric(setup):
     assert_equal(sv.shape[0], midas.num_params)
 
     bounds = midas.bounds(setup.resids)
-    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids ** 2.0)))
+    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids**2.0)))
     assert_equal(bounds[1], (0.0, 1.0))
     assert_equal(bounds[2], (-1.0, 2.0))
     assert_equal(bounds[3], (0.0, 1.0))
@@ -1348,7 +1348,7 @@ def test_figarch(setup, initial_value):
     assert_equal(sv.shape[0], figarch.num_params)
 
     bounds = figarch.bounds(setup.resids)
-    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids ** 2.0)))
+    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids**2.0)))
     assert_equal(bounds[1], (0.0, 0.5))
     assert_allclose(np.array(bounds[2]), np.array([0.0, 1 - EPS_HALF]))
     assert_allclose(np.array(bounds[3]), np.array([0.0, 1 - EPS_HALF]))
@@ -1364,7 +1364,7 @@ def test_figarch(setup, initial_value):
     )
 
     cond_var_direct = np.zeros_like(setup.sigma2)
-    fresids = setup.resids ** 2
+    fresids = setup.resids**2
     p = q = 1
     nobs = setup.resids.shape[0]
     recpy.figarch_recursion_python(
@@ -1444,7 +1444,7 @@ def test_figarch_no_phi(setup):
     assert_equal(sv.shape[0], figarch.num_params)
 
     bounds = figarch.bounds(setup.resids)
-    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids ** 2.0)))
+    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids**2.0)))
     assert_allclose(np.array(bounds[1]), np.array([0.0, 1 - EPS_HALF]))
     assert_allclose(np.array(bounds[2]), np.array([0.0, 1 - EPS_HALF]))
     assert len(bounds) == figarch.num_params
@@ -1469,7 +1469,7 @@ def test_figarch_no_beta(setup):
     assert_equal(sv.shape[0], figarch.num_params)
 
     bounds = figarch.bounds(setup.resids)
-    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids ** 2.0)))
+    assert_equal(bounds[0], (0.0, 10.0 * np.mean(setup.resids**2.0)))
     assert_equal(bounds[1], (0.0, 0.5))
     assert_allclose(np.array(bounds[2]), np.array([0.0, 1 - EPS_HALF]))
     assert len(bounds) == figarch.num_params
@@ -1553,7 +1553,7 @@ def test_aparch(setup, initial_value):
     assert_equal(sv.shape[0], aparch.num_params)
 
     bounds = aparch.bounds(setup.resids)
-    upper = max(np.mean(setup.resids ** 2.0), np.mean(np.abs(setup.resids) ** 0.5))
+    upper = max(np.mean(setup.resids**2.0), np.mean(np.abs(setup.resids) ** 0.5))
     assert_equal(bounds[0], (0.0, 10.0 * upper))
     assert_equal(bounds[1], (0.0, 1.0))
     assert_equal(bounds[2], (-0.9997, 0.9997))
@@ -1616,7 +1616,7 @@ def test_aparch(setup, initial_value):
         sigma_delta[t] = parameters[0]
         shock = initial_value if t == 0 else np.abs(data[t - 1])
         shock -= 0 if t == 0 else parameters[2] * data[t - 1]
-        sigma_delta[t] += parameters[1] * shock ** delta
+        sigma_delta[t] += parameters[1] * shock**delta
         lagged_value = initial_value if t == 0 else sigma_delta[t - 1]
         sigma_delta[t] += parameters[3] * lagged_value
         sigma2[t] = sigma_delta[t] ** (2 / delta)
@@ -1652,7 +1652,7 @@ def test_aparch_delta(setup):
     assert_equal(sv.shape[0], aparch.num_params)
 
     bounds = aparch.bounds(setup.resids)
-    upper = max(np.mean(setup.resids ** 2.0), np.mean(np.abs(setup.resids) ** 0.5))
+    upper = max(np.mean(setup.resids**2.0), np.mean(np.abs(setup.resids) ** 0.5))
     assert_equal(bounds[0], (0.0, 10.0 * upper))
     assert_equal(bounds[1], (0.0, 1.0))
     assert_equal(bounds[2], (-0.9997, 0.9997))
@@ -1710,7 +1710,7 @@ def test_aparch_delta(setup):
         sigma_delta[t] = parameters[0]
         shock = initial_value if t == 0 else np.abs(data[t - 1])
         shock -= 0 if t == 0 else parameters[2] * data[t - 1]
-        sigma_delta[t] += parameters[1] * shock ** delta
+        sigma_delta[t] += parameters[1] * shock**delta
         lagged_value = initial_value if t == 0 else sigma_delta[t - 1]
         sigma_delta[t] += parameters[3] * lagged_value
         sigma2[t] = sigma_delta[t] ** (2 / delta)

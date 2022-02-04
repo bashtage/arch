@@ -346,7 +346,7 @@ def test_studentized(bs_setup, seed):
 
     def std_err_func(mu, y):
         errors = y - mu
-        var = (errors ** 2.0).mean(axis=0)
+        var = (errors**2.0).mean(axis=0)
         return np.sqrt(var / y.shape[0])
 
     ci = bs.conf_int(
@@ -369,7 +369,7 @@ def test_studentized(bs_setup, seed):
     assert_allclose(results, bs._results)
     assert_allclose(stud_results, bs._studentized_results)
     errors = results - results.mean(0)
-    std_err = np.sqrt(np.mean(errors ** 2.0, axis=0))
+    std_err = np.sqrt(np.mean(errors**2.0, axis=0))
     ci_direct = np.zeros((2, 2))
     for i in range(2):
         ci_direct[0, i] = base[i] - std_err[i] * np.percentile(stud_results[:, i], 97.5)
@@ -389,9 +389,9 @@ def test_studentized(bs_setup, seed):
     for pos, _ in bs.bootstrap(reps=num_bootstrap):
         results[count] = bs_setup.func(*pos)
         if isinstance(bs._generator, RandomState):
-            seed = bs._generator.randint(2 ** 31 - 1)
+            seed = bs._generator.randint(2**31 - 1)
         else:
-            seed = bs._generator.integers(2 ** 31 - 1)
+            seed = bs._generator.integers(2**31 - 1)
         inner_bs = IIDBootstrap(*pos, seed=seed)
         cov = inner_bs.cov(bs_setup.func, reps=50)
         std_err = np.sqrt(np.diag(cov))
@@ -401,7 +401,7 @@ def test_studentized(bs_setup, seed):
     assert_allclose(results, bs._results)
     assert_allclose(stud_results, bs._studentized_results)
     errors = results - results.mean(0)
-    std_err = np.sqrt(np.mean(errors ** 2.0, axis=0))
+    std_err = np.sqrt(np.mean(errors**2.0, axis=0))
 
     ci_direct = np.zeros((2, 2))
     for i in range(2):
@@ -579,7 +579,7 @@ def test_bca(bs_setup):
     u = jk.mean() - jk
     u2 = np.sum(u * u, 0)
     u3 = np.sum(u * u * u, 0)
-    a = u3 / (6.0 * (u2 ** 1.5))
+    a = u3 / (6.0 * (u2**1.5))
     a = a[:, None]
     percentiles = 100 * stats.norm.cdf(b + (b + q) / (1 - a * (b + q)))
 

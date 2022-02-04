@@ -767,13 +767,13 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         hessian[-1, -1] = -1
         if cov_type in ("classic",):
             param_cov = sigma2 * -hessian
-            param_cov[self.num_params, self.num_params] = 2 * sigma2 ** 2.0
+            param_cov[self.num_params, self.num_params] = 2 * sigma2**2.0
             param_cov /= nobs
             cov_type_name = COV_TYPES["classic_ols"]
         elif cov_type in ("robust",):
             scores = np.zeros((nobs, self.num_params + 1))
             scores[:, : self.num_params] = x * e[:, None]
-            scores[:, -1] = e ** 2.0 - sigma2
+            scores[:, -1] = e**2.0 - sigma2
             score_cov = np.asarray(scores.T.dot(scores) / nobs)
             param_cov = (hessian @ score_cov @ hessian) / nobs
             cov_type_name = COV_TYPES["white"]
@@ -1014,7 +1014,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             long_run_variance_paths = variance_paths.copy()
             for i in range(horizon):
                 _impulses = impulse[i::-1][:, None]
-                lrvp = variance_paths[:, :, : (i + 1)].dot(_impulses ** 2)
+                lrvp = variance_paths[:, :, : (i + 1)].dot(_impulses**2)
                 long_run_variance_paths[:, :, i] = np.squeeze(lrvp)
             t, m = self._y.shape[0], self._max_lags
             mean_paths = np.empty(shocks.shape[:2] + (m + horizon,))
@@ -1030,7 +1030,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                         + shocks[path_loc, :, j]
                     )
                     if expected_x.shape[0] > 0:
-                        mean_paths[path_loc, :, m + j] += expected_x[:, :, j].T @ exog_p
+                        mean_paths[path_loc, :, m + j] += (
+                            expected_x[:, path_loc, j].T @ exog_p
+                        )
 
             mean_paths = mean_paths[:, :, m:]
 

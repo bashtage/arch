@@ -44,7 +44,7 @@ def test_moment(dist, params):
     # verify moments that exist
     def f(x, n):
         sigma2 = ones_like(x)
-        return (x ** n) * exp(dist.loglikelihood(params, x, sigma2, True))
+        return (x**n) * exp(dist.loglikelihood(params, x, sigma2, True))
 
     for n in range(6):  # moments 0-5
 
@@ -60,7 +60,7 @@ def test_moment(dist, params):
                 eta, lam = params
                 c = gammaln((eta + 1) / 2) - gammaln(eta / 2) - log(pi * (eta - 2)) / 2
                 a = 4 * lam * exp(c) * (eta - 2) / (eta - 1)
-                b = (1 + 3 * lam ** 2 - a ** 2) ** 0.5
+                b = (1 + 3 * lam**2 - a**2) ** 0.5
                 loc = -a / b
                 if z < loc:
                     m_quad = quad(f, -inf, z, args=(n,))[0]

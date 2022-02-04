@@ -166,7 +166,7 @@ class TestMeanModel(object):
         assert isinstance(zm.distribution, Normal)
         assert zm.lags is None
         res = zm.fit(disp=DISPLAY)
-        assert_almost_equal(res.params, np.array([np.mean(self.y ** 2)]))
+        assert_almost_equal(res.params, np.array([np.mean(self.y**2)]))
 
         forecasts = res.forecast(horizon=99, reindex=False)
         direct = pd.DataFrame(
@@ -1131,7 +1131,7 @@ def test_arch_lm(simulated_data):
     assert "H0: Standardized" not in wald.__repr__()
     assert "heteroskedastic" in wald.__repr__()
 
-    resids2 = pd.Series(res.resid ** 2)
+    resids2 = pd.Series(res.resid**2)
     data = [resids2.shift(i) for i in range(df + 1)]
     data = pd.concat(data, axis=1).dropna()
     lhs = data.iloc[:, 0]

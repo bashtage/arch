@@ -36,8 +36,8 @@ def simulate_kpss(
     trend_coef = zinv.dot(e)
     resid = e - cast(np.ndarray, z.dot(trend_coef))
     s = np.cumsum(resid, axis=0)
-    lam = (resid ** 2.0).mean(axis=0)
-    kpss = 1 / (nobs ** 2.0) * (s ** 2.0).sum(axis=0) / lam
+    lam = (resid**2.0).mean(axis=0)
+    kpss = 1 / (nobs**2.0) * (s**2.0).sum(axis=0) / lam
     return kpss
 
 
@@ -49,7 +49,7 @@ def wrapper(nobs: int, b: int, trend: str = "c", max_memory: int = 1024) -> np.n
     """
     rng = RandomState()
     rng.seed(0)
-    memory = max_memory * 2 ** 20
+    memory = max_memory * 2**20
     b_max_memory = memory // 8 // nobs
     b_max_memory = max(b_max_memory, 1)
     remaining = b
