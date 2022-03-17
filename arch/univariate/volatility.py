@@ -7,7 +7,6 @@ from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
 import itertools
-import operator
 from typing import TYPE_CHECKING, List, Optional, Sequence, Tuple, Union, cast
 from warnings import warn
 
@@ -1443,8 +1442,8 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     def __init__(self, lags: Union[int, Sequence[int]] = 1) -> None:
         super().__init__()
-        if np.isscalar(lags):
-            lag_val = operator.index(lags)
+        if not isinstance(lags, Sequence):
+            lag_val = int(lags)
             lags = list(range(1, lag_val + 1))
         lags_arr = ensure1d(lags, "lags")
         self.lags: Int32Array = np.array(lags_arr, dtype=np.int32)
