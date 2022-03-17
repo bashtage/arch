@@ -7,7 +7,6 @@ from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
 import itertools
-import operator
 from typing import TYPE_CHECKING, List, Optional, Sequence, Tuple, Union, cast
 from warnings import warn
 
