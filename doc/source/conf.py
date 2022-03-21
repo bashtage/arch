@@ -7,11 +7,12 @@
 # https://www.sphinx-doc.org/en/master/config
 
 # -- Path setup --------------------------------------------------------------
-from distutils.version import LooseVersion
 import glob
 import os
 import shutil
 from typing import Dict, List
+
+from packaging.version import parse
 
 import arch
 
@@ -40,17 +41,10 @@ copyright = "2021, Kevin Sheppard"
 author = "Kevin Sheppard"
 
 # The short X.Y version
-loose_version = LooseVersion(arch.__version__)
+full_version = parse(arch.__version__)
 short_version = version = arch.__version__
-if "+" in loose_version.version:
-    version = version.replace(".dirty", "")
-    version = version.split("+")
-    commits, tag = version[1].split(".")
-    version = version[0]
-    short_tag = " (+{0})".format(commits)
-    tag = " (+" + commits + ", " + tag + ")"
-    short_version = version + short_tag
-    version = version + tag
+if full_version.is_devrelease:
+    short_version = f"v{full_version.base_version} (+{full_version.dev})"
 # The full version, including alpha/beta/rc tags.
 release = arch.__version__
 
@@ -176,7 +170,7 @@ html_logo = "images/bw-logo.svg"
 # so a file named "default.css" will overwrite the builtin "default.css".
 if not on_rtd:
     html_static_path = ["_static"]
-    html_css_files = ['css/small_fixes.css']
+    html_css_files = ["css/small_fixes.css"]
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.

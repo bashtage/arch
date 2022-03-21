@@ -1,9 +1,6 @@
-from arch._version import get_versions
-from arch.univariate.mean import arch_model
-from arch.utility import test
-
-__version__ = get_versions()["version"]
-del get_versions
+from ._version import version as __version__, version_tuple
+from .univariate.mean import arch_model
+from .utility import test
 
 
 def doc() -> None:
@@ -12,4 +9,4 @@ def doc() -> None:
     webbrowser.open("https://bashtage.github.io/arch/")
 
 
-__all__ = ["arch_model", "__version__", "doc", "test"]
+__all__ = ["arch_model", "__version__", "doc", "test", "version_tuple"]
