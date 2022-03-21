@@ -1,6 +1,7 @@
 .idea/
 arch/**/*.pyd
 arch/**/*.so
+arch/_version.py
 arch/bootstrap/*.c
 arch.egg-info/
 build/

@@ -217,24 +217,15 @@ that arch will work with older versions.
   
 ```shell
 export ARCH_NO_BINARY=1
-pip install arch --no-binary arch
+python -m pip install arch
 ```
 
 or if using Powershell on windows
 
 ```powershell
 $env:ARCH_NO_BINARY=1
-pip install arch --no-binary arch
+python -m pip install arch
 ```
-
-If you have locally cloned the repo, you can install without building the binary modules
-by running
-
-```shell
-python setup.py install --no-binary
-```
-
-or by setting the environment variable ``ARCH_NO_BINARY=1``.
 
 - jupyter and notebook are required to run the notebooks
 
@@ -251,11 +242,6 @@ Releases are available PyPI and can be installed with `pip`.
 
 ```shell
 pip install arch
-```
-
-```shell
-export ARCH_NO_BINARY=1
-pip install arch --no-binary arch
 ```
 
 You can alternatively install the latest version from GitHub
@@ -288,7 +274,7 @@ ahead-of-time compiled extensions.
 
 The development requirements are:
 
-- Cython (0.29+, if not using --no-binary)
+- Cython (0.29+, if not using ARCH_NO_BINARY=1)
 - pytest (For tests)
 - sphinx (to build docs)
 - sphinx_material (to build docs)
@@ -297,6 +283,6 @@ The development requirements are:
 ### Installation Notes
 
 1. If Cython is not installed, the package will be installed
-   as-if `--no-binary` was used.
+   as-if `ARCH_NO_BINARY=1` was set.
 2. Setup does not verify these requirements. Please ensure these are
    installed.

@@ -46,11 +46,9 @@ jobs:
         test.install: true
       python_39_no_binary:
         python.version: '3.9'
-        SETUP_ARGS: '--no-binary'
-        use.conda: 'true'
-        USE_NUMBA: true
+        ARCH_NO_BINARY: true
         PYTEST_OPTS: '--skip-slow'
-        PANDAS: 1.2.0
+        PANDAS: 1.3.0
       python_39_no_binary_environment:
         python.version: '3.9'
         ARCH_NO_BINARY: true
@@ -116,20 +114,15 @@ jobs:
 
   - script: |
       echo "Installing to site packages"
-      python setup.py bdist_wheel
-      WHL=$(ls -t dist)
-      pip install ./dist/${WHL}
+      python -m pip wheel . --wheel-dir ./dist/ --no-build-isolation
+      WHL=$(ls -t ./dist/arch-*.whl | head -1)
+      pip install ${WHL}
     displayName: 'Install arch (site-packages)'
     condition: eq(variables['test.install'], 'true')
 
   - script: |
-      if [ -z ${SETUP_ARGS} ]; then
-        echo python -m pip install -e . -v --no-build-isolation
-        python -m pip install -e . -v --no-build-isolation
-      else:
-        echo python setup.py develop ${SETUP_ARGS}
-        python setup.py develop ${SETUP_ARGS}
-      fi
+      echo python -m pip install -e . -v --no-build-isolation
+      python -m pip install -e . -v --no-build-isolation
     displayName: 'Install arch (editable)'
     condition: ne(variables['test.install'], 'true')
 

@@ -1,15 +1,14 @@
 from setuptools import Command, Extension, find_packages, setup
 from setuptools.dist import Distribution
-import pathlib
+
 from collections import defaultdict
 from distutils.errors import CCompilerError, DistutilsExecError, DistutilsPlatformError
 import fnmatch
 import os
+import pathlib
 import sys
 
 import pkg_resources
-
-import versioneer
 
 CYTHON_COVERAGE = os.environ.get("ARCH_CYTHON_COVERAGE", "0") in ("true", "1", "True")
 if CYTHON_COVERAGE:
@@ -46,11 +45,8 @@ extension modules or to use numba.
 ******************************************************************************
 """
 
-cmdclass = versioneer.get_cmdclass()
 
-
-# prevent setup.py from crashing by calling import numpy before
-# numpy is installed
+# prevent setup.py from crashing by calling import numpy before numpy is installed
 class build_ext(_build_ext):
     def build_extensions(self) -> None:
         numpy_incl = pkg_resources.resource_filename("numpy", "core/include")
@@ -61,15 +57,14 @@ class build_ext(_build_ext):
         _build_ext.build_extensions(self)
 
 
-with pathlib.Path('requirements.txt').open() as requirements_txt:
+with pathlib.Path("requirements.txt").open() as requirements_txt:
     install_requires = [
         str(requirement)
-        for requirement
-        in pkg_resources.parse_requirements(requirements_txt)
+        for requirement in pkg_resources.parse_requirements(requirements_txt)
     ]
 
 
-cmdclass["build_ext"] = build_ext
+cmdclass = {"build_ext": build_ext}
 
 
 class BinaryDistribution(Distribution):
@@ -148,7 +143,6 @@ installed.
     setup(
         name="arch",
         license="NCSA",
-        version=versioneer.get_version(),
         description="ARCH for Python",
         long_description=description,
         long_description_content_type="text/markdown",
@@ -203,10 +197,8 @@ installed.
 
 
 try:
-    build_binary = "--no-binary" not in sys.argv and CYTHON_INSTALLED
+    build_binary = CYTHON_INSTALLED
     build_binary &= os.environ.get("ARCH_NO_BINARY", None) not in ("1", "True", "true")
-    if "--no-binary" in sys.argv:
-        sys.argv.remove("--no-binary")
     run_setup(binary=build_binary)
 except (
     CCompilerError,

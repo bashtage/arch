@@ -1,7 +1,8 @@
 """
 Pure Python implementations of the core recursions in the models. Only used for
 testing and if it is not possible to install the Cython version using
-python setup.py install --no-binary
+export ARCH_NO_BINARY=1
+python -m pip install .
 """
 from __future__ import annotations
 
