@@ -717,13 +717,13 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             Function the computes parameter values.  See Notes for requirements
         reps : int, default 1000
             Number of bootstrap replications
-        method : string, default "basic"
+        method : str, default "basic"
             One of 'basic', 'percentile', 'studentized', 'norm' (identical to
             'var', 'cov'), 'bc' (identical to 'debiased', 'bias-corrected'), or
             'bca'
         size : float, default 0.95
             Coverage of confidence interval
-        tail : string, default "two"
+        tail : str, default "two"
             One of 'two', 'upper' or 'lower'.
         reuse : bool, default False
             Flag indicating whether to reuse previously computed bootstrap
@@ -731,7 +731,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             rerunning the bootstrap simulation.  Reuse is ignored if reps is
             not the same across multiple runs, func changes across calls, or
             method is 'studentized'.
-        sampling : string, default "nonparametric"
+        sampling : str, default "nonparametric"
             Type of sampling to use: 'nonparametric', 'semi-parametric' (or
             'semi') or 'parametric'.  The default is 'nonparametric'.  See
             notes about the changes to func required when using 'semi' or
