@@ -7,6 +7,8 @@ requires = [
   "numpy; python_version>='3.11'",
   "Cython>=0.29.24"
 ]
+build-backend = "setuptools.build_meta"
+
 
 [tool.black]
 target-version = ['py38', 'py39', 'py310']
@@ -22,8 +24,6 @@ exclude = '''
   | dist
 )
 '''
-
-# pyproject.toml
 
 [tool.setuptools_scm]
 write_to = "arch/_version.py"

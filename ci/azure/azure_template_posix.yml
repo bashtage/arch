@@ -49,6 +49,7 @@ jobs:
         ARCH_NO_BINARY: true
         PYTEST_OPTS: '--skip-slow'
         PANDAS: 1.3.0
+        USE_NUMBA: true
       python_39_no_binary_environment:
         python.version: '3.9'
         ARCH_NO_BINARY: true
