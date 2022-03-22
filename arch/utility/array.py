@@ -174,7 +174,7 @@ def date_to_index(
 
     Parameters
     ----------
-    date : string, datetime or datetime64
+    date : str, datetime or datetime64
         Date to use when returning the index
     date_index : ndarray
         Index data containing datetime64 values
