@@ -1300,7 +1300,8 @@ class ARCHModelFixedResult(_SummaryRepr):
         Residuals standardized by conditional volatility
         """
         std_res = self.resid / self.conditional_volatility
-        std_res.name = "std_resid"
+        if isinstance(std_res, pd.Series):
+            std_res.name = "std_resid"
         return std_res
 
     def plot(

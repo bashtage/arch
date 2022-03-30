@@ -4,7 +4,10 @@ Version 5
 
 Since 5.1
 =========
-- Fix a bug in :func:`~arch.univariate.base.ARCHModelResult.forecast` and related
+- Fixed a bug in in :func:`~arch.univariate.base.ARCHModelResult.std_resid` that
+  would raise an exception when the data used to construct the model with a NumPy
+  array (:issue:`565`).
+- Fixed a bug in :func:`~arch.univariate.base.ARCHModelResult.forecast` and related
   ``forecast`` methods when producing multi-step forecasts usign simulation with
   exogenous variables (:issue:`551`).
 

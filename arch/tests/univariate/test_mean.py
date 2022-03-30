@@ -1321,3 +1321,15 @@ def test_last_obs_equiv_param(first, last, mean):
     assert_allclose(res1.model._backcast, res2.model._backcast, rtol=RTOL)
     assert_allclose(res1.params, res2.params, rtol=RTOL)
     assert_allclose(cv1[np.isfinite(cv1)], cv2[np.isfinite(cv2)], rtol=RTOL)
+
+
+@pytest.mark.parametrize("use_pandas", [True, False])
+def test_all_attr_numpy_pandas(use_pandas):
+    data = SP500
+    if not use_pandas:
+        data = np.asanyarray(data)
+    mod = arch_model(data, p=1, o=1, q=1)
+    res = mod.fit(disp="off")
+    for attr in dir(res):
+        if not attr.startswith("_"):
+            getattr(res, attr)
