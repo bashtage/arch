@@ -2,8 +2,8 @@
 Version 5
 =========
 
-Since 5.1
-=========
+Release 5.2
+===========
 - Fixed a bug in in :func:`~arch.univariate.base.ARCHModelResult.std_resid` that
   would raise an exception when the data used to construct the model with a NumPy
   array (:issue:`565`).
