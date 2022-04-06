@@ -1291,7 +1291,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         Resample all data using the values in _index
         """
         indices = self._index
-        assert isinstance(indices, np.ndarray)
+        assert isinstance(indices, (np.ndarray, tuple))
         pos_data = []
         for values in self._args:
             if isinstance(values, (pd.Series, pd.DataFrame)):

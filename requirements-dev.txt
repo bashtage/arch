@@ -17,6 +17,7 @@ pytest-xdist
 black[jupyter]==22.3.0
 isort
 flake8
+mypy
 
 # Documentation
 ipython>=7
