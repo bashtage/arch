@@ -1290,8 +1290,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         """
         Resample all data using the values in _index
         """
-        indices = self._index
-        assert isinstance(indices, (np.ndarray, tuple))
+        indices = cast(Union[Int64Array, Tuple[Int64Array, ...]], self._index)
         pos_data = []
         for values in self._args:
             if isinstance(values, (pd.Series, pd.DataFrame)):
@@ -1455,7 +1454,9 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         """
         Resample all data using the values in _index
         """
-        pos_indices, kw_indices = self._index
+        pos_indices, kw_indices = cast(
+            Tuple[List[Int64Array], Dict[str, Int64Array]], self._index
+        )
         pos_data = []
         for i, values in enumerate(self._args):
             if isinstance(values, (pd.Series, pd.DataFrame)):
@@ -1464,10 +1465,11 @@ class IndependentSamplesBootstrap(IIDBootstrap):
                 pos_data.append(values[pos_indices[i]])
         named_data = {}
         for key, values in self._kwargs.items():
+            idx = kw_indices[key]
             if isinstance(values, (pd.Series, pd.DataFrame)):
-                named_data[key] = values.iloc[kw_indices[key]]
+                named_data[key] = values.iloc[idx]
             else:
-                named_data[key] = values[kw_indices[key]]
+                named_data[key] = values[idx]
             setattr(self, key, named_data[key])
 
         self.pos_data = tuple(pos_data)
