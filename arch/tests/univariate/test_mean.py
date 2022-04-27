@@ -1333,3 +1333,14 @@ def test_all_attr_numpy_pandas(use_pandas):
     for attr in dir(res):
         if not attr.startswith("_"):
             getattr(res, attr)
+
+
+def test_figarch_power():
+    base = ConstantMean(SP500, volatility=FIGARCH())
+    fiavgarch = ConstantMean(SP500, volatility=FIGARCH(power=1.0))
+    base_res = base.fit(disp=DISPLAY)
+    fiavgarch_res = fiavgarch.fit(disp=DISPLAY)
+    assert np.abs(base_res.loglikelihood - fiavgarch_res.loglikelihood) > 1.0
+    alt_fiavgarch = arch_model(SP500, vol="FIGARCH", power=1.0)
+    alt_fiavgarch_res = alt_fiavgarch.fit(disp=DISPLAY)
+    assert np.abs(alt_fiavgarch_res.loglikelihood - fiavgarch_res.loglikelihood) < 1.0
