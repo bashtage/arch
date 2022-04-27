@@ -1820,7 +1820,9 @@ def arch_model(
         "Constant", "Zero", "LS", "AR", "ARX", "HAR", "HARX", "constant", "zero"
     ] = "Constant",
     lags: Union[None, int, List[int], Int32Array, Int64Array] = 0,
-    vol: Literal["GARCH", "ARCH", "EGARCH", "FIARCH", "APARCH", "HARCH"] = "GARCH",
+    vol: Literal[
+        "GARCH", "ARCH", "EGARCH", "FIARCH", "APARCH", "HARCH", "FIGARCH"
+    ] = "GARCH",
     p: Union[int, List[int]] = 1,
     o: int = 0,
     q: int = 1,
@@ -1978,7 +1980,7 @@ def arch_model(
         v = ARCH(p=p)
     elif vol_model == "figarch":
         assert isinstance(p, int)
-        v = FIGARCH(p=p, q=q)
+        v = FIGARCH(p=p, q=q, power=power)
     elif vol_model == "garch":
         assert isinstance(p, int)
         v = GARCH(p=p, o=o, q=q, power=power)
