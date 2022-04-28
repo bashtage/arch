@@ -6,7 +6,6 @@ from distutils.errors import CCompilerError, DistutilsExecError, DistutilsPlatfo
 import fnmatch
 import os
 import pathlib
-import sys
 
 import pkg_resources
 
