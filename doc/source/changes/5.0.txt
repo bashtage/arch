@@ -2,6 +2,11 @@
 Version 5
 =========
 
+Changes Since 5.2
+=================
+- Fixed a bug in :func:`~arch.univariate.mean.arch_model` where ``power`` was
+  not passed to the :class:`~arch.univariate.FIGARCH` constructor (:issue:`572`).
+
 Release 5.2
 ===========
 - Fixed a bug in in :func:`~arch.univariate.base.ARCHModelResult.std_resid` that
