@@ -9,7 +9,7 @@ to improve performance)
 | Metric                     |                                                                                                                                                                                                                                          |
 | :------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Latest Release**         | [![PyPI version](https://badge.fury.io/py/arch.svg)](https://badge.fury.io/py/arch)                                                                                                                                                      |
-|                            | [![conda-forge version](https://anaconda.org/conda-forge/arch-py/badges/version.svg)](https://anaconda.org/conda-forge/arch-py)                                                                                          |
+|                            | [![conda-forge version](https://anaconda.org/conda-forge/arch-py/badges/version.svg)](https://anaconda.org/conda-forge/arch-py)                                                                                                          |
 | **Continuous Integration** | [![Build Status](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_apis/build/status/bashtage.arch?branchName=main)](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_build/latest?definitionId=1&branchName=main)        |
 |                            | [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/nmt02u7jwcgx7i2x?svg=true)](https://ci.appveyor.com/project/bashtage/arch/branch/main)                                                                             |
 | **Coverage**               | [![codecov](https://codecov.io/gh/bashtage/arch/branch/main/graph/badge.svg)](https://codecov.io/gh/bashtage/arch)                                                                                                                       |
@@ -18,7 +18,7 @@ to improve performance)
 |                            | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/93f6fd90209842bf97fd20fda8db70ef)](https://www.codacy.com/manual/bashtage/arch?utm_source=github.com&utm_medium=referral&utm_content=bashtage/arch&utm_campaign=Badge_Grade) |
 |                            | [![codebeat badge](https://codebeat.co/badges/18a78c15-d74b-4820-b56d-72f7e4087532)](https://codebeat.co/projects/github-com-bashtage-arch-main)                                                                                         |
 | **Citation**               | [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.593254.svg)](https://doi.org/10.5281/zenodo.593254)                                                                                                                                  |
-| **Documentation**          | [![Documentation Status](https://readthedocs.org/projects/arch/badge/?version=latest)](https://arch.readthedocs.org/en/latest/)                                                                                                           |
+| **Documentation**          | [![Documentation Status](https://readthedocs.org/projects/arch/badge/?version=latest)](https://arch.readthedocs.org/en/latest/)                                                                                                          |
 
 ## Module Contents
 
@@ -114,7 +114,7 @@ for examples of testing series for unit roots.
   - Engle-Granger Test
   - Phillips-Ouliaris Test
 - Cointegration Vector Estimation
-  - Canonical Cointegrating Regression 
+  - Canonical Cointegrating Regression
   - Dynamic OLS
   - Fully Modified OLS
 
@@ -170,13 +170,12 @@ ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 ### Multiple Comparison Procedures
 
 - Test of Superior Predictive Ability (SPA), also known as the Reality
-  Check or Bootstrap Data Snooper
+    Check or Bootstrap Data Snooper
 - Stepwise (StepM)
 - Model Confidence Set (MCS)
 
 See the [multiple comparison example notebook](https://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/multiple-comparison_examples.ipynb)
 for examples of the multiple comparison procedures.
-
 
 <a id="long-run-covariance"></a>
 
@@ -184,7 +183,7 @@ for examples of the multiple comparison procedures.
 
 Kernel-based estimators of long-run covariance including the
 Bartlett kernel which is known as Newey-West in econometrics.
-Automatic bandwidth selection is available for all of the 
+Automatic bandwidth selection is available for all of the
 covariance estimators.
 
 ```python
@@ -213,8 +212,8 @@ that arch will work with older versions.
 
 ### Optional Requirements
 
-- Numba (0.49+) will be used if available **and** when installed without building the binary modules. In order to ensure that these are not built, you must set the environment variable ``ARCH_NO_BINARY=1`` and install without the wheel.
-  
+- Numba (0.49+) will be used if available **and** when installed without building the binary modules. In order to ensure that these are not built, you must set the environment variable `ARCH_NO_BINARY=1` and install without the wheel.
+
 ```shell
 export ARCH_NO_BINARY=1
 python -m pip install arch
@@ -283,6 +282,6 @@ The development requirements are:
 ### Installation Notes
 
 1. If Cython is not installed, the package will be installed
-   as-if `ARCH_NO_BINARY=1` was set.
+    as-if `ARCH_NO_BINARY=1` was set.
 2. Setup does not verify these requirements. Please ensure these are
-   installed.
+    installed.
