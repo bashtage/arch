@@ -1821,7 +1821,7 @@ def arch_model(
     ] = "Constant",
     lags: Union[None, int, List[int], Int32Array, Int64Array] = 0,
     vol: Literal[
-        "GARCH", "ARCH", "EGARCH", "FIARCH", "APARCH", "HARCH", "FIGARCH"
+        "GARCH", "ARCH", "EGARCH", "FIGARCH", "APARCH", "HARCH", "FIGARCH"
     ] = "GARCH",
     p: Union[int, List[int]] = 1,
     o: int = 0,
@@ -1858,7 +1858,7 @@ def arch_model(
         integers specifying lag locations.
     vol : str, optional
         Name of the volatility model.  Currently supported options are:
-        'GARCH' (default), 'ARCH', 'EGARCH', 'FIARCH', 'APARCH' and 'HARCH'
+        'GARCH' (default), 'ARCH', 'EGARCH', 'FIGARCH', 'APARCH' and 'HARCH'
     p : int, optional
         Lag order of the symmetric innovation
     o : int, optional
