@@ -303,7 +303,7 @@
    "source": [
     "from arch.bootstrap import optimal_block_length\n",
     "\n",
-    "opt = optimal_block_length(excess_market ** 2)\n",
+    "opt = optimal_block_length(excess_market**2)\n",
     "print(opt)"
    ]
   },
