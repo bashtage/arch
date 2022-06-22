@@ -39,6 +39,8 @@ for example in examples:
 project = "arch"
 copyright = "2021, Kevin Sheppard"
 author = "Kevin Sheppard"
+language = "en"
+nitpicky = True
 
 # The short X.Y version
 full_version = parse(arch.__version__)
@@ -265,8 +267,8 @@ epub_exclude_files = ["search.html"]
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     "statsmodels": ("https://www.statsmodels.org/dev/", None),
-    "matplotlib": ("https://matplotlib.org", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
+    "matplotlib": ("https://matplotlib.org/stable/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "python": ("https://docs.python.org/3/", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
     "np": ("https://numpy.org/doc/stable/", None),
