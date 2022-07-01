@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import copy
-from typing import Dict, Hashable, List, Optional, Sequence, Tuple, Union, cast
+from typing import Hashable, Sequence, cast
 
 import numpy as np
 import pandas as pd
@@ -26,7 +26,7 @@ __all__ = ["StepM", "SPA", "RealityCheck", "MCS"]
 
 
 def _info_to_str(
-    model: str, info: Dict[str, str], is_repr: bool = False, is_html: bool = False
+    model: str, info: dict[str, str], is_repr: bool = False, is_html: bool = False
 ) -> str:
     if is_html:
         model = "<strong>" + model + "</strong>"
@@ -39,14 +39,14 @@ def _info_to_str(
     return _str[:-2] + ")"
 
 
-class MultipleComparison(object):
+class MultipleComparison:
     """
     Abstract class for inheritance
     """
 
     def __init__(self) -> None:
         self._model = ""
-        self._info: Dict[str, str] = {}
+        self._info: dict[str, str] = {}
         self.bootstrap: CircularBlockBootstrap = CircularBlockBootstrap(
             10, np.ones(100)
         )
@@ -66,7 +66,7 @@ class MultipleComparison(object):
         """
         self.bootstrap.reset()
 
-    def seed(self, value: Union[int, List[int], Uint32Array]) -> None:
+    def seed(self, value: int | list[int] | Uint32Array) -> None:
         """
         Seed the bootstrap's random number generator
 
@@ -123,13 +123,13 @@ class MCS(MultipleComparison):
         losses: ArrayLike,
         size: float,
         reps: int = 1000,
-        block_size: Optional[int] = None,
+        block_size: int | None = None,
         method: Literal["R", "max"] = "R",
         bootstrap: Literal[
             "stationary", "sb", "circular", "cbb", "moving block", "mbb"
         ] = "stationary",
         *,
-        seed: Union[None, int, np.random.Generator, np.random.RandomState] = None,
+        seed: None | int | np.random.Generator | np.random.RandomState = None,
     ) -> None:
         super().__init__()
         self.losses: Float64Array = ensure2d(losses, "losses")
@@ -160,11 +160,11 @@ class MCS(MultipleComparison):
             raise ValueError(f"Unknown bootstrap: {bootstrap_meth}")
         self._seed = seed
         self.bootstrap: CircularBlockBootstrap = bootstrap_inst
-        self._bootstrap_indices: List[IntArray] = []  # For testing
+        self._bootstrap_indices: list[IntArray] = []  # For testing
         self._model = "MCS"
         self._info = dict(
             [
-                ("size", "{0:0.2f}".format(self.size)),
+                ("size", f"{self.size:0.2f}"),
                 ("bootstrap", str(bootstrap_inst)),
                 ("ID", hex(id(self))),
             ]
@@ -175,7 +175,7 @@ class MCS(MultipleComparison):
         if not self._results_computed:
             raise RuntimeError("Must call compute before accessing results")
 
-    def _format_pvalues(self, eliminated: Sequence[Tuple[int, float]]) -> pd.DataFrame:
+    def _format_pvalues(self, eliminated: Sequence[tuple[int, float]]) -> pd.DataFrame:
         columns = ["Model index", "Pvalue"]
         mcs = pd.DataFrame(eliminated, columns=columns)
         max_pval = mcs.iloc[0, 1]
@@ -301,7 +301,7 @@ class MCS(MultipleComparison):
         self._pvalues = self._format_pvalues(eliminated)
 
     @property
-    def included(self) -> List[Hashable]:
+    def included(self) -> list[Hashable]:
         """
         List of model indices that are included in the MCS
 
@@ -317,7 +317,7 @@ class MCS(MultipleComparison):
         return included
 
     @property
-    def excluded(self) -> List[Hashable]:
+    def excluded(self) -> list[Hashable]:
         """
         List of model indices that are excluded from the MCS
 
@@ -405,7 +405,7 @@ class StepM(MultipleComparison):
         benchmark: ArrayLike,
         models: ArrayLike,
         size: float = 0.05,
-        block_size: Optional[int] = None,
+        block_size: int | None = None,
         reps: int = 1000,
         bootstrap: Literal[
             "stationary", "sb", "circular", "cbb", "moving block", "mbb"
@@ -413,9 +413,9 @@ class StepM(MultipleComparison):
         studentize: bool = True,
         nested: bool = False,
         *,
-        seed: Union[None, int, np.random.Generator, np.random.RandomState] = None,
+        seed: None | int | np.random.Generator | np.random.RandomState = None,
     ) -> None:
-        super(StepM, self).__init__()
+        super().__init__()
         self.benchmark: Float64Array = ensure2d(benchmark, "benchmark")
         self.models: Float64Array = ensure2d(models, "models")
         self.spa: SPA = SPA(
@@ -433,7 +433,7 @@ class StepM(MultipleComparison):
         self.k: int = self.models.shape[1]
         self.reps: int = reps
         self.size: float = size
-        self._superior_models: Optional[List[Hashable]] = None
+        self._superior_models: list[Hashable] | None = None
         self.bootstrap: CircularBlockBootstrap = self.spa.bootstrap
 
         self._model = "StepM"
@@ -443,7 +443,7 @@ class StepM(MultipleComparison):
             method = "none"
         self._info = dict(
             [
-                ("FWER (size)", "{:0.2f}".format(self.size)),
+                ("FWER (size)", f"{self.size:0.2f}"),
                 ("studentization", method),
                 ("bootstrap", str(self.spa.bootstrap)),
                 ("ID", hex(id(self))),
@@ -479,7 +479,7 @@ class StepM(MultipleComparison):
         self._superior_models = all_better_models
 
     @property
-    def superior_models(self) -> List[Hashable]:
+    def superior_models(self) -> list[Hashable]:
         """
         List of the indices or column names of the superior models
 
@@ -554,7 +554,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self,
         benchmark: ArrayLike,
         models: ArrayLike,
-        block_size: Optional[int] = None,
+        block_size: int | None = None,
         reps: int = 1000,
         bootstrap: Literal[
             "stationary", "sb", "circular", "cbb", "moving block", "mbb"
@@ -562,7 +562,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         studentize: bool = True,
         nested: bool = False,
         *,
-        seed: Union[None, int, np.random.Generator, np.random.RandomState] = None,
+        seed: None | int | np.random.Generator | np.random.RandomState = None,
     ) -> None:
         super().__init__()
         self.benchmark: Float64Array = ensure2d(benchmark, "benchmark")
@@ -595,8 +595,8 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
             raise ValueError(f"Unknown bootstrap: {bootstrap_name}")
         self._seed = seed
         self.bootstrap: CircularBlockBootstrap = bootstrap_inst
-        self._pvalues: Dict[str, float] = {}
-        self._simulated_vals: Optional[Float64Array] = None
+        self._pvalues: dict[str, float] = {}
+        self._simulated_vals: Float64Array | None = None
         self._selector = np.ones(self.k, dtype=np.bool_)
         self._model = "SPA"
         if self.studentize:
@@ -615,7 +615,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         """
         Reset the bootstrap to its initial state.
         """
-        super(SPA, self).reset()
+        super().reset()
         self._pvalues = {}
 
     def subset(self, selector: BoolArray) -> None:
@@ -766,7 +766,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self,
         pvalue: float = 0.05,
         pvalue_type: Literal["lower", "consistent", "upper"] = "consistent",
-    ) -> Union[Int64Array, List[Hashable]]:
+    ) -> Int64Array | list[Hashable]:
         """
         Returns set of models rejected as being equal-or-worse than the
         benchmark

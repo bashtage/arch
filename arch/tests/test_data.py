@@ -15,6 +15,6 @@ def dataset(request):
 
 
 def test_dataset(dataset):
-    mod = __import__("arch.data.{0}".format(dataset), fromlist=[dataset])
+    mod = __import__(f"arch.data.{dataset}", fromlist=[dataset])
     data = mod.load()
     assert isinstance(data, pd.DataFrame)

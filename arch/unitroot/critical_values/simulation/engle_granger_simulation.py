@@ -147,7 +147,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     njobs = getattr(args, "ncpu", None)
     njobs = cpu_count() - 1 if njobs is None else njobs
-    print("Running on {0} CPUs".format(njobs))
+    print(f"Running on {njobs} CPUs")
     entropy_bits = [
         41526,
         18062,
@@ -166,7 +166,7 @@ if __name__ == "__main__":
         61267,
         56526,
     ]
-    entropy = sum([bits << (16 * i) for i, bits in enumerate(entropy_bits)])
+    entropy = sum(bits << (16 * i) for i, bits in enumerate(entropy_bits))
     seq = SeedSequence(entropy)
     gen = [Generator(PCG64(child)) for child in seq.spawn(EX_NUM)]
     sample_sizes = (

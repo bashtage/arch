@@ -9,7 +9,7 @@ from statsmodels.datasets import macrodata
 from arch.utility import cov_nw
 
 
-class TestVarNW(object):
+class TestVarNW:
     @classmethod
     def setup_class(cls):
 

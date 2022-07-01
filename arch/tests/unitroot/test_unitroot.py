@@ -48,7 +48,7 @@ TRUE_BW_FROM_R_PA = 7.75328
 TRUE_BW_FROM_R_QS = 3.851586
 
 
-class TestUnitRoot(object):
+class TestUnitRoot:
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)
@@ -299,7 +299,7 @@ class TestUnitRoot(object):
         assert isinstance(vr, VarianceRatio)
 
 
-class TestAutolagOLS(object):
+class TestAutolagOLS:
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)

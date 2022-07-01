@@ -7,7 +7,7 @@ from arch.compat.pandas import is_datetime64_any_dtype
 
 from abc import ABCMeta
 import datetime as dt
-from typing import Any, Dict, Hashable, List, Optional, Sequence, Tuple, Type, Union
+from typing import Any, Hashable, Sequence
 
 import numpy as np
 from pandas import DataFrame, DatetimeIndex, Index, NaT, Series, Timestamp, to_datetime
@@ -32,10 +32,10 @@ deprecation_doc: str = """
 
 
 def ensure1d(
-    x: Union[int, float, Sequence[Union[int, float]], ArrayLike],  # noqa: E231
-    name: Optional[Hashable],
+    x: int | float | Sequence[int | float] | ArrayLike,  # noqa: E231
+    name: Hashable | None,
     series: bool = False,
-) -> Union[NDArray, Series]:
+) -> NDArray | Series:
     if isinstance(x, Series):
         if not isinstance(x.name, str):
             x.name = str(x.name)
@@ -67,11 +67,9 @@ def ensure1d(
 
 
 def ensure2d(
-    x: Union[
-        Sequence[Union[float, int]], Sequence[Sequence[Union[float, int]]], ArrayLike
-    ],
+    x: (Sequence[float | int] | Sequence[Sequence[float | int]] | ArrayLike),
     name: str,
-) -> Union[DataFrame, NDArray]:
+) -> DataFrame | NDArray:
     if isinstance(x, Series):
         return DataFrame(x)
     elif isinstance(x, DataFrame):
@@ -90,12 +88,12 @@ def ensure2d(
 
 
 def parse_dataframe(
-    x: Optional[ArrayLike], name: Union[str, List[str]]
-) -> Union[
-    Tuple[Index, Index],
-    Tuple[List[Optional[Hashable]], Index],
-    Tuple[List[str], NDArray],
-]:
+    x: ArrayLike | None, name: str | list[str]
+) -> (
+    tuple[Index, Index]
+    | tuple[list[Hashable | None], Index]
+    | tuple[list[str], NDArray]
+):
     if x is None:
         return [name], np.empty(0)
     if isinstance(x, DataFrame):
@@ -116,7 +114,7 @@ class DocStringInheritor(type):
     """
 
     def __new__(
-        mcs, name: str, bases: Tuple[Type, ...], clsdict: Dict[str, Any]
+        mcs, name: str, bases: tuple[type, ...], clsdict: dict[str, Any]
     ) -> Any:
         if not ("__doc__" in clsdict and clsdict["__doc__"]):
             for mro_cls in (mro_cls for base in bases for mro_cls in base.mro()):
@@ -152,8 +150,8 @@ class DocStringInheritor(type):
 
 class ConcreteClassMeta(ABCMeta):
     def __init__(cls, *args: Any, **kwargs: Any):
-        super(ConcreteClassMeta, cls).__init__(*args, **kwargs)
-        missing: List[str] = getattr(cls, "__abstractmethods__", [])
+        super().__init__(*args, **kwargs)
+        missing: list[str] = getattr(cls, "__abstractmethods__", [])
         if missing:
             missing_meth = ", ".join(missing)
             raise TypeError(
@@ -166,8 +164,8 @@ class AbstractDocStringInheritor(ConcreteClassMeta, DocStringInheritor):
 
 
 def date_to_index(
-    date: Union[str, dt.date, dt.datetime, np.datetime64, Timestamp],
-    date_index: Union[DatetimeIndex, NDArray],
+    date: str | dt.date | dt.datetime | np.datetime64 | Timestamp,
+    date_index: DatetimeIndex | NDArray,
 ) -> int:
     """
     Looks up a date in an array of dates
@@ -232,7 +230,7 @@ def date_to_index(
 
 
 def cutoff_to_index(
-    cutoff: Union[None, int, DateLike], index: DatetimeIndex, default: int
+    cutoff: None | int | DateLike, index: DatetimeIndex, default: int
 ) -> int:
     """
     Converts a cutoff to a numerical index
@@ -261,7 +259,7 @@ def cutoff_to_index(
     return int_index
 
 
-def find_index(s: AnyPandas, index: Union[int, DateLike]) -> int:
+def find_index(s: AnyPandas, index: int | DateLike) -> int:
     """
     Returns the numeric index for a string or datetime
 

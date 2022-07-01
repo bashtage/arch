@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Dict
-
 from scipy.stats import chi2
 
 from arch.vendor import cached_property
@@ -9,7 +7,7 @@ from arch.vendor import cached_property
 __all__ = ["WaldTestStatistic"]
 
 
-class WaldTestStatistic(object):
+class WaldTestStatistic:
     """
     Test statistic holder for Wald-type tests
 
@@ -41,7 +39,7 @@ class WaldTestStatistic(object):
         self.df: int = df
         self._name = name
         self.dist = chi2(df)
-        self.dist_name: str = "chi2({0})".format(df)
+        self.dist_name: str = f"chi2({df})"
 
     @property
     def stat(self) -> float:
@@ -54,7 +52,7 @@ class WaldTestStatistic(object):
         return 1 - self.dist.cdf(self.stat)
 
     @cached_property
-    def critical_values(self) -> Dict[str, float]:
+    def critical_values(self) -> dict[str, float]:
         """Critical values test for common test sizes"""
         return dict(zip(["10%", "5%", "1%"], self.dist.ppf([0.9, 0.95, 0.99])))
 
@@ -84,8 +82,5 @@ class WaldTestStatistic(object):
 
     def __repr__(self) -> str:
         return (
-            self.__str__()
-            + "\n"
-            + self.__class__.__name__
-            + ", id: {0}".format(hex(id(self)))
+            self.__str__() + "\n" + self.__class__.__name__ + f", id: {hex(id(self))}"
         )

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Copyright (c) 2018-2019, Martin Larralde
 Copyright (c) 2015-2018, Daniel Greenfeld
@@ -100,22 +99,22 @@ class threaded_cached_property(cached_property):
     """
 
     def __init__(self, func) -> None:
-        super(threaded_cached_property, self).__init__(func)
+        super().__init__(func)
         self.lock: threading.RLock = threading.RLock()
 
     def __get__(self, obj, cls):
         if obj is None:
             return self
         with self.lock:
-            return super(threaded_cached_property, self).__get__(obj, cls)
+            return super().__get__(obj, cls)
 
     def __set__(self, obj, value):
         with self.lock:
-            super(threaded_cached_property, self).__set__(obj, value)
+            super().__set__(obj, value)
 
     def __delete__(self, obj):
         with self.lock:
-            super(threaded_cached_property, self).__delete__(obj)
+            super().__delete__(obj)
 
 
 class cached_property_with_ttl(cached_property):
@@ -132,10 +131,10 @@ class cached_property_with_ttl(cached_property):
         else:
             func = None
         self.ttl: Optional[int] = ttl
-        super(cached_property_with_ttl, self).__init__(func)
+        super().__init__(func)
 
     def __call__(self, func):
-        super(cached_property_with_ttl, self).__init__(func)
+        super().__init__(func)
         return self
 
     def __get__(self, obj, cls):
@@ -152,7 +151,7 @@ class cached_property_with_ttl(cached_property):
         return value
 
     def __set__(self, obj, value):
-        super(cached_property_with_ttl, self).__set__(obj, (value, time()))
+        super().__set__(obj, (value, time()))
 
 
 # Aliases to make cached_property_with_ttl easier to use
@@ -169,20 +168,20 @@ class threaded_cached_property_with_ttl(
     """
 
     def __init__(self, ttl=None) -> None:
-        super(threaded_cached_property_with_ttl, self).__init__(ttl)
+        super().__init__(ttl)
         self.lock: threading.RLock = threading.RLock()
 
     def __get__(self, obj, cls):
         with self.lock:
-            return super(threaded_cached_property_with_ttl, self).__get__(obj, cls)
+            return super().__get__(obj, cls)
 
     def __set__(self, obj, value):
         with self.lock:
-            return super(threaded_cached_property_with_ttl, self).__set__(obj, value)
+            return super().__set__(obj, value)
 
     def __delete__(self, obj):
         with self.lock:
-            return super(threaded_cached_property_with_ttl, self).__delete__(obj)
+            return super().__delete__(obj)
 
 
 # Alias to make threaded_cached_property_with_ttl easier to use

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Optional, Sequence, Tuple
+from typing import Sequence
 
 import numpy as np
 import pandas as pd
@@ -42,7 +42,7 @@ __all__ = [
 ]
 
 
-class _CommonCointegrationResults(object):
+class _CommonCointegrationResults:
     def __init__(
         self,
         params: pd.Series,
@@ -190,8 +190,8 @@ class _CommonCointegrationResults(object):
 
     @staticmethod
     def _top_table(
-        top_left: Sequence[Tuple[str, str]],
-        top_right: Sequence[Tuple[str, str]],
+        top_left: Sequence[tuple[str, str]],
+        top_right: Sequence[tuple[str, str]],
         title: str,
     ) -> SimpleTable:
         stubs = []
@@ -214,7 +214,7 @@ class _CommonCointegrationResults(object):
 
         return table
 
-    def _top_right(self) -> List[Tuple[str, str]]:
+    def _top_right(self) -> list[tuple[str, str]]:
         top_right = [
             ("No. Observations:", str(self._resid.shape[0])),
             ("R²:", str_format(self.rsquared)),
@@ -448,7 +448,7 @@ class DynamicOLSResults(_CommonCointegrationResults):
         return smry
 
 
-class DynamicOLS(object):
+class DynamicOLS:
     r"""
     Dynamic OLS (DOLS) cointegrating vector estimation
 
@@ -527,11 +527,11 @@ class DynamicOLS(object):
         y: ArrayLike1D,
         x: ArrayLike2D,
         trend: UnitRootTrend = "c",
-        lags: Optional[int] = None,
-        leads: Optional[int] = None,
+        lags: int | None = None,
+        leads: int | None = None,
         common: bool = False,
-        max_lag: Optional[int] = None,
-        max_lead: Optional[int] = None,
+        max_lag: int | None = None,
+        max_lead: int | None = None,
         method: Literal["aic", "bic", "hqic"] = "bic",
     ) -> None:
         setup = _check_cointegrating_regression(y, x, trend)
@@ -584,7 +584,7 @@ class DynamicOLS(object):
 
     def _format_variables(
         self, leads: int, lags: int
-    ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    ) -> tuple[pd.DataFrame, pd.DataFrame]:
         """Format the variables for the regression"""
         x = self._x
         y = self._y_df
@@ -628,7 +628,7 @@ class DynamicOLS(object):
         nobs = self._y.shape[0]
         return int(np.ceil(12.0 * (nobs / 100) ** (1 / 4)))
 
-    def _leads_and_lags(self) -> Tuple[int, int]:
+    def _leads_and_lags(self) -> tuple[int, int]:
         """Select the optimal number of leads and lags"""
         if self._lags is not None and self._leads is not None:
             return self._leads, self._lags
@@ -678,7 +678,7 @@ class DynamicOLS(object):
             "unadjusted", "homoskedastic", "robust", "kernel"
         ] = "unadjusted",
         kernel: str = "bartlett",
-        bandwidth: Optional[int] = None,
+        bandwidth: int | None = None,
         force_int: bool = False,
         df_adjust: bool = False,
     ) -> DynamicOLSResults:
@@ -776,12 +776,12 @@ class DynamicOLS(object):
     def _cov(
         cov_type: Literal["unadjusted", "homoskedastic", "robust", "kernel"],
         kernel: str,
-        bandwidth: Optional[int],
+        bandwidth: int | None,
         force_int: bool,
         df_adjust: bool,
         rhs: pd.DataFrame,
         resids: pd.Series,
-    ) -> Tuple[pd.DataFrame, lrcov.CovarianceEstimator]:
+    ) -> tuple[pd.DataFrame, lrcov.CovarianceEstimator]:
         """Estimate the covariance"""
         kernel = kernel.lower().replace("-", "").replace("_", "")
         if kernel not in KERNEL_ESTIMATORS:
@@ -969,13 +969,13 @@ FMOLS_ESTIMATOR = r"""
 
 @Substitution(method=FMOLS_METHOD, estimator=FMOLS_ESTIMATOR)
 @Appender(COMMON_DOCSTRING)
-class FullyModifiedOLS(object):
+class FullyModifiedOLS:
     def __init__(
         self,
         y: ArrayLike1D,
         x: ArrayLike2D,
         trend: UnitRootTrend = "c",
-        x_trend: Optional[UnitRootTrend] = None,
+        x_trend: UnitRootTrend | None = None,
     ) -> None:
         setup = _check_cointegrating_regression(y, x, trend)
         self._y = setup.y
@@ -985,8 +985,8 @@ class FullyModifiedOLS(object):
         self._y_df = pd.DataFrame(self._y)
 
     def _common_fit(
-        self, kernel: str, bandwidth: Optional[float], force_int: bool, diff: bool
-    ) -> Tuple[lrcov.CovarianceEstimator, Float64Array, Float64Array]:
+        self, kernel: str, bandwidth: float | None, force_int: bool, diff: bool
+    ) -> tuple[lrcov.CovarianceEstimator, Float64Array, Float64Array]:
         kernel = _check_kernel(kernel)
         res = _cross_section(self._y, self._x, self._trend)
         x = np.asarray(self._x)
@@ -1015,7 +1015,7 @@ class FullyModifiedOLS(object):
         beta = np.asarray(res.params)[: x.shape[1]]
         return cov_est, eta, beta
 
-    def _final_statistics(self, theta: pd.Series) -> Tuple[pd.Series, float, float]:
+    def _final_statistics(self, theta: pd.Series) -> tuple[pd.Series, float, float]:
         z = add_trend(self._x, self._trend)
         nobs, nvar = z.shape
         resid = self._y - np.asarray(z @ theta)
@@ -1035,7 +1035,7 @@ class FullyModifiedOLS(object):
     def fit(
         self,
         kernel: str = "bartlett",
-        bandwidth: Optional[float] = None,
+        bandwidth: float | None = None,
         force_int: bool = True,
         diff: bool = False,
         df_adjust: bool = False,
@@ -1131,7 +1131,7 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         y: ArrayLike1D,
         x: ArrayLike2D,
         trend: UnitRootTrend = "c",
-        x_trend: Optional[UnitRootTrend] = None,
+        x_trend: UnitRootTrend | None = None,
     ) -> None:
         super().__init__(y, x, trend, x_trend)
 
@@ -1139,7 +1139,7 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
     def fit(
         self,
         kernel: str = "bartlett",
-        bandwidth: Optional[float] = None,
+        bandwidth: float | None = None,
         force_int: bool = True,
         diff: bool = False,
         df_adjust: bool = False,

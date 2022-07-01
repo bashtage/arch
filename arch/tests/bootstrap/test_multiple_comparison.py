@@ -204,7 +204,7 @@ def test_single_model(spa_data):
     spa.compute()
 
 
-class TestStepM(object):
+class TestStepM:
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(23456)
@@ -310,7 +310,7 @@ class TestStepM(object):
         assert_equal(len(stepm.superior_models), self.models.shape[1] - 2)
 
 
-class TestMCS(object):
+class TestMCS:
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(23456)

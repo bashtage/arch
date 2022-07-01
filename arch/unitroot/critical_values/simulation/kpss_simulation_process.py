@@ -41,7 +41,7 @@ for k in ("c", "ct"):
     sio.write(k + " = (")
     count = 0
     for c, q in zip(critical_values, quantiles):
-        sio.write("(" + "{0:0.3f}".format(q) + ", " + "{0:0.4f}".format(c) + ")")
+        sio.write("(" + f"{q:0.3f}" + ", " + f"{c:0.4f}" + ")")
         count += 1
         if count % 4 == 0:
             sio.write(",\n    " + " " * len(k))

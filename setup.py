@@ -84,7 +84,7 @@ class CleanCommand(Command):
 
 cmdclass["clean"] = CleanCommand
 
-with open("README.md", "r") as readme:
+with open("README.md") as readme:
     description = readme.read()
 
 package_data = defaultdict(list)
@@ -203,7 +203,7 @@ except (
     CCompilerError,
     DistutilsExecError,
     DistutilsPlatformError,
-    IOError,
+    OSError,
     ValueError,
 ):
     run_setup(binary=False)

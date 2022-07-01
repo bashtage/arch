@@ -6,7 +6,7 @@ best when joblib is installed.
 from __future__ import annotations
 
 import datetime
-from typing import Optional, cast
+from typing import cast
 
 import numpy as np
 from numpy.linalg import pinv
@@ -48,7 +48,7 @@ def wrapper(n: int, trend: Literal["c", "ct"], b: int, seed: int = 0) -> np.ndar
 
 
 def dfgsl_simulation(
-    n: int, trend: Literal["c", "ct"], b: int, rng: Optional[RandomState] = None
+    n: int, trend: Literal["c", "ct"], b: int, rng: RandomState | None = None
 ) -> float:
     """
     Simulates the empirical distribution of the DFGLS test statistic
@@ -137,9 +137,7 @@ if __name__ == "__main__":
         results = np.zeros((len(percentiles), len(T), EX_NUM))
 
         for i in range(EX_NUM):
-            print(
-                "Experiment Number {0} of {1} " "(trend {2})".format(i + 1, EX_NUM, tr)
-            )
+            print("Experiment Number {} of {} " "(trend {})".format(i + 1, EX_NUM, tr))
             now = datetime.datetime.now()
             parallel, p_func, n_jobs = parallel_func(
                 wrapper, n_jobs=NUM_JOBS, verbose=2
@@ -147,7 +145,7 @@ if __name__ == "__main__":
             out = parallel(p_func(t, tr, EX_SIZE, seed=seeds[i]) for t in T)
             quantiles = [np.percentile(x, percentiles) for x in out]
             results[:, :, i] = np.array(quantiles).T
-            print("Elapsed time {0} seconds".format(datetime.datetime.now() - now))
+            print(f"Elapsed time {datetime.datetime.now() - now} seconds")
 
             if i % 50 == 0:
                 np.savez(

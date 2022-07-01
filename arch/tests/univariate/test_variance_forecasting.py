@@ -43,7 +43,7 @@ def _compare_truncated_forecasts(full, trunc, start):
         return
 
 
-class PreservedState(object):
+class PreservedState:
     """
     Context manager that will save NumPy's random generator's state when entering and restore
     the original state when exiting.
@@ -136,7 +136,7 @@ def _simple_direct_gjrgarch_forecaster(
     return sigma2[:, m:]
 
 
-class TestVarianceForecasts(object):
+class TestVarianceForecasts:
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)
@@ -1536,9 +1536,7 @@ class TestVarianceForecasts(object):
         )
         _sigma2 = np.concatenate([[backcast], [sigma2_0], one_step.forecasts[:-1, 0]])
         _resids = np.concatenate([[np.sqrt(backcast)], resids])
-        _asymresids = np.concatenate(
-            ([[np.sqrt(0.5 * backcast)], resids * (resids < 0)])
-        )
+        _asymresids = np.concatenate([[np.sqrt(0.5 * backcast)], resids * (resids < 0)])
 
         for t in range(resids.shape[0]):
             std_shocks = rng((100, 3))
@@ -1613,7 +1611,7 @@ class TestVarianceForecasts(object):
             params, resids, backcast, var_bounds, horizon=10, start=0
         )
 
-        expected = np.zeros((t + 1))
+        expected = np.zeros(t + 1)
         expected[0] = backcast
         lam = 0.94
         for i in range(1, t + 1):
@@ -2163,7 +2161,7 @@ class TestVarianceForecasts(object):
         assert np.all(np.isnan(forecasts.shocks))
 
 
-class TestBootstrapRng(object):
+class TestBootstrapRng:
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)

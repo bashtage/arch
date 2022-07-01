@@ -64,7 +64,7 @@ def model_spec(request):
     return mean
 
 
-class TestForecasting(object):
+class TestForecasting:
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)
@@ -465,13 +465,11 @@ class TestForecasting(object):
         for i in range(1, 5):
             means[:, i] = const + ar * means[:, i - 1]
         means = pd.DataFrame(
-            means, index=index, columns=["h.{0}".format(j) for j in range(1, 6)]
+            means, index=index, columns=[f"h.{j}" for j in range(1, 6)]
         )
         assert_frame_equal(means, forecast.mean)
         var = np.concatenate([[[np.nan] * 5], vfcast.forecasts])
-        rv = pd.DataFrame(
-            var, index=index, columns=["h.{0}".format(j) for j in range(1, 6)]
-        )
+        rv = pd.DataFrame(var, index=index, columns=[f"h.{j}" for j in range(1, 6)])
         assert_frame_equal(rv, forecast.residual_variance)
 
         lrv = rv.copy()
