@@ -108,7 +108,7 @@ for tr in trends:
     filename = "adf_z_" + tr + ".npz"
 
     for i in range(EX_NUM):
-        print("Experiment Number {0} for Trend {1}".format(i + 1, tr))
+        print(f"Experiment Number {i + 1} for Trend {tr}")
         # Non parallel version
         # args = (T, [tr] * m, [EX_SIZE] * m, [seeds[i]] * m)
         # out = [wrapper(a, b, c, d) for a, b, c, d in args]

@@ -37,7 +37,7 @@ except ImportError:
 pytestmark = pytest.mark.filterwarnings("ignore::arch.compat.numba.PerformanceWarning")
 
 
-class Timer(object):
+class Timer:
     def __init__(
         self,
         first,
@@ -69,26 +69,19 @@ class Timer(object):
         title = self.model_name + " timing"
         print("\n" + title)
         print("-" * len(title))
-        print(self.first_name + ": " + "{:0.3f} ms".format(1000 * self.times[0]))
-        print(self.second_name + ": " + "{:0.3f} ms".format(1000 * self.times[1]))
+        print(self.first_name + ": " + f"{1000 * self.times[0]:0.3f} ms")
+        print(self.second_name + ": " + f"{1000 * self.times[1]:0.3f} ms")
         if self.ratio < 1:
             print(
-                "{0} is {1:0.1f}% faster".format(
+                "{} is {:0.1f}% faster".format(
                     self.first_name, 100 * (1 / self.ratio - 1)
                 )
             )
         else:
             print(
-                "{0} is {1:0.1f}% faster".format(
-                    self.second_name, 100 * (self.ratio - 1)
-                )
+                "{} is {:0.1f}% faster".format(self.second_name, 100 * (self.ratio - 1))
             )
-        print(
-            self.first_name
-            + "/"
-            + self.second_name
-            + " Ratio: {:0.3f}\n".format(self.ratio)
-        )
+        print(self.first_name + "/" + self.second_name + f" Ratio: {self.ratio:0.3f}\n")
 
     def time(self):
         self.times = []
@@ -97,7 +90,7 @@ class Timer(object):
             self.times.append(min(timer.repeat(self.repeat, self.number)))
 
 
-class TestRecursions(object):
+class TestRecursions:
     @classmethod
     def setup_class(cls):
         cls.nobs = 1000

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import List, Optional, SupportsInt, cast
+from typing import SupportsInt, cast
 
 import numpy as np
 from pandas import DataFrame
@@ -44,7 +44,7 @@ KERNELS = [
 ]
 
 
-class CovarianceEstimate(object):
+class CovarianceEstimate:
     r"""
     Covariance estimate using a long-run covariance estimator
 
@@ -84,9 +84,9 @@ class CovarianceEstimate(object):
         self,
         short_run: Float64Array,
         one_sided_strict: Float64Array,
-        columns: Optional[List[str]] = None,
-        long_run: Optional[Float64Array] = None,
-        one_sided: Optional[Float64Array] = None,
+        columns: list[str] | None = None,
+        long_run: Float64Array | None = None,
+        one_sided: Float64Array | None = None,
     ) -> None:
         self._sr = short_run
         self._oss = one_sided_strict
@@ -174,10 +174,10 @@ class CovarianceEstimator(ABC):
     def __init__(
         self,
         x: ArrayLike,
-        bandwidth: Optional[float] = None,
+        bandwidth: float | None = None,
         df_adjust: int = 0,
         center: bool = True,
-        weights: Optional[ArrayLike] = None,
+        weights: ArrayLike | None = None,
         force_int: bool = False,
     ):
 

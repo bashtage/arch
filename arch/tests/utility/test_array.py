@@ -123,7 +123,7 @@ def test_implicit_constant(rng):
 
 
 def test_docstring_inheritor():
-    class A(object, metaclass=DocStringInheritor):
+    class A(metaclass=DocStringInheritor):
         """
         Docstring
         """

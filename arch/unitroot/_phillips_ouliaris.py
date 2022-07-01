@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional, cast
+from typing import cast
 
 import numpy as np
 import pandas as pd
@@ -42,7 +42,7 @@ def _po_ptests(
     test_type: Literal["Pu", "Pz"],
     trend: UnitRootTrend,
     kernel: str,
-    bandwidth: Optional[int],
+    bandwidth: int | None,
     force_int: bool,
 ) -> PhillipsOuliarisTestResults:
     nobs = z.shape[0]
@@ -94,7 +94,7 @@ def _po_ztests(
     test_type: Literal["Za", "Zt"],
     trend: UnitRootTrend,
     kernel: str,
-    bandwidth: Optional[int],
+    bandwidth: int | None,
     force_int: bool,
 ) -> PhillipsOuliarisTestResults:
     # Za and Zt tests
@@ -139,7 +139,7 @@ def phillips_ouliaris(
     *,
     test_type: Literal["Za", "Zt", "Pu", "Pz"] = "Zt",
     kernel: str = "bartlett",
-    bandwidth: Optional[int] = None,
+    bandwidth: int | None = None,
     force_int: bool = False,
 ) -> PhillipsOuliarisTestResults:
     r"""
@@ -330,9 +330,9 @@ class PhillipsOuliarisTestResults(ResidualCointegrationTestResult):
         alternative: str = "Cointegration",
         trend: str = "c",
         order: int = 2,
-        xsection: Optional[RegressionResults] = None,
+        xsection: RegressionResults | None = None,
         test_type: str = "Za",
-        kernel_est: Optional[lrcov.CovarianceEstimator] = None,
+        kernel_est: lrcov.CovarianceEstimator | None = None,
         rho: float = 0.0,
     ) -> None:
         super().__init__(

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional, Sequence, Tuple
+from typing import Sequence
 
 import numpy as np
 import pandas as pd
@@ -21,7 +21,7 @@ Some of the column named being added were not unique and have been renamed.
 
 def _enforce_unique_col_name(
     existing: Sequence[str], new: Sequence[str]
-) -> Tuple[str, ...]:
+) -> tuple[str, ...]:
     converted_names = []
     unique_names = list(new[:])
     for i, n in enumerate(new):
@@ -33,7 +33,7 @@ def _enforce_unique_col_name(
                 fixed_name = n + "_" + str(duplicate_count)
                 duplicate_count += 1
             unique_names[i] = fixed_name
-            converted_names.append("{0}   ->   {1}".format(original_name, fixed_name))
+            converted_names.append(f"{original_name}   ->   {fixed_name}")
     if converted_names:
         import warnings
 
@@ -44,10 +44,10 @@ def _enforce_unique_col_name(
 
 
 def add_trend(
-    x: Optional[NDArrayOrFrame] = None,
+    x: NDArrayOrFrame | None = None,
     trend: Literal["n", "c", "t", "ct", "ctt"] = "c",
     prepend: bool = False,
-    nobs: Optional[int] = None,
+    nobs: int | None = None,
     has_constant: Literal["raise", "add", "skip"] = "skip",
 ) -> NDArrayOrFrame:
     """
@@ -121,7 +121,7 @@ def add_trend(
         elif has_constant == "skip" and trend in ("c", "ct", "ctt"):
             trend_array = trend_array[:, 1:]
     if isinstance(x, pd.DataFrame):
-        columns: Tuple[str, ...] = ("const", "trend", "quadratic_trend")
+        columns: tuple[str, ...] = ("const", "trend", "quadratic_trend")
         if trend_name == "t":
             columns = (columns[1],)
         else:

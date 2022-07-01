@@ -83,7 +83,7 @@ def simulated_data(request):
     return np.asarray(sim_data.data) if request.param else sim_data.data
 
 
-class TestMeanModel(object):
+class TestMeanModel:
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(1234)
@@ -136,7 +136,7 @@ class TestMeanModel(object):
         forecasts = res.forecast(horizon=20, start=20, reindex=False)
         direct = pd.DataFrame(
             index=np.arange(self.y.shape[0]),
-            columns=["h.{0:>02d}".format(i + 1) for i in range(20)],
+            columns=[f"h.{i + 1:>02d}" for i in range(20)],
             dtype="double",
         )
         direct.iloc[20:, :] = res.params.iloc[0]
@@ -171,7 +171,7 @@ class TestMeanModel(object):
         forecasts = res.forecast(horizon=99, reindex=False)
         direct = pd.DataFrame(
             index=np.arange(self.y.shape[0]),
-            columns=["h.{0:>02d}".format(i + 1) for i in range(99)],
+            columns=[f"h.{i + 1:>02d}" for i in range(99)],
             dtype="double",
         )
         direct.iloc[:, :] = 0.0
@@ -822,7 +822,7 @@ class TestMeanModel(object):
 
     def test_align(self):
         dates = pd.date_range("2000-01-01", "2010-01-01", freq="M")
-        columns = ["h." + "{0:>02}".format(h + 1) for h in range(10)]
+        columns = ["h." + f"{h + 1:>02}" for h in range(10)]
         forecasts = pd.DataFrame(self.rng.randn(120, 10), index=dates, columns=columns)
 
         aligned = _align_forecast(forecasts.copy(), align="origin")
@@ -1188,8 +1188,8 @@ def test_no_variance():
 
 def test_1d_exog():
     rs = np.random.RandomState(329302)
-    y = rs.standard_normal((300))
-    x = rs.standard_normal((300))
+    y = rs.standard_normal(300)
+    x = rs.standard_normal(300)
     am = arch_model(y, x, mean="ARX", lags=2, vol="ARCH", q=0)
     res = am.fit()
     am = arch_model(y, x[:, None], mean="ARX", lags=2, vol="ARCH", q=0)
@@ -1271,7 +1271,7 @@ def test_param_cov():
 def test_plot_bad_index():
     import matplotlib.pyplot as plt
 
-    idx = sorted([f"{a}{b}{c}" for a, b, c, in product(*([ascii_lowercase] * 3))])
+    idx = sorted(f"{a}{b}{c}" for a, b, c, in product(*([ascii_lowercase] * 3)))
     sp500_copy = SP500.copy()
     sp500_copy.index = idx[: sp500_copy.shape[0]]
     res = ConstantMean(sp500_copy).fit(disp=False)

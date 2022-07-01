@@ -44,7 +44,7 @@ formatted_code += "adf_z_small_p = " + format_dict(adf_z_small_p)
 formatted_code += "\n\nadf_z_large_p = " + format_dict(adf_z_large_p)
 formatted_code += "\n\nadf_z_cv_approx = " + format_dict(adf_z_cv_approx)
 
-with open("../dickey_fuller.py", "r") as cvs:
+with open("../dickey_fuller.py") as cvs:
     lines = cvs.readlines()
 
 retain = []

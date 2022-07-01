@@ -972,7 +972,7 @@ def test_egarch(setup, initial_value):
     assert_allclose(setup.sigma2, cond_var_direct)
 
     a, b = egarch.constraints()
-    a_target = np.vstack((np.array([[0, 0, 0, -1.0]])))
+    a_target = np.vstack(np.array([[0, 0, 0, -1.0]]))
     b_target = np.array([-1.0])
     assert_array_equal(a, a_target)
     assert_array_equal(b, b_target)
@@ -1412,7 +1412,7 @@ def test_figarch(setup, initial_value):
     data[:trunc_lag] = np.sqrt(sigma2[:trunc_lag]) * e[:trunc_lag]
 
     for t in range(trunc_lag, trunc_lag + setup.t + 500):
-        sigma2[t] = omega_tilde + lam_rev.dot((data[t - trunc_lag : t] ** 2))
+        sigma2[t] = omega_tilde + lam_rev.dot(data[t - trunc_lag : t] ** 2)
         data[t] = e[t] * np.sqrt(sigma2[t])
     data = data[trunc_lag + 500 :]
     sigma2 = sigma2[trunc_lag + 500 :]
@@ -1540,10 +1540,10 @@ def test_figarch_str(setup, p, q, power):
     figarch = FIGARCH(p=p, q=q, power=power)
     s = str(figarch).lower()
     assert "arch" in s
-    assert "q: {0}".format(q) in s
-    assert "p: {0}".format(p) in s
+    assert f"q: {q}" in s
+    assert f"p: {p}" in s
     if power not in (1.0, 2.0):
-        assert "power: {0:0.1f}".format(power) in s
+        assert f"power: {power:0.1f}" in s
 
 
 @pytest.mark.parametrize("initial_value", [None, 1.0])

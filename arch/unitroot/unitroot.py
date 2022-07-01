@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
-from typing import Dict, List, Optional, Sequence, Tuple, Union, cast
+from typing import Sequence, cast
 import warnings
 
 from numpy import (
@@ -119,7 +119,7 @@ SHORT_TREND_DESCRIPTION = {
 }
 
 
-def _is_reduced_rank(x: Float64Array) -> Tuple[bool, Optional[int]]:
+def _is_reduced_rank(x: Float64Array) -> tuple[bool, int | None]:
     """
     Check if a matrix has reduced rank preferring quick checks
     """
@@ -139,7 +139,7 @@ def _select_best_ic(
     nobs: float,
     sigma2: Float64Array,
     tstat: Float64Array,
-) -> Tuple[float, int]:
+) -> tuple[float, int]:
     """
     Computes the best information criteria
 
@@ -195,7 +195,7 @@ def _autolag_ols_low_memory(
     maxlag: int,
     trend: UnitRootTrend,
     method: Literal["aic", "bic", "t-stat"],
-) -> Tuple[float, int]:
+) -> tuple[float, int]:
     """
     Computes the lag length that minimizes an info criterion .
 
@@ -228,7 +228,7 @@ def _autolag_ols_low_memory(
     lhs = deltay[maxlag:][:, None]
     level = y[maxlag:-1]
     level = level / sqrt(level @ level)
-    trendx: List[Float64Array] = []
+    trendx: list[Float64Array] = []
     nobs = lhs.shape[0]
     if trend == "n":
         trendx.append(empty((nobs, 0)))
@@ -290,7 +290,7 @@ def _autolag_ols(
     startlag: int,
     maxlag: int,
     method: Literal["aic", "bic", "t-stat"],
-) -> Tuple[float, int]:
+) -> tuple[float, int]:
     """
     Returns the results for the lag length that maximizes the info criterion.
 
@@ -358,10 +358,10 @@ def _autolag_ols(
 def _df_select_lags(
     y: Float64Array,
     trend: Literal["n", "c", "ct", "ctt"],
-    max_lags: Optional[int],
+    max_lags: int | None,
     method: Literal["aic", "bic", "t-stat"],
     low_memory: bool = False,
-) -> Tuple[float, int]:
+) -> tuple[float, int]:
     """
     Helper method to determine the best lag length in DF-like regressions
 
@@ -423,7 +423,7 @@ def _df_select_lags(
 
 def _add_column_names(rhs: ArrayLike, lags: int) -> DataFrame:
     """Return a DataFrame with named columns"""
-    lag_names = ["Diff.L{0}".format(i) for i in range(1, lags + 1)]
+    lag_names = [f"Diff.L{i}" for i in range(1, lags + 1)]
     return DataFrame(rhs, columns=["Level.L1"] + lag_names)
 
 
@@ -465,14 +465,14 @@ def _estimate_df_regression(
     return OLS(lhs, rhs).fit()
 
 
-class UnitRootTest(object, metaclass=ABCMeta):
+class UnitRootTest(metaclass=ABCMeta):
     """Base class to be used for inheritance in unit root bootstrap"""
 
     def __init__(
         self,
         y: ArrayLike,
-        lags: Optional[int],
-        trend: Union[UnitRootTrend, Literal["t"]],
+        lags: int | None,
+        trend: UnitRootTrend | Literal["t"],
         valid_trends: Sequence[str],
     ) -> None:
         self._y = ensure1d(y, "y")
@@ -491,14 +491,14 @@ class UnitRootTest(object, metaclass=ABCMeta):
         if trend not in self.valid_trends:
             raise ValueError("trend not understood")
         self._trend = trend
-        self._stat: Optional[float] = None
-        self._critical_values: Dict[str, float] = {}
-        self._pvalue: Optional[float] = None
+        self._stat: float | None = None
+        self._critical_values: dict[str, float] = {}
+        self._pvalue: float | None = None
         self._null_hypothesis = "The process contains a unit root."
         self._alternative_hypothesis = "The process is weakly stationary."
         self._test_name = ""
         self._title = ""
-        self._summary_text: List[str] = []
+        self._summary_text: list[str] = []
 
     def __str__(self) -> str:
         return self.summary().__str__()
@@ -566,7 +566,7 @@ class UnitRootTest(object, metaclass=ABCMeta):
         return self._stat
 
     @property
-    def critical_values(self) -> Dict[str, float]:
+    def critical_values(self) -> dict[str, float]:
         """Dictionary containing critical values specific to the test, number of
         observations and included deterministic trend terms.
         """
@@ -576,9 +576,9 @@ class UnitRootTest(object, metaclass=ABCMeta):
     def summary(self) -> Summary:
         """Summary of test, containing statistic, p-value and critical values"""
         table_data = [
-            ("Test Statistic", "{0:0.3f}".format(self.stat)),
-            ("P-value", "{0:0.3f}".format(self.pvalue)),
-            ("Lags", "{0:d}".format(self.lags)),
+            ("Test Statistic", f"{self.stat:0.3f}"),
+            ("P-value", f"{self.pvalue:0.3f}"),
+            ("Lags", f"{self.lags:d}"),
         ]
         title = self._title
 
@@ -602,7 +602,7 @@ class UnitRootTest(object, metaclass=ABCMeta):
         cv_numeric = sort(cv_numeric)
         for val in cv_numeric:
             p = str(int(val)) + "%"
-            cv_string += "{0:0.2f}".format(self._critical_values[p])
+            cv_string += f"{self._critical_values[p]:0.2f}"
             cv_string += " (" + p + ")"
             if val != cv_numeric[-1]:
                 cv_string += ", "
@@ -734,11 +734,11 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         y: ArrayLike,
-        lags: Optional[int] = None,
+        lags: int | None = None,
         trend: UnitRootTrend = "c",
-        max_lags: Optional[int] = None,
+        max_lags: int | None = None,
         method: Literal["aic", "bic", "t-stat"] = "aic",
-        low_memory: Optional[bool] = None,
+        low_memory: bool | None = None,
     ) -> None:
         valid_trends = ("n", "c", "ct", "ctt")
         super().__init__(y, lags, trend, valid_trends)
@@ -803,7 +803,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
         return self._regression
 
     @property
-    def max_lags(self) -> Optional[int]:
+    def max_lags(self) -> int | None:
         """Sets or gets the maximum lags used when automatically selecting lag
         length"""
         return self._max_lags
@@ -883,11 +883,11 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         y: ArrayLike,
-        lags: Optional[int] = None,
+        lags: int | None = None,
         trend: Literal["c", "ct"] = "c",
-        max_lags: Optional[int] = None,
+        max_lags: int | None = None,
         method: Literal["aic", "bic", "t-stat"] = "aic",
-        low_memory: Optional[bool] = None,
+        low_memory: bool | None = None,
     ) -> None:
         valid_trends = ("c", "ct")
         super().__init__(y, lags, trend, valid_trends)
@@ -975,7 +975,7 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         return self._regression
 
     @property
-    def max_lags(self) -> Optional[int]:
+    def max_lags(self) -> int | None:
         """Sets or gets the maximum lags used when automatically selecting lag
         length"""
         return self._max_lags
@@ -1071,7 +1071,7 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         y: ArrayLike,
-        lags: Optional[int] = None,
+        lags: int | None = None,
         trend: Literal["n", "c", "ct"] = "c",
         test_type: Literal["tau", "rho"] = "tau",
     ) -> None:
@@ -1251,7 +1251,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
     """
 
     def __init__(
-        self, y: ArrayLike, lags: Optional[int] = None, trend: Literal["c", "ct"] = "c"
+        self, y: ArrayLike, lags: int | None = None, trend: Literal["c", "ct"] = "c"
     ) -> None:
         valid_trends = ("c", "ct")
         if lags is None:
@@ -1268,7 +1268,7 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._test_name = "KPSS Stationarity Test"
         self._null_hypothesis = "The process is weakly stationary."
         self._alternative_hypothesis = "The process contains a unit root."
-        self._resids: Optional[ArrayLike1D] = None
+        self._resids: ArrayLike1D | None = None
 
     def _check_specification(self) -> None:
         trend_order = len(self._trend)
@@ -1415,10 +1415,10 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         y: ArrayLike,
-        lags: Optional[int] = None,
+        lags: int | None = None,
         trend: Literal["c", "ct", "t"] = "c",
         trim: float = 0.15,
-        max_lags: Optional[int] = None,
+        max_lags: int | None = None,
         method: Literal["aic", "bic", "t-stat"] = "aic",
     ) -> None:
         super().__init__(y, lags, trend, ("c", "t", "ct"))
@@ -1628,8 +1628,8 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._robust = robust
         self._debiased = debiased
         self._overlap = overlap
-        self._vr: Optional[float] = None
-        self._stat_variance: Optional[float] = None
+        self._vr: float | None = None
+        self._stat_variance: float | None = None
         quantiles = array([0.01, 0.05, 0.1, 0.9, 0.95, 0.99])
         for q, cv in zip(quantiles, norm.ppf(quantiles)):
             self._critical_values[str(int(100 * q)) + "%"] = cv
@@ -1800,7 +1800,7 @@ def mackinnonp(
         small_p = dfgls_small_p[regression]
         large_p = dfgls_large_p[regression]
     else:
-        raise ValueError("Unknown test type {0}".format(dist_type))
+        raise ValueError(f"Unknown test type {dist_type}")
 
     if stat > maxstat:
         return 1.0
@@ -1872,7 +1872,7 @@ def mackinnoncrit(
     if lower_dist_type == "dfgls":
         valid_regression = ["c", "ct"]
     if regression not in valid_regression:
-        raise ValueError("regression keyword {0} not understood".format(regression))
+        raise ValueError(f"regression keyword {regression} not understood")
 
     if lower_dist_type == "adf-t":
         asymptotic_cv = tau_2010[regression][num_unit_roots - 1, :, 0]
@@ -1884,7 +1884,7 @@ def mackinnoncrit(
         poly_coef = dfgls_cv_approx[regression].T
         asymptotic_cv = dfgls_cv_approx[regression][:, 0]
     else:
-        raise ValueError("Unknown test type {0}".format(dist_type))
+        raise ValueError(f"Unknown test type {dist_type}")
 
     if nobs is inf:
         return asymptotic_cv
@@ -1895,7 +1895,7 @@ def mackinnoncrit(
 
 def kpss_crit(
     stat: float, trend: Literal["c", "ct"] = "c"
-) -> Tuple[float, Float64Array]:
+) -> tuple[float, Float64Array]:
     """
     Linear interpolation for KPSS p-values and critical values
 
@@ -1932,7 +1932,7 @@ def kpss_crit(
 
 
 def auto_bandwidth(
-    y: Union[Sequence[Union[float, int]], ArrayLike1D],
+    y: Sequence[float | int] | ArrayLike1D,
     kernel: Literal[
         "ba", "bartlett", "nw", "pa", "parzen", "gallant", "qs", "andrews"
     ] = "ba",
@@ -1979,7 +1979,7 @@ def auto_bandwidth(
     for i in range(n + 1):
         a = list(y[i:])
         b = list(y[: len(y) - i])
-        sig[i] = int(sum([i * j for (i, j) in zip(a, b)]))
+        sig[i] = int(sum(i * j for (i, j) in zip(a, b)))
 
     sigma_m1 = sig[1 : len(sig)]  # sigma without the 1st element
     s0 = sig[0] + 2 * sum(sigma_m1)

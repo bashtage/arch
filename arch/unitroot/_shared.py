@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, NamedTuple, Optional, Tuple, Type, cast
+from typing import Any, NamedTuple, Optional, cast
 
 import pandas as pd
 from statsmodels.iolib.summary import Summary
@@ -16,11 +16,11 @@ try:
 except ImportError:
     pass
 
-KERNEL_ESTIMATORS: Dict[str, Type[lrcov.CovarianceEstimator]] = {
+KERNEL_ESTIMATORS: dict[str, type[lrcov.CovarianceEstimator]] = {
     kernel.lower(): getattr(lrcov, kernel) for kernel in lrcov.KERNELS
 }
 KERNEL_ESTIMATORS.update({kernel: getattr(lrcov, kernel) for kernel in lrcov.KERNELS})
-KNOWN_KERNELS = "\n".join(sorted([k for k in KERNEL_ESTIMATORS]))
+KNOWN_KERNELS = "\n".join(sorted(k for k in KERNEL_ESTIMATORS))
 KERNEL_ERR = f"kernel is not a known estimator. Must be one of:\n {KNOWN_KERNELS}"
 
 
@@ -33,7 +33,7 @@ class CointegrationSetup(NamedTuple):
 def _check_kernel(kernel: str) -> str:
     kernel = kernel.replace("-", "").replace("_", "").lower()
     if kernel not in KERNEL_ESTIMATORS:
-        est = "\n".join(sorted([k for k in KERNEL_ESTIMATORS]))
+        est = "\n".join(sorted(k for k in KERNEL_ESTIMATORS))
         raise ValueError(
             f"kernel is not a known kernel estimator. Must be one of:\n {est}"
         )
@@ -44,7 +44,7 @@ def _check_cointegrating_regression(
     y: ArrayLike1D,
     x: ArrayLike2D,
     trend: UnitRootTrend,
-    supported_trends: Tuple[str, ...] = ("n", "c", "ct", "ctt"),
+    supported_trends: tuple[str, ...] = ("n", "c", "ct", "ctt"),
 ) -> CointegrationSetup:
     y = ensure1d(y, "y", True)
     x = ensure2d(x, "x")
@@ -83,7 +83,7 @@ def _cross_section(
     return res
 
 
-class CointegrationTestResult(object):
+class CointegrationTestResult:
     """
     Base results class for cointegration tests.
 
@@ -116,7 +116,7 @@ class CointegrationTestResult(object):
         self._name = ""
         self._null = null
         self._alternative = alternative
-        self._additional_info: Dict[str, Any] = {}
+        self._additional_info: dict[str, Any] = {}
 
     @property
     def name(self) -> str:
@@ -184,7 +184,7 @@ class ResidualCointegrationTestResult(CointegrationTestResult):
         alternative: str = "Cointegration",
         trend: str = "c",
         order: int = 2,
-        xsection: Optional[RegressionResults] = None,
+        xsection: RegressionResults | None = None,
     ) -> None:
         super().__init__(stat, pvalue, crit_vals, null, alternative)
         self.name = "NONE"
@@ -221,7 +221,7 @@ class ResidualCointegrationTestResult(CointegrationTestResult):
         return resid
 
     def plot(
-        self, axes: Optional["plt.Axes"] = None, title: Optional[str] = None
+        self, axes: Optional[plt.Axes] = None, title: str | None = None
     ) -> plt.Figure:
         """
         Plot the cointegration residuals.

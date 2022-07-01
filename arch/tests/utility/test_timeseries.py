@@ -65,7 +65,7 @@ def test_add_trend_ct():
     y = add_trend(x, trend="ct")
     assert np.all(y[:, 1] == 1.0)
     assert_equal(y[0, 2], 1.0)
-    assert_array_almost_equal(np.diff(y[:, 2]), np.ones((n - 1)))
+    assert_array_almost_equal(np.diff(y[:, 2]), np.ones(n - 1))
 
 
 def test_add_trend_ctt():
@@ -74,7 +74,7 @@ def test_add_trend_ctt():
     y = add_trend(x, trend="ctt")
     assert np.all(y[:, 1] == 1.0)
     assert y[0, 2] == 1.0
-    assert_array_almost_equal(np.diff(y[:, 2]), np.ones((n - 1)))
+    assert_array_almost_equal(np.diff(y[:, 2]), np.ones(n - 1))
     assert y[0, 3] == 1.0
     assert_array_almost_equal(np.diff(y[:, 3]), np.arange(3.0, 2.0 * n, 2.0))
 
@@ -84,7 +84,7 @@ def test_add_trend_t():
     x = np.zeros((20, 1))
     y = add_trend(x, trend="t")
     assert y[0, 1] == 1.0
-    assert_array_almost_equal(np.diff(y[:, 1]), np.ones((n - 1)))
+    assert_array_almost_equal(np.diff(y[:, 1]), np.ones(n - 1))
 
 
 def test_add_trend_no_input():
@@ -92,7 +92,7 @@ def test_add_trend_no_input():
     y = add_trend(x=None, trend="ct", nobs=n)
     assert np.all(y[:, 0] == 1.0)
     assert y[0, 1] == 1.0
-    assert_array_almost_equal(np.diff(y[:, 1]), np.ones((n - 1)))
+    assert_array_almost_equal(np.diff(y[:, 1]), np.ones(n - 1))
 
 
 def test_skip_constant():

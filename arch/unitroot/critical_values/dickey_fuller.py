@@ -8,8 +8,6 @@ simulation.
 """
 from __future__ import annotations
 
-from typing import Dict
-
 from numpy import array, asarray, inf
 
 from arch.typing import Float64Array
@@ -105,7 +103,7 @@ tau_large_p["ctt"] = asarray(tau_large_p["ctt"]) * large_scaling
 # the last axis is the coefficients
 
 # noinspection PyDictCreation
-tau_2010: Dict[str, Float64Array] = {}
+tau_2010: dict[str, Float64Array] = {}
 
 tau_2010["n"] = array(
     [

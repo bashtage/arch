@@ -130,7 +130,7 @@ for tr in trends:
     filename = "adf_z_" + tr + ".npz"
 
     for i, t in enumerate(T):
-        print("Time series length {0} for Trend {1}".format(t, tr))
+        print(f"Time series length {t} for Trend {tr}")
         now = datetime.datetime.now()
         # Serial version
         # args = ([t] * EX_NUM, [tr] * EX_NUM, [EX_SIZE] * EX_NUM, seeds)
@@ -145,7 +145,7 @@ for tr in trends:
             sleep_count += 1
             elapsed = datetime.datetime.now() - now
             if sleep_count % 10:
-                print("Elapsed time {0}, waiting for results".format(elapsed))
+                print(f"Elapsed time {elapsed}, waiting for results")
             time.sleep(SLEEP)
 
         out = res.get()
@@ -153,7 +153,7 @@ for tr in trends:
         clear_cache(rc, lview)
 
         elapsed = datetime.datetime.now() - now
-        print("Total time {0} for T={1}".format(elapsed, t))
+        print(f"Total time {elapsed} for T={t}")
         quantiles = [percentile(x, percentiles) for x in out]
         results[:, i, :] = cast(ndarray, array(quantiles).T)
 

@@ -26,7 +26,7 @@ def seed(request):
         return request.param(12345)
 
 
-class TestDistributions(object):
+class TestDistributions:
     @classmethod
     def setup_class(cls):
         cls.rng = RandomState(12345)

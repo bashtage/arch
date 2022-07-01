@@ -200,9 +200,9 @@ for key in nsimulation:
 
 counts = "\n".join(report)
 
-STATISTICS = set(str(final_key[0]) for final_key in final)
-ALL_TRENDS = set(str(final_key[1]) for final_key in final)
-NSTOCHASTICS = set(int(final_key[-1]) for final_key in final)
+STATISTICS = {str(final_key[0]) for final_key in final}
+ALL_TRENDS = {str(final_key[1]) for final_key in final}
+NSTOCHASTICS = {int(final_key[-1]) for final_key in final}
 quantiles_d = defaultdict(list)
 pval_data = {}
 for multi_key in product(STATISTICS, ALL_TRENDS, NSTOCHASTICS):
