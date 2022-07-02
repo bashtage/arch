@@ -79,7 +79,7 @@ class Timer:
             )
         else:
             print(
-                "{} is {:0.1f}% faster".format(self.second_name, 100 * (self.ratio - 1))
+                f"{self.second_name} is {100 * (self.ratio - 1):0.1f}% faster"
             )
         print(self.first_name + "/" + self.second_name + f" Ratio: {self.ratio:0.3f}\n")
 
