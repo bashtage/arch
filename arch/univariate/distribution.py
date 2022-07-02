@@ -89,10 +89,11 @@ class Distribution(metaclass=ABCMeta):
     ) -> Float64Array:
         bounds = self.bounds(empty(0))
         if parameters is not None:
-            params = ensure1d(parameters, "parameters", False)
+            params = asarray(ensure1d(parameters, "parameters", False))
             nparams = len(params)
         else:
             nparams = 0
+            params = empty(0)
         if nparams != len(bounds):
             raise ValueError(f"parameters must have {len(bounds)} elements")
         if len(bounds) == 0:
@@ -103,7 +104,7 @@ class Distribution(metaclass=ABCMeta):
                     "{} does not satisfy the bounds requirement "
                     "of ({}, {})".format(n, *b)
                 )
-        return params
+        return asarray(params)
 
     @property
     def generator(self) -> RandomState | Generator:
@@ -638,7 +639,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         parameters = ensure1d(parameters, "parameters", False)
         if parameters[0] <= 2.0:
             raise ValueError("The shape parameter must be larger than 2")
-        self._parameters = parameters
+        self._parameters = asarray(parameters, dtype=float)
         return self._simulator
 
     def parameter_names(self) -> list[str]:
@@ -656,11 +657,11 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
 
     def ppf(
         self,
-        pits: Sequence[float] | ArrayLike1D,
+        pits: float | Sequence[float] | ArrayLike1D,
         parameters: None | Sequence[float] | ArrayLike1D = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
-        pits = asarray(pits)
+        pits = asarray(pits, dtype=float)
         nu = parameters[0]
         var = nu / (nu - 2)
         return stats.t(nu, scale=1.0 / sqrt(var)).ppf(pits)
@@ -839,6 +840,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
         and :math:`\Gamma` is the gamma function.
         """
+        parameters = asarray(parameters, dtype=float)
         eta, lam = parameters
 
         const_c = self.__const_c(parameters)
@@ -904,7 +906,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
             raise ValueError(
                 "The skew parameter must be smaller than 1 in absolute value"
             )
-        self._parameters = parameters
+        self._parameters = asarray(parameters, dtype=float)
         return self._simulator
 
     def parameter_names(self) -> list[str]:
@@ -970,14 +972,14 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
     def cdf(
         self,
-        resids: ArrayLike,
+        resids: Sequence[float] | ArrayLike1D,
         parameters: None | Sequence[float] | ArrayLike1D = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(resids)
         if scalar:
             resids = array([resids])
-
+        resids = asarray(resids, dtype=float)
         eta, lam = parameters
 
         a = self.__const_a(parameters)
@@ -996,14 +998,14 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
 
     def ppf(
         self,
-        pits: Sequence[float] | ArrayLike1D,
+        pits: float | Sequence[float] | ArrayLike1D,
         parameters: None | Sequence[float] | ArrayLike1D = None,
     ) -> float | Float64Array:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(pits)
         if scalar:
             pits = array([pits])
-        pits = asarray(pits)
+        pits = asarray(pits, dtype=float)
         eta, lam = parameters
 
         a = self.__const_a(parameters)
@@ -1236,7 +1238,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         parameters = ensure1d(parameters, "parameters", False)
         if parameters[0] <= 1.0:
             raise ValueError("The shape parameter must be larger than 1")
-        self._parameters = parameters
+        self._parameters = asarray(parameters, dtype=float)
         return self._simulator
 
     def parameter_names(self) -> list[str]:
@@ -1244,24 +1246,24 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
 
     def ppf(
         self,
-        pits: Sequence[float] | ArrayLike1D,
+        pits: float | Sequence[float] | ArrayLike1D,
         parameters: None | Sequence[float] | ArrayLike1D = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
-        pits = asarray(pits)
+        pits = asarray(pits, dtype=float)
         nu = parameters[0]
         var = stats.gennorm(nu).var()
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).ppf(pits)
 
     def cdf(
         self,
-        resids: ArrayLike,
+        resids: Sequence[float] | ArrayLike1D,
         parameters: None | Sequence[float] | ArrayLike1D = None,
     ) -> Float64Array:
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         var = stats.gennorm(nu).var()
-        resids = asarray(resids)
+        resids = asarray(resids, dtype=float)
         return stats.gennorm(nu, scale=1.0 / sqrt(var)).cdf(resids)
 
     def moment(

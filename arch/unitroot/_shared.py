@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, NamedTuple, Optional, cast
+from typing import Any, NamedTuple, cast
 
 import pandas as pd
 from statsmodels.iolib.summary import Summary
@@ -221,7 +221,7 @@ class ResidualCointegrationTestResult(CointegrationTestResult):
         return resid
 
     def plot(
-        self, axes: Optional[plt.Axes] = None, title: str | None = None
+        self, axes: plt.Axes | None = None, title: str | None = None
     ) -> plt.Figure:
         """
         Plot the cointegration residuals.
