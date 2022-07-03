@@ -25,6 +25,7 @@ from arch.__future__._utility import check_reindex
 from arch.typing import (
     ArrayLike,
     ArrayLike1D,
+    ArrayLike2D,
     DateLike,
     Float64Array,
     ForecastingMethod,
@@ -454,10 +455,10 @@ class ARCHModel(metaclass=ABCMeta):
         return names
 
     def _parse_parameters(
-        self, x: ArrayLike
+        self, x: ArrayLike1D | Sequence[float]
     ) -> tuple[Float64Array, Float64Array, Float64Array]:
         """Return the parameters of each model in a tuple"""
-        x = np.asarray(x, dtype=np.float64)
+        x = np.asarray(x, dtype=float)
         km, kv = int(self.num_params), int(self.volatility.num_params)
         return x[:km], x[km : km + kv], x[km + kv :]
 
@@ -833,7 +834,7 @@ class ARCHModel(metaclass=ABCMeta):
     @abstractmethod
     def simulate(
         self,
-        params: ArrayLike1D,
+        params: ArrayLike1D | Sequence[float],
         nobs: int,
         burn: int = 500,
         initial_value: float | None = None,
@@ -846,9 +847,9 @@ class ARCHModel(metaclass=ABCMeta):
     def resids(
         self,
         params: Float64Array,
-        y: Float64Array | None = None,
-        regressors: Float64Array | None = None,
-    ) -> Float64Array:
+        y: ArrayLike1D | None = None,
+        regressors: ArrayLike2D | None = None,
+    ) -> ArrayLike1D:
         """
         Compute model residuals
 
