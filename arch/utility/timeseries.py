@@ -5,7 +5,7 @@ from typing import Sequence
 import numpy as np
 import pandas as pd
 
-from arch.typing import Literal, NDArrayOrFrame
+from arch.typing import Float64Array, Literal, NDArrayOrFrame
 
 
 class ColumnNameConflict(Warning):
@@ -19,9 +19,7 @@ Some of the column named being added were not unique and have been renamed.
 """
 
 
-def _enforce_unique_col_name(
-    existing: Sequence[str], new: Sequence[str]
-) -> tuple[str, ...]:
+def _enforce_unique_col_name(existing: Sequence[str], new: list[str]) -> list[str]:
     converted_names = []
     unique_names = list(new[:])
     for i, n in enumerate(new):
@@ -40,7 +38,7 @@ def _enforce_unique_col_name(
         ws = column_name_conflict_doc.format("\n    ".join(converted_names))
         warnings.warn(ws, ColumnNameConflict)
 
-    return tuple(unique_names)
+    return unique_names
 
 
 def add_trend(
@@ -49,7 +47,7 @@ def add_trend(
     prepend: bool = False,
     nobs: int | None = None,
     has_constant: Literal["raise", "add", "skip"] = "skip",
-) -> NDArrayOrFrame:
+) -> Float64Array | pd.DataFrame:
     """
     Adds a trend and/or constant to an array.
 
@@ -121,12 +119,12 @@ def add_trend(
         elif has_constant == "skip" and trend in ("c", "ct", "ctt"):
             trend_array = trend_array[:, 1:]
     if isinstance(x, pd.DataFrame):
-        columns: tuple[str, ...] = ("const", "trend", "quadratic_trend")
+        columns: list[str] = ["const", "trend", "quadratic_trend"]
         if trend_name == "t":
-            columns = (columns[1],)
+            columns = [columns[1]]
         else:
             columns = columns[0 : trend_order + 1]
-        columns = _enforce_unique_col_name(x.columns, columns)
+        columns = _enforce_unique_col_name([str(col) for col in x.columns], columns)
         trend_array_df = pd.DataFrame(trend_array, index=x.index, columns=columns)
         if prepend:
             x = trend_array_df.join(x)

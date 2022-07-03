@@ -95,6 +95,7 @@ def parse_dataframe(
     | tuple[list[str], NDArray]
 ):
     if x is None:
+        assert isinstance(name, str)
         return [name], np.empty(0)
     if isinstance(x, DataFrame):
         return x.columns, x.index
@@ -229,9 +230,7 @@ def date_to_index(
     return int(loc)
 
 
-def cutoff_to_index(
-    cutoff: None | int | DateLike, index: DatetimeIndex, default: int
-) -> int:
+def cutoff_to_index(cutoff: None | int | DateLike, index: Index, default: int) -> int:
     """
     Converts a cutoff to a numerical index
 

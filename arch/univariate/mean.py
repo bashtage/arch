@@ -16,6 +16,7 @@ from arch.__future__._utility import check_reindex
 from arch.typing import (
     ArrayLike,
     ArrayLike1D,
+    ArrayLike2D,
     DateLike,
     Float64Array,
     ForecastingMethod,
@@ -244,7 +245,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         y: ArrayLike | None = None,
-        x: ArrayLike | None = None,
+        x: ArrayLike2D | None = None,
         lags: (
             None
             | int
@@ -306,7 +307,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self._init_model()
 
     @property
-    def x(self) -> ArrayLike:
+    def x(self) -> ArrayLike2D | None:
         """Gets the value of the exogenous regressors in the model"""
         return self._x
 
@@ -359,13 +360,13 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     def resids(
         self,
         params: Float64Array,
-        y: ArrayLike | None = None,
-        regressors: ArrayLike | None = None,
-    ) -> ArrayLike:
+        y: ArrayLike1D | None = None,
+        regressors: ArrayLike2D | None = None,
+    ) -> ArrayLike1D:
         regressors = self._fit_regressors if y is None else regressors
         y = self._fit_y if y is None else y
         assert regressors is not None
-        return y - regressors.dot(params)
+        return y - np.asarray(regressors, dtype=float).dot(params)
 
     @cached_property
     def num_params(self) -> int:
@@ -389,7 +390,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         if initial_value is None:
             initial_value = 0.0
         elif not np.isscalar(initial_value):
-            initial_value = ensure1d(initial_value, "initial_value")
+            initial_value = np.asarray(
+                ensure1d(initial_value, "initial_value"), dtype=float
+            )
             if initial_value.shape[0] != max_lag:
                 raise ValueError(
                     f"initial_value has the wrong shape. Expected {max_lag} values"
@@ -414,7 +417,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def simulate(
         self,
-        params: Float64Array | Sequence[float],
+        params: ArrayLike1D | Sequence[float],
         nobs: int,
         burn: int = 500,
         initial_value: None | float | Float64Array = None,
@@ -426,7 +429,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
         Parameters
         ----------
-        params : ndarray
+        params : array_like
             Parameters to use when simulating the model.  Parameter order is
             [mean volatility distribution] where the parameters of the mean
             model are ordered [constant lag[0] lag[1] ... lag[p] ex[0] ...
@@ -500,7 +503,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                 "Expected " + str(num_params) + ", got " + str(params.shape[0])
             )
 
-        dist_params = [] if dc == 0 else params[-dc:]
+        dist_params = np.empty(0) if dc == 0 else params[-dc:]
         vol_params = params[mc : mc + vc]
         simulator = self.distribution.simulate(dist_params)
         sim_data = self.volatility.simulate(
@@ -530,7 +533,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         """Generates lag names.  Overridden by other models"""
         lags = self._lags
         names = []
-        var_name = self._y_series.name
+        var_name = str(self._y_series.name) if self._y_series.name else ""
         if len(var_name) > 10:
             var_name = var_name[:4] + "..." + var_name[-3:]
         for i in range(lags.shape[1]):
@@ -647,7 +650,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
         self.regressors = np.hstack((reg_constant, reg_lags, reg_x))
 
-    def _r2(self, params: Float64Array) -> float:
+    def _r2(self, params: ArrayLike1D) -> float:
         y = self._fit_y
         constant = False
         x = self._fit_regressors
@@ -661,7 +664,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         tss = float(y.dot(y))
         if tss <= 0.0:
             return np.nan
-        e = self.resids(params)
+        e = self.resids(np.asarray(params, dtype=float))
 
         return 1.0 - float(e.T.dot(e)) / tss
 
@@ -956,8 +959,10 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         #####################################
         # Back cast should use only the sample used in fitting
         resids = self.resids(mp)
-        backcast = self._volatility.backcast(resids)
-        full_resids = self.resids(mp, self._y[earliest:], self.regressors[earliest:])
+        backcast = self._volatility.backcast(np.asarray(resids, dtype=float))
+        full_resids = np.asarray(
+            self.resids(mp, self._y[earliest:], self.regressors[earliest:]), dtype=float
+        )
         vb = self._volatility.variance_bounds(full_resids, 2.0)
         if rng is None:
             rng = self._distribution.simulate(dp)
@@ -1120,7 +1125,7 @@ class ConstantMean(HARX):
 
     def simulate(
         self,
-        params: ArrayLike,
+        params: ArrayLike1D | Sequence[float],
         nobs: int,
         burn: int = 500,
         initial_value: None | float | Float64Array = None,
@@ -1132,7 +1137,7 @@ class ConstantMean(HARX):
 
         Parameters
         ----------
-        params : ndarray
+        params : array_like
             Parameters to use when simulating the model.  Parameter order is
             [mean volatility distribution]. There is one parameter in the mean
             model, mu.
@@ -1184,15 +1189,15 @@ class ConstantMean(HARX):
         vol = np.sqrt(sim_values[1])
         assert isinstance(vol, np.ndarray)
         df = dict(data=y[burn:], volatility=vol[burn:], errors=errors[burn:])
-        df = pd.DataFrame(df)
-        return df
+
+        return pd.DataFrame(df)
 
     def resids(
         self,
         params: Float64Array,
-        y: ArrayLike | None = None,
-        regressors: ArrayLike | None = None,
-    ) -> ArrayLike:
+        y: ArrayLike1D | None = None,
+        regressors: ArrayLike2D | None = None,
+    ) -> ArrayLike1D:
         y = self._fit_y if y is None else np.asarray(y, dtype=np.float64)
         return y - params
 
@@ -1268,7 +1273,7 @@ class ZeroMean(HARX):
 
     def simulate(
         self,
-        params: Sequence[float] | ArrayLike1D,
+        params: ArrayLike1D | Sequence[float],
         nobs: int,
         burn: int = 500,
         initial_value: None | float | Float64Array = None,
@@ -1318,7 +1323,7 @@ class ZeroMean(HARX):
         >>> zm.volatility = GARCH(p=1, o=1, q=1)
         >>> sim_data = zm.simulate([0.05, 0.1, 0.1, 0.8], 300)
         """
-        params = ensure1d(params, "params", False)
+        params = np.asarray(ensure1d(params, "params", False), dtype=float)
         if initial_value is not None or x is not None:
             raise ValueError(
                 "Both initial value and x must be none when "
@@ -1335,16 +1340,15 @@ class ZeroMean(HARX):
         vol = np.sqrt(sim_values[1])
         assert isinstance(vol, np.ndarray)
         df = dict(data=y[burn:], volatility=vol[burn:], errors=errors[burn:])
-        df = pd.DataFrame(df)
 
-        return df
+        return pd.DataFrame(df)
 
     def resids(
         self,
         params: Float64Array,
-        y: ArrayLike | None = None,
-        regressors: ArrayLike | None = None,
-    ) -> ArrayLike:
+        y: ArrayLike1D | None = None,
+        regressors: ArrayLike2D | None = None,
+    ) -> ArrayLike1D:
         if y is not None:
             return y
         assert self._fit_y is not None
@@ -1410,7 +1414,7 @@ class ARX(HARX):
     def __init__(
         self,
         y: ArrayLike | None = None,
-        x: ArrayLike | None = None,
+        x: ArrayLike2D | None = None,
         lags: None | int | list[int] | Int32Array | Int64Array = None,
         constant: bool = True,
         hold_back: int | None = None,
@@ -1474,7 +1478,7 @@ class ARX(HARX):
     def _generate_lag_names(self) -> list[str]:
         lags = self._lags
         names = []
-        var_name = self._y_series.name
+        var_name = str(self._y_series.name) if self._y_series.name else ""
         if len(var_name) > 10:
             var_name = var_name[:4] + "..." + var_name[-3:]
         for i in range(lags.shape[1]):
@@ -1530,7 +1534,7 @@ class LS(HARX):
     def __init__(
         self,
         y: ArrayLike | None = None,
-        x: ArrayLike | None = None,
+        x: ArrayLike2D | None = None,
         constant: bool = True,
         hold_back: int | None = None,
         volatility: VolatilityProcess | None = None,
@@ -1617,7 +1621,7 @@ class ARCHInMean(ARX):
     def __init__(
         self,
         y: ArrayLike | None = None,
-        x: ArrayLike | None = None,
+        x: ArrayLike2D | None = None,
         lags: None | int | list[int] | Int32Array | Int64Array = None,
         constant: bool = True,
         hold_back: int | None = None,
@@ -1710,9 +1714,9 @@ class ARCHInMean(ARX):
     def resids(
         self,
         params: Float64Array,
-        y: ArrayLike | None = None,
-        regressors: ArrayLike | None = None,
-    ) -> ArrayLike:
+        y: ArrayLike1D | None = None,
+        regressors: ArrayLike2D | None = None,
+    ) -> ArrayLike1D:
         return super().resids(params[:-1], y=y, regressors=regressors)
 
     def starting_values(self) -> Float64Array:
@@ -1788,7 +1792,9 @@ class ARCHInMean(ARX):
         if initial_value is None:
             initial_value = 0.0
         elif not np.isscalar(initial_value):
-            initial_value = ensure1d(initial_value, "initial_value")
+            initial_value = np.asarray(
+                ensure1d(initial_value, "initial_value"), dtype=float
+            )
             if initial_value.shape[0] != max_lag:
                 raise ValueError(
                     f"initial_value has the wrong shape. Expected {max_lag} values"
@@ -1814,7 +1820,7 @@ class ARCHInMean(ARX):
 
 def arch_model(
     y: ArrayLike | None,
-    x: ArrayLike | None = None,
+    x: ArrayLike2D | None = None,
     mean: Literal[
         "Constant", "Zero", "LS", "AR", "ARX", "HAR", "HARX", "constant", "zero"
     ] = "Constant",

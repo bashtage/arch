@@ -1774,7 +1774,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: None | float | Float64Array = None,
     ) -> tuple[Float64Array, Float64Array]:
-        parameters = ensure1d(parameters, "parameters", False)
+        parameters = np.asarray(ensure1d(parameters, "parameters", False), dtype=float)
         if self._asym:
             omega, alpha, gamma = parameters[:3]
         else:
@@ -3548,7 +3548,7 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: None | float | Float64Array = None,
     ) -> tuple[Float64Array, Float64Array]:
-        params = ensure1d(parameters, "parameters", False)
+        params = np.asarray(ensure1d(parameters, "parameters", False), dtype=float)
         params = self._repack_parameters(params)
         p, o, q = self.p, self.o, self.q
         errors = rng(nobs + burn)
