@@ -35,8 +35,8 @@ deprecation_doc: str = """
 def ensure1d(
     x: int | float | Sequence[int | float] | ArrayLike,
     name: Hashable | None,
-    series: Literal[False] = ...,
-) -> NDArray:
+    series: Literal[True] = ...,
+) -> Series:
     ...
 
 
@@ -44,8 +44,8 @@ def ensure1d(
 def ensure1d(
     x: int | float | Sequence[int | float] | ArrayLike,
     name: Hashable | None,
-    series: Literal[True] = ...,
-) -> Series:
+    series: Literal[False],
+) -> np.ndarray:
     ...
 
 
@@ -191,9 +191,9 @@ def date_to_index(
 
     Parameters
     ----------
-    date : str, datetime or datetime64
+    date : {str, datetime, datetime64, Timestamp}
         Date to use when returning the index
-    date_index : ndarray
+    date_index : {DatetimeIndex, ndarray}
         Index data containing datetime64 values
 
     Returns
@@ -268,6 +268,7 @@ def cutoff_to_index(cutoff: None | int | DateLike, index: Index, default: int) -
     """
     int_index = default
     if isinstance(cutoff, (str, dt.datetime, np.datetime64, Timestamp)):
+        assert isinstance(index, DatetimeIndex)
         int_index = date_to_index(cutoff, index)
     elif isinstance(cutoff, int) or issubclass(cutoff.__class__, np.integer):
         assert cutoff is not None
@@ -294,6 +295,7 @@ def find_index(s: AnyPandas, index: int | DateLike) -> int:
     """
     if isinstance(index, (int, np.int64)):
         return int(index)
+    assert isinstance(index, (str, dt.datetime, np.datetime64, Timestamp))
     date_index = to_datetime(index, errors="coerce")
 
     if date_index is NaT:

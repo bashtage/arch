@@ -4,10 +4,10 @@ from abc import ABC, abstractmethod
 from typing import SupportsInt, cast
 
 import numpy as np
-from pandas import DataFrame
+from pandas import DataFrame, Index
 from pandas.util._decorators import Substitution
 
-from arch.typing import ArrayLike, Float64Array, NDArrayOrFrame
+from arch.typing import ArrayLike, Float64Array
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
 from arch.vendor import cached_property
 
@@ -84,7 +84,7 @@ class CovarianceEstimate:
         self,
         short_run: Float64Array,
         one_sided_strict: Float64Array,
-        columns: list[str] | None = None,
+        columns: Index | list[str] | None = None,
         long_run: Float64Array | None = None,
         one_sided: Float64Array | None = None,
     ) -> None:
@@ -94,13 +94,13 @@ class CovarianceEstimate:
         self._long_run = long_run
         self._one_sided = one_sided
 
-    def _wrap(self, value: Float64Array) -> NDArrayOrFrame:
+    def _wrap(self, value: Float64Array) -> Float64Array | DataFrame:
         if self._columns is not None:
             return DataFrame(value, columns=self._columns, index=self._columns)
         return value
 
     @cached_property
-    def long_run(self) -> NDArrayOrFrame:
+    def long_run(self) -> Float64Array | DataFrame:
         """
         The long-run covariance estimate.
         """
@@ -111,14 +111,14 @@ class CovarianceEstimate:
         return self._wrap(long_run)
 
     @cached_property
-    def short_run(self) -> NDArrayOrFrame:
+    def short_run(self) -> Float64Array | DataFrame:
         """
         The short-run covariance estimate.
         """
         return self._wrap(self._sr)
 
     @cached_property
-    def one_sided(self) -> NDArrayOrFrame:
+    def one_sided(self) -> Float64Array | DataFrame:
         """
         The one-sided covariance estimate.
         """
@@ -129,7 +129,7 @@ class CovarianceEstimate:
         return self._wrap(one_sided)
 
     @cached_property
-    def one_sided_strict(self) -> NDArrayOrFrame:
+    def one_sided_strict(self) -> Float64Array | DataFrame:
         """
         The one-sided strict covariance estimate.
         """
@@ -204,7 +204,7 @@ class CovarianceEstimator(ABC):
         if weights is None:
             xw = self._x_weights = np.ones((self._x.shape[1], 1))
         else:
-            xw = ensure1d(np.asarray(weights), "weights")
+            xw = ensure1d(np.asarray(weights), "weights", series=False)
             xw = self._x_weights = xw[:, None]
         if (
             xw.shape[0] != self._x.shape[1]

@@ -429,7 +429,7 @@ class ARCHModel(metaclass=ABCMeta):
 
         # 1. Resids
         mp, vp, dp = self._parse_parameters(parameters)
-        resids = self.resids(mp)
+        resids = np.asarray(self.resids(mp), dtype=float)
 
         # 2. Compute sigma2 using VolatilityModel
         sigma2 = self.volatility.compute_variance(
@@ -494,7 +494,7 @@ class ARCHModel(metaclass=ABCMeta):
         v = self.volatility
 
         self._adjust_sample(first_obs, last_obs)
-        resids = self.resids(self.starting_values())
+        resids = np.asarray(self.resids(self.starting_values()), dtype=float)
         sigma2 = np.zeros_like(resids)
         backcast = v.backcast(resids)
         self._backcast = backcast
@@ -507,7 +507,7 @@ class ARCHModel(metaclass=ABCMeta):
 
         mp, vp, dp = self._parse_parameters(params)
 
-        resids = self.resids(mp)
+        resids = np.asarray(self.resids(mp), dtype=float)
         vol = np.zeros_like(resids)
         self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
         vol = np.asarray(np.sqrt(vol))
@@ -536,7 +536,7 @@ class ARCHModel(metaclass=ABCMeta):
 
     @abstractmethod
     def _adjust_sample(
-        self, first_obs: int | DateLike, last_obs: int | DateLike
+        self, first_obs: int | DateLike | None, last_obs: int | DateLike | None
     ) -> None:
         """
         Performs sample adjustment for estimation
@@ -557,7 +557,7 @@ class ARCHModel(metaclass=ABCMeta):
         self,
         update_freq: int = 1,
         disp: bool | Literal["off", "final"] = "final",
-        starting_values: ArrayLike1D = None,
+        starting_values: ArrayLike1D | None = None,
         cov_type: Literal["robust", "classic"] = "robust",
         show_warning: bool = True,
         first_obs: int | DateLike | None = None,
@@ -629,13 +629,13 @@ class ARCHModel(metaclass=ABCMeta):
 
         self._adjust_sample(first_obs, last_obs)
 
-        resids = self.resids(self.starting_values())
+        resids = np.asarray(self.resids(self.starting_values()), dtype=float)
         self._check_scale(resids)
         if self.scale != 1.0:
             # Scale changed, rescale data and reset model
             self._y = cast(np.ndarray, self.scale * np.asarray(self._y_original))
             self._adjust_sample(first_obs, last_obs)
-            resids = self.resids(self.starting_values())
+            resids = np.asarray(self.resids(self.starting_values()), dtype=float)
 
         if backcast is None:
             backcast = v.backcast(resids)
@@ -692,6 +692,7 @@ class ARCHModel(metaclass=ABCMeta):
         # 3. Construct starting values from all models
         sv = starting_values
         if starting_values is not None:
+            assert sv is not None
             sv = ensure1d(sv, "starting_values")
             valid = sv.shape[0] == num_params
             if a.shape[0] > 0:
@@ -704,8 +705,9 @@ class ARCHModel(metaclass=ABCMeta):
                 starting_values = None
 
         if starting_values is None:
-            sv = (self.starting_values(), sv_volatility, d.starting_values(std_resids))
-            sv = np.hstack(sv)
+            sv = np.hstack(
+                [self.starting_values(), sv_volatility, d.starting_values(std_resids)]
+            )
 
         # 4. Estimate models using constrained optimization
         _callback_info["count"], _callback_info["iter"] = 0, 0
@@ -762,7 +764,7 @@ class ARCHModel(metaclass=ABCMeta):
 
         mp, vp, dp = self._parse_parameters(params)
 
-        resids = self.resids(mp)
+        resids = np.asarray(self.resids(mp), dtype=float)
         vol = np.zeros_like(resids)
         self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
         vol = cast(Float64Array, np.sqrt(vol))
@@ -888,7 +890,7 @@ class ARCHModel(metaclass=ABCMeta):
             classic MLE (False)
 
         """
-        resids = self.resids(self.starting_values())
+        resids = np.asarray(self.resids(self.starting_values()), dtype=float)
         var_bounds = self.volatility.variance_bounds(resids)
         nobs = resids.shape[0]
         if backcast is None and self._backcast is None:
@@ -922,7 +924,7 @@ class ARCHModel(metaclass=ABCMeta):
         self,
         params: Float64Array,
         horizon: int = 1,
-        start: int | DateLike = None,
+        start: int | DateLike | None = None,
         align: Literal["origin", "target"] = "origin",
         method: ForecastingMethod = "analytic",
         simulations: int = 1000,
@@ -1102,7 +1104,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         self._model = model
         self._datetime = dt.datetime.now()
         self._dep_var = dep_var
-        self._dep_name = dep_var.name
+        self._dep_name = str(dep_var.name)
         self._names = list(names)
         self._loglikelihood = loglikelihood
         self._nobs = self.model._fit_y.shape[0]
@@ -1384,7 +1386,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         self,
         params: ArrayLike1D | None = None,
         horizon: int = 1,
-        start: int | DateLike = None,
+        start: int | DateLike | None = None,
         align: Literal["origin", "target"] = "origin",
         method: ForecastingMethod = "analytic",
         simulations: int = 1000,
@@ -1524,7 +1526,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         params: ArrayLike1D | None = None,
         horizon: int = 10,
         step: int = 10,
-        start: int | DateLike = None,
+        start: int | DateLike | None = None,
         plot_type: Literal["volatility", "mean"] = "volatility",
         method: ForecastingMethod = "analytic",
         simulations: int = 1000,
@@ -1623,10 +1625,12 @@ class ARCHModelFixedResult(_SummaryRepr):
                 continue
             temp_x = x_values[i : i + horizon + 1]
             if plot_mean:
-                spine_data = forecasts.mean.iloc[i]
+                spine_data = np.asarray(forecasts.mean.iloc[i], dtype=float)
             else:
-                spine_data = np.sqrt(forecasts.variance.iloc[i])
-            temp_y = np.hstack((y_values[i], spine_data))
+                spine_data = np.asarray(
+                    np.sqrt(forecasts.variance.iloc[i]), dtype=float
+                )
+            temp_y = np.hstack([y_values[i], spine_data])
             line = plot_fn(temp_x, temp_y, linewidth=3, linestyle="-", marker="")
             spines.append(line)
         color = spines[0][0].get_color()
@@ -2128,9 +2132,10 @@ class ARCHModelForecast:
         variance_df = _format_forecasts(variance, index, start_index)
         residual_variance_df = _format_forecasts(residual_variance, index, start_index)
         if reindex:
-            mean_df = mean_df.reindex(index)
-            variance_df = variance_df.reindex(index)
-            residual_variance_df = residual_variance_df.reindex(index)
+            # TODO: Fix when typing improved
+            mean_df = mean_df.reindex(index)  # type: ignore
+            variance_df = variance_df.reindex(index)  # type: ignore
+            residual_variance_df = residual_variance_df.reindex(index)  # type: ignore
         self._mean = _align_forecast(mean_df, align=align)
         self._variance = _align_forecast(variance_df, align=align)
         self._residual_variance = _align_forecast(residual_variance_df, align=align)

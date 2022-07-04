@@ -54,7 +54,7 @@ def add_trend(
 
 @overload
 def add_trend(
-    x: Float64Array = ...,
+    x: Float64Array,
     trend: Literal["n", "c", "t", "ct", "ctt"] = ...,
     prepend: bool = ...,
     nobs: None = ...,
@@ -65,7 +65,7 @@ def add_trend(
 
 @overload
 def add_trend(
-    x: pd.DataFrame = ...,
+    x: pd.DataFrame,
     trend: Literal["n", "c", "t", "ct", "ctt"] = ...,
     prepend: bool = ...,
     nobs: None = ...,
