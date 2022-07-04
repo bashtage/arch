@@ -204,7 +204,7 @@ class CovarianceEstimator(ABC):
         if weights is None:
             xw = self._x_weights = np.ones((self._x.shape[1], 1))
         else:
-            xw = ensure1d(np.asarray(weights), "weights")
+            xw = ensure1d(np.asarray(weights), "weights", series=False)
             xw = self._x_weights = xw[:, None]
         if (
             xw.shape[0] != self._x.shape[1]

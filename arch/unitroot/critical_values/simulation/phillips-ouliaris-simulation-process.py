@@ -170,7 +170,8 @@ nsimulation = {k: 250_000 * v for k, v in num_files.items()}
 joined = defaultdict(list)
 for key in results:
     result_dfs = results[key]
-    stoch_trends = result_dfs[0].columns.levels[1]
+    mi_columns = cast(pd.MultiIndex, result_dfs[0].columns)
+    stoch_trends = mi_columns.levels[1]
     for st in stoch_trends:
         for df in result_dfs:
             single = df.loc[:, pd.IndexSlice[:, st]]
@@ -208,9 +209,9 @@ quantiles_d = defaultdict(list)
 pval_data = {}
 for multi_key in product(STATISTICS, ALL_TRENDS, NSTOCHASTICS):
     pval_data[multi_key] = final[multi_key].loc[:, 2000]
-    temp = final[multi_key].loc[:, 2000].mean(1)
-    temp.name = multi_key[-1]
-    quantiles_d[multi_key[:-1]].append(temp)
+    temp_series = final[multi_key].loc[:, 2000].mean(1)
+    temp_series.name = multi_key[-1]
+    quantiles_d[multi_key[:-1]].append(temp_series)
 quantiles = {}
 for key in quantiles_d:
     quantiles[key] = pd.concat(quantiles_d[key], axis=1)

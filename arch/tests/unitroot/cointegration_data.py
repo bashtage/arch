@@ -24,7 +24,9 @@ def data(request) -> Tuple[Float64Array, Float64Array]:
     y = y[-1000:]
     if request.param:
         df = pd.DataFrame(y, columns=["y", "x"])
-        return df.iloc[:, :1], df.iloc[:, 1:]
+        return np.asarray(df.iloc[:, :1], dtype=float), np.asarray(
+            df.iloc[:, 1:], dtype=float
+        )
     return y[:, :1], y[:, 1:]
 
 
@@ -61,9 +63,9 @@ def trivariate_data(request) -> Tuple[ArrayLike2D, ArrayLike2D]:
             idx += 1
     y = y @ rot
     if request.param:
-        idx = pd.date_range("1-1-2000", periods=nobs, freq="M")
+        dt_index = pd.date_range("1-1-2000", periods=nobs, freq="M")
         cols = [f"y{i}" for i in range(1, 4)]
-        data = pd.DataFrame(y, columns=cols, index=idx)
+        data = pd.DataFrame(y, columns=cols, index=dt_index)
         return data.iloc[:, :1], data.iloc[:, 1:]
 
     return y[:, :1], y[:, 1:]
