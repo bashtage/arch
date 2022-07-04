@@ -664,7 +664,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         tss = float(y.dot(y))
         if tss <= 0.0:
             return np.nan
-        e = self.resids(np.asarray(params, dtype=float))
+        e = np.asarray(self.resids(np.asarray(params, dtype=float)), dtype=float)
 
         return 1.0 - float(e.T.dot(e)) / tss
 

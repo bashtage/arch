@@ -1301,7 +1301,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             else:
                 assert isinstance(values, np.ndarray)
                 pos_data.append(values[indices])
-        named_data: dict[str, Union[NDArray, pd.Series, pd.DataFrame]] = {}
+        named_data: dict[str, NDArray | pd.Series | pd.DataFrame] = {}
         for key, values in self._kwargs.items():
             if isinstance(values, (pd.Series, pd.DataFrame)):
                 named_data[key] = values.iloc[indices]

@@ -169,10 +169,10 @@ nsimulation = {k: 250_000 * v for k, v in num_files.items()}
 
 joined = defaultdict(list)
 for key in results:
-    temp = results[key]
-    stoch_trends = temp[0].columns.levels[1]
+    result_dfs = results[key]
+    stoch_trends = result_dfs[0].columns.levels[1]
     for st in stoch_trends:
-        for df in temp:
+        for df in result_dfs:
             single = df.loc[:, pd.IndexSlice[:, st]]
             single.columns = single.columns.droplevel(1)
             single = single.dropna(axis=1, how="all")
