@@ -293,9 +293,9 @@ def phillips_ouliaris(
     kernel = kernel.lower().replace("-", "").replace("_", "")
     if kernel not in KERNEL_ESTIMATORS:
         raise ValueError(KERNEL_ERR)
-    y = ensure2d(y, "y")
+    y_2d = ensure2d(y, "y")
     x = ensure2d(x, "x")
-    xsection = _cross_section(y, x, trend)
+    xsection = _cross_section(y_2d, x, trend)
     data = xsection.model.data
     x_df = data.orig_exog.iloc[:, : x.shape[1]]
     z = pd.concat([data.orig_endog, x_df], axis=1)

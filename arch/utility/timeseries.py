@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Sequence
+from typing import Sequence, overload
 
 import numpy as np
 import pandas as pd
@@ -39,6 +39,39 @@ def _enforce_unique_col_name(existing: Sequence[str], new: list[str]) -> list[st
         warnings.warn(ws, ColumnNameConflict)
 
     return unique_names
+
+
+@overload
+def add_trend(
+    x: None = ...,
+    trend: Literal["n", "c", "t", "ct", "ctt"] = ...,
+    prepend: bool = ...,
+    nobs: int = ...,
+    has_constant: Literal["raise", "add", "skip"] = ...,
+) -> Float64Array:
+    ...
+
+
+@overload
+def add_trend(
+    x: Float64Array = ...,
+    trend: Literal["n", "c", "t", "ct", "ctt"] = ...,
+    prepend: bool = ...,
+    nobs: None = ...,
+    has_constant: Literal["raise", "add", "skip"] = ...,
+) -> Float64Array:
+    ...
+
+
+@overload
+def add_trend(
+    x: pd.DataFrame = ...,
+    trend: Literal["n", "c", "t", "ct", "ctt"] = ...,
+    prepend: bool = ...,
+    nobs: None = ...,
+    has_constant: Literal["raise", "add", "skip"] = ...,
+) -> pd.DataFrame:
+    ...
 
 
 def add_trend(

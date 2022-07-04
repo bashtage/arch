@@ -23,10 +23,13 @@ import scipy.stats as stats
 from arch.typing import (
     AnyArray,
     ArrayLike,
+    ArrayLike1D,
+    ArrayLike2D,
     BootstrapIndexT,
     Float64Array,
     Int64Array,
     Literal,
+    NDArray,
     RandomStateState,
     Uint32Array,
 )
@@ -126,7 +129,7 @@ def _single_optimal_block(x: Float64Array) -> tuple[float, float]:
     return b_sb, b_cb
 
 
-def optimal_block_length(x: ArrayLike) -> pd.DataFrame:
+def optimal_block_length(x: ArrayLike1D | ArrayLike2D) -> pd.DataFrame:
     r"""
     Estimate optimal window length for time-series bootstraps
 
@@ -193,10 +196,11 @@ def optimal_block_length(x: ArrayLike) -> pd.DataFrame:
        Bootstrap” by D. Politis and H. White, Econometric Reviews, 28:4,
        372-375, DOI: 10.1080/07474930802459016.
     """
-    x_arr = ensure2d(np.asarray(x), "x")
+    # TODO: This should use overload ensure2d definitions to know it is ndarray
+    x_arr = np.asarray(ensure2d(np.asarray(x, dtype=float), "x"), dtype=float)
     opt = [_single_optimal_block(col) for col in x_arr.T]
     if isinstance(x, pd.DataFrame):
-        idx = x.columns
+        idx = list(x.columns)
     elif isinstance(x, pd.Series):
         idx = [x.name]
     else:
@@ -694,7 +698,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
     def conf_int(
         self,
-        func: Callable[..., ArrayLike],
+        func: Callable[..., Float64Array],
         reps: int = 1000,
         method: Literal[
             "basic", "percentile", "studentized", "norm", "bc", "bca"
@@ -957,7 +961,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         return b[:, None]
 
     def _bca_acceleration(
-        self, func: Callable[..., ArrayLike], extra_kwags: dict[str, Any] | None
+        self, func: Callable[..., Float64Array], extra_kwags: dict[str, Any] | None
     ) -> float:
         nobs = self._num_items
         jk_params = _loo_jackknife(func, nobs, self._args, self._kwargs, extra_kwags)
@@ -1297,7 +1301,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             else:
                 assert isinstance(values, np.ndarray)
                 pos_data.append(values[indices])
-        named_data = {}
+        named_data: dict[str, Union[NDArray, pd.Series, pd.DataFrame]] = {}
         for key, values in self._kwargs.items():
             if isinstance(values, (pd.Series, pd.DataFrame)):
                 named_data[key] = values.iloc[indices]

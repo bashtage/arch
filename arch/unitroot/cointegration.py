@@ -594,14 +594,18 @@ class DynamicOLS:
         for lag in range(-lags, leads + 1):
             lag_data = delta_x.shift(-lag)
             typ = "LAG" if lag < 0 else "LEAD"
-            lag_data.columns = [f"D.{c}.{typ}{abs(lag)}" for c in lag_data.columns]
+            lag_data.columns = pd.Index(
+                [f"D.{c}.{typ}{abs(lag)}" for c in lag_data.columns]
+            )
             if lag == 0:
-                lag_data.columns = [f"D.{c}" for c in lag_data.columns]
+                lag_data.columns = pd.Index([f"D.{c}" for c in lag_data.columns])
             data.append(lag_data)
         data_df: pd.DataFrame = pd.concat(data, axis=1).dropna()
         lhs, rhs = data_df.iloc[:, :1], data_df.iloc[:, 1:]
         nrhs = rhs.shape[1]
-        rhs = add_trend(rhs, trend=self._trend, prepend=True)
+        with_trend = add_trend(rhs, trend=self._trend, prepend=True)
+        assert isinstance(with_trend, pd.DataFrame)
+        rhs = with_trend
         ntrend = rhs.shape[1] - nrhs
         if ntrend:
             nx = x.shape[1]
@@ -1084,7 +1088,9 @@ class FullyModifiedOLS:
         lmbda_12 = lmbda[:1, 1:]
         lmbda_22 = lmbda[1:, 1:]
         lmbda_12_dot = lmbda_12 - omega_12 @ omega_22_inv @ lmbda_22
-        z_df = add_trend(self._x, trend=self._trend)
+        with_trend = add_trend(self._x, trend=self._trend)
+        assert isinstance(with_trend, pd.DataFrame)
+        z_df = with_trend
         z_df = z_df.iloc[1:]
         z = np.asarray(z_df)
         zpz = z.T @ z
@@ -1102,14 +1108,14 @@ class FullyModifiedOLS:
         zpz_inv = np.linalg.inv(zpz)
         param_cov = omega_112 * zpz_inv
         cols = z_df.columns
-        params = pd.Series(params.squeeze(), index=cols, name="params")
+        params_s = pd.Series(params.squeeze(), index=cols, name="params")
         param_cov = pd.DataFrame(param_cov, columns=cols, index=cols)
-        resid, r2, r2_adj = self._final_statistics(params)
+        resid, r2, r2_adj = self._final_statistics(params_s)
         resid_kern = KERNEL_ESTIMATORS[kernel](
             resid, bandwidth=cov_est.bandwidth, force_int=cov_est.force_int
         )
         return CointegrationAnalysisResults(
-            params,
+            params_s,
             param_cov,
             resid,
             omega_112[0, 0],
@@ -1171,7 +1177,9 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         scale = 1.0 if not df_adjust else nobs / (nobs - nvar)
         omega_112 = scale * omega_11 - omega_12 @ omega_22_inv @ omega_12.T
         param_cov = omega_112 * np.linalg.inv(z_star.T @ z_star)
-        cols = add_trend(self._x.iloc[:10], self._trend).columns
+        with_trend = add_trend(self._x.iloc[:10], self._trend)
+        assert isinstance(with_trend, pd.DataFrame)
+        cols = with_trend.columns
         params = pd.Series(params.squeeze(), index=cols, name="params")
         param_cov = pd.DataFrame(param_cov, columns=cols, index=cols)
         resid, r2, r2_adj = self._final_statistics(params)

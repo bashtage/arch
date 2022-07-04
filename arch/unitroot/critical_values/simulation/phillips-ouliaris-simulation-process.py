@@ -2,7 +2,7 @@ from collections import defaultdict
 import glob
 from itertools import product
 import os
-from typing import Dict, List, NamedTuple, Tuple
+from typing import Dict, List, NamedTuple, Tuple, cast
 
 from black import FileMode, TargetVersion, format_file_contents
 import matplotlib.backends.backend_pdf
@@ -156,7 +156,8 @@ for file_type in FILE_TYPES:
         num_files[(file_type, trend)] = len(result_files)
         for rf in result_files:
             temp = pd.DataFrame(pd.read_hdf(rf, "results"))
-            statistics = temp.columns.levels[2]
+            mi_cols = cast(pd.MultiIndex, temp.columns)
+            statistics = mi_cols.levels[2]
             for stat in statistics:
                 single = temp.loc[:, pd.IndexSlice[:, :, stat]]
                 single.columns = single.columns.droplevel(2)
@@ -279,7 +280,7 @@ formatted_code += "\n\nPVAL_TAU_MAX = " + format_dict(pval_tau_max)
 formatted_code += "\n\nPVAL_TAU_STAR = " + format_dict(pval_tau_star)
 formatted_code += "\n\nPVAL_TAU_MIN = " + format_dict(pval_tau_min)
 
-targets = {TargetVersion.PY36, TargetVersion.PY37, TargetVersion.PY38}
+targets = {TargetVersion.PY38, TargetVersion.PY39, TargetVersion.PY310}
 fm = FileMode(target_versions=targets)
 formatted_code = format_file_contents(formatted_code, fast=False, mode=fm)
 
