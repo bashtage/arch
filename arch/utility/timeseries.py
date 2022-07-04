@@ -44,10 +44,10 @@ def _enforce_unique_col_name(existing: Sequence[str], new: list[str]) -> list[st
 @overload
 def add_trend(
     x: None = ...,
-    trend: Literal["n", "c", "t", "ct", "ctt"] = "c",
-    prepend: bool = False,
+    trend: Literal["n", "c", "t", "ct", "ctt"] = ...,
+    prepend: bool = ...,
     nobs: int = ...,
-    has_constant: Literal["raise", "add", "skip"] = "skip",
+    has_constant: Literal["raise", "add", "skip"] = ...,
 ) -> Float64Array:
     ...
 
@@ -55,10 +55,10 @@ def add_trend(
 @overload
 def add_trend(
     x: Float64Array = ...,
-    trend: Literal["n", "c", "t", "ct", "ctt"] = "c",
-    prepend: bool = False,
+    trend: Literal["n", "c", "t", "ct", "ctt"] = ...,
+    prepend: bool = ...,
     nobs: None = ...,
-    has_constant: Literal["raise", "add", "skip"] = "skip",
+    has_constant: Literal["raise", "add", "skip"] = ...,
 ) -> Float64Array:
     ...
 
@@ -66,10 +66,10 @@ def add_trend(
 @overload
 def add_trend(
     x: pd.DataFrame = ...,
-    trend: Literal["n", "c", "t", "ct", "ctt"] = "c",
-    prepend: bool = False,
+    trend: Literal["n", "c", "t", "ct", "ctt"] = ...,
+    prepend: bool = ...,
     nobs: None = ...,
-    has_constant: Literal["raise", "add", "skip"] = "skip",
+    has_constant: Literal["raise", "add", "skip"] = ...,
 ) -> pd.DataFrame:
     ...
 

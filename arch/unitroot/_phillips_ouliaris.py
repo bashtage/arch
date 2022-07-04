@@ -27,7 +27,7 @@ from arch.unitroot.critical_values.phillips_ouliaris import (
     PVAL_TAU_STAR,
 )
 from arch.unitroot.unitroot import TREND_DESCRIPTION
-from arch.utility.array import ensure1d, ensure2d
+from arch.utility.array import ensure2d
 from arch.utility.io import str_format
 from arch.utility.timeseries import add_trend
 

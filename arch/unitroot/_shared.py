@@ -67,7 +67,7 @@ def _check_cointegrating_regression(
 
 
 def _cross_section(
-    y: ArrayLike1D, x: ArrayLike2D, trend: UnitRootTrend
+    y: ArrayLike2D, x: ArrayLike2D, trend: UnitRootTrend
 ) -> RegressionResults:
     if trend not in ("n", "c", "ct", "ctt"):
         raise ValueError('trend must be one of "n", "c", "ct" or "ctt"')

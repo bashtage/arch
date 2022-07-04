@@ -13,6 +13,7 @@ from arch.bootstrap.base import (
 )
 from arch.typing import (
     ArrayLike,
+    ArrayLike2D,
     BoolArray,
     Float64Array,
     Int64Array,
@@ -120,7 +121,7 @@ class MCS(MultipleComparison):
 
     def __init__(
         self,
-        losses: ArrayLike,
+        losses: ArrayLike2D,
         size: float,
         reps: int = 1000,
         block_size: int | None = None,
@@ -132,8 +133,8 @@ class MCS(MultipleComparison):
         seed: None | int | np.random.Generator | np.random.RandomState = None,
     ) -> None:
         super().__init__()
-        self.losses: Float64Array = ensure2d(losses, "losses")
-        self._losses_arr = np.asarray(self.losses)
+        self.losses = ensure2d(losses, "losses")
+        self._losses_arr = np.asarray(self.losses, dtype=float)
         if self._losses_arr.shape[1] < 2:
             raise ValueError("losses must have at least two columns")
         self.size: float = size
@@ -178,19 +179,19 @@ class MCS(MultipleComparison):
     def _format_pvalues(self, eliminated: Sequence[tuple[int, float]]) -> pd.DataFrame:
         columns = ["Model index", "Pvalue"]
         mcs = pd.DataFrame(eliminated, columns=columns)
-        max_pval = mcs.iloc[0, 1]
+        max_pval = cast(float, mcs.iloc[0, 1])
         for i in range(1, mcs.shape[0]):
-            max_pval = np.max([max_pval, mcs.iloc[i, 1]])
+            max_pval = np.max([max_pval, cast(float, mcs.iloc[i, 1])])
             mcs.iloc[i, 1] = max_pval
         model_index = mcs.pop("Model index")
         if isinstance(self.losses, pd.DataFrame):
             # Workaround for old pandas/numpy combination
             # Preferred expression :
-            # model_index = pd.Series(self.losses.columns[model_index])
-            model_index = self.losses.iloc[:, model_index.values].columns
-            model_index = pd.Series(model_index)
+            model_index = pd.Series(self.losses.columns[model_index])
+            # model_index = self.losses.iloc[:, model_index.to_numpy()].columns
+            # model_index = pd.Series(model_index)
             model_index.name = "Model name"
-        mcs.index = model_index
+        mcs.index = pd.Index(model_index)
         return mcs
 
     def compute(self) -> None:
@@ -218,7 +219,9 @@ class MCS(MultipleComparison):
         bs = self.bootstrap
         for j, data in enumerate(bs.bootstrap(self.reps)):
             bs_index = data[0][0]  # Only element in pos data
-            self._bootstrap_indices.append(bs_index)  # For testing
+            self._bootstrap_indices.append(
+                np.asarray(bs_index, dtype=int)
+            )  # For testing
             mean_losses_star = losses[bs_index].mean(0)[:, None]
             bootstrapped_mean_losses[j] = mean_losses_star - mean_losses_star.T
         # Recenter
@@ -267,7 +270,9 @@ class MCS(MultipleComparison):
         bs_avg_loss_errors = np.zeros((self.reps, self.k))
         for i, data in enumerate(self.bootstrap.bootstrap(self.reps)):
             bs_index = data[0][0]
-            self._bootstrap_indices.append(bs_index)  # For testing
+            self._bootstrap_indices.append(
+                np.asarray(bs_index, dtype=int)
+            )  # For testing
             bs_errors = loss_errors[bs_index]
             avg_bs_errors = bs_errors.mean(0)
             avg_bs_errors -= avg_bs_errors.mean()
@@ -416,8 +421,8 @@ class StepM(MultipleComparison):
         seed: None | int | np.random.Generator | np.random.RandomState = None,
     ) -> None:
         super().__init__()
-        self.benchmark: Float64Array = ensure2d(benchmark, "benchmark")
-        self.models: Float64Array = ensure2d(models, "models")
+        self.benchmark = ensure2d(benchmark, "benchmark")
+        self.models = ensure2d(models, "models")
         self.spa: SPA = SPA(
             benchmark,
             models,
@@ -565,8 +570,8 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         seed: None | int | np.random.Generator | np.random.RandomState = None,
     ) -> None:
         super().__init__()
-        self.benchmark: Float64Array = ensure2d(benchmark, "benchmark")
-        self.models: Float64Array = ensure2d(models, "models")
+        self.benchmark = ensure2d(benchmark, "benchmark")
+        self.models = ensure2d(models, "models")
         self.reps: int = reps
         if block_size is None:
             self.block_size = int(np.sqrt(benchmark.shape[0]))
