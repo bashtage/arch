@@ -465,8 +465,8 @@ class ARCHModel(metaclass=ABCMeta):
     def fix(
         self,
         params: Sequence[float] | ArrayLike1D,
-        first_obs: int | DateLike = None,
-        last_obs: int | DateLike = None,
+        first_obs: int | DateLike | None = None,
+        last_obs: int | DateLike | None = None,
     ) -> ARCHModelFixedResult:
         """
         Allows an ARCHModelFixedResult to be constructed from fixed parameters.
@@ -560,8 +560,8 @@ class ARCHModel(metaclass=ABCMeta):
         starting_values: ArrayLike1D = None,
         cov_type: Literal["robust", "classic"] = "robust",
         show_warning: bool = True,
-        first_obs: int | DateLike = None,
-        last_obs: int | DateLike = None,
+        first_obs: int | DateLike | None = None,
+        last_obs: int | DateLike | None = None,
         tol: float | None = None,
         options: dict[str, Any] | None = None,
         backcast: None | float | Float64Array = None,
@@ -1103,7 +1103,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         self._datetime = dt.datetime.now()
         self._dep_var = dep_var
         self._dep_name = dep_var.name
-        self._names = names
+        self._names = list(names)
         self._loglikelihood = loglikelihood
         self._nobs = self.model._fit_y.shape[0]
         self._index = dep_var.index
@@ -1960,18 +1960,16 @@ class ARCHModelResult(ARCHModelFixedResult):
         """
         Array of p-values for the t-statistics
         """
-        return pd.Series(
-            stats.norm.sf(np.abs(self.tvalues)) * 2, index=self._names, name="pvalues"
-        )
+        pvals = np.asarray(stats.norm.sf(np.abs(self.tvalues)) * 2, dtype=float)
+        return pd.Series(pvals, index=self._names, name="pvalues")
 
     @cached_property
     def std_err(self) -> pd.Series:
         """
         Array of parameter standard errors
         """
-        return pd.Series(
-            np.sqrt(np.diag(self.param_cov)), index=self._names, name="std_err"
-        )
+        se = np.asarray(np.sqrt(np.diag(self.param_cov)), dtype=float)
+        return pd.Series(se, index=self._names, name="std_err")
 
     @cached_property
     def tvalues(self) -> pd.Series:
@@ -2080,7 +2078,9 @@ class ARCHModelForecastSimulation:
         return self._residual_variances
 
 
-def _reindex(a: Float64Array | None, idx: pd.Index) -> Float64Array | None:
+def _reindex(
+    a: Float64Array | None, idx: list[Label] | pd.Index
+) -> Float64Array | None:
     if a is None:
         return a
     assert a is not None

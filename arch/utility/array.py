@@ -7,7 +7,7 @@ from arch.compat.pandas import is_datetime64_any_dtype
 
 from abc import ABCMeta
 import datetime as dt
-from typing import Any, Hashable, Sequence
+from typing import Any, Hashable, Literal, Sequence, overload
 
 import numpy as np
 from pandas import DataFrame, DatetimeIndex, Index, NaT, Series, Timestamp, to_datetime
@@ -29,6 +29,24 @@ __all__ = [
 deprecation_doc: str = """
 {func} has been moved.  Please use {new_location}.{func}.
 """
+
+
+@overload
+def ensure1d(
+    x: int | float | Sequence[int | float] | ArrayLike,
+    name: Hashable | None,
+    series: Literal[False] = ...,
+) -> NDArray:
+    ...
+
+
+@overload
+def ensure1d(
+    x: int | float | Sequence[int | float] | ArrayLike,
+    name: Hashable | None,
+    series: Literal[True] = ...,
+) -> Series:
+    ...
 
 
 def ensure1d(

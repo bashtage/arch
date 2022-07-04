@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, NamedTuple, Sequence
+from __future__ import annotations
+
+from typing import Any, NamedTuple, Sequence
 
 import numpy as np
 import pandas as pd
@@ -6,7 +8,7 @@ from scipy import stats
 from statsmodels.regression.linear_model import OLS, WLS
 
 
-def format_dict(d: Dict[Any, Any]) -> str:
+def format_dict(d: dict[Any, Any]) -> str:
     return (
         str(d)
         .replace(" ", "")
@@ -17,8 +19,8 @@ def format_dict(d: Dict[Any, Any]) -> str:
 
 
 class PvalueResult(NamedTuple):
-    large_p: List[float]
-    small_p: List[float]
+    large_p: list[float]
+    small_p: list[float]
     tau_max: float
     tau_star: float
     tau_min: float
@@ -26,7 +28,7 @@ class PvalueResult(NamedTuple):
 
 def estimate_cv_regression(
     results: pd.DataFrame, critical_values: Sequence[float]
-) -> Dict[float, List[float]]:
+) -> dict[float, list[float]]:
     """
     Parameters
     ----------
@@ -52,7 +54,7 @@ def estimate_cv_regression(
 
 
 def fit_pval_model(
-    quantiles: pd.DataFrame,
+    quantiles: pd.Series | pd.DataFrame,
     small_order: int = 3,
     use_log: bool = False,
     drop_insignif: bool = True,

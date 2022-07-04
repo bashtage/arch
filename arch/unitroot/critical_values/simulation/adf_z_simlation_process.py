@@ -24,12 +24,14 @@ for trend in TRENDS:
             all_results.append(data["results"])
     results = np.hstack(all_results)
     cols = TIME_SERIES_LENGTHS.tolist() * len(data_files)
-    results = pd.DataFrame(results, index=PERCENTILES / 100.0, columns=cols)
+    results_df = pd.DataFrame(
+        results, index=pd.Index(PERCENTILES / 100.0), columns=cols
+    )
 
-    cv_approx = estimate_cv_regression(results, critical_values)
+    cv_approx = estimate_cv_regression(results_df, critical_values)
     adf_z_cv_approx[trend] = [cv_approx[cv] for cv in critical_values]
 
-    pvals = fit_pval_model(results[2000], small_order=4, use_log=True)
+    pvals = fit_pval_model(results_df[2000], small_order=4, use_log=True)
     adf_z_max[trend] = pvals.tau_max
     adf_z_min[trend] = pvals.tau_min
     adf_z_star[trend] = pvals.tau_star

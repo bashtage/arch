@@ -34,7 +34,7 @@ from numpy import (
     sort,
     sqrt,
     squeeze,
-    sum,
+    sum as npsum,
 )
 from numpy.linalg import LinAlgError, inv, lstsq, matrix_rank, pinv, qr, solve
 from pandas import DataFrame
@@ -119,7 +119,7 @@ SHORT_TREND_DESCRIPTION = {
 }
 
 
-def _is_reduced_rank(x: Float64Array) -> tuple[bool, int | None]:
+def _is_reduced_rank(x: Float64Array | DataFrame) -> tuple[bool, int | None]:
     """
     Check if a matrix has reduced rank preferring quick checks
     """
@@ -421,7 +421,7 @@ def _df_select_lags(
     return ic_best, best_lag
 
 
-def _add_column_names(rhs: ArrayLike, lags: int) -> DataFrame:
+def _add_column_names(rhs: Float64Array, lags: int) -> DataFrame:
     """Return a DataFrame with named columns"""
     lag_names = [f"Diff.L{i}" for i in range(1, lags + 1)]
     return DataFrame(rhs, columns=["Level.L1"] + lag_names)
@@ -475,7 +475,7 @@ class UnitRootTest(metaclass=ABCMeta):
         trend: UnitRootTrend | Literal["t"],
         valid_trends: Sequence[str],
     ) -> None:
-        self._y = ensure1d(y, "y")
+        self._y = ensure1d(y, "y", series=False)
         self._delta_y = diff(y)
         self._nobs = self._y.shape[0]
         self._lags = int(lags) if lags is not None else lags
@@ -1104,15 +1104,16 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
             self._lags = int(ceil(12.0 * power(nobs / 100.0, 1 / 4.0)))
         lags = self._lags
 
-        rhs = y[:-1, None]
-        rhs = _add_column_names(rhs, 0)
+        rhs = asarray(y, dtype=float)[:-1, None]
+        rhs_df = _add_column_names(rhs, 0)
         lhs = y[1:, None]
         if trend != "n":
-            rhs = add_trend(rhs, trend)
+            rhs_df = add_trend(rhs_df, trend)
 
-        resols = OLS(lhs, rhs).fit()
-        self._regression = OLS(lhs, rhs).fit(cov_type="HAC", cov_kwds={"maxlags": lags})
-        k = rhs.shape[1]
+        mod = OLS(lhs, rhs_df)
+        resols = mod.fit()
+        self._regression = mod.fit(cov_type="HAC", cov_kwds={"maxlags": lags})
+        k = rhs_df.shape[1]
         n, u = resols.nobs, resols.resid
         if u.shape[0] < lags:
             raise InfeasibleTestException(
@@ -1465,8 +1466,8 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         trend = self._trend
 
         y = self._y
-        y = ensure2d(y, "y")
-        nobs = y.shape[0]
+        y_2d = ensure2d(y, "y")
+        nobs = y_2d.shape[0]
 
         if self._lags is not None:
             baselags = self._lags
@@ -1482,16 +1483,16 @@ class ZivotAndrews(UnitRootTest, metaclass=AbstractDocStringInheritor):
         else:
             basecols = 4
         # first-diff y and standardize for numerical stability
-        dy = diff(y, axis=0)[:, 0]
+        dy = diff(y_2d, axis=0)[:, 0]
         dy /= sqrt(dy.T @ dy)
-        y = y / sqrt(y.T @ y)
+        y_2d = y_2d / sqrt(y_2d.T @ y_2d)
         # reserve exog space
         exog = empty((dy[baselags:].shape[0], basecols + baselags))
         # normalize constant for stability in long time series
         c_const = 1 / sqrt(nobs)  # Normalize
         exog[:, 0] = c_const
         # lagged y and dy
-        exog[:, basecols - 1] = y[baselags : (nobs - 1), 0]
+        exog[:, basecols - 1] = y_2d[baselags : (nobs - 1), 0]
         exog[:, basecols:] = lagmat(dy, baselags, trim="none")[
             baselags : exog.shape[0] + baselags
         ]
@@ -1979,7 +1980,7 @@ def auto_bandwidth(
     for i in range(n + 1):
         a = list(y[i:])
         b = list(y[: len(y) - i])
-        sig[i] = int(sum(i * j for (i, j) in zip(a, b)))
+        sig[i] = int(npsum([i * j for (i, j) in zip(a, b)]))
 
     sigma_m1 = sig[1 : len(sig)]  # sigma without the 1st element
     s0 = sig[0] + 2 * sum(sigma_m1)
