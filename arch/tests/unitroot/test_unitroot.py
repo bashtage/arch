@@ -250,7 +250,7 @@ class TestUnitRoot:
         denom = np.sum((dy - mu) ** 2.0) / nq
         num = np.sum((dy2 - 2 * mu) ** 2.0) / nq
         ratio = num / denom
-        assert_equal(ratio, computed_value)
+        assert_allclose(ratio, computed_value)
 
         vr = VarianceRatio(self.inflation, overlap=True)
         assert_equal(vr.overlap, True)
