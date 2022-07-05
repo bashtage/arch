@@ -1297,6 +1297,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         pos_data: list[NDArray | pd.Series | pd.DataFrame] = []
         for values in self._args:
             if isinstance(values, (pd.Series, pd.DataFrame)):
+                assert isinstance(indices, NDArray)
                 pos_data.append(values.iloc[indices])
             else:
                 assert isinstance(values, np.ndarray)
@@ -1304,8 +1305,10 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         named_data: dict[str, NDArray | pd.Series | pd.DataFrame] = {}
         for key, values in self._kwargs.items():
             if isinstance(values, (pd.Series, pd.DataFrame)):
+                assert isinstance(indices, NDArray)
                 named_data[key] = values.iloc[indices]
             else:
+                assert isinstance(values, np.ndarray)
                 named_data[key] = values[indices]
             setattr(self, key, named_data[key])
 
@@ -1467,7 +1470,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
             else:
                 assert isinstance(values, np.ndarray)
                 pos_data.append(values[pos_indices[i]])
-        named_data = {}
+        named_data: dict[str, pd.DataFrame | pd.Series | AnyArray] = {}
         for key, values in self._kwargs.items():
             idx = kw_indices[key]
             if isinstance(values, (pd.Series, pd.DataFrame)):
