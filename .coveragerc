@@ -28,8 +28,6 @@ exclude_lines =
     elif TYPE_CHECKING
     # Cython function declarations
     cdef
-    # Ellipsis in overloads
-    ...
 
 include = */arch/*
 omit =

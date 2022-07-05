@@ -37,7 +37,7 @@ def ensure1d(
     name: Hashable | None,
     series: Literal[True] = ...,
 ) -> Series:
-    ...
+    ...  # pragma: no cover
 
 
 @overload
@@ -46,7 +46,7 @@ def ensure1d(
     name: Hashable | None,
     series: Literal[False],
 ) -> np.ndarray:
-    ...
+    ...  # pragma: no cover
 
 
 def ensure1d(
