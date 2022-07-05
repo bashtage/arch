@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Sequence, overload
+from typing import overload
 
 import numpy as np
 import pandas as pd
@@ -19,7 +19,7 @@ Some of the column named being added were not unique and have been renamed.
 """
 
 
-def _enforce_unique_col_name(existing: Sequence[str], new: list[str]) -> list[str]:
+def _enforce_unique_col_name(existing: list[str], new: list[str]) -> list[str]:
     converted_names = []
     unique_names = list(new[:])
     for i, n in enumerate(new):

@@ -473,7 +473,7 @@ class UnitRootTest(metaclass=ABCMeta):
         y: ArrayLike,
         lags: int | None,
         trend: UnitRootTrend | Literal["t"],
-        valid_trends: Sequence[str],
+        valid_trends: list[str] | tuple[str, ...],
     ) -> None:
         self._y = ensure1d(y, "y", series=False)
         self._delta_y = diff(y)
@@ -481,7 +481,7 @@ class UnitRootTest(metaclass=ABCMeta):
         self._lags = int(lags) if lags is not None else lags
         if self._lags is not None and self._lags < 0:
             raise ValueError("lags must be non-negative.")
-        self._valid_trends = valid_trends
+        self._valid_trends = list(valid_trends)
         if trend == "nc":  # type: ignore
             warnings.warn(
                 'Trend "nc" is deprecated and has been replaced with "n" (for none).',
@@ -547,7 +547,7 @@ class UnitRootTest(metaclass=ABCMeta):
         return self._nobs
 
     @property
-    def valid_trends(self) -> Sequence[str]:
+    def valid_trends(self) -> list[str]:
         """List of valid trend terms."""
         return self._valid_trends
 
