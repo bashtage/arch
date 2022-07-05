@@ -231,7 +231,7 @@ class _CommonCointegrationResults:
         se: Float64Array,
         tstats: Float64Array,
         pvalues: Float64Array,
-        stubs: Sequence[str],
+        stubs: list[str],
         title: str,
     ) -> SimpleTable:
         ci = params[:, None] + se[:, None] * stats.norm.ppf([[0.025, 0.975]])
