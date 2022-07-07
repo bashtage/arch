@@ -2132,10 +2132,9 @@ class ARCHModelForecast:
         variance_df = _format_forecasts(variance, index, start_index)
         residual_variance_df = _format_forecasts(residual_variance, index, start_index)
         if reindex:
-            # TODO: Fix when typing improved
-            mean_df = mean_df.reindex(index)  # type: ignore
-            variance_df = variance_df.reindex(index)  # type: ignore
-            residual_variance_df = residual_variance_df.reindex(index)  # type: ignore
+            mean_df = mean_df.reindex(index)
+            variance_df = variance_df.reindex(index)
+            residual_variance_df = residual_variance_df.reindex(index)
         self._mean = _align_forecast(mean_df, align=align)
         self._variance = _align_forecast(variance_df, align=align)
         self._residual_variance = _align_forecast(residual_variance_df, align=align)
