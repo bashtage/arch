@@ -297,7 +297,8 @@ def worker(
         nsim = min(remaining, block_size)
         res_block = block(gen, statistic, nsim, trend)
         loc = EX_SIZE - remaining
-        results.iloc[loc : loc + nsim] = res_block
+        # TODO: Bug in pandas-stubs prevents assignment form ndarray
+        results.iloc[loc : loc + nsim] = res_block  # type: ignore
         remaining -= block_size
         remaining = max(0, remaining)
         elapsed = dt.datetime.now() - start

@@ -23,7 +23,7 @@ class SPAData(NamedTuple):
     t: int
     benchmark: np.ndarray
     models: np.ndarray
-    index: pd.DatetimeIndex
+    data_index: pd.DatetimeIndex
     benchmark_series: pd.Series
     benchmark_df: pd.DataFrame
     models_df: pd.DataFrame
