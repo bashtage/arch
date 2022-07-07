@@ -924,12 +924,14 @@ class TestMeanModel:
         )
         am = arch_model(y, mean="ARX", lags=10, p=5, q=0)
 
-        warning = ConvergenceWarning if SP_LT_14 else None
-        with pytest.warns(warning):
-            am.fit(disp=DISPLAY)
-
-        with pytest.warns(warning):
-            am.fit(show_warning=True, disp=DISPLAY)
+        if SP_LT_14:
+            with pytest.warns(ConvergenceWarning):
+                am.fit(disp=DISPLAY)
+                am.fit(show_warning=True, disp=DISPLAY)
+        else:
+            with pytest.warns(DataScaleWarning):
+                am.fit(disp=DISPLAY)
+                am.fit(show_warning=True, disp=DISPLAY)
 
         with pytest.warns(DataScaleWarning):
             am.fit(show_warning=False, disp=DISPLAY)

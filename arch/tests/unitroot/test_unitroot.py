@@ -635,11 +635,6 @@ def test_invalid_trend():
         ADF(np.random.standard_normal(100), trend="unknown")
 
 
-def test_nc_warning():
-    with pytest.warns(FutureWarning, match='Trend "nc" is deprecated'):
-        ADF(np.random.standard_normal(100), trend="nc")
-
-
 @pytest.mark.filterwarnings("ignore:Lag selection has changed:DeprecationWarning")
 @pytest.mark.parametrize("nobs", np.arange(1, 11).tolist())
 @pytest.mark.parametrize("stat", [ADF, PhillipsPerron, KPSS, ZivotAndrews, DFGLS])

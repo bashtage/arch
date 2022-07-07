@@ -628,9 +628,10 @@ def test_reindex(model_spec, reindex, first_obs, last_obs):
 @pytest.mark.parametrize("reindex", [None, True, False])
 def test_reindex_warning(reindex):
     res = arch_model(SP500).fit(disp="off")
-    warning = FutureWarning if reindex is None else None
-    match = "The default for reindex" if reindex is None else None
-    with pytest.warns(warning, match=match):
+    if reindex is None:
+        with pytest.warns(FutureWarning, match="The default for reindex"):
+            res.forecast(reindex=reindex)
+    else:
         res.forecast(reindex=reindex)
 
 
@@ -638,15 +639,13 @@ def test_reindex_future_import():
     res = arch_model(SP500).fit(disp="off")
     with pytest.warns(FutureWarning, match="The default for reindex"):
         default = res.forecast()
-    with pytest.warns(None):
-        fcast = res.forecast(reindex=False)
+    fcast = res.forecast(reindex=False)
 
     from arch.__future__ import reindexing  # noqa: F401
 
     future_name = "arch.__future__.reindexing"
     assert future_name in sys.modules
-    with pytest.warns(None):
-        post = res.forecast()
+    post = res.forecast()
     assert post.mean.shape == fcast.mean.shape
     assert post.mean.shape != default.mean.shape
 
