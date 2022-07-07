@@ -109,6 +109,7 @@ def test_covariance_errors(data: ArrayLike, estimator: Type[CovarianceEstimator]
     with pytest.raises(ValueError, match="df_adjust must be a non-negative"):
         estimator(data, df_adjust=-2)
     with pytest.raises(ValueError, match="df_adjust must be a non-negative"):
+        # Type ignored due to invalid type used in test
         estimator(data, df_adjust=np.ones(2))  # type: ignore
     with pytest.raises(ValueError, match="bandwidth must be"):
         estimator(data, bandwidth=-3)

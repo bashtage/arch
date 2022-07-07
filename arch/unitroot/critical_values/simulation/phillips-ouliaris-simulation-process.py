@@ -159,7 +159,8 @@ for file_type in FILE_TYPES:
             mi_cols = cast(pd.MultiIndex, temp.columns)
             statistics = mi_cols.levels[2]
             for stat in statistics:
-                single = temp.loc[:, pd.IndexSlice[:, :, stat]]
+                # TODO: Bug in pandas-stubs prevents valid index types
+                single = temp.loc[:, pd.IndexSlice[:, :, stat]]  # type: ignore
                 single.columns = single.columns.droplevel(2)
                 results[(stat, trend)].append(single)
 
@@ -174,7 +175,8 @@ for key in results:
     stoch_trends = mi_columns.levels[1]
     for st in stoch_trends:
         for df in result_dfs:
-            single = df.loc[:, pd.IndexSlice[:, st]]
+            # TODO: Bug in pandas-stubs prevents valid index types
+            single = df.loc[:, pd.IndexSlice[:, st]]  # type: ignore
             single.columns = single.columns.droplevel(1)
             single = single.dropna(axis=1, how="all")
             joined[key + (st,)].append(single)
@@ -208,8 +210,10 @@ NSTOCHASTICS = {int(final_key[-1]) for final_key in final}
 quantiles_d = defaultdict(list)
 pval_data = {}
 for multi_key in product(STATISTICS, ALL_TRENDS, NSTOCHASTICS):
-    pval_data[multi_key] = final[multi_key].loc[:, 2000]
-    temp_series = final[multi_key].loc[:, 2000].mean(1)
+    # TODO: Bug in pandas-stubs prevents valid index types
+    pval_data[multi_key] = final[multi_key].loc[:, 2000]  # type: ignore
+    # TODO: Bug in pandas-stubs prevents valid index types
+    temp_series = final[multi_key].loc[:, 2000].mean(1)  # type: ignore
     temp_series.name = multi_key[-1]
     quantiles_d[multi_key[:-1]].append(temp_series)
 quantiles = {}

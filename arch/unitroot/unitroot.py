@@ -482,12 +482,6 @@ class UnitRootTest(metaclass=ABCMeta):
         if self._lags is not None and self._lags < 0:
             raise ValueError("lags must be non-negative.")
         self._valid_trends = list(valid_trends)
-        if trend == "nc":  # type: ignore
-            warnings.warn(
-                'Trend "nc" is deprecated and has been replaced with "n" (for none).',
-                FutureWarning,
-            )
-            trend = "n"
         if trend not in self.valid_trends:
             raise ValueError("trend not understood")
         self._trend = trend

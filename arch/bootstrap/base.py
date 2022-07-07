@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 from typing import (
     Any,
     Callable,
@@ -453,7 +452,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
                     )
         self._index: BootstrapIndexT = np.arange(self._num_items)
 
-        self._parameters: list[int | ArrayLike] = []
+        self._parameters: list[int] = []
         self.pos_data: tuple[AnyArray | pd.Series | pd.DataFrame, ...] = args
         self.kw_data: dict[str, AnyArray | pd.Series | pd.DataFrame] = kwargs
         self.data: tuple[
@@ -990,9 +989,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         bs
             Bootstrap instance
         """
-        pos_arguments: list[int | ArrayLike] = copy.deepcopy(self._parameters)
-        pos_arguments.extend(args)
-        bs = self.__class__(*pos_arguments, random_state=None, seed=seed, **kwargs)
+        bs = self.__class__(*args, random_state=None, seed=seed, **kwargs)
         return bs
 
     def apply(
@@ -1579,6 +1576,32 @@ class CircularBlockBootstrap(IIDBootstrap):
         super().__init__(*args, random_state=random_state, seed=seed, **kwargs)
         self.block_size: int = block_size
         self._parameters = [block_size]
+
+    def clone(
+        self,
+        *args: ArrayLike,
+        seed: None | int | Generator | RandomState = None,
+        **kwargs: ArrayLike,
+    ) -> CircularBlockBootstrap:
+        """
+        Clones the bootstrap using different data with a fresh prng.
+
+        Parameters
+        ----------
+        args
+            Positional arguments to bootstrap
+        seed
+            The seed value to pass to the closed generator
+        kwargs
+            Keyword arguments to bootstrap
+
+        Returns
+        -------
+        bs
+            Bootstrap instance
+        """
+        block_size = self._parameters[0]
+        return self.__class__(block_size, *args, random_state=None, seed=seed, **kwargs)
 
     def __str__(self) -> str:
         txt = self._name

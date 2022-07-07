@@ -149,7 +149,7 @@ class DocStringInheritor(type):
                     for mro_cls in base.mro()
                     if hasattr(mro_cls, attr)
                 ):
-                    doc = getattr(getattr(mro_cls, attr), "__doc__")
+                    doc = getattr(mro_cls, attr).__doc__
                     if doc:
                         if isinstance(attribute, cached_property):
                             attribute.func.__doc__ = doc
@@ -297,8 +297,8 @@ def find_index(s: AnyPandas, index: int | DateLike) -> int:
         return int(index)
     assert isinstance(index, (str, dt.datetime, np.datetime64, Timestamp))
     date_index = to_datetime(index, errors="coerce")
-
-    if date_index is NaT:
+    # TODO: Bug in pandas-stubs does not return correct types when errors=coerce
+    if date_index is NaT:  # type: ignore
         raise ValueError(f"{index} cannot be converted to datetime")
     loc = np.argwhere(s.index == date_index).squeeze()
     if loc.size == 0:
