@@ -23,7 +23,7 @@ build_script:
   - cmd: SET PATH=C:\Py;C:\Py\Scripts;C:\Py\Library\bin;%PATH%
   - cmd: conda config --set always_yes yes
   - cmd: conda update conda --quiet
-  - cmd: conda install numpy cython pytest pandas scipy patsy statsmodels matplotlib nbconvert nbformat pip pyyaml setuptools pyqt pyparsing --quiet
+  - cmd: conda install numpy cython "pytest>=7,<7.1" pandas scipy patsy statsmodels matplotlib nbconvert nbformat pip pyyaml setuptools pyqt pyparsing --quiet
   - cmd: conda install -c numba numba llvmlite
   - cmd: python -m pip install --upgrade pip
   - cmd: pip install pytest-xdist!=1.30 property_cached

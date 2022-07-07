@@ -2,7 +2,7 @@
 setuptools_scm>=6.4.2,<7.0.0
 
 # Performance
-cython>=0.29.24
+cython>=0.29.30
 numba>=0.49,!=0.50.*
 
 # Graphics
@@ -10,18 +10,18 @@ matplotlib>=3
 seaborn
 
 # Tests
-pytest>=5
+pytest>=7,<7.1
 pytest-xdist
 
 # formatting
-black[jupyter]==22.3.0
-isort
+black[jupyter]==22.6.0
+isort~=5.0
 flake8
 mypy
 
 # Documentation
 ipython>=7
-sphinx>=3
+sphinx>=5
 sphinx_material
 nbsphinx
 jupyter

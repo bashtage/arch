@@ -179,6 +179,8 @@ class _CommonCointegrationResults:
         float
             The estimated long-run variance of the residual.
 
+        Notes
+        -----
         The long-run variance is estimated from the model residuals
         using the same kernel used to estimate the parameter
         covariance.
