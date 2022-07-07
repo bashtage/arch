@@ -56,7 +56,7 @@ class cached_property(property):
     def __init__(self, func) -> None:
         self.cache: Mapping[str, Any] = weakref.WeakKeyDictionary()
         self.func: Callable[[], Any] = func
-        self._update_wrapper(func)  # type: ignore
+        self._update_wrapper(func)
 
     def __get__(self, obj, cls):
         if obj is None:

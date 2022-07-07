@@ -573,10 +573,11 @@ class IIDBootstrap(metaclass=DocStringInheritor):
     @state.setter
     def state(self, value: RandomStateState | Mapping[str, Any]) -> None:
         if isinstance(self._generator, Generator):
-            self._generator.bit_generator.state = value  # type: ignore
+            assert isinstance(value, Mapping)
+            self._generator.bit_generator.state = value
         else:
             assert isinstance(self._generator, RandomState)
-            self._generator.set_state(value)  # type: ignore
+            self._generator.set_state(cast(RandomStateState, value))
 
     def get_state(self) -> RandomStateState | Mapping[str, Any]:
         """

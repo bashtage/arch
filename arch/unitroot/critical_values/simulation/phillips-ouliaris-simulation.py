@@ -297,8 +297,7 @@ def worker(
         nsim = min(remaining, block_size)
         res_block = block(gen, statistic, nsim, trend)
         loc = EX_SIZE - remaining
-        # TODO: Bug in pandas-stubs prevents assignment form ndarray
-        results.iloc[loc : loc + nsim] = res_block  # type: ignore
+        results.iloc[loc : loc + nsim] = res_block
         remaining -= block_size
         remaining = max(0, remaining)
         elapsed = dt.datetime.now() - start
@@ -401,7 +400,7 @@ if __name__ == "__main__":
     print(f"Running on {BLUE}{njobs}{RESET} CPUs")
     if njobs == 1:
         for job in jobs:
-            worker(*job)  # type: ignore[misc]
+            worker(*job)
     else:
         Parallel(verbose=50, n_jobs=njobs)(
             delayed(worker)(gen, statistic, trend, idx, fullfile)
