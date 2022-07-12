@@ -303,7 +303,7 @@ def find_index(s: AnyPandas, index: int | DateLike) -> int:
     assert isinstance(index, (str, dt.datetime, np.datetime64, Timestamp))
     date_index = to_datetime(index, errors="coerce")
     # TODO: Bug in pandas-stubs does not return correct types when errors=coerce
-    if date_index is NaT:  # typo: ignore
+    if date_index is NaT:
         raise ValueError(f"{index} cannot be converted to datetime")
     loc = np.argwhere(s.index == date_index).squeeze()
     if loc.size == 0:
