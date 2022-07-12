@@ -614,7 +614,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             self._generator.bit_generator.state = state
         else:
             assert isinstance(self._generator, RandomState)
-            self._generator.set_state(state)  # typo: ignore
+            self._generator.set_state(state)
 
     def seed(self, value: int | list[int] | Uint32Array) -> None:
         """
