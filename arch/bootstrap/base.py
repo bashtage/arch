@@ -595,7 +595,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         )
         return _get_prng_state(self._generator)
 
-    def set_state(self, state: RandomStateState | Mapping[str, Any]) -> None:
+    def set_state(self, state: RandomStateState | dict[str, Any]) -> None:
         """
         Sets the state of the bootstrap's random number generator
 
@@ -614,7 +614,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
             self._generator.bit_generator.state = state
         else:
             assert isinstance(self._generator, RandomState)
-            self._generator.set_state(state)  # type: ignore
+            self._generator.set_state(state)  # typo: ignore
 
     def seed(self, value: int | list[int] | Uint32Array) -> None:
         """

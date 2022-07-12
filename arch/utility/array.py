@@ -214,34 +214,39 @@ def date_to_index(
     )
     if not np.all((np.diff(values).astype(dtype=np.int64)) > 0):
         raise ValueError("date_index is not monotonic and unique")
-    if not isinstance(date, (dt.datetime, np.datetime64, str)):
-        raise ValueError("date must be a datetime, datetime64 or string")
-    elif isinstance(date, Timestamp):
+    if not isinstance(date, (dt.datetime, np.datetime64, str, Timestamp)):
+        raise ValueError("date must be a datetime, datetime64, Timestamp or string")
+
+    if isinstance(date, Timestamp):
         assert isinstance(date_index, DatetimeIndex)
         if date_index.tzinfo is not None:
             date = date.tz_convert("GMT").tz_localize(None)
-        date = date.to_datetime64()
+        date_64 = date.to_datetime64()
     elif isinstance(date, dt.datetime):
-        date = np.datetime64(date)
+        date_64 = np.datetime64(date)
     elif isinstance(date, str):
-        orig_date = date
-        try:
-            date = np.datetime64(to_datetime(date, errors="coerce"))
-        except (ValueError, TypeError):
-            raise ValueError("date:" + orig_date + " cannot be parsed to a date.")
+        pd_dt = to_datetime(date, errors="coerce")
+        if pd_dt is NaT:
+            raise ValueError(f"date: {date} cannot be parsed to a date.")
+        assert isinstance(pd_dt, Timestamp)
+        date_64 = pd_dt.to_datetime64()
+    else:
+        assert isinstance(date, np.datetime64)
+        date_64 = date
 
     if isinstance(date_index, DatetimeIndex):
         if date_index.tzinfo is not None:
             date_index = date_index.tz_convert("GMT").tz_localize(None)
+        date_index = date_index.to_numpy()
 
     date_index = np.asarray(date_index)
 
-    locs = np.nonzero(date_index <= date)[0]
+    locs = np.nonzero(date_index <= date_64)[0]
     if locs.shape[0] == 0:
         return 0
 
     loc = locs.max()
-    in_array = np.any(date_index == date)
+    in_array = np.any(date_index == date_64)
     if not in_array:
         loc += 1
 
@@ -298,7 +303,7 @@ def find_index(s: AnyPandas, index: int | DateLike) -> int:
     assert isinstance(index, (str, dt.datetime, np.datetime64, Timestamp))
     date_index = to_datetime(index, errors="coerce")
     # TODO: Bug in pandas-stubs does not return correct types when errors=coerce
-    if date_index is NaT:  # type: ignore
+    if date_index is NaT:  # typo: ignore
         raise ValueError(f"{index} cannot be converted to datetime")
     loc = np.argwhere(s.index == date_index).squeeze()
     if loc.size == 0:

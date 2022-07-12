@@ -160,7 +160,8 @@ for file_type in FILE_TYPES:
             statistics = mi_cols.levels[2]
             for stat in statistics:
                 # TODO: Bug in pandas-stubs prevents valid index types
-                single = temp.loc[:, pd.IndexSlice[:, :, stat]]  # type: ignore
+                index_slice = pd.IndexSlice[:, :, stat]
+                single = temp.loc[:, index_slice]  # type: ignore
                 single.columns = single.columns.droplevel(2)
                 results[(stat, trend)].append(single)
 
