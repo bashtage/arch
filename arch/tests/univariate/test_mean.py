@@ -1,4 +1,3 @@
-from distutils.version import LooseVersion
 from io import StringIO
 from itertools import product
 from string import ascii_lowercase
@@ -15,6 +14,7 @@ from numpy.testing import (
     assert_array_almost_equal,
     assert_equal,
 )
+from packaging.version import parse
 import pandas as pd
 from pandas.testing import assert_frame_equal, assert_series_equal
 import pytest
@@ -71,7 +71,7 @@ except ImportError:
 
 RTOL = 1e-4 if struct.calcsize("P") < 8 else 1e-6
 DISPLAY: Literal["off"] = "off"
-SP_LT_14 = LooseVersion(scipy.__version__) < LooseVersion("1.4")
+SP_LT_14 = parse(scipy.__version__) < parse("1.4")
 SP500 = 100 * sp500.load()["Adj Close"].pct_change().dropna()
 
 

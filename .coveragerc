@@ -28,6 +28,9 @@ exclude_lines =
     elif TYPE_CHECKING
     # Cython function declarations
     cdef
+    # Cython functions with void
+    cdef void
+
 
 include = */arch/*
 omit =
