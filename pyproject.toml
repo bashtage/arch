@@ -1,8 +1,8 @@
 [build-system]
 requires = [
-  "setuptools>=45",
+  "setuptools>=61",
   "wheel",
-  "setuptools_scm[toml]>=6.2",
+  "setuptools_scm[toml]>=7,<8",
   "oldest-supported-numpy",
   "numpy; python_version>='3.11'",
   "Cython>=0.29.24"

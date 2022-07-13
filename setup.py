@@ -1,8 +1,9 @@
 from setuptools import Command, Extension, find_packages, setup
 from setuptools.dist import Distribution
+from setuptools.errors import CCompilerError, ExecError, PlatformError
 
 from collections import defaultdict
-from distutils.errors import CCompilerError, DistutilsExecError, DistutilsPlatformError
+
 import fnmatch
 import os
 import pathlib
@@ -201,8 +202,8 @@ try:
     run_setup(binary=build_binary)
 except (
     CCompilerError,
-    DistutilsExecError,
-    DistutilsPlatformError,
+    ExecError,
+    PlatformError,
     OSError,
     ValueError,
 ):

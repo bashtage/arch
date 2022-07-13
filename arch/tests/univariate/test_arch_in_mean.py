@@ -123,6 +123,20 @@ def test_supported(good_vol):
     assert res2.params.shape == (n,)
 
 
+def test_egarch_bad_params():
+    aim = ARCHInMean(SP500, volatility=EGARCH(), form="log")
+    res = aim.fit(disp=False)
+    sv = res.params.copy()
+    sv["omega"] = 4
+    sv["alpha[1]"] = 0.75
+    sv["beta[1]"] = 0.999998
+    res2 = aim.fit(disp=False, starting_values=sv)
+    n = res2.params.shape[0]
+    assert res.param_cov.shape == (n, n)
+    res3 = aim.fit(disp=False, starting_values=res.params)
+    assert res3.params.shape == (n,)
+
+
 @pytest.mark.parametrize("form", ["log", "vol", 1.5])
 def test_simulate_arx(form):
     normal = Normal(seed=np.random.RandomState(0))
