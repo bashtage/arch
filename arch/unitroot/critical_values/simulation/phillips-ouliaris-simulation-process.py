@@ -94,7 +94,7 @@ def estimate_cv_regression(
     return out, float(tau.min())
 
 
-def fit_pval_model(quantiles: pd.DataFrame) -> PvalueResult:
+def fit_pval_model(quantiles: pd.DataFrame | pd.Series) -> PvalueResult:
     percentiles = quantiles.index.to_numpy()
     lhs = stats.norm.ppf(percentiles)
     data = np.asarray(quantiles)
@@ -252,12 +252,12 @@ pval_tau_star = {}
 pval_tau_min = {}
 pval_tau_max = {}
 for pval_key in pval_data:
-    temp = pval_data[pval_key].copy()
+    pval_series = pval_data[pval_key].copy()
     if pval_key[0] in ("p_z", "p_u"):
-        temp.index = 1 - temp.index
-        temp = -1 * temp
-    temp = temp.sort_index()
-    res = fit_pval_model(temp)
+        pval_series.index = 1 - pval_series.index
+        pval_series = -1 * pval_series
+    pval_series = pval_series.sort_index()
+    res = fit_pval_model(pval_series)
     out_key = (stat_names[pval_key[0]],) + pval_key[1:]
     pval_results[out_key] = res
     pval_large_p[out_key] = res.large_p
