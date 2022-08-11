@@ -1662,9 +1662,11 @@ class ARCHModelFixedResult(_SummaryRepr):
             Result of ARCH-LM test
         """
         resids = self.resid
-        nobs = resids.shape[0]
         if standardized:
             resids = resids / np.asarray(self.conditional_volatility)
+        # GH 599: drop missing observations
+        resids = resids[~np.isnan(resids)]
+        nobs = resids.shape[0]
         resid2 = resids**2
         lags = (
             int(np.ceil(12.0 * np.power(nobs / 100.0, 1 / 4.0)))
@@ -1672,6 +1674,8 @@ class ARCHModelFixedResult(_SummaryRepr):
             else lags
         )
         lags = max(min(resids.shape[0] // 2 - 1, lags), 1)
+        if resid2.shape[0] < 3:
+            raise ValueError("Test requires at least 3 non-nan observations")
         lag, lead = lagmat(resid2, lags, "both", "sep", False)
         lag = add_constant(lag)
         res = OLS(lead, lag).fit()

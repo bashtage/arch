@@ -1346,3 +1346,14 @@ def test_figarch_power():
     alt_fiavgarch = arch_model(SP500, vol="FIGARCH", power=1.0)
     alt_fiavgarch_res = alt_fiavgarch.fit(disp=DISPLAY)
     assert np.abs(alt_fiavgarch_res.loglikelihood - fiavgarch_res.loglikelihood) < 1.0
+
+
+@pytest.mark.parametrize("lags", [1, 5, [1, 4]])
+def test_arch_lm_ar_model(lags):
+    rs = RandomState(1234)
+    y = rs.standard_normal(1000)
+    model = arch_model(y, mean="AR", lags=lags, vol="GARCH", rescale=True)
+    fit = model.fit()
+    val = fit.arch_lm_test()
+    assert val.stat > 0
+    assert val.pval <= 1
