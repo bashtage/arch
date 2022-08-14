@@ -692,7 +692,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         Returns
         -------
         params : ndarray
-            Array of estiamted parameters
+            Array of estimated parameters
         """
         assert self._fit_y is not None
         nobs = self._fit_y.shape[0]
@@ -1738,7 +1738,7 @@ class ARCHInMean(ARX):
         mp, vp, dp = self._parse_parameters(parameters)
         # 2. Initialize volatility update
         self._volatility_updater.initialize_update(vp, backcast, nobs)
-        # 3. Compute recusions
+        # 3. Compute recursions
         power = self._form_power / 2.0
         resids = self._recursion.recursion(
             self._fit_y,

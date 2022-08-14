@@ -53,7 +53,7 @@ class Distribution(metaclass=ABCMeta):
         if random_state is not None:
             if seed is not None:
                 raise ValueError(
-                    "seed cannot be simultantoulsy used with random_state. Use "
+                    "seed cannot be simultaneously used with random_state. Use "
                     "seed to future proof your code."
                 )
             if not isinstance(random_state, RandomState):

@@ -198,7 +198,7 @@ class VolatilityProcess(metaclass=ABCMeta):
 
     @property
     def name(self) -> str:
-        """The name of the volatilty process"""
+        """The name of the volatility process"""
         return self._name
 
     @property

@@ -202,7 +202,7 @@ def garch_core(
     Parameters
     ----------
     t : int
-        The time perdiod to update
+        The time period to update
     parameters : ndarray
         Model parameters
     resids : ndarray
