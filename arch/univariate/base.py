@@ -61,7 +61,7 @@ __all__ = [
     "format_float_fixed",
 ]
 
-CONVERGENCE_WARNGING: str = """\
+CONVERGENCE_WARNING: str = """\
 WARNING: The optimizer did not indicate successful convergence. The message was {msg}.
 See convergence_flag.
 """
@@ -1919,7 +1919,7 @@ class ARCHModelResult(ARCHModelFixedResult):
 
         if self.convergence_flag:
             string_message = self._optim_output.message
-            extra_text.append(CONVERGENCE_WARNGING.format(msg=string_message))
+            extra_text.append(CONVERGENCE_WARNING.format(msg=string_message))
 
         smry.add_extra_txt(extra_text)
         return smry
@@ -1998,7 +1998,7 @@ class ARCHModelResult(ARCHModelFixedResult):
     @property
     def optimization_result(self) -> OptimizeResult:
         """
-        Information about the covergence of the loglikelihood optimization
+        Information about the convergence of the loglikelihood optimization
 
         Returns
         -------
