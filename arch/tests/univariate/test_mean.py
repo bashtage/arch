@@ -70,7 +70,8 @@ except ImportError:
     HAS_MATPLOTLIB = False
 
 RTOL = 1e-4 if struct.calcsize("P") < 8 else 1e-6
-DISPLAY: Literal["off"] = "off"
+DISPLAY: Literal["off", "final"] = "off"
+UPDATE_FREQ = 0 if DISPLAY == "off" else 3
 SP_LT_14 = parse(scipy.__version__) < parse("1.4")
 SP500 = 100 * sp500.load()["Adj Close"].pct_change().dropna()
 
@@ -180,7 +181,7 @@ class TestMeanModel:
         # assert_frame_equal(direct, forecasts)
         garch = GARCH()
         zm.volatility = garch
-        zm.fit(update_freq=0, disp=DISPLAY)
+        zm.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
         assert isinstance(zm.__repr__(), str)
         assert isinstance(zm.__str__(), str)
         assert "<strong>" in zm._repr_html_()
@@ -453,7 +454,7 @@ class TestMeanModel:
         assert "Df Model:                            6" in str(summ)
         assert "Constant Variance" in str(summ)
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
-        res = ar.fit(disp=DISPLAY, update_freq=5, cov_type="classic")
+        res = ar.fit(disp=DISPLAY, update_freq=UPDATE_FREQ, cov_type="classic")
         assert isinstance(res.param_cov, pd.DataFrame)
         sims = res.forecast(horizon=5, method="simulation", reindex=False)
         assert isinstance(sims.simulations.residual_variances, np.ndarray)
@@ -471,7 +472,7 @@ class TestMeanModel:
     @pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
     def test_ar_plot(self):
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
-        res = ar.fit(disp=DISPLAY, update_freq=5, cov_type="mle")
+        res = ar.fit(disp=DISPLAY, update_freq=UPDATE_FREQ, cov_type="mle")
         res.plot()
         res.plot(annualize="D")
         res.plot(annualize="W")
@@ -502,7 +503,7 @@ class TestMeanModel:
         res.summary()
         assert isinstance(res.optimization_result, OptimizeResult)
         am.volatility = ARCH(p=2)
-        results = am.fit(update_freq=0, disp=DISPLAY)
+        results = am.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
         assert isinstance(results.pvalues, pd.Series)
         assert_equal(
             list(results.pvalues.index),
@@ -517,7 +518,7 @@ class TestMeanModel:
         assert summ[:10] == res_repr[:10]
 
         am.volatility = ARCH(p=2)
-        results = am.fit(update_freq=0, disp=DISPLAY)
+        results = am.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
         assert isinstance(results.pvalues, pd.Series)
         assert_equal(
             list(results.pvalues.index),
@@ -539,7 +540,7 @@ class TestMeanModel:
         am = ARX(y=y, x=x)
         am.fit(disp=DISPLAY).summary()
         am.volatility = ARCH(p=2)
-        results = am.fit(update_freq=0, disp=DISPLAY)
+        results = am.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
         assert isinstance(results.pvalues, pd.Series)
         assert_equal(
             list(results.pvalues.index),
@@ -616,21 +617,21 @@ class TestMeanModel:
 
     def test_summary(self):
         am = arch_model(self.y, mean="ar", lags=[1, 3, 5])
-        res = am.fit(update_freq=0, disp=DISPLAY)
+        res = am.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
         res.summary()
 
         am = arch_model(self.y, mean="ar", lags=[1, 3, 5], dist="studentst")
         assert isinstance(am.distribution, StudentsT)
-        res = am.fit(update_freq=0, disp=DISPLAY)
+        res = am.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
         res.summary()
 
         am = arch_model(self.y, mean="ar", lags=[1, 3, 5], dist="ged")
         assert isinstance(am.distribution, GeneralizedError)
-        res = am.fit(update_freq=0, disp=DISPLAY)
+        res = am.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
         res.summary()
 
         am = arch_model(self.y, mean="ar", lags=[1, 3, 5], dist="skewt")
-        res = am.fit(update_freq=0, disp=DISPLAY)
+        res = am.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
         assert isinstance(am.distribution, SkewStudent)
         res.summary()
 
@@ -703,8 +704,8 @@ class TestMeanModel:
 
     def test_starting_values(self):
         am = arch_model(self.y, mean="ar", lags=[1, 3, 5])
-        res = am.fit(cov_type="classic", update_freq=0, disp=DISPLAY)
-        res2 = am.fit(starting_values=res.params, update_freq=0, disp=DISPLAY)
+        res = am.fit(cov_type="classic", update_freq=UPDATE_FREQ, disp=DISPLAY)
+        res2 = am.fit(starting_values=res.params, update_freq=UPDATE_FREQ, disp=DISPLAY)
         assert isinstance(res, ARCHModelResult)
         assert isinstance(res2, ARCHModelResult)
         assert len(res.params) == 7
@@ -713,21 +714,21 @@ class TestMeanModel:
         am = arch_model(self.y, mean="zero")
         sv = np.array([1.0, 0.3, 0.8])
         with warnings.catch_warnings(record=True) as w:
-            am.fit(starting_values=sv, update_freq=0, disp=DISPLAY)
+            am.fit(starting_values=sv, update_freq=UPDATE_FREQ, disp=DISPLAY)
             assert_equal(len(w), 1)
 
     def test_no_param_volatility(self):
         cm = ConstantMean(self.y)
         cm.volatility = EWMAVariance()
-        cm.fit(update_freq=0, disp=DISPLAY)
+        cm.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
         cm.volatility = RiskMetrics2006()
-        cm.fit(update_freq=0, disp=DISPLAY)
+        cm.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
 
         ar = ARX(self.y, lags=5)
         ar.volatility = EWMAVariance()
-        ar.fit(update_freq=0, disp=DISPLAY)
+        ar.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
         ar.volatility = RiskMetrics2006()
-        ar.fit(update_freq=0, disp=DISPLAY)
+        ar.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
         assert "tau0" in str(ar.volatility)
         assert "tau1" in str(ar.volatility)
         assert "kmax" in str(ar.volatility)
@@ -735,11 +736,11 @@ class TestMeanModel:
     def test_egarch(self):
         cm = ConstantMean(self.y)
         cm.volatility = EGARCH()
-        res = cm.fit(update_freq=0, disp=DISPLAY)
+        res = cm.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
         summ = res.summary()
         assert "Df Model:                            1" in str(summ)
         cm.distribution = StudentsT()
-        cm.fit(update_freq=0, disp=DISPLAY)
+        cm.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
 
     def test_multiple_lags(self):
         """Smoke test to ensure models estimate with multiple lags"""
@@ -747,30 +748,30 @@ class TestMeanModel:
         cm = ConstantMean(self.y)
         for name, process in vp.items():
             cm.volatility = process()
-            cm.fit(update_freq=0, disp=DISPLAY)
+            cm.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
             for p in [1, 2, 3]:
                 for o in [1, 2, 3]:
                     for q in [1, 2, 3]:
                         if name in ("arch",):
                             cm.volatility = process(p=p + o + q)
-                            cm.fit(update_freq=0, disp=DISPLAY)
+                            cm.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
                         elif name in ("harch",):
                             cm.volatility = process(lags=[p, p + o, p + o + q])
-                            cm.fit(update_freq=0, disp=DISPLAY)
+                            cm.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
                         else:
                             cm.volatility = process(p=p, o=o, q=q)
-                            cm.fit(update_freq=0, disp=DISPLAY)
+                            cm.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
 
     def test_first_last_obs(self):
         ar = ARX(self.y, lags=5, hold_back=100)
-        res = ar.fit(update_freq=0, disp=DISPLAY)
+        res = ar.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
         resids = res.resid
         resid_copy = resids.copy()
         resid_copy[:100] = np.nan
         assert_equal(resids, resid_copy)
 
         ar.volatility = GARCH()
-        res = ar.fit(update_freq=0, disp=DISPLAY)
+        res = ar.fit(update_freq=UPDATE_FREQ, disp=DISPLAY)
         resids = res.resid
         resid_copy = resids.copy()
         resid_copy[:100] = np.nan
@@ -778,7 +779,7 @@ class TestMeanModel:
 
         ar = ARX(self.y, lags=5)
         ar.volatility = GARCH()
-        res = ar.fit(update_freq=0, last_obs=500, disp=DISPLAY)
+        res = ar.fit(update_freq=UPDATE_FREQ, last_obs=500, disp=DISPLAY)
         resids = res.resid
         resid_copy = resids.copy()
         resid_copy[500:] = np.nan
@@ -786,7 +787,7 @@ class TestMeanModel:
 
         ar = ARX(self.y, lags=5, hold_back=100)
         ar.volatility = GARCH()
-        res = ar.fit(update_freq=0, last_obs=500, disp=DISPLAY)
+        res = ar.fit(update_freq=UPDATE_FREQ, last_obs=500, disp=DISPLAY)
         resids = res.resid
         resid_copy = resids.copy()
         resid_copy[:100] = np.nan
@@ -802,7 +803,7 @@ class TestMeanModel:
 
         ar = ARX(self.y, lags=5)
         ar.volatility = GARCH()
-        res = ar.fit(update_freq=0, last_obs=500, disp=DISPLAY)
+        res = ar.fit(update_freq=UPDATE_FREQ, last_obs=500, disp=DISPLAY)
         resids = res.resid
         resid_copy = resids.copy()
         resid_copy[:5] = np.nan
@@ -878,17 +879,21 @@ class TestMeanModel:
         assert_equal(res.loglikelihood, fixed_res.loglikelihood)
         assert_equal(res.num_params, fixed_res.num_params)
 
-    def test_output_options(self):
+    @pytest.mark.parametrize("display", ["off", "final"])
+    def test_output_options(self, display):
         am = arch_model(self.y_series)
         orig_stdout = sys.stdout
 
         try:
             sio = StringIO()
             sys.stdout = sio
-            am.fit(disp=DISPLAY)
+            am.fit(disp=display)
             sio.seek(0)
             output = sio.read()
-            assert len(output) == 0
+            if display == "off":
+                assert len(output) == 0
+            else:
+                assert len(output) > 0
         finally:
             sys.stdout = orig_stdout
 
@@ -1341,10 +1346,10 @@ def test_figarch_power():
     base = ConstantMean(SP500, volatility=FIGARCH())
     fiavgarch = ConstantMean(SP500, volatility=FIGARCH(power=1.0))
     base_res = base.fit(disp=DISPLAY)
-    fiavgarch_res = fiavgarch.fit(disp=DISPLAY)
+    fiavgarch_res = fiavgarch.fit(disp=DISPLAY, update_freq=UPDATE_FREQ)
     assert np.abs(base_res.loglikelihood - fiavgarch_res.loglikelihood) > 1.0
     alt_fiavgarch = arch_model(SP500, vol="FIGARCH", power=1.0)
-    alt_fiavgarch_res = alt_fiavgarch.fit(disp=DISPLAY)
+    alt_fiavgarch_res = alt_fiavgarch.fit(disp=DISPLAY, update_freq=UPDATE_FREQ)
     assert np.abs(alt_fiavgarch_res.loglikelihood - fiavgarch_res.loglikelihood) < 1.0
 
 
