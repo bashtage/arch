@@ -15,7 +15,7 @@ else
   CMD="python -m pip install numpy"
 fi
 
-python -m pip install --upgrade pip setuptools wheel
+python -m pip install --upgrade pip "setuptools>=61,<64" wheel
 python -m pip install cython pytest pytest-xdist coverage pytest-cov ipython jupyter notebook nbconvert "property_cached>=1.6.3" black isort flake8 nbconvert setuptools_scm
 
 if [[ -n ${NUMPY} ]]; then CMD="$CMD~=${NUMPY}"; fi;
