@@ -32,7 +32,7 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - script: |
-      python -m pip install --upgrade pip "setuptools>=61,<64" wheel
+      python -m pip install --upgrade pip "setuptools>=61" wheel
       python -m pip install -r requirements.txt
       python -m pip install -r requirements-dev.txt
     displayName: 'Install dependencies'

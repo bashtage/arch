@@ -1,9 +1,9 @@
 from setuptools import Command, Extension, find_packages, setup
+from setuptools.command.build_ext import build_ext as _build_ext
 from setuptools.dist import Distribution
 from setuptools.errors import CCompilerError, ExecError, PlatformError
 
 from collections import defaultdict
-
 import fnmatch
 import os
 import pathlib
@@ -19,7 +19,6 @@ if CYTHON_COVERAGE:
 
 try:
     from Cython.Build import cythonize
-    from Cython.Distutils.build_ext import build_ext as _build_ext
 
     CYTHON_INSTALLED = True
 except ImportError:
@@ -29,7 +28,6 @@ except ImportError:
             "cython is required for cython coverage. Unset " "ARCH_CYTHON_COVERAGE"
         )
 
-    from setuptools.command.build_ext import build_ext as _build_ext
 
 FAILED_COMPILER_WARNING = """
 ******************************************************************************
