@@ -888,7 +888,10 @@ class TestMeanModel:
             am.fit(disp=DISPLAY)
             sio.seek(0)
             output = sio.read()
-            assert len(output) == 0
+            if DISPLAY == "off":
+                assert len(output) == 0
+            else:
+                assert len(output) > 0
         finally:
             sys.stdout = orig_stdout
 
