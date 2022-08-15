@@ -70,7 +70,7 @@ except ImportError:
     HAS_MATPLOTLIB = False
 
 RTOL = 1e-4 if struct.calcsize("P") < 8 else 1e-6
-DISPLAY: Literal["off"] = "off"
+DISPLAY: Literal["off", "final"] = "final"
 SP_LT_14 = parse(scipy.__version__) < parse("1.4")
 SP500 = 100 * sp500.load()["Adj Close"].pct_change().dropna()
 
@@ -753,13 +753,13 @@ class TestMeanModel:
                     for q in [1, 2, 3]:
                         if name in ("arch",):
                             cm.volatility = process(p=p + o + q)
-                            cm.fit(update_freq=0, disp=DISPLAY)
+                            cm.fit(update_freq=5, disp=DISPLAY)
                         elif name in ("harch",):
                             cm.volatility = process(lags=[p, p + o, p + o + q])
-                            cm.fit(update_freq=0, disp=DISPLAY)
+                            cm.fit(update_freq=5, disp=DISPLAY)
                         else:
                             cm.volatility = process(p=p, o=o, q=q)
-                            cm.fit(update_freq=0, disp=DISPLAY)
+                            cm.fit(update_freq=5, disp=DISPLAY)
 
     def test_first_last_obs(self):
         ar = ARX(self.y, lags=5, hold_back=100)
@@ -1341,10 +1341,10 @@ def test_figarch_power():
     base = ConstantMean(SP500, volatility=FIGARCH())
     fiavgarch = ConstantMean(SP500, volatility=FIGARCH(power=1.0))
     base_res = base.fit(disp=DISPLAY)
-    fiavgarch_res = fiavgarch.fit(disp=DISPLAY)
+    fiavgarch_res = fiavgarch.fit(disp=DISPLAY, update_freq=5)
     assert np.abs(base_res.loglikelihood - fiavgarch_res.loglikelihood) > 1.0
     alt_fiavgarch = arch_model(SP500, vol="FIGARCH", power=1.0)
-    alt_fiavgarch_res = alt_fiavgarch.fit(disp=DISPLAY)
+    alt_fiavgarch_res = alt_fiavgarch.fit(disp=DISPLAY, update_freq=5)
     assert np.abs(alt_fiavgarch_res.loglikelihood - fiavgarch_res.loglikelihood) < 1.0
 
 
