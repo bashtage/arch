@@ -879,17 +879,18 @@ class TestMeanModel:
         assert_equal(res.loglikelihood, fixed_res.loglikelihood)
         assert_equal(res.num_params, fixed_res.num_params)
 
-    def test_output_options(self):
+    @pytest.mark.parametrize("display", ["off", "final"])
+    def test_output_options(self, display):
         am = arch_model(self.y_series)
         orig_stdout = sys.stdout
 
         try:
             sio = StringIO()
             sys.stdout = sio
-            am.fit(disp=DISPLAY)
+            am.fit(disp=display)
             sio.seek(0)
             output = sio.read()
-            if DISPLAY == "off":
+            if display == "off":
                 assert len(output) == 0
             else:
                 assert len(output) > 0
