@@ -384,7 +384,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         initial_value: None | float | Float64Array,
         conditional_variance: Float64Array,
     ) -> Float64Array:
-        max_lag = 0 if not self._lags.size else np.max(self._lags)
+        max_lag = 0 if not self._lags.size else int(np.max(self._lags))
         nobs_and_burn = errors.shape[0]
         y = np.zeros(nobs_and_burn)
         if initial_value is None:
@@ -1786,7 +1786,7 @@ class ARCHInMean(ARX):
         else:
             trans_vol = conditional_variance ** (self._form_power / 2)
 
-        max_lag = 0 if not self._lags.size else np.max(self._lags)
+        max_lag = 0 if not self._lags.size else int(np.max(self._lags))
         nobs_and_burn = errors.shape[0]
         y = np.zeros(nobs_and_burn)
         if initial_value is None:

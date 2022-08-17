@@ -13,6 +13,7 @@ seaborn
 # Tests
 pytest>=7,<7.1
 pytest-xdist
+pytest-cov
 
 # formatting
 black[jupyter]==22.6.0

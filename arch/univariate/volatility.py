@@ -1515,7 +1515,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         sigma2 = np.empty(nobs + burn)
         data = np.empty(nobs + burn)
-        max_lag = np.max(lags)
+        max_lag = int(np.max(lags))
         sigma2[:max_lag] = initial_value
         data[:max_lag] = np.sqrt(initial_value)
         for t in range(max_lag, nobs + burn):
