@@ -217,11 +217,13 @@ for multi_key in product(STATISTICS, ALL_TRENDS, NSTOCHASTICS):
     pval_data[multi_key] = final[multi_key].loc[:, 2000]  # type: ignore
     # TODO: Bug in pandas-stubs prevents valid index types
     temp_series = final[multi_key].loc[:, 2000].mean(1)  # type: ignore
-    temp_series.name = multi_key[-1]
+    # This is a series since there are many columns with 2000
+    temp_series.name = multi_key[-1]  # type: ignore
     quantiles_d[multi_key[:-1]].append(temp_series)
 quantiles = {}
 for key in quantiles_d:
-    quantiles[key] = pd.concat(quantiles_d[key], axis=1)
+    selected = cast(np.ndarray, quantiles_d[key])
+    quantiles[key] = pd.concat(selected, axis=1)
 
 
 plt.rc("figure", figsize=(16, 8))

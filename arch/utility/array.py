@@ -184,7 +184,7 @@ class AbstractDocStringInheritor(ConcreteClassMeta, DocStringInheritor):
 
 def date_to_index(
     date: str | dt.date | dt.datetime | np.datetime64 | Timestamp,
-    date_index: DatetimeIndex | NDArray,
+    date_index: DatetimeIndex | NDArray | Series[Timestamp],
 ) -> int:
     """
     Looks up a date in an array of dates

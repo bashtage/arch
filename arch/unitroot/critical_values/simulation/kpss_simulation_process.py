@@ -23,19 +23,19 @@ for k in ("c", "ct"):
     selected[v.index == 1.0] = True
     max_diff = 1.0
     while max_diff > 0.05:
-        xp = np.squeeze(v[selected].values)
-        yp = np.asarray(v[selected].index, dtype=np.float64)
-        x = np.squeeze(v.values)
-        y = np.asarray(v.index, dtype=np.float64)
+        xp = np.squeeze(np.asarray(v[selected].values))
+        yp = np.asarray(v[selected].index, dtype=float)
+        x = np.squeeze(np.asarray(v.values))
+        y = np.asarray(v.index, dtype=float)
         yi = np.interp(x, xp, yp)
         abs_diff = np.abs(y - yi)
         max_diff = np.max(abs_diff)
         if max_diff > 0.05:
             selected[np.where(abs_diff == max_diff)] = True
-    selected[v.index <= 10.0] = True
+    selected[np.asarray(v.index, dtype=float) <= 10.0] = True
 
     quantiles = list(np.squeeze(v[selected].index.values))
-    critical_values = list(np.squeeze(v[selected].values))
+    critical_values = list(np.squeeze(np.asarray(v[selected].values)))
     # Fix for first CV
     critical_values[0] = 0.0
     sio.write(k + " = (")
