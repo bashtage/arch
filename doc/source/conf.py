@@ -38,7 +38,6 @@ for example in examples:
 project = "arch"
 copyright = "2021, Kevin Sheppard"
 author = "Kevin Sheppard"
-language = "en"
 nitpicky = True
 
 # The short X.Y version
@@ -106,7 +105,7 @@ master_doc = "index"
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -275,7 +274,7 @@ intersphinx_mapping = {
     "pd": ("https://pandas.pydata.org/pandas-docs/stable/", None),
 }
 
-extlinks = {"issue": ("https://github.com/bashtage/arch/issues/%s", "GH")}
+extlinks = {"issue": ("https://github.com/bashtage/arch/issues/%s", "GH%s")}
 
 napoleon_use_admonition_for_examples = False
 napoleon_use_admonition_for_notes = False
