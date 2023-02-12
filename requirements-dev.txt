@@ -22,7 +22,7 @@ flake8
 mypy
 
 # Documentation
-ipython>=7
+ipython>=8.10.0
 sphinx>=5
 sphinx_material
 nbsphinx
