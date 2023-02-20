@@ -32,3 +32,5 @@ nbconvert
 numpydoc>=0.9.2
 sphinx-autodoc-typehints
 pygments>=2.7.4 # not directly required, pinned by Snyk to avoid a vulnerability
+numpy>=1.22.2 # not directly required, pinned by Snyk to avoid a vulnerability
+setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
