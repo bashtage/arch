@@ -228,7 +228,7 @@ if __name__ == "__main__":
 
     shuffle(remaining_configs)
     if njobs == 1:
-        for ((idx, rg), trend) in remaining_configs:
+        for (idx, rg), trend in remaining_configs:
             partial_block(rg, trend=trend, idx=idx)
     else:
         Parallel(verbose=50, n_jobs=njobs)(

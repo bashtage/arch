@@ -8,7 +8,7 @@ on the local machine.  This can be started using a command similar to
 Remote clusters can be used by modifying the call to Client.
 """
 import datetime
-from typing import cast
+from typing import Literal, cast
 
 from ipyparallel import Client
 from numpy import array, nan, ndarray, percentile, savez
@@ -29,7 +29,9 @@ with dview.sync_imports():
     from numpy.random import RandomState
 
 
-def wrapper(n: int, trend: str, b: int, seed: int = 0) -> ndarray:
+def wrapper(
+    n: int, trend: Literal["n", "c", "ct", "ctt"], b: int, seed: int = 0
+) -> ndarray:
     """
     Wraps and blocks the main simulation so that the maximum amount of memory
     can be controlled on multi processor systems when executing in parallel

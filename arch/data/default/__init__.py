@@ -4,7 +4,6 @@ from arch.data.utility import load_file
 
 
 def load() -> DataFrame:
-
     """
     Load the AAA and BAA rates used in the examples
 

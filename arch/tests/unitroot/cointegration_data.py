@@ -32,7 +32,6 @@ def data(request) -> Tuple[Float64Array, Float64Array]:
 
 @pytest.fixture(scope="module", params=[True, False], ids=["pandas", "numpy"])
 def trivariate_data(request) -> Tuple[ArrayLike2D, ArrayLike2D]:
-
     rs = np.random.RandomState([922019, 12882912, 192010, 10189, 109981])
     nobs = 1000
     burn = 100

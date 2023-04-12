@@ -4,7 +4,6 @@ from arch.data.utility import load_file
 
 
 def load() -> DataFrame:
-
     """
     Load the Fama-French factor data used in the examples
 

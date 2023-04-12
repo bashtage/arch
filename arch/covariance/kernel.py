@@ -180,7 +180,6 @@ class CovarianceEstimator(ABC):
         weights: ArrayLike | None = None,
         force_int: bool = False,
     ):
-
         self._x_orig = ensure2d(x, "x")
         self._x = np.asarray(self._x_orig)
         self._center = center

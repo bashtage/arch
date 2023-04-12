@@ -12,7 +12,6 @@ from arch.utility import cov_nw
 class TestVarNW:
     @classmethod
     def setup_class(cls):
-
         cls.rng = RandomState(12345)
         cls.cpi = log(dataset_loader(macrodata)["cpi"])
         cls.inflation = diff(cls.cpi)
