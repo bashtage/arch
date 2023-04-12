@@ -2,6 +2,11 @@
 Version 5
 =========
 
+Release 5.4
+===========
+- Compatability release with pandas 2.0
+- Add testing and wheel support for Python 3.11
+
 Release 5.3
 ===========
 - Fixed a bug in :func:`~arch.univariate.mean.arch_model` where ``power`` was
