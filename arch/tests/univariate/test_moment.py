@@ -47,7 +47,6 @@ def test_moment(dist, params):
         return (x**n) * exp(dist.loglikelihood(params, x, sigma2, True))
 
     for n in range(6):  # moments 0-5
-
         # complete moments
         m_quad = quad(f, -inf, inf, args=(n,))[0]
         m_method = dist.moment(n, params)

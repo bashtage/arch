@@ -16,7 +16,7 @@ pytest-xdist
 pytest-cov
 
 # formatting
-black[jupyter]==22.6.0
+black[jupyter]==23.3.0
 isort~=5.0
 flake8
 mypy

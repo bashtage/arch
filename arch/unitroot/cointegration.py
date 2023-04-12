@@ -1029,7 +1029,7 @@ class FullyModifiedOLS:
         center = 0.0
         tss_df = 0
         if "c" in self._trend:
-            center = self._y.mean()
+            center = float(self._y.mean())
             tss_df = 1
         y_centered = self._y - center
         ssr = resid.T @ resid

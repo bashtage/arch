@@ -41,6 +41,8 @@ jobs:
         MATPLOTLIB: 3.3.0
         NUMPY: 1.19.0
         PANDAS: 1.1.0
+      python_311:
+        python.version: '3.11'
       python_310:
         python.version: '3.10'
         test.install: true
@@ -61,6 +63,7 @@ jobs:
         NUMPY: 1.21.0
         USE_NUMBA: false
         MATPLOTLIB: 3.3.0
+        PANDAS: 1.5.0
         PYTEST_PATTERN: "(slow or not slow)"
       python_39_numpy_118:
         python.version: '3.9'

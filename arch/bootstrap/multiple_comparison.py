@@ -316,8 +316,8 @@ class MCS(MultipleComparison):
             List of column indices or names of the included models
         """
         self._has_been_computed()
-        included = self._pvalues.Pvalue > self.size
-        included = list(self._pvalues.index[included])
+        incl_loc = self._pvalues.Pvalue > self.size
+        included = list(self._pvalues.index[incl_loc])
         included.sort()
         return included
 
@@ -332,8 +332,8 @@ class MCS(MultipleComparison):
             List of column indices or names of the excluded models
         """
         self._has_been_computed()
-        excluded = self._pvalues.Pvalue <= self.size
-        excluded = list(self._pvalues.index[excluded])
+        excl_loc = self._pvalues.Pvalue <= self.size
+        excluded = list(self._pvalues.index[excl_loc])
         excluded.sort()
         return excluded
 

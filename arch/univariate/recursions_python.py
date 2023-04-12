@@ -766,7 +766,6 @@ class GARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         sigma2: Float64Array,
         var_bounds: Float64Array,
     ) -> None:
-
         loc = 0
         sigma2[t] = parameters[loc]
         loc += 1
@@ -814,7 +813,6 @@ class HARCHUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         sigma2: Float64Array,
         var_bounds: Float64Array,
     ) -> None:
-
         backcast = self.backcast
 
         sigma2[t] = parameters[0]
@@ -854,7 +852,6 @@ class EWMAUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         sigma2: Float64Array,
         var_bounds: Float64Array,
     ) -> None:
-
         sigma2[t] = self.params[0]
         if t == 0:
             sigma2[t] += self.backcast
@@ -896,7 +893,6 @@ class MIDASUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
     def initialize_update(
         self, parameters: Float64Array, backcast: float | Float64Array, nobs: int
     ) -> None:
-
         self.update_weights(parameters[2 + self.asym])
         alpha = parameters[1]
         if self.asym:
@@ -919,7 +915,6 @@ class MIDASUpdater(VolatilityUpdater, metaclass=AbstractDocStringInheritor):
         sigma2: Float64Array,
         var_bounds: Float64Array,
     ) -> None:
-
         omega = parameters[0]
         if t > 0:
             self.resids2[t - 1] = resids[t - 1] * resids[t - 1]
@@ -1009,7 +1004,6 @@ class RiskMetrics2006Updater(VolatilityUpdater, metaclass=AbstractDocStringInher
         sigma2: Float64Array,
         var_bounds: Float64Array,
     ) -> None:
-
         w = self.combination_weights
         mus = self.smoothing_parameters
         if t == 0:

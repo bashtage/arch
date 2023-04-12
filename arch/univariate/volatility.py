@@ -1234,7 +1234,6 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         start: int,
         horizon: int,
     ) -> VarianceForecast:
-
         sigma2, forecasts = self._one_step_forecast(
             parameters, resids, backcast, var_bounds, horizon, start
         )
@@ -1298,7 +1297,6 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         scaled_shock: Float64Array,
         asym_scaled_shock: Float64Array,
     ) -> tuple[Float64Array, Float64Array, Float64Array]:
-
         power = self.power
         p, o, q = self.p, self.o, self.q
         omega = parameters[0]
@@ -1346,7 +1344,6 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         simulations: int,
         rng: RNGType,
     ) -> VarianceForecast:
-
         sigma2, forecasts = self._one_step_forecast(
             parameters, resids, backcast, var_bounds, horizon, start
         )
@@ -2344,7 +2341,6 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         backcast: float | Float64Array,
         var_bounds: Float64Array,
     ) -> Float64Array:
-
         nobs = resids.shape[0]
         kmax = self.kmax
         w = self._ewma_combination_weights()
@@ -2698,7 +2694,6 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         start: int,
         horizon: int,
     ) -> VarianceForecast:
-
         _, forecasts = self._one_step_forecast(
             parameters, resids, backcast, var_bounds, horizon, start
         )
@@ -3035,7 +3030,6 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return bounds
 
     def constraints(self) -> tuple[Float64Array, Float64Array]:
-
         # omega > 0 <- 1
         # 0 <= d <= 1 <- 2
         # 0 <= phi <= (1 - d) / 2 <- 2
@@ -3600,7 +3594,6 @@ class APARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         shock: Float64Array,
         abs_shock: Float64Array,
     ) -> tuple[Float64Array, Float64Array, Float64Array]:
-
         if self._est_delta:
             delta = parameters[-1]
         else:

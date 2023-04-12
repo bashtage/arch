@@ -546,7 +546,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             if isinstance(self._x, pd.Series):
                 self._x = pd.DataFrame(self._x)
             elif self._x.ndim == 1:
-                self._x = self._x[:, None]
+                self._x = np.asarray(self._x)[:, None]
             if self._x.ndim != 2 or self._x.shape[0] != self._y.shape[0]:
                 raise ValueError(
                     "x must be nobs by n, where nobs is the same as "

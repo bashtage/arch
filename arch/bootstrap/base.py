@@ -833,7 +833,6 @@ class IIDBootstrap(metaclass=DocStringInheritor):
 
         if not _reuse:
             if reuse:
-
                 warn = (
                     "The conditions to reuse the previous bootstrap has "
                     "not been satisfied. A new bootstrap will be used."
