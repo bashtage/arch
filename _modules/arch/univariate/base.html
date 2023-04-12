@@ -1,4 +1,4 @@
-<!DOCTYPE html> <html lang=en > <meta charset=utf-8  /> <meta name=viewport  content="width=device-width, initial-scale=1.0" /> <meta name=viewport  content="width=device-width,initial-scale=1"> <meta http-equiv=x-ua-compatible  content="ie=edge"> <meta name="lang:clipboard.copy" content="Copy to clipboard"> <meta name="lang:clipboard.copied" content="Copied to clipboard"> <meta name="lang:search.language" content=en > <meta name="lang:search.pipeline.stopwords" content=True > <meta name="lang:search.pipeline.trimmer" content=True > <meta name="lang:search.result.none" content="No matching documents"> <meta name="lang:search.result.one" content="1 matching document"> <meta name="lang:search.result.other" content="# matching documents"> <meta name="lang:search.tokenizer" content="[\s\-]+"> <link href="https://fonts.gstatic.com/" rel=preconnect  crossorigin> <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700|Roboto:300,400,400i,700&display=fallback" rel=stylesheet > <style> body, input { font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif } code, kbd, pre { font-family: "Roboto Mono", "Courier New", Courier, monospace } </style> <link rel=stylesheet  href="../../../_static/stylesheets/application.css"/> <link rel=stylesheet  href="../../../_static/stylesheets/application-palette.css"/> <link rel=stylesheet  href="../../../_static/stylesheets/application-fixes.css"/> <link rel=stylesheet  href="../../../_static/fonts/material-icons.css"/> <meta name=theme-color  content="#2196f3"> <script src="../../../_static/javascripts/modernizr.js"></script> <title>arch.univariate.base &#8212; arch 5.3.1 documentation</title> <link rel=apple-touch-icon  sizes=180x180  href="../../../_static/images/apple-touch-icon.png"> <link rel=icon  type="image/png" sizes=32x32  href="../../../_static/images/favicon-32x32.png"> <link rel=icon  type="image/png" sizes=16x16  href="../../../_static/images/favicon-16x16.png"> <link rel=manifest  href="../../../_static/images/site.webmanifest"> <link rel=mask-icon  href="../../../_static/images/safari-pinned-tab.svg" color="#2196f3"> <meta name=msapplication-TileColor  content="#2b5797"> <meta name=msapplication-config  content="../../../_static/images/browserconfig.xml"> <link rel=stylesheet  type="text/css" href="../../../_static/pygments.css" /> <link rel=stylesheet  type="text/css" href="../../../_static/material.css" /> <link rel=stylesheet  type="text/css" href="../../../_static/css/small_fixes.css" /> <script data-url_root="../../../" id=documentation_options  src="../../../_static/documentation_options.js"></script> <script src="../../../_static/jquery.js"></script> <script src="../../../_static/underscore.js"></script> <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script> <script src="../../../_static/doctools.js"></script> <script crossorigin=anonymous  integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script> <link rel="shortcut icon" href="../../../_static/favicon.ico"/> <link rel=index  title=Index  href="../../../genindex.html" /> <link rel=search  title=Search  href="../../../search.html" /> <body dir=ltr data-md-color-primary=blue data-md-color-accent=indigo> <svg class=md-svg > <defs data-children-count=0 > <svg xmlns="http://www.w3.org/2000/svg" width=416  height=448  viewBox="0 0 416 448" id=__github ><path fill=currentColor  d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg> </defs> </svg> <input class=md-toggle  data-md-toggle=drawer  type=checkbox  id=__drawer > <input class=md-toggle  data-md-toggle=search  type=checkbox  id=__search > <label class=md-overlay  data-md-component=overlay  for=__drawer ></label> <a href="#_modules/arch/univariate/base" tabindex=1  class=md-skip > Skip to content </a> <header class=md-header  data-md-component=header > <nav class="md-header-nav md-grid"> <div class="md-flex navheader"> <div class="md-flex__cell md-flex__cell--shrink"> <a href="../../../index.html" title="arch 5.3.1 documentation" class="md-header-nav__button md-logo"> <img src="../../../_static/bw-logo.svg" height=26  alt="arch 5.3.1 documentation logo"> </a> </div> <div class="md-flex__cell md-flex__cell--shrink"> <label class="md-icon md-icon--menu md-header-nav__button" for=__drawer ></label> </div> <div class="md-flex__cell md-flex__cell--stretch"> <div class="md-flex__ellipsis md-header-nav__title" data-md-component=title > <span class=md-header-nav__topic >arch 5.3.1</span> <span class=md-header-nav__topic > arch.univariate.base </span> </div> </div> <div class="md-flex__cell md-flex__cell--shrink"> <label class="md-icon md-icon--search md-header-nav__button" for=__search ></label> <div class=md-search  data-md-component=search  role=dialog > <label class=md-search__overlay  for=__search ></label> <div class=md-search__inner  role=search > <form class=md-search__form  action="../../../search.html" method=get  name=search > <input type=text  class=md-search__input  name=q  placeholder=Search  autocapitalize=off  autocomplete=off  spellcheck=false  data-md-component=query  data-md-state=active > <label class="md-icon md-search__icon" for=__search ></label> <button type=reset  class="md-icon md-search__icon" data-md-component=reset  tabindex=-1 > &#xE5CD; </button> </form> <div class=md-search__output > <div class=md-search__scrollwrap  data-md-scrollfix> <div class=md-search-result  data-md-component=result > <div class=md-search-result__meta > Type to start searching </div> <ol class=md-search-result__list ></ol> </div> </div> </div> </div> </div> </div> <div class="md-flex__cell md-flex__cell--shrink"> <div class=md-header-nav__source > <a href="https://github.com/bashtage/arch/" title="Go to repository" class=md-source  data-md-source=github > <div class=md-source__icon > <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width=28  height=28 > <use xlink:href="#__github" width=24  height=24 ></use> </svg> </div> <div class=md-source__repository > ARCH </div> </a> </div> </div> <div class="md-flex__cell md-flex__cell--shrink dropdown"> <button class=dropdownbutton >Versions</button> <div class="dropdown-content md-hero"> <a title=Release  href="https://bashtage.github.io/arch/">Release</a> <a title=Development  href="https://bashtage.github.io/arch/devel/">Development</a> <a title="RTD (Release)" href="https://arch.readthedocs.io/">RTD (Release)</a> </div> </div> </div> </nav> </header> <div class=md-container > <nav class=md-tabs  data-md-component=tabs > <div class="md-tabs__inner md-grid"> <ul class=md-tabs__list > <li class=md-tabs__item ><a href="../../index.html" class=md-tabs__link >Module code</a> </ul> </div> </nav> <main class=md-main > <div class="md-main__inner md-grid" data-md-component=container > <div class="md-sidebar md-sidebar--primary" data-md-component=navigation > <div class=md-sidebar__scrollwrap > <div class=md-sidebar__inner > <nav class="md-nav md-nav--primary" data-md-level=0 > <label class="md-nav__title md-nav__title--site" for=__drawer > <a href="../../../index.html" title="arch 5.3.1 documentation" class="md-nav__button md-logo"> <img src="../../../_static/bw-logo.svg" alt=" logo" width=48  height=48 > </a> <a href="../../../index.html" title="arch 5.3.1 documentation">arch 5.3.1</a> </label> <div class=md-nav__source > <a href="https://github.com/bashtage/arch/" title="Go to repository" class=md-source  data-md-source=github > <div class=md-source__icon > <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width=28  height=28 > <use xlink:href="#__github" width=24  height=24 ></use> </svg> </div> <div class=md-source__repository > ARCH </div> </a> </div> <ul class=md-nav__list > <li class=md-nav__item > <a href="../../../univariate/univariate.html" class=md-nav__link >Univariate Volatility Models</a> <li class=md-nav__item > <a href="../../../bootstrap/bootstrap.html" class=md-nav__link >Bootstrapping</a> <li class=md-nav__item > <a href="../../../multiple-comparison/multiple-comparisons.html" class=md-nav__link >Multiple Comparison Problems</a> <li class=md-nav__item > <a href="../../../unitroot/unitroot.html" class=md-nav__link >Unit Root Testing</a> <li class=md-nav__item > <a href="../../../unitroot/unitroot.html#cointegration-analysis" class=md-nav__link >Cointegration Analysis</a> <li class=md-nav__item > <a href="../../../covariance/covariance.html" class=md-nav__link >Long-run Covariance Estimation</a> <li class=md-nav__item > <a href="../../../api.html" class=md-nav__link >API Reference</a> <li class=md-nav__item > <a href="../../../changes.html" class=md-nav__link >Change Log</a> </ul> </nav> </div> </div> </div> <div class="md-sidebar md-sidebar--secondary" data-md-component=toc > <div class=md-sidebar__scrollwrap > <div class=md-sidebar__inner > <nav class="md-nav md-nav--secondary"> <ul class=md-nav__list  data-md-scrollfix=""> <li id=searchbox  class=md-nav__item > </ul> </nav> </div> </div> </div> <div class=md-content > <article class="md-content__inner md-typeset" role=main > <h1 id=modules-arch-univariate-base--page-root >Source code for arch.univariate.base</h1><div class=highlight ><pre>
+<!DOCTYPE html> <html lang=en > <meta charset=utf-8  /> <meta name=viewport  content="width=device-width, initial-scale=1.0" /> <meta name=viewport  content="width=device-width,initial-scale=1"> <meta http-equiv=x-ua-compatible  content="ie=edge"> <meta name="lang:clipboard.copy" content="Copy to clipboard"> <meta name="lang:clipboard.copied" content="Copied to clipboard"> <meta name="lang:search.language" content=en > <meta name="lang:search.pipeline.stopwords" content=True > <meta name="lang:search.pipeline.trimmer" content=True > <meta name="lang:search.result.none" content="No matching documents"> <meta name="lang:search.result.one" content="1 matching document"> <meta name="lang:search.result.other" content="# matching documents"> <meta name="lang:search.tokenizer" content="[\s\-]+"> <link href="https://fonts.gstatic.com/" rel=preconnect  crossorigin> <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700|Roboto:300,400,400i,700&display=fallback" rel=stylesheet > <style> body, input { font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif } code, kbd, pre { font-family: "Roboto Mono", "Courier New", Courier, monospace } </style> <link rel=stylesheet  href="../../../_static/stylesheets/application.css"/> <link rel=stylesheet  href="../../../_static/stylesheets/application-palette.css"/> <link rel=stylesheet  href="../../../_static/stylesheets/application-fixes.css"/> <link rel=stylesheet  href="../../../_static/fonts/material-icons.css"/> <meta name=theme-color  content="#2196f3"> <script src="../../../_static/javascripts/modernizr.js"></script> <title>arch.univariate.base &#8212; arch 5.4.0 documentation</title> <link rel=apple-touch-icon  sizes=180x180  href="../../../_static/images/apple-touch-icon.png"> <link rel=icon  type="image/png" sizes=32x32  href="../../../_static/images/favicon-32x32.png"> <link rel=icon  type="image/png" sizes=16x16  href="../../../_static/images/favicon-16x16.png"> <link rel=manifest  href="../../../_static/images/site.webmanifest"> <link rel=mask-icon  href="../../../_static/images/safari-pinned-tab.svg" color="#2196f3"> <meta name=msapplication-TileColor  content="#2b5797"> <meta name=msapplication-config  content="../../../_static/images/browserconfig.xml"> <link rel=stylesheet  type="text/css" href="../../../_static/pygments.css" /> <link rel=stylesheet  type="text/css" href="../../../_static/material.css" /> <link rel=stylesheet  type="text/css" href="../../../_static/css/small_fixes.css" /> <script data-url_root="../../../" id=documentation_options  src="../../../_static/documentation_options.js"></script> <script src="../../../_static/doctools.js"></script> <script src="../../../_static/sphinx_highlight.js"></script> <script crossorigin=anonymous  integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script> <link rel=icon  href="../../../_static/favicon.ico"/> <link rel=index  title=Index  href="../../../genindex.html" /> <link rel=search  title=Search  href="../../../search.html" /> <body dir=ltr data-md-color-primary=blue data-md-color-accent=indigo> <svg class=md-svg > <defs data-children-count=0 > <svg xmlns="http://www.w3.org/2000/svg" width=416  height=448  viewBox="0 0 416 448" id=__github ><path fill=currentColor  d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg> </defs> </svg> <input class=md-toggle  data-md-toggle=drawer  type=checkbox  id=__drawer > <input class=md-toggle  data-md-toggle=search  type=checkbox  id=__search > <label class=md-overlay  data-md-component=overlay  for=__drawer ></label> <a href="#_modules/arch/univariate/base" tabindex=1  class=md-skip > Skip to content </a> <header class=md-header  data-md-component=header > <nav class="md-header-nav md-grid"> <div class="md-flex navheader"> <div class="md-flex__cell md-flex__cell--shrink"> <a href="../../../index.html" title="arch 5.4.0 documentation" class="md-header-nav__button md-logo"> &nbsp; </a> </div> <div class="md-flex__cell md-flex__cell--shrink"> <label class="md-icon md-icon--menu md-header-nav__button" for=__drawer ></label> </div> <div class="md-flex__cell md-flex__cell--stretch"> <div class="md-flex__ellipsis md-header-nav__title" data-md-component=title > <span class=md-header-nav__topic >arch 5.4.0</span> <span class=md-header-nav__topic > arch.univariate.base </span> </div> </div> <div class="md-flex__cell md-flex__cell--shrink"> <label class="md-icon md-icon--search md-header-nav__button" for=__search ></label> <div class=md-search  data-md-component=search  role=dialog > <label class=md-search__overlay  for=__search ></label> <div class=md-search__inner  role=search > <form class=md-search__form  action="../../../search.html" method=get  name=search > <input type=text  class=md-search__input  name=q  placeholder=Search  autocapitalize=off  autocomplete=off  spellcheck=false  data-md-component=query  data-md-state=active > <label class="md-icon md-search__icon" for=__search ></label> <button type=reset  class="md-icon md-search__icon" data-md-component=reset  tabindex=-1 > &#xE5CD; </button> </form> <div class=md-search__output > <div class=md-search__scrollwrap  data-md-scrollfix> <div class=md-search-result  data-md-component=result > <div class=md-search-result__meta > Type to start searching </div> <ol class=md-search-result__list ></ol> </div> </div> </div> </div> </div> </div> <div class="md-flex__cell md-flex__cell--shrink"> <div class=md-header-nav__source > <a href="https://github.com/bashtage/arch/" title="Go to repository" class=md-source  data-md-source=github > <div class=md-source__icon > <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width=28  height=28 > <use xlink:href="#__github" width=24  height=24 ></use> </svg> </div> <div class=md-source__repository > ARCH </div> </a> </div> </div> <div class="md-flex__cell md-flex__cell--shrink dropdown"> <button class=dropdownbutton >Versions</button> <div class="dropdown-content md-hero"> <a title=Release  href="https://bashtage.github.io/arch/">Release</a> <a title=Development  href="https://bashtage.github.io/arch/devel/">Development</a> <a title="RTD (Release)" href="https://arch.readthedocs.io/">RTD (Release)</a> </div> </div> </div> </nav> </header> <div class=md-container > <nav class=md-tabs  data-md-component=tabs > <div class="md-tabs__inner md-grid"> <ul class=md-tabs__list > <li class=md-tabs__item ><a href="../../index.html" class=md-tabs__link >Module code</a> </ul> </div> </nav> <main class=md-main > <div class="md-main__inner md-grid" data-md-component=container > <div class="md-sidebar md-sidebar--primary" data-md-component=navigation > <div class=md-sidebar__scrollwrap > <div class=md-sidebar__inner > <nav class="md-nav md-nav--primary" data-md-level=0 > <label class="md-nav__title md-nav__title--site" for=__drawer > <a href="../../../index.html" title="arch 5.4.0 documentation" class="md-nav__button md-logo"> <img src="../../../_static/" alt=" logo" width=48  height=48 > </a> <a href="../../../index.html" title="arch 5.4.0 documentation">arch 5.4.0</a> </label> <div class=md-nav__source > <a href="https://github.com/bashtage/arch/" title="Go to repository" class=md-source  data-md-source=github > <div class=md-source__icon > <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width=28  height=28 > <use xlink:href="#__github" width=24  height=24 ></use> </svg> </div> <div class=md-source__repository > ARCH </div> </a> </div> <ul class=md-nav__list > <li class=md-nav__item > <a href="../../../univariate/univariate.html" class=md-nav__link >Univariate Volatility Models</a> <li class=md-nav__item > <a href="../../../bootstrap/bootstrap.html" class=md-nav__link >Bootstrapping</a> <li class=md-nav__item > <a href="../../../multiple-comparison/multiple-comparisons.html" class=md-nav__link >Multiple Comparison Problems</a> <li class=md-nav__item > <a href="../../../unitroot/unitroot.html" class=md-nav__link >Unit Root Testing</a> <li class=md-nav__item > <a href="../../../unitroot/unitroot.html#cointegration-analysis" class=md-nav__link >Cointegration Analysis</a> <li class=md-nav__item > <a href="../../../covariance/covariance.html" class=md-nav__link >Long-run Covariance Estimation</a> <li class=md-nav__item > <a href="../../../api.html" class=md-nav__link >API Reference</a> <li class=md-nav__item > <a href="../../../changes.html" class=md-nav__link >Change Log</a> </ul> </nav> </div> </div> </div> <div class="md-sidebar md-sidebar--secondary" data-md-component=toc > <div class=md-sidebar__scrollwrap > <div class=md-sidebar__inner > <nav class="md-nav md-nav--secondary"> <ul class=md-nav__list  data-md-scrollfix=""> <li id=searchbox  class=md-nav__item > </ul> </nav> </div> </div> </div> <div class=md-content > <article class="md-content__inner md-typeset" role=main > <h1 id=modules-arch-univariate-base--page-root >Source code for arch.univariate.base</h1><div class=highlight ><pre>
 <span></span><span class=sd >"""</span>
 <span class=sd >Core classes for ARCH models</span>
 <span class=sd >"""</span>
@@ -7,7 +7,7 @@
 <span class=kn >from</span> <span class=nn >abc</span> <span class=kn >import</span> <span class=n >ABCMeta</span><span class=p >,</span> <span class=n >abstractmethod</span>
 <span class=kn >from</span> <span class=nn >copy</span> <span class=kn >import</span> <span class=n >deepcopy</span>
 <span class=kn >import</span> <span class=nn >datetime</span> <span class=k >as</span> <span class=nn >dt</span>
-<span class=kn >from</span> <span class=nn >typing</span> <span class=kn >import</span> <span class=n >Any</span><span class=p >,</span> <span class=n >Callable</span><span class=p >,</span> <span class=n >Dict</span><span class=p >,</span> <span class=n >List</span><span class=p >,</span> <span class=n >Optional</span><span class=p >,</span> <span class=n >Sequence</span><span class=p >,</span> <span class=n >Tuple</span><span class=p >,</span> <span class=n >Union</span><span class=p >,</span> <span class=n >cast</span>
+<span class=kn >from</span> <span class=nn >typing</span> <span class=kn >import</span> <span class=n >Any</span><span class=p >,</span> <span class=n >Callable</span><span class=p >,</span> <span class=n >Sequence</span><span class=p >,</span> <span class=n >cast</span>
 <span class=kn >import</span> <span class=nn >warnings</span>
 
 <span class=kn >import</span> <span class=nn >numpy</span> <span class=k >as</span> <span class=nn >np</span>
@@ -26,6 +26,7 @@
 <span class=kn >from</span> <span class=nn >arch.typing</span> <span class=kn >import</span> <span class=p >(</span>
     <span class=n >ArrayLike</span><span class=p >,</span>
     <span class=n >ArrayLike1D</span><span class=p >,</span>
+    <span class=n >ArrayLike2D</span><span class=p >,</span>
     <span class=n >DateLike</span><span class=p >,</span>
     <span class=n >Float64Array</span><span class=p >,</span>
     <span class=n >ForecastingMethod</span><span class=p >,</span>
@@ -61,7 +62,7 @@
     <span class=s2 >"format_float_fixed"</span><span class=p >,</span>
 <span class=p >]</span>
 
-<span class=n >CONVERGENCE_WARNGING</span><span class=p >:</span> <span class=nb >str</span> <span class=o >=</span> <span class=s2 >"""</span><span class=se >\</span>
+<span class=n >CONVERGENCE_WARNING</span><span class=p >:</span> <span class=nb >str</span> <span class=o >=</span> <span class=s2 >"""</span><span class=se >\</span>
 <span class=s2 >WARNING: The optimizer did not indicate successful convergence. The message was </span><span class=si >{msg}</span><span class=s2 >.</span>
 <span class=s2 >See convergence_flag.</span>
 <span class=s2 >"""</span>
@@ -71,7 +72,7 @@
 
 
 <span class=k >def</span> <span class=nf >_callback</span><span class=p >(</span><span class=n >parameters</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span> <span class=o >*</span><span class=n >args</span><span class=p >:</span> <span class=n >Any</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=kc >None</span><span class=p >:</span>
-    <span class=sd >"""</span>
+<span class=w >    </span><span class=sd >"""</span>
 <span class=sd >    Callback for use in optimization</span>
 
 <span class=sd >    Parameters</span>
@@ -97,8 +98,8 @@
         <span class=p >)</span>
 
 
-<span class=k >def</span> <span class=nf >constraint</span><span class=p >(</span><span class=n >a</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span> <span class=n >b</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >List</span><span class=p >[</span><span class=n >Dict</span><span class=p >[</span><span class=nb >str</span><span class=p >,</span> <span class=nb >object</span><span class=p >]]:</span>
-    <span class=sd >"""</span>
+<span class=k >def</span> <span class=nf >constraint</span><span class=p >(</span><span class=n >a</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span> <span class=n >b</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >list</span><span class=p >[</span><span class=nb >dict</span><span class=p >[</span><span class=nb >str</span><span class=p >,</span> <span class=nb >object</span><span class=p >]]:</span>
+<span class=w >    </span><span class=sd >"""</span>
 <span class=sd >    Generate constraints from arrays</span>
 
 <span class=sd >    Parameters</span>
@@ -133,7 +134,7 @@
 
 
 <span class=k >def</span> <span class=nf >format_float_fixed</span><span class=p >(</span><span class=n >x</span><span class=p >:</span> <span class=nb >float</span><span class=p >,</span> <span class=n >max_digits</span><span class=p >:</span> <span class=nb >int</span> <span class=o >=</span> <span class=mi >10</span><span class=p >,</span> <span class=n >decimal</span><span class=p >:</span> <span class=nb >int</span> <span class=o >=</span> <span class=mi >4</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >str</span><span class=p >:</span>
-    <span class=sd >"""Formats a floating point number so that if it can be well expressed</span>
+<span class=w >    </span><span class=sd >"""Formats a floating point number so that if it can be well expressed</span>
 <span class=sd >    in using a string with digits len, then it is converted simply, otherwise</span>
 <span class=sd >    it is expressed in scientific notation"""</span>
     <span class=c1 ># basic_format = '{:0.' + str(digits) + 'g}'</span>
@@ -149,7 +150,7 @@
 
 
 <span class=k >def</span> <span class=nf >implicit_constant</span><span class=p >(</span><span class=n >x</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >bool</span><span class=p >:</span>
-    <span class=sd >"""</span>
+<span class=w >    </span><span class=sd >"""</span>
 <span class=sd >    Test a matrix for an implicit constant</span>
 
 <span class=sd >    Parameters</span>
@@ -168,8 +169,8 @@
     <span class=k >return</span> <span class=n >rank</span> <span class=o >==</span> <span class=n >x</span><span class=o >.</span><span class=n >shape</span><span class=p >[</span><span class=mi >1</span><span class=p >]</span>
 
 
-<div class=viewcode-block  id=ARCHModel ><a class=viewcode-back  href="../../../univariate/generated/arch.univariate.base.ARCHModel.html#arch.univariate.base.ARCHModel">[docs]</a><span class=k >class</span> <span class=nc >ARCHModel</span><span class=p >(</span><span class=nb >object</span><span class=p >,</span> <span class=n >metaclass</span><span class=o >=</span><span class=n >ABCMeta</span><span class=p >):</span>
-    <span class=sd >"""</span>
+<div class=viewcode-block  id=ARCHModel ><a class=viewcode-back  href="../../../univariate/generated/arch.univariate.base.ARCHModel.html#arch.univariate.base.ARCHModel">[docs]</a><span class=k >class</span> <span class=nc >ARCHModel</span><span class=p >(</span><span class=n >metaclass</span><span class=o >=</span><span class=n >ABCMeta</span><span class=p >):</span>
+<span class=w >    </span><span class=sd >"""</span>
 <span class=sd >    Abstract base class for mean models in ARCH processes.  Specifies the</span>
 <span class=sd >    conditional mean process.</span>
 
@@ -180,11 +181,11 @@
 
     <span class=k >def</span> <span class=fm >__init__</span><span class=p >(</span>
         <span class=bp >self</span><span class=p >,</span>
-        <span class=n >y</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >ArrayLike</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >volatility</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >VolatilityProcess</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >distribution</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Distribution</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >hold_back</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=nb >int</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >rescale</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=nb >bool</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >y</span><span class=p >:</span> <span class=n >ArrayLike</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >volatility</span><span class=p >:</span> <span class=n >VolatilityProcess</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >distribution</span><span class=p >:</span> <span class=n >Distribution</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >hold_back</span><span class=p >:</span> <span class=nb >int</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >rescale</span><span class=p >:</span> <span class=nb >bool</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
     <span class=p >)</span> <span class=o >-&gt;</span> <span class=kc >None</span><span class=p >:</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >_name</span> <span class=o >=</span> <span class=s2 >"ARCHModel"</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >_is_pandas</span> <span class=o >=</span> <span class=nb >isinstance</span><span class=p >(</span><span class=n >y</span><span class=p >,</span> <span class=p >(</span><span class=n >pd</span><span class=o >.</span><span class=n >DataFrame</span><span class=p >,</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >))</span>
@@ -199,17 +200,17 @@
             <span class=p >)</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >_y_original</span> <span class=o >=</span> <span class=n >y</span>
 
-        <span class=bp >self</span><span class=o >.</span><span class=n >_fit_indices</span><span class=p >:</span> <span class=n >List</span><span class=p >[</span><span class=nb >int</span><span class=p >]</span> <span class=o >=</span> <span class=p >[</span><span class=mi >0</span><span class=p >,</span> <span class=nb >int</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >_y</span><span class=o >.</span><span class=n >shape</span><span class=p >[</span><span class=mi >0</span><span class=p >])]</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >_fit_indices</span><span class=p >:</span> <span class=nb >list</span><span class=p >[</span><span class=nb >int</span><span class=p >]</span> <span class=o >=</span> <span class=p >[</span><span class=mi >0</span><span class=p >,</span> <span class=nb >int</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >_y</span><span class=o >.</span><span class=n >shape</span><span class=p >[</span><span class=mi >0</span><span class=p >])]</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >_fit_y</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >_y</span>
 
-        <span class=bp >self</span><span class=o >.</span><span class=n >hold_back</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=nb >int</span><span class=p >]</span> <span class=o >=</span> <span class=n >hold_back</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >hold_back</span><span class=p >:</span> <span class=nb >int</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=n >hold_back</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >_hold_back</span> <span class=o >=</span> <span class=mi >0</span> <span class=k >if</span> <span class=n >hold_back</span> <span class=ow >is</span> <span class=kc >None</span> <span class=k >else</span> <span class=n >hold_back</span>
 
-        <span class=bp >self</span><span class=o >.</span><span class=n >rescale</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=nb >bool</span><span class=p >]</span> <span class=o >=</span> <span class=n >rescale</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >rescale</span><span class=p >:</span> <span class=nb >bool</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=n >rescale</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >scale</span><span class=p >:</span> <span class=nb >float</span> <span class=o >=</span> <span class=mf >1.0</span>
 
-        <span class=bp >self</span><span class=o >.</span><span class=n >_backcast</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=kc >None</span><span class=p >,</span> <span class=nb >float</span><span class=p >,</span> <span class=n >Float64Array</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span>
-        <span class=bp >self</span><span class=o >.</span><span class=n >_var_bounds</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >_backcast</span><span class=p >:</span> <span class=kc >None</span> <span class=o >|</span> <span class=nb >float</span> <span class=o >|</span> <span class=n >Float64Array</span> <span class=o >=</span> <span class=kc >None</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >_var_bounds</span><span class=p >:</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span>
 
         <span class=k >if</span> <span class=nb >isinstance</span><span class=p >(</span><span class=n >volatility</span><span class=p >,</span> <span class=n >VolatilityProcess</span><span class=p >):</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >_volatility</span> <span class=o >=</span> <span class=n >volatility</span>
@@ -227,11 +228,11 @@
 
     <span class=nd >@property</span>
     <span class=k >def</span> <span class=nf >name</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >str</span><span class=p >:</span>
-        <span class=sd >"""The name of the model."""</span>
+<span class=w >        </span><span class=sd >"""The name of the model."""</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_name</span>
 
-<div class=viewcode-block  id=ARCHModel.constraints ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.constraints.html#arch.univariate.base.ARCHModel.constraints">[docs]</a>    <span class=k >def</span> <span class=nf >constraints</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Tuple</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >,</span> <span class=n >Float64Array</span><span class=p >]:</span>
-        <span class=sd >"""</span>
+<div class=viewcode-block  id=ARCHModel.constraints ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.constraints.html#arch.univariate.base.ARCHModel.constraints">[docs]</a>    <span class=k >def</span> <span class=nf >constraints</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >tuple</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >,</span> <span class=n >Float64Array</span><span class=p >]:</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Construct linear constraint arrays  for use in non-linear optimization</span>
 
 <span class=sd >        Returns</span>
@@ -247,8 +248,8 @@
 <span class=sd >        """</span>
         <span class=k >return</span> <span class=n >np</span><span class=o >.</span><span class=n >empty</span><span class=p >((</span><span class=mi >0</span><span class=p >,</span> <span class=bp >self</span><span class=o >.</span><span class=n >num_params</span><span class=p >)),</span> <span class=n >np</span><span class=o >.</span><span class=n >empty</span><span class=p >(</span><span class=mi >0</span><span class=p >)</span></div>
 
-<div class=viewcode-block  id=ARCHModel.bounds ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.bounds.html#arch.univariate.base.ARCHModel.bounds">[docs]</a>    <span class=k >def</span> <span class=nf >bounds</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >List</span><span class=p >[</span><span class=n >Tuple</span><span class=p >[</span><span class=nb >float</span><span class=p >,</span> <span class=nb >float</span><span class=p >]]:</span>
-        <span class=sd >"""</span>
+<div class=viewcode-block  id=ARCHModel.bounds ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.bounds.html#arch.univariate.base.ARCHModel.bounds">[docs]</a>    <span class=k >def</span> <span class=nf >bounds</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >list</span><span class=p >[</span><span class=nb >tuple</span><span class=p >[</span><span class=nb >float</span><span class=p >,</span> <span class=nb >float</span><span class=p >]]:</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Construct bounds for parameters to use in non-linear optimization</span>
 
 <span class=sd >        Returns</span>
@@ -260,13 +261,13 @@
         <span class=k >return</span> <span class=p >[(</span><span class=o >-</span><span class=n >np</span><span class=o >.</span><span class=n >inf</span><span class=p >,</span> <span class=n >np</span><span class=o >.</span><span class=n >inf</span><span class=p >)]</span> <span class=o >*</span> <span class=n >num_params</span></div>
 
     <span class=nd >@property</span>
-    <span class=k >def</span> <span class=nf >y</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Optional</span><span class=p >[</span><span class=n >ArrayLike</span><span class=p >]:</span>
-        <span class=sd >"""Returns the dependent variable"""</span>
+    <span class=k >def</span> <span class=nf >y</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >ArrayLike</span> <span class=o >|</span> <span class=kc >None</span><span class=p >:</span>
+<span class=w >        </span><span class=sd >"""Returns the dependent variable"""</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_y_original</span>
 
     <span class=nd >@property</span>
     <span class=k >def</span> <span class=nf >volatility</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >VolatilityProcess</span><span class=p >:</span>
-        <span class=sd >"""Set or gets the volatility process</span>
+<span class=w >        </span><span class=sd >"""Set or gets the volatility process</span>
 
 <span class=sd >        Volatility processes must be a subclass of VolatilityProcess</span>
 <span class=sd >        """</span>
@@ -280,7 +281,7 @@
 
     <span class=nd >@property</span>
     <span class=k >def</span> <span class=nf >distribution</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Distribution</span><span class=p >:</span>
-        <span class=sd >"""Set or gets the error distribution</span>
+<span class=w >        </span><span class=sd >"""Set or gets the error distribution</span>
 
 <span class=sd >        Distributions must be a subclass of Distribution</span>
 <span class=sd >        """</span>
@@ -313,8 +314,8 @@
             <span class=k >return</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >scale</span> <span class=o >=</span> <span class=n >rescale</span>
 
-    <span class=k >def</span> <span class=nf >_r2</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >params</span><span class=p >:</span> <span class=n >ArrayLike1D</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Union</span><span class=p >[</span><span class=kc >None</span><span class=p >,</span> <span class=nb >float</span><span class=p >]:</span>
-        <span class=sd >"""</span>
+    <span class=k >def</span> <span class=nf >_r2</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >params</span><span class=p >:</span> <span class=n >ArrayLike1D</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=kc >None</span> <span class=o >|</span> <span class=nb >float</span><span class=p >:</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Computes the model r-square.  Optional to over-ride.  Must match</span>
 <span class=sd >        signature.</span>
 <span class=sd >        """</span>
@@ -322,7 +323,7 @@
 
     <span class=nd >@abstractmethod</span>
     <span class=k >def</span> <span class=nf >_fit_no_arch_normal_errors_params</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Float64Array</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Must be overridden with closed form estimator the return parameters ony</span>
 <span class=sd >        """</span>
 
@@ -330,7 +331,7 @@
     <span class=k >def</span> <span class=nf >_fit_no_arch_normal_errors</span><span class=p >(</span>
         <span class=bp >self</span><span class=p >,</span> <span class=n >cov_type</span><span class=p >:</span> <span class=n >Literal</span><span class=p >[</span><span class=s2 >"robust"</span><span class=p >,</span> <span class=s2 >"classic"</span><span class=p >]</span> <span class=o >=</span> <span class=s2 >"robust"</span>
     <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >ARCHModelResult</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Must be overridden with closed form estimator</span>
 <span class=sd >        """</span>
 
@@ -348,9 +349,9 @@
     <span class=k >def</span> <span class=nf >_fit_parameterless_model</span><span class=p >(</span>
         <span class=bp >self</span><span class=p >,</span>
         <span class=n >cov_type</span><span class=p >:</span> <span class=n >Literal</span><span class=p >[</span><span class=s2 >"robust"</span><span class=p >,</span> <span class=s2 >"classic"</span><span class=p >],</span>
-        <span class=n >backcast</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=nb >float</span><span class=p >,</span> <span class=n >Float64Array</span><span class=p >],</span>
+        <span class=n >backcast</span><span class=p >:</span> <span class=nb >float</span> <span class=o >|</span> <span class=n >Float64Array</span><span class=p >,</span>
     <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >ARCHModelResult</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        When models have no parameters, fill return values</span>
 
 <span class=sd >        Returns</span>
@@ -405,11 +406,11 @@
         <span class=bp >self</span><span class=p >,</span>
         <span class=n >parameters</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span>
         <span class=n >sigma2</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span>
-        <span class=n >backcast</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=nb >float</span><span class=p >,</span> <span class=n >Float64Array</span><span class=p >],</span>
+        <span class=n >backcast</span><span class=p >:</span> <span class=nb >float</span> <span class=o >|</span> <span class=n >Float64Array</span><span class=p >,</span>
         <span class=n >var_bounds</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span>
         <span class=n >individual</span><span class=p >:</span> <span class=nb >bool</span> <span class=o >=</span> <span class=kc >False</span><span class=p >,</span>
-    <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Union</span><span class=p >[</span><span class=nb >float</span><span class=p >,</span> <span class=n >Float64Array</span><span class=p >]:</span>
-        <span class=sd >"""</span>
+    <span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >float</span> <span class=o >|</span> <span class=n >Float64Array</span><span class=p >:</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Computes the log-likelihood using the entire model</span>
 
 <span class=sd >        Parameters</span>
@@ -429,7 +430,7 @@
 
         <span class=c1 ># 1. Resids</span>
         <span class=n >mp</span><span class=p >,</span> <span class=n >vp</span><span class=p >,</span> <span class=n >dp</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >_parse_parameters</span><span class=p >(</span><span class=n >parameters</span><span class=p >)</span>
-        <span class=n >resids</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >resids</span><span class=p >(</span><span class=n >mp</span><span class=p >)</span>
+        <span class=n >resids</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >resids</span><span class=p >(</span><span class=n >mp</span><span class=p >),</span> <span class=n >dtype</span><span class=o >=</span><span class=nb >float</span><span class=p >)</span>
 
         <span class=c1 ># 2. Compute sigma2 using VolatilityModel</span>
         <span class=n >sigma2</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >volatility</span><span class=o >.</span><span class=n >compute_variance</span><span class=p >(</span>
@@ -444,8 +445,8 @@
 
         <span class=k >return</span> <span class=n >cast</span><span class=p >(</span><span class=n >np</span><span class=o >.</span><span class=n >ndarray</span><span class=p >,</span> <span class=o >-</span><span class=n >llf</span><span class=p >)</span>
 
-    <span class=k >def</span> <span class=nf >_all_parameter_names</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >List</span><span class=p >[</span><span class=nb >str</span><span class=p >]:</span>
-        <span class=sd >"""Returns a list containing all parameter names from the mean model,</span>
+    <span class=k >def</span> <span class=nf >_all_parameter_names</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >list</span><span class=p >[</span><span class=nb >str</span><span class=p >]:</span>
+<span class=w >        </span><span class=sd >"""Returns a list containing all parameter names from the mean model,</span>
 <span class=sd >        volatility model and distribution"""</span>
 
         <span class=n >names</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >parameter_names</span><span class=p >()</span>
@@ -455,20 +456,20 @@
         <span class=k >return</span> <span class=n >names</span>
 
     <span class=k >def</span> <span class=nf >_parse_parameters</span><span class=p >(</span>
-        <span class=bp >self</span><span class=p >,</span> <span class=n >x</span><span class=p >:</span> <span class=n >ArrayLike</span>
-    <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Tuple</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >,</span> <span class=n >Float64Array</span><span class=p >,</span> <span class=n >Float64Array</span><span class=p >]:</span>
-        <span class=sd >"""Return the parameters of each model in a tuple"""</span>
-        <span class=n >x</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span><span class=n >x</span><span class=p >,</span> <span class=n >dtype</span><span class=o >=</span><span class=n >np</span><span class=o >.</span><span class=n >float64</span><span class=p >)</span>
+        <span class=bp >self</span><span class=p >,</span> <span class=n >x</span><span class=p >:</span> <span class=n >ArrayLike1D</span> <span class=o >|</span> <span class=n >Sequence</span><span class=p >[</span><span class=nb >float</span><span class=p >]</span>
+    <span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >tuple</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >,</span> <span class=n >Float64Array</span><span class=p >,</span> <span class=n >Float64Array</span><span class=p >]:</span>
+<span class=w >        </span><span class=sd >"""Return the parameters of each model in a tuple"""</span>
+        <span class=n >x</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span><span class=n >x</span><span class=p >,</span> <span class=n >dtype</span><span class=o >=</span><span class=nb >float</span><span class=p >)</span>
         <span class=n >km</span><span class=p >,</span> <span class=n >kv</span> <span class=o >=</span> <span class=nb >int</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >num_params</span><span class=p >),</span> <span class=nb >int</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >volatility</span><span class=o >.</span><span class=n >num_params</span><span class=p >)</span>
         <span class=k >return</span> <span class=n >x</span><span class=p >[:</span><span class=n >km</span><span class=p >],</span> <span class=n >x</span><span class=p >[</span><span class=n >km</span> <span class=p >:</span> <span class=n >km</span> <span class=o >+</span> <span class=n >kv</span><span class=p >],</span> <span class=n >x</span><span class=p >[</span><span class=n >km</span> <span class=o >+</span> <span class=n >kv</span> <span class=p >:]</span>
 
 <div class=viewcode-block  id=ARCHModel.fix ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.fix.html#arch.univariate.base.ARCHModel.fix">[docs]</a>    <span class=k >def</span> <span class=nf >fix</span><span class=p >(</span>
         <span class=bp >self</span><span class=p >,</span>
-        <span class=n >params</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=n >Sequence</span><span class=p >[</span><span class=nb >float</span><span class=p >],</span> <span class=n >ArrayLike1D</span><span class=p >],</span>
-        <span class=n >first_obs</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=nb >int</span><span class=p >,</span> <span class=n >DateLike</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >last_obs</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=nb >int</span><span class=p >,</span> <span class=n >DateLike</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >params</span><span class=p >:</span> <span class=n >Sequence</span><span class=p >[</span><span class=nb >float</span><span class=p >]</span> <span class=o >|</span> <span class=n >ArrayLike1D</span><span class=p >,</span>
+        <span class=n >first_obs</span><span class=p >:</span> <span class=nb >int</span> <span class=o >|</span> <span class=n >DateLike</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >last_obs</span><span class=p >:</span> <span class=nb >int</span> <span class=o >|</span> <span class=n >DateLike</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
     <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >ARCHModelFixedResult</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Allows an ARCHModelFixedResult to be constructed from fixed parameters.</span>
 
 <span class=sd >        Parameters</span>
@@ -494,7 +495,7 @@
         <span class=n >v</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >volatility</span>
 
         <span class=bp >self</span><span class=o >.</span><span class=n >_adjust_sample</span><span class=p >(</span><span class=n >first_obs</span><span class=p >,</span> <span class=n >last_obs</span><span class=p >)</span>
-        <span class=n >resids</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >resids</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >starting_values</span><span class=p >())</span>
+        <span class=n >resids</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >resids</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >starting_values</span><span class=p >()),</span> <span class=n >dtype</span><span class=o >=</span><span class=nb >float</span><span class=p >)</span>
         <span class=n >sigma2</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >zeros_like</span><span class=p >(</span><span class=n >resids</span><span class=p >)</span>
         <span class=n >backcast</span> <span class=o >=</span> <span class=n >v</span><span class=o >.</span><span class=n >backcast</span><span class=p >(</span><span class=n >resids</span><span class=p >)</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >_backcast</span> <span class=o >=</span> <span class=n >backcast</span>
@@ -507,7 +508,7 @@
 
         <span class=n >mp</span><span class=p >,</span> <span class=n >vp</span><span class=p >,</span> <span class=n >dp</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >_parse_parameters</span><span class=p >(</span><span class=n >params</span><span class=p >)</span>
 
-        <span class=n >resids</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >resids</span><span class=p >(</span><span class=n >mp</span><span class=p >)</span>
+        <span class=n >resids</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >resids</span><span class=p >(</span><span class=n >mp</span><span class=p >),</span> <span class=n >dtype</span><span class=o >=</span><span class=nb >float</span><span class=p >)</span>
         <span class=n >vol</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >zeros_like</span><span class=p >(</span><span class=n >resids</span><span class=p >)</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >volatility</span><span class=o >.</span><span class=n >compute_variance</span><span class=p >(</span><span class=n >vp</span><span class=p >,</span> <span class=n >resids</span><span class=p >,</span> <span class=n >vol</span><span class=p >,</span> <span class=n >backcast</span><span class=p >,</span> <span class=n >var_bounds</span><span class=p >)</span>
         <span class=n >vol</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span><span class=n >np</span><span class=o >.</span><span class=n >sqrt</span><span class=p >(</span><span class=n >vol</span><span class=p >))</span>
@@ -536,9 +537,9 @@
 
     <span class=nd >@abstractmethod</span>
     <span class=k >def</span> <span class=nf >_adjust_sample</span><span class=p >(</span>
-        <span class=bp >self</span><span class=p >,</span> <span class=n >first_obs</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=nb >int</span><span class=p >,</span> <span class=n >DateLike</span><span class=p >],</span> <span class=n >last_obs</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=nb >int</span><span class=p >,</span> <span class=n >DateLike</span><span class=p >]</span>
+        <span class=bp >self</span><span class=p >,</span> <span class=n >first_obs</span><span class=p >:</span> <span class=nb >int</span> <span class=o >|</span> <span class=n >DateLike</span> <span class=o >|</span> <span class=kc >None</span><span class=p >,</span> <span class=n >last_obs</span><span class=p >:</span> <span class=nb >int</span> <span class=o >|</span> <span class=n >DateLike</span> <span class=o >|</span> <span class=kc >None</span>
     <span class=p >)</span> <span class=o >-&gt;</span> <span class=kc >None</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Performs sample adjustment for estimation</span>
 
 <span class=sd >        Parameters</span>
@@ -556,17 +557,17 @@
 <div class=viewcode-block  id=ARCHModel.fit ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.fit.html#arch.univariate.base.ARCHModel.fit">[docs]</a>    <span class=k >def</span> <span class=nf >fit</span><span class=p >(</span>
         <span class=bp >self</span><span class=p >,</span>
         <span class=n >update_freq</span><span class=p >:</span> <span class=nb >int</span> <span class=o >=</span> <span class=mi >1</span><span class=p >,</span>
-        <span class=n >disp</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=nb >bool</span><span class=p >,</span> <span class=n >Literal</span><span class=p >[</span><span class=s2 >"off"</span><span class=p >,</span> <span class=s2 >"final"</span><span class=p >]]</span> <span class=o >=</span> <span class=s2 >"final"</span><span class=p >,</span>
-        <span class=n >starting_values</span><span class=p >:</span> <span class=n >ArrayLike1D</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >disp</span><span class=p >:</span> <span class=nb >bool</span> <span class=o >|</span> <span class=n >Literal</span><span class=p >[</span><span class=s2 >"off"</span><span class=p >,</span> <span class=s2 >"final"</span><span class=p >]</span> <span class=o >=</span> <span class=s2 >"final"</span><span class=p >,</span>
+        <span class=n >starting_values</span><span class=p >:</span> <span class=n >ArrayLike1D</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
         <span class=n >cov_type</span><span class=p >:</span> <span class=n >Literal</span><span class=p >[</span><span class=s2 >"robust"</span><span class=p >,</span> <span class=s2 >"classic"</span><span class=p >]</span> <span class=o >=</span> <span class=s2 >"robust"</span><span class=p >,</span>
         <span class=n >show_warning</span><span class=p >:</span> <span class=nb >bool</span> <span class=o >=</span> <span class=kc >True</span><span class=p >,</span>
-        <span class=n >first_obs</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=nb >int</span><span class=p >,</span> <span class=n >DateLike</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >last_obs</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=nb >int</span><span class=p >,</span> <span class=n >DateLike</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >tol</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=nb >float</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >options</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Dict</span><span class=p >[</span><span class=nb >str</span><span class=p >,</span> <span class=n >Any</span><span class=p >]]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >backcast</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=kc >None</span><span class=p >,</span> <span class=nb >float</span><span class=p >,</span> <span class=n >Float64Array</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >first_obs</span><span class=p >:</span> <span class=nb >int</span> <span class=o >|</span> <span class=n >DateLike</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >last_obs</span><span class=p >:</span> <span class=nb >int</span> <span class=o >|</span> <span class=n >DateLike</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >tol</span><span class=p >:</span> <span class=nb >float</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >options</span><span class=p >:</span> <span class=nb >dict</span><span class=p >[</span><span class=nb >str</span><span class=p >,</span> <span class=n >Any</span><span class=p >]</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >backcast</span><span class=p >:</span> <span class=kc >None</span> <span class=o >|</span> <span class=nb >float</span> <span class=o >|</span> <span class=n >Float64Array</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
     <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >ARCHModelResult</span><span class=p >:</span>
-        <span class=sa >r</span><span class=sd >"""</span>
+<span class=w >        </span><span class=sa >r</span><span class=sd >"""</span>
 <span class=sd >        Estimate model parameters</span>
 
 <span class=sd >        Parameters</span>
@@ -629,13 +630,13 @@
 
         <span class=bp >self</span><span class=o >.</span><span class=n >_adjust_sample</span><span class=p >(</span><span class=n >first_obs</span><span class=p >,</span> <span class=n >last_obs</span><span class=p >)</span>
 
-        <span class=n >resids</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >resids</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >starting_values</span><span class=p >())</span>
+        <span class=n >resids</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >resids</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >starting_values</span><span class=p >()),</span> <span class=n >dtype</span><span class=o >=</span><span class=nb >float</span><span class=p >)</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >_check_scale</span><span class=p >(</span><span class=n >resids</span><span class=p >)</span>
         <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >scale</span> <span class=o >!=</span> <span class=mf >1.0</span><span class=p >:</span>
             <span class=c1 ># Scale changed, rescale data and reset model</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >_y</span> <span class=o >=</span> <span class=n >cast</span><span class=p >(</span><span class=n >np</span><span class=o >.</span><span class=n >ndarray</span><span class=p >,</span> <span class=bp >self</span><span class=o >.</span><span class=n >scale</span> <span class=o >*</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >_y_original</span><span class=p >))</span>
             <span class=bp >self</span><span class=o >.</span><span class=n >_adjust_sample</span><span class=p >(</span><span class=n >first_obs</span><span class=p >,</span> <span class=n >last_obs</span><span class=p >)</span>
-            <span class=n >resids</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >resids</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >starting_values</span><span class=p >())</span>
+            <span class=n >resids</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >resids</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >starting_values</span><span class=p >()),</span> <span class=n >dtype</span><span class=o >=</span><span class=nb >float</span><span class=p >)</span>
 
         <span class=k >if</span> <span class=n >backcast</span> <span class=ow >is</span> <span class=kc >None</span><span class=p >:</span>
             <span class=n >backcast</span> <span class=o >=</span> <span class=n >v</span><span class=o >.</span><span class=n >backcast</span><span class=p >(</span><span class=n >resids</span><span class=p >)</span>
@@ -692,6 +693,7 @@
         <span class=c1 ># 3. Construct starting values from all models</span>
         <span class=n >sv</span> <span class=o >=</span> <span class=n >starting_values</span>
         <span class=k >if</span> <span class=n >starting_values</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span><span class=p >:</span>
+            <span class=k >assert</span> <span class=n >sv</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span>
             <span class=n >sv</span> <span class=o >=</span> <span class=n >ensure1d</span><span class=p >(</span><span class=n >sv</span><span class=p >,</span> <span class=s2 >"starting_values"</span><span class=p >)</span>
             <span class=n >valid</span> <span class=o >=</span> <span class=n >sv</span><span class=o >.</span><span class=n >shape</span><span class=p >[</span><span class=mi >0</span><span class=p >]</span> <span class=o >==</span> <span class=n >num_params</span>
             <span class=k >if</span> <span class=n >a</span><span class=o >.</span><span class=n >shape</span><span class=p >[</span><span class=mi >0</span><span class=p >]</span> <span class=o >&gt;</span> <span class=mi >0</span><span class=p >:</span>
@@ -704,8 +706,9 @@
                 <span class=n >starting_values</span> <span class=o >=</span> <span class=kc >None</span>
 
         <span class=k >if</span> <span class=n >starting_values</span> <span class=ow >is</span> <span class=kc >None</span><span class=p >:</span>
-            <span class=n >sv</span> <span class=o >=</span> <span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >starting_values</span><span class=p >(),</span> <span class=n >sv_volatility</span><span class=p >,</span> <span class=n >d</span><span class=o >.</span><span class=n >starting_values</span><span class=p >(</span><span class=n >std_resids</span><span class=p >))</span>
-            <span class=n >sv</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >hstack</span><span class=p >(</span><span class=n >sv</span><span class=p >)</span>
+            <span class=n >sv</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >hstack</span><span class=p >(</span>
+                <span class=p >[</span><span class=bp >self</span><span class=o >.</span><span class=n >starting_values</span><span class=p >(),</span> <span class=n >sv_volatility</span><span class=p >,</span> <span class=n >d</span><span class=o >.</span><span class=n >starting_values</span><span class=p >(</span><span class=n >std_resids</span><span class=p >)]</span>
+            <span class=p >)</span>
 
         <span class=c1 ># 4. Estimate models using constrained optimization</span>
         <span class=n >_callback_info</span><span class=p >[</span><span class=s2 >"count"</span><span class=p >],</span> <span class=n >_callback_info</span><span class=p >[</span><span class=s2 >"iter"</span><span class=p >]</span> <span class=o >=</span> <span class=mi >0</span><span class=p >,</span> <span class=mi >0</span>
@@ -762,7 +765,7 @@
 
         <span class=n >mp</span><span class=p >,</span> <span class=n >vp</span><span class=p >,</span> <span class=n >dp</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >_parse_parameters</span><span class=p >(</span><span class=n >params</span><span class=p >)</span>
 
-        <span class=n >resids</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >resids</span><span class=p >(</span><span class=n >mp</span><span class=p >)</span>
+        <span class=n >resids</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >resids</span><span class=p >(</span><span class=n >mp</span><span class=p >),</span> <span class=n >dtype</span><span class=o >=</span><span class=nb >float</span><span class=p >)</span>
         <span class=n >vol</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >zeros_like</span><span class=p >(</span><span class=n >resids</span><span class=p >)</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >volatility</span><span class=o >.</span><span class=n >compute_variance</span><span class=p >(</span><span class=n >vp</span><span class=p >,</span> <span class=n >resids</span><span class=p >,</span> <span class=n >vol</span><span class=p >,</span> <span class=n >backcast</span><span class=p >,</span> <span class=n >var_bounds</span><span class=p >)</span>
         <span class=n >vol</span> <span class=o >=</span> <span class=n >cast</span><span class=p >(</span><span class=n >Float64Array</span><span class=p >,</span> <span class=n >np</span><span class=o >.</span><span class=n >sqrt</span><span class=p >(</span><span class=n >vol</span><span class=p >))</span>
@@ -803,8 +806,8 @@
         <span class=p >)</span></div>
 
 <div class=viewcode-block  id=ARCHModel.parameter_names ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.parameter_names.html#arch.univariate.base.ARCHModel.parameter_names">[docs]</a>    <span class=nd >@abstractmethod</span>
-    <span class=k >def</span> <span class=nf >parameter_names</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >List</span><span class=p >[</span><span class=nb >str</span><span class=p >]:</span>
-        <span class=sd >"""List of parameters names</span>
+    <span class=k >def</span> <span class=nf >parameter_names</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >list</span><span class=p >[</span><span class=nb >str</span><span class=p >]:</span>
+<span class=w >        </span><span class=sd >"""List of parameters names</span>
 
 <span class=sd >        Returns</span>
 <span class=sd >        -------</span>
@@ -813,7 +816,7 @@
 <span class=sd >        """</span></div>
 
 <div class=viewcode-block  id=ARCHModel.starting_values ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.starting_values.html#arch.univariate.base.ARCHModel.starting_values">[docs]</a>    <span class=k >def</span> <span class=nf >starting_values</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Float64Array</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Returns starting values for the mean model, often the same as the</span>
 <span class=sd >        values returned from fit</span>
 
@@ -827,19 +830,19 @@
 <div class=viewcode-block  id=ARCHModel.num_params ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.num_params.html#arch.univariate.base.ARCHModel.num_params">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=nd >@abstractmethod</span>
     <span class=k >def</span> <span class=nf >num_params</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >int</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Number of parameters in the model</span>
 <span class=sd >        """</span></div>
 
 <div class=viewcode-block  id=ARCHModel.simulate ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.simulate.html#arch.univariate.base.ARCHModel.simulate">[docs]</a>    <span class=nd >@abstractmethod</span>
     <span class=k >def</span> <span class=nf >simulate</span><span class=p >(</span>
         <span class=bp >self</span><span class=p >,</span>
-        <span class=n >params</span><span class=p >:</span> <span class=n >ArrayLike1D</span><span class=p >,</span>
+        <span class=n >params</span><span class=p >:</span> <span class=n >ArrayLike1D</span> <span class=o >|</span> <span class=n >Sequence</span><span class=p >[</span><span class=nb >float</span><span class=p >],</span>
         <span class=n >nobs</span><span class=p >:</span> <span class=nb >int</span><span class=p >,</span>
         <span class=n >burn</span><span class=p >:</span> <span class=nb >int</span> <span class=o >=</span> <span class=mi >500</span><span class=p >,</span>
-        <span class=n >initial_value</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=nb >float</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >x</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >ArrayLike</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >initial_value_vol</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=nb >float</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >initial_value</span><span class=p >:</span> <span class=nb >float</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >x</span><span class=p >:</span> <span class=n >ArrayLike</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >initial_value_vol</span><span class=p >:</span> <span class=nb >float</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
     <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >pd</span><span class=o >.</span><span class=n >DataFrame</span><span class=p >:</span>
         <span class=k >pass</span></div>
 
@@ -847,10 +850,10 @@
     <span class=k >def</span> <span class=nf >resids</span><span class=p >(</span>
         <span class=bp >self</span><span class=p >,</span>
         <span class=n >params</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span>
-        <span class=n >y</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >regressors</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-    <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Float64Array</span><span class=p >:</span>
-        <span class=sd >"""</span>
+        <span class=n >y</span><span class=p >:</span> <span class=n >ArrayLike1D</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >regressors</span><span class=p >:</span> <span class=n >ArrayLike2D</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+    <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >ArrayLike1D</span><span class=p >:</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Compute model residuals</span>
 
 <span class=sd >        Parameters</span>
@@ -871,10 +874,10 @@
 <div class=viewcode-block  id=ARCHModel.compute_param_cov ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.compute_param_cov.html#arch.univariate.base.ARCHModel.compute_param_cov">[docs]</a>    <span class=k >def</span> <span class=nf >compute_param_cov</span><span class=p >(</span>
         <span class=bp >self</span><span class=p >,</span>
         <span class=n >params</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span>
-        <span class=n >backcast</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=kc >None</span><span class=p >,</span> <span class=nb >float</span><span class=p >,</span> <span class=n >Float64Array</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >backcast</span><span class=p >:</span> <span class=kc >None</span> <span class=o >|</span> <span class=nb >float</span> <span class=o >|</span> <span class=n >Float64Array</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
         <span class=n >robust</span><span class=p >:</span> <span class=nb >bool</span> <span class=o >=</span> <span class=kc >True</span><span class=p >,</span>
     <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Float64Array</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Computes parameter covariances using numerical derivatives.</span>
 
 <span class=sd >        Parameters</span>
@@ -888,7 +891,7 @@
 <span class=sd >            classic MLE (False)</span>
 
 <span class=sd >        """</span>
-        <span class=n >resids</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >resids</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >starting_values</span><span class=p >())</span>
+        <span class=n >resids</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >resids</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >starting_values</span><span class=p >()),</span> <span class=n >dtype</span><span class=o >=</span><span class=nb >float</span><span class=p >)</span>
         <span class=n >var_bounds</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >volatility</span><span class=o >.</span><span class=n >variance_bounds</span><span class=p >(</span><span class=n >resids</span><span class=p >)</span>
         <span class=n >nobs</span> <span class=o >=</span> <span class=n >resids</span><span class=o >.</span><span class=n >shape</span><span class=p >[</span><span class=mi >0</span><span class=p >]</span>
         <span class=k >if</span> <span class=n >backcast</span> <span class=ow >is</span> <span class=kc >None</span> <span class=ow >and</span> <span class=bp >self</span><span class=o >.</span><span class=n >_backcast</span> <span class=ow >is</span> <span class=kc >None</span><span class=p >:</span>
@@ -922,17 +925,17 @@
         <span class=bp >self</span><span class=p >,</span>
         <span class=n >params</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span>
         <span class=n >horizon</span><span class=p >:</span> <span class=nb >int</span> <span class=o >=</span> <span class=mi >1</span><span class=p >,</span>
-        <span class=n >start</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=nb >int</span><span class=p >,</span> <span class=n >DateLike</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >start</span><span class=p >:</span> <span class=nb >int</span> <span class=o >|</span> <span class=n >DateLike</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
         <span class=n >align</span><span class=p >:</span> <span class=n >Literal</span><span class=p >[</span><span class=s2 >"origin"</span><span class=p >,</span> <span class=s2 >"target"</span><span class=p >]</span> <span class=o >=</span> <span class=s2 >"origin"</span><span class=p >,</span>
         <span class=n >method</span><span class=p >:</span> <span class=n >ForecastingMethod</span> <span class=o >=</span> <span class=s2 >"analytic"</span><span class=p >,</span>
         <span class=n >simulations</span><span class=p >:</span> <span class=nb >int</span> <span class=o >=</span> <span class=mi >1000</span><span class=p >,</span>
-        <span class=n >rng</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Callable</span><span class=p >[[</span><span class=n >Union</span><span class=p >[</span><span class=nb >int</span><span class=p >,</span> <span class=n >Tuple</span><span class=p >[</span><span class=nb >int</span><span class=p >,</span> <span class=o >...</span><span class=p >]]],</span> <span class=n >Float64Array</span><span class=p >]]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >random_state</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >np</span><span class=o >.</span><span class=n >random</span><span class=o >.</span><span class=n >RandomState</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >rng</span><span class=p >:</span> <span class=n >Callable</span><span class=p >[[</span><span class=nb >int</span> <span class=o >|</span> <span class=nb >tuple</span><span class=p >[</span><span class=nb >int</span><span class=p >,</span> <span class=o >...</span><span class=p >]],</span> <span class=n >Float64Array</span><span class=p >]</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >random_state</span><span class=p >:</span> <span class=n >np</span><span class=o >.</span><span class=n >random</span><span class=o >.</span><span class=n >RandomState</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
         <span class=o >*</span><span class=p >,</span>
-        <span class=n >reindex</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=nb >bool</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >x</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=kc >None</span><span class=p >,</span> <span class=n >Dict</span><span class=p >[</span><span class=n >Label</span><span class=p >,</span> <span class=n >ArrayLike</span><span class=p >],</span> <span class=n >ArrayLike</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >reindex</span><span class=p >:</span> <span class=nb >bool</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >x</span><span class=p >:</span> <span class=kc >None</span> <span class=o >|</span> <span class=nb >dict</span><span class=p >[</span><span class=n >Label</span><span class=p >,</span> <span class=n >ArrayLike</span><span class=p >]</span> <span class=o >|</span> <span class=n >ArrayLike</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
     <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >ARCHModelForecast</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Construct forecasts from estimated model</span>
 
 <span class=sd >        Parameters</span>
@@ -1044,8 +1047,8 @@
 <span class=sd >        """</span></div></div>
 
 
-<span class=k >class</span> <span class=nc >_SummaryRepr</span><span class=p >(</span><span class=nb >object</span><span class=p >):</span>
-    <span class=sd >"""Base class for returning summary as repr and str"""</span>
+<span class=k >class</span> <span class=nc >_SummaryRepr</span><span class=p >:</span>
+<span class=w >    </span><span class=sd >"""Base class for returning summary as repr and str"""</span>
 
     <span class=k >def</span> <span class=nf >summary</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Summary</span><span class=p >:</span>
         <span class=k >raise</span> <span class=ne >NotImplementedError</span><span class=p >(</span><span class=s2 >"Subclasses must implement"</span><span class=p >)</span>
@@ -1053,7 +1056,7 @@
     <span class=k >def</span> <span class=fm >__repr__</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >str</span><span class=p >:</span>
         <span class=n >out</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=fm >__str__</span><span class=p >()</span> <span class=o >+</span> <span class=s2 >"</span><span class=se >\n</span><span class=s2 >"</span>
         <span class=n >out</span> <span class=o >+=</span> <span class=bp >self</span><span class=o >.</span><span class=vm >__class__</span><span class=o >.</span><span class=vm >__name__</span>
-        <span class=n >out</span> <span class=o >+=</span> <span class=s2 >", id: </span><span class=si >{0}</span><span class=s2 >"</span><span class=o >.</span><span class=n >format</span><span class=p >(</span><span class=nb >hex</span><span class=p >(</span><span class=nb >id</span><span class=p >(</span><span class=bp >self</span><span class=p >)))</span>
+        <span class=n >out</span> <span class=o >+=</span> <span class=sa >f</span><span class=s2 >", id: </span><span class=si >{</span><span class=nb >hex</span><span class=p >(</span><span class=nb >id</span><span class=p >(</span><span class=bp >self</span><span class=p >))</span><span class=si >}</span><span class=s2 >"</span>
         <span class=k >return</span> <span class=n >out</span>
 
     <span class=k >def</span> <span class=fm >__str__</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >str</span><span class=p >:</span>
@@ -1061,7 +1064,7 @@
 
 
 <div class=viewcode-block  id=ARCHModelFixedResult ><a class=viewcode-back  href="../../../univariate/generated/arch.univariate.base.ARCHModelFixedResult.html#arch.univariate.base.ARCHModelFixedResult">[docs]</a><span class=k >class</span> <span class=nc >ARCHModelFixedResult</span><span class=p >(</span><span class=n >_SummaryRepr</span><span class=p >):</span>
-    <span class=sd >"""</span>
+<span class=w >    </span><span class=sd >"""</span>
 <span class=sd >    Results for fixed parameters for an ARCHModel model</span>
 
 <span class=sd >    Parameters</span>
@@ -1091,7 +1094,7 @@
         <span class=n >resid</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span>
         <span class=n >volatility</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span>
         <span class=n >dep_var</span><span class=p >:</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >,</span>
-        <span class=n >names</span><span class=p >:</span> <span class=n >Sequence</span><span class=p >[</span><span class=nb >str</span><span class=p >],</span>
+        <span class=n >names</span><span class=p >:</span> <span class=nb >list</span><span class=p >[</span><span class=nb >str</span><span class=p >],</span>
         <span class=n >loglikelihood</span><span class=p >:</span> <span class=nb >float</span><span class=p >,</span>
         <span class=n >is_pandas</span><span class=p >:</span> <span class=nb >bool</span><span class=p >,</span>
         <span class=n >model</span><span class=p >:</span> <span class=n >ARCHModel</span><span class=p >,</span>
@@ -1102,15 +1105,15 @@
         <span class=bp >self</span><span class=o >.</span><span class=n >_model</span> <span class=o >=</span> <span class=n >model</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >_datetime</span> <span class=o >=</span> <span class=n >dt</span><span class=o >.</span><span class=n >datetime</span><span class=o >.</span><span class=n >now</span><span class=p >()</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >_dep_var</span> <span class=o >=</span> <span class=n >dep_var</span>
-        <span class=bp >self</span><span class=o >.</span><span class=n >_dep_name</span> <span class=o >=</span> <span class=n >dep_var</span><span class=o >.</span><span class=n >name</span>
-        <span class=bp >self</span><span class=o >.</span><span class=n >_names</span> <span class=o >=</span> <span class=n >names</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >_dep_name</span> <span class=o >=</span> <span class=nb >str</span><span class=p >(</span><span class=n >dep_var</span><span class=o >.</span><span class=n >name</span><span class=p >)</span>
+        <span class=bp >self</span><span class=o >.</span><span class=n >_names</span> <span class=o >=</span> <span class=nb >list</span><span class=p >(</span><span class=n >names</span><span class=p >)</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >_loglikelihood</span> <span class=o >=</span> <span class=n >loglikelihood</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >_nobs</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >model</span><span class=o >.</span><span class=n >_fit_y</span><span class=o >.</span><span class=n >shape</span><span class=p >[</span><span class=mi >0</span><span class=p >]</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >_index</span> <span class=o >=</span> <span class=n >dep_var</span><span class=o >.</span><span class=n >index</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >_volatility</span> <span class=o >=</span> <span class=n >volatility</span>
 
 <div class=viewcode-block  id=ARCHModelFixedResult.summary ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.summary.html#arch.univariate.base.ARCHModelFixedResult.summary">[docs]</a>    <span class=k >def</span> <span class=nf >summary</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Summary</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Constructs a summary of the results from a fit model.</span>
 
 <span class=sd >        Returns</span>
@@ -1224,31 +1227,31 @@
 
 <div class=viewcode-block  id=ARCHModelFixedResult.model ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.model.html#arch.univariate.base.ARCHModelFixedResult.model">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >model</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >ARCHModel</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Model instance used to produce the fit</span>
 <span class=sd >        """</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_model</span></div>
 
 <div class=viewcode-block  id=ARCHModelFixedResult.loglikelihood ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.loglikelihood.html#arch.univariate.base.ARCHModelFixedResult.loglikelihood">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >loglikelihood</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >float</span><span class=p >:</span>
-        <span class=sd >"""Model loglikelihood"""</span>
+<span class=w >        </span><span class=sd >"""Model loglikelihood"""</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_loglikelihood</span></div>
 
 <div class=viewcode-block  id=ARCHModelFixedResult.aic ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.aic.html#arch.univariate.base.ARCHModelFixedResult.aic">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >aic</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >float</span><span class=p >:</span>
-        <span class=sd >"""Akaike Information Criteria</span>
+<span class=w >        </span><span class=sd >"""Akaike Information Criteria</span>
 
 <span class=sd >        -2 * loglikelihood + 2 * num_params"""</span>
         <span class=k >return</span> <span class=o >-</span><span class=mi >2</span> <span class=o >*</span> <span class=bp >self</span><span class=o >.</span><span class=n >loglikelihood</span> <span class=o >+</span> <span class=mi >2</span> <span class=o >*</span> <span class=bp >self</span><span class=o >.</span><span class=n >num_params</span></div>
 
 <div class=viewcode-block  id=ARCHModelFixedResult.num_params ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.num_params.html#arch.univariate.base.ARCHModelFixedResult.num_params">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >num_params</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >int</span><span class=p >:</span>
-        <span class=sd >"""Number of parameters in model"""</span>
+<span class=w >        </span><span class=sd >"""Number of parameters in model"""</span>
         <span class=k >return</span> <span class=nb >len</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >params</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=ARCHModelFixedResult.bic ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.bic.html#arch.univariate.base.ARCHModelFixedResult.bic">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >bic</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >float</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Schwarz/Bayesian Information Criteria</span>
 
 <span class=sd >        -2 * loglikelihood + log(nobs) * num_params</span>
@@ -1257,12 +1260,12 @@
 
 <div class=viewcode-block  id=ARCHModelFixedResult.params ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.params.html#arch.univariate.base.ARCHModelFixedResult.params">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >params</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >:</span>
-        <span class=sd >"""Model Parameters"""</span>
+<span class=w >        </span><span class=sd >"""Model Parameters"""</span>
         <span class=k >return</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >_params</span><span class=p >,</span> <span class=n >index</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >_names</span><span class=p >,</span> <span class=n >name</span><span class=o >=</span><span class=s2 >"params"</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=ARCHModelFixedResult.conditional_volatility ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.conditional_volatility.html#arch.univariate.base.ARCHModelFixedResult.conditional_volatility">[docs]</a>    <span class=nd >@cached_property</span>
-    <span class=k >def</span> <span class=nf >conditional_volatility</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Union</span><span class=p >[</span><span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >,</span> <span class=n >Float64Array</span><span class=p >]:</span>
-        <span class=sd >"""</span>
+    <span class=k >def</span> <span class=nf >conditional_volatility</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span> <span class=o >|</span> <span class=n >Float64Array</span><span class=p >:</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Estimated conditional volatility</span>
 
 <span class=sd >        Returns</span>
@@ -1280,14 +1283,14 @@
 
 <div class=viewcode-block  id=ARCHModelFixedResult.nobs ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.nobs.html#arch.univariate.base.ARCHModelFixedResult.nobs">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >nobs</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >int</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Number of data points used to estimate model</span>
 <span class=sd >        """</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_nobs</span></div>
 
 <div class=viewcode-block  id=ARCHModelFixedResult.resid ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.resid.html#arch.univariate.base.ARCHModelFixedResult.resid">[docs]</a>    <span class=nd >@cached_property</span>
-    <span class=k >def</span> <span class=nf >resid</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Union</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >,</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >]:</span>
-        <span class=sd >"""</span>
+    <span class=k >def</span> <span class=nf >resid</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >:</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Model residuals</span>
 <span class=sd >        """</span>
         <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >_is_pandas</span><span class=p >:</span>
@@ -1296,8 +1299,8 @@
             <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_resid</span></div>
 
 <div class=viewcode-block  id=ARCHModelFixedResult.std_resid ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.std_resid.html#arch.univariate.base.ARCHModelFixedResult.std_resid">[docs]</a>    <span class=nd >@cached_property</span>
-    <span class=k >def</span> <span class=nf >std_resid</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Union</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >,</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >]:</span>
-        <span class=sd >"""</span>
+    <span class=k >def</span> <span class=nf >std_resid</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >:</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Residuals standardized by conditional volatility</span>
 <span class=sd >        """</span>
         <span class=n >std_res</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >resid</span> <span class=o >/</span> <span class=bp >self</span><span class=o >.</span><span class=n >conditional_volatility</span>
@@ -1305,10 +1308,8 @@
             <span class=n >std_res</span><span class=o >.</span><span class=n >name</span> <span class=o >=</span> <span class=s2 >"std_resid"</span>
         <span class=k >return</span> <span class=n >std_res</span></div>
 
-<div class=viewcode-block  id=ARCHModelFixedResult.plot ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.plot.html#arch.univariate.base.ARCHModelFixedResult.plot">[docs]</a>    <span class=k >def</span> <span class=nf >plot</span><span class=p >(</span>
-        <span class=bp >self</span><span class=p >,</span> <span class=n >annualize</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=nb >str</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span> <span class=n >scale</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=nb >float</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span>
-    <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Figure</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<div class=viewcode-block  id=ARCHModelFixedResult.plot ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.plot.html#arch.univariate.base.ARCHModelFixedResult.plot">[docs]</a>    <span class=k >def</span> <span class=nf >plot</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >annualize</span><span class=p >:</span> <span class=nb >str</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span> <span class=n >scale</span><span class=p >:</span> <span class=nb >float</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Figure</span><span class=p >:</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Plot standardized residuals and conditional volatility</span>
 
 <span class=sd >        Parameters</span>
@@ -1384,19 +1385,19 @@
 
 <div class=viewcode-block  id=ARCHModelFixedResult.forecast ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.forecast.html#arch.univariate.base.ARCHModelFixedResult.forecast">[docs]</a>    <span class=k >def</span> <span class=nf >forecast</span><span class=p >(</span>
         <span class=bp >self</span><span class=p >,</span>
-        <span class=n >params</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >ArrayLike1D</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >params</span><span class=p >:</span> <span class=n >ArrayLike1D</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
         <span class=n >horizon</span><span class=p >:</span> <span class=nb >int</span> <span class=o >=</span> <span class=mi >1</span><span class=p >,</span>
-        <span class=n >start</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=nb >int</span><span class=p >,</span> <span class=n >DateLike</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >start</span><span class=p >:</span> <span class=nb >int</span> <span class=o >|</span> <span class=n >DateLike</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
         <span class=n >align</span><span class=p >:</span> <span class=n >Literal</span><span class=p >[</span><span class=s2 >"origin"</span><span class=p >,</span> <span class=s2 >"target"</span><span class=p >]</span> <span class=o >=</span> <span class=s2 >"origin"</span><span class=p >,</span>
         <span class=n >method</span><span class=p >:</span> <span class=n >ForecastingMethod</span> <span class=o >=</span> <span class=s2 >"analytic"</span><span class=p >,</span>
         <span class=n >simulations</span><span class=p >:</span> <span class=nb >int</span> <span class=o >=</span> <span class=mi >1000</span><span class=p >,</span>
-        <span class=n >rng</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Callable</span><span class=p >[[</span><span class=n >Union</span><span class=p >[</span><span class=nb >int</span><span class=p >,</span> <span class=n >Tuple</span><span class=p >[</span><span class=nb >int</span><span class=p >,</span> <span class=o >...</span><span class=p >]]],</span> <span class=n >Float64Array</span><span class=p >]]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >random_state</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >np</span><span class=o >.</span><span class=n >random</span><span class=o >.</span><span class=n >RandomState</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >rng</span><span class=p >:</span> <span class=n >Callable</span><span class=p >[[</span><span class=nb >int</span> <span class=o >|</span> <span class=nb >tuple</span><span class=p >[</span><span class=nb >int</span><span class=p >,</span> <span class=o >...</span><span class=p >]],</span> <span class=n >Float64Array</span><span class=p >]</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >random_state</span><span class=p >:</span> <span class=n >np</span><span class=o >.</span><span class=n >random</span><span class=o >.</span><span class=n >RandomState</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
         <span class=o >*</span><span class=p >,</span>
-        <span class=n >reindex</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=nb >bool</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >x</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=kc >None</span><span class=p >,</span> <span class=n >Dict</span><span class=p >[</span><span class=n >Label</span><span class=p >,</span> <span class=n >ArrayLike</span><span class=p >],</span> <span class=n >ArrayLike</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >reindex</span><span class=p >:</span> <span class=nb >bool</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >x</span><span class=p >:</span> <span class=kc >None</span> <span class=o >|</span> <span class=nb >dict</span><span class=p >[</span><span class=n >Label</span><span class=p >,</span> <span class=n >ArrayLike</span><span class=p >]</span> <span class=o >|</span> <span class=n >ArrayLike</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
     <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >ARCHModelForecast</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Construct forecasts from estimated model</span>
 
 <span class=sd >        Parameters</span>
@@ -1523,15 +1524,15 @@
 <div class=viewcode-block  id=ARCHModelFixedResult.hedgehog_plot ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.hedgehog_plot.html#arch.univariate.base.ARCHModelFixedResult.hedgehog_plot">[docs]</a>    <span class=nd >@deprecate_kwarg</span><span class=p >(</span><span class=s2 >"type"</span><span class=p >,</span> <span class=s2 >"plot_type"</span><span class=p >)</span>
     <span class=k >def</span> <span class=nf >hedgehog_plot</span><span class=p >(</span>
         <span class=bp >self</span><span class=p >,</span>
-        <span class=n >params</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >ArrayLike1D</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >params</span><span class=p >:</span> <span class=n >ArrayLike1D</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
         <span class=n >horizon</span><span class=p >:</span> <span class=nb >int</span> <span class=o >=</span> <span class=mi >10</span><span class=p >,</span>
         <span class=n >step</span><span class=p >:</span> <span class=nb >int</span> <span class=o >=</span> <span class=mi >10</span><span class=p >,</span>
-        <span class=n >start</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=nb >int</span><span class=p >,</span> <span class=n >DateLike</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >start</span><span class=p >:</span> <span class=nb >int</span> <span class=o >|</span> <span class=n >DateLike</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
         <span class=n >plot_type</span><span class=p >:</span> <span class=n >Literal</span><span class=p >[</span><span class=s2 >"volatility"</span><span class=p >,</span> <span class=s2 >"mean"</span><span class=p >]</span> <span class=o >=</span> <span class=s2 >"volatility"</span><span class=p >,</span>
         <span class=n >method</span><span class=p >:</span> <span class=n >ForecastingMethod</span> <span class=o >=</span> <span class=s2 >"analytic"</span><span class=p >,</span>
         <span class=n >simulations</span><span class=p >:</span> <span class=nb >int</span> <span class=o >=</span> <span class=mi >1000</span><span class=p >,</span>
     <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Figure</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Plot forecasts from estimated model</span>
 
 <span class=sd >        Parameters</span>
@@ -1625,10 +1626,12 @@
                 <span class=k >continue</span>
             <span class=n >temp_x</span> <span class=o >=</span> <span class=n >x_values</span><span class=p >[</span><span class=n >i</span> <span class=p >:</span> <span class=n >i</span> <span class=o >+</span> <span class=n >horizon</span> <span class=o >+</span> <span class=mi >1</span><span class=p >]</span>
             <span class=k >if</span> <span class=n >plot_mean</span><span class=p >:</span>
-                <span class=n >spine_data</span> <span class=o >=</span> <span class=n >forecasts</span><span class=o >.</span><span class=n >mean</span><span class=o >.</span><span class=n >iloc</span><span class=p >[</span><span class=n >i</span><span class=p >]</span>
+                <span class=n >spine_data</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span><span class=n >forecasts</span><span class=o >.</span><span class=n >mean</span><span class=o >.</span><span class=n >iloc</span><span class=p >[</span><span class=n >i</span><span class=p >],</span> <span class=n >dtype</span><span class=o >=</span><span class=nb >float</span><span class=p >)</span>
             <span class=k >else</span><span class=p >:</span>
-                <span class=n >spine_data</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >sqrt</span><span class=p >(</span><span class=n >forecasts</span><span class=o >.</span><span class=n >variance</span><span class=o >.</span><span class=n >iloc</span><span class=p >[</span><span class=n >i</span><span class=p >])</span>
-            <span class=n >temp_y</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >hstack</span><span class=p >((</span><span class=n >y_values</span><span class=p >[</span><span class=n >i</span><span class=p >],</span> <span class=n >spine_data</span><span class=p >))</span>
+                <span class=n >spine_data</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span>
+                    <span class=n >np</span><span class=o >.</span><span class=n >sqrt</span><span class=p >(</span><span class=n >forecasts</span><span class=o >.</span><span class=n >variance</span><span class=o >.</span><span class=n >iloc</span><span class=p >[</span><span class=n >i</span><span class=p >]),</span> <span class=n >dtype</span><span class=o >=</span><span class=nb >float</span>
+                <span class=p >)</span>
+            <span class=n >temp_y</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >hstack</span><span class=p >([</span><span class=n >y_values</span><span class=p >[</span><span class=n >i</span><span class=p >],</span> <span class=n >spine_data</span><span class=p >])</span>
             <span class=n >line</span> <span class=o >=</span> <span class=n >plot_fn</span><span class=p >(</span><span class=n >temp_x</span><span class=p >,</span> <span class=n >temp_y</span><span class=p >,</span> <span class=n >linewidth</span><span class=o >=</span><span class=mi >3</span><span class=p >,</span> <span class=n >linestyle</span><span class=o >=</span><span class=s2 >"-"</span><span class=p >,</span> <span class=n >marker</span><span class=o >=</span><span class=s2 >""</span><span class=p >)</span>
             <span class=n >spines</span><span class=o >.</span><span class=n >append</span><span class=p >(</span><span class=n >line</span><span class=p >)</span>
         <span class=n >color</span> <span class=o >=</span> <span class=n >spines</span><span class=p >[</span><span class=mi >0</span><span class=p >][</span><span class=mi >0</span><span class=p >]</span><span class=o >.</span><span class=n >get_color</span><span class=p >()</span>
@@ -1640,9 +1643,9 @@
         <span class=k >return</span> <span class=n >fig</span></div>
 
 <div class=viewcode-block  id=ARCHModelFixedResult.arch_lm_test ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.arch_lm_test.html#arch.univariate.base.ARCHModelFixedResult.arch_lm_test">[docs]</a>    <span class=k >def</span> <span class=nf >arch_lm_test</span><span class=p >(</span>
-        <span class=bp >self</span><span class=p >,</span> <span class=n >lags</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=nb >int</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span> <span class=n >standardized</span><span class=p >:</span> <span class=nb >bool</span> <span class=o >=</span> <span class=kc >False</span>
+        <span class=bp >self</span><span class=p >,</span> <span class=n >lags</span><span class=p >:</span> <span class=nb >int</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span> <span class=n >standardized</span><span class=p >:</span> <span class=nb >bool</span> <span class=o >=</span> <span class=kc >False</span>
     <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >WaldTestStatistic</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        ARCH LM test for conditional heteroskedasticity</span>
 
 <span class=sd >        Parameters</span>
@@ -1660,9 +1663,11 @@
 <span class=sd >            Result of ARCH-LM test</span>
 <span class=sd >        """</span>
         <span class=n >resids</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >resid</span>
-        <span class=n >nobs</span> <span class=o >=</span> <span class=n >resids</span><span class=o >.</span><span class=n >shape</span><span class=p >[</span><span class=mi >0</span><span class=p >]</span>
         <span class=k >if</span> <span class=n >standardized</span><span class=p >:</span>
             <span class=n >resids</span> <span class=o >=</span> <span class=n >resids</span> <span class=o >/</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >conditional_volatility</span><span class=p >)</span>
+        <span class=c1 ># GH 599: drop missing observations</span>
+        <span class=n >resids</span> <span class=o >=</span> <span class=n >resids</span><span class=p >[</span><span class=o >~</span><span class=n >np</span><span class=o >.</span><span class=n >isnan</span><span class=p >(</span><span class=n >resids</span><span class=p >)]</span>
+        <span class=n >nobs</span> <span class=o >=</span> <span class=n >resids</span><span class=o >.</span><span class=n >shape</span><span class=p >[</span><span class=mi >0</span><span class=p >]</span>
         <span class=n >resid2</span> <span class=o >=</span> <span class=n >resids</span><span class=o >**</span><span class=mi >2</span>
         <span class=n >lags</span> <span class=o >=</span> <span class=p >(</span>
             <span class=nb >int</span><span class=p >(</span><span class=n >np</span><span class=o >.</span><span class=n >ceil</span><span class=p >(</span><span class=mf >12.0</span> <span class=o >*</span> <span class=n >np</span><span class=o >.</span><span class=n >power</span><span class=p >(</span><span class=n >nobs</span> <span class=o >/</span> <span class=mf >100.0</span><span class=p >,</span> <span class=mi >1</span> <span class=o >/</span> <span class=mf >4.0</span><span class=p >)))</span>
@@ -1670,13 +1675,15 @@
             <span class=k >else</span> <span class=n >lags</span>
         <span class=p >)</span>
         <span class=n >lags</span> <span class=o >=</span> <span class=nb >max</span><span class=p >(</span><span class=nb >min</span><span class=p >(</span><span class=n >resids</span><span class=o >.</span><span class=n >shape</span><span class=p >[</span><span class=mi >0</span><span class=p >]</span> <span class=o >//</span> <span class=mi >2</span> <span class=o >-</span> <span class=mi >1</span><span class=p >,</span> <span class=n >lags</span><span class=p >),</span> <span class=mi >1</span><span class=p >)</span>
+        <span class=k >if</span> <span class=n >resid2</span><span class=o >.</span><span class=n >shape</span><span class=p >[</span><span class=mi >0</span><span class=p >]</span> <span class=o >&lt;</span> <span class=mi >3</span><span class=p >:</span>
+            <span class=k >raise</span> <span class=ne >ValueError</span><span class=p >(</span><span class=s2 >"Test requires at least 3 non-nan observations"</span><span class=p >)</span>
         <span class=n >lag</span><span class=p >,</span> <span class=n >lead</span> <span class=o >=</span> <span class=n >lagmat</span><span class=p >(</span><span class=n >resid2</span><span class=p >,</span> <span class=n >lags</span><span class=p >,</span> <span class=s2 >"both"</span><span class=p >,</span> <span class=s2 >"sep"</span><span class=p >,</span> <span class=kc >False</span><span class=p >)</span>
         <span class=n >lag</span> <span class=o >=</span> <span class=n >add_constant</span><span class=p >(</span><span class=n >lag</span><span class=p >)</span>
         <span class=n >res</span> <span class=o >=</span> <span class=n >OLS</span><span class=p >(</span><span class=n >lead</span><span class=p >,</span> <span class=n >lag</span><span class=p >)</span><span class=o >.</span><span class=n >fit</span><span class=p >()</span>
         <span class=n >stat</span> <span class=o >=</span> <span class=n >nobs</span> <span class=o >*</span> <span class=n >res</span><span class=o >.</span><span class=n >rsquared</span>
         <span class=n >test_type</span> <span class=o >=</span> <span class=s2 >"R"</span> <span class=k >if</span> <span class=ow >not</span> <span class=n >standardized</span> <span class=k >else</span> <span class=s2 >"Standardized r"</span>
-        <span class=n >null</span> <span class=o >=</span> <span class=s2 >"</span><span class=si >{0}</span><span class=s2 >esiduals are homoskedastic."</span><span class=o >.</span><span class=n >format</span><span class=p >(</span><span class=n >test_type</span><span class=p >)</span>
-        <span class=n >alt</span> <span class=o >=</span> <span class=s2 >"</span><span class=si >{0}</span><span class=s2 >esiduals are conditionally heteroskedastic."</span><span class=o >.</span><span class=n >format</span><span class=p >(</span><span class=n >test_type</span><span class=p >)</span>
+        <span class=n >null</span> <span class=o >=</span> <span class=sa >f</span><span class=s2 >"</span><span class=si >{</span><span class=n >test_type</span><span class=si >}</span><span class=s2 >esiduals are homoskedastic."</span>
+        <span class=n >alt</span> <span class=o >=</span> <span class=sa >f</span><span class=s2 >"</span><span class=si >{</span><span class=n >test_type</span><span class=si >}</span><span class=s2 >esiduals are conditionally heteroskedastic."</span>
         <span class=k >assert</span> <span class=nb >isinstance</span><span class=p >(</span><span class=n >lags</span><span class=p >,</span> <span class=nb >int</span><span class=p >)</span>
         <span class=k >return</span> <span class=n >WaldTestStatistic</span><span class=p >(</span>
             <span class=n >stat</span><span class=p >,</span> <span class=n >df</span><span class=o >=</span><span class=n >lags</span><span class=p >,</span> <span class=n >null</span><span class=o >=</span><span class=n >null</span><span class=p >,</span> <span class=n >alternative</span><span class=o >=</span><span class=n >alt</span><span class=p >,</span> <span class=n >name</span><span class=o >=</span><span class=s2 >"ARCH-LM Test"</span>
@@ -1684,7 +1691,7 @@
 
 
 <div class=viewcode-block  id=ARCHModelResult ><a class=viewcode-back  href="../../../univariate/generated/arch.univariate.base.ARCHModelResult.html#arch.univariate.base.ARCHModelResult">[docs]</a><span class=k >class</span> <span class=nc >ARCHModelResult</span><span class=p >(</span><span class=n >ARCHModelFixedResult</span><span class=p >):</span>
-    <span class=sd >"""</span>
+<span class=w >    </span><span class=sd >"""</span>
 <span class=sd >    Results from estimation of an ARCHModel model</span>
 
 <span class=sd >    Parameters</span>
@@ -1726,13 +1733,13 @@
     <span class=k >def</span> <span class=fm >__init__</span><span class=p >(</span>
         <span class=bp >self</span><span class=p >,</span>
         <span class=n >params</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span>
-        <span class=n >param_cov</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >],</span>
+        <span class=n >param_cov</span><span class=p >:</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span><span class=p >,</span>
         <span class=n >r2</span><span class=p >:</span> <span class=nb >float</span><span class=p >,</span>
         <span class=n >resid</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span>
         <span class=n >volatility</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span>
         <span class=n >cov_type</span><span class=p >:</span> <span class=nb >str</span><span class=p >,</span>
         <span class=n >dep_var</span><span class=p >:</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >,</span>
-        <span class=n >names</span><span class=p >:</span> <span class=n >Sequence</span><span class=p >[</span><span class=nb >str</span><span class=p >],</span>
+        <span class=n >names</span><span class=p >:</span> <span class=nb >list</span><span class=p >[</span><span class=nb >str</span><span class=p >],</span>
         <span class=n >loglikelihood</span><span class=p >:</span> <span class=nb >float</span><span class=p >,</span>
         <span class=n >is_pandas</span><span class=p >:</span> <span class=nb >bool</span><span class=p >,</span>
         <span class=n >optim_output</span><span class=p >:</span> <span class=n >OptimizeResult</span><span class=p >,</span>
@@ -1752,7 +1759,7 @@
 
 <div class=viewcode-block  id=ARCHModelResult.scale ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.scale.html#arch.univariate.base.ARCHModelResult.scale">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >scale</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >float</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        The scale applied to the original data before estimating the model.</span>
 
 <span class=sd >        If scale=1.0, the the data have not been rescaled.  Otherwise, the</span>
@@ -1761,7 +1768,7 @@
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >model</span><span class=o >.</span><span class=n >scale</span></div>
 
 <div class=viewcode-block  id=ARCHModelResult.conf_int ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.conf_int.html#arch.univariate.base.ARCHModelResult.conf_int">[docs]</a>    <span class=k >def</span> <span class=nf >conf_int</span><span class=p >(</span><span class=bp >self</span><span class=p >,</span> <span class=n >alpha</span><span class=p >:</span> <span class=nb >float</span> <span class=o >=</span> <span class=mf >0.05</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >pd</span><span class=o >.</span><span class=n >DataFrame</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Parameter confidence intervals</span>
 
 <span class=sd >        Parameters</span>
@@ -1786,7 +1793,7 @@
         <span class=p >)</span></div>
 
 <div class=viewcode-block  id=ARCHModelResult.summary ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.summary.html#arch.univariate.base.ARCHModelResult.summary">[docs]</a>    <span class=k >def</span> <span class=nf >summary</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Summary</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Constructs a summary of the results from a fit model.</span>
 
 <span class=sd >        Returns</span>
@@ -1913,14 +1920,14 @@
 
         <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >convergence_flag</span><span class=p >:</span>
             <span class=n >string_message</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >_optim_output</span><span class=o >.</span><span class=n >message</span>
-            <span class=n >extra_text</span><span class=o >.</span><span class=n >append</span><span class=p >(</span><span class=n >CONVERGENCE_WARNGING</span><span class=o >.</span><span class=n >format</span><span class=p >(</span><span class=n >msg</span><span class=o >=</span><span class=n >string_message</span><span class=p >))</span>
+            <span class=n >extra_text</span><span class=o >.</span><span class=n >append</span><span class=p >(</span><span class=n >CONVERGENCE_WARNING</span><span class=o >.</span><span class=n >format</span><span class=p >(</span><span class=n >msg</span><span class=o >=</span><span class=n >string_message</span><span class=p >))</span>
 
         <span class=n >smry</span><span class=o >.</span><span class=n >add_extra_txt</span><span class=p >(</span><span class=n >extra_text</span><span class=p >)</span>
         <span class=k >return</span> <span class=n >smry</span></div>
 
 <div class=viewcode-block  id=ARCHModelResult.param_cov ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.param_cov.html#arch.univariate.base.ARCHModelResult.param_cov">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >param_cov</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >pd</span><span class=o >.</span><span class=n >DataFrame</span><span class=p >:</span>
-        <span class=sd >"""Parameter covariance"""</span>
+<span class=w >        </span><span class=sd >"""Parameter covariance"""</span>
         <span class=k >if</span> <span class=bp >self</span><span class=o >.</span><span class=n >_param_cov</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span><span class=p >:</span>
             <span class=n >param_cov</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >_param_cov</span>
         <span class=k >else</span><span class=p >:</span>
@@ -1933,24 +1940,24 @@
 
 <div class=viewcode-block  id=ARCHModelResult.rsquared ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.rsquared.html#arch.univariate.base.ARCHModelResult.rsquared">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >rsquared</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >float</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        R-squared</span>
 <span class=sd >        """</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_r2</span></div>
 
 <div class=viewcode-block  id=ARCHModelResult.fit_start ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.fit_start.html#arch.univariate.base.ARCHModelResult.fit_start">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >fit_start</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >int</span><span class=p >:</span>
-        <span class=sd >"""Start of sample used to estimate parameters"""</span>
+<span class=w >        </span><span class=sd >"""Start of sample used to estimate parameters"""</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_fit_indices</span><span class=p >[</span><span class=mi >0</span><span class=p >]</span></div>
 
 <div class=viewcode-block  id=ARCHModelResult.fit_stop ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.fit_stop.html#arch.univariate.base.ARCHModelResult.fit_stop">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >fit_stop</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >int</span><span class=p >:</span>
-        <span class=sd >"""End of sample used to estimate parameters"""</span>
+<span class=w >        </span><span class=sd >"""End of sample used to estimate parameters"""</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_fit_indices</span><span class=p >[</span><span class=mi >1</span><span class=p >]</span></div>
 
 <div class=viewcode-block  id=ARCHModelResult.rsquared_adj ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.rsquared_adj.html#arch.univariate.base.ARCHModelResult.rsquared_adj">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >rsquared_adj</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >float</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Degree of freedom adjusted R-squared</span>
 <span class=sd >        """</span>
         <span class=k >return</span> <span class=mi >1</span> <span class=o >-</span> <span class=p >(</span>
@@ -1959,25 +1966,23 @@
 
 <div class=viewcode-block  id=ARCHModelResult.pvalues ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.pvalues.html#arch.univariate.base.ARCHModelResult.pvalues">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >pvalues</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Array of p-values for the t-statistics</span>
 <span class=sd >        """</span>
-        <span class=k >return</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >(</span>
-            <span class=n >stats</span><span class=o >.</span><span class=n >norm</span><span class=o >.</span><span class=n >sf</span><span class=p >(</span><span class=n >np</span><span class=o >.</span><span class=n >abs</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >tvalues</span><span class=p >))</span> <span class=o >*</span> <span class=mi >2</span><span class=p >,</span> <span class=n >index</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >_names</span><span class=p >,</span> <span class=n >name</span><span class=o >=</span><span class=s2 >"pvalues"</span>
-        <span class=p >)</span></div>
+        <span class=n >pvals</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span><span class=n >stats</span><span class=o >.</span><span class=n >norm</span><span class=o >.</span><span class=n >sf</span><span class=p >(</span><span class=n >np</span><span class=o >.</span><span class=n >abs</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >tvalues</span><span class=p >))</span> <span class=o >*</span> <span class=mi >2</span><span class=p >,</span> <span class=n >dtype</span><span class=o >=</span><span class=nb >float</span><span class=p >)</span>
+        <span class=k >return</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >(</span><span class=n >pvals</span><span class=p >,</span> <span class=n >index</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >_names</span><span class=p >,</span> <span class=n >name</span><span class=o >=</span><span class=s2 >"pvalues"</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=ARCHModelResult.std_err ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.std_err.html#arch.univariate.base.ARCHModelResult.std_err">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >std_err</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Array of parameter standard errors</span>
 <span class=sd >        """</span>
-        <span class=k >return</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >(</span>
-            <span class=n >np</span><span class=o >.</span><span class=n >sqrt</span><span class=p >(</span><span class=n >np</span><span class=o >.</span><span class=n >diag</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >param_cov</span><span class=p >)),</span> <span class=n >index</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >_names</span><span class=p >,</span> <span class=n >name</span><span class=o >=</span><span class=s2 >"std_err"</span>
-        <span class=p >)</span></div>
+        <span class=n >se</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >asarray</span><span class=p >(</span><span class=n >np</span><span class=o >.</span><span class=n >sqrt</span><span class=p >(</span><span class=n >np</span><span class=o >.</span><span class=n >diag</span><span class=p >(</span><span class=bp >self</span><span class=o >.</span><span class=n >param_cov</span><span class=p >)),</span> <span class=n >dtype</span><span class=o >=</span><span class=nb >float</span><span class=p >)</span>
+        <span class=k >return</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >(</span><span class=n >se</span><span class=p >,</span> <span class=n >index</span><span class=o >=</span><span class=bp >self</span><span class=o >.</span><span class=n >_names</span><span class=p >,</span> <span class=n >name</span><span class=o >=</span><span class=s2 >"std_err"</span><span class=p >)</span></div>
 
 <div class=viewcode-block  id=ARCHModelResult.tvalues ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.tvalues.html#arch.univariate.base.ARCHModelResult.tvalues">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >tvalues</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Array of t-statistics testing the null that the coefficient are 0</span>
 <span class=sd >        """</span>
         <span class=n >tvalues</span> <span class=o >=</span> <span class=bp >self</span><span class=o >.</span><span class=n >params</span> <span class=o >/</span> <span class=bp >self</span><span class=o >.</span><span class=n >std_err</span>
@@ -1986,15 +1991,15 @@
 
 <div class=viewcode-block  id=ARCHModelResult.convergence_flag ><a class=viewcode-back  href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.convergence_flag.html#arch.univariate.base.ARCHModelResult.convergence_flag">[docs]</a>    <span class=nd >@cached_property</span>
     <span class=k >def</span> <span class=nf >convergence_flag</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=nb >int</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        scipy.optimize.minimize result flag</span>
 <span class=sd >        """</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_optim_output</span><span class=o >.</span><span class=n >status</span></div>
 
     <span class=nd >@property</span>
     <span class=k >def</span> <span class=nf >optimization_result</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >OptimizeResult</span><span class=p >:</span>
-        <span class=sd >"""</span>
-<span class=sd >        Information about the covergence of the loglikelihood optimization</span>
+<span class=w >        </span><span class=sd >"""</span>
+<span class=sd >        Information about the convergence of the loglikelihood optimization</span>
 
 <span class=sd >        Returns</span>
 <span class=sd >        -------</span>
@@ -2018,7 +2023,7 @@
 
 
 <span class=k >def</span> <span class=nf >_format_forecasts</span><span class=p >(</span>
-    <span class=n >values</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span> <span class=n >index</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=n >List</span><span class=p >[</span><span class=n >Label</span><span class=p >],</span> <span class=n >pd</span><span class=o >.</span><span class=n >Index</span><span class=p >],</span> <span class=n >start_index</span><span class=p >:</span> <span class=nb >int</span>
+    <span class=n >values</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span> <span class=n >index</span><span class=p >:</span> <span class=nb >list</span><span class=p >[</span><span class=n >Label</span><span class=p >]</span> <span class=o >|</span> <span class=n >pd</span><span class=o >.</span><span class=n >Index</span><span class=p >,</span> <span class=n >start_index</span><span class=p >:</span> <span class=nb >int</span>
 <span class=p >)</span> <span class=o >-&gt;</span> <span class=n >pd</span><span class=o >.</span><span class=n >DataFrame</span><span class=p >:</span>
     <span class=n >horizon</span> <span class=o >=</span> <span class=n >values</span><span class=o >.</span><span class=n >shape</span><span class=p >[</span><span class=mi >1</span><span class=p >]</span>
     <span class=n >format_str</span> <span class=o >=</span> <span class=s2 >"{0:&gt;0"</span> <span class=o >+</span> <span class=nb >str</span><span class=p >(</span><span class=nb >int</span><span class=p >(</span><span class=n >np</span><span class=o >.</span><span class=n >ceil</span><span class=p >(</span><span class=n >np</span><span class=o >.</span><span class=n >log10</span><span class=p >(</span><span class=n >horizon</span> <span class=o >+</span> <span class=mf >0.5</span><span class=p >))))</span> <span class=o >+</span> <span class=s2 >"}"</span>
@@ -2029,8 +2034,8 @@
     <span class=k >return</span> <span class=n >forecasts</span>
 
 
-<div class=viewcode-block  id=ARCHModelForecastSimulation ><a class=viewcode-back  href="../../../univariate/generated/arch.univariate.base.ARCHModelForecastSimulation.html#arch.univariate.base.ARCHModelForecastSimulation">[docs]</a><span class=k >class</span> <span class=nc >ARCHModelForecastSimulation</span><span class=p >(</span><span class=nb >object</span><span class=p >):</span>
-    <span class=sd >"""</span>
+<div class=viewcode-block  id=ARCHModelForecastSimulation ><a class=viewcode-back  href="../../../univariate/generated/arch.univariate.base.ARCHModelForecastSimulation.html#arch.univariate.base.ARCHModelForecastSimulation">[docs]</a><span class=k >class</span> <span class=nc >ARCHModelForecastSimulation</span><span class=p >:</span>
+<span class=w >    </span><span class=sd >"""</span>
 <span class=sd >    Container for a simulation or bootstrap-based forecasts from an ARCH Model</span>
 
 <span class=sd >    Parameters</span>
@@ -2044,11 +2049,11 @@
 
     <span class=k >def</span> <span class=fm >__init__</span><span class=p >(</span>
         <span class=bp >self</span><span class=p >,</span>
-        <span class=n >index</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=n >List</span><span class=p >[</span><span class=n >Label</span><span class=p >],</span> <span class=n >pd</span><span class=o >.</span><span class=n >Index</span><span class=p >],</span>
-        <span class=n >values</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >],</span>
-        <span class=n >residuals</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >],</span>
-        <span class=n >variances</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >],</span>
-        <span class=n >residual_variances</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >],</span>
+        <span class=n >index</span><span class=p >:</span> <span class=nb >list</span><span class=p >[</span><span class=n >Label</span><span class=p >]</span> <span class=o >|</span> <span class=n >pd</span><span class=o >.</span><span class=n >Index</span><span class=p >,</span>
+        <span class=n >values</span><span class=p >:</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >residuals</span><span class=p >:</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >variances</span><span class=p >:</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >residual_variances</span><span class=p >:</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span><span class=p >,</span>
     <span class=p >)</span> <span class=o >-&gt;</span> <span class=kc >None</span><span class=p >:</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >_index</span> <span class=o >=</span> <span class=n >pd</span><span class=o >.</span><span class=n >Index</span><span class=p >(</span><span class=n >index</span><span class=p >)</span>
         <span class=bp >self</span><span class=o >.</span><span class=n >_values</span> <span class=o >=</span> <span class=n >values</span>
@@ -2058,31 +2063,33 @@
 
     <span class=nd >@property</span>
     <span class=k >def</span> <span class=nf >index</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >pd</span><span class=o >.</span><span class=n >Index</span><span class=p >:</span>
-        <span class=sd >"""The index aligned to dimension 0 of the simulation paths"""</span>
+<span class=w >        </span><span class=sd >"""The index aligned to dimension 0 of the simulation paths"""</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_index</span>
 
     <span class=nd >@property</span>
-    <span class=k >def</span> <span class=nf >values</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >]:</span>
-        <span class=sd >"""The values of the process"""</span>
+    <span class=k >def</span> <span class=nf >values</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span><span class=p >:</span>
+<span class=w >        </span><span class=sd >"""The values of the process"""</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_values</span>
 
     <span class=nd >@property</span>
-    <span class=k >def</span> <span class=nf >residuals</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >]:</span>
-        <span class=sd >"""Simulated residuals used to produce the values"""</span>
+    <span class=k >def</span> <span class=nf >residuals</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span><span class=p >:</span>
+<span class=w >        </span><span class=sd >"""Simulated residuals used to produce the values"""</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_residuals</span>
 
     <span class=nd >@property</span>
-    <span class=k >def</span> <span class=nf >variances</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >]:</span>
-        <span class=sd >"""Simulated variances of the values"""</span>
+    <span class=k >def</span> <span class=nf >variances</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span><span class=p >:</span>
+<span class=w >        </span><span class=sd >"""Simulated variances of the values"""</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_variances</span>
 
     <span class=nd >@property</span>
-    <span class=k >def</span> <span class=nf >residual_variances</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >]:</span>
-        <span class=sd >"""Simulated variance of the residuals"""</span>
+    <span class=k >def</span> <span class=nf >residual_variances</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span><span class=p >:</span>
+<span class=w >        </span><span class=sd >"""Simulated variance of the residuals"""</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_residual_variances</span></div>
 
 
-<span class=k >def</span> <span class=nf >_reindex</span><span class=p >(</span><span class=n >a</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >],</span> <span class=n >idx</span><span class=p >:</span> <span class=n >pd</span><span class=o >.</span><span class=n >Index</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >]:</span>
+<span class=k >def</span> <span class=nf >_reindex</span><span class=p >(</span>
+    <span class=n >a</span><span class=p >:</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span><span class=p >,</span> <span class=n >idx</span><span class=p >:</span> <span class=nb >list</span><span class=p >[</span><span class=n >Label</span><span class=p >]</span> <span class=o >|</span> <span class=n >pd</span><span class=o >.</span><span class=n >Index</span>
+<span class=p >)</span> <span class=o >-&gt;</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span><span class=p >:</span>
     <span class=k >if</span> <span class=n >a</span> <span class=ow >is</span> <span class=kc >None</span><span class=p >:</span>
         <span class=k >return</span> <span class=n >a</span>
     <span class=k >assert</span> <span class=n >a</span> <span class=ow >is</span> <span class=ow >not</span> <span class=kc >None</span>
@@ -2094,8 +2101,8 @@
     <span class=k >return</span> <span class=n >a</span>
 
 
-<div class=viewcode-block  id=ARCHModelForecast ><a class=viewcode-back  href="../../../univariate/generated/arch.univariate.base.ARCHModelForecast.html#arch.univariate.base.ARCHModelForecast">[docs]</a><span class=k >class</span> <span class=nc >ARCHModelForecast</span><span class=p >(</span><span class=nb >object</span><span class=p >):</span>
-    <span class=sd >"""</span>
+<div class=viewcode-block  id=ARCHModelForecast ><a class=viewcode-back  href="../../../univariate/generated/arch.univariate.base.ARCHModelForecast.html#arch.univariate.base.ARCHModelForecast">[docs]</a><span class=k >class</span> <span class=nc >ARCHModelForecast</span><span class=p >:</span>
+<span class=w >    </span><span class=sd >"""</span>
 <span class=sd >    Container for forecasts from an ARCH Model</span>
 
 <span class=sd >    Parameters</span>
@@ -2113,15 +2120,15 @@
 
     <span class=k >def</span> <span class=fm >__init__</span><span class=p >(</span>
         <span class=bp >self</span><span class=p >,</span>
-        <span class=n >index</span><span class=p >:</span> <span class=n >Union</span><span class=p >[</span><span class=n >List</span><span class=p >[</span><span class=n >Label</span><span class=p >],</span> <span class=n >pd</span><span class=o >.</span><span class=n >Index</span><span class=p >],</span>
+        <span class=n >index</span><span class=p >:</span> <span class=nb >list</span><span class=p >[</span><span class=n >Label</span><span class=p >]</span> <span class=o >|</span> <span class=n >pd</span><span class=o >.</span><span class=n >Index</span><span class=p >,</span>
         <span class=n >start_index</span><span class=p >:</span> <span class=nb >int</span><span class=p >,</span>
         <span class=n >mean</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span>
         <span class=n >variance</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span>
         <span class=n >residual_variance</span><span class=p >:</span> <span class=n >Float64Array</span><span class=p >,</span>
-        <span class=n >simulated_paths</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >simulated_variances</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >simulated_residual_variances</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
-        <span class=n >simulated_residuals</span><span class=p >:</span> <span class=n >Optional</span><span class=p >[</span><span class=n >Float64Array</span><span class=p >]</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >simulated_paths</span><span class=p >:</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >simulated_variances</span><span class=p >:</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >simulated_residual_variances</span><span class=p >:</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
+        <span class=n >simulated_residuals</span><span class=p >:</span> <span class=n >Float64Array</span> <span class=o >|</span> <span class=kc >None</span> <span class=o >=</span> <span class=kc >None</span><span class=p >,</span>
         <span class=n >align</span><span class=p >:</span> <span class=n >Literal</span><span class=p >[</span><span class=s2 >"origin"</span><span class=p >,</span> <span class=s2 >"target"</span><span class=p >]</span> <span class=o >=</span> <span class=s2 >"origin"</span><span class=p >,</span>
         <span class=o >*</span><span class=p >,</span>
         <span class=n >reindex</span><span class=p >:</span> <span class=nb >bool</span> <span class=o >=</span> <span class=kc >False</span><span class=p >,</span>
@@ -2156,22 +2163,22 @@
 
     <span class=nd >@property</span>
     <span class=k >def</span> <span class=nf >mean</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >pd</span><span class=o >.</span><span class=n >DataFrame</span><span class=p >:</span>
-        <span class=sd >"""Forecast values for the conditional mean of the process"""</span>
+<span class=w >        </span><span class=sd >"""Forecast values for the conditional mean of the process"""</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_mean</span>
 
     <span class=nd >@property</span>
     <span class=k >def</span> <span class=nf >variance</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >pd</span><span class=o >.</span><span class=n >DataFrame</span><span class=p >:</span>
-        <span class=sd >"""Forecast values for the conditional variance of the process"""</span>
+<span class=w >        </span><span class=sd >"""Forecast values for the conditional variance of the process"""</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_variance</span>
 
     <span class=nd >@property</span>
     <span class=k >def</span> <span class=nf >residual_variance</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >pd</span><span class=o >.</span><span class=n >DataFrame</span><span class=p >:</span>
-        <span class=sd >"""Forecast values for the conditional variance of the residuals"""</span>
+<span class=w >        </span><span class=sd >"""Forecast values for the conditional variance of the residuals"""</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_residual_variance</span>
 
     <span class=nd >@property</span>
     <span class=k >def</span> <span class=nf >simulations</span><span class=p >(</span><span class=bp >self</span><span class=p >)</span> <span class=o >-&gt;</span> <span class=n >ARCHModelForecastSimulation</span><span class=p >:</span>
-        <span class=sd >"""</span>
+<span class=w >        </span><span class=sd >"""</span>
 <span class=sd >        Detailed simulation results if using a simulation-based method</span>
 
 <span class=sd >        Returns</span>
@@ -2180,4 +2187,4 @@
 <span class=sd >            Container for simulation results</span>
 <span class=sd >        """</span>
         <span class=k >return</span> <span class=bp >self</span><span class=o >.</span><span class=n >_sim</span></div>
-</pre></div> </article> </div> </div> </main> </div> <footer class=md-footer > <div class=md-footer-nav > <nav class="md-footer-nav__inner md-grid"> </a> </nav> </div> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-footer-copyright > <div class=md-footer-copyright__highlight > &#169; Copyright 2021, Kevin Sheppard. </div> Created using <a href="http://www.sphinx-doc.org/">Sphinx</a> 5.0.2. and <a href="https://github.com/bashtage/sphinx-material/">Material for Sphinx</a> </div> </div> </div> </footer> <script src="../../../_static/javascripts/application.js"></script> <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
+</pre></div> </article> </div> </div> </main> </div> <footer class=md-footer > <div class=md-footer-nav > <nav class="md-footer-nav__inner md-grid"> </a> </nav> </div> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-footer-copyright > <div class=md-footer-copyright__highlight > &#169; Copyright 2021, Kevin Sheppard. </div> Created using <a href="http://www.sphinx-doc.org/">Sphinx</a> 6.1.3. and <a href="https://github.com/bashtage/sphinx-material/">Material for Sphinx</a> </div> </div> </div> </footer> <script src="../../../_static/javascripts/application.js"></script> <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
