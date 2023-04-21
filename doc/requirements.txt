@@ -11,7 +11,7 @@ pandas >=1.0.3
 patsy >=0.5.1
 statsmodels >=0.11.1
 jinja2 <3
-sphinx >=4.0
+sphinx >=5,<6
 seaborn
 numpydoc >=1.0.0
 property_cached >=1.6.3

@@ -23,7 +23,7 @@ mypy
 
 # Documentation
 ipython>=7
-sphinx>=5
+sphinx >=5,<6
 sphinx_material
 nbsphinx
 jupyter
