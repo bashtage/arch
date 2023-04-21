@@ -46,12 +46,12 @@ cdef inline void bounds_check(double* sigma2, double* var_bounds):
 
 def harch_core(
     Py_ssize_t t,
-    double[::1] parameters,
-    double[::1] resids,
+    const double[::1] parameters,
+    const double[::1] resids,
     double[::1] sigma2,
-    np.int32_t[::1] lags,
+    const np.int32_t[::1] lags,
     double backcast,
-    double[:, ::1] var_bounds,
+    const double[:, ::1] var_bounds,
 ):
     """
     Compute variance recursion step for HARCH model
@@ -97,13 +97,13 @@ def harch_core(
     return sigma2[t]
 
 
-def harch_recursion(double[::1] parameters,
-                    double[::1] resids,
+def harch_recursion(const double[::1] parameters,
+                    const double[::1] resids,
                     double[::1] sigma2,
                     np.int32_t[::1] lags,
                     int nobs,
                     double backcast,
-                    double[:, ::1] var_bounds):
+                    const double[:, ::1] var_bounds):
     """
     Parameters
     ----------
@@ -141,13 +141,13 @@ def harch_recursion(double[::1] parameters,
 
     return np.asarray(sigma2)
 
-def arch_recursion(double[::1] parameters,
-                   double[::1] resids,
+def arch_recursion(const double[::1] parameters,
+                   const double[::1] resids,
                    double[::1] sigma2,
                    int p,
                    int nobs,
                    double backcast,
-                   double[:, ::1] var_bounds):
+                   const double[:, ::1] var_bounds):
     """
     Parameters
     ----------
@@ -186,11 +186,11 @@ def arch_recursion(double[::1] parameters,
 
 def garch_core(
     Py_ssize_t t,
-    double[::1] parameters,
-    double[::1] resids,
+    const double[::1] parameters,
+    const double[::1] resids,
     double[::1] sigma2,
     double backcast,
-    double[:,::1] var_bounds,
+    const double[:,::1] var_bounds,
     int p,
     int o,
     int q,
@@ -256,16 +256,16 @@ def garch_core(
     return sigma2[t]
 
 
-def garch_recursion(double[::1] parameters,
-                    double[::1] fresids,
-                    double[::1] sresids,
+def garch_recursion(const double[::1] parameters,
+                    const double[::1] fresids,
+                    const double[::1] sresids,
                     double[::1] sigma2,
                     int p,
                     int o,
                     int q,
                     int nobs,
                     double backcast,
-                    double[:, ::1] var_bounds):
+                    const double[:, ::1] var_bounds):
     """
     Compute variance recursion for GARCH and related models
 
@@ -324,15 +324,15 @@ def garch_recursion(double[::1] parameters,
 
     return np.asarray(sigma2)
 
-def egarch_recursion(double[::1] parameters,
-                     double[::1] resids,
+def egarch_recursion(const double[::1] parameters,
+                     const double[::1] resids,
                      double[::1] sigma2,
                      int p,
                      int o,
                      int q,
                      int nobs,
                      double backcast,
-                     double[:, ::1] var_bounds,
+                     const double[:, ::1] var_bounds,
                      double[::1] lnsigma2,
                      double[::1] std_resids,
                      double[::1] abs_std_resids):
@@ -405,9 +405,9 @@ def egarch_recursion(double[::1] parameters,
 
 
 
-def midas_recursion(double[::1] parameters,
-                    double[::1] weights,
-                    double[::1] resids,
+def midas_recursion(const double[::1] parameters,
+                    const double[::1] weights,
+                    const double[::1] resids,
                     double[::1] sigma2,
                     int nobs,
                     double backcast,
@@ -462,7 +462,7 @@ def midas_recursion(double[::1] parameters,
 
     return np.asarray(sigma2)
 
-cdef double[::1] _figarch_weights(double[::1] parameters,
+cdef double[::1] _figarch_weights(const double[::1] parameters,
                                   int p,
                                   int q,
                                   int trunc_lag):
@@ -487,12 +487,12 @@ cdef double[::1] _figarch_weights(double[::1] parameters,
     return lam
 
 
-def figarch_weights(double[::1] parameters, int p, int q, int trunc_lag):
+def figarch_weights(const double[::1] parameters, int p, int q, int trunc_lag):
     return np.asarray(_figarch_weights(parameters, p, q, trunc_lag))
 
 
-def figarch_recursion(double[::1] parameters,
-                      double[::1] fresids,
+def figarch_recursion(const double[::1] parameters,
+                      const double[::1] fresids,
                       double[::1] sigma2,
                       int p,
                       int q,
@@ -520,17 +520,17 @@ def figarch_recursion(double[::1] parameters,
     return np.asarray(sigma2)
 
 
-def aparch_recursion(double[::1] parameters,
-                    double[::1] resids,
-                    double[::1] abs_resids,
-                    double[::1] sigma2,
-                    double[::1] sigma_delta,
-                    int p,
-                    int o,
-                    int q,
-                    int nobs,
-                    double backcast,
-                    double[:, ::1] var_bounds):
+def aparch_recursion(const double[::1] parameters,
+                     const double[::1] resids,
+                     const double[::1] abs_resids,
+                     double[::1] sigma2,
+                     double[::1] sigma_delta,
+                     int p,
+                     int o,
+                     int q,
+                     int nobs,
+                     double backcast,
+                     const double[:, ::1] var_bounds):
     """
     Compute variance recursion for Asymmetric Power ARCH
 
@@ -589,24 +589,24 @@ cdef class VolatilityUpdater:
     def __init__(self):
         pass
 
-    def initialize_update(self, double[::1] parameters, object backcast, Py_ssize_t nobs):
+    def initialize_update(self, const double[::1] parameters, object backcast, Py_ssize_t nobs):
         pass
 
     cdef void update(self,
                      Py_ssize_t t,
-                     double[::1] parameters,
-                     double[::1] resids,
+                     const double[::1] parameters,
+                     const double[::1] resids,
                      double[::1] sigma2,
-                     double[:,::1] var_bounds
+                     const double[:,::1] var_bounds
                      ):
         pass
 
     def _update_tester(self,
                        Py_ssize_t t,
-                       double[::1] parameters,
-                       double[::1] resids,
+                       const double[::1] parameters,
+                       const double[::1] resids,
                        double[::1] sigma2,
-                       double[:,::1] var_bounds):
+                       const double[:,::1] var_bounds):
         self.update(t, parameters, resids, sigma2, var_bounds)
 
 cdef class GARCHUpdater(VolatilityUpdater):
@@ -621,15 +621,15 @@ cdef class GARCHUpdater(VolatilityUpdater):
         self.power = power
         self.backcast = -1.0
 
-    def initialize_update(self, double[::1] parameters, object backcast, Py_ssize_t nobs):
+    def initialize_update(self, const double[::1] parameters, object backcast, Py_ssize_t nobs):
         self.backcast = backcast
 
     cdef void update(self,
                      Py_ssize_t t,
-                     double[::1] parameters,
-                     double[::1] resids,
+                     const double[::1] parameters,
+                     const double[::1] resids,
                      double[::1] sigma2,
-                     double[:,::1] var_bounds
+                     const double[:,::1] var_bounds
                      ):
         cdef:
             int p = self.p, o = self.o, q = self.q
@@ -665,10 +665,10 @@ cdef class GARCHUpdater(VolatilityUpdater):
 
 cdef class HARCHUpdater(VolatilityUpdater):
     cdef:
-        np.int32_t[::1] lags
+        const np.int32_t[::1] lags
         double backcast
 
-    def __init__(self, np.int32_t[::1] lags):
+    def __init__(self, const np.int32_t[::1] lags):
         self.lags = lags
         self.backcast = -1.0
 
@@ -678,15 +678,15 @@ cdef class HARCHUpdater(VolatilityUpdater):
     def __reduce__(self):
         return HARCHUpdater, (np.asarray(self.lags),), (self.backcast,)
 
-    def initialize_update(self, double[::1] parameters, object backcast, Py_ssize_t nobs):
+    def initialize_update(self, const double[::1] parameters, object backcast, Py_ssize_t nobs):
         self.backcast = backcast
 
     cdef void update(self,
                      Py_ssize_t t,
-                     double[::1] parameters,
-                     double[::1] resids,
+                     const double[::1] parameters,
+                     const double[::1] resids,
                      double[::1] sigma2,
-                     double[:,::1] var_bounds
+                     const double[:,::1] var_bounds
                      ):
         cdef:
             double backcast = self.backcast
@@ -715,7 +715,7 @@ cdef class EWMAUpdater(VolatilityUpdater):
         self.params = np.zeros(3)
         if lam is not None:
             self.params[1] = 1.0 - lam
-            self.params[2] =lam
+            self.params[2] = lam
 
     def __setstate__(self, state):
         cdef Py_ssize_t i
@@ -728,7 +728,7 @@ cdef class EWMAUpdater(VolatilityUpdater):
         lam = None if self.estimate_lam else self.params[2]
         return EWMAUpdater, (lam,), (self.backcast, np.asarray(self.params))
 
-    def initialize_update(self, double[::1] parameters, object backcast, Py_ssize_t nobs):
+    def initialize_update(self, const double[::1] parameters, object backcast, Py_ssize_t nobs):
         if self.estimate_lam:
             self.params[1] = 1.0 - parameters[0]
             self.params[2] = parameters[0]
@@ -736,10 +736,10 @@ cdef class EWMAUpdater(VolatilityUpdater):
 
     cdef void update(self,
                      Py_ssize_t t,
-                     double[::1] parameters,
-                     double[::1] resids,
+                     const double[::1] parameters,
+                     const double[::1] resids,
                      double[::1] sigma2,
-                     double[:,::1] var_bounds
+                     const double[:,::1] var_bounds
                      ):
 
         sigma2[t] = self.params[0]
@@ -810,7 +810,7 @@ cdef class MIDASUpdater(VolatilityUpdater):
         for i in range(m):
             self.weights[i] /= sum_w
 
-    def initialize_update(self, double[::1] parameters, object backcast, Py_ssize_t nobs):
+    def initialize_update(self, const double[::1] parameters, object backcast, Py_ssize_t nobs):
         cdef double alpha, gamma, theta
 
         self.update_weights(parameters[2 + <int>self.asym])
@@ -829,10 +829,10 @@ cdef class MIDASUpdater(VolatilityUpdater):
 
     cdef void update(self,
                      Py_ssize_t t,
-                     double[::1] parameters,
-                     double[::1] resids,
+                     const double[::1] parameters,
+                     const double[::1] resids,
                      double[::1] sigma2,
-                     double[:,::1] var_bounds
+                     const double[:,::1] var_bounds
                      ):
         cdef Py_ssize_t i
         cdef int j
@@ -884,7 +884,7 @@ cdef class FIGARCHUpdater(VolatilityUpdater):
     def __reduce__(self):
         return FIGARCHUpdater, (self.p, self.q, self.power, self.truncation), (self.backcast, np.asarray(self.lam), np.asarray(self.fresids))
 
-    def initialize_update(self, double[::1] parameters, object backcast, Py_ssize_t nobs):
+    def initialize_update(self, const double[::1] parameters, object backcast, Py_ssize_t nobs):
         self.lam = _figarch_weights(parameters[1:], self.p, self.q, self.truncation)
         self.backcast = backcast
         if self.fresids.shape[0] < nobs:
@@ -892,10 +892,10 @@ cdef class FIGARCHUpdater(VolatilityUpdater):
 
     cdef void update(self,
                      Py_ssize_t t,
-                     double[::1] parameters,
-                     double[::1] resids,
+                     const double[::1] parameters,
+                     const double[::1] resids,
                      double[::1] sigma2,
-                     double[:,::1] var_bounds
+                     const double[:,::1] var_bounds
                      ):
         cdef Py_ssize_t i
         cdef double bc1, bc2, bc_weight, omega, beta, omega_tilde
@@ -965,10 +965,10 @@ cdef class RiskMetrics2006Updater(VolatilityUpdater):
 
     cdef void update(self,
                      Py_ssize_t t,
-                     double[::1] parameters,
-                     double[::1] resids,
+                     const double[::1] parameters,
+                     const double[::1] resids,
                      double[::1] sigma2,
-                     double[:,::1] var_bounds
+                     const double[:,::1] var_bounds
                      ):
         cdef:
             Py_ssize_t i
@@ -1043,16 +1043,16 @@ cdef class EGARCHUpdater(VolatilityUpdater):
             self.abs_std_resids = np.empty(nobs)
             self.std_resids = np.empty(nobs)
 
-    def initialize_update(self, double[::1] parameters, object backcast, Py_ssize_t nobs):
+    def initialize_update(self, const double[::1] parameters, object backcast, Py_ssize_t nobs):
         self.backcast = backcast
         self._resize(nobs)
 
     cdef void update(self,
                      Py_ssize_t t,
-                     double[::1] parameters,
-                     double[::1] resids,
+                     const double[::1] parameters,
+                     const double[::1] resids,
                      double[::1] sigma2,
-                     double[:,::1] var_bounds
+                     const double[:,::1] var_bounds
                      ):
         cdef Py_ssize_t j, loc
 
@@ -1095,12 +1095,12 @@ cdef class ARCHInMeanRecursion:
         self.volatility_updater = updater
 
     def recursion(self,
-                  double[::1] y,
-                  double[:,::1] x,
-                  double[::1] mean_parameters,
-                  double[::1] variance_params,
+                  const double[::1] y,
+                  const double[:,::1] x,
+                  const double[::1] mean_parameters,
+                  const double[::1] variance_params,
                   double[::1] sigma2,
-                  double[:,::1] var_bounds,
+                  const double[:,::1] var_bounds,
                   double power):
         cdef:
             Py_ssize_t t, i, nobs = y.shape[0], k = x.shape[1]
