@@ -1,32 +1,929 @@
-<!DOCTYPE html> <html lang=en > <meta charset=utf-8  /> <meta name=viewport  content="width=device-width, initial-scale=1.0" /><meta name=generator  content="Docutils 0.19: https://docutils.sourceforge.io/" /> <meta name=viewport  content="width=device-width,initial-scale=1"> <meta http-equiv=x-ua-compatible  content="ie=edge"> <meta name="lang:clipboard.copy" content="Copy to clipboard"> <meta name="lang:clipboard.copied" content="Copied to clipboard"> <meta name="lang:search.language" content=en > <meta name="lang:search.pipeline.stopwords" content=True > <meta name="lang:search.pipeline.trimmer" content=True > <meta name="lang:search.result.none" content="No matching documents"> <meta name="lang:search.result.one" content="1 matching document"> <meta name="lang:search.result.other" content="# matching documents"> <meta name="lang:search.tokenizer" content="[\s\-]+"> <link href="https://fonts.gstatic.com/" rel=preconnect  crossorigin> <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700|Roboto:300,400,400i,700&display=fallback" rel=stylesheet > <style> body, input { font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif } code, kbd, pre { font-family: "Roboto Mono", "Courier New", Courier, monospace } </style> <link rel=stylesheet  href="../_static/stylesheets/application.css"/> <link rel=stylesheet  href="../_static/stylesheets/application-palette.css"/> <link rel=stylesheet  href="../_static/stylesheets/application-fixes.css"/> <link rel=stylesheet  href="../_static/fonts/material-icons.css"/> <meta name=theme-color  content="#2196f3"> <script src="../_static/javascripts/modernizr.js"></script> <title>ARCH Modeling &#8212; arch 5.4.0 documentation</title> <link rel=apple-touch-icon  sizes=180x180  href="../_static/images/apple-touch-icon.png"> <link rel=icon  type="image/png" sizes=32x32  href="../_static/images/favicon-32x32.png"> <link rel=icon  type="image/png" sizes=16x16  href="../_static/images/favicon-16x16.png"> <link rel=manifest  href="../_static/images/site.webmanifest"> <link rel=mask-icon  href="../_static/images/safari-pinned-tab.svg" color="#2196f3"> <meta name=msapplication-TileColor  content="#2b5797"> <meta name=msapplication-config  content="../_static/images/browserconfig.xml"> <link rel=stylesheet  type="text/css" href="../_static/pygments.css" /> <link rel=stylesheet  type="text/css" href="../_static/material.css" /> <link rel=stylesheet  type="text/css" href="../_static/nbsphinx-code-cells.css" /> <link rel=stylesheet  type="text/css" href="../_static/css/small_fixes.css" /> <script data-url_root="../" id=documentation_options  src="../_static/documentation_options.js"></script> <script src="../_static/doctools.js"></script> <script src="../_static/sphinx_highlight.js"></script> <script crossorigin=anonymous  integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script> <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script> <script defer=defer  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> <link rel=icon  href="../_static/favicon.ico"/> <link rel=index  title=Index  href="../genindex.html" /> <link rel=search  title=Search  href="../search.html" /> <link rel=next  title=Forecasting  href=forecasting.html  /> <link rel=prev  title="Introduction to ARCH Models" href=introduction.html  /> <body dir=ltr data-md-color-primary=blue data-md-color-accent=indigo> <svg class=md-svg > <defs data-children-count=0 > <svg xmlns="http://www.w3.org/2000/svg" width=416  height=448  viewBox="0 0 416 448" id=__github ><path fill=currentColor  d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg> </defs> </svg> <input class=md-toggle  data-md-toggle=drawer  type=checkbox  id=__drawer > <input class=md-toggle  data-md-toggle=search  type=checkbox  id=__search > <label class=md-overlay  data-md-component=overlay  for=__drawer ></label> <a href="#univariate/univariate_volatility_modeling" tabindex=1  class=md-skip > Skip to content </a> <header class=md-header  data-md-component=header > <nav class="md-header-nav md-grid"> <div class="md-flex navheader"> <div class="md-flex__cell md-flex__cell--shrink"> <a href="../index.html" title="arch 5.4.0 documentation" class="md-header-nav__button md-logo"> &nbsp; </a> </div> <div class="md-flex__cell md-flex__cell--shrink"> <label class="md-icon md-icon--menu md-header-nav__button" for=__drawer ></label> </div> <div class="md-flex__cell md-flex__cell--stretch"> <div class="md-flex__ellipsis md-header-nav__title" data-md-component=title > <span class=md-header-nav__topic >arch 5.4.0</span> <span class=md-header-nav__topic > ARCH Modeling </span> </div> </div> <div class="md-flex__cell md-flex__cell--shrink"> <label class="md-icon md-icon--search md-header-nav__button" for=__search ></label> <div class=md-search  data-md-component=search  role=dialog > <label class=md-search__overlay  for=__search ></label> <div class=md-search__inner  role=search > <form class=md-search__form  action="../search.html" method=get  name=search > <input type=text  class=md-search__input  name=q  placeholder=Search  autocapitalize=off  autocomplete=off  spellcheck=false  data-md-component=query  data-md-state=active > <label class="md-icon md-search__icon" for=__search ></label> <button type=reset  class="md-icon md-search__icon" data-md-component=reset  tabindex=-1 > &#xE5CD; </button> </form> <div class=md-search__output > <div class=md-search__scrollwrap  data-md-scrollfix> <div class=md-search-result  data-md-component=result > <div class=md-search-result__meta > Type to start searching </div> <ol class=md-search-result__list ></ol> </div> </div> </div> </div> </div> </div> <div class="md-flex__cell md-flex__cell--shrink"> <div class=md-header-nav__source > <a href="https://github.com/bashtage/arch/" title="Go to repository" class=md-source  data-md-source=github > <div class=md-source__icon > <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width=28  height=28 > <use xlink:href="#__github" width=24  height=24 ></use> </svg> </div> <div class=md-source__repository > ARCH </div> </a> </div> </div> <div class="md-flex__cell md-flex__cell--shrink dropdown"> <button class=dropdownbutton >Versions</button> <div class="dropdown-content md-hero"> <a title=Release  href="https://bashtage.github.io/arch/">Release</a> <a title=Development  href="https://bashtage.github.io/arch/devel/">Development</a> <a title="RTD (Release)" href="https://arch.readthedocs.io/">RTD (Release)</a> </div> </div> </div> </nav> </header> <div class=md-container > <nav class=md-tabs  data-md-component=tabs > <div class="md-tabs__inner md-grid"> <ul class=md-tabs__list > <li class=md-tabs__item ><a href=univariate.html  class=md-tabs__link >Univariate Volatility Models</a> </ul> </div> </nav> <main class=md-main > <div class="md-main__inner md-grid" data-md-component=container > <div class="md-sidebar md-sidebar--primary" data-md-component=navigation > <div class=md-sidebar__scrollwrap > <div class=md-sidebar__inner > <nav class="md-nav md-nav--primary" data-md-level=0 > <label class="md-nav__title md-nav__title--site" for=__drawer > <a href="../index.html" title="arch 5.4.0 documentation" class="md-nav__button md-logo"> <img src="../_static/" alt=" logo" width=48  height=48 > </a> <a href="../index.html" title="arch 5.4.0 documentation">arch 5.4.0</a> </label> <div class=md-nav__source > <a href="https://github.com/bashtage/arch/" title="Go to repository" class=md-source  data-md-source=github > <div class=md-source__icon > <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width=28  height=28 > <use xlink:href="#__github" width=24  height=24 ></use> </svg> </div> <div class=md-source__repository > ARCH </div> </a> </div> <ul class=md-nav__list > <li class=md-nav__item > <a href=univariate.html  class=md-nav__link >Univariate Volatility Models</a> <ul class=md-nav__list > <li class=md-nav__item > <a href=introduction.html  class=md-nav__link >Introduction</a> <li class=md-nav__item > <input class="md-toggle md-nav__toggle" data-md-toggle=toc  type=checkbox  id=__toc > <label class="md-nav__link md-nav__link--active" for=__toc > Examples </label> <a href="#" class="md-nav__link md-nav__link--active">Examples</a> <nav class="md-nav md-nav--secondary"> <label class=md-nav__title  for=__toc >Contents</label> <ul class=md-nav__list  data-md-scrollfix=""> <li class=md-nav__item ><a href="#univariate-univariate-volatility-modeling--page-root" class=md-nav__link >ARCH Modeling</a><nav class=md-nav > <ul class=md-nav__list > <li class=md-nav__item ><a href="#Setup" class=md-nav__link >Setup</a> <li class=md-nav__item ><a href="#Specifying-Common-Models" class=md-nav__link >Specifying Common Models</a><nav class=md-nav > <ul class=md-nav__list > <li class=md-nav__item ><a href="#GARCH-(with-a-Constant-Mean)" class=md-nav__link >GARCH (with a Constant Mean)</a> <li class=md-nav__item ><a href="#GJR-GARCH" class=md-nav__link >GJR-GARCH</a> <li class=md-nav__item ><a href="#TARCH/ZARCH" class=md-nav__link >TARCH/ZARCH</a> <li class=md-nav__item ><a href="#Student&#39;s-T-Errors" class=md-nav__link >Student’s T Errors</a> </ul> </nav> <li class=md-nav__item ><a href="#Fixing-Parameters" class=md-nav__link >Fixing Parameters</a> <li class=md-nav__item ><a href="#Building-a-Model-From-Components" class=md-nav__link >Building a Model From Components</a><nav class=md-nav > <ul class=md-nav__list > <li class=md-nav__item ><a href="#Mean-Models" class=md-nav__link >Mean Models</a> <li class=md-nav__item ><a href="#Volatility-Processes" class=md-nav__link >Volatility Processes</a> <li class=md-nav__item ><a href="#Distributions" class=md-nav__link >Distributions</a> </ul> </nav> <li class=md-nav__item ><a href="#WTI-Crude" class=md-nav__link >WTI Crude</a> <li class=md-nav__item ><a href="#Simulation" class=md-nav__link >Simulation</a> </ul> </nav> <li class=md-nav__item ><a class=md-nav__extra_link  href="../_sources/univariate/univariate_volatility_modeling.ipynb.txt">Show Source</a> </ul> </nav> <li class=md-nav__item > <a href=forecasting.html  class=md-nav__link >Forecasting</a> <li class=md-nav__item > <a href=univariate_volatility_forecasting.html  class=md-nav__link >Volatility Forecasting</a> <li class=md-nav__item > <a href="univariate_volatility_forecasting.html#Value-at-Risk-Forecasting" class=md-nav__link >Value-at-Risk Forecasting</a> <li class=md-nav__item > <a href=univariate_volatility_scenarios.html  class=md-nav__link >Forecasting Scenarios</a> <li class=md-nav__item > <a href=univariate_forecasting_with_exogenous_variables.html  class=md-nav__link >Forecasting with Exogenous Variables</a> <li class=md-nav__item > <a href=mean.html  class=md-nav__link >Mean Models</a> <li class=md-nav__item > <a href=volatility.html  class=md-nav__link >Volatility Processes</a> <li class=md-nav__item > <a href=univariate_using_fixed_variance.html  class=md-nav__link >Using the Fixed Variance Process</a> <li class=md-nav__item > <a href=distribution.html  class=md-nav__link >Distributions</a> <li class=md-nav__item > <a href=results.html  class=md-nav__link >Results</a> <li class=md-nav__item > <a href=utility.html  class=md-nav__link >Utilities</a> <li class=md-nav__item > <a href=background.html  class=md-nav__link >Background and References</a> </ul> <li class=md-nav__item > <a href="../bootstrap/bootstrap.html" class=md-nav__link >Bootstrapping</a> <li class=md-nav__item > <a href="../multiple-comparison/multiple-comparisons.html" class=md-nav__link >Multiple Comparison Problems</a> <li class=md-nav__item > <a href="../unitroot/unitroot.html" class=md-nav__link >Unit Root Testing</a> <li class=md-nav__item > <a href="../unitroot/unitroot.html#cointegration-analysis" class=md-nav__link >Cointegration Analysis</a> <li class=md-nav__item > <a href="../covariance/covariance.html" class=md-nav__link >Long-run Covariance Estimation</a> <li class=md-nav__item > <a href="../api.html" class=md-nav__link >API Reference</a> <li class=md-nav__item > <a href="../changes.html" class=md-nav__link >Change Log</a> </ul> </nav> </div> </div> </div> <div class="md-sidebar md-sidebar--secondary" data-md-component=toc > <div class=md-sidebar__scrollwrap > <div class=md-sidebar__inner > <nav class="md-nav md-nav--secondary"> <label class=md-nav__title  for=__toc >Contents</label> <ul class=md-nav__list  data-md-scrollfix=""> <li class=md-nav__item ><a href="#univariate-univariate-volatility-modeling--page-root" class=md-nav__link >ARCH Modeling</a><nav class=md-nav > <ul class=md-nav__list > <li class=md-nav__item ><a href="#Setup" class=md-nav__link >Setup</a> <li class=md-nav__item ><a href="#Specifying-Common-Models" class=md-nav__link >Specifying Common Models</a><nav class=md-nav > <ul class=md-nav__list > <li class=md-nav__item ><a href="#GARCH-(with-a-Constant-Mean)" class=md-nav__link >GARCH (with a Constant Mean)</a> <li class=md-nav__item ><a href="#GJR-GARCH" class=md-nav__link >GJR-GARCH</a> <li class=md-nav__item ><a href="#TARCH/ZARCH" class=md-nav__link >TARCH/ZARCH</a> <li class=md-nav__item ><a href="#Student&#39;s-T-Errors" class=md-nav__link >Student’s T Errors</a> </ul> </nav> <li class=md-nav__item ><a href="#Fixing-Parameters" class=md-nav__link >Fixing Parameters</a> <li class=md-nav__item ><a href="#Building-a-Model-From-Components" class=md-nav__link >Building a Model From Components</a><nav class=md-nav > <ul class=md-nav__list > <li class=md-nav__item ><a href="#Mean-Models" class=md-nav__link >Mean Models</a> <li class=md-nav__item ><a href="#Volatility-Processes" class=md-nav__link >Volatility Processes</a> <li class=md-nav__item ><a href="#Distributions" class=md-nav__link >Distributions</a> </ul> </nav> <li class=md-nav__item ><a href="#WTI-Crude" class=md-nav__link >WTI Crude</a> <li class=md-nav__item ><a href="#Simulation" class=md-nav__link >Simulation</a> </ul> </nav> <li class=md-nav__item ><a class=md-nav__extra_link  href="../_sources/univariate/univariate_volatility_modeling.ipynb.txt">Show Source</a> <li id=searchbox  class=md-nav__item > </ul> </nav> </div> </div> </div> <div class=md-content > <article class="md-content__inner md-typeset" role=main > <section id=ARCH-Modeling > <h1 id=univariate-univariate-volatility-modeling--page-root >ARCH Modeling<a class=headerlink  href="#univariate-univariate-volatility-modeling--page-root" title="Permalink to this heading">¶</a></h1> <p><em>This setup code is required to run in an IPython notebook</em></p> <div class="nbinput nblast docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[1]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=o >%</span><span class=k >matplotlib</span> inline
-<span class=kn >import</span> <span class=nn >matplotlib.pyplot</span> <span class=k >as</span> <span class=nn >plt</span>
-<span class=kn >import</span> <span class=nn >seaborn</span>
 
-<span class=n >seaborn</span><span class=o >.</span><span class=n >set_style</span><span class=p >(</span><span class=s2 >"darkgrid"</span><span class=p >)</span>
-<span class=n >plt</span><span class=o >.</span><span class=n >rc</span><span class=p >(</span><span class=s2 >"figure"</span><span class=p >,</span> <span class=n >figsize</span><span class=o >=</span><span class=p >(</span><span class=mi >16</span><span class=p >,</span> <span class=mi >6</span><span class=p >))</span>
-<span class=n >plt</span><span class=o >.</span><span class=n >rc</span><span class=p >(</span><span class=s2 >"savefig"</span><span class=p >,</span> <span class=n >dpi</span><span class=o >=</span><span class=mi >90</span><span class=p >)</span>
-<span class=n >plt</span><span class=o >.</span><span class=n >rc</span><span class=p >(</span><span class=s2 >"font"</span><span class=p >,</span> <span class=n >family</span><span class=o >=</span><span class=s2 >"sans-serif"</span><span class=p >)</span>
-<span class=n >plt</span><span class=o >.</span><span class=n >rc</span><span class=p >(</span><span class=s2 >"font"</span><span class=p >,</span> <span class=n >size</span><span class=o >=</span><span class=mi >14</span><span class=p >)</span>
-</pre></div> </div> </div> <section id=Setup > <h2 id=Setup >Setup<a class=headerlink  href="#Setup" title="Permalink to this heading">¶</a></h2> <p>These examples will all make use of financial data from Yahoo! Finance. This data set can be loaded from <code class="docutils literal notranslate"><span class=pre >arch.data.sp500</span></code>.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[2]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=kn >import</span> <span class=nn >datetime</span> <span class=k >as</span> <span class=nn >dt</span>
 
-<span class=kn >import</span> <span class=nn >arch.data.sp500</span>
 
-<span class=n >st</span> <span class=o >=</span> <span class=n >dt</span><span class=o >.</span><span class=n >datetime</span><span class=p >(</span><span class=mi >1988</span><span class=p >,</span> <span class=mi >1</span><span class=p >,</span> <span class=mi >1</span><span class=p >)</span>
-<span class=n >en</span> <span class=o >=</span> <span class=n >dt</span><span class=o >.</span><span class=n >datetime</span><span class=p >(</span><span class=mi >2018</span><span class=p >,</span> <span class=mi >1</span><span class=p >,</span> <span class=mi >1</span><span class=p >)</span>
-<span class=n >data</span> <span class=o >=</span> <span class=n >arch</span><span class=o >.</span><span class=n >data</span><span class=o >.</span><span class=n >sp500</span><span class=o >.</span><span class=n >load</span><span class=p >()</span>
-<span class=n >market</span> <span class=o >=</span> <span class=n >data</span><span class=p >[</span><span class=s2 >"Adj Close"</span><span class=p >]</span>
-<span class=n >returns</span> <span class=o >=</span> <span class=mi >100</span> <span class=o >*</span> <span class=n >market</span><span class=o >.</span><span class=n >pct_change</span><span class=p >()</span><span class=o >.</span><span class=n >dropna</span><span class=p >()</span>
-<span class=n >ax</span> <span class=o >=</span> <span class=n >returns</span><span class=o >.</span><span class=n >plot</span><span class=p >()</span>
-<span class=n >xlim</span> <span class=o >=</span> <span class=n >ax</span><span class=o >.</span><span class=n >set_xlim</span><span class=p >(</span><span class=n >returns</span><span class=o >.</span><span class=n >index</span><span class=o >.</span><span class=n >min</span><span class=p >(),</span> <span class=n >returns</span><span class=o >.</span><span class=n >index</span><span class=o >.</span><span class=n >max</span><span class=p >())</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt empty docutils container"> </div> <div class="output_area docutils container"> <img alt="../_images/univariate_univariate_volatility_modeling_5_0.png" src="../_images/univariate_univariate_volatility_modeling_5_0.png"/> </div> </div> </section> <section id=Specifying-Common-Models > <h2 id=Specifying-Common-Models >Specifying Common Models<a class=headerlink  href="#Specifying-Common-Models" title="Permalink to this heading">¶</a></h2> <p>The simplest way to specify a model is to use the model constructor <code class="docutils literal notranslate"><span class=pre >arch.arch_model</span></code> which can specify most common models. The simplest invocation of <code class="docutils literal notranslate"><span class=pre >arch</span></code> will return a model with a constant mean, GARCH(1,1) volatility process and normally distributed errors.</p> <div class="math notranslate nohighlight"> \[r_t = \mu + \epsilon_t\]</div> <div class="math notranslate nohighlight"> \[\sigma^2_t = \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2\]</div> <div class="math notranslate nohighlight"> \[\epsilon_t = \sigma_t e_t,\,\,\, e_t \sim N(0,1)\]</div> <p>The model is estimated by calling <code class="docutils literal notranslate"><span class=pre >fit</span></code>. The optional inputs <code class="docutils literal notranslate"><span class=pre >iter</span></code> controls the frequency of output form the optimizer, and <code class="docutils literal notranslate"><span class=pre >disp</span></code> controls whether convergence information is returned. The results class returned offers direct access to the estimated parameters and related quantities, as well as a <code class="docutils literal notranslate"><span class=pre >summary</span></code> of the estimation results.</p> <section id="GARCH-(with-a-Constant-Mean)"> <h3 id="GARCH-(with-a-Constant-Mean)">GARCH (with a Constant Mean)<a class=headerlink  href="#GARCH-(with-a-Constant-Mean)" title="Permalink to this heading">¶</a></h3> <p>The default set of options produces a model with a constant mean, GARCH(1,1) conditional variance and normal errors.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[3]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=kn >from</span> <span class=nn >arch</span> <span class=kn >import</span> <span class=n >arch_model</span>
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../_static/favicon.ico">
+    
+    
+  
+      
+        <title>ARCH Modeling - arch 5.5.0</title>
+      
+    
 
-<span class=n >am</span> <span class=o >=</span> <span class=n >arch_model</span><span class=p >(</span><span class=n >returns</span><span class=p >)</span>
-<span class=n >res</span> <span class=o >=</span> <span class=n >am</span><span class=o >.</span><span class=n >fit</span><span class=p >(</span><span class=n >update_freq</span><span class=o >=</span><span class=mi >5</span><span class=p >)</span>
-<span class=nb >print</span><span class=p >(</span><span class=n >res</span><span class=o >.</span><span class=n >summary</span><span class=p >())</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt empty docutils container"> </div> <div class="output_area docutils container"> <div class=highlight ><pre>
+  <link rel="apple-touch-icon" sizes="180x180" href="../_static/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../_static/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../_static/images/favicon-16x16.png">
+  <link rel="manifest" href="../_static/images/site.webmanifest">
+  <link rel="mask-icon" href="../_static/images/safari-pinned-tab.svg" color="#2196f3">
+  <meta name="msapplication-TileColor" content="#2b5797">
+  <meta name="msapplication-config" content="../_static/images/browserconfig.xml">
+
+    
+      
+        
+        
+          
+          
+          <meta name="theme-color" content="#2094f3">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.8118e13f191069ea1.min.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css" />
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="blue" data-md-color-accent="indigo">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#Setup" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="arch 5.5.0" class="md-header__button md-logo" aria-label="arch 5.5.0" data-md-component="logo">
+      <img src="../_static/bw-logo.svg" alt="logo">
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            arch 5.5.0
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ARCH Modeling
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/bashtage/arch/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    arch
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+  
+
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="arch 5.5.0" class="md-nav__button md-logo" aria-label="arch 5.5.0" data-md-component="logo">
+      <img src="../_static/bw-logo.svg" alt="logo">
+    </a>
+    arch 5.5.0
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/bashtage/arch/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    arch
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="univariate.html"><span title="/univariate/univariate.rst (reference label)" class="md-ellipsis">Univariate Volatility Models</span></a>
+          
+            <label for="__nav_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Univariate Volatility Models" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          <span title="/univariate/univariate.rst (reference label)" class="md-ellipsis">Univariate Volatility Models</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="introduction.html" class="md-nav__link">
+        <span title="/univariate/introduction.rst (reference label)" class="md-ellipsis">Introduction</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span title="/univariate/univariate_volatility_modeling.ipynb (reference label)" class="md-ellipsis">Examples</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        <span title="/univariate/univariate_volatility_modeling.ipynb (reference label)" class="md-ellipsis">Examples</span>
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#Setup" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#setup (reference label)" class="md-ellipsis">Setup</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Specifying-Common-Models" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#specifying-common-models (reference label)" class="md-ellipsis">Specifying Common Models</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Specifying Common Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#GARCH-(with-a-Constant-Mean)" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#garch-(with-a-constant-mean) (reference label)" class="md-ellipsis">GARCH <wbr>(with a Constant Mean)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GJR-GARCH" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#gjr-garch (reference label)" class="md-ellipsis">GJR-<wbr>GARCH</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#TARCH/ZARCH" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#tarch/zarch (reference label)" class="md-ellipsis">TARCH/ZARCH</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#Student's-T-Errors" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#student&#39;s-t-errors (reference label)" class="md-ellipsis">Student’s T Errors</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Fixing-Parameters" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#fixing-parameters (reference label)" class="md-ellipsis">Fixing Parameters</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Building-a-Model-From-Components" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#building-a-model-from-components (reference label)" class="md-ellipsis">Building a Model From Components</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building a Model From Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#Mean-Models" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#mean-models (reference label)" class="md-ellipsis">Mean Models</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#Volatility-Processes" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#volatility-processes (reference label)" class="md-ellipsis">Volatility Processes</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#Distributions" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#distributions (reference label)" class="md-ellipsis">Distributions</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#WTI-Crude" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#wti-crude (reference label)" class="md-ellipsis">WTI Crude</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Simulation" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#simulation (reference label)" class="md-ellipsis">Simulation</span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="forecasting.html" class="md-nav__link">
+        <span title="/univariate/forecasting.rst (reference label)" class="md-ellipsis">Forecasting</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="univariate_volatility_forecasting.html" class="md-nav__link">
+        <span title="/univariate/univariate_volatility_forecasting.ipynb (reference label)" class="md-ellipsis">Volatility Forecasting</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="univariate_volatility_forecasting.html#Value-at-Risk-Forecasting" class="md-nav__link">
+        <span title="/univariate/univariate_volatility_forecasting.ipynb#value-at-risk-forecasting (reference label)" class="md-ellipsis">Value-<wbr>at-<wbr>Risk Forecasting</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="univariate_volatility_scenarios.html" class="md-nav__link">
+        <span title="/univariate/univariate_volatility_scenarios.ipynb (reference label)" class="md-ellipsis">Forecasting Scenarios</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="univariate_forecasting_with_exogenous_variables.html" class="md-nav__link">
+        <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb (reference label)" class="md-ellipsis">Forecasting with Exogenous Variables</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mean.html" class="md-nav__link">
+        <span title="/univariate/mean.rst (reference label)" class="md-ellipsis">Mean Models</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="volatility.html" class="md-nav__link">
+        <span title="/univariate/volatility.rst (reference label)" class="md-ellipsis">Volatility Processes</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="univariate_using_fixed_variance.html" class="md-nav__link">
+        <span title="/univariate/univariate_using_fixed_variance.ipynb (reference label)" class="md-ellipsis">Using the Fixed Variance Process</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="distribution.html" class="md-nav__link">
+        <span title="/univariate/distribution.rst (reference label)" class="md-ellipsis">Distributions</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="results.html" class="md-nav__link">
+        <span title="/univariate/results.rst (reference label)" class="md-ellipsis">Results</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="utility.html" class="md-nav__link">
+        <span title="/univariate/utility.rst (reference label)" class="md-ellipsis">Utilities</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="background.html" class="md-nav__link">
+        <span title="/univariate/background.rst (reference label)" class="md-ellipsis">Background and References</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bootstrap/bootstrap.html" class="md-nav__link">
+        <span title="/bootstrap/bootstrap.rst (reference label)" class="md-ellipsis">Bootstrapping</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multiple-comparison/multiple-comparisons.html" class="md-nav__link">
+        <span title="/multiple-comparison/multiple-comparisons.rst (reference label)" class="md-ellipsis">Multiple Comparison Problems</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unitroot/unitroot.html" class="md-nav__link">
+        <span title="/unitroot/unitroot.rst (reference label)" class="md-ellipsis">Unit Root Testing</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unitroot/unitroot.html#cointegration-analysis" class="md-nav__link">
+        <span title="/unitroot/unitroot.rst#cointegration-analysis (reference label)" class="md-ellipsis">Cointegration Analysis</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../covariance/covariance.html" class="md-nav__link">
+        <span title="/covariance/covariance.rst (reference label)" class="md-ellipsis">Long-<wbr>run Covariance Estimation</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html" class="md-nav__link">
+        <span title="/api.rst (reference label)" class="md-ellipsis">API Reference</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changes.html" class="md-nav__link">
+        <span title="/changes.rst (reference label)" class="md-ellipsis">Change Log</span>
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#Setup" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#setup (reference label)" class="md-ellipsis">Setup</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Specifying-Common-Models" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#specifying-common-models (reference label)" class="md-ellipsis">Specifying Common Models</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Specifying Common Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#GARCH-(with-a-Constant-Mean)" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#garch-(with-a-constant-mean) (reference label)" class="md-ellipsis">GARCH <wbr>(with a Constant Mean)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GJR-GARCH" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#gjr-garch (reference label)" class="md-ellipsis">GJR-<wbr>GARCH</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#TARCH/ZARCH" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#tarch/zarch (reference label)" class="md-ellipsis">TARCH/ZARCH</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#Student's-T-Errors" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#student&#39;s-t-errors (reference label)" class="md-ellipsis">Student’s T Errors</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Fixing-Parameters" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#fixing-parameters (reference label)" class="md-ellipsis">Fixing Parameters</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Building-a-Model-From-Components" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#building-a-model-from-components (reference label)" class="md-ellipsis">Building a Model From Components</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building a Model From Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#Mean-Models" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#mean-models (reference label)" class="md-ellipsis">Mean Models</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#Volatility-Processes" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#volatility-processes (reference label)" class="md-ellipsis">Volatility Processes</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#Distributions" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#distributions (reference label)" class="md-ellipsis">Distributions</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#WTI-Crude" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#wti-crude (reference label)" class="md-ellipsis">WTI Crude</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Simulation" class="md-nav__link">
+    <span title="/univariate/univariate_volatility_modeling.ipynb#simulation (reference label)" class="md-ellipsis">Simulation</span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                  
+
+
+<h1 id="ARCH-Modeling">ARCH Modeling<a class="headerlink" href="#ARCH-Modeling" title="Permalink to this heading">¶</a></h1>
+<p><em>This setup code is required to run in an IPython notebook</em></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[1]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span>
+
+<span class="n">seaborn</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;savefig&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">&quot;sans-serif&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<h2 id="Setup">Setup<a class="headerlink" href="#Setup" title="Permalink to this heading">¶</a></h2>
+<p>These examples will all make use of financial data from Yahoo! Finance. This data set can be loaded from <code class="docutils literal notranslate"><span class="pre">arch.data.sp500</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[2]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+<span class="kn">import</span> <span class="nn">arch.data.sp500</span>
+
+<span class="n">st</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1988</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">en</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sp500</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">market</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Adj Close&quot;</span><span class="p">]</span>
+<span class="n">returns</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">market</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">returns</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">xlim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">returns</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">returns</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/univariate_univariate_volatility_modeling_5_0.png" src="../_images/univariate_univariate_volatility_modeling_5_0.png" />
+</div>
+</div>
+<h2 id="Specifying-Common-Models">Specifying Common Models<a class="headerlink" href="#Specifying-Common-Models" title="Permalink to this heading">¶</a></h2>
+<p>The simplest way to specify a model is to use the model constructor <code class="docutils literal notranslate"><span class="pre">arch.arch_model</span></code> which can specify most common models. The simplest invocation of <code class="docutils literal notranslate"><span class="pre">arch</span></code> will return a model with a constant mean, GARCH(1,1) volatility process and normally distributed errors.</p>
+<div class="math notranslate nohighlight">
+\[r_t  =  \mu + \epsilon_t\]</div>
+<div class="math notranslate nohighlight">
+\[\sigma^2_t   =  \omega + \alpha \epsilon_{t-1}^2 + \beta \sigma_{t-1}^2\]</div>
+<div class="math notranslate nohighlight">
+\[\epsilon_t  =  \sigma_t e_t,\,\,\, e_t  \sim  N(0,1)\]</div>
+<p>The model is estimated by calling <code class="docutils literal notranslate"><span class="pre">fit</span></code>. The optional inputs <code class="docutils literal notranslate"><span class="pre">iter</span></code> controls the frequency of output form the optimizer, and <code class="docutils literal notranslate"><span class="pre">disp</span></code> controls whether convergence information is returned. The results class returned offers direct access to the estimated parameters and related quantities, as well as a <code class="docutils literal notranslate"><span class="pre">summary</span></code> of the estimation results.</p>
+<h3 id="GARCH-(with-a-Constant-Mean)">GARCH (with a Constant Mean)<a class="headerlink" href="#GARCH-(with-a-Constant-Mean)" title="Permalink to this heading">¶</a></h3>
+<p>The default set of options produces a model with a constant mean, GARCH(1,1) conditional variance and normal errors.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[3]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">arch</span> <span class="kn">import</span> <span class="n">arch_model</span>
+
+<span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
 Iteration:      5,   Func. Count:     35,   Neg. LLF: 6970.2765831170655
 Iteration:     10,   Func. Count:     63,   Neg. LLF: 6936.718477482658
 Optimization terminated successfully    (Exit mode 0)
@@ -59,13 +956,45 @@ beta[1]        0.8852  1.380e-02     64.125      0.000     [  0.858,  0.912]
 ============================================================================
 
 Covariance estimator: robust
-</pre></div></div> </div> <p><code class="docutils literal notranslate"><span class=pre >plot()</span></code> can be used to quickly visualize the standardized residuals and conditional volatility.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[4]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=n >fig</span> <span class=o >=</span> <span class=n >res</span><span class=o >.</span><span class=n >plot</span><span class=p >(</span><span class=n >annualize</span><span class=o >=</span><span class=s2 >"D"</span><span class=p >)</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt empty docutils container"> </div> <div class="output_area docutils container"> <img alt="../_images/univariate_univariate_volatility_modeling_12_0.png" src="../_images/univariate_univariate_volatility_modeling_12_0.png"/> </div> </div> </section> <section id=GJR-GARCH > <h3 id=GJR-GARCH >GJR-GARCH<a class=headerlink  href="#GJR-GARCH" title="Permalink to this heading">¶</a></h3> <p>Additional inputs can be used to construct other models. This example sets <code class="docutils literal notranslate"><span class=pre >o</span></code> to 1, which includes one lag of an asymmetric shock which transforms a GARCH model into a GJR-GARCH model with variance dynamics given by</p> <div class="math notranslate nohighlight"> \[\sigma^2_t = \omega + \alpha \epsilon_{t-1}^2 + \gamma \epsilon_{t-1}^2 I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}^2\]</div> <p>where <span class="math notranslate nohighlight">\(I\)</span> is an indicator function that takes the value 1 when its argument is true.</p> <p>The log likelihood improves substantially with the introduction of an asymmetric term, and the parameter estimate is highly significant.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[5]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=n >am</span> <span class=o >=</span> <span class=n >arch_model</span><span class=p >(</span><span class=n >returns</span><span class=p >,</span> <span class=n >p</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >o</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >q</span><span class=o >=</span><span class=mi >1</span><span class=p >)</span>
-<span class=n >res</span> <span class=o >=</span> <span class=n >am</span><span class=o >.</span><span class=n >fit</span><span class=p >(</span><span class=n >update_freq</span><span class=o >=</span><span class=mi >5</span><span class=p >,</span> <span class=n >disp</span><span class=o >=</span><span class=s2 >"off"</span><span class=p >)</span>
-<span class=nb >print</span><span class=p >(</span><span class=n >res</span><span class=o >.</span><span class=n >summary</span><span class=p >())</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt empty docutils container"> </div> <div class="output_area docutils container"> <div class=highlight ><pre>
+</pre></div></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">plot()</span></code> can be used to quickly visualize the standardized residuals and conditional volatility.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[4]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">annualize</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/univariate_univariate_volatility_modeling_12_0.png" src="../_images/univariate_univariate_volatility_modeling_12_0.png" />
+</div>
+</div>
+<h3 id="GJR-GARCH">GJR-GARCH<a class="headerlink" href="#GJR-GARCH" title="Permalink to this heading">¶</a></h3>
+<p>Additional inputs can be used to construct other models. This example sets <code class="docutils literal notranslate"><span class="pre">o</span></code> to 1, which includes one lag of an asymmetric shock which transforms a GARCH model into a GJR-GARCH model with variance dynamics given by</p>
+<div class="math notranslate nohighlight">
+\[\sigma^2_t   =  \omega + \alpha \epsilon_{t-1}^2 + \gamma \epsilon_{t-1}^2 I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}^2\]</div>
+<p>where <span class="math notranslate nohighlight">\(I\)</span> is an indicator function that takes the value 1 when its argument is true.</p>
+<p>The log likelihood improves substantially with the introduction of an asymmetric term, and the parameter estimate is highly significant.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[5]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
                    Constant Mean - GJR-GARCH Model Results
 ==============================================================================
 Dep. Variable:              Adj Close   R-squared:                       0.000
@@ -92,11 +1021,33 @@ beta[1]        0.8922  1.458e-02     61.200      0.000      [  0.864,  0.921]
 =============================================================================
 
 Covariance estimator: robust
-</pre></div></div> </div> </section> <section id="TARCH/ZARCH"> <h3 id="TARCH/ZARCH">TARCH/ZARCH<a class=headerlink  href="#TARCH/ZARCH" title="Permalink to this heading">¶</a></h3> <p>TARCH (also known as ZARCH) model the <em>volatility</em> using absolute values. This model is specified using <code class="docutils literal notranslate"><span class=pre >power=1.0</span></code> since the default power, 2, corresponds to variance processes that evolve in squares.</p> <p>The volatility process in a TARCH model is given by</p> <div class="math notranslate nohighlight"> \[\sigma_t = \omega + \alpha \left|\epsilon_{t-1}\right| + \gamma \left|\epsilon_{t-1}\right| I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}\]</div> <p>More general models with other powers (<span class="math notranslate nohighlight">\(\kappa\)</span>) have volatility dynamics given by</p> <div class="math notranslate nohighlight"> \[\sigma_t^\kappa = \omega + \alpha \left|\epsilon_{t-1}\right|^\kappa + \gamma \left|\epsilon_{t-1}\right|^\kappa I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}^\kappa\]</div> <p>where the conditional variance is <span class="math notranslate nohighlight">\(\left(\sigma_t^\kappa\right)^{2/\kappa}\)</span>.</p> <p>The TARCH model also improves the fit, although the change in the log likelihood is less dramatic.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[6]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=n >am</span> <span class=o >=</span> <span class=n >arch_model</span><span class=p >(</span><span class=n >returns</span><span class=p >,</span> <span class=n >p</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >o</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >q</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >power</span><span class=o >=</span><span class=mf >1.0</span><span class=p >)</span>
-<span class=n >res</span> <span class=o >=</span> <span class=n >am</span><span class=o >.</span><span class=n >fit</span><span class=p >(</span><span class=n >update_freq</span><span class=o >=</span><span class=mi >5</span><span class=p >)</span>
-<span class=nb >print</span><span class=p >(</span><span class=n >res</span><span class=o >.</span><span class=n >summary</span><span class=p >())</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt empty docutils container"> </div> <div class="output_area docutils container"> <div class=highlight ><pre>
+</pre></div></div>
+</div>
+<h3 id="TARCH/ZARCH">TARCH/ZARCH<a class="headerlink" href="#TARCH/ZARCH" title="Permalink to this heading">¶</a></h3>
+<p>TARCH (also known as ZARCH) model the <em>volatility</em> using absolute values. This model is specified using <code class="docutils literal notranslate"><span class="pre">power=1.0</span></code> since the default power, 2, corresponds to variance processes that evolve in squares.</p>
+<p>The volatility process in a TARCH model is given by</p>
+<div class="math notranslate nohighlight">
+\[\sigma_t  =  \omega + \alpha \left|\epsilon_{t-1}\right| + \gamma \left|\epsilon_{t-1}\right| I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}\]</div>
+<p>More general models with other powers (<span class="math notranslate nohighlight">\(\kappa\)</span>) have volatility dynamics given by</p>
+<div class="math notranslate nohighlight">
+\[\sigma_t^\kappa   = \omega + \alpha \left|\epsilon_{t-1}\right|^\kappa + \gamma \left|\epsilon_{t-1}\right|^\kappa I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}^\kappa\]</div>
+<p>where the conditional variance is <span class="math notranslate nohighlight">\(\left(\sigma_t^\kappa\right)^{2/\kappa}\)</span>.</p>
+<p>The TARCH model also improves the fit, although the change in the log likelihood is less dramatic.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[6]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
 Iteration:      5,   Func. Count:     45,   Neg. LLF: 6829.203002130782
 Iteration:     10,   Func. Count:     79,   Neg. LLF: 6799.178617397159
 Optimization terminated successfully    (Exit mode 0)
@@ -130,11 +1081,26 @@ beta[1]        0.9098  9.672e-03     94.066      0.000      [  0.891,  0.929]
 =============================================================================
 
 Covariance estimator: robust
-</pre></div></div> </div> </section> <section id="Student's-T-Errors"> <h3 id="Student's-T-Errors">Student’s T Errors<a class=headerlink  href="#Student's-T-Errors" title="Permalink to this heading">¶</a></h3> <p>Financial returns are often heavy tailed, and a Student’s T distribution is a simple method to capture this feature. The call to <code class="docutils literal notranslate"><span class=pre >arch</span></code> changes the distribution from a Normal to a Students’s T.</p> <p>The standardized residuals appear to be heavy tailed with an estimated degree of freedom near 10. The log-likelihood also shows a large increase.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[7]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=n >am</span> <span class=o >=</span> <span class=n >arch_model</span><span class=p >(</span><span class=n >returns</span><span class=p >,</span> <span class=n >p</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >o</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >q</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >power</span><span class=o >=</span><span class=mf >1.0</span><span class=p >,</span> <span class=n >dist</span><span class=o >=</span><span class=s2 >"StudentsT"</span><span class=p >)</span>
-<span class=n >res</span> <span class=o >=</span> <span class=n >am</span><span class=o >.</span><span class=n >fit</span><span class=p >(</span><span class=n >update_freq</span><span class=o >=</span><span class=mi >5</span><span class=p >)</span>
-<span class=nb >print</span><span class=p >(</span><span class=n >res</span><span class=o >.</span><span class=n >summary</span><span class=p >())</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt empty docutils container"> </div> <div class="output_area docutils container"> <div class=highlight ><pre>
+</pre></div></div>
+</div>
+<h3 id="Student's-T-Errors">Student’s T Errors<a class="headerlink" href="#Student's-T-Errors" title="Permalink to this heading">¶</a></h3>
+<p>Financial returns are often heavy tailed, and a Student’s T distribution is a simple method to capture this feature. The call to <code class="docutils literal notranslate"><span class="pre">arch</span></code> changes the distribution from a Normal to a Students’s T.</p>
+<p>The standardized residuals appear to be heavy tailed with an estimated degree of freedom near 10. The log-likelihood also shows a large increase.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[7]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">&quot;StudentsT&quot;</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
 Iteration:      5,   Func. Count:     50,   Neg. LLF: 6728.995165345449
 Iteration:     10,   Func. Count:     90,   Neg. LLF: 6722.151188120595
 Optimization terminated successfully    (Exit mode 0)
@@ -147,7 +1113,7 @@ Optimization terminated successfully    (Exit mode 0)
 Dep. Variable:                    Adj Close   R-squared:                       0.000
 Mean Model:                   Constant Mean   Adj. R-squared:                  0.000
 Vol Model:                      TARCH/ZARCH   Log-Likelihood:               -6722.15
-Distribution:      Standardized Student's t   AIC:                           13456.3
+Distribution:      Standardized Student&#39;s t   AIC:                           13456.3
 Method:                  Maximum Likelihood   BIC:                           13495.4
                                               No. Observations:                 5030
 Date:                      Wed, Apr 12 2023   Df Residuals:                     5029
@@ -173,16 +1139,31 @@ nu             7.9553      0.881      9.034  1.648e-19 [  6.229,  9.681]
 ========================================================================
 
 Covariance estimator: robust
-</pre></div></div> </div> </section> </section> <section id=Fixing-Parameters > <h2 id=Fixing-Parameters >Fixing Parameters<a class=headerlink  href="#Fixing-Parameters" title="Permalink to this heading">¶</a></h2> <p>In some circumstances, fixed rather than estimated parameters might be of interest. A model-result-like class can be generated using the <code class="docutils literal notranslate"><span class=pre >fix()</span></code> method. The class returned is identical to the usual model result class except that information about inference (standard errors, t-stats, etc) is not available.</p> <p>In the example, I fix the parameters to a symmetric version of the previously estimated model.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[8]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=n >fixed_res</span> <span class=o >=</span> <span class=n >am</span><span class=o >.</span><span class=n >fix</span><span class=p >([</span><span class=mf >0.0235</span><span class=p >,</span> <span class=mf >0.01</span><span class=p >,</span> <span class=mf >0.06</span><span class=p >,</span> <span class=mf >0.0</span><span class=p >,</span> <span class=mf >0.9382</span><span class=p >,</span> <span class=mf >8.0</span><span class=p >])</span>
-<span class=nb >print</span><span class=p >(</span><span class=n >fixed_res</span><span class=o >.</span><span class=n >summary</span><span class=p >())</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt empty docutils container"> </div> <div class="output_area docutils container"> <div class=highlight ><pre>
+</pre></div></div>
+</div>
+<h2 id="Fixing-Parameters">Fixing Parameters<a class="headerlink" href="#Fixing-Parameters" title="Permalink to this heading">¶</a></h2>
+<p>In some circumstances, fixed rather than estimated parameters might be of interest. A model-result-like class can be generated using the <code class="docutils literal notranslate"><span class="pre">fix()</span></code> method. The class returned is identical to the usual model result class except that information about inference (standard errors, t-stats, etc) is not available.</p>
+<p>In the example, I fix the parameters to a symmetric version of the previously estimated model.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[8]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fixed_res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fix</span><span class="p">([</span><span class="mf">0.0235</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.9382</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fixed_res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
                       Constant Mean - TARCH/ZARCH Model Results
 =====================================================================================
 Dep. Variable:                     Adj Close   R-squared:                          --
 Mean Model:                    Constant Mean   Adj. R-squared:                     --
 Vol Model:                       TARCH/ZARCH   Log-Likelihood:               -6908.93
-Distribution:       Standardized Student's t   AIC:                           13829.9
+Distribution:       Standardized Student&#39;s t   AIC:                           13829.9
 Method:            User-specified Parameters   BIC:                           13869.0
                                                No. Observations:                 5030
 Date:                       Wed, Apr 12 2023
@@ -209,28 +1190,111 @@ nu             8.0000
 
 Results generated with user-specified parameters.
 Std. errors not available when the model is not estimated,
-</pre></div></div> </div> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[9]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=kn >import</span> <span class=nn >pandas</span> <span class=k >as</span> <span class=nn >pd</span>
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[9]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class=n >df</span> <span class=o >=</span> <span class=n >pd</span><span class=o >.</span><span class=n >concat</span><span class=p >([</span><span class=n >res</span><span class=o >.</span><span class=n >conditional_volatility</span><span class=p >,</span> <span class=n >fixed_res</span><span class=o >.</span><span class=n >conditional_volatility</span><span class=p >],</span> <span class=n >axis</span><span class=o >=</span><span class=mi >1</span><span class=p >)</span>
-<span class=n >df</span><span class=o >.</span><span class=n >columns</span> <span class=o >=</span> <span class=p >[</span><span class=s2 >"Estimated"</span><span class=p >,</span> <span class=s2 >"Fixed"</span><span class=p >]</span>
-<span class=n >subplot</span> <span class=o >=</span> <span class=n >df</span><span class=o >.</span><span class=n >plot</span><span class=p >()</span>
-<span class=n >subplot</span><span class=o >.</span><span class=n >set_xlim</span><span class=p >(</span><span class=n >xlim</span><span class=p >)</span>
-</pre></div> </div> </div> <div class="nboutput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[9]:
-</pre></div> </div> <div class="output_area docutils container"> <div class=highlight ><pre>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">,</span> <span class="n">fixed_res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Estimated&quot;</span><span class="p">,</span> <span class="s2">&quot;Fixed&quot;</span><span class="p">]</span>
+<span class="n">subplot</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">subplot</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlim</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[9]:
+</code></pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
 (10596.0, 17896.0)
-</pre></div></div> </div> <div class="nboutput nblast docutils container"> <div class="prompt empty docutils container"> </div> <div class="output_area docutils container"> <img alt="../_images/univariate_univariate_volatility_modeling_24_1.png" src="../_images/univariate_univariate_volatility_modeling_24_1.png"/> </div> </div> </section> <section id=Building-a-Model-From-Components > <h2 id=Building-a-Model-From-Components >Building a Model From Components<a class=headerlink  href="#Building-a-Model-From-Components" title="Permalink to this heading">¶</a></h2> <p>Models can also be systematically assembled from the three model components:</p> <ul class=simple > <li><p>A mean model (<code class="docutils literal notranslate"><span class=pre >arch.mean</span></code>)</p> <ul> <li><p>Zero mean (<code class="docutils literal notranslate"><span class=pre >ZeroMean</span></code>) - useful if using residuals from a model estimated separately</p> <li><p>Constant mean (<code class="docutils literal notranslate"><span class=pre >ConstantMean</span></code>) - common for most liquid financial assets</p> <li><p>Autoregressive (<code class="docutils literal notranslate"><span class=pre >ARX</span></code>) with optional exogenous regressors</p> <li><p>Heterogeneous (<code class="docutils literal notranslate"><span class=pre >HARX</span></code>) autoregression with optional exogenous regressors</p> <li><p>Exogenous regressors only (<code class="docutils literal notranslate"><span class=pre >LS</span></code>)</p> </ul> <li><p>A volatility process (<code class="docutils literal notranslate"><span class=pre >arch.volatility</span></code>)</p> <ul> <li><p>ARCH (<code class="docutils literal notranslate"><span class=pre >ARCH</span></code>)</p> <li><p>GARCH (<code class="docutils literal notranslate"><span class=pre >GARCH</span></code>)</p> <li><p>GJR-GARCH (<code class="docutils literal notranslate"><span class=pre >GARCH</span></code> using <code class="docutils literal notranslate"><span class=pre >o</span></code> argument)</p> <li><p>TARCH/ZARCH (<code class="docutils literal notranslate"><span class=pre >GARCH</span></code> using <code class="docutils literal notranslate"><span class=pre >power</span></code> argument set to <code class="docutils literal notranslate"><span class=pre >1</span></code>)</p> <li><p>Power GARCH and Asymmetric Power GARCH (<code class="docutils literal notranslate"><span class=pre >GARCH</span></code> using <code class="docutils literal notranslate"><span class=pre >power</span></code>)</p> <li><p>Exponentially Weighted Moving Average Variance with estimated coefficient (<code class="docutils literal notranslate"><span class=pre >EWMAVariance</span></code>)</p> <li><p>Heterogeneous ARCH (<code class="docutils literal notranslate"><span class=pre >HARCH</span></code>)</p> <li><p>Parameterless Models</p> <ul> <li><p>Exponentially Weighted Moving Average Variance, known as RiskMetrics (<code class="docutils literal notranslate"><span class=pre >EWMAVariance</span></code>)</p> <li><p>Weighted averages of EWMAs, known as the RiskMetrics 2006 methodology (<code class="docutils literal notranslate"><span class=pre >RiskMetrics2006</span></code>)</p> </ul> </ul> <li><p>A distribution (<code class="docutils literal notranslate"><span class=pre >arch.distribution</span></code>)</p> <ul> <li><p>Normal (<code class="docutils literal notranslate"><span class=pre >Normal</span></code>)</p> <li><p>Standardized Students’s T (<code class="docutils literal notranslate"><span class=pre >StudentsT</span></code>)</p> </ul> </ul> <section id=Mean-Models > <h3 id=Mean-Models >Mean Models<a class=headerlink  href="#Mean-Models" title="Permalink to this heading">¶</a></h3> <p>The first choice is the mean model. For many liquid financial assets, a constant mean (or even zero) is adequate. For other series, such as inflation, a more complicated model may be required. These examples make use of Core CPI downloaded from the <a class="reference external" href="https://fred.stlouisfed.org/">Federal Reserve Economic Data</a> site.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[10]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=kn >import</span> <span class=nn >arch.data.core_cpi</span>
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/univariate_univariate_volatility_modeling_24_1.png" src="../_images/univariate_univariate_volatility_modeling_24_1.png" />
+</div>
+</div>
+<h2 id="Building-a-Model-From-Components">Building a Model From Components<a class="headerlink" href="#Building-a-Model-From-Components" title="Permalink to this heading">¶</a></h2>
+<p>Models can also be systematically assembled from the three model components:</p>
+<ul class="simple">
+<li><p>A mean model (<code class="docutils literal notranslate"><span class="pre">arch.mean</span></code>)</p>
+<ul>
+<li><p>Zero mean (<code class="docutils literal notranslate"><span class="pre">ZeroMean</span></code>) - useful if using residuals from a model estimated separately</p></li>
+<li><p>Constant mean (<code class="docutils literal notranslate"><span class="pre">ConstantMean</span></code>) - common for most liquid financial assets</p></li>
+<li><p>Autoregressive (<code class="docutils literal notranslate"><span class="pre">ARX</span></code>) with optional exogenous regressors</p></li>
+<li><p>Heterogeneous (<code class="docutils literal notranslate"><span class="pre">HARX</span></code>) autoregression with optional exogenous regressors</p></li>
+<li><p>Exogenous regressors only (<code class="docutils literal notranslate"><span class="pre">LS</span></code>)</p></li>
+</ul>
+</li>
+<li><p>A volatility process (<code class="docutils literal notranslate"><span class="pre">arch.volatility</span></code>)</p>
+<ul>
+<li><p>ARCH (<code class="docutils literal notranslate"><span class="pre">ARCH</span></code>)</p></li>
+<li><p>GARCH (<code class="docutils literal notranslate"><span class="pre">GARCH</span></code>)</p></li>
+<li><p>GJR-GARCH (<code class="docutils literal notranslate"><span class="pre">GARCH</span></code> using <code class="docutils literal notranslate"><span class="pre">o</span></code> argument)</p></li>
+<li><p>TARCH/ZARCH (<code class="docutils literal notranslate"><span class="pre">GARCH</span></code> using <code class="docutils literal notranslate"><span class="pre">power</span></code> argument set to <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p></li>
+<li><p>Power GARCH and Asymmetric Power GARCH (<code class="docutils literal notranslate"><span class="pre">GARCH</span></code> using <code class="docutils literal notranslate"><span class="pre">power</span></code>)</p></li>
+<li><p>Exponentially Weighted Moving Average Variance with estimated coefficient (<code class="docutils literal notranslate"><span class="pre">EWMAVariance</span></code>)</p></li>
+<li><p>Heterogeneous ARCH (<code class="docutils literal notranslate"><span class="pre">HARCH</span></code>)</p></li>
+<li><p>Parameterless Models</p>
+<ul>
+<li><p>Exponentially Weighted Moving Average Variance, known as RiskMetrics (<code class="docutils literal notranslate"><span class="pre">EWMAVariance</span></code>)</p></li>
+<li><p>Weighted averages of EWMAs, known as the RiskMetrics 2006 methodology (<code class="docutils literal notranslate"><span class="pre">RiskMetrics2006</span></code>)</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>A distribution (<code class="docutils literal notranslate"><span class="pre">arch.distribution</span></code>)</p>
+<ul>
+<li><p>Normal (<code class="docutils literal notranslate"><span class="pre">Normal</span></code>)</p></li>
+<li><p>Standardized Students’s T (<code class="docutils literal notranslate"><span class="pre">StudentsT</span></code>)</p></li>
+</ul>
+</li>
+</ul>
+<h3 id="Mean-Models">Mean Models<a class="headerlink" href="#Mean-Models" title="Permalink to this heading">¶</a></h3>
+<p>The first choice is the mean model. For many liquid financial assets, a constant mean (or even zero) is adequate. For other series, such as inflation, a more complicated model may be required. These examples make use of Core CPI downloaded from the <a class="reference external" href="https://fred.stlouisfed.org/">Federal Reserve Economic Data</a> site.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[10]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">arch.data.core_cpi</span>
 
-<span class=n >core_cpi</span> <span class=o >=</span> <span class=n >arch</span><span class=o >.</span><span class=n >data</span><span class=o >.</span><span class=n >core_cpi</span><span class=o >.</span><span class=n >load</span><span class=p >()</span>
-<span class=n >ann_inflation</span> <span class=o >=</span> <span class=mi >100</span> <span class=o >*</span> <span class=n >core_cpi</span><span class=o >.</span><span class=n >CPILFESL</span><span class=o >.</span><span class=n >pct_change</span><span class=p >(</span><span class=mi >12</span><span class=p >)</span><span class=o >.</span><span class=n >dropna</span><span class=p >()</span>
-<span class=n >fig</span> <span class=o >=</span> <span class=n >ann_inflation</span><span class=o >.</span><span class=n >plot</span><span class=p >()</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt empty docutils container"> </div> <div class="output_area docutils container"> <img alt="../_images/univariate_univariate_volatility_modeling_29_0.png" src="../_images/univariate_univariate_volatility_modeling_29_0.png"/> </div> </div> <p>All mean models are initialized with constant variance and normal errors. For <code class="docutils literal notranslate"><span class=pre >ARX</span></code> models, the <code class="docutils literal notranslate"><span class=pre >lags</span></code> argument specifies the lags to include in the model.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[11]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=kn >from</span> <span class=nn >arch.univariate</span> <span class=kn >import</span> <span class=n >ARX</span>
+<span class="n">core_cpi</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">core_cpi</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">ann_inflation</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">core_cpi</span><span class="o">.</span><span class="n">CPILFESL</span><span class="o">.</span><span class="n">pct_change</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">ann_inflation</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/univariate_univariate_volatility_modeling_29_0.png" src="../_images/univariate_univariate_volatility_modeling_29_0.png" />
+</div>
+</div>
+<p>All mean models are initialized with constant variance and normal errors. For <code class="docutils literal notranslate"><span class="pre">ARX</span></code> models, the <code class="docutils literal notranslate"><span class="pre">lags</span></code> argument specifies the lags to include in the model.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[11]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="kn">import</span> <span class="n">ARX</span>
 
-<span class=n >ar</span> <span class=o >=</span> <span class=n >ARX</span><span class=p >(</span><span class=mi >100</span> <span class=o >*</span> <span class=n >ann_inflation</span><span class=p >,</span> <span class=n >lags</span><span class=o >=</span><span class=p >[</span><span class=mi >1</span><span class=p >,</span> <span class=mi >3</span><span class=p >,</span> <span class=mi >12</span><span class=p >])</span>
-<span class=nb >print</span><span class=p >(</span><span class=n >ar</span><span class=o >.</span><span class=n >fit</span><span class=p >()</span><span class=o >.</span><span class=n >summary</span><span class=p >())</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt empty docutils container"> </div> <div class="output_area docutils container"> <div class=highlight ><pre>
+<span class="n">ar</span> <span class="o">=</span> <span class="n">ARX</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">ann_inflation</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ar</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
                      AR - Constant Variance Model Results
 ==============================================================================
 Dep. Variable:               CPILFESL   R-squared:                       0.991
@@ -256,14 +1320,28 @@ CPILFESL[12]    -0.0232  1.370e-02     -1.692  9.058e-02 [-5.002e-02,3.666e-03]
 sigma2       567.4180     64.487      8.799  1.381e-18 [4.410e+02,6.938e+02]
 ============================================================================
 
-Covariance estimator: White's Heteroskedasticity Consistent Estimator
-</pre></div></div> </div> </section> <section id=Volatility-Processes > <h3 id=Volatility-Processes >Volatility Processes<a class=headerlink  href="#Volatility-Processes" title="Permalink to this heading">¶</a></h3> <p>Volatility processes can be added a a mean model using the <code class="docutils literal notranslate"><span class=pre >volatility</span></code> property. This example adds an ARCH(5) process to model volatility. The arguments <code class="docutils literal notranslate"><span class=pre >iter</span></code> and <code class="docutils literal notranslate"><span class=pre >disp</span></code> are used in <code class="docutils literal notranslate"><span class=pre >fit()</span></code> to suppress estimation output.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[12]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=kn >from</span> <span class=nn >arch.univariate</span> <span class=kn >import</span> <span class=n >ARCH</span><span class=p >,</span> <span class=n >GARCH</span>
+Covariance estimator: White&#39;s Heteroskedasticity Consistent Estimator
+</pre></div></div>
+</div>
+<h3 id="Volatility-Processes">Volatility Processes<a class="headerlink" href="#Volatility-Processes" title="Permalink to this heading">¶</a></h3>
+<p>Volatility processes can be added a a mean model using the <code class="docutils literal notranslate"><span class="pre">volatility</span></code> property. This example adds an ARCH(5) process to model volatility. The arguments <code class="docutils literal notranslate"><span class="pre">iter</span></code> and <code class="docutils literal notranslate"><span class="pre">disp</span></code> are used in <code class="docutils literal notranslate"><span class="pre">fit()</span></code> to suppress estimation output.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[12]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="kn">import</span> <span class="n">ARCH</span><span class="p">,</span> <span class="n">GARCH</span>
 
-<span class=n >ar</span><span class=o >.</span><span class=n >volatility</span> <span class=o >=</span> <span class=n >ARCH</span><span class=p >(</span><span class=n >p</span><span class=o >=</span><span class=mi >5</span><span class=p >)</span>
-<span class=n >res</span> <span class=o >=</span> <span class=n >ar</span><span class=o >.</span><span class=n >fit</span><span class=p >(</span><span class=n >update_freq</span><span class=o >=</span><span class=mi >0</span><span class=p >,</span> <span class=n >disp</span><span class=o >=</span><span class=s2 >"off"</span><span class=p >)</span>
-<span class=nb >print</span><span class=p >(</span><span class=n >res</span><span class=o >.</span><span class=n >summary</span><span class=p >())</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt empty docutils container"> </div> <div class="output_area docutils container"> <div class=highlight ><pre>
+<span class="n">ar</span><span class="o">.</span><span class="n">volatility</span> <span class="o">=</span> <span class="n">ARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
                            AR - ARCH Model Results
 ==============================================================================
 Dep. Variable:               CPILFESL   R-squared:                       0.991
@@ -295,21 +1373,50 @@ alpha[5]       0.1954  7.091e-02      2.756  5.856e-03 [5.643e-02,  0.334]
 ==========================================================================
 
 Covariance estimator: robust
-</pre></div></div> </div> <p>Plotting the standardized residuals and the conditional volatility shows some large (in magnitude) errors, even when standardized.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[13]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=n >fig</span> <span class=o >=</span> <span class=n >res</span><span class=o >.</span><span class=n >plot</span><span class=p >()</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt empty docutils container"> </div> <div class="output_area docutils container"> <img alt="../_images/univariate_univariate_volatility_modeling_36_0.png" src="../_images/univariate_univariate_volatility_modeling_36_0.png"/> </div> </div> </section> <section id=Distributions > <h3 id=Distributions >Distributions<a class=headerlink  href="#Distributions" title="Permalink to this heading">¶</a></h3> <p>Finally the distribution can be changed from the default normal to a standardized Student’s T using the <code class="docutils literal notranslate"><span class=pre >distribution</span></code> property of a mean model.</p> <p>The Student’s t distribution improves the model, and the degree of freedom is estimated to be near 8.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[14]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=kn >from</span> <span class=nn >arch.univariate</span> <span class=kn >import</span> <span class=n >StudentsT</span>
+</pre></div></div>
+</div>
+<p>Plotting the standardized residuals and the conditional volatility shows some large (in magnitude) errors, even when standardized.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[13]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/univariate_univariate_volatility_modeling_36_0.png" src="../_images/univariate_univariate_volatility_modeling_36_0.png" />
+</div>
+</div>
+<h3 id="Distributions">Distributions<a class="headerlink" href="#Distributions" title="Permalink to this heading">¶</a></h3>
+<p>Finally the distribution can be changed from the default normal to a standardized Student’s T using the <code class="docutils literal notranslate"><span class="pre">distribution</span></code> property of a mean model.</p>
+<p>The Student’s t distribution improves the model, and the degree of freedom is estimated to be near 8.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[14]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="kn">import</span> <span class="n">StudentsT</span>
 
-<span class=n >ar</span><span class=o >.</span><span class=n >distribution</span> <span class=o >=</span> <span class=n >StudentsT</span><span class=p >()</span>
-<span class=n >res</span> <span class=o >=</span> <span class=n >ar</span><span class=o >.</span><span class=n >fit</span><span class=p >(</span><span class=n >update_freq</span><span class=o >=</span><span class=mi >0</span><span class=p >,</span> <span class=n >disp</span><span class=o >=</span><span class=s2 >"off"</span><span class=p >)</span>
-<span class=nb >print</span><span class=p >(</span><span class=n >res</span><span class=o >.</span><span class=n >summary</span><span class=p >())</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt empty docutils container"> </div> <div class="output_area docutils container"> <div class=highlight ><pre>
+<span class="n">ar</span><span class="o">.</span><span class="n">distribution</span> <span class="o">=</span> <span class="n">StudentsT</span><span class="p">()</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
                               AR - ARCH Model Results
 ====================================================================================
 Dep. Variable:                     CPILFESL   R-squared:                       0.991
 Mean Model:                              AR   Adj. R-squared:                  0.991
 Vol Model:                             ARCH   Log-Likelihood:               -3168.25
-Distribution:      Standardized Student's t   AIC:                           6358.51
+Distribution:      Standardized Student&#39;s t   AIC:                           6358.51
 Method:                  Maximum Likelihood   BIC:                           6408.86
                                               No. Observations:                  719
 Date:                      Wed, Apr 12 2023   Df Residuals:                      715
@@ -340,75 +1447,578 @@ nu             9.0448      3.366      2.687  7.208e-03 [  2.447, 15.642]
 ========================================================================
 
 Covariance estimator: robust
-</pre></div></div> </div> </section> </section> <section id=WTI-Crude > <h2 id=WTI-Crude >WTI Crude<a class=headerlink  href="#WTI-Crude" title="Permalink to this heading">¶</a></h2> <p>The next example uses West Texas Intermediate Crude data from FRED. Three models are fit using alternative distributional assumptions. The results are printed, where we can see that the normal has a much lower log-likelihood than either the Standard Student’s T or the Standardized Skew Student’s T – however, these two are fairly close. The closeness of the T and the Skew T indicate that returns are not heavily skewed.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[15]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=kn >from</span> <span class=nn >collections</span> <span class=kn >import</span> <span class=n >OrderedDict</span>
+</pre></div></div>
+</div>
+<h2 id="WTI-Crude">WTI Crude<a class="headerlink" href="#WTI-Crude" title="Permalink to this heading">¶</a></h2>
+<p>The next example uses West Texas Intermediate Crude data from FRED. Three models are fit using alternative distributional assumptions. The results are printed, where we can see that the normal has a much lower log-likelihood than either the Standard Student’s T or the Standardized Skew Student’s T – however, these two are fairly close. The closeness of the T and the Skew T indicate that returns are not heavily skewed.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[15]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
-<span class=kn >import</span> <span class=nn >arch.data.wti</span>
+<span class="kn">import</span> <span class="nn">arch.data.wti</span>
 
-<span class=n >crude</span> <span class=o >=</span> <span class=n >arch</span><span class=o >.</span><span class=n >data</span><span class=o >.</span><span class=n >wti</span><span class=o >.</span><span class=n >load</span><span class=p >()</span>
-<span class=n >crude_ret</span> <span class=o >=</span> <span class=mi >100</span> <span class=o >*</span> <span class=n >crude</span><span class=o >.</span><span class=n >DCOILWTICO</span><span class=o >.</span><span class=n >dropna</span><span class=p >()</span><span class=o >.</span><span class=n >pct_change</span><span class=p >()</span><span class=o >.</span><span class=n >dropna</span><span class=p >()</span>
-<span class=n >res_normal</span> <span class=o >=</span> <span class=n >arch_model</span><span class=p >(</span><span class=n >crude_ret</span><span class=p >)</span><span class=o >.</span><span class=n >fit</span><span class=p >(</span><span class=n >disp</span><span class=o >=</span><span class=s2 >"off"</span><span class=p >)</span>
-<span class=n >res_t</span> <span class=o >=</span> <span class=n >arch_model</span><span class=p >(</span><span class=n >crude_ret</span><span class=p >,</span> <span class=n >dist</span><span class=o >=</span><span class=s2 >"t"</span><span class=p >)</span><span class=o >.</span><span class=n >fit</span><span class=p >(</span><span class=n >disp</span><span class=o >=</span><span class=s2 >"off"</span><span class=p >)</span>
-<span class=n >res_skewt</span> <span class=o >=</span> <span class=n >arch_model</span><span class=p >(</span><span class=n >crude_ret</span><span class=p >,</span> <span class=n >dist</span><span class=o >=</span><span class=s2 >"skewt"</span><span class=p >)</span><span class=o >.</span><span class=n >fit</span><span class=p >(</span><span class=n >disp</span><span class=o >=</span><span class=s2 >"off"</span><span class=p >)</span>
-<span class=n >lls</span> <span class=o >=</span> <span class=n >pd</span><span class=o >.</span><span class=n >Series</span><span class=p >(</span>
-    <span class=n >OrderedDict</span><span class=p >(</span>
-        <span class=p >(</span>
-            <span class=p >(</span><span class=s2 >"normal"</span><span class=p >,</span> <span class=n >res_normal</span><span class=o >.</span><span class=n >loglikelihood</span><span class=p >),</span>
-            <span class=p >(</span><span class=s2 >"t"</span><span class=p >,</span> <span class=n >res_t</span><span class=o >.</span><span class=n >loglikelihood</span><span class=p >),</span>
-            <span class=p >(</span><span class=s2 >"skewt"</span><span class=p >,</span> <span class=n >res_skewt</span><span class=o >.</span><span class=n >loglikelihood</span><span class=p >),</span>
-        <span class=p >)</span>
-    <span class=p >)</span>
-<span class=p >)</span>
-<span class=nb >print</span><span class=p >(</span><span class=n >lls</span><span class=p >)</span>
-<span class=n >params</span> <span class=o >=</span> <span class=n >pd</span><span class=o >.</span><span class=n >DataFrame</span><span class=p >(</span>
-    <span class=n >OrderedDict</span><span class=p >(</span>
-        <span class=p >(</span>
-            <span class=p >(</span><span class=s2 >"normal"</span><span class=p >,</span> <span class=n >res_normal</span><span class=o >.</span><span class=n >params</span><span class=p >),</span>
-            <span class=p >(</span><span class=s2 >"t"</span><span class=p >,</span> <span class=n >res_t</span><span class=o >.</span><span class=n >params</span><span class=p >),</span>
-            <span class=p >(</span><span class=s2 >"skewt"</span><span class=p >,</span> <span class=n >res_skewt</span><span class=o >.</span><span class=n >params</span><span class=p >),</span>
-        <span class=p >)</span>
-    <span class=p >)</span>
-<span class=p >)</span>
-<span class=n >params</span>
-</pre></div> </div> </div> <div class="nboutput docutils container"> <div class="prompt empty docutils container"> </div> <div class="output_area docutils container"> <div class=highlight ><pre>
+<span class="n">crude</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">wti</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">crude_ret</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">crude</span><span class="o">.</span><span class="n">DCOILWTICO</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">res_normal</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">res_t</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">&quot;t&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">res_skewt</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">&quot;skewt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">lls</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+    <span class="n">OrderedDict</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="n">res_t</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;skewt&quot;</span><span class="p">,</span> <span class="n">res_skewt</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">lls</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="n">OrderedDict</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">params</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="n">res_t</span><span class="o">.</span><span class="n">params</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;skewt&quot;</span><span class="p">,</span> <span class="n">res_skewt</span><span class="o">.</span><span class="n">params</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">params</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
 normal   -18165.858870
 t        -17919.643916
 skewt    -17916.669052
 dtype: float64
-</pre></div></div> </div> <div class="nboutput nblast docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[15]:
-</pre></div> </div> <div class="output_area rendered_html docutils container"> <div> <style scoped=""> .dataframe tbody tr th:only-of-type { vertical-align: middle; } .dataframe tbody tr th { vertical-align: top; } .dataframe thead th { text-align: right; } </style> <table border=1  class=dataframe > <thead> <tr style="text-align: right;"> <th> <th>normal <th>t <th>skewt <tr> <th>alpha[1] <td>0.085627 <td>0.064980 <td>0.064889 <tr> <th>beta[1] <td>0.909098 <td>0.927950 <td>0.928215 <tr> <th>eta <td>NaN <td>NaN <td>6.186541 <tr> <th>lambda <td>NaN <td>NaN <td>-0.036986 <tr> <th>mu <td>0.046682 <td>0.056438 <td>0.040928 <tr> <th>nu <td>NaN <td>6.178598 <td>NaN <tr> <th>omega <td>0.055806 <td>0.048516 <td>0.047683 </table> </div></div> </div> <p>The standardized residuals can be computed by dividing the residuals by the conditional volatility. These are plotted along with the (unstandardized, but scaled) residuals. The non-standardized residuals are more peaked in the center indicating that the distribution is somewhat more heavy tailed than that of the standardized residuals.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[16]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=n >std_resid</span> <span class=o >=</span> <span class=n >res_normal</span><span class=o >.</span><span class=n >resid</span> <span class=o >/</span> <span class=n >res_normal</span><span class=o >.</span><span class=n >conditional_volatility</span>
-<span class=n >unit_var_resid</span> <span class=o >=</span> <span class=n >res_normal</span><span class=o >.</span><span class=n >resid</span> <span class=o >/</span> <span class=n >res_normal</span><span class=o >.</span><span class=n >resid</span><span class=o >.</span><span class=n >std</span><span class=p >()</span>
-<span class=n >df</span> <span class=o >=</span> <span class=n >pd</span><span class=o >.</span><span class=n >concat</span><span class=p >([</span><span class=n >std_resid</span><span class=p >,</span> <span class=n >unit_var_resid</span><span class=p >],</span> <span class=n >axis</span><span class=o >=</span><span class=mi >1</span><span class=p >)</span>
-<span class=n >df</span><span class=o >.</span><span class=n >columns</span> <span class=o >=</span> <span class=p >[</span><span class=s2 >"Std Resids"</span><span class=p >,</span> <span class=s2 >"Unit Variance Resids"</span><span class=p >]</span>
-<span class=n >subplot</span> <span class=o >=</span> <span class=n >df</span><span class=o >.</span><span class=n >plot</span><span class=p >(</span><span class=n >kind</span><span class=o >=</span><span class=s2 >"kde"</span><span class=p >,</span> <span class=n >xlim</span><span class=o >=</span><span class=p >(</span><span class=o >-</span><span class=mi >4</span><span class=p >,</span> <span class=mi >4</span><span class=p >))</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt empty docutils container"> </div> <div class="output_area docutils container"> <img alt="../_images/univariate_univariate_volatility_modeling_44_0.png" src="../_images/univariate_univariate_volatility_modeling_44_0.png"/> </div> </div> </section> <section id=Simulation > <h2 id=Simulation >Simulation<a class=headerlink  href="#Simulation" title="Permalink to this heading">¶</a></h2> <p>All mean models expose a method to simulate returns from assuming the model is correctly specified. There are two required parameters, <code class="docutils literal notranslate"><span class=pre >params</span></code> which are the model parameters, and <code class="docutils literal notranslate"><span class=pre >nobs</span></code>, the number of observations to produce.</p> <p>Below we simulate from a GJR-GARCH(1,1) with Skew-t errors using parameters estimated on the WTI series. The simulation returns a <code class="docutils literal notranslate"><span class=pre >DataFrame</span></code> with 3 columns:</p> <ul class=simple > <li><p><code class="docutils literal notranslate"><span class=pre >data</span></code>: The simulated data, which includes any mean dynamics.</p> <li><p><code class="docutils literal notranslate"><span class=pre >volatility</span></code>: The conditional volatility series</p> <li><p><code class="docutils literal notranslate"><span class=pre >errors</span></code>: The simulated errors generated to produce the model. The errors are the difference between the data and its conditional mean, and can be transformed into the standardized errors by dividing by the volatility.</p> </ul> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[17]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=n >res</span> <span class=o >=</span> <span class=n >arch_model</span><span class=p >(</span><span class=n >crude_ret</span><span class=p >,</span> <span class=n >p</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >o</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >q</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >dist</span><span class=o >=</span><span class=s2 >"skewt"</span><span class=p >)</span><span class=o >.</span><span class=n >fit</span><span class=p >(</span><span class=n >disp</span><span class=o >=</span><span class=s2 >"off"</span><span class=p >)</span>
-<span class=n >pd</span><span class=o >.</span><span class=n >DataFrame</span><span class=p >(</span><span class=n >res</span><span class=o >.</span><span class=n >params</span><span class=p >)</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[17]:
-</pre></div> </div> <div class="output_area rendered_html docutils container"> <div> <style scoped=""> .dataframe tbody tr th:only-of-type { vertical-align: middle; } .dataframe tbody tr th { vertical-align: top; } .dataframe thead th { text-align: right; } </style> <table border=1  class=dataframe > <thead> <tr style="text-align: right;"> <th> <th>params <tr> <th>mu <td>0.029365 <tr> <th>omega <td>0.044374 <tr> <th>alpha[1] <td>0.044344 <tr> <th>gamma[1] <td>0.036104 <tr> <th>beta[1] <td>0.931280 <tr> <th>eta <td>6.211281 <tr> <th>lambda <td>-0.041616 </table> </div></div> </div> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[18]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=n >sim_mod</span> <span class=o >=</span> <span class=n >arch_model</span><span class=p >(</span><span class=kc >None</span><span class=p >,</span> <span class=n >p</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >o</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >q</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >dist</span><span class=o >=</span><span class=s2 >"skewt"</span><span class=p >)</span>
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[15]:
+</code></pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class=n >sim_data</span> <span class=o >=</span> <span class=n >sim_mod</span><span class=o >.</span><span class=n >simulate</span><span class=p >(</span><span class=n >res</span><span class=o >.</span><span class=n >params</span><span class=p >,</span> <span class=mi >1000</span><span class=p >)</span>
-<span class=n >sim_data</span><span class=o >.</span><span class=n >head</span><span class=p >()</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[18]:
-</pre></div> </div> <div class="output_area rendered_html docutils container"> <div> <style scoped=""> .dataframe tbody tr th:only-of-type { vertical-align: middle; } .dataframe tbody tr th { vertical-align: top; } .dataframe thead th { text-align: right; } </style> <table border=1  class=dataframe > <thead> <tr style="text-align: right;"> <th> <th>data <th>volatility <th>errors <tr> <th>0 <td>2.729532 <td>2.293291 <td>2.700167 <tr> <th>1 <td>1.310209 <td>2.294658 <td>1.280844 <tr> <th>2 <td>-3.711848 <td>2.240700 <td>-3.741213 <tr> <th>3 <td>2.212867 <td>2.417869 <td>2.183502 <tr> <th>4 <td>2.987078 <td>2.387496 <td>2.957713 </table> </div></div> </div> <p>Simulations can be reproduced using a NumPy <code class="docutils literal notranslate"><span class=pre >RandomState</span></code>. This requires constructing a model from components where the <code class="docutils literal notranslate"><span class=pre >RandomState</span></code> instance is passed into to the distribution when the model is created.</p> <p>The cell below contains code that builds a model with a constant mean, GJR-GARCH volatility and Skew <span class="math notranslate nohighlight">\(t\)</span> errors initialized with a user-provided <code class="docutils literal notranslate"><span class=pre >RandomState</span></code>. Saving the initial state allows it to be restored later so that the simulation can be run with the same random values.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[19]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=kn >import</span> <span class=nn >numpy</span> <span class=k >as</span> <span class=nn >np</span>
-<span class=kn >from</span> <span class=nn >arch.univariate</span> <span class=kn >import</span> <span class=n >GARCH</span><span class=p >,</span> <span class=n >ConstantMean</span><span class=p >,</span> <span class=n >SkewStudent</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
 
-<span class=n >rs</span> <span class=o >=</span> <span class=n >np</span><span class=o >.</span><span class=n >random</span><span class=o >.</span><span class=n >RandomState</span><span class=p >([</span><span class=mi >892380934</span><span class=p >,</span> <span class=mi >189201902</span><span class=p >,</span> <span class=mi >129129894</span><span class=p >,</span> <span class=mi >9890437</span><span class=p >])</span>
-<span class=c1 ># Save the initial state to reset later</span>
-<span class=n >state</span> <span class=o >=</span> <span class=n >rs</span><span class=o >.</span><span class=n >get_state</span><span class=p >()</span>
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>normal</th>
+      <th>t</th>
+      <th>skewt</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>alpha[1]</th>
+      <td>0.085627</td>
+      <td>0.064980</td>
+      <td>0.064889</td>
+    </tr>
+    <tr>
+      <th>beta[1]</th>
+      <td>0.909098</td>
+      <td>0.927950</td>
+      <td>0.928215</td>
+    </tr>
+    <tr>
+      <th>eta</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>6.186541</td>
+    </tr>
+    <tr>
+      <th>lambda</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>-0.036986</td>
+    </tr>
+    <tr>
+      <th>mu</th>
+      <td>0.046682</td>
+      <td>0.056438</td>
+      <td>0.040928</td>
+    </tr>
+    <tr>
+      <th>nu</th>
+      <td>NaN</td>
+      <td>6.178598</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>omega</th>
+      <td>0.055806</td>
+      <td>0.048516</td>
+      <td>0.047683</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>The standardized residuals can be computed by dividing the residuals by the conditional volatility. These are plotted along with the (unstandardized, but scaled) residuals. The non-standardized residuals are more peaked in the center indicating that the distribution is somewhat more heavy tailed than that of the standardized residuals.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[16]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">std_resid</span> <span class="o">=</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">conditional_volatility</span>
+<span class="n">unit_var_resid</span> <span class="o">=</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="n">res_normal</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">std_resid</span><span class="p">,</span> <span class="n">unit_var_resid</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Std Resids&quot;</span><span class="p">,</span> <span class="s2">&quot;Unit Variance Resids&quot;</span><span class="p">]</span>
+<span class="n">subplot</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;kde&quot;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/univariate_univariate_volatility_modeling_44_0.png" src="../_images/univariate_univariate_volatility_modeling_44_0.png" />
+</div>
+</div>
+<h2 id="Simulation">Simulation<a class="headerlink" href="#Simulation" title="Permalink to this heading">¶</a></h2>
+<p>All mean models expose a method to simulate returns from assuming the model is correctly specified. There are two required parameters, <code class="docutils literal notranslate"><span class="pre">params</span></code> which are the model parameters, and <code class="docutils literal notranslate"><span class="pre">nobs</span></code>, the number of observations to produce.</p>
+<p>Below we simulate from a GJR-GARCH(1,1) with Skew-t errors using parameters estimated on the WTI series. The simulation returns a <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> with 3 columns:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code>: The simulated data, which includes any mean dynamics.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">volatility</span></code>: The conditional volatility series</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">errors</span></code>: The simulated errors generated to produce the model. The errors are the difference between the data and its conditional mean, and can be transformed into the standardized errors by dividing by the volatility.</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[17]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">res</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">crude_ret</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">&quot;skewt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[17]:
+</code></pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class=n >dist</span> <span class=o >=</span> <span class=n >SkewStudent</span><span class=p >(</span><span class=n >seed</span><span class=o >=</span><span class=n >rs</span><span class=p >)</span>
-<span class=n >vol</span> <span class=o >=</span> <span class=n >GARCH</span><span class=p >(</span><span class=n >p</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >o</span><span class=o >=</span><span class=mi >1</span><span class=p >,</span> <span class=n >q</span><span class=o >=</span><span class=mi >1</span><span class=p >)</span>
-<span class=n >repro_mod</span> <span class=o >=</span> <span class=n >ConstantMean</span><span class=p >(</span><span class=kc >None</span><span class=p >,</span> <span class=n >volatility</span><span class=o >=</span><span class=n >vol</span><span class=p >,</span> <span class=n >distribution</span><span class=o >=</span><span class=n >dist</span><span class=p >)</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
 
-<span class=n >repro_mod</span><span class=o >.</span><span class=n >simulate</span><span class=p >(</span><span class=n >res</span><span class=o >.</span><span class=n >params</span><span class=p >,</span> <span class=mi >1000</span><span class=p >)</span><span class=o >.</span><span class=n >head</span><span class=p >()</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[19]:
-</pre></div> </div> <div class="output_area rendered_html docutils container"> <div> <style scoped=""> .dataframe tbody tr th:only-of-type { vertical-align: middle; } .dataframe tbody tr th { vertical-align: top; } .dataframe thead th { text-align: right; } </style> <table border=1  class=dataframe > <thead> <tr style="text-align: right;"> <th> <th>data <th>volatility <th>errors <tr> <th>0 <td>1.616836 <td>4.787697 <td>1.587470 <tr> <th>1 <td>4.106780 <td>4.637129 <td>4.077415 <tr> <th>2 <td>4.530200 <td>4.561457 <td>4.500834 <tr> <th>3 <td>2.284833 <td>4.507739 <td>2.255468 <tr> <th>4 <td>3.378519 <td>4.381016 <td>3.349153 </table> </div></div> </div> <p>Resetting the state using <code class="docutils literal notranslate"><span class=pre >set_state</span></code> shows that calling <code class="docutils literal notranslate"><span class=pre >simulate</span></code> using the same underlying state in the <code class="docutils literal notranslate"><span class=pre >RandomState</span></code> produces the same objects.</p> <div class="nbinput docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[20]:
-</pre></div> </div> <div class="input_area highlight-ipython3 notranslate"><div class=highlight ><pre><span></span><span class=c1 ># Reset the state to the initial state</span>
-<span class=n >rs</span><span class=o >.</span><span class=n >set_state</span><span class=p >(</span><span class=n >state</span><span class=p >)</span>
-<span class=n >repro_mod</span><span class=o >.</span><span class=n >simulate</span><span class=p >(</span><span class=n >res</span><span class=o >.</span><span class=n >params</span><span class=p >,</span> <span class=mi >1000</span><span class=p >)</span><span class=o >.</span><span class=n >head</span><span class=p >()</span>
-</pre></div> </div> </div> <div class="nboutput nblast docutils container"> <div class="prompt highlight-none notranslate"><div class=highlight ><pre><span></span>[20]:
-</pre></div> </div> <div class="output_area rendered_html docutils container"> <div> <style scoped=""> .dataframe tbody tr th:only-of-type { vertical-align: middle; } .dataframe tbody tr th { vertical-align: top; } .dataframe thead th { text-align: right; } </style> <table border=1  class=dataframe > <thead> <tr style="text-align: right;"> <th> <th>data <th>volatility <th>errors <tr> <th>0 <td>1.616836 <td>4.787697 <td>1.587470 <tr> <th>1 <td>4.106780 <td>4.637129 <td>4.077415 <tr> <th>2 <td>4.530200 <td>4.561457 <td>4.500834 <tr> <th>3 <td>2.284833 <td>4.507739 <td>2.255468 <tr> <th>4 <td>3.378519 <td>4.381016 <td>3.349153 </table> </div></div> </div> </section> </section> </article> </div> </div> </main> </div> <footer class=md-footer > <div class=md-footer-nav > <nav class="md-footer-nav__inner md-grid"> <a href=introduction.html  title="Introduction to ARCH Models" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel=prev > <div class="md-flex__cell md-flex__cell--shrink"> <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i> </div> <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"> <span class=md-flex__ellipsis > <span class=md-footer-nav__direction > Previous </span> Introduction to ARCH Models </span> </div> </a> <a href=forecasting.html  title=Forecasting  class="md-flex md-footer-nav__link md-footer-nav__link--next" rel=next > <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span class=md-flex__ellipsis > <span class=md-footer-nav__direction > Next </span> Forecasting </span> </div> <div class="md-flex__cell md-flex__cell--shrink"><i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i> </div> </a> </nav> </div> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-footer-copyright > <div class=md-footer-copyright__highlight > &#169; Copyright 2021, Kevin Sheppard. </div> Created using <a href="http://www.sphinx-doc.org/">Sphinx</a> 6.1.3. and <a href="https://github.com/bashtage/sphinx-material/">Material for Sphinx</a> </div> </div> </div> </footer> <script src="../_static/javascripts/application.js"></script> <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>params</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>mu</th>
+      <td>0.029365</td>
+    </tr>
+    <tr>
+      <th>omega</th>
+      <td>0.044374</td>
+    </tr>
+    <tr>
+      <th>alpha[1]</th>
+      <td>0.044344</td>
+    </tr>
+    <tr>
+      <th>gamma[1]</th>
+      <td>0.036104</td>
+    </tr>
+    <tr>
+      <th>beta[1]</th>
+      <td>0.931280</td>
+    </tr>
+    <tr>
+      <th>eta</th>
+      <td>6.211281</td>
+    </tr>
+    <tr>
+      <th>lambda</th>
+      <td>-0.041616</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[18]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">sim_mod</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">&quot;skewt&quot;</span><span class="p">)</span>
+
+<span class="n">sim_data</span> <span class="o">=</span> <span class="n">sim_mod</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">sim_data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[18]:
+</code></pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>data</th>
+      <th>volatility</th>
+      <th>errors</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2.729532</td>
+      <td>2.293291</td>
+      <td>2.700167</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1.310209</td>
+      <td>2.294658</td>
+      <td>1.280844</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>-3.711848</td>
+      <td>2.240700</td>
+      <td>-3.741213</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2.212867</td>
+      <td>2.417869</td>
+      <td>2.183502</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2.987078</td>
+      <td>2.387496</td>
+      <td>2.957713</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Simulations can be reproduced using a NumPy <code class="docutils literal notranslate"><span class="pre">RandomState</span></code>. This requires constructing a model from components where the <code class="docutils literal notranslate"><span class="pre">RandomState</span></code> instance is passed into to the distribution when the model is created.</p>
+<p>The cell below contains code that builds a model with a constant mean, GJR-GARCH volatility and Skew <span class="math notranslate nohighlight">\(t\)</span> errors initialized with a user-provided <code class="docutils literal notranslate"><span class="pre">RandomState</span></code>. Saving the initial state allows it to be restored later so that the simulation can be run with the same random values.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[19]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="kn">import</span> <span class="n">GARCH</span><span class="p">,</span> <span class="n">ConstantMean</span><span class="p">,</span> <span class="n">SkewStudent</span>
+
+<span class="n">rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">([</span><span class="mi">892380934</span><span class="p">,</span> <span class="mi">189201902</span><span class="p">,</span> <span class="mi">129129894</span><span class="p">,</span> <span class="mi">9890437</span><span class="p">])</span>
+<span class="c1"># Save the initial state to reset later</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span>
+
+<span class="n">dist</span> <span class="o">=</span> <span class="n">SkewStudent</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">rs</span><span class="p">)</span>
+<span class="n">vol</span> <span class="o">=</span> <span class="n">GARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">repro_mod</span> <span class="o">=</span> <span class="n">ConstantMean</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">volatility</span><span class="o">=</span><span class="n">vol</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="n">dist</span><span class="p">)</span>
+
+<span class="n">repro_mod</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[19]:
+</code></pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>data</th>
+      <th>volatility</th>
+      <th>errors</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.616836</td>
+      <td>4.787697</td>
+      <td>1.587470</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4.106780</td>
+      <td>4.637129</td>
+      <td>4.077415</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.530200</td>
+      <td>4.561457</td>
+      <td>4.500834</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2.284833</td>
+      <td>4.507739</td>
+      <td>2.255468</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>3.378519</td>
+      <td>4.381016</td>
+      <td>3.349153</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Resetting the state using <code class="docutils literal notranslate"><span class="pre">set_state</span></code> shows that calling <code class="docutils literal notranslate"><span class="pre">simulate</span></code> using the same underlying state in the <code class="docutils literal notranslate"><span class="pre">RandomState</span></code> produces the same objects.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[20]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Reset the state to the initial state</span>
+<span class="n">rs</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="n">repro_mod</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[20]:
+</code></pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>data</th>
+      <th>volatility</th>
+      <th>errors</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.616836</td>
+      <td>4.787697</td>
+      <td>1.587470</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4.106780</td>
+      <td>4.637129</td>
+      <td>4.077415</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.530200</td>
+      <td>4.561457</td>
+      <td>4.500834</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2.284833</td>
+      <td>4.507739</td>
+      <td>2.255468</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>3.378519</td>
+      <td>4.381016</td>
+      <td>3.349153</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="introduction.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Introduction to ARCH Models" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Introduction to ARCH Models
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="forecasting.html" class="md-footer__link md-footer__link--next" aria-label="Next: Forecasting" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Forecasting
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        &#169; Copyright 2021, Kevin Sheppard.
+        
+    </div>
+  
+    Created using
+    <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
+    5.3.0.
+     and
+    <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    <a href="https://github.com/bashtage/arch" target="_blank" rel="noopener" title="Source on github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://pypi.org/project/arch/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6zM286.2 404c11.1 0 20.1 9.1 20.1 20.3 0 11.3-9 20.4-20.1 20.4-11 0-20.1-9.2-20.1-20.4.1-11.3 9.1-20.3 20.1-20.3zM167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4zm-6.7-142.6c-11.1 0-20.1-9.1-20.1-20.3.1-11.3 9-20.4 20.1-20.4 11 0 20.1 9.2 20.1 20.4s-9 20.3-20.1 20.3z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://doi.org/10.5281/zenodo.593254" target="_blank" rel="noopener" title="doi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M0 216C0 149.7 53.7 96 120 96h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V216zm256 0c0-66.3 53.7-120 120-120h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64h-64c-35.3 0-64-28.7-64-64V216z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    
+      
+        <script src="../_static/sphinx_immaterial_theme.cea6a0c1d5b0618cf.min.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+  </body>
+</html>

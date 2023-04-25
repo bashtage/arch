@@ -1,3 +1,5 @@
+:hero: Univariate volatility modeling, bootstrapping, multiple comparison procedures and unit root tests.
+
 .. image:: images/color-logo.svg
    :width: 33.3%
    :alt: arch logo

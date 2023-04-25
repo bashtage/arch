@@ -1,1 +1,1171 @@
-<!DOCTYPE html> <html lang=en > <meta charset=utf-8  /> <meta name=viewport  content="width=device-width, initial-scale=1.0" /><meta name=generator  content="Docutils 0.19: https://docutils.sourceforge.io/" /> <meta name=viewport  content="width=device-width,initial-scale=1"> <meta http-equiv=x-ua-compatible  content="ie=edge"> <meta name="lang:clipboard.copy" content="Copy to clipboard"> <meta name="lang:clipboard.copied" content="Copied to clipboard"> <meta name="lang:search.language" content=en > <meta name="lang:search.pipeline.stopwords" content=True > <meta name="lang:search.pipeline.trimmer" content=True > <meta name="lang:search.result.none" content="No matching documents"> <meta name="lang:search.result.one" content="1 matching document"> <meta name="lang:search.result.other" content="# matching documents"> <meta name="lang:search.tokenizer" content="[\s\-]+"> <link href="https://fonts.gstatic.com/" rel=preconnect  crossorigin> <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700|Roboto:300,400,400i,700&display=fallback" rel=stylesheet > <style> body, input { font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif } code, kbd, pre { font-family: "Roboto Mono", "Courier New", Courier, monospace } </style> <link rel=stylesheet  href="../../../_static/stylesheets/application.css"/> <link rel=stylesheet  href="../../../_static/stylesheets/application-palette.css"/> <link rel=stylesheet  href="../../../_static/stylesheets/application-fixes.css"/> <link rel=stylesheet  href="../../../_static/fonts/material-icons.css"/> <meta name=theme-color  content="#2196f3"> <script src="../../../_static/javascripts/modernizr.js"></script> <title>arch.bootstrap.StationaryBootstrap.generator &#8212; arch 5.4.0 documentation</title> <link rel=apple-touch-icon  sizes=180x180  href="../../../_static/images/apple-touch-icon.png"> <link rel=icon  type="image/png" sizes=32x32  href="../../../_static/images/favicon-32x32.png"> <link rel=icon  type="image/png" sizes=16x16  href="../../../_static/images/favicon-16x16.png"> <link rel=manifest  href="../../../_static/images/site.webmanifest"> <link rel=mask-icon  href="../../../_static/images/safari-pinned-tab.svg" color="#2196f3"> <meta name=msapplication-TileColor  content="#2b5797"> <meta name=msapplication-config  content="../../../_static/images/browserconfig.xml"> <link rel=stylesheet  type="text/css" href="../../../_static/pygments.css" /> <link rel=stylesheet  type="text/css" href="../../../_static/material.css" /> <link rel=stylesheet  type="text/css" href="../../../_static/css/small_fixes.css" /> <script data-url_root="../../../" id=documentation_options  src="../../../_static/documentation_options.js"></script> <script src="../../../_static/doctools.js"></script> <script src="../../../_static/sphinx_highlight.js"></script> <script crossorigin=anonymous  integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script> <link rel=icon  href="../../../_static/favicon.ico"/> <link rel=index  title=Index  href="../../../genindex.html" /> <link rel=search  title=Search  href="../../../search.html" /> <link rel=next  title=arch.bootstrap.StationaryBootstrap.index  href=arch.bootstrap.StationaryBootstrap.index.html  /> <link rel=prev  title=arch.bootstrap.StationaryBootstrap.var  href=arch.bootstrap.StationaryBootstrap.var.html  /> <body dir=ltr data-md-color-primary=blue data-md-color-accent=indigo> <svg class=md-svg > <defs data-children-count=0 > <svg xmlns="http://www.w3.org/2000/svg" width=416  height=448  viewBox="0 0 416 448" id=__github ><path fill=currentColor  d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg> </defs> </svg> <input class=md-toggle  data-md-toggle=drawer  type=checkbox  id=__drawer > <input class=md-toggle  data-md-toggle=search  type=checkbox  id=__search > <label class=md-overlay  data-md-component=overlay  for=__drawer ></label> <a href="#bootstrap/generated/generated/arch.bootstrap.StationaryBootstrap.generator" tabindex=1  class=md-skip > Skip to content </a> <header class=md-header  data-md-component=header > <nav class="md-header-nav md-grid"> <div class="md-flex navheader"> <div class="md-flex__cell md-flex__cell--shrink"> <a href="../../../index.html" title="arch 5.4.0 documentation" class="md-header-nav__button md-logo"> &nbsp; </a> </div> <div class="md-flex__cell md-flex__cell--shrink"> <label class="md-icon md-icon--menu md-header-nav__button" for=__drawer ></label> </div> <div class="md-flex__cell md-flex__cell--stretch"> <div class="md-flex__ellipsis md-header-nav__title" data-md-component=title > <span class=md-header-nav__topic >arch 5.4.0</span> <span class=md-header-nav__topic > arch.bootstrap.StationaryBootstrap.generator </span> </div> </div> <div class="md-flex__cell md-flex__cell--shrink"> <label class="md-icon md-icon--search md-header-nav__button" for=__search ></label> <div class=md-search  data-md-component=search  role=dialog > <label class=md-search__overlay  for=__search ></label> <div class=md-search__inner  role=search > <form class=md-search__form  action="../../../search.html" method=get  name=search > <input type=text  class=md-search__input  name=q  placeholder=Search  autocapitalize=off  autocomplete=off  spellcheck=false  data-md-component=query  data-md-state=active > <label class="md-icon md-search__icon" for=__search ></label> <button type=reset  class="md-icon md-search__icon" data-md-component=reset  tabindex=-1 > &#xE5CD; </button> </form> <div class=md-search__output > <div class=md-search__scrollwrap  data-md-scrollfix> <div class=md-search-result  data-md-component=result > <div class=md-search-result__meta > Type to start searching </div> <ol class=md-search-result__list ></ol> </div> </div> </div> </div> </div> </div> <div class="md-flex__cell md-flex__cell--shrink"> <div class=md-header-nav__source > <a href="https://github.com/bashtage/arch/" title="Go to repository" class=md-source  data-md-source=github > <div class=md-source__icon > <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width=28  height=28 > <use xlink:href="#__github" width=24  height=24 ></use> </svg> </div> <div class=md-source__repository > ARCH </div> </a> </div> </div> <div class="md-flex__cell md-flex__cell--shrink dropdown"> <button class=dropdownbutton >Versions</button> <div class="dropdown-content md-hero"> <a title=Release  href="https://bashtage.github.io/arch/">Release</a> <a title=Development  href="https://bashtage.github.io/arch/devel/">Development</a> <a title="RTD (Release)" href="https://arch.readthedocs.io/">RTD (Release)</a> </div> </div> </div> </nav> </header> <div class=md-container > <nav class=md-tabs  data-md-component=tabs > <div class="md-tabs__inner md-grid"> <ul class=md-tabs__list > <li class=md-tabs__item ><a href="../../bootstrap.html" class=md-tabs__link >Bootstrapping</a> <li class=md-tabs__item ><a href="../../timeseries-bootstraps.html" class=md-tabs__link >Time-series Bootstraps</a> <li class=md-tabs__item ><a href="../arch.bootstrap.StationaryBootstrap.html" class=md-tabs__link >arch.bootstrap.StationaryBootstrap</a> </ul> </div> </nav> <main class=md-main > <div class="md-main__inner md-grid" data-md-component=container > <div class="md-sidebar md-sidebar--primary" data-md-component=navigation > <div class=md-sidebar__scrollwrap > <div class=md-sidebar__inner > <nav class="md-nav md-nav--primary" data-md-level=0 > <label class="md-nav__title md-nav__title--site" for=__drawer > <a href="../../../index.html" title="arch 5.4.0 documentation" class="md-nav__button md-logo"> <img src="../../../_static/" alt=" logo" width=48  height=48 > </a> <a href="../../../index.html" title="arch 5.4.0 documentation">arch 5.4.0</a> </label> <div class=md-nav__source > <a href="https://github.com/bashtage/arch/" title="Go to repository" class=md-source  data-md-source=github > <div class=md-source__icon > <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width=28  height=28 > <use xlink:href="#__github" width=24  height=24 ></use> </svg> </div> <div class=md-source__repository > ARCH </div> </a> </div> <ul class=md-nav__list > <li class=md-nav__item > <a href="../../../univariate/univariate.html" class=md-nav__link >Univariate Volatility Models</a> <li class=md-nav__item > <a href="../../bootstrap.html" class=md-nav__link >Bootstrapping</a> <ul class=md-nav__list > <li class=md-nav__item > <a href="../../bootstrap_examples.html" class=md-nav__link >Examples</a> <li class=md-nav__item > <a href="../../confidence-intervals.html" class=md-nav__link >Confidence Interval Construction</a> <li class=md-nav__item > <a href="../../parameter-covariance-estimation.html" class=md-nav__link >Parameter Covariance Estimation</a> <li class=md-nav__item > <a href="../../low-level-interface.html" class=md-nav__link >Low-level Interface</a> <li class=md-nav__item > <a href="../../semiparametric-parametric-bootstrap.html" class=md-nav__link >Semiparametric Bootstraps</a> <li class=md-nav__item > <a href="../../semiparametric-parametric-bootstrap.html#parametric-bootstraps" class=md-nav__link >Parametric Bootstraps</a> <li class=md-nav__item > <a href="../../iid-bootstraps.html" class=md-nav__link >Independent, Identical Distributed Data (i.i.d.)</a> <li class=md-nav__item > <a href="../../iid-bootstraps.html#independent-samples" class=md-nav__link >Independent Samples</a> <li class=md-nav__item > <a href="../../timeseries-bootstraps.html" class=md-nav__link >Bootstraps for Time-series Data</a> <li class=md-nav__item > <a href="../../background.html" class=md-nav__link >Background and References</a> </ul> <li class=md-nav__item > <a href="../../../multiple-comparison/multiple-comparisons.html" class=md-nav__link >Multiple Comparison Problems</a> <li class=md-nav__item > <a href="../../../unitroot/unitroot.html" class=md-nav__link >Unit Root Testing</a> <li class=md-nav__item > <a href="../../../unitroot/unitroot.html#cointegration-analysis" class=md-nav__link >Cointegration Analysis</a> <li class=md-nav__item > <a href="../../../covariance/covariance.html" class=md-nav__link >Long-run Covariance Estimation</a> <li class=md-nav__item > <a href="../../../api.html" class=md-nav__link >API Reference</a> <li class=md-nav__item > <a href="../../../changes.html" class=md-nav__link >Change Log</a> </ul> </nav> </div> </div> </div> <div class="md-sidebar md-sidebar--secondary" data-md-component=toc > <div class=md-sidebar__scrollwrap > <div class=md-sidebar__inner > <nav class="md-nav md-nav--secondary"> <label class=md-nav__title  for=__toc >Contents</label> <ul class=md-nav__list  data-md-scrollfix=""> <li class=md-nav__item ><a href="#bootstrap-generated-generated-arch-bootstrap-stationarybootstrap-generator--page-root" class=md-nav__link >arch.bootstrap.StationaryBootstrap.generator</a><nav class=md-nav > <ul class=md-nav__list > <li class=md-nav__item ><a href="#arch.bootstrap.StationaryBootstrap.generator" class=md-nav__link ><code class="docutils literal notranslate"><span class=pre >StationaryBootstrap.generator</span></code></a> </ul> </nav> <li class=md-nav__item ><a class=md-nav__extra_link  href="../../../_sources/bootstrap/generated/generated/arch.bootstrap.StationaryBootstrap.generator.rst.txt">Show Source</a> <li id=searchbox  class=md-nav__item > </ul> </nav> </div> </div> </div> <div class=md-content > <article class="md-content__inner md-typeset" role=main > <section id=arch-bootstrap-stationarybootstrap-generator > <h1 id=bootstrap-generated-generated-arch-bootstrap-stationarybootstrap-generator--page-root >arch.bootstrap.StationaryBootstrap.generator<a class=headerlink  href="#bootstrap-generated-generated-arch-bootstrap-stationarybootstrap-generator--page-root" title="Permalink to this heading">¶</a></h1> <dl class="py property"> <dt class="sig sig-object py" id=arch.bootstrap.StationaryBootstrap.generator > <em class=property ><span class=pre >property</span><span class=w > </span></em><span class="sig-prename descclassname"><span class=pre >StationaryBootstrap.</span></span><span class="sig-name descname"><span class=pre >generator</span></span><em class=property ><span class=p ><span class=pre >:</span></span><span class=w > </span><span class=pre >Generator</span><span class=w > </span><span class=p ><span class=pre >|</span></span><span class=w > </span><span class=pre >RandomState</span></em><a class=headerlink  href="#arch.bootstrap.StationaryBootstrap.generator" title="Permalink to this definition">¶</a> <dd><p>Set or get the instance PRNG</p> <dl class=field-list > <dt class=field-odd >Parameters<span class=colon >:</span> <dd class=field-odd ><dl> <dt><strong>seed</strong><span class=classifier >{<code class="xref py py-obj docutils literal notranslate"><span class=pre >Generator</span></code>, <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class=pre >RandomState</span></code></a>}, <code class="xref py py-obj docutils literal notranslate"><span class=pre >optional</span></code></span><dd><p>Generator or RandomState used to produce the pseudo-random values used in the bootstrap</p> </dl> <dt class=field-even >Returns<span class=colon >:</span> <dd class=field-even ><dl class=simple > <dt>{<code class="xref py py-obj docutils literal notranslate"><span class=pre >Generator</span></code>, <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class=pre >RandomState</span></code></a>}<dd><p>The instance of the Generator or RandomState instance used by bootstrap</p> </dl> </dl> </dl> </section> </article> </div> </div> </main> </div> <footer class=md-footer > <div class=md-footer-nav > <nav class="md-footer-nav__inner md-grid"> <a href=arch.bootstrap.StationaryBootstrap.var.html  title=arch.bootstrap.StationaryBootstrap.var  class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel=prev > <div class="md-flex__cell md-flex__cell--shrink"> <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i> </div> <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"> <span class=md-flex__ellipsis > <span class=md-footer-nav__direction > Previous </span> arch.bootstrap.StationaryBootstrap.var </span> </div> </a> <a href=arch.bootstrap.StationaryBootstrap.index.html  title=arch.bootstrap.StationaryBootstrap.index  class="md-flex md-footer-nav__link md-footer-nav__link--next" rel=next > <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span class=md-flex__ellipsis > <span class=md-footer-nav__direction > Next </span> arch.bootstrap.StationaryBootstrap.index </span> </div> <div class="md-flex__cell md-flex__cell--shrink"><i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i> </div> </a> </nav> </div> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-footer-copyright > <div class=md-footer-copyright__highlight > &#169; Copyright 2021, Kevin Sheppard. </div> Created using <a href="http://www.sphinx-doc.org/">Sphinx</a> 6.1.3. and <a href="https://github.com/bashtage/sphinx-material/">Material for Sphinx</a> </div> </div> </div> </footer> <script src="../../../_static/javascripts/application.js"></script> <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../../_static/favicon.ico">
+    
+    
+  
+      
+        <title>arch.bootstrap.StationaryBootstrap.generator - arch 5.5.0</title>
+      
+    
+
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../_static/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../_static/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../_static/images/favicon-16x16.png">
+  <link rel="manifest" href="../../../_static/images/site.webmanifest">
+  <link rel="mask-icon" href="../../../_static/images/safari-pinned-tab.svg" color="#2196f3">
+  <meta name="msapplication-TileColor" content="#2b5797">
+  <meta name="msapplication-config" content="../../../_static/images/browserconfig.xml">
+
+    
+      
+        
+        
+          
+          
+          <meta name="theme-color" content="#2094f3">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.8118e13f191069ea1.min.css" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css" />
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="blue" data-md-color-accent="indigo">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#arch.bootstrap.StationaryBootstrap.generator" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../index.html" title="arch 5.5.0" class="md-header__button md-logo" aria-label="arch 5.5.0" data-md-component="logo">
+      <img src="../../../_static/bw-logo.svg" alt="logo">
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            arch 5.5.0
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              arch.bootstrap.StationaryBootstrap.generator
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/bashtage/arch/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    arch
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+  
+
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../index.html" title="arch 5.5.0" class="md-nav__button md-logo" aria-label="arch 5.5.0" data-md-component="logo">
+      <img src="../../../_static/bw-logo.svg" alt="logo">
+    </a>
+    arch 5.5.0
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/bashtage/arch/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    arch
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../univariate/univariate.html" class="md-nav__link">
+        <span title="/univariate/univariate.rst (reference label)" class="md-ellipsis">Univariate Volatility Models</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../bootstrap.html"><span title="/bootstrap/bootstrap.rst (reference label)" class="md-ellipsis">Bootstrapping</span></a>
+          
+            <label for="__nav_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Bootstrapping" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          <span title="/bootstrap/bootstrap.rst (reference label)" class="md-ellipsis">Bootstrapping</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bootstrap_examples.html" class="md-nav__link">
+        <span title="/bootstrap/bootstrap_examples.ipynb (reference label)" class="md-ellipsis">Examples</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../confidence-intervals.html" class="md-nav__link">
+        <span title="/bootstrap/confidence-intervals.rst (reference label)" class="md-ellipsis">Confidence Interval Construction</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parameter-covariance-estimation.html" class="md-nav__link">
+        <span title="/bootstrap/parameter-covariance-estimation.rst (reference label)" class="md-ellipsis">Parameter Covariance Estimation</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../low-level-interface.html" class="md-nav__link">
+        <span title="/bootstrap/low-level-interface.rst (reference label)" class="md-ellipsis">Low-<wbr>level Interface</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../semiparametric-parametric-bootstrap.html" class="md-nav__link">
+        <span title="/bootstrap/semiparametric-parametric-bootstrap.rst (reference label)" class="md-ellipsis">Semiparametric Bootstraps</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../semiparametric-parametric-bootstrap.html#parametric-bootstraps" class="md-nav__link">
+        <span title="parametric-bootstraps (reference label)" class="md-ellipsis">Parametric Bootstraps</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../iid-bootstraps.html" class="md-nav__link">
+        <span title="/bootstrap/iid-bootstraps.rst (reference label)" class="md-ellipsis">Independent, Identical Distributed Data <wbr>(i.<wbr>i.<wbr>d.<wbr>)</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../iid-bootstraps.html#independent-samples" class="md-nav__link">
+        <span title="/bootstrap/iid-bootstraps.rst#independent-samples (reference label)" class="md-ellipsis">Independent Samples</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_9" type="checkbox" id="__nav_2_9" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../timeseries-bootstraps.html"><span title="/bootstrap/timeseries-bootstraps.rst (reference label)" class="md-ellipsis">Bootstraps for Time-<wbr>series Data</span></a>
+          
+            <label for="__nav_2_9">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Bootstraps for Time-series Data" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_9">
+          <span class="md-nav__icon md-icon"></span>
+          <span title="/bootstrap/timeseries-bootstraps.rst (reference label)" class="md-ellipsis">Bootstraps for Time-<wbr>series Data</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_9_1" type="checkbox" id="__nav_2_9_1" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../arch.bootstrap.StationaryBootstrap.html"><span title="/bootstrap/generated/arch.bootstrap.stationarybootstrap.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap</span></a>
+          
+            <label for="__nav_2_9_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="arch.bootstrap.StationaryBootstrap" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_9_1">
+          <span class="md-nav__icon md-icon"></span>
+          <span title="/bootstrap/generated/arch.bootstrap.stationarybootstrap.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_9_1_1" type="checkbox" id="__nav_2_9_1_1" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../arch.bootstrap.StationaryBootstrap.html#arch.bootstrap.StationaryBootstrap"><span aria-label="Python class" class="objinfo-icon objinfo-icon__data" title="Python class">C</span><span title="arch.bootstrap.StationaryBootstrap (Python class) — Politis and Romano (1994) bootstrap with expon distributed block sizes" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap</span></a>
+          
+            <label for="__nav_2_9_1_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="arch.bootstrap.StationaryBootstrap" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_9_1_1">
+          <span class="md-nav__icon md-icon"></span>
+          <span aria-label="Python class" class="objinfo-icon objinfo-icon__data" title="Python class">C</span><span title="arch.bootstrap.StationaryBootstrap (Python class) — Politis and Romano (1994) bootstrap with expon distributed block sizes" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="arch.bootstrap.StationaryBootstrap.apply.html" class="md-nav__link">
+        <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.apply.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>apply</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="arch.bootstrap.StationaryBootstrap.bootstrap.html" class="md-nav__link">
+        <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.bootstrap.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>bootstrap</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="arch.bootstrap.StationaryBootstrap.clone.html" class="md-nav__link">
+        <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.clone.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>clone</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="arch.bootstrap.StationaryBootstrap.conf_int.html" class="md-nav__link">
+        <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.conf_int.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>conf_<wbr>int</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="arch.bootstrap.StationaryBootstrap.cov.html" class="md-nav__link">
+        <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.cov.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>cov</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="arch.bootstrap.StationaryBootstrap.get_state.html" class="md-nav__link">
+        <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.get_state.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>get_<wbr>state</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="arch.bootstrap.StationaryBootstrap.reset.html" class="md-nav__link">
+        <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.reset.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>reset</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="arch.bootstrap.StationaryBootstrap.seed.html" class="md-nav__link">
+        <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.seed.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>seed</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="arch.bootstrap.StationaryBootstrap.set_state.html" class="md-nav__link">
+        <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.set_state.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>set_<wbr>state</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="arch.bootstrap.StationaryBootstrap.update_indices.html" class="md-nav__link">
+        <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.update_indices.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>update_<wbr>indices</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="arch.bootstrap.StationaryBootstrap.var.html" class="md-nav__link">
+        <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.var.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>var</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.generator.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>generator</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.generator.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>generator</span>
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#arch.bootstrap.StationaryBootstrap.generator" class="md-nav__link">
+    <span aria-label="Python property" class="objinfo-icon objinfo-icon__alias" title="Python property">P</span><span title="arch.bootstrap.StationaryBootstrap.generator (Python property) — Set or get the instance PRNG" class="md-ellipsis">Stationary<wbr>Bootstrap.<wbr>generator</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="StationaryBootstrap.generator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arch.bootstrap.StationaryBootstrap.generator-parameters" class="md-nav__link">
+    <span class="md-ellipsis">Parameters</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arch.bootstrap.StationaryBootstrap.generator-returns" class="md-nav__link">
+    <span class="md-ellipsis">Returns</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arch.bootstrap.StationaryBootstrap.generator-return-type" class="md-nav__link">
+    <span class="md-ellipsis">Return type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="arch.bootstrap.StationaryBootstrap.index.html" class="md-nav__link">
+        <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.index.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>index</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="arch.bootstrap.StationaryBootstrap.random_state.html" class="md-nav__link">
+        <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.random_state.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>random_<wbr>state</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="arch.bootstrap.StationaryBootstrap.state.html" class="md-nav__link">
+        <span title="/bootstrap/generated/generated/arch.bootstrap.stationarybootstrap.state.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Stationary<wbr>Bootstrap.<wbr>state</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../arch.bootstrap.CircularBlockBootstrap.html" class="md-nav__link">
+        <span title="/bootstrap/generated/arch.bootstrap.circularblockbootstrap.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Circular<wbr>Block<wbr>Bootstrap</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../arch.bootstrap.MovingBlockBootstrap.html" class="md-nav__link">
+        <span title="/bootstrap/generated/arch.bootstrap.movingblockbootstrap.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>Moving<wbr>Block<wbr>Bootstrap</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../arch.bootstrap.optimal_block_length.html" class="md-nav__link">
+        <span title="/bootstrap/generated/arch.bootstrap.optimal_block_length.rst (reference label)" class="md-ellipsis">arch.<wbr>bootstrap.<wbr>optimal_<wbr>block_<wbr>length</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../background.html" class="md-nav__link">
+        <span title="/bootstrap/background.rst (reference label)" class="md-ellipsis">Background and References</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../multiple-comparison/multiple-comparisons.html" class="md-nav__link">
+        <span title="/multiple-comparison/multiple-comparisons.rst (reference label)" class="md-ellipsis">Multiple Comparison Problems</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../unitroot/unitroot.html" class="md-nav__link">
+        <span title="/unitroot/unitroot.rst (reference label)" class="md-ellipsis">Unit Root Testing</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../unitroot/unitroot.html#cointegration-analysis" class="md-nav__link">
+        <span title="/unitroot/unitroot.rst#cointegration-analysis (reference label)" class="md-ellipsis">Cointegration Analysis</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../covariance/covariance.html" class="md-nav__link">
+        <span title="/covariance/covariance.rst (reference label)" class="md-ellipsis">Long-<wbr>run Covariance Estimation</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api.html" class="md-nav__link">
+        <span title="/api.rst (reference label)" class="md-ellipsis">API Reference</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../changes.html" class="md-nav__link">
+        <span title="/changes.rst (reference label)" class="md-ellipsis">Change Log</span>
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#arch.bootstrap.StationaryBootstrap.generator" class="md-nav__link">
+    <span aria-label="Python property" class="objinfo-icon objinfo-icon__alias" title="Python property">P</span><span title="arch.bootstrap.StationaryBootstrap.generator (Python property) — Set or get the instance PRNG" class="md-ellipsis">Stationary<wbr>Bootstrap.<wbr>generator</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="StationaryBootstrap.generator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arch.bootstrap.StationaryBootstrap.generator-parameters" class="md-nav__link">
+    <span class="md-ellipsis">Parameters</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arch.bootstrap.StationaryBootstrap.generator-returns" class="md-nav__link">
+    <span class="md-ellipsis">Returns</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arch.bootstrap.StationaryBootstrap.generator-return-type" class="md-nav__link">
+    <span class="md-ellipsis">Return type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                  
+
+
+<h1 id="arch-bootstrap-stationarybootstrap-generator">arch.bootstrap.StationaryBootstrap.generator<a class="headerlink" href="#arch-bootstrap-stationarybootstrap-generator" title="Permalink to this heading">¶</a></h1>
+<dl class="py property objdesc">
+<dt class="sig sig-object highlight sig-wrap py" id="arch.bootstrap.StationaryBootstrap.generator">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">StationaryBootstrap.</span></span><span class="sig-name descname"><span class="pre">generator</span></span><span class="p"> <span class="pre">:</span> </span><span class="desctype"><a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.24)"><span class="pre">numpy.random._generator.Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v1.24)"><span class="pre">numpy.random.mtrand.RandomState</span></a></span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.generator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set or get the instance PRNG</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="arch.bootstrap.StationaryBootstrap.generator-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.generator-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt><span class="sig-name descname">seed</span><span class="p"> : </span><span class="desctype"><span class="desctype">{Generator, RandomState}, optional</span></span></dt><dd><p>Generator or RandomState used to produce the pseudo-random
+values used in the bootstrap</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even" id="arch.bootstrap.StationaryBootstrap.generator-returns">Returns<span class="colon">:</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.generator-returns" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><p>The instance of the Generator or RandomState instance used
+by bootstrap</p>
+</dd>
+<dt class="field-odd" id="arch.bootstrap.StationaryBootstrap.generator-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#arch.bootstrap.StationaryBootstrap.generator-return-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>{Generator, RandomState}</p>
+</dd>
+</dl>
+</dd></dl>
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="arch.bootstrap.StationaryBootstrap.var.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: arch.bootstrap.StationaryBootstrap.var" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              arch.bootstrap.StationaryBootstrap.var
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="arch.bootstrap.StationaryBootstrap.index.html" class="md-footer__link md-footer__link--next" aria-label="Next: arch.bootstrap.StationaryBootstrap.index" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              arch.bootstrap.StationaryBootstrap.index
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        &#169; Copyright 2021, Kevin Sheppard.
+        
+    </div>
+  
+    Created using
+    <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
+    5.3.0.
+     and
+    <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    <a href="https://github.com/bashtage/arch" target="_blank" rel="noopener" title="Source on github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://pypi.org/project/arch/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6zM286.2 404c11.1 0 20.1 9.1 20.1 20.3 0 11.3-9 20.4-20.1 20.4-11 0-20.1-9.2-20.1-20.4.1-11.3 9.1-20.3 20.1-20.3zM167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4zm-6.7-142.6c-11.1 0-20.1-9.1-20.1-20.3.1-11.3 9-20.4 20.1-20.4 11 0 20.1 9.2 20.1 20.4s-9 20.3-20.1 20.3z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://doi.org/10.5281/zenodo.593254" target="_blank" rel="noopener" title="doi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M0 216C0 149.7 53.7 96 120 96h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V216zm256 0c0-66.3 53.7-120 120-120h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64h-64c-35.3 0-64-28.7-64-64V216z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    
+      
+        <script src="../../../_static/sphinx_immaterial_theme.cea6a0c1d5b0618cf.min.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+  </body>
+</html>
