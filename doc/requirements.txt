@@ -16,7 +16,7 @@ seaborn
 numpydoc >=1.0.0
 property_cached >=1.6.3
 nbsphinx
-sphinx_material
+sphinx_immaterial
 jupyter
 notebook
 sphinx-autodoc-typehints

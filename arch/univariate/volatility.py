@@ -265,7 +265,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         ----------
         index : int
             The numerical index of the variance to compute
-        variance_params : ndarray
+        parameters : ndarray
             The variance model parameters
         resids :
             The residual array. Only uses ``resids[:index]`` when computing
@@ -986,6 +986,8 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         + \sum_{i=1}^{p}\alpha_{i}\left|\epsilon_{t-i}\right|^{\lambda}
         +\sum_{j=1}^{o}\gamma_{j}\left|\epsilon_{t-j}\right|^{\lambda}
         I\left[\epsilon_{t-j}<0\right]+\sum_{k=1}^{q}\beta_{k}\sigma_{t-k}^{\lambda}
+
+    where :math:`\lambda` is the ``power``.
     """
 
     def __init__(self, p: int = 1, o: int = 0, q: int = 1, power: float = 2.0) -> None:
@@ -1425,7 +1427,7 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         \sigma_{t}^{2}=\omega + \sum_{i=1}^{m}\alpha_{l_{i}}
         \left(l_{i}^{-1}\sum_{j=1}^{l_{i}}\epsilon_{t-j}^{2}\right)
 
-    In the common case where lags=[1,5,22], the model is
+    In the common case where ``lags=[1,5,22]``, the model is
 
     .. math::
 
