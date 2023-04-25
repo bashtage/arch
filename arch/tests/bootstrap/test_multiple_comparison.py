@@ -302,7 +302,7 @@ class TestStepM:
             stepm.superior_models
 
     def test_exact_ties(self):
-        adj_models: pd.DataFrame = self.models_df - 100.0
+        adj_models = self.models_df - 100.0
         adj_models.iloc[:, :2] -= adj_models.iloc[:, :2].mean()
         adj_models.iloc[:, :2] += self.benchmark_df.mean().iloc[0]
         stepm = StepM(self.benchmark_df, adj_models, size=0.10)

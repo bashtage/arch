@@ -1460,7 +1460,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         pos_indices, kw_indices = cast(
             Tuple[List[Int64Array], Dict[str, Int64Array]], self._index
         )
-        pos_data = []
+        pos_data: list[np.ndarray | pd.DataFrame | pd.Series] = []
         for i, values in enumerate(self._args):
             if isinstance(values, (pd.Series, pd.DataFrame)):
                 pos_data.append(values.iloc[pos_indices[i]])

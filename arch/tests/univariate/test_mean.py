@@ -304,7 +304,7 @@ class TestMeanModel:
             fcast[i + 1 :] = 0.0
             for h in range(6):
                 fcast[i + h + 1] = params[0]
-                fcast[i + h + 1] += params[1] * fcast[i + h : i + h + 1]
+                fcast[i + h + 1] += params[1] * fcast[i + h]
                 fcast[i + h + 1] += params[2] * fcast[i + h - 4 : i + h + 1].mean()
                 fcast[i + h + 1] += params[3] * fcast[i + h - 21 : i + h + 1].mean()
             direct.iloc[i, :] = fcast[i + 1 : i + 7]
@@ -336,7 +336,7 @@ class TestMeanModel:
             fcast[i + 1 :] = 0.0
             for h in range(6):
                 fcast[i + h + 1] = params[0]
-                fcast[i + h + 1] += params[1] * fcast[i + h : i + h + 1]
+                fcast[i + h + 1] += params[1] * fcast[i + h]
                 fcast[i + h + 1] += params[2] * fcast[i + h - 4 : i + h + 1].mean()
                 fcast[i + h + 1] += params[3] * fcast[i + h - 21 : i + h + 1].mean()
             direct.iloc[i, :] = fcast[i + 1 : i + 7]
