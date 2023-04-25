@@ -275,11 +275,11 @@ def _autolag_ols_low_memory(
             raise InfeasibleTestException(
                 singular_array_error.format(max_lags=maxlag, lag=m - i)
             )
-        sigma2[i - m] = (ypy - b.T @ xpx_sub @ b) / nobs
+        sigma2[i - m] = squeeze(ypy - b.T @ xpx_sub @ b) / nobs
         if lower_method == "t-stat":
             xpxi = inv(xpx_sub)
             stderr = sqrt(sigma2[i - m] * xpxi[-1, -1])
-            tstat[i - m] = b[-1] / stderr
+            tstat[i - m] = squeeze(b[-1]) / stderr
 
     return _select_best_ic(method, nobs, sigma2, tstat)
 
@@ -346,11 +346,11 @@ def _autolag_ols(
     tstat[0] = inf
     for i in range(startlag, startlag + maxlag + 1):
         b = solve(r[:i, :i], qpy[:i])
-        sigma2[i - startlag] = (ypy - b.T @ xpx[:i, :i] @ b) / nobs
+        sigma2[i - startlag] = squeeze(ypy - b.T @ xpx[:i, :i] @ b) / nobs
         if lower_method == "t-stat" and i > startlag:
             xpxi = inv(xpx[:i, :i])
             stderr = sqrt(sigma2[i - startlag] * xpxi[-1, -1])
-            tstat[i - startlag] = b[-1] / stderr
+            tstat[i - startlag] = squeeze(b[-1]) / stderr
 
     return _select_best_ic(method, nobs, sigma2, tstat)
 

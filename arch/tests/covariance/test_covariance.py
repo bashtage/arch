@@ -69,13 +69,13 @@ def data(request) -> ArrayLike:
         size += (3,)
     e = rs.standard_normal(size)
     if ndim == 1:
-        phi = rs.uniform(0, 0.9, 1)
+        phi = rs.uniform(0, 0.9)
         for i in range(1, size[0]):
             e[i] += e[i - 1] * phi
     else:
-        phi = np.diag(rs.uniform(0, 0.9, size[1]))
+        phi_arr = np.diag(rs.uniform(0, 0.9, size[1]))
         for i in range(1, size[0]):
-            e[i] += e[i - 1] @ phi
+            e[i] += e[i - 1] @ phi_arr
     e = e[burn:]
     if use_pandas:
         if ndim == 1:
