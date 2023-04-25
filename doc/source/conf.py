@@ -15,12 +15,6 @@ from packaging.version import parse
 
 import arch
 
-on_rtd = os.environ.get("READTHEDOCS", None) == "True"
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-# sys.path.insert(0, os.path.abspath("."))
-
 ##########################################################
 # Copy Examples
 ##########################################################
@@ -44,9 +38,9 @@ nitpicky = True
 full_version = parse(arch.__version__)
 short_version = version = arch.__version__
 if full_version.is_devrelease:
-    short_version = f"v{full_version.base_version} (+{full_version.dev})"
-# The full version, including alpha/beta/rc tags.
-release = arch.__version__
+    release = f"v{full_version.base_version} (+{full_version.dev})"
+else:
+    release = short_version
 
 # -- General configuration ---------------------------------------------------
 
@@ -68,12 +62,13 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.coverage",
     "sphinx.ext.ifconfig",
-    "numpydoc",
-    # "sphinx.ext.napoleon",
+    # "numpydoc",
+    "sphinx.ext.napoleon",
     "sphinx_autodoc_typehints",
     "IPython.sphinxext.ipython_console_highlighting",
     "IPython.sphinxext.ipython_directive",
     "nbsphinx",
+    "sphinx_immaterial",
 ]
 
 try:
@@ -120,42 +115,59 @@ pygments_style = "colorful"  # "sphinx"
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "default"
-# on_rtd is whether we are on readthedocs.org
-if not on_rtd:  # only import and set the theme if we"re building docs locally
-    import sphinx_material
+# Adds an HTML table visitor to apply Bootstrap table classes
+html_theme = "sphinx_immaterial"
+html_title = f"{project} {release}"
+# sphinx_immaterial theme options
+html_theme_options = {
+    "icon": {
+        "repo": "fontawesome/brands/github"
+    },
 
-    # Adds an HTML table visitor to apply Bootstrap table classes
-    html_theme_path = sphinx_material.html_theme_path()
-    html_context = sphinx_material.get_html_context()
-    html_theme = "sphinx_material"
-
-    # Register the theme as an extension to generate a sitemap.xml
-    extensions.append("sphinx_material")
-
-    # sphinx_material theme options (see theme.conf for more information)
-    html_theme_options = {
-        "base_url": "https://bashtage.github.io/arch/",
-        "repo_url": "https://github.com/bashtage/arch/",
-        "repo_name": "ARCH",
-        # Set the name of the project to appear in the sidebar
-        "nav_title": project + " " + short_version,
-        "globaltoc_depth": 2,
-        "globaltoc_collapse": True,
-        "globaltoc_includehidden": True,
-        "theme_color": "#2196f3",
-        "color_primary": "blue ",
-        "color_accent": "indigo",
-        "html_minify": True,
-        "css_minify": True,
-        "master_doc": False,
-        "version_dropdown": True,
-        "version_info": {
-            "Release": "https://bashtage.github.io/arch/",
-            "Development": "https://bashtage.github.io/arch/devel/",
-            "RTD (Release)": "https://arch.readthedocs.io/",
+    "site_url": "https://bashtage.github.io/arch/",
+    "repo_url": "https://github.com/bashtage/arch/",
+    "repo_name": "arch",
+    "repo_type": "github",
+    "palette": {"primary": "blue", "accent": "indigo"},
+    "globaltoc_collapse": True,
+    "toc_title": "Contents",
+    "version_dropdown": True,
+    "version_info": [
+        {
+            "version": "https://bashtage.github.io/arch/",
+            "title": "Release",
+            "aliases": [],
         },
-    }
+        {
+            "version": "https://bashtage.github.io/arch/devel/",
+            "title": "Development",
+            "aliases": [],
+        },
+        {
+            "title": "RTD (Release)",
+            "version": "https://arch.readthedocs.io/",
+            "aliases": [],
+        },
+    ],
+    "toc_title_is_page_title": True,
+    "social": [
+        {
+            "icon": "fontawesome/brands/github",
+            "link": "https://github.com/bashtage/arch",
+            "name": "Source on github.com",
+        },
+        {
+            "icon": "fontawesome/brands/python",
+            "link": "https://pypi.org/project/arch/",
+        },
+        {
+            "icon": "fontawesome/solid/quote-left",
+            "link": "https://doi.org/10.5281/zenodo.593254",
+        },
+    ],
+    #        "globaltoc_depth": 2,
+    #        "globaltoc_includehidden": True,
+}
 
 html_favicon = "images/favicon.ico"
 html_logo = "images/bw-logo.svg"
@@ -290,6 +302,9 @@ numpydoc_xref_aliases = {
     "AxesSubplot": "matplotlib.axes.Axes",
     "DataFrame": "pandas.DataFrame",
     "Series": "pandas.Series",
+    "ndarray": "numpy.ndarray",
+    "RandomState": "numpy.random.RandomState",
+    "VarianceForecast": "arch.univariate.volatility.VarianceForecast",
 }
 
 autosummary_generate = True

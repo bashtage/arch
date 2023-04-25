@@ -525,7 +525,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         'moving block' or 'mbb': Moving block bootstrap
     studentize : bool
         Flag indicating to studentize loss differentials. Default is True
-    nested=False
+    nested : bool
         Flag indicating to use a nested bootstrap to compute variances for
         studentization.  Default is False.  Note that this can be slow since
         the procedure requires k extra bootstraps.

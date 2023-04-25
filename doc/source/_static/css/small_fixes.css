@@ -8,3 +8,10 @@ span.versionmodified.deprecated {
   color: #c00;
   font-weight: bold;
 }
+
+span.classifier:before {
+    font-style: normal;
+    margin: 0 0.5em;
+    content: ":";
+    display: inline-block;
+}

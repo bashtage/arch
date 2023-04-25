@@ -276,7 +276,7 @@ The development requirements are:
 - Cython (0.29+, if not using ARCH_NO_BINARY=1)
 - pytest (For tests)
 - sphinx (to build docs)
-- sphinx_material (to build docs)
+- sphinx-immaterial (to build docs)
 - jupyter, notebook and nbsphinx (to build docs)
 
 ### Installation Notes
