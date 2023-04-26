@@ -860,7 +860,7 @@ COMMON_DOCSTRING = r"""
         The left-hand-side variable in the cointegrating regression.
     x : array_like
         The right-hand-side variables in the cointegrating regression.
-    trend : {{"n","c","ct","ctt"}}, default "c"
+    trend : {"n","c","ct","ctt"}, default "c"
         Trend to include in the cointegrating regression. Trends are:
 
         * "n": No deterministic terms

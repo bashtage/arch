@@ -120,10 +120,7 @@ html_theme = "sphinx_immaterial"
 html_title = f"{project} {release}"
 # sphinx_immaterial theme options
 html_theme_options = {
-    "icon": {
-        "repo": "fontawesome/brands/github"
-    },
-
+    "icon": {"repo": "fontawesome/brands/github"},
     "site_url": "https://bashtage.github.io/arch/",
     "repo_url": "https://github.com/bashtage/arch/",
     "repo_name": "arch",
@@ -193,7 +190,7 @@ html_css_files = ["css/small_fixes.css"]
 #
 # html_sidebars = {}
 html_sidebars = {
-        "**": ["logo-text.html", "globaltoc.html", "searchbox.html", "localtoc.html"]
+    "**": ["logo-text.html", "globaltoc.html", "searchbox.html", "localtoc.html"]
 }
 
 # If false, no module index is generated.

@@ -1645,7 +1645,7 @@ class StationaryBootstrap(CircularBlockBootstrap):
         Average size of block to use
     args
         Positional arguments to bootstrap
-    seed : {{Generator, RandomState, int}}, optional
+    seed : {Generator, RandomState, int}, optional
         Seed to use to ensure reproducable results. If an int, passes the
         value to value to ``np.random.default_rng``. If None, a fresh
         Generator is constructed with system-provided entropy.
@@ -1753,7 +1753,7 @@ class MovingBlockBootstrap(CircularBlockBootstrap):
         Size of block to use
     args
         Positional arguments to bootstrap
-    seed : {{Generator, RandomState, int}}, optional
+    seed : {Generator, RandomState, int}, optional
         Seed to use to ensure reproducable results. If an int, passes the
         value to value to ``np.random.default_rng``. If None, a fresh
         Generator is constructed with system-provided entropy.
