@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.univariate.mean - arch v5.5.1 (+6)</title>
+        <title>arch.univariate.mean - arch v5.5.1 (+10)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v5.5.1 (+6)" class="md-header__button md-logo" aria-label="arch v5.5.1 (+6)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v5.5.1 (+10)" class="md-header__button md-logo" aria-label="arch v5.5.1 (+10)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v5.5.1 (+6)
+            arch v5.5.1 (+10)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v5.5.1 (+6)" class="md-nav__button md-logo" aria-label="arch v5.5.1 (+6)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v5.5.1 (+10)" class="md-nav__button md-logo" aria-label="arch v5.5.1 (+10)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v5.5.1 (+6)
+    arch v5.5.1 (+10)
   </label>
   
     <div class="md-nav__source">
@@ -418,6 +418,8 @@
             <span class="n">VolatilityUpdater</span><span class="p">,</span>
         <span class="p">)</span>
 
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
+
 <span class="kn">from</span> <span class="nn">arch.typing</span> <span class="kn">import</span> <span class="n">Literal</span>
 <span class="kn">from</span> <span class="nn">arch.univariate.volatility</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">APARCH</span><span class="p">,</span>
@@ -435,7 +437,6 @@
     <span class="n">ensure1d</span><span class="p">,</span>
     <span class="n">parse_dataframe</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">arch.vendor</span> <span class="kn">import</span> <span class="n">cached_property</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;HARX&quot;</span><span class="p">,</span> <span class="s2">&quot;ConstantMean&quot;</span><span class="p">,</span> <span class="s2">&quot;ZeroMean&quot;</span><span class="p">,</span> <span class="s2">&quot;ARX&quot;</span><span class="p">,</span> <span class="s2">&quot;arch_model&quot;</span><span class="p">,</span> <span class="s2">&quot;LS&quot;</span><span class="p">,</span> <span class="s2">&quot;ARCHInMean&quot;</span><span class="p">]</span>
 
@@ -2408,7 +2409,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    5.3.0.
+    7.0.0.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
