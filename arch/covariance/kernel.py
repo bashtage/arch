@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from functools import cached_property
 from typing import SupportsInt, cast
 
 import numpy as np
@@ -9,7 +10,6 @@ from pandas.util._decorators import Substitution
 
 from arch.typing import ArrayLike, Float64Array
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
-from arch.vendor import cached_property
 
 __all__ = [
     "Bartlett",

@@ -2,6 +2,12 @@
 Version 5
 =========
 
+Changes Since 5.5
+=================
+- Removed dependence on property-cached
+- Bumped minimum NumPy, SciPy, pandas, statsmodels and Cython
+- Added compatability with Cython 3
+
 Release 5.5
 ===========
 - NumPy 1.25 fixes

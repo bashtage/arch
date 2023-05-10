@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from scipy.stats import chi2
+from functools import cached_property
 
-from arch.vendor import cached_property
+from scipy.stats import chi2
 
 __all__ = ["WaldTestStatistic"]
 

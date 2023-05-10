@@ -1,5 +1,5 @@
 #!python
-#cython: language_level=3, boundscheck=False, wraparound=False, cdivision=True, binding=True
+
 
 import numpy as np
 
@@ -7,7 +7,9 @@ cimport numpy as np
 from libc.float cimport DBL_MAX
 from libc.math cimport exp, fabs, lgamma, log, sqrt
 
-DEF SQRT2_OV_PI = 0.79788456080286535587989211
+cdef:
+    double SQRT2_OV_PI = 0.79788456080286535587989211
+
 
 __all__ = [
     "harch_recursion",
@@ -34,7 +36,7 @@ cdef double LNSIGMA_MAX = log(DBL_MAX)
 
 np.import_array()
 
-cdef inline void bounds_check(double* sigma2, double* var_bounds):
+cdef inline void bounds_check(double* sigma2, const double* var_bounds):
     if sigma2[0] < var_bounds[0]:
         sigma2[0] = var_bounds[0]
     elif sigma2[0] > var_bounds[1]:

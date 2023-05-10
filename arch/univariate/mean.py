@@ -52,6 +52,8 @@ else:
             VolatilityUpdater,
         )
 
+from functools import cached_property
+
 from arch.typing import Literal
 from arch.univariate.volatility import (
     APARCH,
@@ -69,7 +71,6 @@ from arch.utility.array import (
     ensure1d,
     parse_dataframe,
 )
-from arch.vendor import cached_property
 
 __all__ = ["HARX", "ConstantMean", "ZeroMean", "ARX", "arch_model", "LS", "ARCHInMean"]
 
