@@ -6,6 +6,7 @@ from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 from copy import deepcopy
 import datetime as dt
+from functools import cached_property
 from typing import Any, Callable, Sequence, cast
 import warnings
 
@@ -44,7 +45,6 @@ from arch.utility.exceptions import (
     starting_value_warning,
 )
 from arch.utility.testing import WaldTestStatistic
-from arch.vendor import cached_property
 
 try:
     from matplotlib.figure import Figure

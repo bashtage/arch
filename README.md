@@ -200,11 +200,11 @@ cov_est.cov.long_run
 These requirements reflect the testing environment. It is possible
 that arch will work with older versions.
 
-- Python (3.7+)
-- NumPy (1.17+)
-- SciPy (1.3+)
-- Pandas (1.0+)
-- statsmodels (0.11+)
+- Python (3.8+)
+- NumPy (1.19+)
+- SciPy (1.5+)
+- Pandas (1.1+)
+- statsmodels (0.12+)
 - matplotlib (3+), optional
 - property-cached (1.6.4+), optional
 
@@ -263,7 +263,7 @@ conda install arch-py -c conda-forge
 ### Windows
 
 Building extension using the community edition of Visual Studio is
-simple when using Python 3.7 or later. Building is not necessary when numba
+simple when using Python 3.8 or later. Building is not necessary when numba
 is installed since just-in-time compiled code (numba) runs as fast as
 ahead-of-time compiled extensions.
 

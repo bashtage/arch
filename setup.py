@@ -114,7 +114,15 @@ installed.
 """
         )
     else:
-        directives = {"linetrace": CYTHON_COVERAGE}
+        directives = {
+            "language_level": "3",
+            "cpow": True,
+            "linetrace": CYTHON_COVERAGE,
+            "boundscheck": False,
+            "wraparound": False,
+            "cdivision": True,
+            "binding": True,
+        }
         macros = [("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]
         if CYTHON_COVERAGE:
             macros.append(("CYTHON_TRACE", "1"))
@@ -178,9 +186,10 @@ installed.
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: End Users/Desktop",
             "Intended Audience :: Financial and Insurance Industry",
-            "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
+            "Programming Language :: Python :: 3.10",
+            "Programming Language :: Python :: 3.11",
             "License :: OSI Approved",
             "Operating System :: MacOS :: MacOS X",
             "Operating System :: Microsoft :: Windows",
