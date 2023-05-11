@@ -44,3 +44,5 @@ echo "Github Actions doc build after commit ${GITHUB_SHA::8}"
 git commit -a -m "Github Actions doc build after commit ${GITHUB_SHA::8}"
 echo "Push"
 git push -f
+echo Show status using git status
+git status
