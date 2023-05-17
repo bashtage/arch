@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 from typing import Hashable, Sequence, cast
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -289,6 +290,15 @@ class MCS(MultipleComparison):
             # Reshape for broadcast
             incl_bs_avg_loss_err -= incl_bs_grand_loss[:, None]
             std_devs = np.sqrt((incl_bs_avg_loss_err**2).mean(0))
+            if np.any(std_devs <= 0):
+                warnings.warn(
+                    "During computation of a step of the MCS the estimated standard "
+                    "deviation of at least one loss difference was 0.  This "
+                    "indicates that the MCS is not valid for this problem. This can "
+                    "occur if the number of losses is too small, or if there are "
+                    "repeated (identical) losses in the set under consideration.",
+                    RuntimeWarning,
+                )
             simulated_test_stat = incl_bs_avg_loss_err / std_devs
             simulated_test_stat = np.max(simulated_test_stat, 1)
             loss_diffs = incl_losses.mean(0)
@@ -297,7 +307,8 @@ class MCS(MultipleComparison):
             test_stat = np.max(std_loss_diffs)
             pval = (test_stat < simulated_test_stat).mean()
             locs = np.argwhere(std_loss_diffs == test_stat)
-            eliminated.append((int(indices.flat[locs.squeeze()]), pval))
+            for idx_val in indices.flat[np.atleast_1d(locs.squeeze())]:
+                eliminated.append((int(idx_val), pval))
             included[indices.flat[locs]] = False
 
         indices = np.argwhere(included).flatten()

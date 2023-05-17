@@ -11,7 +11,7 @@ matplotlib>=3
 seaborn
 
 # Tests
-pytest>=7,<7.1
+pytest>=7.3
 pytest-xdist
 pytest-cov
 
@@ -20,6 +20,7 @@ black[jupyter]==23.3.0
 isort~=5.0
 flake8
 mypy
+pyupgrade>=3.4.0
 
 # Documentation
 ipython>=7
