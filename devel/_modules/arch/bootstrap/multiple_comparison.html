@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.bootstrap.multiple_comparison - arch v5.5.1 (+14)</title>
+        <title>arch.bootstrap.multiple_comparison - arch v5.5.1 (+16)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v5.5.1 (+14)" class="md-header__button md-logo" aria-label="arch v5.5.1 (+14)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v5.5.1 (+16)" class="md-header__button md-logo" aria-label="arch v5.5.1 (+16)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v5.5.1 (+14)
+            arch v5.5.1 (+16)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v5.5.1 (+14)" class="md-nav__button md-logo" aria-label="arch v5.5.1 (+14)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v5.5.1 (+16)" class="md-nav__button md-logo" aria-label="arch v5.5.1 (+16)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v5.5.1 (+14)
+    arch v5.5.1 (+16)
   </label>
   
     <div class="md-nav__source">
@@ -368,6 +368,7 @@
 
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -655,6 +656,15 @@
             <span class="c1"># Reshape for broadcast</span>
             <span class="n">incl_bs_avg_loss_err</span> <span class="o">-=</span> <span class="n">incl_bs_grand_loss</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
             <span class="n">std_devs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">incl_bs_avg_loss_err</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">std_devs</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;During computation of a step of the MCS the estimated standard &quot;</span>
+                    <span class="s2">&quot;deviation of at least one loss difference was 0.  This &quot;</span>
+                    <span class="s2">&quot;indicates that the MCS is not valid for this problem. This can &quot;</span>
+                    <span class="s2">&quot;occur if the number of losses is too small, or if there are &quot;</span>
+                    <span class="s2">&quot;repeated (identical) losses in the set under consideration.&quot;</span><span class="p">,</span>
+                    <span class="ne">RuntimeWarning</span><span class="p">,</span>
+                <span class="p">)</span>
             <span class="n">simulated_test_stat</span> <span class="o">=</span> <span class="n">incl_bs_avg_loss_err</span> <span class="o">/</span> <span class="n">std_devs</span>
             <span class="n">simulated_test_stat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">simulated_test_stat</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">loss_diffs</span> <span class="o">=</span> <span class="n">incl_losses</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -663,7 +673,8 @@
             <span class="n">test_stat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">std_loss_diffs</span><span class="p">)</span>
             <span class="n">pval</span> <span class="o">=</span> <span class="p">(</span><span class="n">test_stat</span> <span class="o">&lt;</span> <span class="n">simulated_test_stat</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
             <span class="n">locs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">std_loss_diffs</span> <span class="o">==</span> <span class="n">test_stat</span><span class="p">)</span>
-            <span class="n">eliminated</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">indices</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="n">locs</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()]),</span> <span class="n">pval</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">idx_val</span> <span class="ow">in</span> <span class="n">indices</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">locs</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())]:</span>
+                <span class="n">eliminated</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">idx_val</span><span class="p">),</span> <span class="n">pval</span><span class="p">))</span>
             <span class="n">included</span><span class="p">[</span><span class="n">indices</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="n">locs</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">included</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -1213,7 +1224,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.0.0.
+    7.0.1.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
