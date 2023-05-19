@@ -1,6 +1,7 @@
 # versioning
 setuptools_scm[toml]>=7,<8
 packaging
+oldest-supported-numpy>=2022.11.19
 
 # Performance
 cython>=3.0.0b2
