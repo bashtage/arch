@@ -25,9 +25,9 @@ try:
         def f(x: float, y: float) -> float:
             return x + y
 
-        fjit = jit(f, nopython=True, fastmath=True)
+        fjit = jit(f, nopython=True)
         fjit(1.0, 2.0)
-        jit = functools.partial(jit, nopython=True, fastmath=True)
+        jit = functools.partial(jit, nopython=True)
     except KeyError:
         jit = functools.partial(jit, nopython=True)
 except ImportError:
