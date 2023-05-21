@@ -44,8 +44,7 @@ SQRT2_OV_PI = 0.79788456080286541  # E[abs(e)], e~N(0,1)
 def bounds_check_python(sigma2: float, var_bounds: Float64Array) -> float:
     if sigma2 < var_bounds[0]:
         sigma2 = var_bounds[0]
-    elif sigma2 > var_bounds[1] or np.isinf(sigma2):
-        # Redundant or to work around numba issues with inf
+    elif sigma2 > var_bounds[1]:
         if not np.isinf(sigma2):
             sigma2 = var_bounds[1] + np.log(sigma2 / var_bounds[1])
         else:

@@ -56,14 +56,11 @@ jobs:
         PYTEST_OPTS: '--skip-slow'
         PANDAS: 1.4.0
         USE_NUMBA: true
-        NUMBA: 0.56.0
-        use.conda: 'true'
       python_39_no_binary_environment:
         python.version: '3.9'
         ARCH_NO_BINARY: true
         use.conda: 'true'
         USE_NUMBA: true
-        NUMBA: 0.56.0
         PYTEST_OPTS: '--skip-slow'
       python_39_no_numba:
         python.version: '3.9'

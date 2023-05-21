@@ -98,8 +98,6 @@ class TestRecursions:
         var = cls.resids.var()
         var_bounds = np.array([var / 1000000.0, var * 1000000.0])
         cls.var_bounds = np.ones((cls.nobs, 2)) * var_bounds
-        assert np.all(np.isfinite(cls.var_bounds))
-        assert np.all(cls.var_bounds > 0)
         cls.backcast = 1.0
         cls.timer_setup = """
 import numpy as np

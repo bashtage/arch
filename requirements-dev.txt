@@ -12,9 +12,8 @@ matplotlib>=3
 seaborn
 
 # Tests
-pytest~=7.0.0; sys_platform == "win32"
-pytest>=7.3; sys_platform != "win32"
-pytest-xdist>=3.3.1
+pytest>=7.3
+pytest-xdist
 pytest-cov
 
 # formatting
