@@ -3,7 +3,7 @@ requires = [
   "setuptools>=61",
   "wheel",
   "setuptools_scm[toml]>=7,<8",
-  "oldest-supported-numpy",
+  "oldest-supported-numpy>=2022.11.19",
   "numpy; python_version>='3.12'",
   "cython>=3.0.0b2"
 ]

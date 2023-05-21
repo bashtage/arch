@@ -56,7 +56,6 @@ jobs:
         PYTEST_OPTS: '--skip-slow'
         PANDAS: 1.4.0
         USE_NUMBA: true
-        use.conda: 'true'
       python_39_no_binary_environment:
         python.version: '3.9'
         ARCH_NO_BINARY: true
