@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.univariate.base - arch v5.5.1 (+25)</title>
+        <title>arch.univariate.base - arch v5.5.1 (+27)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v5.5.1 (+25)" class="md-header__button md-logo" aria-label="arch v5.5.1 (+25)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v5.5.1 (+27)" class="md-header__button md-logo" aria-label="arch v5.5.1 (+27)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v5.5.1 (+25)
+            arch v5.5.1 (+27)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v5.5.1 (+25)" class="md-nav__button md-logo" aria-label="arch v5.5.1 (+25)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v5.5.1 (+27)" class="md-nav__button md-logo" aria-label="arch v5.5.1 (+27)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v5.5.1 (+25)
+    arch v5.5.1 (+27)
   </label>
   
     <div class="md-nav__source">
@@ -370,10 +370,11 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">cast</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -1288,7 +1289,7 @@
 <div class="viewcode-block" id="ARCHModel.forecast"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.forecast.html#arch.univariate.base.ARCHModel.forecast">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">forecast</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">align</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;origin&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;origin&quot;</span><span class="p">,</span>
@@ -1512,10 +1513,10 @@
         <span class="n">top_right</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">(</span><span class="s2">&quot;R-squared:&quot;</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;Adj. R-squared:&quot;</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;Log-Likelihood:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#10.6g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;AIC:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#10.6g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">aic</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;BIC:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#10.6g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">bic</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;No. Observations:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Log-Likelihood:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">loglikelihood</span><span class="si">:</span><span class="s2">#10.6g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;AIC:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aic</span><span class="si">:</span><span class="s2">#10.6g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;BIC:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bic</span><span class="si">:</span><span class="s2">#10.6g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;No. Observations:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
         <span class="p">]</span>
@@ -1552,12 +1553,8 @@
         <span class="n">param_table_data</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coef_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
             <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coef_vals</span><span class="p">):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
-                    <span class="n">converted</span> <span class="o">=</span> <span class="n">format_float_fixed</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="o">*</span><span class="n">formats</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">converted</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
-                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">converted</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coef_val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coef_vals</span><span class="p">):</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_float_fixed</span><span class="p">(</span><span class="n">coef_val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="o">*</span><span class="n">formats</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
             <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">param_table_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 
@@ -2190,14 +2187,14 @@
         <span class="p">]</span>
 
         <span class="n">top_right</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="s2">&quot;R-squared:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#8.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">rsquared</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;Adj. R-squared:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#8.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;Log-Likelihood:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#10.6g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;AIC:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#10.6g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">aic</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;BIC:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#10.6g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">bic</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;No. Observations:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;Df Residuals:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">num_params</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;Df Model:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">num_params</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;R-squared:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">#8.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Adj. R-squared:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="si">:</span><span class="s2">#8.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Log-Likelihood:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">loglikelihood</span><span class="si">:</span><span class="s2">#10.6g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;AIC:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aic</span><span class="si">:</span><span class="s2">#10.6g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;BIC:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bic</span><span class="si">:</span><span class="s2">#10.6g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;No. Observations:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Df Residuals:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nobs</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">num_params</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Df Model:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">num_params</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
         <span class="p">]</span>
 
         <span class="n">title</span> <span class="o">=</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot; Model Results&quot;</span>
@@ -2242,7 +2239,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">std_err</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">tvalues</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pvalues</span><span class="p">,</span>
-            <span class="n">conf_int_str</span><span class="p">,</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">conf_int_str</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="c1"># (0,0) is a dummy format</span>
         <span class="n">formats</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
@@ -2250,11 +2247,12 @@
         <span class="n">param_table_data</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">table_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
             <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">table_vals</span><span class="p">):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
-                    <span class="n">converted</span> <span class="o">=</span> <span class="n">format_float_fixed</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="o">*</span><span class="n">formats</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">table_val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">table_vals</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table_val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+                    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table_val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span>
+                    <span class="n">converted</span> <span class="o">=</span> <span class="n">format_float_fixed</span><span class="p">(</span><span class="n">table_val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="o">*</span><span class="n">formats</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">converted</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
+                    <span class="n">converted</span> <span class="o">=</span> <span class="n">table_val</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
                 <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">converted</span><span class="p">)</span>
             <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">param_table_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>

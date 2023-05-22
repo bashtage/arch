@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.bootstrap.base - arch v5.5.1 (+25)</title>
+        <title>arch.bootstrap.base - arch v5.5.1 (+27)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v5.5.1 (+25)" class="md-header__button md-logo" aria-label="arch v5.5.1 (+25)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v5.5.1 (+27)" class="md-header__button md-logo" aria-label="arch v5.5.1 (+27)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v5.5.1 (+25)
+            arch v5.5.1 (+27)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v5.5.1 (+25)" class="md-nav__button md-logo" aria-label="arch v5.5.1 (+25)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v5.5.1 (+27)" class="md-nav__button md-logo" aria-label="arch v5.5.1 (+27)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v5.5.1 (+25)
+    arch v5.5.1 (+27)
   </label>
   
     <div class="md-nav__source">
@@ -366,18 +366,8 @@
 <h1>Source code for arch.bootstrap.base</h1><div class="highlight"><pre>
 <span></span><code><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Any</span><span class="p">,</span>
-    <span class="n">Callable</span><span class="p">,</span>
-    <span class="n">Dict</span><span class="p">,</span>
-    <span class="n">Generator</span> <span class="k">as</span> <span class="n">PyGenerator</span><span class="p">,</span>
-    <span class="n">List</span><span class="p">,</span>
-    <span class="n">Mapping</span><span class="p">,</span>
-    <span class="n">Sequence</span><span class="p">,</span>
-    <span class="n">Tuple</span><span class="p">,</span>
-    <span class="n">Union</span><span class="p">,</span>
-    <span class="n">cast</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Generator</span> <span class="k">as</span> <span class="n">PyGenerator</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -1656,7 +1646,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Resample all data using the values in _index</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">indices</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Union</span><span class="p">[</span><span class="n">Int64Array</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Int64Array</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">)</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Union</span><span class="p">[</span><span class="n">Int64Array</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Int64Array</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">)</span>
         <span class="n">pos_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">NDArray</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)):</span>
@@ -1824,7 +1814,7 @@
 <span class="sd">        Resample all data using the values in _index</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pos_indices</span><span class="p">,</span> <span class="n">kw_indices</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
-            <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Int64Array</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Int64Array</span><span class="p">]],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span>
+            <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Int64Array</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Int64Array</span><span class="p">]],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span>
         <span class="p">)</span>
         <span class="n">pos_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">):</span>

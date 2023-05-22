@@ -1,0 +1,14 @@
+=========
+Version 1
+=========
+
+Version 1.1
+===========
+
+- Refactored to move the univariate routines to `arch.univariate` and added
+  deprecation warnings in the old locations
+- Enable `numba` jit compilation in the python recursions
+- Added a bootstrap framework, which will be used in future versions.
+  The bootstrap framework is general purpose and can be used via high-level
+  functions such as `conf_int` or `cov`, or as a low level iterator using
+  `bootstrap`
