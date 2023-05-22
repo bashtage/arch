@@ -1,0 +1,20 @@
+=========
+Version 2
+=========
+
+Version 2.2
+===========
+- Added multiple comparison procedures
+- Typographical and other small changes
+
+Version 2.1
+===========
+- Add unit root tests:
+  * Augmented Dickey-Fuller
+  * Dickey-Fuller GLS
+  * Phillips-Perron
+  * KPSS
+  * Variance Ratio
+- Removed deprecated locations for ARCH modeling functions
+
+

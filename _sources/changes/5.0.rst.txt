@@ -1,0 +1,92 @@
+=========
+Version 5
+=========
+
+Changes Since 5.5
+=================
+- Removed dependence on property-cached
+- Bumped minimum NumPy, SciPy, pandas, statsmodels and Cython
+- Added compatability with Cython 3
+
+Release 5.5
+===========
+- NumPy 1.25 fixes
+- Initial pandas copy-on-write support
+- Switched doc theme to sphinx-immaterial
+- Small fixes for typing issues
+
+Release 5.4
+===========
+- Compatability release with pandas 2.0
+- Add testing and wheel support for Python 3.11
+
+Release 5.3
+===========
+- Fixed a bug in :func:`~arch.univariate.mean.arch_model` where ``power`` was
+  not passed to the :class:`~arch.univariate.FIGARCH` constructor (:issue:`572`).
+- Fixed a bug that affected downstream projects due to an overly specific assert
+  (:issue:`569`).
+
+Release 5.2
+===========
+- Fixed a bug in in :func:`~arch.univariate.base.ARCHModelResult.std_resid` that
+  would raise an exception when the data used to construct the model with a NumPy
+  array (:issue:`565`).
+- Fixed a bug in :func:`~arch.univariate.base.ARCHModelResult.forecast` and related
+  ``forecast`` methods when producing multi-step forecasts usign simulation with
+  exogenous variables (:issue:`551`).
+
+Release 5.1
+===========
+
+Unit Root
+~~~~~~~~~
+
+- Improved automatic lag length selection in :class:`~arch.unitroot.DFGLS`
+  by using OLS rather than GLS detrended data when selecting the lag length.
+  This problem was studied by Perron, P., & Qu, Z. (2007).
+
+Release 5.0
+===========
+
+Unit Root
+~~~~~~~~~
+- All unit root tests are now immutable, and so properties such as ``trend`` cannot
+  be set after the test is created.
+
+Bootstrap
+~~~~~~~~~
+- Added ``seed`` keyword argument to all bootstraps (e.g., :class:`~arch.bootstrap.IIDBootstrap`
+  and :class:`~arch.bootstrap.StationaryBootstrap`) that allows a NumPy :class:`numpy.random.Generator`
+  to be used. The ``seed`` keyword argument also accepts legacy :class:`numpy.random.RandomState`
+  instances and integers.  If an integer is passed, the random number generator is constructed by
+  calling :func:`numpy.random.default_rng` The ``seed`` keyword argument replaces the
+  ``random_state`` keyword argument.
+- The :func:`~arch.bootstrap.IIDBootstrap.random_state` property has also been deprecated in favor
+  of :func:`~arch.bootstrap.IIDBootstrap.generator`.
+- The :func:`~arch.bootstrap.IIDBootstrap.get_state` and :func:`~arch.bootstrap.IIDBootstrap.set_state`
+  methods have been replaced by the :func:`~arch.bootstrap.IIDBootstrap.state` property.
+
+Volatility Modeling
+~~~~~~~~~~~~~~~~~~~
+- Added ``seed`` keyword argument to all distributions (e.g., :class:`~arch.univariate.distribution.Normal`
+  and :class:`~arch.univariate.distribution.StudentsT`) that allows a NumPy :class:`numpy.random.Generator`
+  to be used. The ``seed`` keyword argument also accepts legacy :class:`numpy.random.RandomState`
+  instances and integers.  If an integer is passed, the random number generator is constructed by
+  calling :func:`numpy.random.default_rng` The ``seed`` keyword argument replaces the
+  ``random_state`` keyword argument.
+- The :func:`~arch.univariate.distribution.Normal.random_state` property has also been deprecated in favor
+  of :func:`~arch.univariate.distribution.Normal.generator`.
+- Added :class:`~arch.univariate.ARCHInMean` mean process supporting (G)ARCH-in-mean models.
+- Extended :class:`~arch.univariate.volatility.VolatilityProcess` with
+  :func:`~arch.univariate.volatility.VolatilityProcess.volatility_updater` that contains a
+  :class:`~arch.univariate.recursions_python.VolatilityUpdater` to allow
+  :class:`~arch.univariate.ARCHInMean` to be created from different volatility processes.
+
+Setup
+~~~~~
+- Added support for using an environmental variable to disable C-extension compilation.
+
+  * Linux and OSX: ``export ARCH_NO_BINARY=1``
+  * PowerShell: ``$env:ARCH_NO_BINARY=1``
+  * cmd: ``set ARCH_NO_BINARY=1``

@@ -1,0 +1,201 @@
+=========
+Version 4
+=========
+
+Release 4.19
+============
+- Added the keyword argument ``reindex`` to :func:`~arch.univariate.HARX.forecast`
+  that allows the returned forecasts to have minimal size when ``reindex=False``.
+  The default is ``reindex=True`` which preserved the current behavior.  This will
+  change in a future release. Using ``reindex=True`` often requires substantially
+  more memory than when ``reindex=False``. This is especially true when using
+  simulation or bootstrap-based forecasting.
+- The default value ``reindex`` can be changed by importing
+
+.. code::
+
+   from arch.__future__ import reindexing
+
+- Fixed handling of exogenous regressors in :func:`~arch.univariate.HARX.forecast`.
+  It is now possible to pass values for :math:`E_t[X_{t+h}]` using the ``x`` argument.
+
+
+Release 4.18
+============
+- Improved :func:`~arch.univariate.HARX.fit` performance of ARCH models.
+- Fixed a bug where ```typing_extensions`` was subtly introduced as a run-time dependency.
+
+Release 4.17
+============
+- Fixed a bug that produced incorrect conditional volatility from EWMA models (:issue:`458`).
+
+Release 4.16
+============
+- Added :class:`~arch.univariate.APARCH` volatilty process (:issue:`443`).
+- Added support for Python 3.9 in pyproject.toml (:issue:`438`).
+- Fixed a bug in model degree-of-freedom calculation (:issue:`437`).
+- Improved HARX initialization (:issue:`417`).
+
+Release 4.15
+============
+- This is a minor release with doc fixes and other small updates. The only notable
+  feature is :func:`~arch.unitroot.unitroot.PhillipsPerron.regression` which returns
+  regression results from the model estimated as part of the test (:issue:`395`).
+
+Release 4.14
+============
+- Added Kernel-based long-run variance estimation in ``arch.covariance.kernel``.
+  Examples include the :class:`~arch.covariance.kernel.Bartlett` and the
+  :class:`~arch.covariance.kernel.Parzen` kernels.  All estimators suppose automatic
+  bandwidth selection.
+- Improved exceptions in :class:`~arch.unitroot.ADF`,  :class:`~arch.unitroot.KPSS`,
+  :class:`~arch.unitroot.PhillipsPerron`, :class:`~arch.unitroot.VarianceRatio`,
+  and :class:`~arch.unitroot.ZivotAndrews` when test specification is infeasible to
+  the time series being too short or the required regression model having reduced
+  rank (:issue:`364`).
+- Fixed a bug when using "bca" confidence intervals with ``extra_kwargs`` (:issue:`366`).
+- Added Phillips-Ouliaris (:func:`~arch.unitroot.cointegration.phillips_ouliaris`)
+  cointegration tests (:issue:`360`).
+- Added three methods to estimate cointegrating vectors:
+  :class:`~arch.unitroot.cointegration.CanonicalCointegratingReg`,
+  :class:`~arch.unitroot.cointegration.DynamicOLS`, and
+  :class:`~arch.unitroot.cointegration.FullyModifiedOLS`
+  (:issue:`356`, :issue:`359`).
+- Added the Engle-Granger (:func:`~arch.unitroot.cointegration.engle_granger`)
+  cointegration test (:issue:`354`).
+- Issue warnings when unit root tests are mutated. Will raise after 5.0
+  is released.
+- Fixed a bug in :class:`arch.univariate.SkewStudent` which did not use the
+  user-provided `RandomState` when one was provided. This prevented
+  reproducing simulated values (:issue:`353`).
+
+Release 4.13
+============
+- Restored the vendored copy of ``property_cached`` for conda package building.
+
+Release 4.12
+============
+- Added typing support to all classes, functions and methods (:issue:`338`,
+  :issue:`341`, :issue:`342`, :issue:`343`, :issue:`345`, :issue:`346`).
+- Fixed an issue that caused tests to fail on SciPy 1.4+ (:issue:`339`).
+- Dropped support for Python 3.5 inline with NEP 29 (:issue:`334`).
+- Added methods to compute moment and lower partial moments for standardized
+  residuals. See, for example, :func:`~arch.univariate.SkewStudent.moment` and
+  :func:`~arch.univariate.SkewStudent.partial_moment` (:issue:`329`).
+- Fixed a bug that produced an OverflowError when a time series has no
+  variance (:issue:`331`).
+
+Release 4.11
+============
+- Added :func:`~arch.univariate.base.ARCHModelResult.std_resid` (:issue:`326`).
+- Error if inputs are not ndarrays, DataFrames or Series (:issue:`315`).
+- Added a check that the covariance is non-zero when using "studentized" confidence intervals.
+  If the function bootstrapped produces statistics with 0 variance, it is not possible to
+  studentized (:issue:`322`).
+
+Release 4.10
+============
+- Fixed a bug in arch_lm_test that assumed that the model data is contained in
+  a pandas Series. (:issue:`313`).
+- Fixed a bug that can affect use in certain environments that reload modules
+  (:issue:`317`).
+
+Release 4.9
+===========
+- Removed support for Python 2.7.
+- Added :func:`~arch.unitroot.auto_bandwidth` to compute optimized bandwidth
+  for a number of common kernel covariance estimators (:issue:`303`). This code
+  was written by Michael Rabba.
+- Added a parameter `rescale` to :func:`~arch.univariate.mean.arch_model`
+  that allows the estimator to rescale data if it may help parameter
+  estimation. If `rescale=True`, then the data will be rescaled by a power
+  of 10 (e.g., 10, 100, or 1000) to produce a series with a residual
+  variance between 1 and 1000. The model is then estimated on the rescaled
+  data. The scale is reported :func:`~arch.univariate.base.ARCHModelResult.scale`.
+  If `rescale=None`, a warning is produced if the data appear to be poorly
+  scaled, but no change of scale is applied. If `rescale=False`, no scale
+  change is applied and no warning is issued.
+- Fixed a bug when using the BCA bootstrap method where the leave-one-out
+  jackknife used the wrong centering variable (:issue:`288`).
+- Added :func:`~arch.univariate.base.ARCHModelResult.optimization_result` to
+  simplify checking for convergence of the numerical optimizer (:issue:`292`).
+- Added `random_state` argument to :func:`~arch.univariate.HARX.forecast`
+  to allow a :class:`~numpy.random.RandomState` object to be passed in when
+  forecasting when `method='bootstrap'`. This allows the repeatable forecast to
+  be produced (:issue:`290`).
+- Fixed a bug in :class:`~arch.unitroot.VarianceRatio` that used the wrong
+  variance in nonrobust inference with overlapping samples (:issue:`286`).
+
+Release 4.8.1
+=============
+- Fixed a bug which prevented extension modules from being correctly imported.
+
+Release 4.8
+===========
+- Added Zivot-Andrews unit root test :class:`~arch.unitroot.ZivotAndrews`.
+  This code was originally written by Jim Varanelli.
+- Added data dependent lag length selection to the KPSS test,
+  :class:`~arch.unitroot.KPSS`. This code was originally written by
+  Jim Varanelli.
+- Added :class:`~arch.bootstrap.IndependentSamplesBootstrap` to
+  perform bootstrap inference on statistics from independent samples that may
+  have uneven length (:issue:`260`).
+- Added :func:`~arch.univariate.base.ARCHModelResult.arch_lm_test` to
+  perform ARCH-LM tests on model residuals or standardized residuals
+  (:issue:`261`).
+- Fixed a bug in :class:`~arch.unitroot.ADF` when applying to very short time series
+  (:issue:`262`).
+- Added ability to set the ``random_state`` when initializing a bootstrap
+  (:issue:`259`).
+
+Release 4.7
+===========
+- Added support for Fractionally Integrated GARCH (FIGARCH) in
+  :class:`~arch.univariate.FIGARCH`.
+- Enable user to specify a specific value of the `backcast` in place of
+  the automatically generated value.
+- Fixed a big where parameter-less models where incorrectly reported as
+  having constant variance (:issue:`248`).
+
+
+Release 4.6
+===========
+- Added support for MIDAS volatility processes using Hyperbolic
+  weighting in :class:`~arch.univariate.MidasHyperbolic`
+  (:issue:`233`).
+
+Release 4.5
+===========
+- Added a parameter to forecast that allows a user-provided callable random
+  generator to be used in place of the model random generator (:issue:`225`).
+- Added a low memory automatic lag selection method that can be used with very
+  large time-series.
+- Improved performance of automatic lag selection in ADF and related tests.
+
+Release 4.4
+===========
+- Added named parameters to Dickey-Fuller regressions.
+- Removed use of the module-level NumPy RandomState. All random number
+  generators use separate RandomState instances.
+- Fixed a bug that prevented 1-step forecasts with exogenous regressors.
+- Added the Generalized Error Distribution for univariate ARCH models.
+- Fixed a bug in MCS when using the max method that prevented all included
+  models from being listed.
+
+Release 4.3
+===========
+- Added :class:`~arch.univariate.FixedVariance` volatility process which
+  allows pre-specified variances to be used with a mean model.  This has been
+  added to allow so-called zig-zag estimation where a mean model is estimated
+  with a fixed variance, and then a variance model is estimated on the residuals
+  using a ``ZeroMean`` variance process.
+
+Release 4.2
+===========
+- Fixed a bug that prevented ``fix`` from being used with a new model
+  (:issue:`156`).
+- Added ``first_obs`` and ``last_obs`` parameters to ``fix`` to mimic ``fit``.
+- Added ability to jointly estimate smoothing parameter in EWMA variance when
+  fitting the model.
+- Added ability to pass optimization options to ARCH model estimation
+  (:issue:`195`).

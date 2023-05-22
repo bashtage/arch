@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.univariate.base - arch 5.5.0</title>
+        <title>arch.univariate.base - arch 6.0.0</title>
       
     
 
@@ -47,7 +47,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.8118e13f191069ea1.min.css" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.b223ac77c5eb52f42.min.css" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch 5.5.0" class="md-header__button md-logo" aria-label="arch 5.5.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 6.0.0" class="md-header__button md-logo" aria-label="arch 6.0.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 5.5.0
+            arch 6.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch 5.5.0" class="md-nav__button md-logo" aria-label="arch 5.5.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 6.0.0" class="md-nav__button md-logo" aria-label="arch 6.0.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 5.5.0
+    arch 6.0.0
   </label>
   
     <div class="md-nav__source">
@@ -370,9 +370,11 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">cast</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -410,7 +412,6 @@
     <span class="n">starting_value_warning</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">arch.utility.testing</span> <span class="kn">import</span> <span class="n">WaldTestStatistic</span>
-<span class="kn">from</span> <span class="nn">arch.vendor</span> <span class="kn">import</span> <span class="n">cached_property</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">matplotlib.figure</span> <span class="kn">import</span> <span class="n">Figure</span>
@@ -1192,12 +1193,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_no_arch_normal_errors_params</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="ARCHModel.num_params"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.num_params.html#arch.univariate.base.ARCHModel.num_params">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Number of parameters in the model</span>
-<span class="sd">        &quot;&quot;&quot;</span></div>
+<span class="sd">        &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ARCHModel.simulate"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.simulate.html#arch.univariate.base.ARCHModel.simulate">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
@@ -1288,7 +1289,7 @@
 <div class="viewcode-block" id="ARCHModel.forecast"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.forecast.html#arch.univariate.base.ARCHModel.forecast">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">forecast</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">align</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;origin&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;origin&quot;</span><span class="p">,</span>
@@ -1512,10 +1513,10 @@
         <span class="n">top_right</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">(</span><span class="s2">&quot;R-squared:&quot;</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;Adj. R-squared:&quot;</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;Log-Likelihood:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#10.6g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;AIC:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#10.6g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">aic</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;BIC:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#10.6g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">bic</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;No. Observations:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Log-Likelihood:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">loglikelihood</span><span class="si">:</span><span class="s2">#10.6g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;AIC:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aic</span><span class="si">:</span><span class="s2">#10.6g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;BIC:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bic</span><span class="si">:</span><span class="s2">#10.6g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;No. Observations:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
         <span class="p">]</span>
@@ -1552,12 +1553,8 @@
         <span class="n">param_table_data</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coef_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
             <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coef_vals</span><span class="p">):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
-                    <span class="n">converted</span> <span class="o">=</span> <span class="n">format_float_fixed</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="o">*</span><span class="n">formats</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">converted</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
-                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">converted</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coef_val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coef_vals</span><span class="p">):</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_float_fixed</span><span class="p">(</span><span class="n">coef_val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="o">*</span><span class="n">formats</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
             <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">param_table_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 
@@ -1590,45 +1587,45 @@
         <span class="n">smry</span><span class="o">.</span><span class="n">add_extra_txt</span><span class="p">(</span><span class="n">extra_text</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">smry</span></div>
 
-<div class="viewcode-block" id="ARCHModelFixedResult.model"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.model.html#arch.univariate.base.ARCHModelFixedResult.model">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ARCHModel</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Model instance used to produce the fit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span>
 
-<div class="viewcode-block" id="ARCHModelFixedResult.loglikelihood"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.loglikelihood.html#arch.univariate.base.ARCHModelFixedResult.loglikelihood">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Model loglikelihood&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loglikelihood</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loglikelihood</span>
 
-<div class="viewcode-block" id="ARCHModelFixedResult.aic"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.aic.html#arch.univariate.base.ARCHModelFixedResult.aic">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">aic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Akaike Information Criteria</span>
 
 <span class="sd">        -2 * loglikelihood + 2 * num_params&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglikelihood</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span></div>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglikelihood</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span>
 
-<div class="viewcode-block" id="ARCHModelFixedResult.num_params"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.num_params.html#arch.univariate.base.ARCHModelFixedResult.num_params">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of parameters in model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ARCHModelFixedResult.bic"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.bic.html#arch.univariate.base.ARCHModelFixedResult.bic">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">bic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Schwarz/Bayesian Information Criteria</span>
 
 <span class="sd">        -2 * loglikelihood + log(nobs) * num_params</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglikelihood</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nobs</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span></div>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglikelihood</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nobs</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span>
 
-<div class="viewcode-block" id="ARCHModelFixedResult.params"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.params.html#arch.univariate.base.ARCHModelFixedResult.params">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Model Parameters&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;params&quot;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;params&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ARCHModelFixedResult.conditional_volatility"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.conditional_volatility.html#arch.univariate.base.ARCHModelFixedResult.conditional_volatility">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">conditional_volatility</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">|</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Estimated conditional volatility</span>
@@ -1644,16 +1641,16 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pandas</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;cond_vol&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span>
 
-<div class="viewcode-block" id="ARCHModelFixedResult.nobs"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.nobs.html#arch.univariate.base.ARCHModelFixedResult.nobs">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">nobs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Number of data points used to estimate model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span>
 
-<div class="viewcode-block" id="ARCHModelFixedResult.resid"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.resid.html#arch.univariate.base.ARCHModelFixedResult.resid">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">resid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Model residuals</span>
@@ -1661,9 +1658,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pandas</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_resid</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;resid&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resid</span></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resid</span>
 
-<div class="viewcode-block" id="ARCHModelFixedResult.std_resid"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.std_resid.html#arch.univariate.base.ARCHModelFixedResult.std_resid">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">std_resid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Residuals standardized by conditional volatility</span>
@@ -1671,7 +1668,7 @@
         <span class="n">std_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditional_volatility</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">std_res</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
             <span class="n">std_res</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;std_resid&quot;</span>
-        <span class="k">return</span> <span class="n">std_res</span></div>
+        <span class="k">return</span> <span class="n">std_res</span>
 
 <div class="viewcode-block" id="ARCHModelFixedResult.plot"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.plot.html#arch.univariate.base.ARCHModelFixedResult.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annualize</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2122,7 +2119,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cov_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">cov_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_optim_output</span> <span class="o">=</span> <span class="n">optim_output</span>
 
-<div class="viewcode-block" id="ARCHModelResult.scale"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.scale.html#arch.univariate.base.ARCHModelResult.scale">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The scale applied to the original data before estimating the model.</span>
@@ -2130,7 +2127,7 @@
 <span class="sd">        If scale=1.0, the the data have not been rescaled.  Otherwise, the</span>
 <span class="sd">        model parameters have been estimated on scale * y.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">scale</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">scale</span>
 
 <div class="viewcode-block" id="ARCHModelResult.conf_int"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.conf_int.html#arch.univariate.base.ARCHModelResult.conf_int">[docs]</a>    <span class="k">def</span> <span class="nf">conf_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2190,14 +2187,14 @@
         <span class="p">]</span>
 
         <span class="n">top_right</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="s2">&quot;R-squared:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#8.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">rsquared</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;Adj. R-squared:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#8.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;Log-Likelihood:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#10.6g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;AIC:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#10.6g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">aic</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;BIC:&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%#10.6g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">bic</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;No. Observations:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;Df Residuals:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">num_params</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;Df Model:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">num_params</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;R-squared:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">#8.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Adj. R-squared:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="si">:</span><span class="s2">#8.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Log-Likelihood:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">loglikelihood</span><span class="si">:</span><span class="s2">#10.6g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;AIC:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aic</span><span class="si">:</span><span class="s2">#10.6g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;BIC:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bic</span><span class="si">:</span><span class="s2">#10.6g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;No. Observations:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Df Residuals:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nobs</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">num_params</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Df Model:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">num_params</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
         <span class="p">]</span>
 
         <span class="n">title</span> <span class="o">=</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot; Model Results&quot;</span>
@@ -2242,7 +2239,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">std_err</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">tvalues</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pvalues</span><span class="p">,</span>
-            <span class="n">conf_int_str</span><span class="p">,</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">conf_int_str</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="c1"># (0,0) is a dummy format</span>
         <span class="n">formats</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
@@ -2250,11 +2247,12 @@
         <span class="n">param_table_data</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">table_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
             <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">table_vals</span><span class="p">):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
-                    <span class="n">converted</span> <span class="o">=</span> <span class="n">format_float_fixed</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="o">*</span><span class="n">formats</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">table_val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">table_vals</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table_val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+                    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table_val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span>
+                    <span class="n">converted</span> <span class="o">=</span> <span class="n">format_float_fixed</span><span class="p">(</span><span class="n">table_val</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="o">*</span><span class="n">formats</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">converted</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
+                    <span class="n">converted</span> <span class="o">=</span> <span class="n">table_val</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
                 <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">converted</span><span class="p">)</span>
             <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">param_table_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
@@ -2290,7 +2288,7 @@
         <span class="n">smry</span><span class="o">.</span><span class="n">add_extra_txt</span><span class="p">(</span><span class="n">extra_text</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">smry</span></div>
 
-<div class="viewcode-block" id="ARCHModelResult.param_cov"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.param_cov.html#arch.univariate.base.ARCHModelResult.param_cov">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">param_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parameter covariance&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_cov</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -2301,65 +2299,65 @@
                 <span class="n">param_cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">compute_param_cov</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">param_cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">compute_param_cov</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">param_cov</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">param_cov</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ARCHModelResult.rsquared"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.rsquared.html#arch.univariate.base.ARCHModelResult.rsquared">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">rsquared</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        R-squared</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r2</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r2</span>
 
-<div class="viewcode-block" id="ARCHModelResult.fit_start"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.fit_start.html#arch.univariate.base.ARCHModelResult.fit_start">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">fit_start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Start of sample used to estimate parameters&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-<div class="viewcode-block" id="ARCHModelResult.fit_stop"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.fit_stop.html#arch.univariate.base.ARCHModelResult.fit_stop">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">fit_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;End of sample used to estimate parameters&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-<div class="viewcode-block" id="ARCHModelResult.rsquared_adj"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.rsquared_adj.html#arch.univariate.base.ARCHModelResult.rsquared_adj">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">rsquared_adj</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Degree of freedom adjusted R-squared</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span>
             <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rsquared</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">num_params</span><span class="p">)</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
 
-<div class="viewcode-block" id="ARCHModelResult.pvalues"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.pvalues.html#arch.univariate.base.ARCHModelResult.pvalues">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">pvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Array of p-values for the t-statistics</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tvalues</span><span class="p">))</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">pvals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;pvalues&quot;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">pvals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;pvalues&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ARCHModelResult.std_err"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.std_err.html#arch.univariate.base.ARCHModelResult.std_err">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">std_err</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Array of parameter standard errors</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">se</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_cov</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">se</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;std_err&quot;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">se</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;std_err&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ARCHModelResult.tvalues"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.tvalues.html#arch.univariate.base.ARCHModelResult.tvalues">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">tvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Array of t-statistics testing the null that the coefficient are 0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tvalues</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_err</span>
         <span class="n">tvalues</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;tvalues&quot;</span>
-        <span class="k">return</span> <span class="n">tvalues</span></div>
+        <span class="k">return</span> <span class="n">tvalues</span>
 
-<div class="viewcode-block" id="ARCHModelResult.convergence_flag"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelResult.convergence_flag.html#arch.univariate.base.ARCHModelResult.convergence_flag">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">convergence_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        scipy.optimize.minimize result flag</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optim_output</span><span class="o">.</span><span class="n">status</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optim_output</span><span class="o">.</span><span class="n">status</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">optimization_result</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OptimizeResult</span><span class="p">:</span>
@@ -2583,7 +2581,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    5.3.0.
+    7.0.1.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

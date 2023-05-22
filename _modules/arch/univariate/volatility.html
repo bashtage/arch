@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.univariate.volatility - arch 5.5.0</title>
+        <title>arch.univariate.volatility - arch 6.0.0</title>
       
     
 
@@ -47,7 +47,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.8118e13f191069ea1.min.css" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.b223ac77c5eb52f42.min.css" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch 5.5.0" class="md-header__button md-logo" aria-label="arch 5.5.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 6.0.0" class="md-header__button md-logo" aria-label="arch 6.0.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 5.5.0
+            arch 6.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch 5.5.0" class="md-nav__button md-logo" aria-label="arch 5.5.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 6.0.0" class="md-nav__button md-logo" aria-label="arch 6.0.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 5.5.0
+    arch 6.0.0
   </label>
   
     <div class="md-nav__source">
@@ -372,8 +372,9 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">cast</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -540,8 +541,9 @@
 
 <div class="viewcode-block" id="VolatilityProcess"><a class="viewcode-back" href="../../../univariate/generated/arch.univariate.volatility.VolatilityProcess.html#arch.univariate.VolatilityProcess">[docs]</a><span class="k">class</span> <span class="nc">VolatilityProcess</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Abstract base class for ARCH models.  Allows the conditional mean model to be specified</span>
-<span class="sd">    separately from the conditional variance, even though parameters are estimated jointly.</span>
+<span class="sd">    Abstract base class for ARCH models.  Allows the conditional mean model to be</span>
+<span class="sd">    specified separately from the conditional variance, even though parameters</span>
+<span class="sd">    are estimated jointly.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_updatable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
@@ -703,7 +705,8 @@
 <span class="sd">        sigma2 : ndarray</span>
 <span class="sd">            t element array containing the one-step ahead forecasts</span>
 <span class="sd">        forecasts : ndarray</span>
-<span class="sd">            t by horizon array containing the one-step ahead forecasts in the first location</span>
+<span class="sd">            t by horizon array containing the one-step ahead forecasts in the first</span>
+<span class="sd">            location</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">t</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">_resids</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">resids</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">])))</span>
@@ -1173,8 +1176,9 @@
         <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Private implementation of a Gaussian log-likelihood for use in constructing starting</span>
-<span class="sd">        values or other quantities that do not depend on the distribution used by the model.</span>
+<span class="sd">        Private implementation of a Gaussian log-likelihood for use in constructing</span>
+<span class="sd">        starting values or other quantities that do not depend on the distribution</span>
+<span class="sd">        used by the model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">compute_variance</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">)</span>
@@ -1322,9 +1326,10 @@
 <span class="sd">    q : int</span>
 <span class="sd">        Order of the lagged (transformed) conditional variance</span>
 <span class="sd">    power : float, optional</span>
-<span class="sd">        Power to use with the innovations, abs(e) ** power.  Default is 2.0, which produces ARCH</span>
-<span class="sd">        and related models. Using 1.0 produces AVARCH and related models.  Other powers can be</span>
-<span class="sd">        specified, although these should be strictly positive, and usually larger than 0.25.</span>
+<span class="sd">        Power to use with the innovations, abs(e) ** power.  Default is 2.0, which</span>
+<span class="sd">        produces ARCH and related models. Using 1.0 produces AVARCH and related</span>
+<span class="sd">        models.  Other powers can be specified, although these should be strictly</span>
+<span class="sd">        positive, and usually larger than 0.25.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -1770,7 +1775,8 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    lags : {list, array, int}</span>
-<span class="sd">        List of lags to include in the model, or if scalar, includes all lags up the value</span>
+<span class="sd">        List of lags to include in the model, or if scalar, includes all lags up the</span>
+<span class="sd">        value</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -1801,8 +1807,8 @@
 <span class="sd">        +\alpha_{5} \left(\frac{1}{5}\sum_{j=1}^{5}\epsilon_{t-j}^{2}\right)</span>
 <span class="sd">        +\alpha_{22} \left(\frac{1}{22}\sum_{j=1}^{22}\epsilon_{t-j}^{2}\right)</span>
 
-<span class="sd">    A HARCH process is a special case of an ARCH process where parameters in the more general</span>
-<span class="sd">    ARCH process have been restricted.</span>
+<span class="sd">    A HARCH process is a special case of an ARCH process where parameters in the</span>
+<span class="sd">    more general ARCH process have been restricted.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -2575,8 +2581,9 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    The variance dynamics of the model are given as a weighted average of kmax EWMA variance</span>
-<span class="sd">    processes where the smoothing parameters and weights are determined by tau0, tau1 and rho.</span>
+<span class="sd">    The variance dynamics of the model are given as a weighted average of kmax EWMA</span>
+<span class="sd">    variance processes where the smoothing parameters and weights are determined by</span>
+<span class="sd">    tau0, tau1 and rho.</span>
 
 <span class="sd">    This model has no parameters since the smoothing parameter is fixed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -3143,17 +3150,17 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    variance : {array, Series}</span>
-<span class="sd">        Array containing the variances to use.  Should have the same shape as the data used in the</span>
-<span class="sd">        model.</span>
+<span class="sd">        Array containing the variances to use.  Should have the same shape as the</span>
+<span class="sd">        data used in the model.</span>
 <span class="sd">    unit_scale : bool, optional</span>
-<span class="sd">        Flag whether to enforce a unit scale.  If False, a scale parameter will be estimated so</span>
-<span class="sd">        that the model variance will be proportional to ``variance``.  If True, the model variance</span>
-<span class="sd">        is set of ``variance``</span>
+<span class="sd">        Flag whether to enforce a unit scale.  If False, a scale parameter will be</span>
+<span class="sd">        estimated so that the model variance will be proportional to ``variance``.</span>
+<span class="sd">        If True, the model variance is set of ``variance``</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    Allows a fixed set of variances to be used when estimating a mean model, allowing GLS</span>
-<span class="sd">    estimation.</span>
+<span class="sd">    Allows a fixed set of variances to be used when estimating a mean model,</span>
+<span class="sd">    allowing GLS estimation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variance</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">unit_scale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -4115,7 +4122,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    5.3.0.
+    7.0.1.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

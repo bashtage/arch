@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.covariance.kernel - arch 5.5.0</title>
+        <title>arch.covariance.kernel - arch 6.0.0</title>
       
     
 
@@ -47,7 +47,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.8118e13f191069ea1.min.css" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.b223ac77c5eb52f42.min.css" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch 5.5.0" class="md-header__button md-logo" aria-label="arch 5.5.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 6.0.0" class="md-header__button md-logo" aria-label="arch 6.0.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 5.5.0
+            arch 6.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch 5.5.0" class="md-nav__button md-logo" aria-label="arch 5.5.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 6.0.0" class="md-nav__button md-logo" aria-label="arch 6.0.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 5.5.0
+    arch 6.0.0
   </label>
   
     <div class="md-nav__source">
@@ -367,6 +367,7 @@
 <span></span><code><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">SupportsInt</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -375,7 +376,6 @@
 
 <span class="kn">from</span> <span class="nn">arch.typing</span> <span class="kn">import</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">Float64Array</span>
 <span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="kn">import</span> <span class="n">AbstractDocStringInheritor</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">ensure2d</span>
-<span class="kn">from</span> <span class="nn">arch.vendor</span> <span class="kn">import</span> <span class="n">cached_property</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;Bartlett&quot;</span><span class="p">,</span>
@@ -465,7 +465,7 @@
             <span class="k">return</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">value</span>
 
-<div class="viewcode-block" id="CovarianceEstimate.long_run"><a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.long_run.html#arch.covariance.kernel.CovarianceEstimate.long_run">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">long_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The long-run covariance estimate.</span>
@@ -474,16 +474,16 @@
             <span class="n">long_run</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_long_run</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">long_run</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oss</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oss</span><span class="o">.</span><span class="n">T</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="n">long_run</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="n">long_run</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CovarianceEstimate.short_run"><a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.short_run.html#arch.covariance.kernel.CovarianceEstimate.short_run">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">short_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The short-run covariance estimate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sr</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sr</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CovarianceEstimate.one_sided"><a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.one_sided.html#arch.covariance.kernel.CovarianceEstimate.one_sided">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">one_sided</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The one-sided covariance estimate.</span>
@@ -492,14 +492,14 @@
             <span class="n">one_sided</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_sided</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">one_sided</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oss</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="n">one_sided</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="n">one_sided</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CovarianceEstimate.one_sided_strict"><a class="viewcode-back" href="../../../covariance/generated/generated/arch.covariance.kernel.CovarianceEstimate.one_sided_strict.html#arch.covariance.kernel.CovarianceEstimate.one_sided_strict">[docs]</a>    <span class="nd">@cached_property</span>
+    <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">one_sided_strict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The one-sided strict covariance estimate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_oss</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_oss</span><span class="p">)</span></div>
 
 
 <span class="k">class</span> <span class="nc">CovarianceEstimator</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
@@ -1098,7 +1098,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    5.3.0.
+    7.0.1.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

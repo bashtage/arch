@@ -1,0 +1,10 @@
+=========
+Version 6
+=========
+
+Release 6.0
+===========
+- Minimum supported Python is 3.9
+- Bumped minimum NumPy, SciPy, pandas, statsmodels and Cython
+- Removed dependence on property-cached
+- Added compatability with Cython 3

@@ -1,0 +1,19 @@
+=========
+Version 3
+=========
+
+- Added forecast code for mean forecasting
+- Added volatility hedgehog plot
+- Added ``fix`` to arch models which allows for user specified parameters
+  instead of estimated parameters.
+- Added Hansen's Skew T distribution to distribution (Stanislav Khrapov)
+- Updated IPython notebooks to latest IPython version
+- Bug and typo fixes to IPython notebooks
+- Changed MCS to give a pvalue of 1.0 to best model.  Previously was NaN
+- Removed ``hold_back`` and ``last_obs`` from model initialization and to
+  ``fit`` method to simplify estimating a model over alternative samples
+  (e.g., rolling window estimation)
+- Redefined ``hold_back`` to only accept integers so that is simply defined
+  the number of observations held back. This number is now held out of the
+  sample irrespective of the value of ``first_obs``.
+
