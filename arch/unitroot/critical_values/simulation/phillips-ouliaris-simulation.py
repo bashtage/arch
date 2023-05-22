@@ -5,7 +5,7 @@ import os
 import pickle
 from random import shuffle
 import sys
-from typing import IO, List, Optional, Tuple, cast
+from typing import IO, Optional, cast
 
 import colorama
 from joblib import Parallel, delayed
@@ -63,7 +63,7 @@ def inner_prod(a: Float64Array, b: Optional[Float64Array] = None) -> Float64Arra
 
 def z_tests_vec(
     z: Float64Array, lag: int, trend: UnitRootTrend
-) -> Tuple[np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray]:
     assert z.ndim == 3
     nobs = int(z.shape[1])
     if trend == "c":
@@ -103,7 +103,7 @@ def z_tests_vec(
     return z_a, z_t
 
 
-def z_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> Tuple[float, float]:
+def z_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> tuple[float, float]:
     z = add_trend(z, trend=trend)
     u = z
     if z.shape[1] > 1:
@@ -126,7 +126,7 @@ def z_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> Tuple[float, flo
 
 def p_tests_vec(
     z: Float64Array, lag: int, trend: UnitRootTrend
-) -> Tuple[np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray]:
     assert z.ndim == 3
     z_lag, z_lead = z[:, :-1], z[:, 1:]
     nobs = z.shape[1]
@@ -173,7 +173,7 @@ def p_tests_vec(
     return p_u, p_z
 
 
-def p_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> Tuple[float, float]:
+def p_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> tuple[float, float]:
     x, y = z[:, 1:], z[:, 0]
     nobs = int(x.shape[0])
     x = add_trend(x, trend=trend)
@@ -256,7 +256,7 @@ def save_partial(
 
 def load_partial(
     gen: np.random.Generator, results: pd.DataFrame, remaining: int, full_path: str
-) -> Tuple[np.random.Generator, pd.DataFrame, int]:
+) -> tuple[np.random.Generator, pd.DataFrame, int]:
     temp_file = temp_file_name(full_path)
     if os.path.exists(temp_file):
         try:
@@ -355,8 +355,8 @@ if __name__ == "__main__":
 
     ss = np.random.SeedSequence(entropy)
     children = ss.spawn(len(TRENDS) * EX_NUM * len(STATISTICS))
-    jobs: List[
-        Tuple[np.random.Generator, Literal["z", "p"], UnitRootTrend, int, str]
+    jobs: list[
+        tuple[np.random.Generator, Literal["z", "p"], UnitRootTrend, int, str]
     ] = []
     loc = 0
     from itertools import product
@@ -364,7 +364,11 @@ if __name__ == "__main__":
     for statistic, trend, idx in product(STATISTICS, TRENDS, range(EX_NUM)):
         child = children[loc]
         gen = np.random.Generator(np.random.PCG64(child))
-        filename = f"phillips-ouliaris-results-statistic-{statistic}-trend-{trend}-{idx:04d}.hdf"
+        filename = (
+            "phillips-ouliaris-results-statistic-"
+            + f"{statistic}-trend-{trend}-{idx:04d}.hdf"
+        )
+
         full_file = os.path.join(ROOT, filename)
         if os.path.exists(full_file):
             continue

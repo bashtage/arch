@@ -45,8 +45,8 @@ def _compare_truncated_forecasts(full, trunc, start):
 
 class PreservedState:
     """
-    Context manager that will save NumPy's random generator's state when entering and restore
-    the original state when exiting.
+    Context manager that will save NumPy's random generator's state when entering and
+    restore the original state when exiting.
     """
 
     def __init__(self, random_state):

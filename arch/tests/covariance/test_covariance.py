@@ -1,5 +1,4 @@
 from itertools import product
-from typing import Tuple, Type
 
 import numpy as np
 from numpy.testing import assert_allclose
@@ -64,7 +63,7 @@ def data(request) -> ArrayLike:
     rs = np.random.RandomState([3894830, 432841, 323297, 8927821])
     ndim, use_pandas = request.param
     burn = 100
-    size: Tuple[int, ...] = (500 + burn,)
+    size: tuple[int, ...] = (500 + burn,)
     if ndim == 2:
         size += (3,)
     e = rs.standard_normal(size)
@@ -90,7 +89,7 @@ def estimator(request) -> CovarianceEstimator:
     return request.param
 
 
-def test_covariance_smoke(data: ArrayLike, estimator: Type[CovarianceEstimator]):
+def test_covariance_smoke(data: ArrayLike, estimator: type[CovarianceEstimator]):
     cov = estimator(data)
     est_cov = cov.cov
     ndim = data.shape[1] if data.ndim > 1 else 1
@@ -103,7 +102,7 @@ def test_covariance_smoke(data: ArrayLike, estimator: Type[CovarianceEstimator])
     assert isinstance(repr(cov), str)
 
 
-def test_covariance_errors(data: ArrayLike, estimator: Type[CovarianceEstimator]):
+def test_covariance_errors(data: ArrayLike, estimator: type[CovarianceEstimator]):
     with pytest.raises(ValueError, match="Degrees of freedom is <= 0"):
         estimator(data, df_adjust=data.shape[0] + 1)
     with pytest.raises(ValueError, match="df_adjust must be a non-negative"):
@@ -139,10 +138,10 @@ def test_bartlett_auto(data: ArrayLike):
     assert_allclose(expected_oss, np.squeeze(nw.cov.one_sided_strict))
     assert_allclose(expected_cov, np.squeeze(nw.cov.long_run))
     ce = CovarianceEstimate(
-        short_run=nw.cov.short_run,
-        one_sided_strict=nw.cov.one_sided_strict,
-        long_run=nw.cov.long_run,
-        one_sided=nw.cov.one_sided,
+        short_run=np.asarray(nw.cov.short_run),
+        one_sided_strict=np.asarray(nw.cov.one_sided_strict),
+        long_run=np.asarray(nw.cov.long_run),
+        one_sided=np.asarray(nw.cov.one_sided),
     )
     assert_allclose(ce.short_run, nw.cov.short_run)
     assert_allclose(ce.one_sided_strict, nw.cov.one_sided_strict)
@@ -155,7 +154,7 @@ def test_parzen_auto(data: ArrayLike):
 
     if data.ndim == 1:
         # This test is noisy
-        expected_bw: Tuple[int, ...] = (18, 19)
+        expected_bw: tuple[int, ...] = (18, 19)
         expected_weights = [
             1.0000e00,
             9.8575e-01,
@@ -239,19 +238,19 @@ def test_qs_auto(data: ArrayLike):
     assert_allclose(qs.kernel_weights[:10], np.array(expected_weights))
 
 
-def test_force_int(data: ArrayLike, estimator: Type[CovarianceEstimator]):
+def test_force_int(data: ArrayLike, estimator: type[CovarianceEstimator]):
     bw = estimator(data, force_int=False).bandwidth
     bw_int = estimator(data, force_int=True).bandwidth
     assert bw_int >= bw
     assert bw_int == int(bw_int)
 
 
-def test_first_weights(data: ArrayLike, estimator: Type[CovarianceEstimator]):
+def test_first_weights(data: ArrayLike, estimator: type[CovarianceEstimator]):
     w = estimator(data).kernel_weights
     assert w[0] == 1.0
 
 
-def test_constants(data: ArrayLike, estimator: Type[CovarianceEstimator]):
+def test_constants(data: ArrayLike, estimator: type[CovarianceEstimator]):
     cov_est = estimator(data)
     kc, bs, rate = KERNEL_PARAMS[estimator.__name__]
     assert_allclose(cov_est.kernel_const, kc)
@@ -259,7 +258,7 @@ def test_constants(data: ArrayLike, estimator: Type[CovarianceEstimator]):
     assert_allclose(cov_est.rate, rate)
 
 
-def test_weight_len(data: ArrayLike, estimator: Type[CovarianceEstimator]):
+def test_weight_len(data: ArrayLike, estimator: type[CovarianceEstimator]):
     cov_est = estimator(data, force_int=True)
     name = estimator.__name__
     is_qs = name in ("QuadraticSpectral", "Andrews")
@@ -270,7 +269,7 @@ def test_weight_len(data: ArrayLike, estimator: Type[CovarianceEstimator]):
     assert cov_est.kernel_weights.shape[0] == exp_len
 
 
-def test_kernel_weights(data: ArrayLike, estimator: Type[CovarianceEstimator]):
+def test_kernel_weights(data: ArrayLike, estimator: type[CovarianceEstimator]):
     if data.ndim == 1:
         return
     weights = np.arange(1, data.shape[1] + 1)
@@ -280,7 +279,7 @@ def test_kernel_weights(data: ArrayLike, estimator: Type[CovarianceEstimator]):
     assert wcov.bandwidth != cov.bandwidth
 
 
-def test_center(data: ArrayLike, estimator: Type[CovarianceEstimator]):
+def test_center(data: ArrayLike, estimator: type[CovarianceEstimator]):
     centered_cov = estimator(data, center=False, force_int=False)
     cov = estimator(data, force_int=False)
     assert centered_cov.bandwidth != cov.bandwidth

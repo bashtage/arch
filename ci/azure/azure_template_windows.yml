@@ -17,9 +17,6 @@ jobs:
     vmImage: ${{ parameters.vmImage }}
   strategy:
     matrix:
-      python38_win_latest:
-        python.version: '3.8'
-        use.numba: 'false'
       python39_win_latest:
         python.version: '3.9'
         use.numba: 'false'
@@ -45,7 +42,7 @@ jobs:
   - script: |
       python -m pip uninstall numba -y
     condition: eq(variables['use.numba'], 'false')
-    displayName: 'Remove numba on 3.8 and 3.9'
+    displayName: 'Remove numba on Python 3.9'
 
   - script: |
       python -m pip list

@@ -1,19 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Hashable
 import datetime as dt
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Dict,
-    Hashable,
-    List,
-    Literal,
-    Optional,
-    Tuple,
-    TypeVar,
-    Union,
-)
+from typing import TYPE_CHECKING, Any, Callable, Literal, Optional, TypeVar, Union
 
 import numpy as np
 from pandas import DataFrame, Series, Timestamp
@@ -61,11 +50,11 @@ else:
     ) = Float64Array = Int64Array = Int32Array = BoolArray = AnyArray = NDArray
 
 BootstrapIndexT = Union[
-    Int64Array, Tuple[Int64Array, ...], Tuple[List[Int64Array], Dict[str, Int64Array]]
+    Int64Array, tuple[Int64Array, ...], tuple[list[Int64Array], dict[str, Int64Array]]
 ]
-RandomStateState = Tuple[str, Uint32Array, int, int, float]
+RandomStateState = tuple[str, Uint32Array, int, int, float]
 
-RNGType = Callable[[Union[int, Tuple[int, ...]]], Float64Array]
+RNGType = Callable[[Union[int, tuple[int, ...]]], Float64Array]
 ArrayLike1D = Union[NDArray, Series]
 ArrayLike2D = Union[NDArray, DataFrame]
 ArrayLike = Union[NDArray, DataFrame, Series]

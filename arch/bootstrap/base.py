@@ -1,17 +1,7 @@
 from __future__ import annotations
 
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Generator as PyGenerator,
-    List,
-    Mapping,
-    Sequence,
-    Tuple,
-    Union,
-    cast,
-)
+from collections.abc import Generator as PyGenerator, Mapping, Sequence
+from typing import Any, Callable, Union, cast
 import warnings
 
 import numpy as np
@@ -1290,7 +1280,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         """
         Resample all data using the values in _index
         """
-        indices = cast(Union[Int64Array, Tuple[Int64Array, ...]], self._index)
+        indices = cast(Union[Int64Array, tuple[Int64Array, ...]], self._index)
         pos_data: list[NDArray | pd.Series | pd.DataFrame] = []
         for values in self._args:
             if isinstance(values, (pd.Series, pd.DataFrame)):
@@ -1458,7 +1448,7 @@ class IndependentSamplesBootstrap(IIDBootstrap):
         Resample all data using the values in _index
         """
         pos_indices, kw_indices = cast(
-            Tuple[List[Int64Array], Dict[str, Int64Array]], self._index
+            tuple[list[Int64Array], dict[str, Int64Array]], self._index
         )
         pos_data: list[np.ndarray | pd.DataFrame | pd.Series] = []
         for i, values in enumerate(self._args):

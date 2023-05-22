@@ -6,8 +6,9 @@ same inputs.
 from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
+from collections.abc import Sequence
 import itertools
-from typing import TYPE_CHECKING, Sequence, cast
+from typing import TYPE_CHECKING, cast
 from warnings import warn
 
 import numpy as np
@@ -174,8 +175,9 @@ class VarianceForecast:
 
 class VolatilityProcess(metaclass=ABCMeta):
     """
-    Abstract base class for ARCH models.  Allows the conditional mean model to be specified
-    separately from the conditional variance, even though parameters are estimated jointly.
+    Abstract base class for ARCH models.  Allows the conditional mean model to be
+    specified separately from the conditional variance, even though parameters
+    are estimated jointly.
     """
 
     _updatable: bool = True
@@ -337,7 +339,8 @@ class VolatilityProcess(metaclass=ABCMeta):
         sigma2 : ndarray
             t element array containing the one-step ahead forecasts
         forecasts : ndarray
-            t by horizon array containing the one-step ahead forecasts in the first location
+            t by horizon array containing the one-step ahead forecasts in the first
+            location
         """
         t = resids.shape[0]
         _resids: Float64Array = np.concatenate((resids, np.array([0.0])))
@@ -807,8 +810,9 @@ class VolatilityProcess(metaclass=ABCMeta):
         var_bounds: Float64Array,
     ) -> float:
         """
-        Private implementation of a Gaussian log-likelihood for use in constructing starting
-        values or other quantities that do not depend on the distribution used by the model.
+        Private implementation of a Gaussian log-likelihood for use in constructing
+        starting values or other quantities that do not depend on the distribution
+        used by the model.
         """
         sigma2 = np.zeros_like(resids)
         self.compute_variance(parameters, resids, sigma2, backcast, var_bounds)
@@ -956,9 +960,10 @@ class GARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     q : int
         Order of the lagged (transformed) conditional variance
     power : float, optional
-        Power to use with the innovations, abs(e) ** power.  Default is 2.0, which produces ARCH
-        and related models. Using 1.0 produces AVARCH and related models.  Other powers can be
-        specified, although these should be strictly positive, and usually larger than 0.25.
+        Power to use with the innovations, abs(e) ** power.  Default is 2.0, which
+        produces ARCH and related models. Using 1.0 produces AVARCH and related
+        models.  Other powers can be specified, although these should be strictly
+        positive, and usually larger than 0.25.
 
     Examples
     --------
@@ -1404,7 +1409,8 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Parameters
     ----------
     lags : {list, array, int}
-        List of lags to include in the model, or if scalar, includes all lags up the value
+        List of lags to include in the model, or if scalar, includes all lags up the
+        value
 
     Examples
     --------
@@ -1435,8 +1441,8 @@ class HARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         +\alpha_{5} \left(\frac{1}{5}\sum_{j=1}^{5}\epsilon_{t-j}^{2}\right)
         +\alpha_{22} \left(\frac{1}{22}\sum_{j=1}^{22}\epsilon_{t-j}^{2}\right)
 
-    A HARCH process is a special case of an ARCH process where parameters in the more general
-    ARCH process have been restricted.
+    A HARCH process is a special case of an ARCH process where parameters in the
+    more general ARCH process have been restricted.
     """
 
     def __init__(self, lags: int | Sequence[int] = 1) -> None:
@@ -2209,8 +2215,9 @@ class RiskMetrics2006(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     Notes
     -----
-    The variance dynamics of the model are given as a weighted average of kmax EWMA variance
-    processes where the smoothing parameters and weights are determined by tau0, tau1 and rho.
+    The variance dynamics of the model are given as a weighted average of kmax EWMA
+    variance processes where the smoothing parameters and weights are determined by
+    tau0, tau1 and rho.
 
     This model has no parameters since the smoothing parameter is fixed.
     """
@@ -2777,17 +2784,17 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     Parameters
     ----------
     variance : {array, Series}
-        Array containing the variances to use.  Should have the same shape as the data used in the
-        model.
+        Array containing the variances to use.  Should have the same shape as the
+        data used in the model.
     unit_scale : bool, optional
-        Flag whether to enforce a unit scale.  If False, a scale parameter will be estimated so
-        that the model variance will be proportional to ``variance``.  If True, the model variance
-        is set of ``variance``
+        Flag whether to enforce a unit scale.  If False, a scale parameter will be
+        estimated so that the model variance will be proportional to ``variance``.
+        If True, the model variance is set of ``variance``
 
     Notes
     -----
-    Allows a fixed set of variances to be used when estimating a mean model, allowing GLS
-    estimation.
+    Allows a fixed set of variances to be used when estimating a mean model,
+    allowing GLS estimation.
     """
 
     def __init__(self, variance: Float64Array, unit_scale: bool = False) -> None:

@@ -1,5 +1,7 @@
 # TODO: Tests for features that are just called
 # TODO: Test for trend='ctt'
+from __future__ import annotations
+
 from arch.compat.statsmodels import dataset_loader
 
 import os

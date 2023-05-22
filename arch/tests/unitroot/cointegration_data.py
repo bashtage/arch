@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import numpy as np
 import pandas as pd
 import pytest
@@ -8,7 +6,7 @@ from arch.typing import ArrayLike2D, Float64Array
 
 
 @pytest.fixture(scope="module", params=[True, False])
-def data(request) -> Tuple[Float64Array, Float64Array]:
+def data(request) -> tuple[Float64Array, Float64Array]:
     g = np.random.RandomState([12839028, 3092183, 902813])
     e = g.standard_normal((2000, 2))
     phi = g.random_sample((3, 2, 2))
@@ -31,7 +29,7 @@ def data(request) -> Tuple[Float64Array, Float64Array]:
 
 
 @pytest.fixture(scope="module", params=[True, False], ids=["pandas", "numpy"])
-def trivariate_data(request) -> Tuple[ArrayLike2D, ArrayLike2D]:
+def trivariate_data(request) -> tuple[ArrayLike2D, ArrayLike2D]:
     rs = np.random.RandomState([922019, 12882912, 192010, 10189, 109981])
     nobs = 1000
     burn = 100

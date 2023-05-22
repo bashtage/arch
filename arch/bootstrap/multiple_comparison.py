@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Hashable, Sequence
 import copy
-from typing import Hashable, Sequence, cast
+from typing import cast
 import warnings
 
 import numpy as np

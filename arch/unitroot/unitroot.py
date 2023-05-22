@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
-from typing import Sequence, cast
+from collections.abc import Sequence
+from typing import cast
 import warnings
 
 from numpy import (
@@ -1141,10 +1142,10 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._nobs = int(resols.nobs)
         if self._test_type == "rho":
             self._stat = self._stat_rho
-            dist_type = "ADF-z"
+            dist_type = "adf-z"
         else:
             self._stat = self._stat_tau
-            dist_type = "ADF-t"
+            dist_type = "adf-t"
         assert self._stat is not None
         self._pvalue = mackinnonp(self._stat, regression=trend, dist_type=dist_type)
         critical_values = mackinnoncrit(regression=trend, nobs=n, dist_type=dist_type)
@@ -1291,8 +1292,8 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         if u.shape[0] < self._lags:
             raise InfeasibleTestException(
                 f"The number of observations {u.shape[0]} is less than the number of"
-                f"lags in the long-run covariance estimator, {self._lags}. You must have "
-                "lags <= nobs."
+                f"lags in the long-run covariance estimator, {self._lags}. You must "
+                "have lags <= nobs."
             )
         lam = cov_nw(u, self._lags, demean=False)
         s = cumsum(u)

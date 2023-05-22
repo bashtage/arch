@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from arch.compat.statsmodels import dataset_loader
 
 from numpy import diff, log

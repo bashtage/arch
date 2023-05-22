@@ -6,9 +6,10 @@ from __future__ import annotations
 from arch.compat.pandas import is_datetime64_any_dtype
 
 from abc import ABCMeta
+from collections.abc import Hashable, Sequence
 import datetime as dt
 from functools import cached_property
-from typing import Any, Hashable, Literal, Sequence, overload
+from typing import Any, Literal, overload
 
 import numpy as np
 from pandas import DataFrame, DatetimeIndex, Index, NaT, Series, Timestamp, to_datetime
