@@ -9,7 +9,6 @@
 import glob
 import os
 import shutil
-from typing import Dict, List
 
 from packaging.version import parse
 
@@ -105,7 +104,7 @@ language = "en"
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns: List[str] = []
+exclude_patterns: list[str] = []
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "colorful"  # "sphinx"
@@ -203,7 +202,7 @@ htmlhelp_basename = "arch"
 
 # -- Options for LaTeX output ------------------------------------------------
 
-latex_elements: Dict[str, str] = {
+latex_elements: dict[str, str] = {
     # The paper size ("letterpaper" or "a4paper").
     #
     # "papersize": "letterpaper",

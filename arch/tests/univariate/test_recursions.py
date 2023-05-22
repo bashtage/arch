@@ -2,7 +2,6 @@ import os
 import pickle
 import timeit
 import types
-from typing import List
 
 import numpy as np
 from numpy.random import RandomState
@@ -58,7 +57,7 @@ class Timer:
         self.repeat = repeat
         self.number = number
         self._run = False
-        self.times: List[float] = []
+        self.times: list[float] = []
         self._codes = [first, second]
         self.ratio = np.inf
 
@@ -1242,10 +1241,12 @@ fresids = resids ** 2.0
 """
 
         midas_first = """
-recpy.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backcast, var_bounds)
-                """
+recpy.figarch_recursion(parameters, fresids, sigma2, p, q,
+                        nobs, trunc_lag, backcast, var_bounds)
+"""
         midas_second = """
-rec.figarch_recursion(parameters, fresids, sigma2, p, q, nobs, trunc_lag, backcast, var_bounds)
+rec.figarch_recursion(parameters, fresids, sigma2, p, q,
+                      nobs, trunc_lag, backcast, var_bounds)
 """
         timer = Timer(
             midas_first,

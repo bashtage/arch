@@ -4,10 +4,11 @@ Core classes for ARCH models
 from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
+from collections.abc import Sequence
 from copy import deepcopy
 import datetime as dt
 from functools import cached_property
-from typing import Any, Callable, Sequence, cast
+from typing import Any, Callable, cast
 import warnings
 
 import numpy as np
@@ -922,7 +923,7 @@ class ARCHModel(metaclass=ABCMeta):
     @abstractmethod
     def forecast(
         self,
-        params: Float64Array,
+        params: ArrayLike1D,
         horizon: int = 1,
         start: int | DateLike | None = None,
         align: Literal["origin", "target"] = "origin",
@@ -1146,10 +1147,10 @@ class ARCHModelFixedResult(_SummaryRepr):
         top_right = [
             ("R-squared:", "--"),
             ("Adj. R-squared:", "--"),
-            ("Log-Likelihood:", "%#10.6g" % self.loglikelihood),
-            ("AIC:", "%#10.6g" % self.aic),
-            ("BIC:", "%#10.6g" % self.bic),
-            ("No. Observations:", self._nobs),
+            ("Log-Likelihood:", f"{self.loglikelihood:#10.6g}"),
+            ("AIC:", f"{self.aic:#10.6g}"),
+            ("BIC:", f"{self.bic:#10.6g}"),
+            ("No. Observations:", f"{self._nobs}"),
             ("", ""),
             ("", ""),
         ]
@@ -1186,12 +1187,8 @@ class ARCHModelFixedResult(_SummaryRepr):
         param_table_data = []
         for _ in range(len(coef_vals[0])):
             row = []
-            for i, val in enumerate(coef_vals):
-                if isinstance(val[pos], np.float64):
-                    converted = format_float_fixed(val[pos], *formats[i])
-                else:
-                    converted = val[pos]
-                row.append(converted)
+            for i, coef_val in enumerate(coef_vals):
+                row.append(format_float_fixed(coef_val[pos], *formats[i]))
             pos += 1
             param_table_data.append(row)
 
@@ -1824,14 +1821,14 @@ class ARCHModelResult(ARCHModelFixedResult):
         ]
 
         top_right = [
-            ("R-squared:", "%#8.3f" % self.rsquared),
-            ("Adj. R-squared:", "%#8.3f" % self.rsquared_adj),
-            ("Log-Likelihood:", "%#10.6g" % self.loglikelihood),
-            ("AIC:", "%#10.6g" % self.aic),
-            ("BIC:", "%#10.6g" % self.bic),
-            ("No. Observations:", self._nobs),
-            ("Df Residuals:", self.nobs - self.model.num_params),
-            ("Df Model:", self.model.num_params),
+            ("R-squared:", f"{self.rsquared:#8.3f}"),
+            ("Adj. R-squared:", f"{self.rsquared_adj:#8.3f}"),
+            ("Log-Likelihood:", f"{self.loglikelihood:#10.6g}"),
+            ("AIC:", f"{self.aic:#10.6g}"),
+            ("BIC:", f"{self.bic:#10.6g}"),
+            ("No. Observations:", f"{self._nobs}"),
+            ("Df Residuals:", f"{self.nobs - self.model.num_params}"),
+            ("Df Model:", f"{self.model.num_params}"),
         ]
 
         title = model_name + " Model Results"
@@ -1876,7 +1873,7 @@ class ARCHModelResult(ARCHModelFixedResult):
             self.std_err,
             self.tvalues,
             self.pvalues,
-            conf_int_str,
+            pd.Series(conf_int_str),
         )
         # (0,0) is a dummy format
         formats = [(10, 4), (9, 3), (9, 3), (9, 3), (0, 0)]
@@ -1884,11 +1881,12 @@ class ARCHModelResult(ARCHModelFixedResult):
         param_table_data = []
         for _ in range(len(table_vals[0])):
             row = []
-            for i, val in enumerate(table_vals):
-                if isinstance(val[pos], np.float64):
-                    converted = format_float_fixed(val[pos], *formats[i])
+            for i, table_val in enumerate(table_vals):
+                if isinstance(table_val[pos], (np.float64, float)):
+                    assert isinstance(table_val[pos], float)
+                    converted = format_float_fixed(table_val[pos], *formats[i])
                 else:
-                    converted = val[pos]
+                    converted = table_val[pos]
                 row.append(converted)
             pos += 1
             param_table_data.append(row)

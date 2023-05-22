@@ -11,7 +11,7 @@ build-backend = "setuptools.build_meta"
 
 
 [tool.black]
-target-version = ['py38', 'py39', 'py310', 'py311']
+target-version = ['py39', 'py310', 'py311']
 exclude = '''
 (
     \.egg
@@ -27,3 +27,6 @@ exclude = '''
 
 [tool.setuptools_scm]
 write_to = "arch/_version.py"
+
+[tool.ruff]
+typing-modules = ["arch.typing"]

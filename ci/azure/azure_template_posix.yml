@@ -16,6 +16,16 @@ jobs:
     vmImage: ${{ parameters.vmImage }}
   strategy:
     matrix:
+      python_311:
+        python.version: '3.11'
+      python_310:
+        python.version: '3.10'
+        test.install: true
+      python_39:
+        python.version: '3.9'
+      python_311_copy_on_write:
+        python.version: '3.11'
+        ARCH_TEST_COPY_ON_WRITE: 1
       python_39_coverage:
         python.version: '3.9'
         ARCH_CYTHON_COVERAGE: true
@@ -24,32 +34,18 @@ jobs:
         python.version: '3.9'
         STATSMODELS_MAIN: true
         coverage: false
-      python38:
-        python.version: '3.8'
-        NUMPY: 1.19.0
-        SCIPY: 1.5.0
-        MATPLOTLIB: 3.3.0
-        PANDAS: 1.1.0
       python_39_conda_numba:
         python.version: '3.9'
         use.conda: 'true'
         USE_NUMBA: true
         MATPLOTLIB: 3.4.0
         PYTEST_PATTERN: "(slow or not slow)"
-      python38_numpy120:
-        python.version: '3.8'
+      python39_numpy120:
+        python.version: '3.9'
         MATPLOTLIB: 3.3.0
         NUMPY: 1.20.0
         SCIPY: 1.7.0
         PANDAS: 1.2.0
-      python_311:
-        python.version: '3.11'
-      python_311_copy_on_write:
-        python.version: '3.11'
-        ARCH_TEST_COPY_ON_WRITE: 1
-      python_310:
-        python.version: '3.10'
-        test.install: true
       python_310_no_binary:
         python.version: '3.10'
         ARCH_NO_BINARY: true
@@ -74,6 +70,13 @@ jobs:
         NUMPY: 1.22.0
         USE_NUMBA: false
         PYTEST_PATTERN: "(slow or not slow)"
+      python_minimums:
+        python.version: '3.9'
+        NUMPY: 1.19.0
+        SCIPY: 1.5.0
+        MATPLOTLIB: 3.3.0
+        PANDAS: 1.1.0
+
     maxParallel: 10
 
   steps:

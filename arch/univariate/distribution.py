@@ -5,7 +5,8 @@ Distributions to use in ARCH models.  All distributions must inherit from
 from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
-from typing import Callable, Sequence
+from collections.abc import Sequence
+from typing import Callable
 import warnings
 
 from numpy import (

@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import numpy as np
 from numpy.testing import assert_allclose
 import pytest
@@ -15,7 +13,7 @@ from arch.unitroot.cointegration import phillips_ouliaris
 from arch.utility.timeseries import add_trend
 
 
-def z_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> Tuple[float, float]:
+def z_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> tuple[float, float]:
     z = add_trend(z, trend=trend)
     u = z
     if z.shape[1] > 1:
@@ -37,7 +35,7 @@ def z_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> Tuple[float, flo
     return float(z_a), float(z_t)
 
 
-def p_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> Tuple[float, float]:
+def p_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> tuple[float, float]:
     x, y = z[:, 1:], z[:, 0]
     nobs = x.shape[0]
     x = add_trend(x, trend=trend)

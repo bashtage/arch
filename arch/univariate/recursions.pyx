@@ -83,7 +83,7 @@ def harch_core(
         Conditional variance at time t
     """
     cdef:
-        Py_ssize_t i,j
+        Py_ssize_t i, j
         double param
 
     sigma2[t] = parameters[0]
@@ -143,6 +143,7 @@ def harch_recursion(const double[::1] parameters,
 
     return np.asarray(sigma2)
 
+
 def arch_recursion(const double[::1] parameters,
                    const double[::1] resids,
                    double[::1] sigma2,
@@ -172,7 +173,6 @@ def arch_recursion(const double[::1] parameters,
 
     cdef Py_ssize_t t
     cdef int i
-    cdef double param
 
     for t in range(nobs):
         sigma2[t] = parameters[0]
@@ -186,13 +186,14 @@ def arch_recursion(const double[::1] parameters,
 
     return np.asarray(sigma2)
 
+
 def garch_core(
     Py_ssize_t t,
     const double[::1] parameters,
     const double[::1] resids,
     double[::1] sigma2,
     double backcast,
-    const double[:,::1] var_bounds,
+    const double[:, ::1] var_bounds,
     int p,
     int o,
     int q,
@@ -326,6 +327,7 @@ def garch_recursion(const double[::1] parameters,
 
     return np.asarray(sigma2)
 
+
 def egarch_recursion(const double[::1] parameters,
                      const double[::1] resids,
                      double[::1] sigma2,
@@ -379,7 +381,9 @@ def egarch_recursion(const double[::1] parameters,
         loc += 1
         for j in range(p):
             if (t - 1 - j) >= 0:
-                lnsigma2[t] += parameters[loc] * (abs_std_resids[t - 1 - j] - SQRT2_OV_PI)
+                lnsigma2[t] += (
+                        parameters[loc] * (abs_std_resids[t - 1 - j] - SQRT2_OV_PI)
+                )
             loc += 1
         for j in range(o):
             if (t - 1 - j) >= 0:
@@ -404,7 +408,6 @@ def egarch_recursion(const double[::1] parameters,
         abs_std_resids[t] = fabs(std_resids[t])
 
     return np.asarray(sigma2)
-
 
 
 def midas_recursion(const double[::1] parameters,
@@ -434,8 +437,7 @@ def midas_recursion(const double[::1] parameters,
         variances for each time period
     """
     cdef Py_ssize_t m, t, i
-    cdef int j
-    cdef double param, omega, alpha, gamma
+    cdef double omega, alpha, gamma
     cdef double [::1] aw, gw, resids2
 
     m = weights.shape[0]
@@ -456,13 +458,16 @@ def midas_recursion(const double[::1] parameters,
         sigma2[t] = omega
         for i in range(m):
             if (t - i - 1) >= 0:
-                sigma2[t] += (aw[i] + gw[i] * (resids[t - i - 1] < 0)) * resids2[t - i - 1]
+                sigma2[t] += (
+                        (aw[i] + gw[i] * (resids[t - i - 1] < 0)) * resids2[t - i - 1]
+                )
             else:
-                sigma2[t] +=  (aw[i] + 0.5 * gw[i]) * backcast
+                sigma2[t] += (aw[i] + 0.5 * gw[i]) * backcast
 
         bounds_check(&sigma2[t], &var_bounds[t, 0])
 
     return np.asarray(sigma2)
+
 
 cdef double[::1] _figarch_weights(const double[::1] parameters,
                                   int p,
@@ -472,7 +477,7 @@ cdef double[::1] _figarch_weights(const double[::1] parameters,
     cdef double phi, d, beta
     cdef double [::1] lam, delta
     cdef Py_ssize_t i
-    
+
     phi = parameters[0] if p else 0.0
     d = parameters[1] if p else parameters[0]
     beta = parameters[p + q] if q else 0.0
@@ -503,7 +508,7 @@ def figarch_recursion(const double[::1] parameters,
                       double backcast,
                       double[:, ::1] var_bounds):
     cdef Py_ssize_t t, i
-    cdef double bc1, bc2, bc_weight, omega, beta, omega_tilde
+    cdef double bc_weight, omega, beta, omega_tilde
     cdef double [::1] lam
 
     omega = parameters[0]
@@ -591,7 +596,12 @@ cdef class VolatilityUpdater:
     def __init__(self):
         pass
 
-    def initialize_update(self, const double[::1] parameters, object backcast, Py_ssize_t nobs):
+    def initialize_update(
+            self,
+            const double[::1] parameters,
+            object backcast,
+            Py_ssize_t nobs
+    ):
         pass
 
     cdef void update(self,
@@ -599,7 +609,7 @@ cdef class VolatilityUpdater:
                      const double[::1] parameters,
                      const double[::1] resids,
                      double[::1] sigma2,
-                     const double[:,::1] var_bounds
+                     const double[:, ::1] var_bounds
                      ):
         pass
 
@@ -608,7 +618,7 @@ cdef class VolatilityUpdater:
                        const double[::1] parameters,
                        const double[::1] resids,
                        double[::1] sigma2,
-                       const double[:,::1] var_bounds):
+                       const double[:, ::1] var_bounds):
         self.update(t, parameters, resids, sigma2, var_bounds)
 
 cdef class GARCHUpdater(VolatilityUpdater):
@@ -623,7 +633,12 @@ cdef class GARCHUpdater(VolatilityUpdater):
         self.power = power
         self.backcast = -1.0
 
-    def initialize_update(self, const double[::1] parameters, object backcast, Py_ssize_t nobs):
+    def initialize_update(
+            self,
+            const double[::1] parameters,
+            object backcast,
+            Py_ssize_t nobs
+    ):
         self.backcast = backcast
 
     cdef void update(self,
@@ -631,7 +646,7 @@ cdef class GARCHUpdater(VolatilityUpdater):
                      const double[::1] parameters,
                      const double[::1] resids,
                      double[::1] sigma2,
-                     const double[:,::1] var_bounds
+                     const double[:, ::1] var_bounds
                      ):
         cdef:
             int p = self.p, o = self.o, q = self.q
@@ -680,7 +695,12 @@ cdef class HARCHUpdater(VolatilityUpdater):
     def __reduce__(self):
         return HARCHUpdater, (np.asarray(self.lags),), (self.backcast,)
 
-    def initialize_update(self, const double[::1] parameters, object backcast, Py_ssize_t nobs):
+    def initialize_update(
+            self,
+            const double[::1] parameters,
+            object backcast,
+            Py_ssize_t nobs
+    ):
         self.backcast = backcast
 
     cdef void update(self,
@@ -688,7 +708,7 @@ cdef class HARCHUpdater(VolatilityUpdater):
                      const double[::1] parameters,
                      const double[::1] resids,
                      double[::1] sigma2,
-                     const double[:,::1] var_bounds
+                     const double[:, ::1] var_bounds
                      ):
         cdef:
             double backcast = self.backcast
@@ -730,7 +750,12 @@ cdef class EWMAUpdater(VolatilityUpdater):
         lam = None if self.estimate_lam else self.params[2]
         return EWMAUpdater, (lam,), (self.backcast, np.asarray(self.params))
 
-    def initialize_update(self, const double[::1] parameters, object backcast, Py_ssize_t nobs):
+    def initialize_update(
+            self,
+            const double[::1] parameters,
+            object backcast,
+            Py_ssize_t nobs
+    ):
         if self.estimate_lam:
             self.params[1] = 1.0 - parameters[0]
             self.params[2] = parameters[0]
@@ -741,7 +766,7 @@ cdef class EWMAUpdater(VolatilityUpdater):
                      const double[::1] parameters,
                      const double[::1] resids,
                      double[::1] sigma2,
-                     const double[:,::1] var_bounds
+                     const double[:, ::1] var_bounds
                      ):
 
         sigma2[t] = self.params[0]
@@ -812,8 +837,13 @@ cdef class MIDASUpdater(VolatilityUpdater):
         for i in range(m):
             self.weights[i] /= sum_w
 
-    def initialize_update(self, const double[::1] parameters, object backcast, Py_ssize_t nobs):
-        cdef double alpha, gamma, theta
+    def initialize_update(
+            self,
+            const double[::1] parameters,
+            object backcast,
+            Py_ssize_t nobs
+    ):
+        cdef double alpha, gamma
 
         self.update_weights(parameters[2 + <int>self.asym])
         alpha = parameters[1]
@@ -834,11 +864,10 @@ cdef class MIDASUpdater(VolatilityUpdater):
                      const double[::1] parameters,
                      const double[::1] resids,
                      double[::1] sigma2,
-                     const double[:,::1] var_bounds
+                     const double[:, ::1] var_bounds
                      ):
         cdef Py_ssize_t i
-        cdef int j
-        cdef double param, omega, alpha, gamma
+        cdef double omega
 
         omega = parameters[0]
         if t > 0:
@@ -847,9 +876,12 @@ cdef class MIDASUpdater(VolatilityUpdater):
         sigma2[t] = omega
         for i in range(self.m):
             if (t - i - 1) >= 0:
-                sigma2[t] += (self.aw[i] + self.gw[i] * (resids[t - i - 1] < 0)) * self.resids2[t - i - 1]
+                sigma2[t] += (
+                        (self.aw[i] + self.gw[i] * (resids[t - i - 1] < 0))
+                        * self.resids2[t - i - 1]
+                )
             else:
-                sigma2[t] +=  (self.aw[i] + 0.5 * self.gw[i]) * self.backcast
+                sigma2[t] += (self.aw[i] + 0.5 * self.gw[i]) * self.backcast
 
             bounds_check(&sigma2[t], &var_bounds[t, 0])
 
@@ -884,9 +916,27 @@ cdef class FIGARCHUpdater(VolatilityUpdater):
             self.fresids[i] = temp[i]
 
     def __reduce__(self):
-        return FIGARCHUpdater, (self.p, self.q, self.power, self.truncation), (self.backcast, np.asarray(self.lam), np.asarray(self.fresids))
+        return (
+            FIGARCHUpdater,
+            (
+                self.p,
+                self.q,
+                self.power,
+                self.truncation
+            ),
+            (
+                self.backcast,
+                np.asarray(self.lam),
+                np.asarray(self.fresids)
+            )
+        )
 
-    def initialize_update(self, const double[::1] parameters, object backcast, Py_ssize_t nobs):
+    def initialize_update(
+            self,
+            const double[::1] parameters,
+            object backcast,
+            Py_ssize_t nobs
+    ):
         self.lam = _figarch_weights(parameters[1:], self.p, self.q, self.truncation)
         self.backcast = backcast
         if self.fresids.shape[0] < nobs:
@@ -897,11 +947,10 @@ cdef class FIGARCHUpdater(VolatilityUpdater):
                      const double[::1] parameters,
                      const double[::1] resids,
                      double[::1] sigma2,
-                     const double[:,::1] var_bounds
+                     const double[:, ::1] var_bounds
                      ):
         cdef Py_ssize_t i
-        cdef double bc1, bc2, bc_weight, omega, beta, omega_tilde
-        cdef double [::1] lam
+        cdef double bc_weight, omega, beta, omega_tilde
         cdef int p = self.p, q = self.q, trunc_lag = self.truncation
 
         omega = parameters[0]
@@ -918,7 +967,6 @@ cdef class FIGARCHUpdater(VolatilityUpdater):
         for i in range(min(t, trunc_lag)):
             sigma2[t] += self.lam[i] * self.fresids[t - i - 1]
         bounds_check(&sigma2[t], &var_bounds[t, 0])
-
 
 
 cdef class RiskMetrics2006Updater(VolatilityUpdater):
@@ -970,7 +1018,7 @@ cdef class RiskMetrics2006Updater(VolatilityUpdater):
                      const double[::1] parameters,
                      const double[::1] resids,
                      double[::1] sigma2,
-                     const double[:,::1] var_bounds
+                     const double[:, ::1] var_bounds
                      ):
         cdef:
             Py_ssize_t i
@@ -978,8 +1026,10 @@ cdef class RiskMetrics2006Updater(VolatilityUpdater):
         sigma2[t] = 0.0
         if t > 0:
             for i in range(self.kmax):
-                self.last_sigma2s[i] = ((1 - self.smoothing_parameters[i]) * resids[t - 1] ** 2 +
-                                        self.smoothing_parameters[i] * self.last_sigma2s[i])
+                self.last_sigma2s[i] = (
+                        (1 - self.smoothing_parameters[i]) * resids[t - 1] ** 2 +
+                        self.smoothing_parameters[i] * self.last_sigma2s[i]
+                )
                 sigma2[t] += self.last_sigma2s[i] * self.combination_weights[i]
         else:
             for i in range(self.kmax):
@@ -1045,7 +1095,12 @@ cdef class EGARCHUpdater(VolatilityUpdater):
             self.abs_std_resids = np.empty(nobs)
             self.std_resids = np.empty(nobs)
 
-    def initialize_update(self, const double[::1] parameters, object backcast, Py_ssize_t nobs):
+    def initialize_update(
+            self,
+            const double[::1] parameters,
+            object backcast,
+            Py_ssize_t nobs
+    ):
         self.backcast = backcast
         self._resize(nobs)
 
@@ -1054,7 +1109,7 @@ cdef class EGARCHUpdater(VolatilityUpdater):
                      const double[::1] parameters,
                      const double[::1] resids,
                      double[::1] sigma2,
-                     const double[:,::1] var_bounds
+                     const double[:, ::1] var_bounds
                      ):
         cdef Py_ssize_t j, loc
 
@@ -1066,7 +1121,9 @@ cdef class EGARCHUpdater(VolatilityUpdater):
         loc = 1
         for j in range(self.p):
             if (t - 1 - j) >= 0:
-                self.lnsigma2[t] += parameters[loc] * (self.abs_std_resids[t - 1 - j] - SQRT2_OV_PI)
+                self.lnsigma2[t] += (
+                        parameters[loc] * (self.abs_std_resids[t - 1 - j] - SQRT2_OV_PI)
+                )
             loc += 1
         for j in range(self.o):
             if (t - 1 - j) >= 0:
@@ -1098,11 +1155,11 @@ cdef class ARCHInMeanRecursion:
 
     def recursion(self,
                   const double[::1] y,
-                  const double[:,::1] x,
+                  const double[:, ::1] x,
                   const double[::1] mean_parameters,
                   const double[::1] variance_params,
                   double[::1] sigma2,
-                  const double[:,::1] var_bounds,
+                  const double[:, ::1] var_bounds,
                   double power):
         cdef:
             Py_ssize_t t, i, nobs = y.shape[0], k = x.shape[1]
@@ -1110,10 +1167,12 @@ cdef class ARCHInMeanRecursion:
             double gamma = mean_parameters[k]
 
         for t in range(nobs):
-            self.volatility_updater.update(t, variance_params, resids, sigma2, var_bounds)
+            self.volatility_updater.update(
+                t, variance_params, resids, sigma2, var_bounds
+            )
             resids[t] = y[t]
             for i in range(k):
-                resids[t] -= x[t,i] * mean_parameters[i]
+                resids[t] -= x[t, i] * mean_parameters[i]
             if power == 0.0:
                 resids[t] -= gamma * log(sigma2[t])
             else:

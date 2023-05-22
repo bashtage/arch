@@ -1,6 +1,5 @@
 from collections import defaultdict
 import glob
-from typing import Dict, List
 
 from black import FileMode, TargetVersion, format_file_contents
 import numpy as np
@@ -21,13 +20,13 @@ for f in files:
     input_data[contents["trend"][0]].append(temp)
     sample_sizes = contents["sample_sizes"]
 
-final: Dict[str, np.ndarray] = {}
+final: dict[str, np.ndarray] = {}
 for key in input_data:
     final[key] = np.concatenate(input_data[key], -1)
 
 trends = ("nc", "c", "ct", "ctt")
 critical_values = (1, 5, 10)
-final_cv: Dict[str, Dict[int, List[float]]] = {}
+final_cv: dict[str, dict[int, list[float]]] = {}
 for trend in trends:
     print(trend)
     results = final[trend]

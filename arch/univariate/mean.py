@@ -4,8 +4,9 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 """
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 import copy
-from typing import TYPE_CHECKING, Callable, Mapping, Sequence, cast
+from typing import TYPE_CHECKING, Callable, cast
 
 import numpy as np
 import pandas as pd
@@ -829,7 +830,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
         Parameters
         ----------
-        x: Union[None, Dict[Label, ArrayLike], ArrayLike] = None
+        x: dict[label, array_like], array_like, None
             The input data to reformat
 
         Returns

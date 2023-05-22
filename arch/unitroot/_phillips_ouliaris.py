@@ -241,7 +241,8 @@ def phillips_ouliaris(
     .. math::
 
        \hat{\omega}_{11\cdot 2} = \hat{\omega}_{11}
-                                 - \hat{\omega}'_{21} \hat{\Omega}_{22}^{-1} \hat{\omega}_{21}
+                                 - \hat{\omega}'_{21} \hat{\Omega}_{22}^{-1}
+                                   \hat{\omega}_{21}
 
     and
 

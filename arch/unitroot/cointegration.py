@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from functools import cached_property
-from typing import Sequence
 
 import numpy as np
 import pandas as pd
@@ -167,7 +167,7 @@ class _CommonCointegrationResults:
         If `df_adjust` is True, then the estimator is rescaled by T/(T-m) where
         m is the number of regressors in the model.
         """
-        return self._df_scale * self._cov_est.short_run[0, 0]
+        return float(self._df_scale * self._cov_est.short_run[0, 0])
 
     @property
     def long_run_variance(self) -> float:
@@ -188,7 +188,7 @@ class _CommonCointegrationResults:
         If `df_adjust` is True, then the estimator is rescaled by T/(T-m) where
         m is the number of regressors in the model.
         """
-        return self._df_scale * self._cov_est.long_run[0, 0]
+        return float(self._df_scale * self._cov_est.long_run[0, 0])
 
     @staticmethod
     def _top_table(
@@ -951,7 +951,8 @@ FMOLS_ESTIMATOR = r"""
 
     .. math::
 
-        \hat{\theta} = \left[\begin{array}{c}\hat{\gamma}_1 \\ \hat{\beta} \end{array}\right]
+        \hat{\theta} = \left[\begin{array}{c}\hat{\gamma}_1 \\
+                       \hat{\beta} \end{array}\right]
                      = \left(\sum_{t=2}^T Z_tZ'_t\right)^{-1}
                        \left(\sum_{t=2}^t Z_t Y^\star_t -
                        T \left[\begin{array}{c} 0 \\ \lambda^{\star\prime}_{12}
@@ -968,8 +969,9 @@ FMOLS_ESTIMATOR = r"""
 
     References
     ----------
-    .. [1] Hansen, B. E., & Phillips, P. C. (1990). Estimation and inference in models of
-       cointegration: A simulation study. Advances in Econometrics, 8(1989), 225-248.
+    .. [1] Hansen, B. E., & Phillips, P. C. (1990). Estimation and inference in
+       models of cointegration: A simulation study. Advances in Econometrics,
+       8(1989), 225-248.
 """
 
 
