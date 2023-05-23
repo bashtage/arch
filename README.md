@@ -271,7 +271,7 @@ ahead-of-time compiled extensions.
 
 The development requirements are:
 
-- Cython (0.29+, if not using ARCH_NO_BINARY=1)
+- Cython (0.29+, if not using ARCH_NO_BINARY=1, supports 3.0.0b2+)
 - pytest (For tests)
 - sphinx (to build docs)
 - sphinx-immaterial (to build docs)
