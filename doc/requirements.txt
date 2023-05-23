@@ -2,7 +2,7 @@ setuptools>=61
 wheel
 setuptools_scm[toml]>=7,<8
 oldest-supported-numpy
-cython>=3.0.0b2
+cython>=0.29.34  # Works with 3.0.0b2
 numpy >=1.22
 scipy >=1.5.0
 ipython >=8.0.1
