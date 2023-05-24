@@ -468,6 +468,7 @@ class ARCHModel(metaclass=ABCMeta):
         params: Sequence[float] | ArrayLike1D,
         first_obs: int | DateLike | None = None,
         last_obs: int | DateLike | None = None,
+        demean: bool = False,
     ) -> ARCHModelFixedResult:
         """
         Allows an ARCHModelFixedResult to be constructed from fixed parameters.
@@ -482,6 +483,8 @@ class ARCHModel(metaclass=ABCMeta):
             First observation to use when fixing model
         last_obs : {int, str, datetime, Timestamp}
             Last observation to use when fixing model
+        demean: bool
+            Indicate to demean the fitting data y. Default is `False`.
 
         Returns
         -------
@@ -494,7 +497,7 @@ class ARCHModel(metaclass=ABCMeta):
         """
         v = self.volatility
 
-        self._adjust_sample(first_obs, last_obs)
+        self._adjust_sample(first_obs, last_obs, demean)
         resids = np.asarray(self.resids(self.starting_values()), dtype=float)
         sigma2 = np.zeros_like(resids)
         backcast = v.backcast(resids)
@@ -537,7 +540,10 @@ class ARCHModel(metaclass=ABCMeta):
 
     @abstractmethod
     def _adjust_sample(
-        self, first_obs: int | DateLike | None, last_obs: int | DateLike | None
+        self,
+        first_obs: int | DateLike | None,
+        last_obs: int | DateLike | None,
+        demean: bool,
     ) -> None:
         """
         Performs sample adjustment for estimation
@@ -548,6 +554,8 @@ class ARCHModel(metaclass=ABCMeta):
             First observation to use when estimating model
         last_obs : {int, str, datetime, datetime64, Timestamp}
             Last observation to use when estimating model
+        demean: bool
+            Perform demean on fitting data y
 
         Notes
         -----
@@ -566,6 +574,7 @@ class ARCHModel(metaclass=ABCMeta):
         tol: float | None = None,
         options: dict[str, Any] | None = None,
         backcast: None | float | Float64Array = None,
+        demean: bool = False,
     ) -> ARCHModelResult:
         r"""
         Estimate model parameters
@@ -628,14 +637,14 @@ class ARCHModel(metaclass=ABCMeta):
             v.closed_form and d.num_params == 0 and isinstance(v, ConstantVariance)
         )
 
-        self._adjust_sample(first_obs, last_obs)
+        self._adjust_sample(first_obs, last_obs, demean)
 
         resids = np.asarray(self.resids(self.starting_values()), dtype=float)
         self._check_scale(resids)
         if self.scale != 1.0:
             # Scale changed, rescale data and reset model
             self._y = cast(np.ndarray, self.scale * np.asarray(self._y_original))
-            self._adjust_sample(first_obs, last_obs)
+            self._adjust_sample(first_obs, last_obs, demean)
             resids = np.asarray(self.resids(self.starting_values()), dtype=float)
 
         if backcast is None:

@@ -674,6 +674,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self,
         first_obs: None | int | DateLike,
         last_obs: None | int | DateLike,
+        demean: bool,
     ) -> None:
         index = self._y_series.index
         _first_obs_index = cutoff_to_index(first_obs, index, 0)
@@ -683,6 +684,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             raise ValueError("first_obs and last_obs produce in an empty array.")
         self._fit_indices = [_first_obs_index, _last_obs_index]
         self._fit_y = self._y[_first_obs_index:_last_obs_index]
+        if demean:
+            self._fit_y = np.mean(self._fit_y)
         reg = self.regressors
         self._fit_regressors = reg[_first_obs_index:_last_obs_index]
         self.volatility.start, self.volatility.stop = self._fit_indices
