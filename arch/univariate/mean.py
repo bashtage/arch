@@ -306,6 +306,15 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
         self._init_model()
 
+    def _scale_changed(self):
+        """
+        Called when the scale has changed.  This allows the model
+        to update any values that are affected by the scale changes,
+        e.g., any logged values.
+        """
+        # Reinitialize the model
+        self._init_model()
+
     @property
     def x(self) -> ArrayLike2D | None:
         """Gets the value of the exogenous regressors in the model"""
