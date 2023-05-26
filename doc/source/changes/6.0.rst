@@ -2,6 +2,14 @@
 Version 6
 =========
 
+Release 6.1
+===========
+- Pushed back the adoption of Cython 3 until a later date
+- Fixed a bug that occurred when:
+
+  - Using a AR, HAR or other model with lagged dependent variables; and
+  - ``rescale=True`` or with data that was automatically rescaled.
+
 Release 6.0
 ===========
 - Minimum supported Python is 3.9
