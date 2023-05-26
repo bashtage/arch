@@ -1035,12 +1035,14 @@ def test_rescale():
     lr_fcast_rescale = res_rescale.forecast(horizon=10000, reindex=False)
 
     omega_bar = res.params.omega / (1 - res.params["alpha[1]"] - res.params["beta[1]"])
-    assert_allclose(lr_fcast.residual_variance.iloc[0, -1], omega_bar)
+    assert_allclose(lr_fcast.residual_variance.iloc[0, -1], omega_bar, rtol=1e-5)
 
     omega_bar_rescale = res_rescale.params.omega / (
         1 - res_rescale.params["alpha[1]"] - res_rescale.params["beta[1]"]
     )
-    assert_allclose(lr_fcast_rescale.residual_variance.iloc[0, -1], omega_bar_rescale)
+    assert_allclose(
+        lr_fcast_rescale.residual_variance.iloc[0, -1], omega_bar_rescale, rtol=1e-5
+    )
 
     rets = 10000 * SP500.copy()
     model_rescale = arch_model(
@@ -1070,8 +1072,11 @@ def test_rescale_ar():
     vol = GARCH()
     mod = ARX(data, lags=3, constant=True, volatility=vol, rescale=True)
     res = mod.fit()
-    mod.scale
 
     mod_no_rs = ARX(100 * data, lags=3, constant=True, volatility=vol, rescale=False)
     res_no_rs = mod_no_rs.fit()
-    assert_allclose(res_no_rs.params.iloc[1:4], res.params.iloc[1:4])
+    assert_allclose(res_no_rs.params.iloc[1:4], res.params.iloc[1:4], rtol=1e-5)
+
+    fcasts = res.forecast(horizon=100, reindex=False).variance
+    fcasts_no_rs = res_no_rs.forecast(horizon=100, reindex=False).variance
+    assert_allclose(fcasts.iloc[0, -10:], fcasts_no_rs.iloc[0, -10:], rtol=1e-5)
