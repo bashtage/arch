@@ -186,7 +186,6 @@ installed.
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: End Users/Desktop",
             "Intended Audience :: Financial and Insurance Industry",
-            "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
             "Programming Language :: Python :: 3.10",
