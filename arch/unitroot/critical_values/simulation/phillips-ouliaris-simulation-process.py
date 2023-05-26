@@ -4,7 +4,7 @@ from collections import defaultdict
 import glob
 from itertools import product
 import os
-from typing import Dict, List, NamedTuple, Tuple, cast
+from typing import NamedTuple, cast
 
 from black import FileMode, TargetVersion, format_file_contents
 import matplotlib.backends.backend_pdf

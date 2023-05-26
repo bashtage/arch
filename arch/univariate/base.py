@@ -6,7 +6,6 @@ from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 from copy import deepcopy
 import datetime as dt
-from functools import cached_property
 from typing import Any, Callable, Sequence, cast
 import warnings
 
