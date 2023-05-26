@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from functools import cached_property
 from typing import Sequence
 
 import numpy as np
@@ -30,6 +29,7 @@ from arch.unitroot.unitroot import SHORT_TREND_DESCRIPTION
 from arch.utility.array import ensure2d
 from arch.utility.io import pval_format, str_format
 from arch.utility.timeseries import add_trend
+from arch.vendor import cached_property
 
 __all__ = [
     "engle_granger",

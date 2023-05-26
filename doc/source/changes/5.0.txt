@@ -2,11 +2,11 @@
 Version 5
 =========
 
-Changes Since 5.5
-=================
-- Removed dependence on property-cached
-- Bumped minimum NumPy, SciPy, pandas, statsmodels and Cython
-- Added compatability with Cython 3
+Release 5.6
+===========
+- Fix a bug in ``forecast`` forecasting from a model with lagged dependent
+  variables (e.g., AR) with rescaled data (either ``rescale=True`` or when
+  using automatic rescaling).  (:issue:`632`)
 
 Release 5.5
 ===========

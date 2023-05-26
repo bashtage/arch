@@ -52,8 +52,6 @@ else:
             VolatilityUpdater,
         )
 
-from functools import cached_property
-
 from arch.typing import Literal
 from arch.univariate.volatility import (
     APARCH,
@@ -71,6 +69,7 @@ from arch.utility.array import (
     ensure1d,
     parse_dataframe,
 )
+from arch.vendor import cached_property
 
 __all__ = ["HARX", "ConstantMean", "ZeroMean", "ARX", "arch_model", "LS", "ARCHInMean"]
 
@@ -305,6 +304,15 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             )
             self._hold_back = max_lags
 
+        self._init_model()
+
+    def _scale_changed(self):
+        """
+        Called when the scale has changed.  This allows the model
+        to update any values that are affected by the scale changes,
+        e.g., any logged values.
+        """
+        # Reinitialize the model
         self._init_model()
 
     @property
