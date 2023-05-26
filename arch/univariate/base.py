@@ -314,6 +314,7 @@ class ARCHModel(metaclass=ABCMeta):
             return
         self.scale = rescale
 
+    @abstractmethod
     def _scale_changed(self):
         """
         Called when the scale has changed.  This allows the model
