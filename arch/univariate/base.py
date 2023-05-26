@@ -314,6 +314,13 @@ class ARCHModel(metaclass=ABCMeta):
             return
         self.scale = rescale
 
+    def _scale_changed(self):
+        """
+        Called when the scale has changed.  This allows the model
+        to update any values that are affected by the scale changes,
+        e.g., any logged values.
+        """
+
     def _r2(self, params: ArrayLike1D) -> None | float:
         """
         Computes the model r-square.  Optional to over-ride.  Must match
@@ -635,6 +642,7 @@ class ARCHModel(metaclass=ABCMeta):
         if self.scale != 1.0:
             # Scale changed, rescale data and reset model
             self._y = cast(np.ndarray, self.scale * np.asarray(self._y_original))
+            self._scale_changed()
             self._adjust_sample(first_obs, last_obs)
             resids = np.asarray(self.resids(self.starting_values()), dtype=float)
 

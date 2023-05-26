@@ -998,3 +998,80 @@ def test_simulation_exog():
     delta = forecasts_10.mean - forecasts.mean
     expected = (10 * res.params[["x0", "x1"]]).sum() + np.zeros_like(delta)
     assert_allclose(delta, expected)
+
+
+def test_rescale():
+    # GH 632
+
+    rets = 100 * SP500.copy()
+
+    model = arch_model(
+        rets,
+        p=1,
+        o=0,
+        q=1,
+        mean="AR",
+        lags=1,
+        vol="GARCH",
+        dist="normal",
+        rescale=False,
+    )
+    res = model.fit(disp="off")
+
+    model_rescale = arch_model(
+        rets,
+        p=1,
+        o=0,
+        q=1,
+        mean="AR",
+        lags=1,
+        vol="GARCH",
+        dist="normal",
+        rescale=True,
+    )
+    res_rescale = model_rescale.fit(disp="off")
+
+    lr_fcast = res.forecast(horizon=10000, reindex=False)
+    lr_fcast_rescale = res_rescale.forecast(horizon=10000, reindex=False)
+
+    omega_bar = res.params.omega / (1 - res.params["alpha[1]"] - res.params["beta[1]"])
+    assert_allclose(lr_fcast.residual_variance.iloc[0, -1], omega_bar)
+
+    omega_bar_rescale = res_rescale.params.omega / (
+        1 - res_rescale.params["alpha[1]"] - res_rescale.params["beta[1]"]
+    )
+    assert_allclose(lr_fcast_rescale.residual_variance.iloc[0, -1], omega_bar_rescale)
+
+    rets = 10000 * SP500.copy()
+    model_rescale = arch_model(
+        rets,
+        p=1,
+        o=0,
+        q=1,
+        mean="AR",
+        lags=1,
+        vol="GARCH",
+        dist="normal",
+        rescale=True,
+    )
+    res_rescale = model_rescale.fit(disp="off")
+    omega_bar_rescale = res_rescale.params.omega / (
+        1 - res_rescale.params["alpha[1]"] - res_rescale.params["beta[1]"]
+    )
+    assert_allclose(
+        lr_fcast_rescale.residual_variance.iloc[0, -1], omega_bar_rescale, rtol=1e-5
+    )
+
+
+def test_rescale_ar():
+    # GH 632
+    am = arch_model(None, mean="AR", lags=3, vol="GARCH", p=1, o=0, q=1)
+    data = am.simulate([10, 0.4, 0.3, 0.2, 10, 0.1, 0.85], 10000).data / 1000
+    vol = GARCH()
+    mod = ARX(data, lags=3, constant=True, volatility=vol, rescale=True)
+    res = mod.fit()
+    mod.scale
+
+    mod_no_rs = ARX(100 * data, lags=3, constant=True, volatility=vol, rescale=False)
+    res_no_rs = mod_no_rs.fit()
+    assert_allclose(res_no_rs.params.iloc[1:4], res.params.iloc[1:4])
