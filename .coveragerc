@@ -5,6 +5,7 @@ branch = True
 omit =
     */_version.py
     */compat/*
+    */vendor/*
 plugins = Cython.Coverage
 
 [report]

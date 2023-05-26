@@ -45,6 +45,7 @@ from arch.utility.exceptions import (
     starting_value_warning,
 )
 from arch.utility.testing import WaldTestStatistic
+from arch.vendor import cached_property
 
 try:
     from matplotlib.figure import Figure
