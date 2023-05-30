@@ -13,7 +13,6 @@ import pandas as pd
 from scipy.optimize import OptimizeResult
 from statsmodels.tsa.tsatools import lagmat
 
-from arch.__future__._utility import check_reindex
 from arch.typing import (
     ArrayLike,
     ArrayLike1D,
@@ -944,10 +943,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         rng: Callable[[int | tuple[int, ...]], Float64Array] | None = None,
         random_state: np.random.RandomState | None = None,
         *,
-        reindex: bool | None = None,
+        reindex: bool = False,
         x: None | dict[Label, ArrayLike] | ArrayLike = None,
     ) -> ARCHModelForecast:
-        reindex = check_reindex(reindex)
         if not isinstance(horizon, (int, np.integer)) or horizon < 1:
             raise ValueError("horizon must be an integer >= 1.")
         # Check start

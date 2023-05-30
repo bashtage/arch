@@ -2,6 +2,14 @@
 Version 6
 =========
 
+Release 6.2 (Not Released)
+==========================
+- Changed the default value of ``reindex`` to ``False`` so that forecasts
+  will not match the input by default.  Set ``reindex`` to ``True`` if this is
+  required.
+- Made ``from __future__ import reindex`` a no-op.
+- Updated notebooks to reflect best practices
+
 Release 6.1
 ===========
 - Pushed back the adoption of Cython 3 until a later date
