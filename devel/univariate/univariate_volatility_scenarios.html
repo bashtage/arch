@@ -15,7 +15,7 @@
     
   
       
-        <title>Volatility Scenarios - arch 6.1.0</title>
+        <title>Volatility Scenarios - arch v6.1.1 (+3)</title>
       
     
 
@@ -93,7 +93,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch 6.1.0" class="md-header__button md-logo" aria-label="arch 6.1.0" data-md-component="logo">
+    <a href="../index.html" title="arch v6.1.1 (+3)" class="md-header__button md-logo" aria-label="arch v6.1.1 (+3)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -103,7 +103,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 6.1.0
+            arch v6.1.1 (+3)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -190,10 +190,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch 6.1.0" class="md-nav__button md-logo" aria-label="arch 6.1.0" data-md-component="logo">
+    <a href="../index.html" title="arch v6.1.1 (+3)" class="md-nav__button md-logo" aria-label="arch v6.1.1 (+3)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 6.1.0
+    arch v6.1.1 (+3)
   </label>
   
     <div class="md-nav__source">
@@ -772,7 +772,7 @@ Name: Adj Close, dtype: float64
 </div>
 <p>The one advantage of constructing the model using the components is that the NumPy <code class="docutils literal notranslate"><span class="pre">RandomState</span></code> that is used to simulate from the model can be externally set. This allows the generator seed to be easily set and for the state to reset, if needed.</p>
 <p><strong>NOTE</strong>: It is always a good idea to scale return by 100 before estimating ARCH-type models. This helps the optimizer converse since the scale of the volatility intercept is much closer to the scale of the other parameters in the model.</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[3]:
 </code></pre></div>
 </div>
@@ -780,21 +780,12 @@ Name: Adj Close, dtype: float64
 
 <span class="c1"># Build components to set the state for the distribution</span>
 <span class="n">random_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">dist</span> <span class="o">=</span> <span class="n">Normal</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+<span class="n">dist</span> <span class="o">=</span> <span class="n">Normal</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
 <span class="n">volatility</span> <span class="o">=</span> <span class="n">GARCH</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
 <span class="n">mod</span> <span class="o">=</span> <span class="n">ConstantMean</span><span class="p">(</span><span class="n">rets</span><span class="p">,</span> <span class="n">volatility</span><span class="o">=</span><span class="n">volatility</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="n">dist</span><span class="p">)</span>
 </code></pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-C:\git\arch\arch\univariate\distribution.py:63: FutureWarning: random_state is deprecated and will be removed in a future update. Use seed instead.
-  warnings.warn(
-</pre></div></div>
 </div>
 <p>Fitting the model is standard.</p>
 <div class="nbinput docutils container">
@@ -820,8 +811,8 @@ Vol Model:                  GJR-GARCH   Log-Likelihood:               -8196.75
 Distribution:                  Normal   AIC:                           16403.5
 Method:            Maximum Likelihood   BIC:                           16436.1
                                         No. Observations:                 5030
-Date:                Wed, Apr 12 2023   Df Residuals:                     5029
-Time:                        15:59:51   Df Model:                            1
+Date:                Tue, May 30 2023   Df Residuals:                     5029
+Time:                        10:55:35   Df Model:                            1
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
@@ -838,50 +829,17 @@ beta[1]        0.9100  1.107e-02     82.232      0.000      [  0.888,  0.932]
 =============================================================================
 
 Covariance estimator: robust
-ARCHModelResult, id: 0x1548c0a8850
+ARCHModelResult, id: 0x202821906a0
 </pre></div></div>
 </div>
 <p>GJR-GARCH models support analytical forecasts, which is the default. The forecasts are produced for all of 2017 using the estimated model parameters.</p>
+<p>All GARCH specification are complete models in the sense that they specify a distribution. This allows simulations to be produced using the assumptions in the model. The <code class="docutils literal notranslate"><span class="pre">forecast</span></code> function can be made to produce simulations using the assumed distribution by setting <code class="docutils literal notranslate"><span class="pre">method='simulation'</span></code>.</p>
+<p>These forecasts are similar to the analytical forecasts above. As the number of simulation increases towards <span class="math notranslate nohighlight">\(\infty\)</span>, the simulation-based forecasts will converge to the analytical values above.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[5]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1-1-2017&quot;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
-</code></pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-                h.01      h.02      h.03      h.04      h.05      h.06
-Date
-2017-01-03  0.623295  0.637504  0.651549  0.665431  0.679154  0.692717  \
-2017-01-04  0.599455  0.613940  0.628257  0.642408  0.656397  0.670223
-2017-01-05  0.567297  0.582153  0.596837  0.611352  0.625699  0.639880
-2017-01-06  0.542506  0.557649  0.572616  0.587410  0.602034  0.616488
-2017-01-09  0.515452  0.530906  0.546183  0.561282  0.576208  0.590961
-
-                h.07      h.08      h.09      h.10
-Date
-2017-01-03  0.706124  0.719376  0.732475  0.745423
-2017-01-04  0.683890  0.697399  0.710752  0.723950
-2017-01-05  0.653897  0.667753  0.681448  0.694985
-2017-01-06  0.630776  0.644899  0.658858  0.672656
-2017-01-09  0.605543  0.619957  0.634205  0.648288
-</pre></div></div>
-</div>
-<p>All GARCH specification are complete models in the sense that they specify a distribution. This allows simulations to be produced using the assumptions in the model. The <code class="docutils literal notranslate"><span class="pre">forecast</span></code> function can be made to produce simulations using the assumed distribution by setting <code class="docutils literal notranslate"><span class="pre">method='simulation'</span></code>.</p>
-<p>These forecasts are similar to the analytical forecasts above. As the number of simulation increases towards <span class="math notranslate nohighlight">\(\infty\)</span>, the simulation-based forecasts will converge to the analytical values above.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[6]:
-</code></pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">sim_forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span>
-    <span class="n">start</span><span class="o">=</span><span class="s2">&quot;1-1-2017&quot;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;simulation&quot;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span>
-<span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">sim_forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1-1-2017&quot;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;simulation&quot;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">sim_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </code></pre></div>
 </div>
@@ -912,6 +870,37 @@ Date
 <p><code class="docutils literal notranslate"><span class="pre">forecast</span></code> supports replacing the generator based on the assumed distribution of residuals in the model with any other generator. A shock generator should usually produce unit variance shocks. However, in this example the first 5 shocks generated have variance 2, and the remainder are standard normal. This scenario consists of a period of consistently surprising volatility where the volatility has shifted for some reason.</p>
 <p>The forecast variances are much larger and grow faster than those from either method previously illustrated. This reflects the increase in volatility in the first 5 days.</p>
 <div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[6]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1-1-2017&quot;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+                h.01      h.02      h.03      h.04      h.05      h.06
+Date
+2017-01-03  0.623295  0.637504  0.651549  0.665431  0.679154  0.692717  \
+2017-01-04  0.599455  0.613940  0.628257  0.642408  0.656397  0.670223
+2017-01-05  0.567297  0.582153  0.596837  0.611352  0.625699  0.639880
+2017-01-06  0.542506  0.557649  0.572616  0.587410  0.602034  0.616488
+2017-01-09  0.515452  0.530906  0.546183  0.561282  0.576208  0.590961
+
+                h.07      h.08      h.09      h.10
+Date
+2017-01-03  0.706124  0.719376  0.732475  0.745423
+2017-01-04  0.683890  0.697399  0.710752  0.723950
+2017-01-05  0.653897  0.667753  0.681448  0.694985
+2017-01-06  0.630776  0.644899  0.658858  0.672656
+2017-01-09  0.605543  0.619957  0.634205  0.648288
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[7]:
 </code></pre></div>
 </div>
@@ -927,7 +916,7 @@ Date
 
 
 <span class="n">scenario_forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span>
-    <span class="n">start</span><span class="o">=</span><span class="s2">&quot;1-1-2017&quot;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;simulation&quot;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">scenario_rng</span><span class="p">,</span> <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span>
+    <span class="n">start</span><span class="o">=</span><span class="s2">&quot;1-1-2017&quot;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;simulation&quot;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">scenario_rng</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">scenario_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </code></pre></div>
@@ -951,7 +940,7 @@ Date
 2017-01-03  0.970796  0.977504  0.982202  0.992547
 2017-01-04  0.955295  0.965540  0.966432  0.974248
 2017-01-05  0.905952  0.915208  0.930777  0.938636
-2017-01-06  0.856175  0.873866  0.886221  0.890002
+2017-01-06  0.856175  0.873865  0.886221  0.890002
 2017-01-09  0.851104  0.864591  0.874696  0.894397
 </pre></div></div>
 </div>
@@ -979,11 +968,7 @@ parameter.</p>
 <span class="n">shocks</span> <span class="o">=</span> <span class="n">std_shocks</span><span class="p">[</span><span class="s2">&quot;2008-08-01&quot;</span><span class="p">:</span><span class="s2">&quot;2008-11-10&quot;</span><span class="p">]</span>
 <span class="n">scenario_bootstrap</span> <span class="o">=</span> <span class="n">ScenarioBootstrapRNG</span><span class="p">(</span><span class="n">shocks</span><span class="p">,</span> <span class="n">random_state</span><span class="p">)</span>
 <span class="n">bs_forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span>
-    <span class="n">start</span><span class="o">=</span><span class="s2">&quot;1-1-2017&quot;</span><span class="p">,</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;simulation&quot;</span><span class="p">,</span>
-    <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-    <span class="n">rng</span><span class="o">=</span><span class="n">scenario_bootstrap</span><span class="o">.</span><span class="n">rng</span><span class="p">,</span>
-    <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">start</span><span class="o">=</span><span class="s2">&quot;1-1-2017&quot;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;simulation&quot;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">scenario_bootstrap</span><span class="o">.</span><span class="n">rng</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">bs_forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </code></pre></div>
@@ -1006,7 +991,7 @@ Date
 Date
 2017-01-03  0.958215  1.043704  1.124684  1.203893
 2017-01-04  0.945120  1.013400  1.084042  1.158148
-2017-01-05  0.889032  0.961424  1.022413  1.097192
+2017-01-05  0.889032  0.961424  1.022412  1.097192
 2017-01-06  0.840667  0.895559  0.957266  1.019497
 2017-01-09  0.820788  0.887791  0.938708  1.028614
 </pre></div></div>

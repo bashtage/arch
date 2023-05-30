@@ -15,7 +15,7 @@
     
   
       
-        <title>Volatility Forecasting - arch 6.1.0</title>
+        <title>Volatility Forecasting - arch v6.1.1 (+3)</title>
       
     
 
@@ -75,7 +75,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#Future-Forecast-Shape-Changes" class="md-skip">
+        <a href="#Data" class="md-skip">
           Skip to content
         </a>
       
@@ -93,7 +93,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch 6.1.0" class="md-header__button md-logo" aria-label="arch 6.1.0" data-md-component="logo">
+    <a href="../index.html" title="arch v6.1.1 (+3)" class="md-header__button md-logo" aria-label="arch v6.1.1 (+3)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -103,7 +103,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 6.1.0
+            arch v6.1.1 (+3)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -190,10 +190,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch 6.1.0" class="md-nav__button md-logo" aria-label="arch 6.1.0" data-md-component="logo">
+    <a href="../index.html" title="arch v6.1.1 (+3)" class="md-nav__button md-logo" aria-label="arch v6.1.1 (+3)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 6.1.0
+    arch v6.1.1 (+3)
   </label>
   
     <div class="md-nav__source">
@@ -327,13 +327,6 @@
       Contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#Future-Forecast-Shape-Changes" class="md-nav__link">
-    <span title="/univariate/univariate_volatility_forecasting.ipynb#future-forecast-shape-changes (reference label)" class="md-ellipsis">Future Forecast Shape Changes</span>
-  </a>
-  
-</li>
       
         <li class="md-nav__item">
   <a href="#Data" class="md-nav__link">
@@ -524,13 +517,6 @@
       Contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#Future-Forecast-Shape-Changes" class="md-nav__link">
-    <span title="/univariate/univariate_volatility_forecasting.ipynb#future-forecast-shape-changes (reference label)" class="md-ellipsis">Future Forecast Shape Changes</span>
-  </a>
-  
-</li>
       
         <li class="md-nav__item">
   <a href="#Data" class="md-nav__link">
@@ -903,13 +889,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#Future-Forecast-Shape-Changes" class="md-nav__link">
-    <span title="/univariate/univariate_volatility_forecasting.ipynb#future-forecast-shape-changes (reference label)" class="md-ellipsis">Future Forecast Shape Changes</span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#Data" class="md-nav__link">
     <span title="/univariate/univariate_volatility_forecasting.ipynb#data (reference label)" class="md-ellipsis">Data</span>
   </a>
@@ -1023,18 +1002,6 @@
 </code></pre></div>
 </div>
 </div>
-<h2 id="Future-Forecast-Shape-Changes">Future Forecast Shape Changes<a class="headerlink" href="#Future-Forecast-Shape-Changes" title="Permalink to this heading">¶</a></h2>
-<div class="admonition warning">
-<div class="admonition-title"><h3></div><p>WARNING</p>
-</h3><p>The future behavior of <code class="docutils literal notranslate"><span class="pre">forecast</span></code> is changing.</p>
-</div>
-<p>Versions of <code class="docutils literal notranslate"><span class="pre">arch</span></code> before 4.19 defaulted to returning forecast values with the same shape as the data used to fit the model. While this is convenient it is also computationally wasteful. This is especially true when using <code class="docutils literal notranslate"><span class="pre">method</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;simulation&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;bootstrap&quot;</span></code>. In future version of <code class="docutils literal notranslate"><span class="pre">arch</span></code>, the default behavior will change to only returning the minimal <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> that is needed to contain the forecast results. In the current version of <code class="docutils literal notranslate"><span class="pre">arch</span></code>, calling <code class="docutils literal notranslate"><span class="pre">forecast()</span></code> without
-the <code class="docutils literal notranslate"><span class="pre">reindex</span></code> keyword argument produces a <code class="docutils literal notranslate"><span class="pre">FutureWarning</span></code>. You can silence the future warning by:</p>
-<ul class="simple">
-<li><p>Using <code class="docutils literal notranslate"><span class="pre">reindex=False</span></code> which uses the future behavior.</p></li>
-<li><p>Using <code class="docutils literal notranslate"><span class="pre">reindex=True</span></code> which uses the legacy behavior.</p></li>
-<li><p>Importing <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">arch.__future__</span> <span class="pre">import</span> <span class="pre">reindexing</span></code> which will set the default to <code class="docutils literal notranslate"><span class="pre">False</span></code> and silence the warning.</p></li>
-</ul>
 <h2 id="Data">Data<a class="headerlink" href="#Data" title="Permalink to this heading">¶</a></h2>
 <p>These examples make use of S&amp;P 500 data from Yahoo! that is available from <code class="docutils literal notranslate"><span class="pre">arch.data.sp500</span></code>.</p>
 <div class="nbinput nblast docutils container">
@@ -1078,10 +1045,10 @@ the <code class="docutils literal notranslate"><span class="pre">reindex</span><
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     35,   Neg. LLF: 6970.282172935112
-Iteration:     10,   Func. Count:     63,   Neg. LLF: 6936.718477483884
+Iteration:      5,   Func. Count:     35,   Neg. LLF: 6970.2779565773335
+Iteration:     10,   Func. Count:     63,   Neg. LLF: 6936.718477482076
 Optimization terminated successfully    (Exit mode 0)
-            Current function value: 6936.718476988963
+            Current function value: 6936.718476988951
             Iterations: 11
             Function evaluations: 68
             Gradient evaluations: 11
@@ -1091,7 +1058,7 @@ Optimization terminated successfully    (Exit mode 0)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[4]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">()</span>
 </code></pre></div>
 </div>
 </div>
@@ -1135,7 +1102,7 @@ Date
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[6]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:])</span>
 </code></pre></div>
 </div>
@@ -1145,56 +1112,9 @@ Date
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-                h.1       h.2       h.3       h.4     h.5
+                h.1       h.2       h.3       h.4       h.5
 Date
-2018-12-31  3.59647  3.568502  3.540887  3.513621  3.4867
-</pre></div></div>
-</div>
-<p>If you fail to set <code class="docutils literal notranslate"><span class="pre">reindex</span></code> you will see a warning.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[7]:
-</code></pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-</code></pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-c:\git\arch\arch\__future__\_utility.py:11: FutureWarning:
-The default for reindex is True. After September 2021 this will change to
-False. Set reindex to True or False to silence this message. Alternatively,
-you can use the import comment
-
-from arch.__future__ import reindexing
-
-to globally set reindex to True and silence this warning.
-
-  warnings.warn(
-</pre></div></div>
-</div>
-<p>When not specified, or if <code class="docutils literal notranslate"><span class="pre">reindex</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, then values that are not computed are <code class="docutils literal notranslate"><span class="pre">nan</span></code>-filled.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[8]:
-</code></pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">residual_variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:])</span>
-</code></pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-                h.1       h.2       h.3       h.4     h.5
-Date
-2018-12-27      NaN       NaN       NaN       NaN     NaN
-2018-12-28      NaN       NaN       NaN       NaN     NaN
-2018-12-31  3.59647  3.568502  3.540887  3.513621  3.4867
+2018-12-31  3.59647  3.568502  3.540887  3.513621  3.486701
 </pre></div></div>
 </div>
 <h2 id="Alternative-Forecast-Generation-Schemes">Alternative Forecast Generation Schemes<a class="headerlink" href="#Alternative-Forecast-Generation-Schemes" title="Permalink to this heading">¶</a></h2>
@@ -1202,11 +1122,11 @@ Date
 <p>Fixed-windows forecasting uses data up to a specified date to generate all forecasts after that date. This can be implemented by passing the entire data in when initializing the model and then using <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> when calling <code class="docutils literal notranslate"><span class="pre">fit</span></code>. <code class="docutils literal notranslate"><span class="pre">forecast()</span></code> will, by default, produce forecasts after this final date.</p>
 <p><strong>Note</strong> <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> follow Python sequence rules so that the actual date in <code class="docutils literal notranslate"><span class="pre">last_obs</span></code> is not in the sample.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[7]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">last_obs</span><span class="o">=</span><span class="s2">&quot;2011-1-1&quot;</span><span class="p">,</span> <span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-<span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </code></pre></div>
 </div>
@@ -1235,7 +1155,7 @@ Date
 <h3 id="Rolling-Window-Forecasting">Rolling Window Forecasting<a class="headerlink" href="#Rolling-Window-Forecasting" title="Permalink to this heading">¶</a></h3>
 <p>Rolling window forecasts use a fixed sample length and then produce one-step from the final observation. These can be implemented using <code class="docutils literal notranslate"><span class="pre">first_obs</span></code> and <code class="docutils literal notranslate"><span class="pre">last_obs</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[8]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">index</span> <span class="o">=</span> <span class="n">returns</span><span class="o">.</span><span class="n">index</span>
@@ -1246,7 +1166,7 @@ Date
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">first_obs</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">last_obs</span><span class="o">=</span><span class="n">i</span> <span class="o">+</span> <span class="n">end_loc</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-    <span class="n">temp</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">variance</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">variance</span>
     <span class="n">fcast</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">forecasts</span><span class="p">[</span><span class="n">fcast</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">fcast</span>
 <span class="nb">print</span><span class="p">()</span>
@@ -1286,7 +1206,7 @@ Date
 <h3 id="Recursive-Forecast-Generation">Recursive Forecast Generation<a class="headerlink" href="#Recursive-Forecast-Generation" title="Permalink to this heading">¶</a></h3>
 <p>Recursive is similar to rolling except that the initial observation does not change. This can be easily implemented by dropping the <code class="docutils literal notranslate"><span class="pre">first_obs</span></code> input.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[9]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -1300,7 +1220,7 @@ Date
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">last_obs</span><span class="o">=</span><span class="n">i</span> <span class="o">+</span> <span class="n">end_loc</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-    <span class="n">temp</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">variance</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">variance</span>
     <span class="n">fcast</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">forecasts</span><span class="p">[</span><span class="n">fcast</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">fcast</span>
 <span class="nb">print</span><span class="p">()</span>
@@ -1341,13 +1261,13 @@ Date
 <h3 id="Analytical-Forecasts">Analytical Forecasts<a class="headerlink" href="#Analytical-Forecasts" title="Permalink to this heading">¶</a></h3>
 <p>All ARCH-type models have one-step analytical forecasts. Longer horizons only have closed forms for specific models. TARCH models do not have closed-form (analytical) forecasts for horizons larger than 1, and so simulation or bootstrapping is required. Attempting to produce forecasts for horizons larger than 1 using <code class="docutils literal notranslate"><span class="pre">method='analytical'</span></code> results in a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[10]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># TARCH specification</span>
 <span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="s2">&quot;GARCH&quot;</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-<span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 </code></pre></div>
 </div>
@@ -1357,10 +1277,10 @@ Date
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     40,   Neg. LLF: 6846.496665348549
-Iteration:     10,   Func. Count:     75,   Neg. LLF: 6822.883179474602
+Iteration:      5,   Func. Count:     40,   Neg. LLF: 6846.48928243015
+Iteration:     10,   Func. Count:     75,   Neg. LLF: 6822.883188650879
 Optimization terminated successfully    (Exit mode 0)
-            Current function value: 6822.882823372691
+            Current function value: 6822.882823441358
             Iterations: 13
             Function evaluations: 93
             Gradient evaluations: 13
@@ -1371,7 +1291,7 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <h3 id="Simulation-Forecasts">Simulation Forecasts<a class="headerlink" href="#Simulation-Forecasts" title="Permalink to this heading">¶</a></h3>
 <p>When using simulation- or bootstrap-based forecasts, an additional attribute of an <code class="docutils literal notranslate"><span class="pre">ARCHModelForecast</span></code> object is meaningful – <code class="docutils literal notranslate"><span class="pre">simulation</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[11]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -1384,7 +1304,7 @@ Name: 2018-12-31 00:00:00, dtype: float64
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[11]:
 </code></pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1396,14 +1316,14 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_forecasting_28_1.png" src="../_images/univariate_univariate_volatility_forecasting_28_1.png" />
+<img alt="../_images/univariate_univariate_volatility_forecasting_23_1.png" src="../_images/univariate_univariate_volatility_forecasting_23_1.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[12]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;simulation&quot;</span><span class="p">,</span> <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;simulation&quot;</span><span class="p">)</span>
 <span class="n">sims</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">simulations</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
@@ -1421,11 +1341,11 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_forecasting_29_0.png" src="../_images/univariate_univariate_volatility_forecasting_29_0.png" />
+<img alt="../_images/univariate_univariate_volatility_forecasting_24_0.png" src="../_images/univariate_univariate_volatility_forecasting_24_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[13]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
@@ -1435,28 +1355,28 @@ Name: 2018-12-31 00:00:00, dtype: float64
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[13]:
 </code></pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;AxesSubplot:&gt;
+&lt;Axes: &gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_forecasting_30_1.png" src="../_images/univariate_univariate_volatility_forecasting_30_1.png" />
+<img alt="../_images/univariate_univariate_volatility_forecasting_25_1.png" src="../_images/univariate_univariate_volatility_forecasting_25_1.png" />
 </div>
 </div>
 <h3 id="Bootstrap-Forecasts">Bootstrap Forecasts<a class="headerlink" href="#Bootstrap-Forecasts" title="Permalink to this heading">¶</a></h3>
 <p>Bootstrap-based forecasts are nearly identical to simulation-based forecasts except that the values used to simulate the process are computed from historical data rather than using the assumed distribution of the residuals. Forecasts produced using this method also return an <code class="docutils literal notranslate"><span class="pre">ARCHModelForecastSimulation</span></code> containing information about the simulated paths.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[14]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">,</span> <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">)</span>
 <span class="n">sims</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">simulations</span>
 
 <span class="n">lines</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sims</span><span class="o">.</span><span class="n">residual_variances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">::</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#9cb2d6&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
@@ -1473,7 +1393,7 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_forecasting_32_0.png" src="../_images/univariate_univariate_volatility_forecasting_32_0.png" />
+<img alt="../_images/univariate_univariate_volatility_forecasting_27_0.png" src="../_images/univariate_univariate_volatility_forecasting_27_0.png" />
 </div>
 </div>
 <h1 id="Value-at-Risk-Forecasting">Value-at-Risk Forecasting<a class="headerlink" href="#Value-at-Risk-Forecasting" title="Permalink to this heading">¶</a></h1>
@@ -1483,7 +1403,7 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <p>where <span class="math notranslate nohighlight">\(q_{\alpha}\)</span> is the <span class="math notranslate nohighlight">\(\alpha\)</span> quantile of the standardized residuals, e.g., 5%.</p>
 <p>The quantile can be either computed from the estimated model density or computed using the empirical distribution of the standardized residuals. The example below shows both methods.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[15]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="s2">&quot;Garch&quot;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">&quot;skewt&quot;</span><span class="p">)</span>
@@ -1493,13 +1413,14 @@ Name: 2018-12-31 00:00:00, dtype: float64
 </div>
 <h2 id="Parametric-VaR">Parametric VaR<a class="headerlink" href="#Parametric-VaR" title="Permalink to this heading">¶</a></h2>
 <p>First, we use the model to estimate the VaR. The quantiles can be computed using the <code class="docutils literal notranslate"><span class="pre">ppf</span></code> method of the distribution attached to the model. The quantiles are printed below.</p>
+<p><strong>Note</strong>: <code class="docutils literal notranslate"><span class="pre">forecast</span></code> is called with <code class="docutils literal notranslate"><span class="pre">align=&quot;target&quot;</span></code> so that the forecasts are already aligned with the target and so do not need further shifting.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[16]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;2018-1-1&quot;</span><span class="p">,</span> <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">cond_mean</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">mean</span><span class="p">[</span><span class="s2">&quot;2018&quot;</span><span class="p">:]</span>
-<span class="n">cond_var</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="s2">&quot;2018&quot;</span><span class="p">:]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">align</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">)</span>
+<span class="n">cond_mean</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">mean</span><span class="p">[</span><span class="s2">&quot;2018&quot;</span><span class="p">:]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">cond_var</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="s2">&quot;2018&quot;</span><span class="p">:]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">q</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">ppf</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">],</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 </code></pre></div>
@@ -1515,7 +1436,7 @@ Name: 2018-12-31 00:00:00, dtype: float64
 </div>
 <p>Next, we plot the two VaRs along with the returns. The returns that violate the VaR forecasts are highlighted.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[17]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">value_at_risk</span> <span class="o">=</span> <span class="o">-</span><span class="n">cond_mean</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cond_var</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span> <span class="n">q</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
@@ -1557,13 +1478,13 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_forecasting_38_0.png" src="../_images/univariate_univariate_volatility_forecasting_38_0.png" />
+<img alt="../_images/univariate_univariate_volatility_forecasting_33_0.png" src="../_images/univariate_univariate_volatility_forecasting_33_0.png" />
 </div>
 </div>
 <h2 id="Filtered-Historical-Simulation">Filtered Historical Simulation<a class="headerlink" href="#Filtered-Historical-Simulation" title="Permalink to this heading">¶</a></h2>
 <p>Next, we use the empirical distribution of the standardized residuals to estimate the quantiles. These values are very similar to those estimated using the assumed distribution. The plot below is identical except for the slightly different quantiles.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[18]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">std_rets</span> <span class="o">=</span> <span class="p">(</span><span class="n">returns</span><span class="p">[:</span><span class="s2">&quot;2017&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span>
@@ -1584,7 +1505,7 @@ dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[19]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">value_at_risk</span> <span class="o">=</span> <span class="o">-</span><span class="n">cond_mean</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cond_var</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span> <span class="n">q</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
@@ -1620,7 +1541,7 @@ dtype: float64
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_forecasting_41_0.png" src="../_images/univariate_univariate_volatility_forecasting_41_0.png" />
+<img alt="../_images/univariate_univariate_volatility_forecasting_36_0.png" src="../_images/univariate_univariate_volatility_forecasting_36_0.png" />
 </div>
 </div>
 
