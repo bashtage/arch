@@ -247,7 +247,7 @@ def test_force_int(data: ArrayLike, estimator: type[CovarianceEstimator]):
 
 def test_first_weights(data: ArrayLike, estimator: type[CovarianceEstimator]):
     w = estimator(data).kernel_weights
-    assert w[0] == 1.0
+    assert_allclose(w[0], 1.0)
 
 
 def test_constants(data: ArrayLike, estimator: type[CovarianceEstimator]):

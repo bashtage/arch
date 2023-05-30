@@ -2230,7 +2230,6 @@ def test_external_rng():
         method="simulation",
         start=900,
         simulations=250,
-        reindex=False,
     )
     rand_state.set_state(state)
     rng = rand_state.standard_normal
@@ -2241,6 +2240,5 @@ def test_external_rng():
         start=900,
         simulations=250,
         rng=rng,
-        reindex=False,
     )
     assert_allclose(fcast_1.residual_variance, fcast_2.residual_variance)

@@ -23,7 +23,6 @@ from statsmodels.tools.numdiff import approx_fprime, approx_hess
 from statsmodels.tools.tools import add_constant
 from statsmodels.tsa.tsatools import lagmat
 
-from arch.__future__._utility import check_reindex
 from arch.typing import (
     ArrayLike,
     ArrayLike1D,
@@ -941,7 +940,7 @@ class ARCHModel(metaclass=ABCMeta):
         rng: Callable[[int | tuple[int, ...]], Float64Array] | None = None,
         random_state: np.random.RandomState | None = None,
         *,
-        reindex: bool | None = None,
+        reindex: bool = False,
         x: None | dict[Label, ArrayLike] | ArrayLike = None,
     ) -> ARCHModelForecast:
         """
@@ -1399,7 +1398,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         rng: Callable[[int | tuple[int, ...]], Float64Array] | None = None,
         random_state: np.random.RandomState | None = None,
         *,
-        reindex: bool | None = None,
+        reindex: bool = False,
         x: None | dict[Label, ArrayLike] | ArrayLike = None,
     ) -> ARCHModelForecast:
         """
@@ -1442,11 +1441,11 @@ class ARCHModelFixedResult(_SummaryRepr):
             NumPy RandomState instance to use when method is 'bootstrap'
         reindex : bool, optional
             Whether to reindex the forecasts to have the same dimension as the series
-            being forecast. Prior to 4.18 this was the default. As of 4.19 this is
-            now optional. If not provided, a warning is raised about the future
-            change in the default which will occur after September 2021.
+            being forecast.
 
-            .. versionadded:: 4.19
+            .. versionchanged:: 6.2
+
+               The default has been changed to False.
 
         x : {dict[label, array_like], array_like}
             Values to use for exogenous regressors if any are included in the
@@ -1502,7 +1501,6 @@ class ARCHModelFixedResult(_SummaryRepr):
         [102, 2], so that it is aligned with the observation to use when
         evaluating, but still in the same column.
         """
-        reindex = check_reindex(reindex)
         if params is None:
             params = self._params
         else:
@@ -1598,7 +1596,6 @@ class ARCHModelFixedResult(_SummaryRepr):
                         start,
                         method=method,
                         simulations=simulations,
-                        reindex=False,
                     )
                     invalid_start = False
                 except ValueError:
@@ -1610,7 +1607,6 @@ class ARCHModelFixedResult(_SummaryRepr):
                 start,
                 method=method,
                 simulations=simulations,
-                reindex=False,
             )
 
         fig, ax = plt.subplots(1, 1)
