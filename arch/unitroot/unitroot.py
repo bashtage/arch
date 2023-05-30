@@ -82,6 +82,7 @@ from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
 from arch.utility.exceptions import (
     InfeasibleTestException,
     InvalidLengthWarning,
+    PerformanceWarning,
     invalid_length_doc,
 )
 from arch.utility.timeseries import add_trend
@@ -246,8 +247,8 @@ def _autolag_ols_low_memory(
             trendx.append(ones((nobs, 1)) / sqrt(nobs))
     rhs = hstack([level[:, None], hstack(trendx)])
     m = rhs.shape[1]
-    xpx = empty((m + maxlag, m + maxlag)) * nan
-    xpy = empty((m + maxlag, 1)) * nan
+    xpx = full((m + maxlag, m + maxlag), nan)
+    xpy = full((m + maxlag, 1), nan)
     assert isinstance(xpx, ndarray)
     assert isinstance(xpy, ndarray)
     xpy[:m] = rhs.T @ lhs
@@ -402,6 +403,14 @@ def _df_select_lags(
     if max_lags is None:
         max_lags = int(ceil(12.0 * power(nobs / 100.0, 1 / 4.0)))
         max_lags = max(min(max_lags, max_max_lags), 0)
+        if max_lags > 119:
+            warnings.warn(
+                "The value of max_lags was not specified and has been calculated as "
+                f"{max_lags}. Searching over a large lag length with a sample size "
+                f"of {nobs} is likely to be slow. Consider directly setting "
+                "``max_lags`` to a small value to avoid this performance issue.",
+                PerformanceWarning,
+            )
     assert max_lags is not None
     if low_memory:
         out = _autolag_ols_low_memory(y, max_lags, trend, method)

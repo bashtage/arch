@@ -84,3 +84,7 @@ is:\n\n {cov}
 
 class InfeasibleTestException(RuntimeError):
     pass
+
+
+class PerformanceWarning(UserWarning):
+    """Warning issued if recursions are run in CPython"""

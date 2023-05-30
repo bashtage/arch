@@ -2,11 +2,9 @@ import functools
 import os
 from typing import Any, Callable
 
+from arch.utility.exceptions import PerformanceWarning
+
 DISABLE_NUMBA = os.environ.get("ARCH_DISABLE_NUMBA", False) in ("1", "true", "True")
-
-
-class PerformanceWarning(UserWarning):
-    """Warning issued if recursions are run in CPython"""
 
 
 performance_warning: str = """

@@ -29,7 +29,7 @@ from arch.unitroot.unitroot import (
     mackinnoncrit,
     mackinnonp,
 )
-from arch.utility.exceptions import InfeasibleTestException
+from arch.utility.exceptions import InfeasibleTestException, PerformanceWarning
 
 DECIMAL_5 = 5
 DECIMAL_4 = 4
@@ -729,3 +729,9 @@ def test_autolag_ols_low_memory_smoke(trend, method):
     data = dataset_loader(macrodata)
     realgdp = np.log(data["realgdp"])
     _autolag_ols_low_memory(realgdp, maxlag=4, trend=trend, method=method)
+
+
+def test_autolag_warning():
+    y = np.random.standard_normal(1000000)
+    with pytest.warns(PerformanceWarning, match=""):
+        assert isinstance(ADF(y).stat, float)
