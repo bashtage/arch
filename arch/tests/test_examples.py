@@ -5,6 +5,7 @@ import sys
 import pytest
 
 SKIP = True
+REASON = "Required packages not available"
 
 try:
     import jupyter_client
@@ -34,7 +35,7 @@ try:
                 asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
 
 except ImportError:  # pragma: no cover
-    pytestmark = pytest.mark.skip(reason="Required packages not available")
+    pytestmark = pytest.mark.skip(reason=REASON)
 
 SLOW_NOTEBOOKS = ["multiple-comparison_examples.ipynb"]
 if bool(os.environ.get("ARCH_TEST_SLOW_NOTEBOOKS", False)):  # pragma: no cover
@@ -47,16 +48,13 @@ NOTEBOOK_DIR = os.path.abspath(os.path.join(head, "..", "..", "examples"))
 nbs = sorted(glob.glob(os.path.join(NOTEBOOK_DIR, "*.ipynb")))
 ids = [os.path.split(nb)[-1].split(".")[0] for nb in nbs]
 if not nbs:  # pragma: no cover
-    pytest.mark.skip(reason="No notebooks found and so no tests run")
-
-
-@pytest.fixture(params=nbs, ids=ids)
-def notebook(request):
-    return request.param
+    REASON = "No notebooks found and so no tests run"
+    pytestmark = pytest.mark.skip(reason=REASON)
 
 
 @pytest.mark.slow
-@pytest.mark.skipif(SKIP, reason="Required packages not available")
+@pytest.mark.parametrize("notebook", nbs, ids=ids)
+@pytest.mark.skipif(SKIP, reason=REASON)
 def test_notebook(notebook):
     nb_name = os.path.split(notebook)[-1]
     if nb_name in SLOW_NOTEBOOKS:
