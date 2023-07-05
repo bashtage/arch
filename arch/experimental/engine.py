@@ -158,7 +158,7 @@ def fori_loop(lower, upper, body_fun, init_val=None):
         import tensorflow as tf
 
         i = tf.constant(lower)
-        while_condition = lambda i: tf.less(i, upper)
+        while_condition = lambda i: tf.less(i, upper)  # noqa
 
         def body(i, val):
             return [tf.add(i, 1), body_fun(val)]

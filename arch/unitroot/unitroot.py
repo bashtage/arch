@@ -45,6 +45,7 @@ from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import OLS, RegressionResults
 from statsmodels.tsa.tsatools import lagmat
 
+from arch.experimental import linalg as alinalg, numpy as anp
 from arch.typing import (
     ArrayLike,
     ArrayLike1D,
@@ -86,8 +87,6 @@ from arch.utility.exceptions import (
     invalid_length_doc,
 )
 from arch.utility.timeseries import add_trend
-from arch.experimental import numpy as anp, linalg as alinalg
-
 
 __all__ = [
     "ADF",

@@ -11,7 +11,6 @@ from arch.experimental import numpy as np
 from arch.typing import ArrayLike, Float64Array
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
 
-
 __all__ = [
     "Bartlett",
     "Parzen",
