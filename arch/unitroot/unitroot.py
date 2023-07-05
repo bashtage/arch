@@ -345,7 +345,7 @@ def _autolag_ols(
     q, r = alinalg.qr(exog)
     # Convert it to 2-d so as to adapt to linalg.solve input format for all
     # engines
-    qpy = (q.T @ endog)[:, anp.newaxis]
+    qpy = q.T @ endog
     ypy = endog.T @ endog
     xpx = exog.T @ exog
 
