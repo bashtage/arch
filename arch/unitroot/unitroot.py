@@ -37,7 +37,7 @@ from numpy import (
     squeeze,
     sum as npsum,
 )
-from numpy.linalg import LinAlgError, inv, lstsq, matrix_rank, pinv, qr, solve
+from numpy.linalg import LinAlgError, inv, lstsq, matrix_rank, pinv, solve
 from pandas import DataFrame
 from scipy.stats import norm
 from statsmodels.iolib.summary import Summary
@@ -86,6 +86,8 @@ from arch.utility.exceptions import (
     invalid_length_doc,
 )
 from arch.utility.timeseries import add_trend
+from arch.experimental import numpy as anp, linalg as alinalg
+
 
 __all__ = [
     "ADF",
@@ -337,8 +339,13 @@ def _autolag_ols(
                 max_lags=maxlag, lag=max(exog_rank - startlag, 0)
             )
         )
-    q, r = qr(exog)
-    qpy = q.T @ endog
+
+    endog = anp.asarray(endog)
+    exog = anp.asarray(exog)
+    q, r = alinalg.qr(exog)
+    # Convert it to 2-d so as to adapt to linalg.solve input format for all
+    # engines
+    qpy = (q.T @ endog)[:, anp.newaxis]
     ypy = endog.T @ endog
     xpx = exog.T @ exog
 
@@ -347,12 +354,12 @@ def _autolag_ols(
     nobs = float(endog.shape[0])
     tstat[0] = inf
     for i in range(startlag, startlag + maxlag + 1):
-        b = solve(r[:i, :i], qpy[:i])
-        sigma2[i - startlag] = squeeze(ypy - b.T @ xpx[:i, :i] @ b) / nobs
+        b = alinalg.solve(r[:i, :i], qpy[:i])
+        sigma2[i - startlag] = anp.squeeze(ypy - b.T @ xpx[:i, :i] @ b) / nobs
         if lower_method == "t-stat" and i > startlag:
-            xpxi = inv(xpx[:i, :i])
-            stderr = sqrt(sigma2[i - startlag] * xpxi[-1, -1])
-            tstat[i - startlag] = squeeze(b[-1]) / stderr
+            xpxi = alinalg.inv(xpx[:i, :i])
+            stderr = anp.sqrt(sigma2[i - startlag] * xpxi[-1, -1])
+            tstat[i - startlag] = anp.squeeze(b[-1]) / stderr
 
     return _select_best_ic(method, nobs, sigma2, tstat)
 

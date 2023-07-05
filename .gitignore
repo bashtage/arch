@@ -18,3 +18,4 @@ dist/
 doc/build/
 doc/source/**/generated/
 arch/univariate/recursions.c
+**/.DS_Store
