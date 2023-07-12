@@ -49,15 +49,38 @@ VOLATILITIES = [
     EGARCH(),
 ]
 
+ANALYTICAL_VOLATILITIES = [
+    ConstantVariance(),
+    GARCH(),
+    FIGARCH(),
+    EWMAVariance(lam=0.94),
+    MIDASHyperbolic(),
+    HARCH(lags=[1, 5, 22]),
+    RiskMetrics2006(),
+]
+
+
 MODEL_SPECS = list(product(MEAN_MODELS, VOLATILITIES))
+ANALYTICAL_MODEL_SPECS = list(product(MEAN_MODELS, ANALYTICAL_VOLATILITIES))
 
 IDS = [
     f"{str(mean).split('(')[0]}-{str(vol).split('(')[0]}" for mean, vol in MODEL_SPECS
+]
+ANALYTICAL_IDS = [
+    f"{str(mean).split('(')[0]}-{str(vol).split('(')[0]}"
+    for mean, vol in ANALYTICAL_MODEL_SPECS
 ]
 
 
 @pytest.fixture(params=MODEL_SPECS, ids=IDS)
 def model_spec(request):
+    mean, vol = request.param
+    mean.volatility = vol
+    return mean
+
+
+@pytest.fixture(params=ANALYTICAL_MODEL_SPECS, ids=ANALYTICAL_IDS)
+def analytical_model_spec(request):
     mean, vol = request.param
     mean.volatility = vol
     return mean
@@ -1053,3 +1076,31 @@ def test_rescale_ar():
     fcasts = res.forecast(horizon=100).variance
     fcasts_no_rs = res_no_rs.forecast(horizon=100).variance
     assert_allclose(fcasts.iloc[0, -10:], fcasts_no_rs.iloc[0, -10:], rtol=1e-5)
+
+
+def test_figarch_multistep():
+    # GH 670
+    mod = ConstantMean(SP500, volatility=FIGARCH())
+    res = mod.fit(disp="off")
+    fcasts = res.forecast(horizon=10)
+    rv = fcasts.residual_variance
+    assert np.all(np.isfinite(rv))
+    assert rv.shape == (1, 10)
+    fcasts_ri = res.forecast(horizon=10, reindex=True)
+    rv_ri = fcasts_ri.residual_variance
+    assert_frame_equal(rv, rv_ri.iloc[-1:])
+    assert rv_ri.shape == (SP500.shape[0], 10)
+
+
+def test_multistep(analytical_model_spec):
+    # GH 670
+    # Ensure all work as expected
+    res = analytical_model_spec.fit(disp="off")
+    fcasts = res.forecast(horizon=10)
+    rv = fcasts.residual_variance
+    assert np.all(np.isfinite(rv))
+    assert rv.shape == (1, 10)
+    fcasts_ri = res.forecast(horizon=10, reindex=True)
+    rv_ri = fcasts_ri.residual_variance
+    assert_frame_equal(rv, rv_ri.iloc[-1:])
+    assert rv_ri.shape == (SP500.shape[0], 10)
