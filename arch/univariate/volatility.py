@@ -3235,6 +3235,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         temp_forecasts = np.empty(truncation + horizon)
         resids2 = resids**2
         for i in range(start, t):
+            fcast_loc = i - start
             available = i + 1 - max(0, i - truncation + 1)
             temp_forecasts[truncation - available : truncation] = resids2[
                 max(0, i - truncation + 1) : i + 1
@@ -3246,9 +3247,8 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 temp_forecasts[truncation + h] = omega_tilde + lam_rev.dot(
                     lagged_forecasts
                 )
-            forecasts[i, :] = temp_forecasts[truncation:]
+            forecasts[fcast_loc, :] = temp_forecasts[truncation:]
 
-        forecasts[:start] = np.nan
         return VarianceForecast(forecasts)
 
     def _simulation_forecast(
