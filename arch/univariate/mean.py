@@ -326,7 +326,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             if self._x.shape[0] != self._y.shape[0]:
                 raise ValueError("x must have the same number of observations as y")
 
-            self._init_model()
+        self._init_model()
 
     def _scale_changed(self):
         """
