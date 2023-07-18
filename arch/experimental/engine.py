@@ -2,6 +2,7 @@ from contextlib import contextmanager
 from typing import Any
 
 _BACKEND_ENGINE = "numpy"
+_SUPPORTED_ENGINES = ["numpy", "tensorflow", "cupy", "jax"]
 
 
 def backend():
@@ -20,7 +21,8 @@ def set_backend(library_name):
         Library name. Default is `numpy`. Options are `numpy`, `tensorflow`,
         `cupy` and `jax`.
     """
-    assert library_name.lower() in ["numpy", "tensorflow", "cupy", "jax"], (
+    library_name = library_name.lower()
+    assert library_name in _SUPPORTED_ENGINES, (
         "Only `numpy`, `tensorflow`, `cupy` and `jax` are supported, but not "
         f"{library_name}"
     )
@@ -42,7 +44,8 @@ def use_backend(library_name="numpy"):
         Library name. Default is `numpy`. Options are `numpy`, `tensorflow`,
         `cupy` and `jax`.
     """
-    assert library_name.lower() in ["numpy", "tensorflow", "cupy", "jax"], (
+    library_name = library_name.lower()
+    assert library_name.lower() in _SUPPORTED_ENGINES, (
         "Only `numpy`, `tensorflow`, `cupy` and `jax` are supported, but not "
         f"{library_name}"
     )
@@ -64,16 +67,12 @@ class NumpyEngine:
     NumPy engine.
     """
 
-    @property
-    def name(self):
-        """
-        Get engine name.
-        """
-        global _BACKEND_ENGINE
-        return _BACKEND_ENGINE
-
     def __getattribute__(self, __name: str) -> Any:
         global _BACKEND_ENGINE
+
+        if __name == "name":
+            return _BACKEND_ENGINE
+
         try:
             if _BACKEND_ENGINE == "numpy":
                 import numpy as anp
@@ -96,7 +95,7 @@ class NumpyEngine:
             return getattr(anp, __name)
         except AttributeError:
             raise AttributeError(
-                "Cannot get attribute / function from numpy library in "
+                f"Cannot get attribute / function ({__name}) from numpy library in "
                 f"backend engine {_BACKEND_ENGINE}"
             )
 
@@ -106,16 +105,12 @@ class LinAlgEngine:
     Linear algebra engine.
     """
 
-    @property
-    def name(self):
-        """
-        Get engine name.
-        """
-        global _BACKEND_ENGINE
-        return _BACKEND_ENGINE
-
     def __getattribute__(self, __name: str) -> Any:
         global _BACKEND_ENGINE
+
+        if __name == "name":
+            return _BACKEND_ENGINE
+
         try:
             if _BACKEND_ENGINE == "numpy":
                 import numpy.linalg as alinalg
@@ -138,34 +133,9 @@ class LinAlgEngine:
             return getattr(alinalg, __name)
         except AttributeError:
             raise AttributeError(
-                "Cannot get attribute / function from linalg library in "
+                f"Cannot get attribute / function ({__name}) from linalg library in "
                 f"backend engine {_BACKEND_ENGINE}"
             )
-
-
-def fori_loop(lower, upper, body_fun, init_val=None):
-    global _BACKEND_ENGINE
-    if _BACKEND_ENGINE in ["numpy", "cupy"]:
-        val = init_val
-        for i in range(lower, upper):
-            val = body_fun(i, val)
-        return val
-    elif _BACKEND_ENGINE == "jax":
-        import jax.lax
-
-        return jax.lax.fori_loop(lower, upper, body_fun, init_val)
-    elif _BACKEND_ENGINE == "tensorflow":
-        import tensorflow as tf
-
-        i = tf.constant(lower)
-        while_condition = lambda i: tf.less(i, upper)  # noqa
-
-        def body(i, val):
-            return [tf.add(i, 1), body_fun(val)]
-
-        return tf.while_loop(while_condition, body, [i, init_val])
-
-    raise ImportError(f"Cannot recognize backend {_BACKEND_ENGINE}")
 
 
 numpy = NumpyEngine()
