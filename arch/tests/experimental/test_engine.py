@@ -2,11 +2,11 @@ import pytest
 
 from arch.experimental.engine import (
     _SUPPORTED_ENGINES,
+    backend,
     linalg,
     numpy,
-    use_backend,
     set_backend,
-    backend,
+    use_backend,
 )
 
 
@@ -82,10 +82,10 @@ def test_numpy_getattribute_failed_import():
     )
 
 
-def test_linalg_getattribute_failed_attr():
+def test_linalg_getattribute_failed_import():
     with use_backend("jax"):
         with pytest.raises(ImportError) as exc:
-            linalg.array  # noqa
+            linalg.inv  # noqa
 
     assert str(exc.value) == (
         "Library `linalg` cannot be imported from backend engine "
