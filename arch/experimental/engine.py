@@ -28,6 +28,7 @@ def set_backend(library_name):
     )
     global _BACKEND_ENGINE
     _BACKEND_ENGINE = library_name
+    return _BACKEND_ENGINE
 
 
 @contextmanager
@@ -68,8 +69,6 @@ class NumpyEngine:
     """
 
     def __getattribute__(self, __name: str) -> Any:
-        global _BACKEND_ENGINE
-
         if __name == "name":
             return _BACKEND_ENGINE
 
@@ -106,8 +105,6 @@ class LinAlgEngine:
     """
 
     def __getattribute__(self, __name: str) -> Any:
-        global _BACKEND_ENGINE
-
         if __name == "name":
             return _BACKEND_ENGINE
 
