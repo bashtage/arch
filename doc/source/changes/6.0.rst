@@ -2,8 +2,13 @@
 Version 6
 =========
 
-Release 6.2 (Not Released)
-==========================
+Release 6.2
+===========
+- Fixed a bug that affected forecasting from  :class:`~arch.univariate.volatility.FIGARCH` models (:issue:`606`).
+- Added a performance warning when testing for unit roots in large series using a lag-length
+  search with no-max-lag specified.
+- Fixed a bug that affected forecasting from :class:`arch.univariate.volatility.FIGARCH'
+  models (:issue:`606`).
 - Changed the default value of ``reindex`` to ``False`` so that forecasts
   will not match the input by default.  Set ``reindex`` to ``True`` if this is
   required.
