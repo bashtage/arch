@@ -1,16 +1,14 @@
 [project]
 name = "arch"
-dynamic = ["dependencies", "version","readme"]
-license = {file = "LICENSE.md"}
-authors = [
-  {name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com"}
-]
+dynamic = ["dependencies", "version", "readme"]
+license = { file = "LICENSE.md" }
+authors = [{ name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" }]
 maintainers = [
-  {name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com"}
+  { name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" },
 ]
-description="ARCH for Python"
+description = "ARCH for Python"
 requires-python = ">=3.9"
-keywords=[
+keywords = [
   "arch",
   "ARCH",
   "variance",
@@ -29,25 +27,25 @@ keywords=[
   "SPA",
   "StepM",
 ]
-classifiers=[
-            "Development Status :: 5 - Production/Stable",
-            "Intended Audience :: End Users/Desktop",
-            "Intended Audience :: Financial and Insurance Industry",
-            "Programming Language :: Python :: 3.9",
-            "Programming Language :: Python :: 3.10",
-            "Programming Language :: Python :: 3.11",
-            "Programming Language :: Python :: 3.12",
-            "License :: OSI Approved :: University of Illinois/NCSA Open Source License",
-            "Operating System :: MacOS :: MacOS X",
-            "Operating System :: Microsoft :: Windows",
-            "Operating System :: POSIX",
-            "Programming Language :: Python",
-            "Programming Language :: Cython",
-            "Topic :: Scientific/Engineering",
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: End Users/Desktop",
+  "Intended Audience :: Financial and Insurance Industry",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "License :: OSI Approved :: University of Illinois/NCSA Open Source License",
+  "Operating System :: MacOS :: MacOS X",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX",
+  "Programming Language :: Python",
+  "Programming Language :: Cython",
+  "Topic :: Scientific/Engineering",
 ]
 
 [project.urls]
-homepage = "https://github.com/bashtage/arch",
+homepage = "https://github.com/bashtage/arch"
 documentation = "https://bashtage.github.io/arch/"
 repository = "https://github.com/bashtage/arch"
 changelog = "https://bashtage.github.io/arch/changes.html"
@@ -56,15 +54,15 @@ changelog = "https://bashtage.github.io/arch/changes.html"
 requires = [
   "setuptools>=61",
   "wheel",
-  "setuptools_scm[toml]>=7,<8",
+  "setuptools_scm[toml]>=8.0.3,<9",
   "oldest-supported-numpy>=2022.11.19",
-  "numpy; python_version>='3.12'",
-  "cython>=0.29.34"  # Works with 3.0.0b2
+  "cython>=0.29.34", # Works with 3.0.0b2
+
 ]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
+dependencies = { file = ["requirements.txt"] }
 
 [tool.black]
 target-version = ['py39', 'py310', 'py311']
