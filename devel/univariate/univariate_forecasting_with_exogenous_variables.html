@@ -15,7 +15,7 @@
     
   
       
-        <title>Forecasting with Exogenous Regressors - arch v6.1.1 (+9)</title>
+        <title>Forecasting with Exogenous Regressors - arch v6.1.1 (+13)</title>
       
     
 
@@ -47,9 +47,9 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css" />
-        <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
-        <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.79d3faa9841bcddc6.min.css?v=e88de5f6" />
+        <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+        <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -93,7 +93,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v6.1.1 (+9)" class="md-header__button md-logo" aria-label="arch v6.1.1 (+9)" data-md-component="logo">
+    <a href="../index.html" title="arch v6.1.1 (+13)" class="md-header__button md-logo" aria-label="arch v6.1.1 (+13)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -103,7 +103,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v6.1.1 (+9)
+            arch v6.1.1 (+13)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -190,10 +190,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v6.1.1 (+9)" class="md-nav__button md-logo" aria-label="arch v6.1.1 (+9)" data-md-component="logo">
+    <a href="../index.html" title="arch v6.1.1 (+13)" class="md-nav__button md-logo" aria-label="arch v6.1.1 (+13)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v6.1.1 (+9)
+    arch v6.1.1 (+13)
   </label>
   
     <div class="md-nav__source">
@@ -851,7 +851,7 @@
                   
 
 
-<h1 id="Forecasting-with-Exogenous-Regressors">Forecasting with Exogenous Regressors<a class="headerlink" href="#Forecasting-with-Exogenous-Regressors" title="Permalink to this heading">¶</a></h1>
+<h1 id="Forecasting-with-Exogenous-Regressors">Forecasting with Exogenous Regressors<a class="headerlink" href="#Forecasting-with-Exogenous-Regressors" title="Link to this heading">¶</a></h1>
 <p>This notebook provides examples of the accepted data structures for passing the expected value of exogenous variables when these are included in the mean. For example, consider an AR(1) with 2 exogenous variables. The mean dynamics are</p>
 <div class="math notranslate nohighlight">
 \[Y_t = \phi_0 + \phi_1 Y_{t-1} + \beta_0 X_{0,t} + \beta_1 X_{1,t} + \epsilon_t.\]</div>
@@ -887,7 +887,7 @@
 </code></pre></div>
 </div>
 </div>
-<h2 id="Simulating-data">Simulating data<a class="headerlink" href="#Simulating-data" title="Permalink to this heading">¶</a></h2>
+<h2 id="Simulating-data">Simulating data<a class="headerlink" href="#Simulating-data" title="Link to this heading">¶</a></h2>
 <p>Two <span class="math notranslate nohighlight">\(X\)</span> variables are simulated and are assumed to follow independent AR(1) processes. The data is then assumed to follow an ARX(1) with 2 exogenous regressors and GARCH(1,1) errors.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[2]:
@@ -917,7 +917,7 @@
 </code></pre></div>
 </div>
 </div>
-<h2 id="Plotting-the-data">Plotting the data<a class="headerlink" href="#Plotting-the-data" title="Permalink to this heading">¶</a></h2>
+<h2 id="Plotting-the-data">Plotting the data<a class="headerlink" href="#Plotting-the-data" title="Link to this heading">¶</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[3]:
 </code></pre></div>
@@ -935,7 +935,7 @@
 <img alt="../_images/univariate_univariate_forecasting_with_exogenous_variables_5_0.png" src="../_images/univariate_univariate_forecasting_with_exogenous_variables_5_0.png" />
 </div>
 </div>
-<h2 id="Forecasting-the-X-values">Forecasting the X values<a class="headerlink" href="#Forecasting-the-X-values" title="Permalink to this heading">¶</a></h2>
+<h2 id="Forecasting-the-X-values">Forecasting the X values<a class="headerlink" href="#Forecasting-the-X-values" title="Link to this heading">¶</a></h2>
 <p>The forecasts of <span class="math notranslate nohighlight">\(Y\)</span> depend on forecasts of <span class="math notranslate nohighlight">\(X_0\)</span> and <span class="math notranslate nohighlight">\(X_1\)</span>. Both of these follow simple AR(1), and so we can construct the forecasts for all time horizons. Note that the value in position <code class="docutils literal notranslate"><span class="pre">[i,j]</span></code> is the time-<code class="docutils literal notranslate"><span class="pre">i</span></code> forecast for horizon <code class="docutils literal notranslate"><span class="pre">j+1</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[4]:
@@ -969,7 +969,7 @@ array([5.65805541, 5.3290277 , 5.16451385, 5.08225693, 5.04112846,
        5.02056423, 5.01028212, 5.00514106, 5.00257053, 5.00128526])
 </pre></div></div>
 </div>
-<h2 id="Fitting-the-model">Fitting the model<a class="headerlink" href="#Fitting-the-model" title="Permalink to this heading">¶</a></h2>
+<h2 id="Fitting-the-model">Fitting the model<a class="headerlink" href="#Fitting-the-model" title="Link to this heading">¶</a></h2>
 <p>Next, the most is fit. The parameters are accurately estimated.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[5]:
@@ -1017,9 +1017,9 @@ beta[1]        0.8083  5.059e-02     15.977  1.839e-57   [  0.709,  0.907]
 Covariance estimator: robust
 </pre></div></div>
 </div>
-<h2 id="Using-a-dict">Using a <code class="docutils literal notranslate"><span class="pre">dict</span></code><a class="headerlink" href="#Using-a-dict" title="Permalink to this heading">¶</a></h2>
+<h2 id="Using-a-dict">Using a <code class="docutils literal notranslate"><span class="pre">dict</span></code><a class="headerlink" href="#Using-a-dict" title="Link to this heading">¶</a></h2>
 <p>The first approach uses a dict to pass the two variables. The key consideration here is the the keys of the dictionary must <strong>exactly</strong> match the variable names (<code class="docutils literal notranslate"><span class="pre">x0</span></code> and <code class="docutils literal notranslate"><span class="pre">x1</span></code> here). The dictionary here contains only the final row of the forecast values since <code class="docutils literal notranslate"><span class="pre">forecast</span></code> will only make forecasts beginning from the final in-sample observation by default.</p>
-<h3 id="Using-DataFrame">Using <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code><a class="headerlink" href="#Using-DataFrame" title="Permalink to this heading">¶</a></h3>
+<h3 id="Using-DataFrame">Using <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code><a class="headerlink" href="#Using-DataFrame" title="Link to this heading">¶</a></h3>
 <p>While these examples make use of NumPy arrays, these can be <code class="docutils literal notranslate"><span class="pre">DataFrames</span></code>. This allows the index to be used to track the forecast origination point, which can be a helpful device.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[6]:
@@ -1047,7 +1047,7 @@ Covariance estimator: robust
 <img alt="../_images/univariate_univariate_forecasting_with_exogenous_variables_11_1.png" src="../_images/univariate_univariate_forecasting_with_exogenous_variables_11_1.png" />
 </div>
 </div>
-<h2 id="Using-an-array">Using an <code class="docutils literal notranslate"><span class="pre">array</span></code><a class="headerlink" href="#Using-an-array" title="Permalink to this heading">¶</a></h2>
+<h2 id="Using-an-array">Using an <code class="docutils literal notranslate"><span class="pre">array</span></code><a class="headerlink" href="#Using-an-array" title="Link to this heading">¶</a></h2>
 <p>An array can alternatively be used. This frees the restriction on matching the variable names although the order must match instead. The forecast values are 2 (variables) by 1 (forecast) by 10 (horizon).</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[7]:
@@ -1070,7 +1070,7 @@ The shape is (2, 1, 10)
 999   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
 </pre></div></div>
 </div>
-<h2 id="Producing-multiple-forecasts">Producing multiple forecasts<a class="headerlink" href="#Producing-multiple-forecasts" title="Permalink to this heading">¶</a></h2>
+<h2 id="Producing-multiple-forecasts">Producing multiple forecasts<a class="headerlink" href="#Producing-multiple-forecasts" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">forecast</span></code> can produce multiple forecasts using the same fit model. Here the model is fit to the first 500 observations and then forecasting for the remaining values are produced. It must be the case that the <code class="docutils literal notranslate"><span class="pre">x</span></code> values passed for <code class="docutils literal notranslate"><span class="pre">forecast</span></code> have the same number of rows as the table of forecasts produced.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[8]:
@@ -1298,7 +1298,7 @@ The shape is (2, 1, 10)
 0.0
 </pre></div></div>
 </div>
-<h2 id="x-input-array-sizes"><code class="docutils literal notranslate"><span class="pre">x</span></code> input array sizes<a class="headerlink" href="#x-input-array-sizes" title="Permalink to this heading">¶</a></h2>
+<h2 id="x-input-array-sizes"><code class="docutils literal notranslate"><span class="pre">x</span></code> input array sizes<a class="headerlink" href="#x-input-array-sizes" title="Link to this heading">¶</a></h2>
 <p>While the natural shape of the <code class="docutils literal notranslate"><span class="pre">x</span></code> data is the number of forecasts, it is also possible to pass an <code class="docutils literal notranslate"><span class="pre">x</span></code> that has the same shape as the <code class="docutils literal notranslate"><span class="pre">y</span></code> used to construct the model. The may simplify tracking the origin points of the forecast. Values are are not needed are ignored. In this example, the out-of-sample values are 2 by 1000 (original number of observations) by 10. Only the final 500 are used.</p>
 <div class="admonition warning">
 <div class="admonition-title"><h3></div><p>WARNING</p>
@@ -1332,7 +1332,7 @@ The shape is (2, 1, 10)
 0.0
 </pre></div></div>
 </div>
-<h2 id="Special-Cases-with-a-single-x-variable">Special Cases with a single <code class="docutils literal notranslate"><span class="pre">x</span></code> variable<a class="headerlink" href="#Special-Cases-with-a-single-x-variable" title="Permalink to this heading">¶</a></h2>
+<h2 id="Special-Cases-with-a-single-x-variable">Special Cases with a single <code class="docutils literal notranslate"><span class="pre">x</span></code> variable<a class="headerlink" href="#Special-Cases-with-a-single-x-variable" title="Link to this heading">¶</a></h2>
 <p>When a model consists of a single exogenous regressor, then <code class="docutils literal notranslate"><span class="pre">x</span></code> can be a 1-d or 2-d array (or <code class="docutils literal notranslate"><span class="pre">Series</span></code> or <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>).</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[12]:
@@ -1403,9 +1403,9 @@ Covariance estimator: robust
 999   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
 </pre></div></div>
 </div>
-<h2 id="Simulation">Simulation<a class="headerlink" href="#Simulation" title="Permalink to this heading">¶</a></h2>
+<h2 id="Simulation">Simulation<a class="headerlink" href="#Simulation" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">forecast</span></code> supports simulating paths. When forecasting a model with exogenous variables, the same value is used to in all mean paths. If you wish to also simulate the paths of the <code class="docutils literal notranslate"><span class="pre">x</span></code> variables, these need to generated and then passed inside a loop.</p>
-<h3 id="Static-out-of-sample-x">Static out-of-sample <code class="docutils literal notranslate"><span class="pre">x</span></code><a class="headerlink" href="#Static-out-of-sample-x" title="Permalink to this heading">¶</a></h3>
+<h3 id="Static-out-of-sample-x">Static out-of-sample <code class="docutils literal notranslate"><span class="pre">x</span></code><a class="headerlink" href="#Static-out-of-sample-x" title="Link to this heading">¶</a></h3>
 <p>This first example shows that variance of the paths when the same <code class="docutils literal notranslate"><span class="pre">x</span></code> values are used in the forecast. There is a sense the out-of-sample <code class="docutils literal notranslate"><span class="pre">x</span></code> are treated as deterministic.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[14]:
@@ -1427,7 +1427,7 @@ array([[1.04095499, 1.27798546, 1.30149937, 1.53498654, 1.60825322,
         1.53831759, 1.55948399, 1.49811376, 1.74794163, 1.54496175]])
 </pre></div></div>
 </div>
-<h3 id="Simulating-the-out-of-sample-x">Simulating the out-of-sample <code class="docutils literal notranslate"><span class="pre">x</span></code><a class="headerlink" href="#Simulating-the-out-of-sample-x" title="Permalink to this heading">¶</a></h3>
+<h3 id="Simulating-the-out-of-sample-x">Simulating the out-of-sample <code class="docutils literal notranslate"><span class="pre">x</span></code><a class="headerlink" href="#Simulating-the-out-of-sample-x" title="Link to this heading">¶</a></h3>
 <p>This example simulates distinct paths for the two exogenous variables and then simulates a single path. This is then repeated 100 times. We see that variance is much higher when we account for variation in the x data.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[15]:
@@ -1543,7 +1543,7 @@ array([[2.95980851, 4.9043695 , 6.49587772, 7.50716786, 8.27211937,
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.0.1.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1590,10 +1590,10 @@ array([[2.95980851, 4.9043695 , 6.49587772, 7.50716786, 8.27211937,
     <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
     
       
-        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js"></script>
+        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=1e7b0789"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js"></script>
+        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js?v=cadf963e"></script>
     
   </body>
 </html>

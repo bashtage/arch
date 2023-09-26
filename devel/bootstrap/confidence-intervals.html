@@ -15,7 +15,7 @@
     
   
       
-        <title>Confidence Intervals - arch v6.1.1 (+9)</title>
+        <title>Confidence Intervals - arch v6.1.1 (+13)</title>
       
     
 
@@ -47,8 +47,8 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css" />
-        <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.79d3faa9841bcddc6.min.css?v=e88de5f6" />
+        <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -92,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v6.1.1 (+9)" class="md-header__button md-logo" aria-label="arch v6.1.1 (+9)" data-md-component="logo">
+    <a href="../index.html" title="arch v6.1.1 (+13)" class="md-header__button md-logo" aria-label="arch v6.1.1 (+13)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -102,7 +102,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v6.1.1 (+9)
+            arch v6.1.1 (+13)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -189,10 +189,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v6.1.1 (+9)" class="md-nav__button md-logo" aria-label="arch v6.1.1 (+9)" data-md-component="logo">
+    <a href="../index.html" title="arch v6.1.1 (+13)" class="md-nav__button md-logo" aria-label="arch v6.1.1 (+13)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v6.1.1 (+9)
+    arch v6.1.1 (+13)
   </label>
   
     <div class="md-nav__source">
@@ -776,7 +776,7 @@
                   
 
 
-<h1 id="confidence-intervals">Confidence Intervals<a class="headerlink" href="#confidence-intervals" title="Permalink to this heading">¶</a></h1>
+<h1 id="confidence-intervals">Confidence Intervals<a class="headerlink" href="#confidence-intervals" title="Link to this heading">¶</a></h1>
 <p>The confidence interval function allows three types of confidence intervals to
 be constructed:</p>
 <ul class="simple">
@@ -815,7 +815,7 @@ be constructed:</p>
 </li>
 </ul>
 </nav>
-<h2 id="setup"><a class="toc-backref" href="#id1" role="doc-backlink">Setup</a><a class="headerlink" href="#setup" title="Permalink to this heading">¶</a></h2>
+<h2 id="setup"><a class="toc-backref" href="#id1" role="doc-backlink">Setup</a><a class="headerlink" href="#setup" title="Link to this heading">¶</a></h2>
 <p>All examples will construct confidence intervals for the Sharpe ratio of the
 S&amp;P 500, which is the ratio of the annualized mean to the annualized standard
 deviation.  The parameters will be the annualized mean, the annualized standard
@@ -846,14 +846,14 @@ deviation and the Sharpe ratio.</p>
 <p class="admonition-title">Note</p>
 <p>Functions must return 1-d NumPy arrays or Pandas Series.</p>
 </div>
-<h2 id="confidence-interval-types"><a class="toc-backref" href="#id2" role="doc-backlink">Confidence Interval Types</a><a class="headerlink" href="#confidence-interval-types" title="Permalink to this heading">¶</a></h2>
+<h2 id="confidence-interval-types"><a class="toc-backref" href="#id2" role="doc-backlink">Confidence Interval Types</a><a class="headerlink" href="#confidence-interval-types" title="Link to this heading">¶</a></h2>
 <p>Three types of confidence intervals can be computed.  The simplest are
 non-parametric; these only make use of parameter estimates from both the
 original data as well as the resampled data.  Semi-parametric mix the original
 data with a limited form of resampling, usually for residuals.  Finally,
 parametric bootstrap confidence intervals make use of a parametric distribution
 to construct “as-if” exact confidence intervals.</p>
-<h3 id="nonparametric-confidence-intervals"><a class="toc-backref" href="#id3" role="doc-backlink">Nonparametric Confidence Intervals</a><a class="headerlink" href="#nonparametric-confidence-intervals" title="Permalink to this heading">¶</a></h3>
+<h3 id="nonparametric-confidence-intervals"><a class="toc-backref" href="#id3" role="doc-backlink">Nonparametric Confidence Intervals</a><a class="headerlink" href="#nonparametric-confidence-intervals" title="Link to this heading">¶</a></h3>
 <p>Non-parametric sampling is the simplest method to construct confidence
 intervals.</p>
 <p>This example makes use of the percentile bootstrap which is conceptually the
@@ -872,11 +872,11 @@ persistent.  The IID bootstrap is not a good choice here.  Instead a
 time-series bootstrap with an appropriately chosen block size should be
 used.</p>
 </div>
-<h3 id="semi-parametric-confidence-intervals"><a class="toc-backref" href="#id4" role="doc-backlink">Semi-parametric Confidence Intervals</a><a class="headerlink" href="#semi-parametric-confidence-intervals" title="Permalink to this heading">¶</a></h3>
+<h3 id="semi-parametric-confidence-intervals"><a class="toc-backref" href="#id4" role="doc-backlink">Semi-parametric Confidence Intervals</a><a class="headerlink" href="#semi-parametric-confidence-intervals" title="Link to this heading">¶</a></h3>
 <p>See <a class="reference internal" href="semiparametric-parametric-bootstrap.html"><span class="doc">Semiparametric Bootstraps</span></a></p>
-<h3 id="parametric-confidence-intervals"><a class="toc-backref" href="#id5" role="doc-backlink">Parametric Confidence Intervals</a><a class="headerlink" href="#parametric-confidence-intervals" title="Permalink to this heading">¶</a></h3>
+<h3 id="parametric-confidence-intervals"><a class="toc-backref" href="#id5" role="doc-backlink">Parametric Confidence Intervals</a><a class="headerlink" href="#parametric-confidence-intervals" title="Link to this heading">¶</a></h3>
 <p>See <a class="reference internal" href="semiparametric-parametric-bootstrap.html"><span class="doc">Parametric Bootstraps</span></a></p>
-<h2 id="confidence-interval-methods"><a class="toc-backref" href="#id6" role="doc-backlink">Confidence Interval Methods</a><a class="headerlink" href="#confidence-interval-methods" title="Permalink to this heading">¶</a></h2>
+<h2 id="confidence-interval-methods"><a class="toc-backref" href="#id6" role="doc-backlink">Confidence Interval Methods</a><a class="headerlink" href="#confidence-interval-methods" title="Link to this heading">¶</a></h2>
 <div class="note admonition">
 <p class="admonition-title">Note</p>
 <p><code class="docutils literal notranslate"><span class="pre">conf_int</span></code> can construct two-sided, upper or lower (one-sided) confidence
@@ -884,7 +884,7 @@ intervals.  All examples use two-sided, 95% confidence intervals (the
 default).  This can be modified using the keyword inputs <code class="docutils literal notranslate"><span class="pre">type</span></code>
 (<code class="docutils literal notranslate"><span class="pre">'upper'</span></code>, <code class="docutils literal notranslate"><span class="pre">'lower'</span></code> or <code class="docutils literal notranslate"><span class="pre">'two-sided'</span></code>) and <code class="docutils literal notranslate"><span class="pre">size</span></code>.</p>
 </div>
-<h3 id="basic-basic"><a class="toc-backref" href="#id7" role="doc-backlink">Basic (<code class="docutils literal notranslate"><span class="pre">basic</span></code>)</a><a class="headerlink" href="#basic-basic" title="Permalink to this heading">¶</a></h3>
+<h3 id="basic-basic"><a class="toc-backref" href="#id7" role="doc-backlink">Basic (<code class="docutils literal notranslate"><span class="pre">basic</span></code>)</a><a class="headerlink" href="#basic-basic" title="Link to this heading">¶</a></h3>
 <p>Basic confidence intervals construct many bootstrap replications
 <span class="math notranslate nohighlight">\(\hat{\theta}_b^\star\)</span> and then constructs the confidence interval as</p>
 <div class="math notranslate nohighlight">
@@ -900,7 +900,7 @@ computed element-by-element.</p>
 <span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;basic&#39;</span><span class="p">)</span>
 </code></pre></div>
 </div>
-<h3 id="percentile-percentile"><a class="toc-backref" href="#id8" role="doc-backlink">Percentile (<code class="docutils literal notranslate"><span class="pre">percentile</span></code>)</a><a class="headerlink" href="#percentile-percentile" title="Permalink to this heading">¶</a></h3>
+<h3 id="percentile-percentile"><a class="toc-backref" href="#id8" role="doc-backlink">Percentile (<code class="docutils literal notranslate"><span class="pre">percentile</span></code>)</a><a class="headerlink" href="#percentile-percentile" title="Link to this heading">¶</a></h3>
 <p>The percentile method directly constructs confidence intervals from the empirical
 CDF of the bootstrap parameter estimates, <span class="math notranslate nohighlight">\(\hat{\theta}_b^\star\)</span>.
 The confidence interval is then defined.</p>
@@ -915,7 +915,7 @@ distribution.</p>
 <span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;percentile&#39;</span><span class="p">)</span>
 </code></pre></div>
 </div>
-<h3 id="asymptotic-normal-approximation-norm-cov-or-var"><a class="toc-backref" href="#id9" role="doc-backlink">Asymptotic Normal Approximation (<code class="docutils literal notranslate"><span class="pre">norm</span></code>, <code class="docutils literal notranslate"><span class="pre">cov</span></code> or <code class="docutils literal notranslate"><span class="pre">var</span></code>)</a><a class="headerlink" href="#asymptotic-normal-approximation-norm-cov-or-var" title="Permalink to this heading">¶</a></h3>
+<h3 id="asymptotic-normal-approximation-norm-cov-or-var"><a class="toc-backref" href="#id9" role="doc-backlink">Asymptotic Normal Approximation (<code class="docutils literal notranslate"><span class="pre">norm</span></code>, <code class="docutils literal notranslate"><span class="pre">cov</span></code> or <code class="docutils literal notranslate"><span class="pre">var</span></code>)</a><a class="headerlink" href="#asymptotic-normal-approximation-norm-cov-or-var" title="Link to this heading">¶</a></h3>
 <p>The asymptotic normal approximation method estimates the covariance of
 the parameters and then combines this with the usual quantiles from a normal
 distribution.  The confidence interval is then</p>
@@ -930,7 +930,7 @@ error.</p>
 <span class="n">ci</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;norm&#39;</span><span class="p">)</span>
 </code></pre></div>
 </div>
-<h3 id="studentized-studentized"><a class="toc-backref" href="#id10" role="doc-backlink">Studentized (<code class="docutils literal notranslate"><span class="pre">studentized</span></code>)</a><a class="headerlink" href="#studentized-studentized" title="Permalink to this heading">¶</a></h3>
+<h3 id="studentized-studentized"><a class="toc-backref" href="#id10" role="doc-backlink">Studentized (<code class="docutils literal notranslate"><span class="pre">studentized</span></code>)</a><a class="headerlink" href="#studentized-studentized" title="Link to this heading">¶</a></h3>
 <p>The studentized bootstrap may be more accurate than some of the other methods.
 The studentized bootstrap makes use of either a standard error function, when
 parameter standard errors can be analytically computed, or a nested bootstrap,
@@ -991,7 +991,7 @@ of element as params.</p>
 <code class="docutils literal notranslate"><span class="pre">std_err_func(params,</span> <span class="pre">*args,</span> <span class="pre">**kwargs)</span></code> where <code class="docutils literal notranslate"><span class="pre">params</span></code> is an array
 of estimated parameters constructed using <code class="docutils literal notranslate"><span class="pre">*args</span></code> and <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code>.</p>
 </div>
-<h3 id="bias-corrected-bc-bias-corrected-or-debiased"><a class="toc-backref" href="#id11" role="doc-backlink">Bias-corrected (<code class="docutils literal notranslate"><span class="pre">bc</span></code>, <code class="docutils literal notranslate"><span class="pre">bias-corrected</span></code> or <code class="docutils literal notranslate"><span class="pre">debiased</span></code>)</a><a class="headerlink" href="#bias-corrected-bc-bias-corrected-or-debiased" title="Permalink to this heading">¶</a></h3>
+<h3 id="bias-corrected-bc-bias-corrected-or-debiased"><a class="toc-backref" href="#id11" role="doc-backlink">Bias-corrected (<code class="docutils literal notranslate"><span class="pre">bc</span></code>, <code class="docutils literal notranslate"><span class="pre">bias-corrected</span></code> or <code class="docutils literal notranslate"><span class="pre">debiased</span></code>)</a><a class="headerlink" href="#bias-corrected-bc-bias-corrected-or-debiased" title="Link to this heading">¶</a></h3>
 <p>The bias corrected bootstrap makes use of a bootstrap estimate of the bias to
 improve confidence intervals.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="kn">import</span> <span class="n">IIDBootstrap</span>
@@ -1001,7 +1001,7 @@ improve confidence intervals.</p>
 </div>
 <p>The bias-corrected confidence interval is identical to the bias-corrected and
 accelerated where <span class="math notranslate nohighlight">\(a=0\)</span>.</p>
-<h3 id="bias-corrected-and-accelerated-bca"><a class="toc-backref" href="#id12" role="doc-backlink">Bias-corrected and accelerated (<code class="docutils literal notranslate"><span class="pre">bca</span></code>)</a><a class="headerlink" href="#bias-corrected-and-accelerated-bca" title="Permalink to this heading">¶</a></h3>
+<h3 id="bias-corrected-and-accelerated-bca"><a class="toc-backref" href="#id12" role="doc-backlink">Bias-corrected and accelerated (<code class="docutils literal notranslate"><span class="pre">bca</span></code>)</a><a class="headerlink" href="#bias-corrected-and-accelerated-bca" title="Link to this heading">¶</a></h3>
 <p>Bias-corrected and accelerated confidence intervals make use of both
 a bootstrap bias estimate and a jackknife acceleration term.  BCa intervals may
 offer higher-order accuracy if some conditions are satisfied. Bias-corrected
@@ -1093,7 +1093,7 @@ are</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.0.1.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1140,10 +1140,10 @@ are</p>
     <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
     
       
-        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js"></script>
+        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=1e7b0789"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js"></script>
+        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js?v=cadf963e"></script>
     
   </body>
 </html>

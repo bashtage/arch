@@ -15,7 +15,7 @@
     
   
       
-        <title>Bootstrap Examples - arch v6.1.1 (+9)</title>
+        <title>Bootstrap Examples - arch v6.1.1 (+13)</title>
       
     
 
@@ -47,9 +47,9 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css" />
-        <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
-        <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.79d3faa9841bcddc6.min.css?v=e88de5f6" />
+        <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+        <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -93,7 +93,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v6.1.1 (+9)" class="md-header__button md-logo" aria-label="arch v6.1.1 (+9)" data-md-component="logo">
+    <a href="../index.html" title="arch v6.1.1 (+13)" class="md-header__button md-logo" aria-label="arch v6.1.1 (+13)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -103,7 +103,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v6.1.1 (+9)
+            arch v6.1.1 (+13)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -190,10 +190,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v6.1.1 (+9)" class="md-nav__button md-logo" aria-label="arch v6.1.1 (+9)" data-md-component="logo">
+    <a href="../index.html" title="arch v6.1.1 (+13)" class="md-nav__button md-logo" aria-label="arch v6.1.1 (+13)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v6.1.1 (+9)
+    arch v6.1.1 (+13)
   </label>
   
     <div class="md-nav__source">
@@ -735,7 +735,7 @@
                   
 
 
-<h1 id="Bootstrap-Examples">Bootstrap Examples<a class="headerlink" href="#Bootstrap-Examples" title="Permalink to this heading">¶</a></h1>
+<h1 id="Bootstrap-Examples">Bootstrap Examples<a class="headerlink" href="#Bootstrap-Examples" title="Link to this heading">¶</a></h1>
 <p><em>This setup code is required to run in an IPython notebook</em></p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[1]:
@@ -753,7 +753,7 @@
 </code></pre></div>
 </div>
 </div>
-<h2 id="Sharpe-Ratio">Sharpe Ratio<a class="headerlink" href="#Sharpe-Ratio" title="Permalink to this heading">¶</a></h2>
+<h2 id="Sharpe-Ratio">Sharpe Ratio<a class="headerlink" href="#Sharpe-Ratio" title="Link to this heading">¶</a></h2>
 <p>The Sharpe Ratio is an important measure of return per unit of risk. The example shows how to estimate the variance of the Sharpe Ratio and how to construct confidence intervals for the Sharpe Ratio using a long series of U.S. equity data.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[2]:
@@ -828,9 +828,9 @@ SR        0.429115
 dtype: float64
 </pre></div></div>
 </div>
-<h2 id="Reproducibility">Reproducibility<a class="headerlink" href="#Reproducibility" title="Permalink to this heading">¶</a></h2>
+<h2 id="Reproducibility">Reproducibility<a class="headerlink" href="#Reproducibility" title="Link to this heading">¶</a></h2>
 <p>All bootstraps accept the keyword argument <code class="docutils literal notranslate"><span class="pre">seed</span></code> which can contain a NumPy <code class="docutils literal notranslate"><span class="pre">Generator</span></code> or <code class="docutils literal notranslate"><span class="pre">RandomState</span></code> or an <code class="docutils literal notranslate"><span class="pre">int</span></code>. When using an <code class="docutils literal notranslate"><span class="pre">int</span></code>, the argument is passed <code class="docutils literal notranslate"><span class="pre">np.random.default_rng</span></code> to create the core generator. This allows the same pseudo random values to be used across multiple runs.</p>
-<h3 id="Warning"><em>Warning</em><a class="headerlink" href="#Warning" title="Permalink to this heading">¶</a></h3>
+<h3 id="Warning"><em>Warning</em><a class="headerlink" href="#Warning" title="Link to this heading">¶</a></h3>
 <p><em>The bootstrap chosen must be appropriate for the data. Squared returns are serially correlated, and so a time-series bootstrap is required.</em></p>
 <p>Bootstraps are initialized with any bootstrap specific parameters and the data to be used in the bootstrap. Here the <code class="docutils literal notranslate"><span class="pre">12</span></code> is the average window length in the Stationary Bootstrap, and the next input is the data to be bootstrapped.</p>
 <div class="nbinput docutils container">
@@ -929,7 +929,7 @@ Lower   3.880198  15.174416  0.198880
 Upper  11.471040  22.129620  0.691471
 </pre></div></div>
 </div>
-<h3 id="Optimal-Block-Length-Estimation">Optimal Block Length Estimation<a class="headerlink" href="#Optimal-Block-Length-Estimation" title="Permalink to this heading">¶</a></h3>
+<h3 id="Optimal-Block-Length-Estimation">Optimal Block Length Estimation<a class="headerlink" href="#Optimal-Block-Length-Estimation" title="Link to this heading">¶</a></h3>
 <p>The function <code class="docutils literal notranslate"><span class="pre">optimal_block_length</span></code> can be used to estimate the optimal block lengths for the Stationary and Circular bootstraps. Here we use the squared market return since the Sharpe ratio depends on the mean and the variance, and the autocorrelation in the squares is stronger than in the returns.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[10]:
@@ -973,7 +973,7 @@ Mkt-RF   47.766787  54.679322
 <img alt="../_images/bootstrap_bootstrap_examples_23_0.png" src="../_images/bootstrap_bootstrap_examples_23_0.png" />
 </div>
 </div>
-<h2 id="Probit-(statsmodels)">Probit (statsmodels)<a class="headerlink" href="#Probit-(statsmodels)" title="Permalink to this heading">¶</a></h2>
+<h2 id="Probit-(statsmodels)">Probit (statsmodels)<a class="headerlink" href="#Probit-(statsmodels)" title="Link to this heading">¶</a></h2>
 <p>The second example makes use of a Probit model from statsmodels. The demo data is university admissions data which contains a binary variable for being admitted, GRE score, GPA score and quartile rank. This data is downloaded from the internet and imported using pandas.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[12]:
@@ -1003,7 +1003,7 @@ min      0.000000  220.000000    2.260000    1.00000
 max      1.000000  800.000000    4.000000    4.00000
 </pre></div></div>
 </div>
-<h3 id="Fitting-the-model-directly">Fitting the model directly<a class="headerlink" href="#Fitting-the-model-directly" title="Permalink to this heading">¶</a></h3>
+<h3 id="Fitting-the-model-directly">Fitting the model directly<a class="headerlink" href="#Fitting-the-model-directly" title="Link to this heading">¶</a></h3>
 <p>The first steps are to build the regressor and the dependent variable arrays. Then, using these arrays, the model can be estimated by calling <code class="docutils literal notranslate"><span class="pre">fit</span></code></p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[13]:
@@ -1036,7 +1036,7 @@ gpa      0.454575
 dtype: float64
 </pre></div></div>
 </div>
-<h3 id="The-wrapper-function">The wrapper function<a class="headerlink" href="#The-wrapper-function" title="Permalink to this heading">¶</a></h3>
+<h3 id="The-wrapper-function">The wrapper function<a class="headerlink" href="#The-wrapper-function" title="Link to this heading">¶</a></h3>
 <p>Most models in statsmodels are implemented as classes, require an explicit call to <code class="docutils literal notranslate"><span class="pre">fit</span></code> and return a class containing parameter estimates and other quantities. These classes cannot be directly used with the bootstrap methods. However, a simple wrapper can be written that takes the data as the only inputs and returns parameters estimated using a Statsmodel model.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[14]:
@@ -1140,7 +1140,7 @@ Lower -4.214157  0.000360  0.005706
 Upper -1.622607  0.002906  0.871725
 </pre></div></div>
 </div>
-<h3 id="Speeding-things-up">Speeding things up<a class="headerlink" href="#Speeding-things-up" title="Permalink to this heading">¶</a></h3>
+<h3 id="Speeding-things-up">Speeding things up<a class="headerlink" href="#Speeding-things-up" title="Link to this heading">¶</a></h3>
 <p>Starting values can be provided to <code class="docutils literal notranslate"><span class="pre">fit</span></code> which can save time finding starting values. Since the bootstrap parameter estimates should be close to the original sample estimates, the full sample estimated parameters are reasonable starting values. These can be passed using the <code class="docutils literal notranslate"><span class="pre">extra_kwargs</span></code> dictionary to a modified wrapper that will accept a keyword argument containing starting values.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[19]:
@@ -1175,7 +1175,7 @@ gre   -0.000066  4.467596e-07 -0.000058
 gpa   -0.102525 -5.815162e-05  0.039859
 </pre></div></div>
 </div>
-<h2 id="Bootstrapping-Uneven-Length-Samples">Bootstrapping Uneven Length Samples<a class="headerlink" href="#Bootstrapping-Uneven-Length-Samples" title="Permalink to this heading">¶</a></h2>
+<h2 id="Bootstrapping-Uneven-Length-Samples">Bootstrapping Uneven Length Samples<a class="headerlink" href="#Bootstrapping-Uneven-Length-Samples" title="Link to this heading">¶</a></h2>
 <p>Independent samples of uneven length are common in experiment settings, e.g., A/B testing of a website. The <code class="docutils literal notranslate"><span class="pre">IIDBootstrap</span></code> allows for arbitrary dependence within an observation index and so cannot be naturally applied to these data sets. The <code class="docutils literal notranslate"><span class="pre">IndependentSamplesBootstrap</span></code> allows datasets with variables of different lengths to be sampled by exploiting the independence of the values to separately bootstrap each component. Below is an example showing how a confidence interval can be constructed
 for the difference in means of two groups.</p>
 <div class="nbinput docutils container">
@@ -1274,7 +1274,7 @@ for the difference in means of two groups.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.0.1.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1321,10 +1321,10 @@ for the difference in means of two groups.</p>
     <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
     
       
-        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js"></script>
+        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=1e7b0789"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js"></script>
+        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js?v=cadf963e"></script>
     
   </body>
 </html>

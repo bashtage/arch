@@ -15,7 +15,7 @@
     
   
       
-        <title>API Reference - arch v6.1.1 (+9)</title>
+        <title>API Reference - arch v6.1.1 (+13)</title>
       
     
 
@@ -47,8 +47,8 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css" />
-        <link rel="stylesheet" type="text/css" href="_static/css/small_fixes.css" />
+        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.79d3faa9841bcddc6.min.css?v=e88de5f6" />
+        <link rel="stylesheet" type="text/css" href="_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -92,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="arch v6.1.1 (+9)" class="md-header__button md-logo" aria-label="arch v6.1.1 (+9)" data-md-component="logo">
+    <a href="index.html" title="arch v6.1.1 (+13)" class="md-header__button md-logo" aria-label="arch v6.1.1 (+13)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -102,7 +102,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v6.1.1 (+9)
+            arch v6.1.1 (+13)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -189,10 +189,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="arch v6.1.1 (+9)" class="md-nav__button md-logo" aria-label="arch v6.1.1 (+9)" data-md-component="logo">
+    <a href="index.html" title="arch v6.1.1 (+13)" class="md-nav__button md-logo" aria-label="arch v6.1.1 (+13)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
-    arch v6.1.1 (+9)
+    arch v6.1.1 (+13)
   </label>
   
     <div class="md-nav__source">
@@ -601,11 +601,11 @@
                   
 
 
-<h1 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading">¶</a></h1>
+<h1 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h1>
 <p>This page lists contains a list of the essential end-user API functions
 and classes.</p>
-<h2 id="volatility-modeling">Volatility Modeling<a class="headerlink" href="#volatility-modeling" title="Permalink to this heading">¶</a></h2>
-<h3 id="high-level">High-level<a class="headerlink" href="#high-level" title="Permalink to this heading">¶</a></h3>
+<h2 id="volatility-modeling">Volatility Modeling<a class="headerlink" href="#volatility-modeling" title="Link to this heading">¶</a></h2>
+<h3 id="high-level">High-level<a class="headerlink" href="#high-level" title="Link to this heading">¶</a></h3>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="univariate/introduction.html#arch.univariate.arch_model" title="arch.univariate.arch_model (Python function) — Initialization of common ARCH model specifications"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arch_model</span></code></a>(y[, x, mean, lags, vol, p, o, q, ...])</p></td>
@@ -613,7 +613,7 @@ and classes.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="mean-specification">Mean Specification<a class="headerlink" href="#mean-specification" title="Permalink to this heading">¶</a></h3>
+<h3 id="mean-specification">Mean Specification<a class="headerlink" href="#mean-specification" title="Link to this heading">¶</a></h3>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.ConstantMean.html#arch.univariate.ConstantMean" title="arch.univariate.ConstantMean (Python class) — Constant mean model estimation and simulation."><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstantMean</span></code></a>([y, hold_back, volatility, ...])</p></td>
@@ -633,7 +633,7 @@ and classes.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="volatility-process-specification">Volatility Process Specification<a class="headerlink" href="#volatility-process-specification" title="Permalink to this heading">¶</a></h3>
+<h3 id="volatility-process-specification">Volatility Process Specification<a class="headerlink" href="#volatility-process-specification" title="Link to this heading">¶</a></h3>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.GARCH.html#arch.univariate.GARCH" title="arch.univariate.GARCH (Python class) — GARCH and related model estimation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GARCH</span></code></a>([p, o, q, power])</p></td>
@@ -665,7 +665,7 @@ and classes.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="shock-distributions">Shock Distributions<a class="headerlink" href="#shock-distributions" title="Permalink to this heading">¶</a></h3>
+<h3 id="shock-distributions">Shock Distributions<a class="headerlink" href="#shock-distributions" title="Link to this heading">¶</a></h3>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="univariate/generated/arch.univariate.Normal.html#arch.univariate.Normal" title="arch.univariate.Normal (Python class) — Standard normal distribution for use with ARCH models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Normal</span></code></a>([random_state, seed])</p></td>
@@ -682,7 +682,7 @@ and classes.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="unit-root-testing">Unit Root Testing<a class="headerlink" href="#unit-root-testing" title="Permalink to this heading">¶</a></h2>
+<h2 id="unit-root-testing">Unit Root Testing<a class="headerlink" href="#unit-root-testing" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF" title="arch.unitroot.ADF (Python class) — Augmented Dickey-Fuller unit root test"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ADF</span></code></a>(y[, lags, trend, max_lags, method, ...])</p></td>
@@ -705,7 +705,7 @@ and classes.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="cointegration-testing">Cointegration Testing<a class="headerlink" href="#cointegration-testing" title="Permalink to this heading">¶</a></h2>
+<h2 id="cointegration-testing">Cointegration Testing<a class="headerlink" href="#cointegration-testing" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="unitroot/generated/arch.unitroot.cointegration.engle_granger.html#arch.unitroot.cointegration.engle_granger" title="arch.unitroot.cointegration.engle_granger (Python function) — Test for cointegration within a set of time series."><code class="xref py py-obj docutils literal notranslate"><span class="pre">engle_granger</span></code></a>(y, x[, trend, lags, max_lags, ...])</p></td>
@@ -716,7 +716,7 @@ and classes.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="cointegrating-relationship-estimation">Cointegrating Relationship Estimation<a class="headerlink" href="#cointegrating-relationship-estimation" title="Permalink to this heading">¶</a></h2>
+<h2 id="cointegrating-relationship-estimation">Cointegrating Relationship Estimation<a class="headerlink" href="#cointegrating-relationship-estimation" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="unitroot/generated/arch.unitroot.cointegration.CanonicalCointegratingReg.html#arch.unitroot.cointegration.CanonicalCointegratingReg" title="arch.unitroot.cointegration.CanonicalCointegratingReg (Python class) — Canonical Cointegrating Regression cointegrating vector estimation."><code class="xref py py-obj docutils literal notranslate"><span class="pre">CanonicalCointegratingReg</span></code></a>(y, x[, trend, x_trend])</p></td>
@@ -730,7 +730,7 @@ and classes.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="bootstraps">Bootstraps<a class="headerlink" href="#bootstraps" title="Permalink to this heading">¶</a></h2>
+<h2 id="bootstraps">Bootstraps<a class="headerlink" href="#bootstraps" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="bootstrap/generated/arch.bootstrap.IIDBootstrap.html#arch.bootstrap.IIDBootstrap" title="arch.bootstrap.IIDBootstrap (Python class) — Bootstrap using uniform resampling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IIDBootstrap</span></code></a>(*args[, random_state, seed])</p></td>
@@ -750,7 +750,7 @@ and classes.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="block-length-selection">Block-length Selection<a class="headerlink" href="#block-length-selection" title="Permalink to this heading">¶</a></h3>
+<h3 id="block-length-selection">Block-length Selection<a class="headerlink" href="#block-length-selection" title="Link to this heading">¶</a></h3>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="bootstrap/generated/arch.bootstrap.optimal_block_length.html#arch.bootstrap.optimal_block_length" title="arch.bootstrap.optimal_block_length (Python function) — Estimate optimal window length for time-series bootstraps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimal_block_length</span></code></a>(x)</p></td>
@@ -758,7 +758,7 @@ and classes.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="testing-with-multiple-comparison">Testing with Multiple-Comparison<a class="headerlink" href="#testing-with-multiple-comparison" title="Permalink to this heading">¶</a></h2>
+<h2 id="testing-with-multiple-comparison">Testing with Multiple-Comparison<a class="headerlink" href="#testing-with-multiple-comparison" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="multiple-comparison/generated/arch.bootstrap.SPA.html#arch.bootstrap.SPA" title="arch.bootstrap.SPA (Python class) — Test of Superior Predictive Ability (SPA) of White and Hansen."><code class="xref py py-obj docutils literal notranslate"><span class="pre">SPA</span></code></a>(benchmark, models[, block_size, reps, ...])</p></td>
@@ -772,7 +772,7 @@ and classes.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="long-run-covariance-hac-estimation">Long-run Covariance (HAC) Estimation<a class="headerlink" href="#long-run-covariance-hac-estimation" title="Permalink to this heading">¶</a></h2>
+<h2 id="long-run-covariance-hac-estimation">Long-run Covariance (HAC) Estimation<a class="headerlink" href="#long-run-covariance-hac-estimation" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="covariance/generated/arch.covariance.kernel.Bartlett.html#arch.covariance.kernel.Bartlett" title="arch.covariance.kernel.Bartlett (Python class) — Bartlett's (Newey-West) kernel covariance estimation."><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bartlett</span></code></a>(x[, bandwidth, df_adjust, center, ...])</p></td>
@@ -871,7 +871,7 @@ and classes.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.0.1.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -918,7 +918,7 @@ and classes.</p>
     <script id="__config" type="application/json">{"base": ".", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
     
       
-        <script src="_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js"></script>
+        <script src="_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=1e7b0789"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

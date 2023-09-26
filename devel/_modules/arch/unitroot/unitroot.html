@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.unitroot.unitroot - arch v6.1.1 (+9)</title>
+        <title>arch.unitroot.unitroot - arch v6.1.1 (+13)</title>
       
     
 
@@ -47,8 +47,8 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css" />
-        <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.79d3faa9841bcddc6.min.css?v=e88de5f6" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v6.1.1 (+9)" class="md-header__button md-logo" aria-label="arch v6.1.1 (+9)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v6.1.1 (+13)" class="md-header__button md-logo" aria-label="arch v6.1.1 (+13)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v6.1.1 (+9)
+            arch v6.1.1 (+13)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v6.1.1 (+9)" class="md-nav__button md-logo" aria-label="arch v6.1.1 (+9)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v6.1.1 (+13)" class="md-nav__button md-logo" aria-label="arch v6.1.1 (+13)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v6.1.1 (+9)
+    arch v6.1.1 (+13)
   </label>
   
     <div class="md-nav__source">
@@ -1013,7 +1013,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span>
 
 
-<div class="viewcode-block" id="ADF"><a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF">[docs]</a><span class="k">class</span> <span class="nc">ADF</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+<div class="viewcode-block" id="ADF">
+<a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF">[docs]</a>
+<span class="k">class</span> <span class="nc">ADF</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Augmented Dickey-Fuller unit root test</span>
 
@@ -1179,7 +1181,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lags</span></div>
 
 
-<div class="viewcode-block" id="DFGLS"><a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS">[docs]</a><span class="k">class</span> <span class="nc">DFGLS</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DFGLS">
+<a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS">[docs]</a>
+<span class="k">class</span> <span class="nc">DFGLS</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Elliott, Rothenberg and Stock&#39;s ([1]_) GLS detrended Dickey-Fuller</span>
 
@@ -1351,7 +1356,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lags</span></div>
 
 
-<div class="viewcode-block" id="PhillipsPerron"><a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron">[docs]</a><span class="k">class</span> <span class="nc">PhillipsPerron</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PhillipsPerron">
+<a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron">[docs]</a>
+<span class="k">class</span> <span class="nc">PhillipsPerron</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Phillips-Perron unit root test</span>
 
@@ -1552,7 +1560,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regression</span></div>
 
 
-<div class="viewcode-block" id="KPSS"><a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS">[docs]</a><span class="k">class</span> <span class="nc">KPSS</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+
+<div class="viewcode-block" id="KPSS">
+<a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS">[docs]</a>
+<span class="k">class</span> <span class="nc">KPSS</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test</span>
 
@@ -1718,7 +1729,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">autolags</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ZivotAndrews"><a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.ZivotAndrews.html#arch.unitroot.ZivotAndrews">[docs]</a><span class="k">class</span> <span class="nc">ZivotAndrews</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ZivotAndrews">
+<a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.ZivotAndrews.html#arch.unitroot.ZivotAndrews">[docs]</a>
+<span class="k">class</span> <span class="nc">ZivotAndrews</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Zivot-Andrews structural-break unit-root test</span>
 
@@ -1931,7 +1945,10 @@
         <span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="VarianceRatio"><a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.VarianceRatio.html#arch.unitroot.VarianceRatio">[docs]</a><span class="k">class</span> <span class="nc">VarianceRatio</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+
+<div class="viewcode-block" id="VarianceRatio">
+<a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.VarianceRatio.html#arch.unitroot.VarianceRatio">[docs]</a>
+<span class="k">class</span> <span class="nc">VarianceRatio</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Variance Ratio test of a random walk.</span>
 
@@ -2101,6 +2118,7 @@
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">abs_stat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stat</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pvalue</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">abs_stat</span><span class="p">))</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">mackinnonp</span><span class="p">(</span>
@@ -2302,7 +2320,9 @@
     <span class="k">return</span> <span class="n">pvalue</span><span class="p">,</span> <span class="n">crit_value</span>
 
 
-<div class="viewcode-block" id="auto_bandwidth"><a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.auto_bandwidth.html#arch.unitroot.auto_bandwidth">[docs]</a><span class="k">def</span> <span class="nf">auto_bandwidth</span><span class="p">(</span>
+<div class="viewcode-block" id="auto_bandwidth">
+<a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.auto_bandwidth.html#arch.unitroot.auto_bandwidth">[docs]</a>
+<span class="k">def</span> <span class="nf">auto_bandwidth</span><span class="p">(</span>
     <span class="n">y</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
     <span class="n">kernel</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
         <span class="s2">&quot;ba&quot;</span><span class="p">,</span> <span class="s2">&quot;bartlett&quot;</span><span class="p">,</span> <span class="s2">&quot;nw&quot;</span><span class="p">,</span> <span class="s2">&quot;pa&quot;</span><span class="p">,</span> <span class="s2">&quot;parzen&quot;</span><span class="p">,</span> <span class="s2">&quot;gallant&quot;</span><span class="p">,</span> <span class="s2">&quot;qs&quot;</span><span class="p">,</span> <span class="s2">&quot;andrews&quot;</span>
@@ -2378,6 +2398,7 @@
     <span class="n">bandwidth</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">power</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">t_power</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">bandwidth</span></div>
+
 </code></pre></div>
 
 
@@ -2409,7 +2430,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.0.1.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -2456,7 +2477,7 @@
     <script id="__config" type="application/json">{"base": "../../..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
     
       
-        <script src="../../../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js"></script>
+        <script src="../../../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=1e7b0789"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

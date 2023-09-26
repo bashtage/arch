@@ -15,7 +15,7 @@
     
   
       
-        <title>Unit Root Testing - arch v6.1.1 (+9)</title>
+        <title>Unit Root Testing - arch v6.1.1 (+13)</title>
       
     
 
@@ -47,9 +47,9 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css" />
-        <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
-        <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.79d3faa9841bcddc6.min.css?v=e88de5f6" />
+        <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+        <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -93,7 +93,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v6.1.1 (+9)" class="md-header__button md-logo" aria-label="arch v6.1.1 (+9)" data-md-component="logo">
+    <a href="../index.html" title="arch v6.1.1 (+13)" class="md-header__button md-logo" aria-label="arch v6.1.1 (+13)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -103,7 +103,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v6.1.1 (+9)
+            arch v6.1.1 (+13)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -190,10 +190,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v6.1.1 (+9)" class="md-nav__button md-logo" aria-label="arch v6.1.1 (+9)" data-md-component="logo">
+    <a href="../index.html" title="arch v6.1.1 (+13)" class="md-nav__button md-logo" aria-label="arch v6.1.1 (+13)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v6.1.1 (+9)
+    arch v6.1.1 (+13)
   </label>
   
     <div class="md-nav__source">
@@ -632,7 +632,7 @@
                   
 
 
-<h1 id="Unit-Root-Testing">Unit Root Testing<a class="headerlink" href="#Unit-Root-Testing" title="Permalink to this heading">¶</a></h1>
+<h1 id="Unit-Root-Testing">Unit Root Testing<a class="headerlink" href="#Unit-Root-Testing" title="Link to this heading">¶</a></h1>
 <p><em>This setup code is required to run in an IPython notebook</em></p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[1]:
@@ -654,7 +654,7 @@
 </code></pre></div>
 </div>
 </div>
-<h2 id="Setup">Setup<a class="headerlink" href="#Setup" title="Permalink to this heading">¶</a></h2>
+<h2 id="Setup">Setup<a class="headerlink" href="#Setup" title="Link to this heading">¶</a></h2>
 <p>Most examples will make use of the Default premium, which is the difference between the yields of BAA and AAA rated corporate bonds. The data is downloaded from FRED using pandas.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[2]:
@@ -696,7 +696,7 @@
 <img alt="../_images/unitroot_unitroot_examples_7_0.png" src="../_images/unitroot_unitroot_examples_7_0.png" />
 </div>
 </div>
-<h2 id="Augmented-Dickey-Fuller-Testing">Augmented Dickey-Fuller Testing<a class="headerlink" href="#Augmented-Dickey-Fuller-Testing" title="Permalink to this heading">¶</a></h2>
+<h2 id="Augmented-Dickey-Fuller-Testing">Augmented Dickey-Fuller Testing<a class="headerlink" href="#Augmented-Dickey-Fuller-Testing" title="Link to this heading">¶</a></h2>
 <p>The Augmented Dickey-Fuller test is the most common unit root test used. It is a regression of the first difference of the variable on its lagged level as well as additional lags of the first difference. The null is that the series contains a unit root, and the (one-sided) alternative is that the series is stationary.</p>
 <p>By default, the number of lags is selected by minimizing the AIC across a range of lag lengths (which can be set using <code class="docutils literal notranslate"><span class="pre">max_lag</span></code> when initializing the model). Additionally, the basic test includes a constant in the ADF regression.</p>
 <p>These results indicate that the Default premium is stationary.</p>
@@ -731,7 +731,7 @@ Alternative Hypothesis: The process is weakly stationary.
 </div>
 <p>The number of lags can be directly set using <code class="docutils literal notranslate"><span class="pre">lags</span></code>. Changing the number of lags makes no difference to the conclusion.</p>
 <p><strong>Note</strong>: The ADF assumes residuals are white noise, and that the number of lags is sufficient to pick up any dependence in the data.</p>
-<h3 id="Setting-the-number-of-lags">Setting the number of lags<a class="headerlink" href="#Setting-the-number-of-lags" title="Permalink to this heading">¶</a></h3>
+<h3 id="Setting-the-number-of-lags">Setting the number of lags<a class="headerlink" href="#Setting-the-number-of-lags" title="Link to this heading">¶</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[5]:
 </code></pre></div>
@@ -759,7 +759,7 @@ Null Hypothesis: The process contains a unit root.
 Alternative Hypothesis: The process is weakly stationary.
 </pre></div></div>
 </div>
-<h3 id="Deterministic-terms">Deterministic terms<a class="headerlink" href="#Deterministic-terms" title="Permalink to this heading">¶</a></h3>
+<h3 id="Deterministic-terms">Deterministic terms<a class="headerlink" href="#Deterministic-terms" title="Link to this heading">¶</a></h3>
 <p>The deterministic terms can be altered using <code class="docutils literal notranslate"><span class="pre">trend</span></code>. The options are:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">'nc'</span></code> : No deterministic terms</p></li>
@@ -795,7 +795,7 @@ Null Hypothesis: The process contains a unit root.
 Alternative Hypothesis: The process is weakly stationary.
 </pre></div></div>
 </div>
-<h3 id="Regression-output">Regression output<a class="headerlink" href="#Regression-output" title="Permalink to this heading">¶</a></h3>
+<h3 id="Regression-output">Regression output<a class="headerlink" href="#Regression-output" title="Link to this heading">¶</a></h3>
 <p>The ADF uses a standard regression when computing results. These can be accesses using <code class="docutils literal notranslate"><span class="pre">regression</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[7]:
@@ -884,7 +884,7 @@ strong multicollinearity or other numerical problems.
 <img alt="../_images/unitroot_unitroot_examples_22_0.png" src="../_images/unitroot_unitroot_examples_22_0.png" />
 </div>
 </div>
-<h2 id="Dickey-Fuller-GLS-Testing">Dickey-Fuller GLS Testing<a class="headerlink" href="#Dickey-Fuller-GLS-Testing" title="Permalink to this heading">¶</a></h2>
+<h2 id="Dickey-Fuller-GLS-Testing">Dickey-Fuller GLS Testing<a class="headerlink" href="#Dickey-Fuller-GLS-Testing" title="Link to this heading">¶</a></h2>
 <p>The Dickey-Fuller GLS test is an improved version of the ADF which uses a GLS-detrending regression before running an ADF regression with no additional deterministic terms. This test is only available with a constant or constant and time trend (<code class="docutils literal notranslate"><span class="pre">trend='c'</span></code> or <code class="docutils literal notranslate"><span class="pre">trend='ct'</span></code>).</p>
 <p>The results of this test agree with the ADF results.</p>
 <div class="nbinput docutils container">
@@ -944,7 +944,7 @@ Null Hypothesis: The process contains a unit root.
 Alternative Hypothesis: The process is weakly stationary.
 </pre></div></div>
 </div>
-<h2 id="Phillips-Perron-Testing">Phillips-Perron Testing<a class="headerlink" href="#Phillips-Perron-Testing" title="Permalink to this heading">¶</a></h2>
+<h2 id="Phillips-Perron-Testing">Phillips-Perron Testing<a class="headerlink" href="#Phillips-Perron-Testing" title="Link to this heading">¶</a></h2>
 <p>The Phillips-Perron test is similar to the ADF except that the regression run does not include lagged values of the first differences. Instead, the PP test fixed the t-statistic using a long run variance estimation, implemented using a Newey-West covariance estimator.</p>
 <p>By default, the number of lags is automatically set, although this can be overridden using <code class="docutils literal notranslate"><span class="pre">lags</span></code>.</p>
 <div class="nbinput docutils container">
@@ -1060,7 +1060,7 @@ Null Hypothesis: The process contains a unit root.
 Alternative Hypothesis: The process is weakly stationary.
 </pre></div></div>
 </div>
-<h2 id="KPSS-Testing">KPSS Testing<a class="headerlink" href="#KPSS-Testing" title="Permalink to this heading">¶</a></h2>
+<h2 id="KPSS-Testing">KPSS Testing<a class="headerlink" href="#KPSS-Testing" title="Link to this heading">¶</a></h2>
 <p>The KPSS test differs from the three previous in that the null is a stationary process and the alternative is a unit root.</p>
 <p>Note that here the null is rejected which indicates that the series might be a unit root.</p>
 <div class="nbinput docutils container">
@@ -1120,7 +1120,7 @@ Null Hypothesis: The process is weakly stationary.
 Alternative Hypothesis: The process contains a unit root.
 </pre></div></div>
 </div>
-<h2 id="Zivot-Andrews-Test">Zivot-Andrews Test<a class="headerlink" href="#Zivot-Andrews-Test" title="Permalink to this heading">¶</a></h2>
+<h2 id="Zivot-Andrews-Test">Zivot-Andrews Test<a class="headerlink" href="#Zivot-Andrews-Test" title="Link to this heading">¶</a></h2>
 <p>The Zivot-Andrews test allows the possibility of a single structural break in the series. Here we test the default using the test.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[18]:
@@ -1151,7 +1151,7 @@ Null Hypothesis: The process contains a unit root with a single structural break
 Alternative Hypothesis: The process is trend and break stationary.
 </pre></div></div>
 </div>
-<h2 id="Variance-Ratio-Testing">Variance Ratio Testing<a class="headerlink" href="#Variance-Ratio-Testing" title="Permalink to this heading">¶</a></h2>
+<h2 id="Variance-Ratio-Testing">Variance Ratio Testing<a class="headerlink" href="#Variance-Ratio-Testing" title="Link to this heading">¶</a></h2>
 <p>Variance ratio tests are not usually used as unit root tests, and are instead used for testing whether a financial return series is a pure random walk versus having some predictability. This example uses the excess return on the market from Ken French’s data.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[19]:
@@ -1318,7 +1318,7 @@ The length of y is not an exact multiple of 12, and so the final
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.0.1.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1365,10 +1365,10 @@ The length of y is not an exact multiple of 12, and so the final
     <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
     
       
-        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js"></script>
+        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=1e7b0789"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js"></script>
+        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js?v=cadf963e"></script>
     
   </body>
 </html>
