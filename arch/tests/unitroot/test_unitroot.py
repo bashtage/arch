@@ -5,7 +5,7 @@ from __future__ import annotations
 from arch.compat.statsmodels import dataset_loader
 
 import os
-from typing import NamedTuple, Optional
+from typing import NamedTuple
 import warnings
 
 import numpy as np

@@ -8,7 +8,6 @@ import fnmatch
 import importlib.metadata
 import importlib.resources
 import os
-import pathlib
 
 CYTHON_COVERAGE = os.environ.get("ARCH_CYTHON_COVERAGE", "0") in ("true", "1", "True")
 if CYTHON_COVERAGE:
