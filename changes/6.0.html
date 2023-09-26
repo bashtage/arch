@@ -15,7 +15,7 @@
     
   
       
-        <title>Version 6 - arch 6.1.0</title>
+        <title>Version 6 - arch 6.2.0</title>
       
     
 
@@ -47,8 +47,8 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.b223ac77c5eb52f42.min.css" />
-        <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.79d3faa9841bcddc6.min.css?v=e88de5f6" />
+        <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch 6.1.0" class="md-header__button md-logo" aria-label="arch 6.1.0" data-md-component="logo">
+    <a href="../index.html" title="arch 6.2.0" class="md-header__button md-logo" aria-label="arch 6.2.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 6.1.0
+            arch 6.2.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch 6.1.0" class="md-nav__button md-logo" aria-label="arch 6.1.0" data-md-component="logo">
+    <a href="../index.html" title="arch 6.2.0" class="md-nav__button md-logo" aria-label="arch 6.2.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 6.1.0
+    arch 6.2.0
   </label>
   
     <div class="md-nav__source">
@@ -363,8 +363,21 @@
                   
 
 
-<h1 id="version-6">Version 6<a class="headerlink" href="#version-6" title="Permalink to this heading">¶</a></h1>
-<h2 id="release-6-1">Release 6.1<a class="headerlink" href="#release-6-1" title="Permalink to this heading">¶</a></h2>
+<h1 id="version-6">Version 6<a class="headerlink" href="#version-6" title="Link to this heading">¶</a></h1>
+<h2 id="release-6-2">Release 6.2<a class="headerlink" href="#release-6-2" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Fixed a bug that affected forecasting from  <a class="reference internal" href="../univariate/generated/arch.univariate.FIGARCH.html#arch.univariate.FIGARCH" title="arch.univariate.volatility.FIGARCH (Python class)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FIGARCH</span></code></a> models (<a class="reference external" href="https://github.com/bashtage/arch/issues/606">GH606</a>).</p></li>
+<li><p>Added a performance warning when testing for unit roots in large series using a lag-length
+search with no-max-lag specified.</p></li>
+<li><p>Fixed a bug that affected forecasting from <code class="xref py py-class docutils literal notranslate"><span class="pre">arch.univariate.volatility.FIGARCH'</span>
+<span class="pre">models</span> <span class="pre">(:issue:`606</span></code>).</p></li>
+<li><p>Changed the default value of <code class="docutils literal notranslate"><span class="pre">reindex</span></code> to <code class="docutils literal notranslate"><span class="pre">False</span></code> so that forecasts
+will not match the input by default.  Set <code class="docutils literal notranslate"><span class="pre">reindex</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> if this is
+required.</p></li>
+<li><p>Made <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">__future__</span> <span class="pre">import</span> <span class="pre">reindex</span></code> a no-op.</p></li>
+<li><p>Updated notebooks to reflect best practices</p></li>
+</ul>
+<h2 id="release-6-1">Release 6.1<a class="headerlink" href="#release-6-1" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Pushed back the adoption of Cython 3 until a later date</p></li>
 <li><p>Fixed a bug that occurred when:</p>
@@ -374,7 +387,7 @@
 </ul>
 </li>
 </ul>
-<h2 id="release-6-0">Release 6.0<a class="headerlink" href="#release-6-0" title="Permalink to this heading">¶</a></h2>
+<h2 id="release-6-0">Release 6.0<a class="headerlink" href="#release-6-0" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Minimum supported Python is 3.9</p></li>
 <li><p>Bumped minimum NumPy, SciPy, pandas, statsmodels and Cython</p></li>
@@ -412,7 +425,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.0.1.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -459,7 +472,7 @@
     <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
     
       
-        <script src="../_static/sphinx_immaterial_theme.cea6a0c1d5b0618cf.min.js"></script>
+        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=1e7b0789"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

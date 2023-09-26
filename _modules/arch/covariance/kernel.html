@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.covariance.kernel - arch 6.1.0</title>
+        <title>arch.covariance.kernel - arch 6.2.0</title>
       
     
 
@@ -47,8 +47,8 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.b223ac77c5eb52f42.min.css" />
-        <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.79d3faa9841bcddc6.min.css?v=e88de5f6" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch 6.1.0" class="md-header__button md-logo" aria-label="arch 6.1.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 6.2.0" class="md-header__button md-logo" aria-label="arch 6.2.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 6.1.0
+            arch 6.2.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch 6.1.0" class="md-nav__button md-logo" aria-label="arch 6.1.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 6.2.0" class="md-nav__button md-logo" aria-label="arch 6.2.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 6.1.0
+    arch 6.2.0
   </label>
   
     <div class="md-nav__source">
@@ -410,7 +410,9 @@
 <span class="p">]</span>
 
 
-<div class="viewcode-block" id="CovarianceEstimate"><a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.CovarianceEstimate.html#arch.covariance.kernel.CovarianceEstimate">[docs]</a><span class="k">class</span> <span class="nc">CovarianceEstimate</span><span class="p">:</span>
+<div class="viewcode-block" id="CovarianceEstimate">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.CovarianceEstimate.html#arch.covariance.kernel.CovarianceEstimate">[docs]</a>
+<span class="k">class</span> <span class="nc">CovarianceEstimate</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Covariance estimate using a long-run covariance estimator</span>
 
@@ -500,6 +502,7 @@
 <span class="sd">        The one-sided strict covariance estimate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_oss</span><span class="p">)</span></div>
+
 
 
 <span class="k">class</span> <span class="nc">CovarianceEstimator</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
@@ -784,7 +787,9 @@
 <span class="s2">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="Bartlett"><a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Bartlett.html#arch.covariance.kernel.Bartlett">[docs]</a><span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Bartlett&#39;s (Newey-West)&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_bartlett_formula</span><span class="p">)</span>
+<div class="viewcode-block" id="Bartlett">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Bartlett.html#arch.covariance.kernel.Bartlett">[docs]</a>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Bartlett&#39;s (Newey-West)&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_bartlett_formula</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Bartlett</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -803,6 +808,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span></div>
 
 
+
 <span class="n">_parzen_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="se">\</span>
 <span class="s2">1-6z^</span><span class="si">{2}</span><span class="se">\\</span><span class="s2">left(1-z</span><span class="se">\\</span><span class="s2">right) &amp; z</span><span class="se">\\</span><span class="s2">leq</span><span class="se">\\</span><span class="s2">frac</span><span class="si">{1}{2}</span><span class="s2"> </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
@@ -812,7 +818,9 @@
 <span class="s2">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="Parzen"><a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Parzen.html#arch.covariance.kernel.Parzen">[docs]</a><span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen&#39;s&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_formula</span><span class="p">)</span>
+<div class="viewcode-block" id="Parzen">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Parzen.html#arch.covariance.kernel.Parzen">[docs]</a>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen&#39;s&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_formula</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Parzen</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -836,6 +844,7 @@
         <span class="k">return</span> <span class="n">w</span></div>
 
 
+
 <span class="n">_parzen_reisz_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">1-z^2 &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
@@ -844,7 +853,9 @@
 <span class="s2">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="ParzenRiesz"><a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.ParzenRiesz.html#arch.covariance.kernel.ParzenRiesz">[docs]</a><span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen-Reisz&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_reisz_formula</span><span class="p">)</span>
+<div class="viewcode-block" id="ParzenRiesz">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.ParzenRiesz.html#arch.covariance.kernel.ParzenRiesz">[docs]</a>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen-Reisz&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_reisz_formula</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">ParzenRiesz</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -864,6 +875,7 @@
         <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span></div>
 
 
+
 <span class="n">_parzen_geometric_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">frac</span><span class="si">{1}</span><span class="s2">{1+z} &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
@@ -872,7 +884,9 @@
 <span class="s2">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="ParzenGeometric"><a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.ParzenGeometric.html#arch.covariance.kernel.ParzenGeometric">[docs]</a><span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen&#39;s Geometric&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_geometric_formula</span><span class="p">)</span>
+<div class="viewcode-block" id="ParzenGeometric">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.ParzenGeometric.html#arch.covariance.kernel.ParzenGeometric">[docs]</a>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen&#39;s Geometric&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_geometric_formula</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">ParzenGeometric</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -892,6 +906,7 @@
         <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span></div>
 
 
+
 <span class="n">_parzen_cauchy_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">frac</span><span class="si">{1}</span><span class="s2">{1+z^2} &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
@@ -900,7 +915,9 @@
 <span class="s2">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="ParzenCauchy"><a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.ParzenCauchy.html#arch.covariance.kernel.ParzenCauchy">[docs]</a><span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen&#39;s Cauchy&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_cauchy_formula</span><span class="p">)</span>
+<div class="viewcode-block" id="ParzenCauchy">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.ParzenCauchy.html#arch.covariance.kernel.ParzenCauchy">[docs]</a>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Parzen&#39;s Cauchy&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_parzen_cauchy_formula</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">ParzenCauchy</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -920,6 +937,7 @@
         <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
 
 
+
 <span class="n">_tukey_hamming_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0.54 + 0.46 </span><span class="se">\\</span><span class="s2">cos{</span><span class="se">\\</span><span class="s2">pi z} &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
@@ -928,7 +946,9 @@
 <span class="s2">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="TukeyHamming"><a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.TukeyHamming.html#arch.covariance.kernel.TukeyHamming">[docs]</a><span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Tukey-Hamming&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_hamming_formula</span><span class="p">)</span>
+<div class="viewcode-block" id="TukeyHamming">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.TukeyHamming.html#arch.covariance.kernel.TukeyHamming">[docs]</a>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Tukey-Hamming&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_hamming_formula</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">TukeyHamming</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -948,6 +968,7 @@
         <span class="k">return</span> <span class="mf">0.54</span> <span class="o">+</span> <span class="mf">0.46</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
 
 
+
 <span class="n">_tukey_hanning_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="se">\\</span><span class="s2">frac</span><span class="si">{1}{2}</span><span class="s2"> + </span><span class="se">\\</span><span class="s2">frac</span><span class="si">{1}{2}</span><span class="s2"> </span><span class="se">\\</span><span class="s2">cos{</span><span class="se">\\</span><span class="s2">pi z} &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
@@ -956,7 +977,9 @@
 <span class="s2">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="TukeyHanning"><a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.TukeyHanning.html#arch.covariance.kernel.TukeyHanning">[docs]</a><span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Tukey-Hanning&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_hanning_formula</span><span class="p">)</span>
+<div class="viewcode-block" id="TukeyHanning">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.TukeyHanning.html#arch.covariance.kernel.TukeyHanning">[docs]</a>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Tukey-Hanning&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_hanning_formula</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">TukeyHanning</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -976,6 +999,7 @@
         <span class="k">return</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
 
 
+
 <span class="n">_tukey_parzen_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">0.436 + 0.564 </span><span class="se">\\</span><span class="s2">cos{</span><span class="se">\\</span><span class="s2">pi z} &amp; z</span><span class="se">\\</span><span class="s2">leq1 </span><span class="se">\\\\</span><span class="s2"> </span><span class="se">\</span>
@@ -984,7 +1008,9 @@
 <span class="s2">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="TukeyParzen"><a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.TukeyParzen.html#arch.covariance.kernel.TukeyParzen">[docs]</a><span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Tukey-Parzen&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_parzen_formula</span><span class="p">)</span>
+<div class="viewcode-block" id="TukeyParzen">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.TukeyParzen.html#arch.covariance.kernel.TukeyParzen">[docs]</a>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;Tukey-Parzen&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_tukey_parzen_formula</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">TukeyParzen</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1004,6 +1030,7 @@
         <span class="k">return</span> <span class="mf">0.436</span> <span class="o">+</span> <span class="mf">0.564</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
 
 
+
 <span class="n">_qs_name</span> <span class="o">=</span> <span class="s2">&quot;Quadratic-Spectral (Andrews&#39;)&quot;</span>
 <span class="n">_qs_formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
 <span class="s2">w=</span><span class="se">\\</span><span class="s2">begin</span><span class="si">{cases}</span><span class="s2"> </span><span class="se">\</span>
@@ -1013,7 +1040,9 @@
 <span class="s2">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="QuadraticSpectral"><a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.QuadraticSpectral.html#arch.covariance.kernel.QuadraticSpectral">[docs]</a><span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="n">_qs_name</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_qs_formula</span><span class="p">)</span>
+<div class="viewcode-block" id="QuadraticSpectral">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.QuadraticSpectral.html#arch.covariance.kernel.QuadraticSpectral">[docs]</a>
+<span class="nd">@Substitution</span><span class="p">(</span><span class="n">kernel_name</span><span class="o">=</span><span class="n">_qs_name</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="n">_qs_formula</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">QuadraticSpectral</span><span class="p">(</span><span class="n">CovarianceEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">kernel_const</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1039,7 +1068,10 @@
         <span class="k">return</span> <span class="n">w</span></div>
 
 
-<div class="viewcode-block" id="Gallant"><a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Gallant.html#arch.covariance.kernel.Gallant">[docs]</a><span class="k">class</span> <span class="nc">Gallant</span><span class="p">(</span><span class="n">Parzen</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Gallant">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Gallant.html#arch.covariance.kernel.Gallant">[docs]</a>
+<span class="k">class</span> <span class="nc">Gallant</span><span class="p">(</span><span class="n">Parzen</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Alternative name for Parzen covariance estimator.</span>
 
@@ -1049,7 +1081,10 @@
 <span class="sd">    &quot;&quot;&quot;</span></div>
 
 
-<div class="viewcode-block" id="Andrews"><a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Andrews.html#arch.covariance.kernel.Andrews">[docs]</a><span class="k">class</span> <span class="nc">Andrews</span><span class="p">(</span><span class="n">QuadraticSpectral</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Andrews">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.Andrews.html#arch.covariance.kernel.Andrews">[docs]</a>
+<span class="k">class</span> <span class="nc">Andrews</span><span class="p">(</span><span class="n">QuadraticSpectral</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Alternative name of the QuadraticSpectral covariance estimator.</span>
 
@@ -1059,7 +1094,10 @@
 <span class="sd">    &quot;&quot;&quot;</span></div>
 
 
-<div class="viewcode-block" id="NeweyWest"><a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.NeweyWest.html#arch.covariance.kernel.NeweyWest">[docs]</a><span class="k">class</span> <span class="nc">NeweyWest</span><span class="p">(</span><span class="n">Bartlett</span><span class="p">):</span>
+
+<div class="viewcode-block" id="NeweyWest">
+<a class="viewcode-back" href="../../../covariance/generated/arch.covariance.kernel.NeweyWest.html#arch.covariance.kernel.NeweyWest">[docs]</a>
+<span class="k">class</span> <span class="nc">NeweyWest</span><span class="p">(</span><span class="n">Bartlett</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Alternative name for Bartlett covariance estimator.</span>
 
@@ -1067,6 +1105,7 @@
 <span class="sd">    --------</span>
 <span class="sd">    Bartlett</span>
 <span class="sd">    &quot;&quot;&quot;</span></div>
+
 </code></pre></div>
 
 
@@ -1098,7 +1137,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.0.1.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1145,7 +1184,7 @@
     <script id="__config" type="application/json">{"base": "../../..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
     
       
-        <script src="../../../_static/sphinx_immaterial_theme.cea6a0c1d5b0618cf.min.js"></script>
+        <script src="../../../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=1e7b0789"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

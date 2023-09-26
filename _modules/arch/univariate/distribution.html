@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.univariate.distribution - arch 6.1.0</title>
+        <title>arch.univariate.distribution - arch 6.2.0</title>
       
     
 
@@ -47,8 +47,8 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.b223ac77c5eb52f42.min.css" />
-        <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.79d3faa9841bcddc6.min.css?v=e88de5f6" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch 6.1.0" class="md-header__button md-logo" aria-label="arch 6.1.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 6.2.0" class="md-header__button md-logo" aria-label="arch 6.2.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 6.1.0
+            arch 6.2.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch 6.1.0" class="md-nav__button md-logo" aria-label="arch 6.1.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 6.2.0" class="md-nav__button md-logo" aria-label="arch 6.2.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 6.1.0
+    arch 6.2.0
   </label>
   
     <div class="md-nav__source">
@@ -403,7 +403,9 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Distribution&quot;</span><span class="p">,</span> <span class="s2">&quot;Normal&quot;</span><span class="p">,</span> <span class="s2">&quot;StudentsT&quot;</span><span class="p">,</span> <span class="s2">&quot;SkewStudent&quot;</span><span class="p">,</span> <span class="s2">&quot;GeneralizedError&quot;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Distribution"><a class="viewcode-back" href="../../../univariate/generated/arch.univariate.distribution.Distribution.html#arch.univariate.distribution.Distribution">[docs]</a><span class="k">class</span> <span class="nc">Distribution</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<div class="viewcode-block" id="Distribution">
+<a class="viewcode-back" href="../../../univariate/generated/arch.univariate.distribution.Distribution.html#arch.univariate.distribution.Distribution">[docs]</a>
+<span class="k">class</span> <span class="nc">Distribution</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Template for subclassing only</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -514,7 +516,9 @@
 <span class="sd">        Must call `simulate` before using `_simulator`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Distribution.simulate"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.simulate.html#arch.univariate.distribution.Distribution.simulate">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Distribution.simulate">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.simulate.html#arch.univariate.distribution.Distribution.simulate">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="n">Float64Array</span><span class="p">]:</span>
@@ -533,7 +537,10 @@
 <span class="sd">            draws from the distribution</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="Distribution.constraints"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.constraints.html#arch.univariate.distribution.Distribution.constraints">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="Distribution.constraints">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.constraints.html#arch.univariate.distribution.Distribution.constraints">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct arrays to use in constrained optimization.</span>
@@ -550,7 +557,10 @@
 <span class="sd">        Parameters satisfy the constraints A.dot(parameters)-b &gt;= 0</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="Distribution.bounds"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.bounds.html#arch.univariate.distribution.Distribution.bounds">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="Distribution.bounds">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.bounds.html#arch.univariate.distribution.Distribution.bounds">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameter bounds for use in optimization.</span>
@@ -566,7 +576,10 @@
 <span class="sd">            List containing a single tuple with (lower, upper) bounds</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="Distribution.loglikelihood"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.loglikelihood.html#arch.univariate.distribution.Distribution.loglikelihood">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="Distribution.loglikelihood">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.loglikelihood.html#arch.univariate.distribution.Distribution.loglikelihood">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
@@ -595,7 +608,10 @@
 <span class="sd">        and parameters and sigma2 are inputs.</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="Distribution.starting_values"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.starting_values.html#arch.univariate.distribution.Distribution.starting_values">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="Distribution.starting_values">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.starting_values.html#arch.univariate.distribution.Distribution.starting_values">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct starting values for use in optimization.</span>
@@ -616,7 +632,10 @@
 <span class="sd">        Size of sv depends on the distribution</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="Distribution.parameter_names"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.parameter_names.html#arch.univariate.distribution.Distribution.parameter_names">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="Distribution.parameter_names">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.parameter_names.html#arch.univariate.distribution.Distribution.parameter_names">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Names of distribution shape parameters</span>
@@ -627,7 +646,10 @@
 <span class="sd">            Parameter names</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="Distribution.ppf"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.ppf.html#arch.univariate.distribution.Distribution.ppf">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="Distribution.ppf">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.ppf.html#arch.univariate.distribution.Distribution.ppf">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pits</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
@@ -650,7 +672,10 @@
 <span class="sd">            Inverse CDF values</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="Distribution.cdf"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.cdf.html#arch.univariate.distribution.Distribution.cdf">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="Distribution.cdf">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.cdf.html#arch.univariate.distribution.Distribution.cdf">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
@@ -673,7 +698,10 @@
 <span class="sd">            CDF values</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="Distribution.moment"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.moment.html#arch.univariate.distribution.Distribution.moment">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="Distribution.moment">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.moment.html#arch.univariate.distribution.Distribution.moment">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">moment</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -693,7 +721,10 @@
 <span class="sd">            Calculated moment</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="Distribution.partial_moment"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.partial_moment.html#arch.univariate.distribution.Distribution.partial_moment">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="Distribution.partial_moment">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.partial_moment.html#arch.univariate.distribution.Distribution.partial_moment">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">partial_moment</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -733,6 +764,7 @@
 <span class="sd">        See [1]_ for more details.</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
+
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span><span class="p">()</span>
 
@@ -743,7 +775,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; distribution&quot;</span></div>
 
 
-<div class="viewcode-block" id="Normal"><a class="viewcode-back" href="../../../univariate/generated/arch.univariate.Normal.html#arch.univariate.distribution.Normal">[docs]</a><span class="k">class</span> <span class="nc">Normal</span><span class="p">(</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Normal">
+<a class="viewcode-back" href="../../../univariate/generated/arch.univariate.Normal.html#arch.univariate.distribution.Normal">[docs]</a>
+<span class="k">class</span> <span class="nc">Normal</span><span class="p">(</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Standard normal distribution for use with ARCH models</span>
 
@@ -770,13 +805,21 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;Normal&quot;</span>
 
-<div class="viewcode-block" id="Normal.constraints"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.constraints.html#arch.univariate.distribution.Normal.constraints">[docs]</a>    <span class="k">def</span> <span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
+<div class="viewcode-block" id="Normal.constraints">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.constraints.html#arch.univariate.distribution.Normal.constraints">[docs]</a>
+    <span class="k">def</span> <span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Normal.bounds"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.bounds.html#arch.univariate.distribution.Normal.bounds">[docs]</a>    <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+
+<div class="viewcode-block" id="Normal.bounds">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.bounds.html#arch.univariate.distribution.Normal.bounds">[docs]</a>
+    <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
         <span class="k">return</span> <span class="p">[]</span></div>
 
-<div class="viewcode-block" id="Normal.loglikelihood"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.loglikelihood.html#arch.univariate.distribution.Normal.loglikelihood">[docs]</a>    <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span>
+
+<div class="viewcode-block" id="Normal.loglikelihood">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.loglikelihood.html#arch.univariate.distribution.Normal.loglikelihood">[docs]</a>
+    <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
@@ -820,21 +863,33 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">lls</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Normal.starting_values"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.starting_values.html#arch.univariate.distribution.Normal.starting_values">[docs]</a>    <span class="k">def</span> <span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Normal.starting_values">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.starting_values.html#arch.univariate.distribution.Normal.starting_values">[docs]</a>
+    <span class="k">def</span> <span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generator</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Normal.simulate"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.simulate.html#arch.univariate.distribution.Normal.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
+<div class="viewcode-block" id="Normal.simulate">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.simulate.html#arch.univariate.distribution.Normal.simulate">[docs]</a>
+    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="n">Float64Array</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulator</span></div>
 
-<div class="viewcode-block" id="Normal.parameter_names"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.parameter_names.html#arch.univariate.distribution.Normal.parameter_names">[docs]</a>    <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="Normal.parameter_names">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.parameter_names.html#arch.univariate.distribution.Normal.parameter_names">[docs]</a>
+    <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[]</span></div>
 
-<div class="viewcode-block" id="Normal.cdf"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.cdf.html#arch.univariate.distribution.Normal.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span>
+
+<div class="viewcode-block" id="Normal.cdf">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.cdf.html#arch.univariate.distribution.Normal.cdf">[docs]</a>
+    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -842,7 +897,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">asarray</span><span class="p">(</span><span class="n">resids</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Normal.ppf"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.ppf.html#arch.univariate.distribution.Normal.ppf">[docs]</a>    <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span>
+
+<div class="viewcode-block" id="Normal.ppf">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.ppf.html#arch.univariate.distribution.Normal.ppf">[docs]</a>
+    <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pits</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -859,7 +917,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ppf</span></div>
 
-<div class="viewcode-block" id="Normal.moment"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.moment.html#arch.univariate.distribution.Normal.moment">[docs]</a>    <span class="k">def</span> <span class="nf">moment</span><span class="p">(</span>
+
+<div class="viewcode-block" id="Normal.moment">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.moment.html#arch.univariate.distribution.Normal.moment">[docs]</a>
+    <span class="k">def</span> <span class="nf">moment</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -867,7 +928,10 @@
 
         <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">moment</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Normal.partial_moment"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.partial_moment.html#arch.univariate.distribution.Normal.partial_moment">[docs]</a>    <span class="k">def</span> <span class="nf">partial_moment</span><span class="p">(</span>
+
+<div class="viewcode-block" id="Normal.partial_moment">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.partial_moment.html#arch.univariate.distribution.Normal.partial_moment">[docs]</a>
+    <span class="k">def</span> <span class="nf">partial_moment</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
@@ -882,10 +946,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="n">z</span> <span class="o">**</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">partial_moment</span><span class="p">(</span>
                 <span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">parameters</span>
-            <span class="p">)</span></div></div>
+            <span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="StudentsT"><a class="viewcode-back" href="../../../univariate/generated/arch.univariate.StudentsT.html#arch.univariate.distribution.StudentsT">[docs]</a><span class="k">class</span> <span class="nc">StudentsT</span><span class="p">(</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StudentsT">
+<a class="viewcode-back" href="../../../univariate/generated/arch.univariate.StudentsT.html#arch.univariate.distribution.StudentsT">[docs]</a>
+<span class="k">class</span> <span class="nc">StudentsT</span><span class="p">(</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Standardized Student&#39;s distribution for use with ARCH models</span>
 
@@ -913,13 +981,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;Standardized Student&#39;s t&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 
-<div class="viewcode-block" id="StudentsT.constraints"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.constraints.html#arch.univariate.distribution.StudentsT.constraints">[docs]</a>    <span class="k">def</span> <span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
+<div class="viewcode-block" id="StudentsT.constraints">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.constraints.html#arch.univariate.distribution.StudentsT.constraints">[docs]</a>
+    <span class="k">def</span> <span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]),</span> <span class="n">array</span><span class="p">([</span><span class="mf">2.05</span><span class="p">,</span> <span class="o">-</span><span class="mf">500.0</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="StudentsT.bounds"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.bounds.html#arch.univariate.distribution.StudentsT.bounds">[docs]</a>    <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+
+<div class="viewcode-block" id="StudentsT.bounds">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.bounds.html#arch.univariate.distribution.StudentsT.bounds">[docs]</a>
+    <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
         <span class="k">return</span> <span class="p">[(</span><span class="mf">2.05</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">)]</span></div>
 
-<div class="viewcode-block" id="StudentsT.loglikelihood"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.loglikelihood.html#arch.univariate.distribution.StudentsT.loglikelihood">[docs]</a>    <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span>
+
+<div class="viewcode-block" id="StudentsT.loglikelihood">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.loglikelihood.html#arch.univariate.distribution.StudentsT.loglikelihood">[docs]</a>
+    <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
@@ -970,7 +1046,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">lls</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="StudentsT.starting_values"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.starting_values.html#arch.univariate.distribution.StudentsT.starting_values">[docs]</a>    <span class="k">def</span> <span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+
+<div class="viewcode-block" id="StudentsT.starting_values">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.starting_values.html#arch.univariate.distribution.StudentsT.starting_values">[docs]</a>
+    <span class="k">def</span> <span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct starting values for use in optimization.</span>
 
@@ -994,13 +1073,16 @@
         <span class="n">sv</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">k</span> <span class="o">-</span> <span class="mf">6.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mf">3.0</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mf">3.75</span> <span class="k">else</span> <span class="mf">12.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">array</span><span class="p">([</span><span class="n">sv</span><span class="p">])</span></div>
 
+
     <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span>
         <span class="n">std_dev</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generator</span><span class="o">.</span><span class="n">standard_t</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span> <span class="o">/</span> <span class="n">std_dev</span>
 
-<div class="viewcode-block" id="StudentsT.simulate"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.simulate.html#arch.univariate.distribution.StudentsT.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
+<div class="viewcode-block" id="StudentsT.simulate">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.simulate.html#arch.univariate.distribution.StudentsT.simulate">[docs]</a>
+    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="n">Float64Array</span><span class="p">]:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -1009,10 +1091,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulator</span></div>
 
-<div class="viewcode-block" id="StudentsT.parameter_names"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.parameter_names.html#arch.univariate.distribution.StudentsT.parameter_names">[docs]</a>    <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="StudentsT.parameter_names">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.parameter_names.html#arch.univariate.distribution.StudentsT.parameter_names">[docs]</a>
+    <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;nu&quot;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="StudentsT.cdf"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.cdf.html#arch.univariate.distribution.StudentsT.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span>
+
+<div class="viewcode-block" id="StudentsT.cdf">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.cdf.html#arch.univariate.distribution.StudentsT.cdf">[docs]</a>
+    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1022,7 +1110,10 @@
         <span class="n">var</span> <span class="o">=</span> <span class="n">nu</span> <span class="o">/</span> <span class="p">(</span><span class="n">nu</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">))</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">asarray</span><span class="p">(</span><span class="n">resids</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="StudentsT.ppf"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.ppf.html#arch.univariate.distribution.StudentsT.ppf">[docs]</a>    <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span>
+
+<div class="viewcode-block" id="StudentsT.ppf">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.ppf.html#arch.univariate.distribution.StudentsT.ppf">[docs]</a>
+    <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pits</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1033,7 +1124,10 @@
         <span class="n">var</span> <span class="o">=</span> <span class="n">nu</span> <span class="o">/</span> <span class="p">(</span><span class="n">nu</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">))</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">pits</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="StudentsT.moment"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.moment.html#arch.univariate.distribution.StudentsT.moment">[docs]</a>    <span class="k">def</span> <span class="nf">moment</span><span class="p">(</span>
+
+<div class="viewcode-block" id="StudentsT.moment">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.moment.html#arch.univariate.distribution.StudentsT.moment">[docs]</a>
+    <span class="k">def</span> <span class="nf">moment</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -1043,7 +1137,10 @@
         <span class="n">var</span> <span class="o">=</span> <span class="n">nu</span> <span class="o">/</span> <span class="p">(</span><span class="n">nu</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">moment</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">nu</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="StudentsT.partial_moment"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.partial_moment.html#arch.univariate.distribution.StudentsT.partial_moment">[docs]</a>    <span class="k">def</span> <span class="nf">partial_moment</span><span class="p">(</span>
+
+<div class="viewcode-block" id="StudentsT.partial_moment">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.partial_moment.html#arch.univariate.distribution.StudentsT.partial_moment">[docs]</a>
+    <span class="k">def</span> <span class="nf">partial_moment</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
@@ -1055,6 +1152,7 @@
         <span class="n">scale</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
         <span class="n">moment</span> <span class="o">=</span> <span class="p">(</span><span class="n">scale</span> <span class="o">**</span> <span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ord_t_partial_moment</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">z</span> <span class="o">/</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">moment</span></div>
+
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_ord_t_partial_moment</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">nu</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1105,7 +1203,10 @@
         <span class="k">return</span> <span class="n">moment</span></div>
 
 
-<div class="viewcode-block" id="SkewStudent"><a class="viewcode-back" href="../../../univariate/generated/arch.univariate.SkewStudent.html#arch.univariate.distribution.SkewStudent">[docs]</a><span class="k">class</span> <span class="nc">SkewStudent</span><span class="p">(</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SkewStudent">
+<a class="viewcode-back" href="../../../univariate/generated/arch.univariate.SkewStudent.html#arch.univariate.distribution.SkewStudent">[docs]</a>
+<span class="k">class</span> <span class="nc">SkewStudent</span><span class="p">(</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Standardized Skewed Student&#39;s distribution for use with ARCH models</span>
 
@@ -1148,13 +1249,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;Standardized Skew Student&#39;s t&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
 
-<div class="viewcode-block" id="SkewStudent.constraints"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.constraints.html#arch.univariate.distribution.SkewStudent.constraints">[docs]</a>    <span class="k">def</span> <span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
+<div class="viewcode-block" id="SkewStudent.constraints">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.constraints.html#arch.univariate.distribution.SkewStudent.constraints">[docs]</a>
+    <span class="k">def</span> <span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]),</span> <span class="n">array</span><span class="p">([</span><span class="mf">2.05</span><span class="p">,</span> <span class="o">-</span><span class="mf">300.0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="SkewStudent.bounds"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.bounds.html#arch.univariate.distribution.SkewStudent.bounds">[docs]</a>    <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+
+<div class="viewcode-block" id="SkewStudent.bounds">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.bounds.html#arch.univariate.distribution.SkewStudent.bounds">[docs]</a>
+    <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
         <span class="k">return</span> <span class="p">[(</span><span class="mf">2.05</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span></div>
 
-<div class="viewcode-block" id="SkewStudent.loglikelihood"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.loglikelihood.html#arch.univariate.distribution.SkewStudent.loglikelihood">[docs]</a>    <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span>
+
+<div class="viewcode-block" id="SkewStudent.loglikelihood">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.loglikelihood.html#arch.univariate.distribution.SkewStudent.loglikelihood">[docs]</a>
+    <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
@@ -1228,7 +1337,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">lls</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SkewStudent.starting_values"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.starting_values.html#arch.univariate.distribution.SkewStudent.starting_values">[docs]</a>    <span class="k">def</span> <span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+
+<div class="viewcode-block" id="SkewStudent.starting_values">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.starting_values.html#arch.univariate.distribution.SkewStudent.starting_values">[docs]</a>
+    <span class="k">def</span> <span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct starting values for use in optimization.</span>
 
@@ -1252,6 +1364,7 @@
         <span class="n">sv</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">k</span> <span class="o">-</span> <span class="mf">6.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mf">3.0</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mf">3.75</span> <span class="k">else</span> <span class="mf">12.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">array</span><span class="p">([</span><span class="n">sv</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span></div>
 
+
     <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="c1"># No need to normalize since it is already done in parameterization</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -1263,7 +1376,9 @@
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ppf</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ppf</span>
 
-<div class="viewcode-block" id="SkewStudent.simulate"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.simulate.html#arch.univariate.distribution.SkewStudent.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
+<div class="viewcode-block" id="SkewStudent.simulate">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.simulate.html#arch.univariate.distribution.SkewStudent.simulate">[docs]</a>
+    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="n">Float64Array</span><span class="p">]:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -1276,8 +1391,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulator</span></div>
 
-<div class="viewcode-block" id="SkewStudent.parameter_names"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.parameter_names.html#arch.univariate.distribution.SkewStudent.parameter_names">[docs]</a>    <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="SkewStudent.parameter_names">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.parameter_names.html#arch.univariate.distribution.SkewStudent.parameter_names">[docs]</a>
+    <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;lambda&quot;</span><span class="p">]</span></div>
+
 
     <span class="k">def</span> <span class="nf">__const_a</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1337,7 +1456,9 @@
             <span class="n">gammaln</span><span class="p">((</span><span class="n">eta</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">gammaln</span><span class="p">(</span><span class="n">eta</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">log</span><span class="p">(</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="SkewStudent.cdf"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.cdf.html#arch.univariate.distribution.SkewStudent.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span>
+<div class="viewcode-block" id="SkewStudent.cdf">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.cdf.html#arch.univariate.distribution.SkewStudent.cdf">[docs]</a>
+    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1363,7 +1484,10 @@
             <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">p</span></div>
 
-<div class="viewcode-block" id="SkewStudent.ppf"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.ppf.html#arch.univariate.distribution.SkewStudent.ppf">[docs]</a>    <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span>
+
+<div class="viewcode-block" id="SkewStudent.ppf">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.ppf.html#arch.univariate.distribution.SkewStudent.ppf">[docs]</a>
+    <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pits</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1394,7 +1518,10 @@
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">icdf</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">icdf</span></div>
 
-<div class="viewcode-block" id="SkewStudent.moment"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.moment.html#arch.univariate.distribution.SkewStudent.moment">[docs]</a>    <span class="k">def</span> <span class="nf">moment</span><span class="p">(</span>
+
+<div class="viewcode-block" id="SkewStudent.moment">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.moment.html#arch.univariate.distribution.SkewStudent.moment">[docs]</a>
+    <span class="k">def</span> <span class="nf">moment</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
@@ -1426,7 +1553,10 @@
 
         <span class="k">return</span> <span class="n">moment</span></div>
 
-<div class="viewcode-block" id="SkewStudent.partial_moment"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.partial_moment.html#arch.univariate.distribution.SkewStudent.partial_moment">[docs]</a>    <span class="k">def</span> <span class="nf">partial_moment</span><span class="p">(</span>
+
+<div class="viewcode-block" id="SkewStudent.partial_moment">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.partial_moment.html#arch.univariate.distribution.SkewStudent.partial_moment">[docs]</a>
+    <span class="k">def</span> <span class="nf">partial_moment</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
@@ -1470,10 +1600,14 @@
 
             <span class="n">moment</span> <span class="o">+=</span> <span class="n">comb</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">lhs</span> <span class="o">+</span> <span class="n">rhs</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">moment</span></div></div>
+        <span class="k">return</span> <span class="n">moment</span></div>
+</div>
 
 
-<div class="viewcode-block" id="GeneralizedError"><a class="viewcode-back" href="../../../univariate/generated/arch.univariate.GeneralizedError.html#arch.univariate.distribution.GeneralizedError">[docs]</a><span class="k">class</span> <span class="nc">GeneralizedError</span><span class="p">(</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+
+<div class="viewcode-block" id="GeneralizedError">
+<a class="viewcode-back" href="../../../univariate/generated/arch.univariate.GeneralizedError.html#arch.univariate.distribution.GeneralizedError">[docs]</a>
+<span class="k">class</span> <span class="nc">GeneralizedError</span><span class="p">(</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generalized Error distribution for use with ARCH models</span>
 
@@ -1501,13 +1635,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;Generalized Error Distribution&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 
-<div class="viewcode-block" id="GeneralizedError.constraints"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.constraints.html#arch.univariate.distribution.GeneralizedError.constraints">[docs]</a>    <span class="k">def</span> <span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
+<div class="viewcode-block" id="GeneralizedError.constraints">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.constraints.html#arch.univariate.distribution.GeneralizedError.constraints">[docs]</a>
+    <span class="k">def</span> <span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]),</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.01</span><span class="p">,</span> <span class="o">-</span><span class="mf">500.0</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="GeneralizedError.bounds"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.bounds.html#arch.univariate.distribution.GeneralizedError.bounds">[docs]</a>    <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+
+<div class="viewcode-block" id="GeneralizedError.bounds">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.bounds.html#arch.univariate.distribution.GeneralizedError.bounds">[docs]</a>
+    <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
         <span class="k">return</span> <span class="p">[(</span><span class="mf">1.01</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">)]</span></div>
 
-<div class="viewcode-block" id="GeneralizedError.loglikelihood"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.loglikelihood.html#arch.univariate.distribution.GeneralizedError.loglikelihood">[docs]</a>    <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GeneralizedError.loglikelihood">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.loglikelihood.html#arch.univariate.distribution.GeneralizedError.loglikelihood">[docs]</a>
+    <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
@@ -1564,7 +1706,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">lls</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GeneralizedError.starting_values"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.starting_values.html#arch.univariate.distribution.GeneralizedError.starting_values">[docs]</a>    <span class="k">def</span> <span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+
+<div class="viewcode-block" id="GeneralizedError.starting_values">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.starting_values.html#arch.univariate.distribution.GeneralizedError.starting_values">[docs]</a>
+    <span class="k">def</span> <span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct starting values for use in optimization.</span>
 
@@ -1585,6 +1730,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.5</span><span class="p">])</span></div>
 
+
     <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span>
@@ -1599,7 +1745,9 @@
 
         <span class="k">return</span> <span class="n">randoms</span> <span class="o">/</span> <span class="n">scale</span>
 
-<div class="viewcode-block" id="GeneralizedError.simulate"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.simulate.html#arch.univariate.distribution.GeneralizedError.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
+<div class="viewcode-block" id="GeneralizedError.simulate">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.simulate.html#arch.univariate.distribution.GeneralizedError.simulate">[docs]</a>
+    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="n">Float64Array</span><span class="p">]:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -1608,10 +1756,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulator</span></div>
 
-<div class="viewcode-block" id="GeneralizedError.parameter_names"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.parameter_names.html#arch.univariate.distribution.GeneralizedError.parameter_names">[docs]</a>    <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="GeneralizedError.parameter_names">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.parameter_names.html#arch.univariate.distribution.GeneralizedError.parameter_names">[docs]</a>
+    <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;nu&quot;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="GeneralizedError.ppf"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.ppf.html#arch.univariate.distribution.GeneralizedError.ppf">[docs]</a>    <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GeneralizedError.ppf">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.ppf.html#arch.univariate.distribution.GeneralizedError.ppf">[docs]</a>
+    <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pits</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1622,7 +1776,10 @@
         <span class="n">var</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gennorm</span><span class="p">(</span><span class="n">nu</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">gennorm</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">))</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">pits</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GeneralizedError.cdf"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.cdf.html#arch.univariate.distribution.GeneralizedError.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GeneralizedError.cdf">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.cdf.html#arch.univariate.distribution.GeneralizedError.cdf">[docs]</a>
+    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1633,7 +1790,10 @@
         <span class="n">resids</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">gennorm</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">))</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GeneralizedError.moment"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.moment.html#arch.univariate.distribution.GeneralizedError.moment">[docs]</a>    <span class="k">def</span> <span class="nf">moment</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GeneralizedError.moment">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.moment.html#arch.univariate.distribution.GeneralizedError.moment">[docs]</a>
+    <span class="k">def</span> <span class="nf">moment</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -1644,7 +1804,10 @@
         <span class="n">var</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gennorm</span><span class="p">(</span><span class="n">nu</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">gennorm</span><span class="o">.</span><span class="n">moment</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">nu</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="GeneralizedError.partial_moment"><a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.partial_moment.html#arch.univariate.distribution.GeneralizedError.partial_moment">[docs]</a>    <span class="k">def</span> <span class="nf">partial_moment</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GeneralizedError.partial_moment">
+<a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.partial_moment.html#arch.univariate.distribution.GeneralizedError.partial_moment">[docs]</a>
+    <span class="k">def</span> <span class="nf">partial_moment</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
@@ -1655,6 +1818,7 @@
         <span class="n">scale</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">gennorm</span><span class="p">(</span><span class="n">nu</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">())</span>
         <span class="n">moment</span> <span class="o">=</span> <span class="p">(</span><span class="n">scale</span> <span class="o">**</span> <span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ord_gennorm_partial_moment</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">z</span> <span class="o">/</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">moment</span></div>
+
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_ord_gennorm_partial_moment</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1705,6 +1869,7 @@
         <span class="n">moment</span> <span class="o">=</span> <span class="n">lterm</span> <span class="o">+</span> <span class="n">rterm</span>
 
         <span class="k">return</span> <span class="n">moment</span></div>
+
 </code></pre></div>
 
 
@@ -1736,7 +1901,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.0.1.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1783,7 +1948,7 @@
     <script id="__config" type="application/json">{"base": "../../..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
     
       
-        <script src="../../../_static/sphinx_immaterial_theme.cea6a0c1d5b0618cf.min.js"></script>
+        <script src="../../../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=1e7b0789"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

@@ -15,7 +15,7 @@
     
   
       
-        <title>ARCH Modeling - arch 6.1.0</title>
+        <title>ARCH Modeling - arch 6.2.0</title>
       
     
 
@@ -47,9 +47,9 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.b223ac77c5eb52f42.min.css" />
-        <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
-        <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.79d3faa9841bcddc6.min.css?v=e88de5f6" />
+        <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+        <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -93,7 +93,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch 6.1.0" class="md-header__button md-logo" aria-label="arch 6.1.0" data-md-component="logo">
+    <a href="../index.html" title="arch 6.2.0" class="md-header__button md-logo" aria-label="arch 6.2.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -103,7 +103,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 6.1.0
+            arch 6.2.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -190,10 +190,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch 6.1.0" class="md-nav__button md-logo" aria-label="arch 6.1.0" data-md-component="logo">
+    <a href="../index.html" title="arch 6.2.0" class="md-nav__button md-logo" aria-label="arch 6.2.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 6.1.0
+    arch 6.2.0
   </label>
   
     <div class="md-nav__source">
@@ -851,7 +851,7 @@
                   
 
 
-<h1 id="ARCH-Modeling">ARCH Modeling<a class="headerlink" href="#ARCH-Modeling" title="Permalink to this heading">¶</a></h1>
+<h1 id="ARCH-Modeling">ARCH Modeling<a class="headerlink" href="#ARCH-Modeling" title="Link to this heading">¶</a></h1>
 <p><em>This setup code is required to run in an IPython notebook</em></p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[1]:
@@ -869,7 +869,7 @@
 </code></pre></div>
 </div>
 </div>
-<h2 id="Setup">Setup<a class="headerlink" href="#Setup" title="Permalink to this heading">¶</a></h2>
+<h2 id="Setup">Setup<a class="headerlink" href="#Setup" title="Link to this heading">¶</a></h2>
 <p>These examples will all make use of financial data from Yahoo! Finance. This data set can be loaded from <code class="docutils literal notranslate"><span class="pre">arch.data.sp500</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[2]:
@@ -896,7 +896,7 @@
 <img alt="../_images/univariate_univariate_volatility_modeling_5_0.png" src="../_images/univariate_univariate_volatility_modeling_5_0.png" />
 </div>
 </div>
-<h2 id="Specifying-Common-Models">Specifying Common Models<a class="headerlink" href="#Specifying-Common-Models" title="Permalink to this heading">¶</a></h2>
+<h2 id="Specifying-Common-Models">Specifying Common Models<a class="headerlink" href="#Specifying-Common-Models" title="Link to this heading">¶</a></h2>
 <p>The simplest way to specify a model is to use the model constructor <code class="docutils literal notranslate"><span class="pre">arch.arch_model</span></code> which can specify most common models. The simplest invocation of <code class="docutils literal notranslate"><span class="pre">arch</span></code> will return a model with a constant mean, GARCH(1,1) volatility process and normally distributed errors.</p>
 <div class="math notranslate nohighlight">
 \[r_t  =  \mu + \epsilon_t\]</div>
@@ -905,7 +905,7 @@
 <div class="math notranslate nohighlight">
 \[\epsilon_t  =  \sigma_t e_t,\,\,\, e_t  \sim  N(0,1)\]</div>
 <p>The model is estimated by calling <code class="docutils literal notranslate"><span class="pre">fit</span></code>. The optional inputs <code class="docutils literal notranslate"><span class="pre">iter</span></code> controls the frequency of output form the optimizer, and <code class="docutils literal notranslate"><span class="pre">disp</span></code> controls whether convergence information is returned. The results class returned offers direct access to the estimated parameters and related quantities, as well as a <code class="docutils literal notranslate"><span class="pre">summary</span></code> of the estimation results.</p>
-<h3 id="GARCH-(with-a-Constant-Mean)">GARCH (with a Constant Mean)<a class="headerlink" href="#GARCH-(with-a-Constant-Mean)" title="Permalink to this heading">¶</a></h3>
+<h3 id="GARCH-(with-a-Constant-Mean)">GARCH (with a Constant Mean)<a class="headerlink" href="#GARCH-(with-a-Constant-Mean)" title="Link to this heading">¶</a></h3>
 <p>The default set of options produces a model with a constant mean, GARCH(1,1) conditional variance and normal errors.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[3]:
@@ -924,10 +924,10 @@
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     35,   Neg. LLF: 6970.2765831170655
-Iteration:     10,   Func. Count:     63,   Neg. LLF: 6936.718477482658
+Iteration:      5,   Func. Count:     35,   Neg. LLF: 6970.2779565773335
+Iteration:     10,   Func. Count:     63,   Neg. LLF: 6936.718477482076
 Optimization terminated successfully    (Exit mode 0)
-            Current function value: 6936.718476988985
+            Current function value: 6936.718476988951
             Iterations: 11
             Function evaluations: 68
             Gradient evaluations: 11
@@ -939,8 +939,8 @@ Vol Model:                      GARCH   Log-Likelihood:               -6936.72
 Distribution:                  Normal   AIC:                           13881.4
 Method:            Maximum Likelihood   BIC:                           13907.5
                                         No. Observations:                 5030
-Date:                Wed, Apr 12 2023   Df Residuals:                     5029
-Time:                        15:58:55   Df Model:                            1
+Date:                Tue, May 30 2023   Df Residuals:                     5029
+Time:                        10:55:28   Df Model:                            1
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
@@ -974,7 +974,7 @@ Covariance estimator: robust
 <img alt="../_images/univariate_univariate_volatility_modeling_12_0.png" src="../_images/univariate_univariate_volatility_modeling_12_0.png" />
 </div>
 </div>
-<h3 id="GJR-GARCH">GJR-GARCH<a class="headerlink" href="#GJR-GARCH" title="Permalink to this heading">¶</a></h3>
+<h3 id="GJR-GARCH">GJR-GARCH<a class="headerlink" href="#GJR-GARCH" title="Link to this heading">¶</a></h3>
 <p>Additional inputs can be used to construct other models. This example sets <code class="docutils literal notranslate"><span class="pre">o</span></code> to 1, which includes one lag of an asymmetric shock which transforms a GARCH model into a GJR-GARCH model with variance dynamics given by</p>
 <div class="math notranslate nohighlight">
 \[\sigma^2_t   =  \omega + \alpha \epsilon_{t-1}^2 + \gamma \epsilon_{t-1}^2 I_{[\epsilon_{t-1}&lt;0]}+ \beta \sigma_{t-1}^2\]</div>
@@ -1003,8 +1003,8 @@ Vol Model:                  GJR-GARCH   Log-Likelihood:               -6822.88
 Distribution:                  Normal   AIC:                           13655.8
 Method:            Maximum Likelihood   BIC:                           13688.4
                                         No. Observations:                 5030
-Date:                Wed, Apr 12 2023   Df Residuals:                     5029
-Time:                        15:58:56   Df Model:                            1
+Date:                Tue, May 30 2023   Df Residuals:                     5029
+Time:                        10:55:29   Df Model:                            1
                                   Mean Model
 =============================================================================
                  coef    std err          t      P&gt;|t|       95.0% Conf. Int.
@@ -1015,7 +1015,7 @@ mu             0.0175  1.145e-02      1.529      0.126 [-4.936e-03,3.995e-02]
                  coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 -----------------------------------------------------------------------------
 omega          0.0196  4.051e-03      4.830  1.362e-06  [1.163e-02,2.751e-02]
-alpha[1]   2.2928e-10  1.026e-02  2.234e-08      1.000 [-2.011e-02,2.011e-02]
+alpha[1]   2.4027e-10  1.026e-02  2.341e-08      1.000 [-2.011e-02,2.011e-02]
 gamma[1]       0.1831  2.266e-02      8.079  6.543e-16      [  0.139,  0.227]
 beta[1]        0.8922  1.458e-02     61.200      0.000      [  0.864,  0.921]
 =============================================================================
@@ -1023,7 +1023,7 @@ beta[1]        0.8922  1.458e-02     61.200      0.000      [  0.864,  0.921]
 Covariance estimator: robust
 </pre></div></div>
 </div>
-<h3 id="TARCH/ZARCH">TARCH/ZARCH<a class="headerlink" href="#TARCH/ZARCH" title="Permalink to this heading">¶</a></h3>
+<h3 id="TARCH/ZARCH">TARCH/ZARCH<a class="headerlink" href="#TARCH/ZARCH" title="Link to this heading">¶</a></h3>
 <p>TARCH (also known as ZARCH) model the <em>volatility</em> using absolute values. This model is specified using <code class="docutils literal notranslate"><span class="pre">power=1.0</span></code> since the default power, 2, corresponds to variance processes that evolve in squares.</p>
 <p>The volatility process in a TARCH model is given by</p>
 <div class="math notranslate nohighlight">
@@ -1048,12 +1048,12 @@ Covariance estimator: robust
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     45,   Neg. LLF: 6829.203002130782
-Iteration:     10,   Func. Count:     79,   Neg. LLF: 6799.178617397159
+Iteration:      5,   Func. Count:     45,   Neg. LLF: 6829.197763035331
+Iteration:     10,   Func. Count:     79,   Neg. LLF: 6799.178613053096
 Optimization terminated successfully    (Exit mode 0)
-            Current function value: 6799.178521515934
-            Iterations: 13
-            Function evaluations: 96
+            Current function value: 6799.178523172141
+            Iterations: 14
+            Function evaluations: 103
             Gradient evaluations: 13
                   Constant Mean - TARCH/ZARCH Model Results
 ==============================================================================
@@ -1063,27 +1063,27 @@ Vol Model:                TARCH/ZARCH   Log-Likelihood:               -6799.18
 Distribution:                  Normal   AIC:                           13608.4
 Method:            Maximum Likelihood   BIC:                           13641.0
                                         No. Observations:                 5030
-Date:                Wed, Apr 12 2023   Df Residuals:                     5029
-Time:                        15:58:56   Df Model:                            1
+Date:                Tue, May 30 2023   Df Residuals:                     5029
+Time:                        10:55:29   Df Model:                            1
                                   Mean Model
 =============================================================================
                  coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 -----------------------------------------------------------------------------
-mu             0.0143  1.091e-02      1.311      0.190 [-7.087e-03,3.570e-02]
+mu             0.0143  1.091e-02      1.311      0.190 [-7.086e-03,3.570e-02]
                                Volatility Model
 =============================================================================
                  coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 -----------------------------------------------------------------------------
-omega          0.0258  4.100e-03      6.299  2.990e-10  [1.779e-02,3.386e-02]
-alpha[1]       0.0000  9.156e-03      0.000      1.000 [-1.794e-02,1.794e-02]
-gamma[1]       0.1707  1.601e-02     10.664  1.505e-26      [  0.139,  0.202]
-beta[1]        0.9098  9.672e-03     94.066      0.000      [  0.891,  0.929]
+omega          0.0258  4.100e-03      6.299  2.987e-10  [1.779e-02,3.386e-02]
+alpha[1]   5.9528e-09  9.156e-03  6.502e-07      1.000 [-1.794e-02,1.794e-02]
+gamma[1]       0.1707  1.601e-02     10.664  1.501e-26      [  0.139,  0.202]
+beta[1]        0.9098  9.671e-03     94.067      0.000      [  0.891,  0.929]
 =============================================================================
 
 Covariance estimator: robust
 </pre></div></div>
 </div>
-<h3 id="Student's-T-Errors">Student’s T Errors<a class="headerlink" href="#Student's-T-Errors" title="Permalink to this heading">¶</a></h3>
+<h3 id="Student's-T-Errors">Student’s T Errors<a class="headerlink" href="#Student's-T-Errors" title="Link to this heading">¶</a></h3>
 <p>Financial returns are often heavy tailed, and a Student’s T distribution is a simple method to capture this feature. The call to <code class="docutils literal notranslate"><span class="pre">arch</span></code> changes the distribution from a Normal to a Students’s T.</p>
 <p>The standardized residuals appear to be heavy tailed with an estimated degree of freedom near 10. The log-likelihood also shows a large increase.</p>
 <div class="nbinput docutils container">
@@ -1102,12 +1102,12 @@ Covariance estimator: robust
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Iteration:      5,   Func. Count:     50,   Neg. LLF: 6728.995165345449
-Iteration:     10,   Func. Count:     90,   Neg. LLF: 6722.151188120595
+Iteration:     10,   Func. Count:     90,   Neg. LLF: 6722.15117736426
 Optimization terminated successfully    (Exit mode 0)
-            Current function value: 6722.151187386988
-            Iterations: 11
-            Function evaluations: 97
-            Gradient evaluations: 11
+            Current function value: 6722.1511833987915
+            Iterations: 13
+            Function evaluations: 110
+            Gradient evaluations: 12
                      Constant Mean - TARCH/ZARCH Model Results
 ====================================================================================
 Dep. Variable:                    Adj Close   R-squared:                       0.000
@@ -1116,32 +1116,32 @@ Vol Model:                      TARCH/ZARCH   Log-Likelihood:               -672
 Distribution:      Standardized Student&#39;s t   AIC:                           13456.3
 Method:                  Maximum Likelihood   BIC:                           13495.4
                                               No. Observations:                 5030
-Date:                      Wed, Apr 12 2023   Df Residuals:                     5029
-Time:                              15:58:56   Df Model:                            1
+Date:                      Tue, May 30 2023   Df Residuals:                     5029
+Time:                              10:55:29   Df Model:                            1
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
 ----------------------------------------------------------------------------
-mu             0.0323  2.364e-03     13.650  2.020e-42 [2.763e-02,3.690e-02]
+mu             0.0323  2.292e-03     14.077  5.292e-45 [2.777e-02,3.676e-02]
                                Volatility Model
 =============================================================================
                  coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 -----------------------------------------------------------------------------
-omega          0.0201  3.493e-03      5.744  9.249e-09  [1.322e-02,2.691e-02]
-alpha[1]   1.4150e-08  8.223e-03  1.721e-06      1.000 [-1.612e-02,1.612e-02]
-gamma[1]       0.1721  1.512e-02     11.385  4.978e-30      [  0.143,  0.202]
-beta[1]        0.9139  9.578e-03     95.415      0.000      [  0.895,  0.933]
+omega          0.0201  3.492e-03      5.745  9.179e-09  [1.322e-02,2.691e-02]
+alpha[1]       0.0000  8.223e-03      0.000      1.000 [-1.612e-02,1.612e-02]
+gamma[1]       0.1721  1.512e-02     11.386  4.925e-30      [  0.143,  0.202]
+beta[1]        0.9139  9.578e-03     95.414      0.000      [  0.895,  0.933]
                               Distribution
 ========================================================================
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
-nu             7.9553      0.881      9.034  1.648e-19 [  6.229,  9.681]
+nu             7.9549      0.880      9.036  1.620e-19 [  6.229,  9.680]
 ========================================================================
 
 Covariance estimator: robust
 </pre></div></div>
 </div>
-<h2 id="Fixing-Parameters">Fixing Parameters<a class="headerlink" href="#Fixing-Parameters" title="Permalink to this heading">¶</a></h2>
+<h2 id="Fixing-Parameters">Fixing Parameters<a class="headerlink" href="#Fixing-Parameters" title="Link to this heading">¶</a></h2>
 <p>In some circumstances, fixed rather than estimated parameters might be of interest. A model-result-like class can be generated using the <code class="docutils literal notranslate"><span class="pre">fix()</span></code> method. The class returned is identical to the usual model result class except that information about inference (standard errors, t-stats, etc) is not available.</p>
 <p>In the example, I fix the parameters to a symmetric version of the previously estimated model.</p>
 <div class="nbinput docutils container">
@@ -1166,8 +1166,8 @@ Vol Model:                       TARCH/ZARCH   Log-Likelihood:               -69
 Distribution:       Standardized Student&#39;s t   AIC:                           13829.9
 Method:            User-specified Parameters   BIC:                           13869.0
                                                No. Observations:                 5030
-Date:                       Wed, Apr 12 2023
-Time:                               15:58:56
+Date:                       Tue, May 30 2023
+Time:                               10:55:29
       Mean Model
 =====================
                  coef
@@ -1221,7 +1221,7 @@ Std. errors not available when the model is not estimated,
 <img alt="../_images/univariate_univariate_volatility_modeling_24_1.png" src="../_images/univariate_univariate_volatility_modeling_24_1.png" />
 </div>
 </div>
-<h2 id="Building-a-Model-From-Components">Building a Model From Components<a class="headerlink" href="#Building-a-Model-From-Components" title="Permalink to this heading">¶</a></h2>
+<h2 id="Building-a-Model-From-Components">Building a Model From Components<a class="headerlink" href="#Building-a-Model-From-Components" title="Link to this heading">¶</a></h2>
 <p>Models can also be systematically assembled from the three model components:</p>
 <ul class="simple">
 <li><p>A mean model (<code class="docutils literal notranslate"><span class="pre">arch.mean</span></code>)</p>
@@ -1257,7 +1257,7 @@ Std. errors not available when the model is not estimated,
 </ul>
 </li>
 </ul>
-<h3 id="Mean-Models">Mean Models<a class="headerlink" href="#Mean-Models" title="Permalink to this heading">¶</a></h3>
+<h3 id="Mean-Models">Mean Models<a class="headerlink" href="#Mean-Models" title="Link to this heading">¶</a></h3>
 <p>The first choice is the mean model. For many liquid financial assets, a constant mean (or even zero) is adequate. For other series, such as inflation, a more complicated model may be required. These examples make use of Core CPI downloaded from the <a class="reference external" href="https://fred.stlouisfed.org/">Federal Reserve Economic Data</a> site.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[10]:
@@ -1303,8 +1303,8 @@ Vol Model:          Constant Variance   Log-Likelihood:               -3299.84
 Distribution:                  Normal   AIC:                           6609.68
 Method:            Maximum Likelihood   BIC:                           6632.57
                                         No. Observations:                  719
-Date:                Wed, Apr 12 2023   Df Residuals:                      715
-Time:                        15:58:57   Df Model:                            4
+Date:                Tue, May 30 2023   Df Residuals:                      715
+Time:                        10:55:30   Df Model:                            4
                                    Mean Model
 ===============================================================================
                    coef    std err          t      P&gt;|t|       95.0% Conf. Int.
@@ -1323,7 +1323,7 @@ sigma2       567.4180     64.487      8.799  1.381e-18 [4.410e+02,6.938e+02]
 Covariance estimator: White&#39;s Heteroskedasticity Consistent Estimator
 </pre></div></div>
 </div>
-<h3 id="Volatility-Processes">Volatility Processes<a class="headerlink" href="#Volatility-Processes" title="Permalink to this heading">¶</a></h3>
+<h3 id="Volatility-Processes">Volatility Processes<a class="headerlink" href="#Volatility-Processes" title="Link to this heading">¶</a></h3>
 <p>Volatility processes can be added a a mean model using the <code class="docutils literal notranslate"><span class="pre">volatility</span></code> property. This example adds an ARCH(5) process to model volatility. The arguments <code class="docutils literal notranslate"><span class="pre">iter</span></code> and <code class="docutils literal notranslate"><span class="pre">disp</span></code> are used in <code class="docutils literal notranslate"><span class="pre">fit()</span></code> to suppress estimation output.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[12]:
@@ -1350,24 +1350,24 @@ Vol Model:                       ARCH   Log-Likelihood:               -3174.60
 Distribution:                  Normal   AIC:                           6369.19
 Method:            Maximum Likelihood   BIC:                           6414.97
                                         No. Observations:                  719
-Date:                Wed, Apr 12 2023   Df Residuals:                      715
-Time:                        15:58:57   Df Model:                            4
+Date:                Tue, May 30 2023   Df Residuals:                      715
+Time:                        10:55:30   Df Model:                            4
                                    Mean Model
 ===============================================================================
                    coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 -------------------------------------------------------------------------------
 Const            2.8500      1.883      1.513      0.130      [ -0.841,  6.541]
-CPILFESL[1]      1.0859  3.534e-02     30.726 2.594e-207      [  1.017,  1.155]
+CPILFESL[1]      1.0859  3.534e-02     30.726 2.596e-207      [  1.017,  1.155]
 CPILFESL[3]     -0.0788  3.855e-02     -2.045  4.085e-02   [ -0.154,-3.282e-03]
 CPILFESL[12]    -0.0189  1.157e-02     -1.630      0.103 [-4.154e-02,3.820e-03]
                              Volatility Model
 ==========================================================================
                  coef    std err          t      P&gt;|t|    95.0% Conf. Int.
 --------------------------------------------------------------------------
-omega         76.8684     16.016      4.799  1.592e-06 [ 45.477,1.083e+02]
+omega         76.8696     16.017      4.799  1.592e-06 [ 45.478,1.083e+02]
 alpha[1]       0.1345  4.003e-02      3.359  7.827e-04 [5.600e-02,  0.213]
-alpha[2]       0.2280  6.284e-02      3.628  2.860e-04   [  0.105,  0.351]
-alpha[3]       0.1838  6.802e-02      2.702  6.894e-03 [5.047e-02,  0.317]
+alpha[2]       0.2280  6.284e-02      3.628  2.861e-04   [  0.105,  0.351]
+alpha[3]       0.1838  6.802e-02      2.702  6.894e-03 [5.046e-02,  0.317]
 alpha[4]       0.2538  7.826e-02      3.242  1.185e-03   [  0.100,  0.407]
 alpha[5]       0.1954  7.091e-02      2.756  5.856e-03 [5.643e-02,  0.334]
 ==========================================================================
@@ -1391,7 +1391,7 @@ Covariance estimator: robust
 <img alt="../_images/univariate_univariate_volatility_modeling_36_0.png" src="../_images/univariate_univariate_volatility_modeling_36_0.png" />
 </div>
 </div>
-<h3 id="Distributions">Distributions<a class="headerlink" href="#Distributions" title="Permalink to this heading">¶</a></h3>
+<h3 id="Distributions">Distributions<a class="headerlink" href="#Distributions" title="Link to this heading">¶</a></h3>
 <p>Finally the distribution can be changed from the default normal to a standardized Student’s T using the <code class="docutils literal notranslate"><span class="pre">distribution</span></code> property of a mean model.</p>
 <p>The Student’s t distribution improves the model, and the degree of freedom is estimated to be near 8.</p>
 <div class="nbinput docutils container">
@@ -1419,37 +1419,37 @@ Vol Model:                             ARCH   Log-Likelihood:               -316
 Distribution:      Standardized Student&#39;s t   AIC:                           6358.51
 Method:                  Maximum Likelihood   BIC:                           6408.86
                                               No. Observations:                  719
-Date:                      Wed, Apr 12 2023   Df Residuals:                      715
-Time:                              15:58:58   Df Model:                            4
+Date:                      Tue, May 30 2023   Df Residuals:                      715
+Time:                              10:55:31   Df Model:                            4
                                    Mean Model
 ===============================================================================
                    coef    std err          t      P&gt;|t|       95.0% Conf. Int.
 -------------------------------------------------------------------------------
-Const            3.1221      1.861      1.678  9.342e-02      [ -0.525,  6.770]
-CPILFESL[1]      1.0843  3.525e-02     30.762 8.338e-208      [  1.015,  1.153]
-CPILFESL[3]     -0.0730  3.873e-02     -1.885  5.947e-02    [ -0.149,2.916e-03]
-CPILFESL[12]    -0.0236  1.316e-02     -1.791  7.331e-02 [-4.935e-02,2.224e-03]
+Const            3.1220      1.861      1.678  9.343e-02      [ -0.526,  6.770]
+CPILFESL[1]      1.0843  3.525e-02     30.762 8.350e-208      [  1.015,  1.153]
+CPILFESL[3]     -0.0730  3.873e-02     -1.885  5.948e-02    [ -0.149,2.919e-03]
+CPILFESL[12]    -0.0236  1.316e-02     -1.791  7.329e-02 [-4.935e-02,2.223e-03]
                              Volatility Model
 ==========================================================================
                  coef    std err          t      P&gt;|t|    95.0% Conf. Int.
 --------------------------------------------------------------------------
-omega         87.3616     20.628      4.235  2.285e-05 [ 46.931,1.278e+02]
-alpha[1]       0.1715  5.064e-02      3.386  7.090e-04 [7.221e-02,  0.271]
-alpha[2]       0.2202  6.394e-02      3.443  5.743e-04 [9.485e-02,  0.345]
-alpha[3]       0.1547  6.327e-02      2.445  1.447e-02 [3.071e-02,  0.279]
+omega         87.3503     20.625      4.235  2.283e-05 [ 46.927,1.278e+02]
+alpha[1]       0.1715  5.064e-02      3.386  7.087e-04 [7.222e-02,  0.271]
+alpha[2]       0.2202  6.394e-02      3.444  5.741e-04 [9.486e-02,  0.345]
+alpha[3]       0.1547  6.327e-02      2.446  1.447e-02 [3.072e-02,  0.279]
 alpha[4]       0.2117  7.287e-02      2.905  3.677e-03 [6.884e-02,  0.354]
-alpha[5]       0.1959  7.854e-02      2.494  1.261e-02 [4.198e-02,  0.350]
+alpha[5]       0.1959  7.853e-02      2.495  1.261e-02 [4.199e-02,  0.350]
                               Distribution
 ========================================================================
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
-nu             9.0448      3.366      2.687  7.208e-03 [  2.447, 15.642]
+nu             9.0451      3.366      2.687  7.205e-03 [  2.448, 15.642]
 ========================================================================
 
 Covariance estimator: robust
 </pre></div></div>
 </div>
-<h2 id="WTI-Crude">WTI Crude<a class="headerlink" href="#WTI-Crude" title="Permalink to this heading">¶</a></h2>
+<h2 id="WTI-Crude">WTI Crude<a class="headerlink" href="#WTI-Crude" title="Link to this heading">¶</a></h2>
 <p>The next example uses West Texas Intermediate Crude data from FRED. Three models are fit using alternative distributional assumptions. The results are printed, where we can see that the normal has a much lower log-likelihood than either the Standard Student’s T or the Standardized Skew Student’s T – however, these two are fairly close. The closeness of the T and the Skew T indicate that returns are not heavily skewed.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[15]:
@@ -1593,7 +1593,7 @@ dtype: float64
 <img alt="../_images/univariate_univariate_volatility_modeling_44_0.png" src="../_images/univariate_univariate_volatility_modeling_44_0.png" />
 </div>
 </div>
-<h2 id="Simulation">Simulation<a class="headerlink" href="#Simulation" title="Permalink to this heading">¶</a></h2>
+<h2 id="Simulation">Simulation<a class="headerlink" href="#Simulation" title="Link to this heading">¶</a></h2>
 <p>All mean models expose a method to simulate returns from assuming the model is correctly specified. There are two required parameters, <code class="docutils literal notranslate"><span class="pre">params</span></code> which are the model parameters, and <code class="docutils literal notranslate"><span class="pre">nobs</span></code>, the number of observations to produce.</p>
 <p>Below we simulate from a GJR-GARCH(1,1) with Skew-t errors using parameters estimated on the WTI series. The simulation returns a <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> with 3 columns:</p>
 <ul class="simple">
@@ -1711,33 +1711,33 @@ dtype: float64
   <tbody>
     <tr>
       <th>0</th>
-      <td>2.729532</td>
-      <td>2.293291</td>
-      <td>2.700167</td>
+      <td>2.242949</td>
+      <td>2.325649</td>
+      <td>2.213584</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>1.310209</td>
-      <td>2.294658</td>
-      <td>1.280844</td>
+      <td>0.404109</td>
+      <td>2.301873</td>
+      <td>0.374743</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>-3.711848</td>
-      <td>2.240700</td>
-      <td>-3.741213</td>
+      <td>-0.106860</td>
+      <td>2.232734</td>
+      <td>-0.136226</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>2.212867</td>
-      <td>2.417869</td>
-      <td>2.183502</td>
+      <td>-1.678962</td>
+      <td>2.165269</td>
+      <td>-1.708327</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>2.987078</td>
-      <td>2.387496</td>
-      <td>2.957713</td>
+      <td>-1.388209</td>
+      <td>2.155309</td>
+      <td>-1.417574</td>
     </tr>
   </tbody>
 </table>
@@ -1968,7 +1968,7 @@ dtype: float64
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.0.1.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -2015,10 +2015,10 @@ dtype: float64
     <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
     
       
-        <script src="../_static/sphinx_immaterial_theme.cea6a0c1d5b0618cf.min.js"></script>
+        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=1e7b0789"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js?v=cadf963e"></script>
     
   </body>
 </html>
