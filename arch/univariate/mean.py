@@ -1859,15 +1859,15 @@ def arch_model(
 
     Parameters
     ----------
-    y : {ndarray, Series, None}
+    y : ndarray, Series, None
         The dependent variable
-    x : {np.array, DataFrame}, optional
+    x : ndarray, DataFrame, optional
         Exogenous regressors.  Ignored if model does not permit exogenous
         regressors.
     mean : str, optional
         Name of the mean model.  Currently supported options are: 'Constant',
         'Zero', 'LS', 'AR', 'ARX', 'HAR' and  'HARX'
-    lags : int or list (int), optional
+    lags : int or list[int], optional
         Either a scalar integer value indicating lag length or a list of
         integers specifying lag locations.
     vol : str, optional

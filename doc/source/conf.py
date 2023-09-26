@@ -31,6 +31,8 @@ for example in examples:
 project = "arch"
 copyright = "2021, Kevin Sheppard"
 author = "Kevin Sheppard"
+
+# More warnings
 nitpicky = True
 
 # The short X.Y version
@@ -51,6 +53,7 @@ else:
 # extensions coming with Sphinx (named "sphinx.ext.*") or your custom
 # ones.
 extensions = [
+    "sphinx.ext.napoleon",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.extlinks",
@@ -61,9 +64,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.coverage",
     "sphinx.ext.ifconfig",
-    # "numpydoc",
-    "sphinx.ext.napoleon",
-    "sphinx_autodoc_typehints",
+    "sphinx.ext.githubpages",
     "IPython.sphinxext.ipython_console_highlighting",
     "IPython.sphinxext.ipython_directive",
     "nbsphinx",
@@ -107,9 +108,12 @@ language = "en"
 exclude_patterns: list[str] = []
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "colorful"  # "sphinx"
+pygments_style = "colorful"
 
-# -- Options for HTML output -------------------------------------------------
+# If true, `todo` and `todoList` produce output, else they produce nothing.
+todo_include_todos = True
+
+# -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
@@ -161,8 +165,6 @@ html_theme_options = {
             "link": "https://doi.org/10.5281/zenodo.593254",
         },
     ],
-    #        "globaltoc_depth": 2,
-    #        "globaltoc_includehidden": True,
 }
 
 html_favicon = "images/favicon.ico"
@@ -201,21 +203,20 @@ html_domain_indices = True
 htmlhelp_basename = "arch"
 
 # -- Options for LaTeX output ------------------------------------------------
-
-latex_elements: dict[str, str] = {
-    # The paper size ("letterpaper" or "a4paper").
-    #
-    # "papersize": "letterpaper",
-    # The font size ("10pt", "11pt" or "12pt").
-    #
-    # "pointsize": "10pt",
-    # Additional stuff for the LaTeX preamble.
-    #
-    # "preamble": '',
-    # Latex figure (float) alignment
-    #
-    # "figure_align": "htbp",
-}
+# latex_elements: dict[str, str] = {
+# The paper size ("letterpaper" or "a4paper").
+#
+# "papersize": "letterpaper",
+# The font size ("10pt", "11pt" or "12pt").
+#
+# "pointsize": "10pt",
+# Additional stuff for the LaTeX preamble.
+#
+# "preamble": '',
+# Latex figure (float) alignment
+#
+# "figure_align": "htbp",
+# }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
@@ -286,10 +287,29 @@ napoleon_use_admonition_for_examples = False
 napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = False
 
+napoleon_preprocess_types = True
+napoleon_use_param = True
+napoleon_type_aliases = {
+    "array-like": ":term:`array-like <array_like>`",
+    "array_like": ":term:`array_like`",
+    "Figure": "matplotlib.figure.Figure",
+    "Axes": "matplotlib.axes.Axes",
+    "AxesSubplot": "matplotlib.axes.Axes",
+    "DataFrame": "pandas.DataFrame",
+    "Series": "pandas.Series",
+    "csc_matrix": "scipy.sparse.csc_matrix",
+    "DataArray": "xarray.DataArray",
+    "ndarray": "numpy.ndarray",
+    "np.ndarray": "numpy.array",
+    "pd.Series": "pandas.Series",
+    "RandomState": "numpy.random.RandomState",
+    "Generator": "numpy.random.Generator",
+    "VarianceForecast": "arch.univariate.volatility.VarianceForecast",
+}
+
 numpydoc_use_autodoc_signature = True
 numpydoc_xref_param_type = True
 numpydoc_class_members_toctree = False
-
 numpydoc_xref_aliases = {
     "Figure": "matplotlib.figure.Figure",
     "Axes": "matplotlib.axes.Axes",
@@ -299,6 +319,9 @@ numpydoc_xref_aliases = {
     "ndarray": "numpy.ndarray",
     "RandomState": "numpy.random.RandomState",
     "VarianceForecast": "arch.univariate.volatility.VarianceForecast",
+    "Generator": "numpy.random.Generator",
+    "np.ndarray": "numpy.array",
+    "pd.Series": "pandas.Series",
 }
 
 autosummary_generate = True
