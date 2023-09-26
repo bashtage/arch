@@ -1,5 +1,5 @@
 # versioning
-setuptools_scm[toml]>=7,<8
+setuptools_scm[toml]>=8.0.3,<9
 packaging
 oldest-supported-numpy>=2022.11.19
 
@@ -17,7 +17,7 @@ pytest-xdist
 pytest-cov
 
 # formatting
-black[jupyter]==23.3.0
+black[jupyter]==23.9.1
 isort~=5.0
 flake8
 mypy

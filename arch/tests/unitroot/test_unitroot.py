@@ -526,10 +526,10 @@ def test_kpss_data_dependent_lags(data, trend, lags):
 class ZATestResult(NamedTuple):
     stat: float
     pvalue: float
-    lags: Optional[int]
+    lags: int | None
     trend: str
-    max_lags: Optional[int]
-    method: Optional[str]
+    max_lags: int | None
+    method: str | None
     actual_lags: int
 
 
