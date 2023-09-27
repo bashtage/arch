@@ -782,7 +782,7 @@ class ADF(UnitRootTest, metaclass=AbstractDocStringInheritor):
         y, trend, lags = self._y, self._trend, self._lags
         resols = _estimate_df_regression(y, cast(UnitRootTrend, trend), lags)
         self._regression = resols
-        self._stat = stat = np.asarray(resols.tvalues)[0]
+        self._stat = stat = asarray(resols.tvalues)[0]
         self._nobs = int(resols.nobs)
         self._pvalue = mackinnonp(
             stat,
@@ -952,7 +952,7 @@ class DFGLS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         resols = _estimate_df_regression(y_detrended, lags=lags, trend="n")
         self._regression = resols
         self._nobs = int(resols.nobs)
-        self._stat = np.asarray(resols.tvalues)[0]
+        self._stat = asarray(resols.tvalues)[0]
         assert self._stat is not None
         self._pvalue = mackinnonp(
             self._stat, regression=cast(Literal["c", "ct"], trend), dist_type="dfgls"
@@ -1131,7 +1131,7 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         s2 = u @ u / (n - k)
         s = sqrt(s2)
         gamma0 = s2 * (n - k) / n
-        sigma = np.asarray(resols.bse)[0]
+        sigma = asarray(resols.bse)[0]
         sigma2 = sigma**2.0
         if sigma <= 0:
             raise InfeasibleTestException(
@@ -1139,7 +1139,7 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
                 "regression is 0. This may occur if the series contains constant "
                 "values or the residual variance in the regression is 0."
             )
-        rho = np.asarray(resols.params)[0]
+        rho = asarray(resols.params)[0]
         # 3. Compute statistics
         self._stat_tau = sqrt(gamma0 / lam2) * ((rho - 1) / sigma) - 0.5 * (
             (lam2 - gamma0) / lam
