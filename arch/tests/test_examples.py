@@ -37,7 +37,10 @@ try:
 except ImportError:  # pragma: no cover
     pytestmark = pytest.mark.skip(reason=REASON)
 
-SLOW_NOTEBOOKS = ["multiple-comparison_examples.ipynb"]
+SLOW_NOTEBOOKS = [
+    "multiple-comparison_examples.ipynb",
+    "experimental_accelerated_numpy.ipynb",
+]
 if bool(os.environ.get("ARCH_TEST_SLOW_NOTEBOOKS", False)):  # pragma: no cover
     SLOW_NOTEBOOKS = []
 kernel_name = "python%s" % sys.version_info.major

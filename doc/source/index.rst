@@ -35,6 +35,7 @@ routines relevant for the analysis of financial data.
     Multiple Comparison Problems <multiple-comparison/multiple-comparisons>
     Unit Root Tests and Cointegration Analysis <unitroot/unitroot>
     Long-run Covariance Estimation <covariance/covariance>
+    Experimental features <experimental/accelerated_numpy>
     API Reference <api>
     Change Log <changes>
 

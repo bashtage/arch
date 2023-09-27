@@ -4,10 +4,10 @@ from abc import ABC, abstractmethod
 from functools import cached_property
 from typing import SupportsInt, cast
 
-import numpy as np
 from pandas import DataFrame, Index
 from pandas.util._decorators import Substitution
 
+from arch.experimental import numpy as np
 from arch.typing import ArrayLike, Float64Array
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
 
@@ -398,6 +398,7 @@ class CovarianceEstimator(ABC):
         sr = x.T @ x / df
         w = self.kernel_weights
         num_weights = w.shape[0]
+        x = np.asarray(self._x)
         oss = np.zeros((k, k))
         for i in range(1, num_weights):
             oss += w[i] * (x[i:].T @ x[:-i]) / df
