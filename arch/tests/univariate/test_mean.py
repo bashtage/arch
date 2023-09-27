@@ -463,7 +463,8 @@ class TestMeanModel:
         ar = ARX(self.y, lags=0)
         assert ar.lags is None
         res = ar.fit(disp=DISPLAY)
-        assert_almost_equal(np.asarray(res.params)[0], self.y.mean())
+        param0, *_ = res.params
+        assert_almost_equal(param0, self.y.mean())
         assert "lags: none" in ar.__str__()
 
     @pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")

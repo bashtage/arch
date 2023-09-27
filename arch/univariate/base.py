@@ -1189,16 +1189,10 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         stubs = list(self._names)
         header = ["coef"]
-        coef_vals = (np.asarray(self.params),)
-        formats = [(10, 4)]
-        pos = 0
-        param_table_data = []
-        for _ in range(len(coef_vals[0])):
-            row = []
-            for i, coef_val in enumerate(coef_vals):
-                row.append(format_float_fixed(coef_val[pos], *formats[i]))
-            pos += 1
-            param_table_data.append(row)
+        param_table_data = [
+            [format_float_fixed(param, 10, 4)]
+            for param in self.params
+        ]
 
         mc = self.model.num_params
         vc = self.model.volatility.num_params
@@ -1874,27 +1868,24 @@ class ARCHModelResult(ARCHModelFixedResult):
         stubs = list(self._names)
         header = ["coef", "std err", "t", "P>|t|", "95.0% Conf. Int."]
         table_vals = (
-            self.params,
-            self.std_err,
-            self.tvalues,
-            self.pvalues,
+            np.asarray(self.params),
+            np.asarray(self.std_err),
+            np.asarray(self.tvalues),
+            np.asarray(self.pvalues),
             pd.Series(conf_int_str),
         )
         # (0,0) is a dummy format
         formats = [(10, 4), (9, 3), (9, 3), (9, 3), (0, 0)]
-        pos = 0
         param_table_data = []
-        for _ in range(len(table_vals[0])):
+        for pos in range(len(table_vals[0])):
             row = []
             for i, table_val in enumerate(table_vals):
-                val = np.asarray(table_val)[pos]
+                val = table_val[pos]
                 if isinstance(val, (np.float64, float)):
-                    assert isinstance(val, float)
                     converted = format_float_fixed(val, *formats[i])
                 else:
                     converted = val
                 row.append(converted)
-            pos += 1
             param_table_data.append(row)
 
         mc = self.model.num_params
