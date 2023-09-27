@@ -39,7 +39,7 @@ def test_blank(small_data, std_data):
     small_res = small_mod.fit(starting_values=np.array([1e-3, 0.05, 0.90]), disp="off")
     mod = ZeroMean(std_data, volatility=GARCH(), rescale=False)
     res = mod.fit(starting_values=np.array([1, 0.05, 0.90]), disp="off")
-    
+
     small_param0, *_ = small_res.params
     param0, *_ = res.params
     assert_allclose(1e3 * small_param0, param0, rtol=5e-3, atol=1e9)
