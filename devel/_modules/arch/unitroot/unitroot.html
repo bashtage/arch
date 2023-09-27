@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.unitroot.unitroot - arch 6.2.0</title>
+        <title>arch.unitroot.unitroot - arch v6.2.1 (+6)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch 6.2.0" class="md-header__button md-logo" aria-label="arch 6.2.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch v6.2.1 (+6)" class="md-header__button md-logo" aria-label="arch v6.2.1 (+6)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 6.2.0
+            arch v6.2.1 (+6)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch 6.2.0" class="md-nav__button md-logo" aria-label="arch 6.2.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch v6.2.1 (+6)" class="md-nav__button md-logo" aria-label="arch v6.2.1 (+6)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 6.2.0
+    arch v6.2.1 (+6)
   </label>
   
     <div class="md-nav__source">
@@ -1150,7 +1150,7 @@
         <span class="n">y</span><span class="p">,</span> <span class="n">trend</span><span class="p">,</span> <span class="n">lags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
         <span class="n">resols</span> <span class="o">=</span> <span class="n">_estimate_df_regression</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="n">UnitRootTrend</span><span class="p">,</span> <span class="n">trend</span><span class="p">),</span> <span class="n">lags</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_regression</span> <span class="o">=</span> <span class="n">resols</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span> <span class="o">=</span> <span class="n">stat</span> <span class="o">=</span> <span class="n">resols</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stat</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">resols</span><span class="o">.</span><span class="n">tvalues</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resols</span><span class="o">.</span><span class="n">nobs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pvalue</span> <span class="o">=</span> <span class="n">mackinnonp</span><span class="p">(</span>
             <span class="n">stat</span><span class="p">,</span>
@@ -1323,7 +1323,7 @@
         <span class="n">resols</span> <span class="o">=</span> <span class="n">_estimate_df_regression</span><span class="p">(</span><span class="n">y_detrended</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="n">lags</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">&quot;n&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_regression</span> <span class="o">=</span> <span class="n">resols</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resols</span><span class="o">.</span><span class="n">nobs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span> <span class="o">=</span> <span class="n">resols</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">resols</span><span class="o">.</span><span class="n">tvalues</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pvalue</span> <span class="o">=</span> <span class="n">mackinnonp</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span><span class="p">,</span> <span class="n">regression</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">],</span> <span class="n">trend</span><span class="p">),</span> <span class="n">dist_type</span><span class="o">=</span><span class="s2">&quot;dfgls&quot;</span>
@@ -1505,7 +1505,7 @@
         <span class="n">s2</span> <span class="o">=</span> <span class="n">u</span> <span class="o">@</span> <span class="n">u</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span>
         <span class="n">s</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span>
         <span class="n">gamma0</span> <span class="o">=</span> <span class="n">s2</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span>
-        <span class="n">sigma</span> <span class="o">=</span> <span class="n">resols</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">sigma</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">resols</span><span class="o">.</span><span class="n">bse</span>
         <span class="n">sigma2</span> <span class="o">=</span> <span class="n">sigma</span><span class="o">**</span><span class="mf">2.0</span>
         <span class="k">if</span> <span class="n">sigma</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">InfeasibleTestException</span><span class="p">(</span>
@@ -1513,7 +1513,7 @@
                 <span class="s2">&quot;regression is 0. This may occur if the series contains constant &quot;</span>
                 <span class="s2">&quot;values or the residual variance in the regression is 0.&quot;</span>
             <span class="p">)</span>
-        <span class="n">rho</span> <span class="o">=</span> <span class="n">resols</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">rho</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">resols</span><span class="o">.</span><span class="n">params</span>
         <span class="c1"># 3. Compute statistics</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stat_tau</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">gamma0</span> <span class="o">/</span> <span class="n">lam2</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">rho</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span>
             <span class="p">(</span><span class="n">lam2</span> <span class="o">-</span> <span class="n">gamma0</span><span class="p">)</span> <span class="o">/</span> <span class="n">lam</span>
