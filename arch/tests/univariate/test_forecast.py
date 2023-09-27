@@ -766,8 +766,8 @@ def test_x_forecasting(nexog):
     direct = np.zeros(12)
     direct[:2] = y.iloc[-2:]
     p0, p1, p2 = res.params[:3]
-    b0 = res.params[3]
-    b1 = res.params[4] if x.shape[1] == 2 else 0.0
+    b0 = np.asarray(res.params)[3]
+    b1 = np.asarray(res.params)[4] if x.shape[1] == 2 else 0.0
     for i in range(10):
         direct[i + 2] = p0 + p1 * direct[i + 1] + p2 * direct[i]
         direct[i + 2] += b0 * (i)

@@ -1189,7 +1189,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         stubs = list(self._names)
         header = ["coef"]
-        coef_vals = (self.params,)
+        coef_vals = (np.asarray(self.params),)
         formats = [(10, 4)]
         pos = 0
         param_table_data = []
@@ -1887,11 +1887,12 @@ class ARCHModelResult(ARCHModelFixedResult):
         for _ in range(len(table_vals[0])):
             row = []
             for i, table_val in enumerate(table_vals):
-                if isinstance(table_val[pos], (np.float64, float)):
-                    assert isinstance(table_val[pos], float)
-                    converted = format_float_fixed(table_val[pos], *formats[i])
+                val = np.asarray(table_val)[pos]
+                if isinstance(val, (np.float64, float)):
+                    assert isinstance(val, float)
+                    converted = format_float_fixed(val, *formats[i])
                 else:
-                    converted = table_val[pos]
+                    converted = val
                 row.append(converted)
             pos += 1
             param_table_data.append(row)

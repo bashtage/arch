@@ -192,7 +192,7 @@ class EngleGrangerTestResults(ResidualCointegrationTestResult):
                          + \epsilon_t
         """
 
-        return 1 + self._adf.regression.params[0]
+        return 1 + np.asarray(self._adf.regression.params)[0]
 
     def summary(self) -> Summary:
         """Summary of test, containing statistic, p-value and critical values"""
