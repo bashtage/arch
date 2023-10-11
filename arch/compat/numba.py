@@ -1,11 +1,10 @@
 import functools
 import os
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 from arch.utility.exceptions import PerformanceWarning
 
 DISABLE_NUMBA = os.environ.get("ARCH_DISABLE_NUMBA", False) in ("1", "true", "True")
-
 
 performance_warning: str = """
 numba is not available, and this function is being executed without JIT
@@ -22,7 +21,11 @@ try:
 
 except ImportError:
 
-    def jit(func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
+    def jit(
+        func: Optional[Callable[..., Any]],
+        *args: Any,
+        **kwargs: Any,
+    ) -> Any:
         def wrapper(*args: Any, **kwargs: Any) -> Callable[..., Any]:
             import warnings
 
