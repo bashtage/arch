@@ -8,6 +8,7 @@ import numpy as np
 from pandas import DataFrame, Index
 from pandas.util._decorators import Substitution
 
+from arch.compat.numba import jit
 from arch.typing import ArrayLike, Float64Array
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
 
@@ -134,6 +135,14 @@ class CovarianceEstimate:
         The one-sided strict covariance estimate.
         """
         return self._wrap(self._oss)
+
+
+@jit(nopython=True)
+def _cov_jit(df, k, num_weights, w, x):
+    oss = np.zeros((k, k))
+    for i in range(1, num_weights):
+        oss += w[i] * (x[i:].T @ x[:-i]) / df
+    return oss
 
 
 class CovarianceEstimator(ABC):
@@ -398,9 +407,8 @@ class CovarianceEstimator(ABC):
         sr = x.T @ x / df
         w = self.kernel_weights
         num_weights = w.shape[0]
-        oss = np.zeros((k, k))
-        for i in range(1, num_weights):
-            oss += w[i] * (x[i:].T @ x[:-i]) / df
+
+        oss = _cov_jit(df, k, num_weights, w, x)
 
         labels = self._x_orig.columns if isinstance(self._x_orig, DataFrame) else None
         return CovarianceEstimate(sr, oss, labels)
