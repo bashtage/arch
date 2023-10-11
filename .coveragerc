@@ -29,6 +29,8 @@ exclude_lines =
     cdef
     # Cython functions with void
     cdef void
+    # Numba jit decorators
+    @jit
 
 
 include = */arch/*
