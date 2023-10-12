@@ -16,6 +16,8 @@ jobs:
     vmImage: ${{ parameters.vmImage }}
   strategy:
     matrix:
+      python_312:
+        python.version: '3.12'
       python_311:
         python.version: '3.11'
       python_310:
