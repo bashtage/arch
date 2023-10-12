@@ -1,6 +1,6 @@
 import functools
 import os
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 
 from arch.utility.exceptions import PerformanceWarning
 
@@ -22,17 +22,20 @@ try:
 except ImportError:
 
     def jit(
-        func: Optional[Callable[..., Any]],
         *args: Any,
         **kwargs: Any,
     ) -> Any:
-        def wrapper(*args: Any, **kwargs: Any) -> Callable[..., Any]:
-            import warnings
+        def wrap(func):
+            @functools.wraps(func)
+            def wrapper(*args: Any, **kwargs: Any) -> Callable[..., Any]:
+                import warnings
 
-            warnings.warn(performance_warning, PerformanceWarning)
-            return func(*args, **kwargs)
+                warnings.warn(performance_warning, PerformanceWarning)
+                return func(*args, **kwargs)
 
-        return wrapper
+            return wrapper
+
+        return wrap
 
 
 __all__ = ["jit", "PerformanceWarning"]
