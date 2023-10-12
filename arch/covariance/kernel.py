@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from arch.compat.numba import jit
+
 from abc import ABC, abstractmethod
 from functools import cached_property
 from typing import SupportsInt, cast
@@ -8,7 +10,6 @@ import numpy as np
 from pandas import DataFrame, Index
 from pandas.util._decorators import Substitution
 
-from arch.compat.numba import jit
 from arch.typing import ArrayLike, Float64Array
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
 
