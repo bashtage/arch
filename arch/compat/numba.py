@@ -27,8 +27,17 @@ except ImportError:
         **kwargs: Any,
     ) -> Any:
         if function_or_signature is not None and callable(function_or_signature):
-            return function_or_signature
+            # Used directly, e.g., f_jit = jit(f)
+            @functools.wraps(function_or_signature)
+            def wrapper(*args: Any, **kwargs: Any) -> Callable[..., Any]:
+                import warnings
 
+                warnings.warn(performance_warning, PerformanceWarning)
+                return function_or_signature(*args, **kwargs)
+
+            return wrapper
+
+        # Used as a decorator, e.g., @jit
         def wrap(func):
             @functools.wraps(func)
             def wrapper(*args: Any, **kwargs: Any) -> Callable[..., Any]:

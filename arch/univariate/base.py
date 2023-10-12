@@ -1189,10 +1189,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         stubs = list(self._names)
         header = ["coef"]
-        param_table_data = [
-            [format_float_fixed(param, 10, 4)]
-            for param in self.params
-        ]
+        param_table_data = [[format_float_fixed(param, 10, 4)] for param in self.params]
 
         mc = self.model.num_params
         vc = self.model.volatility.num_params
