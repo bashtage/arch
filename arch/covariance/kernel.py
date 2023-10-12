@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from arch.compat.numba import jit
+
 from abc import ABC, abstractmethod
 from functools import cached_property
 from typing import SupportsInt, cast
@@ -134,6 +136,14 @@ class CovarianceEstimate:
         The one-sided strict covariance estimate.
         """
         return self._wrap(self._oss)
+
+
+@jit(nopython=True)
+def _cov_jit(df, k, num_weights, w, x):
+    oss = np.zeros((k, k))
+    for i in range(1, num_weights):
+        oss += w[i] * (x[i:].T @ x[:-i]) / df
+    return oss
 
 
 class CovarianceEstimator(ABC):
@@ -392,15 +402,14 @@ class CovarianceEstimator(ABC):
         --------
         CovarianceEstimate
         """
-        x = np.asarray(self._x)
+        x = np.ascontiguousarray(self._x)
         k = x.shape[1]
         df = self._df
         sr = x.T @ x / df
         w = self.kernel_weights
         num_weights = w.shape[0]
-        oss = np.zeros((k, k))
-        for i in range(1, num_weights):
-            oss += w[i] * (x[i:].T @ x[:-i]) / df
+
+        oss = _cov_jit(df, k, num_weights, w, x)
 
         labels = self._x_orig.columns if isinstance(self._x_orig, DataFrame) else None
         return CovarianceEstimate(sr, oss, labels)

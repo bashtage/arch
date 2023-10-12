@@ -13,6 +13,7 @@ import arch.univariate.recursions_python as recpy
 from arch.univariate.volatility import RiskMetrics2006
 
 CYTHON_COVERAGE = os.environ.get("ARCH_CYTHON_COVERAGE", "0") in ("true", "1", "True")
+DISABLE_NUMBA = os.environ.get("ARCH_DISABLE_NUMBA", False) in ("1", "true", "True")
 
 try:
     import arch.univariate.recursions as rec_cython
@@ -29,7 +30,7 @@ else:
 try:
     import numba  # noqa
 
-    MISSING_NUMBA = False
+    MISSING_NUMBA = False or DISABLE_NUMBA
 except ImportError:
     MISSING_NUMBA = True
 
