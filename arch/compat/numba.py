@@ -1,6 +1,6 @@
 import functools
 import os
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 from arch.utility.exceptions import PerformanceWarning
 
@@ -22,9 +22,13 @@ try:
 except ImportError:
 
     def jit(
+        function_or_signature: Optional[Callable[..., Any]] = None,
         *args: Any,
         **kwargs: Any,
     ) -> Any:
+        if function_or_signature is not None and callable(function_or_signature):
+            return function_or_signature
+
         def wrap(func):
             @functools.wraps(func)
             def wrapper(*args: Any, **kwargs: Any) -> Callable[..., Any]:
