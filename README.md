@@ -75,7 +75,7 @@ Contributions are welcome. There are opportunities at many levels to contribute:
   - Student's T
   - Generalized Error Distribution
 
-See the [univariate volatility example notebook](https://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/univariate_volatility_modeling.ipynb) for a more complete overview.
+See the [univariate volatility example notebook](https://bashtage.github.io/arch/univariate/univariate_volatility_modeling.html) for a more complete overview.
 
 ```python
 import datetime as dt
@@ -101,7 +101,7 @@ res = am.fit()
 - Zivot-Andrews
 - Variance Ratio tests
 
-See the [unit root testing example notebook](https://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/unitroot_examples.ipynb)
+See the [unit root testing example notebook](https://bashtage.github.io/arch/unitroot/unitroot_examples.html)
 for examples of testing series for unit roots.
 
 <a id="unit-root"></a>
@@ -116,7 +116,7 @@ for examples of testing series for unit roots.
   - Dynamic OLS
   - Fully Modified OLS
 
-See the [cointegration testing example notebook](https://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/unitroot_cointegration_examples.ipynb)
+See the [cointegration testing example notebook](https://bashtage.github.io/arch/unitroot/unitroot_cointegration_examples.html)
 for examples of testing series for cointegration.
 
 <a id="bootstrap"></a>
@@ -134,7 +134,7 @@ for examples of testing series for cointegration.
   - Apply method to estimate model across bootstraps
   - Generic Bootstrap iterator
 
-See the [bootstrap example notebook](https://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/bootstrap_examples.ipynb)
+See the [bootstrap example notebook](https://bashtage.github.io/arch/bootstrap/bootstrap_examples.html)
 for examples of bootstrapping the Sharpe ratio and a Probit model from statsmodels.
 
 ```python
@@ -172,7 +172,7 @@ ci = bs.conf_int(sharpe_ratio, 1000, method='percentile')
 - Stepwise (StepM)
 - Model Confidence Set (MCS)
 
-See the [multiple comparison example notebook](https://nbviewer.ipython.org/github/bashtage/arch/blob/main/examples/multiple-comparison_examples.ipynb)
+See the [multiple comparison example notebook](https://bashtage.github.io/arch/multiple-comparison/multiple-comparison_examples.html)
 for examples of the multiple comparison procedures.
 
 <a id="long-run-covariance"></a>
