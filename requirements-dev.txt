@@ -24,7 +24,7 @@ mypy
 pyupgrade>=3.4.0
 
 # Documentation
-ipython>=7
+ipython>=8.10.0
 sphinx>=7
 sphinx_immaterial
 nbsphinx
@@ -33,3 +33,8 @@ notebook
 nbconvert
 sphinx-autodoc-typehints
 
+jupyter-server>=2.7.2 # not directly required, pinned by Snyk to avoid a vulnerability
+numpy>=1.22.2 # not directly required, pinned by Snyk to avoid a vulnerability
+pillow>=10.0.1 # not directly required, pinned by Snyk to avoid a vulnerability
+setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
+tornado>=6.3.3 # not directly required, pinned by Snyk to avoid a vulnerability
