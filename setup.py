@@ -46,10 +46,8 @@ extension modules or to use numba.
 # prevent setup.py from crashing by calling import numpy before numpy is installed
 class build_ext(_build_ext):
     def build_extensions(self) -> None:
-        ref = importlib.resources.files("numpy") / "core/include"
-        with importlib.resources.as_file(ref) as path:
-            numpy_incl = str(path)
-
+        import numpy as np
+        numpy_incl = np.get_include()
         for ext in self.extensions:
             if hasattr(ext, "include_dirs") and numpy_incl not in ext.include_dirs:
                 ext.include_dirs.append(numpy_incl)

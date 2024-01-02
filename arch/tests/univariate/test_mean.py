@@ -1,3 +1,5 @@
+from arch.compat.pandas import MONTH_END
+
 from io import StringIO
 from itertools import product
 from string import ascii_lowercase
@@ -820,7 +822,7 @@ class TestMeanModel:
         assert_equal(res.resid.values, res2.resid.values)
 
     def test_align(self):
-        dates = pd.date_range("2000-01-01", "2010-01-01", freq="M")
+        dates = pd.date_range("2000-01-01", "2010-01-01", freq=MONTH_END)
         columns = ["h." + f"{h + 1:>02}" for h in range(10)]
         forecasts = pd.DataFrame(self.rng.randn(120, 10), index=dates, columns=columns)
 
