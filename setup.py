@@ -5,8 +5,6 @@ from setuptools.errors import CCompilerError, ExecError, PlatformError
 
 from collections import defaultdict
 import fnmatch
-import importlib.metadata
-import importlib.resources
 import os
 
 CYTHON_COVERAGE = os.environ.get("ARCH_CYTHON_COVERAGE", "0") in ("true", "1", "True")
@@ -47,6 +45,7 @@ extension modules or to use numba.
 class build_ext(_build_ext):
     def build_extensions(self) -> None:
         import numpy as np
+
         numpy_incl = np.get_include()
         for ext in self.extensions:
             if hasattr(ext, "include_dirs") and numpy_incl not in ext.include_dirs:
