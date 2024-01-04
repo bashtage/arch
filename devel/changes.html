@@ -15,7 +15,7 @@
     
   
       
-        <title>Change Logs - arch v6.2.1 (+27)</title>
+        <title>Change Logs - arch v6.2.1 (+31)</title>
       
     
 
@@ -92,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="arch v6.2.1 (+27)" class="md-header__button md-logo" aria-label="arch v6.2.1 (+27)" data-md-component="logo">
+    <a href="index.html" title="arch v6.2.1 (+31)" class="md-header__button md-logo" aria-label="arch v6.2.1 (+31)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -102,7 +102,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v6.2.1 (+27)
+            arch v6.2.1 (+31)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -189,10 +189,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="arch v6.2.1 (+27)" class="md-nav__button md-logo" aria-label="arch v6.2.1 (+27)" data-md-component="logo">
+    <a href="index.html" title="arch v6.2.1 (+31)" class="md-nav__button md-logo" aria-label="arch v6.2.1 (+31)" data-md-component="logo">
       <img src="_static/bw-logo.svg" alt="logo">
     </a>
-    arch v6.2.1 (+27)
+    arch v6.2.1 (+31)
   </label>
   
     <div class="md-nav__source">
@@ -514,6 +514,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#release-6-3" class="md-nav__link">
+    <span title="/changes.rst#release-6-3 (reference label)" class="md-ellipsis">Release 6.<wbr>3</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#release-6-2" class="md-nav__link">
     <span title="/changes.rst#release-6-2 (reference label)" class="md-ellipsis">Release 6.<wbr>2</span>
   </a>
@@ -629,6 +636,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#release-6-3" class="md-nav__link">
+    <span title="/changes.rst#release-6-3 (reference label)" class="md-ellipsis">Release 6.<wbr>3</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#release-6-2" class="md-nav__link">
     <span title="/changes.rst#release-6-2 (reference label)" class="md-ellipsis">Release 6.<wbr>2</span>
   </a>
@@ -677,13 +691,18 @@
 
 <h1 id="change-logs">Change Logs<a class="headerlink" href="#change-logs" title="Link to this heading">¶</a></h1>
 <h2 id="version-6">Version 6<a class="headerlink" href="#version-6" title="Link to this heading">¶</a></h2>
+<h3 id="release-6-3">Release 6.3<a class="headerlink" href="#release-6-3" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Compatability with NumPy 2</p></li>
+<li><p>Fixes for future changes in pandas</p></li>
+</ul>
 <h3 id="release-6-2">Release 6.2<a class="headerlink" href="#release-6-2" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Fixed a bug that affected forecasting from  <a class="reference internal" href="univariate/generated/arch.univariate.FIGARCH.html#arch.univariate.FIGARCH" title="arch.univariate.volatility.FIGARCH (Python class)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FIGARCH</span></code></a> models (<a class="reference external" href="https://github.com/bashtage/arch/issues/606">GH606</a>).</p></li>
 <li><p>Added a performance warning when testing for unit roots in large series using a lag-length
 search with no-max-lag specified.</p></li>
-<li><p>Fixed a bug that affected forecasting from <code class="xref py py-class docutils literal notranslate"><span class="pre">arch.univariate.volatility.FIGARCH'</span>
-<span class="pre">models</span> <span class="pre">(:issue:`606</span></code>).</p></li>
+<li><p>Fixed a bug that affected forecasting from <a class="reference internal" href="univariate/generated/arch.univariate.FIGARCH.html#arch.univariate.FIGARCH" title="arch.univariate.volatility.FIGARCH (Python class)"><code class="xref py py-class docutils literal notranslate"><span class="pre">arch.univariate.volatility.FIGARCH</span></code></a>
+models (<a class="reference external" href="https://github.com/bashtage/arch/issues/606">GH606</a>).</p></li>
 <li><p>Changed the default value of <code class="docutils literal notranslate"><span class="pre">reindex</span></code> to <code class="docutils literal notranslate"><span class="pre">False</span></code> so that forecasts
 will not match the input by default.  Set <code class="docutils literal notranslate"><span class="pre">reindex</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> if this is
 required.</p></li>
