@@ -150,7 +150,7 @@ jobs:
       python -c "import arch; arch.test(['-n', 'auto', '--junitxml=../junit/test-results.xml'])"
       popd
     displayName: 'Run tests (site-packages)'
-    condition: and(eq(variables['test.install'], 'true'), ne(variables['pip.pre'], 'true'))
+    condition: eq(variables['test.install'], 'true')
 
   - script: |
       echo "Testing editable install"
