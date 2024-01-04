@@ -1,6 +1,7 @@
 """
 Simulation for critical value production for Engle-Granger
 """
+
 import argparse
 import datetime as dt
 from functools import partial

@@ -1,6 +1,7 @@
 """
 Utility functions that do not explicitly relate to Volatility modeling
 """
+
 from __future__ import annotations
 
 from arch.compat.pandas import is_datetime64_any_dtype
@@ -86,7 +87,7 @@ def ensure1d(
 
 
 def ensure2d(
-    x: (Sequence[float | int] | Sequence[Sequence[float | int]] | ArrayLike),
+    x: Sequence[float | int] | Sequence[Sequence[float | int]] | ArrayLike,
     name: str,
 ) -> DataFrame | NDArray:
     if isinstance(x, Series):

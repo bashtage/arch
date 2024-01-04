@@ -1,6 +1,7 @@
 """
 Simulation of ADF z-test critical values.  Closely follows MacKinnon (2010).
 """
+
 from __future__ import annotations
 
 import argparse

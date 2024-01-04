@@ -1,6 +1,6 @@
 setuptools>=61
 wheel
-setuptools_scm[toml]>=7,<8
+setuptools_scm[toml]>=8.0.3,<9
 oldest-supported-numpy
 cython>=0.29.34  # Works with 3.0.0b2
 numpy >=1.22
