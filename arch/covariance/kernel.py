@@ -179,6 +179,7 @@ class CovarianceEstimator(ABC):
 
     where :math:`z=\frac{h}{H}, h=0, 1, \ldots, H` where H is the bandwidth.
     """
+
     _name = ""
 
     def __init__(

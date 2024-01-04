@@ -2,6 +2,7 @@
 Mean models to use with ARCH processes.  All mean models must inherit from
 :class:`ARCHModel` and provide the same methods with the same inputs.
 """
+
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
@@ -240,6 +241,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     where :math:`\bar{y}_{t-L_{i,0}:L_{i,1}}` is the average value of
     :math:`y_t` between :math:`t-L_{i,0}` and :math:`t - L_{i,1}`.
     """
+
     # To allow for addition mean parameters in simulation
     _extra_simulation_params: int = 0
 
@@ -1624,6 +1626,7 @@ class ARCHInMean(ARX):
 
     where :math:`f(\cdot)` is the function specified by ``form``.
     """
+
     # To account for GIM param
     _extra_simulation_params = 1
 

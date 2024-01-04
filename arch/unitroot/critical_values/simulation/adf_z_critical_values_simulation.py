@@ -7,6 +7,7 @@ on the local machine.  This can be started using a command similar to
 
 Remote clusters can be used by modifying the call to Client.
 """
+
 import datetime
 from typing import Literal, cast
 

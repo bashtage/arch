@@ -150,7 +150,7 @@ jobs:
       python -c "import arch; arch.test(['-n', 'auto', '--junitxml=../junit/test-results.xml'])"
       popd
     displayName: 'Run tests (site-packages)'
-    condition: and(ne(variables['test.install'], 'true'), eq(variables['pip.pre'], 'false'))
+    condition: and(eq(variables['test.install'], 'true'), ne(variables['pip.pre'], 'true'))
 
   - script: |
       echo "Testing editable install"
@@ -160,7 +160,7 @@ jobs:
       echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} ${PYTEST_OPTS} arch/tests
       pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} ${PYTEST_OPTS} arch/tests
     displayName: 'Run tests (editable)'
-    condition: and(ne(variables['test.install'], 'false'), eq(variables['pip.pre'], 'false'))
+    condition: and(ne(variables['test.install'], 'true'), ne(variables['pip.pre'], 'true'))
 
   - script: |
       echo "Testing pip-pre"

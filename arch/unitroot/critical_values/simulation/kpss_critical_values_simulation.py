@@ -2,6 +2,7 @@
 Calculates quantiles of the KPSS test statistic for both the constant
 and constant plus trend scenarios.
 """
+
 import os
 from typing import Optional, cast
 
