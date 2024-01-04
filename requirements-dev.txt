@@ -17,8 +17,9 @@ pytest-xdist
 pytest-cov
 
 # formatting
-black[jupyter]==23.9.1
+black[jupyter]==23.12.1
 isort~=5.0
+colorama
 flake8
 mypy
 pyupgrade>=3.4.0

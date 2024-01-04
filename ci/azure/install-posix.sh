@@ -16,7 +16,7 @@ else
 fi
 
 python -m pip install --upgrade pip "setuptools>=61" wheel
-python -m pip install cython "pytest>=7,<7.1" pytest-xdist coverage pytest-cov ipython jupyter notebook nbconvert "property_cached>=1.6.3" black isort flake8 nbconvert setuptools_scm
+python -m pip install cython "pytest>=7" pytest-xdist coverage pytest-cov ipython jupyter notebook nbconvert "property_cached>=1.6.3" black isort flake8 nbconvert setuptools_scm colorama
 
 if [[ -n ${NUMPY} ]]; then CMD="$CMD~=${NUMPY}"; fi;
 CMD="$CMD scipy"
@@ -35,3 +35,10 @@ fi;
 CMD="$CMD $EXTRA"
 echo $CMD
 eval $CMD
+
+if [ "${PIP_PRE}" = true ]; then
+  python -m pip install matplotlib cython --upgrade
+  python -m pip uninstall -y numpy pandas scipy matplotlib statsmodels
+  python -m pip install -i https://pypi.anaconda.org/scientific-python-nightly-wheels/simple numpy pandas scipy matplotlib --upgrade --use-deprecated=legacy-resolver
+  python -m pip install git+https://github.com/statsmodels/statsmodels.git --upgrade --no-build-isolation -v
+fi
