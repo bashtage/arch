@@ -4,6 +4,8 @@ Version 6
 
 Release 6.3
 ===========
+- Performance enhancement for long-run covariance estimators when numba is installed (:issue:`687`)
+- Python 3.12 support
 - Compatability with NumPy 2
 - Fixes for future changes in pandas
 
