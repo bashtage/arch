@@ -25,7 +25,11 @@ from arch.typing import (
 )
 from arch.univariate.distribution import Normal
 from arch.utility.array import AbstractDocStringInheritor, ensure1d
-from arch.utility.exceptions import InitialValueWarning, initial_value_warning
+from arch.utility.exceptions import (
+    InitialValueWarning,
+    ValueWarning,
+    initial_value_warning,
+)
 
 if TYPE_CHECKING:
     from arch.univariate import recursions_python as rec
@@ -3143,7 +3147,15 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         fdata[:truncation] = abs(data[:truncation]) ** power
         omega = parameters[0]
         beta = parameters[-1] if q else 0
-        omega_tilde = omega / (1 - beta)
+        if beta < 1:
+            omega_tilde = omega / (1 - beta)
+        else:
+            warn(
+                "beta >= 1.0, using omega as intercept since long-run variance "
+                "is ill-defined.",
+                ValueWarning,
+            )
+            omega_tilde = omega
         for t in range(truncation, truncation + nobs + burn):
             fsigma[t] = omega_tilde + lam_rev.dot(fdata[t - truncation : t])
             sigma2[t] = fsigma[t] ** (2.0 / power)

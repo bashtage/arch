@@ -1431,9 +1431,9 @@ def test_figarch(setup, initial_value):
     assert_equal(figarch.num_params, 4)
     assert_equal(figarch.truncation, trunc_lag)
 
-    params = np.array([0.1, 0.2, 0.4, 1.1])
+    params = np.array([0.1, 1.01, 0.4, 1.005])
     with pytest.warns(InitialValueWarning):
-        figarch.simulate(params, 1000, rng.simulate([]))
+        figarch.simulate(params, 20, rng.simulate([]))
 
 
 def test_figarch_no_phi(setup):
