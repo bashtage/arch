@@ -1,10 +1,9 @@
 # versioning
 setuptools_scm[toml]>=8.0.3,<9
 packaging
-oldest-supported-numpy>=2022.11.19
 
 # Performance
-cython>=0.29.34  # Works with 3.0.0b2
+cython>=3.0.10
 numba>=0.49,!=0.50.*;python_version<"3.12"
 
 # Graphics
@@ -12,12 +11,12 @@ matplotlib>=3
 seaborn
 
 # Tests
-pytest>=7.3
+pytest>=7.3,<8
 pytest-xdist
 pytest-cov
 
 # formatting
-black[jupyter]==23.12.1
+black[jupyter]~=24.4.0
 isort~=5.0
 colorama
 flake8

@@ -48,8 +48,7 @@ def add_trend(
     prepend: bool = ...,
     nobs: int = ...,
     has_constant: Literal["raise", "add", "skip"] = ...,
-) -> Float64Array:
-    ...  # pragma: no cover
+) -> Float64Array: ...  # pragma: no cover
 
 
 @overload
@@ -59,8 +58,7 @@ def add_trend(
     prepend: bool = ...,
     nobs: None = ...,
     has_constant: Literal["raise", "add", "skip"] = ...,
-) -> Float64Array:
-    ...  # pragma: no cover
+) -> Float64Array: ...  # pragma: no cover
 
 
 @overload
@@ -70,8 +68,7 @@ def add_trend(
     prepend: bool = ...,
     nobs: None = ...,
     has_constant: Literal["raise", "add", "skip"] = ...,
-) -> pd.DataFrame:
-    ...  # pragma: no cover
+) -> pd.DataFrame: ...  # pragma: no cover
 
 
 def add_trend(

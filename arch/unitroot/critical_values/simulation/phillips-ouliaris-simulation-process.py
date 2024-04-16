@@ -20,7 +20,7 @@ from statsmodels.regression.linear_model import OLS, WLS
 META = {"z_a": "negative", "z_t": "negative", "p_u": "positive", "p_z": "positive"}
 CRITICAL_VALUES = (1, 5, 10)
 PLOT = False
-WINS: dict[int, int] = defaultdict(lambda: 0)
+WINS: dict[int, int] = defaultdict(int)
 # 1. Load data
 # 2. Compute critical values
 

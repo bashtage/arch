@@ -1144,9 +1144,7 @@ class PhillipsPerron(UnitRootTest, metaclass=AbstractDocStringInheritor):
         self._stat_tau = sqrt(gamma0 / lam2) * ((rho - 1) / sigma) - 0.5 * (
             (lam2 - gamma0) / lam
         ) * (n * sigma / s)
-        self._stat_rho = n * (rho - 1) - 0.5 * (n**2.0 * sigma2 / s2) * (
-            lam2 - gamma0
-        )
+        self._stat_rho = n * (rho - 1) - 0.5 * (n**2.0 * sigma2 / s2) * (lam2 - gamma0)
 
         self._nobs = int(resols.nobs)
         if self._test_type == "rho":

@@ -55,9 +55,8 @@ requires = [
   "setuptools>=61",
   "wheel",
   "setuptools_scm[toml]>=8.0.3,<9",
-  "oldest-supported-numpy>=2022.11.19",
-  "cython>=0.29.34", # Works with 3.0.0b2
-
+  "cython>=3.0.10",
+  "numpy>=2.0.0rc1,<3"
 ]
 build-backend = "setuptools.build_meta"
 
@@ -65,7 +64,7 @@ build-backend = "setuptools.build_meta"
 dependencies = { file = ["requirements.txt"] }
 
 [tool.black]
-target-version = ['py39', 'py310', 'py311']
+target-version = ['py39', 'py310', 'py311', 'py312']
 exclude = '''
 (
     \.egg

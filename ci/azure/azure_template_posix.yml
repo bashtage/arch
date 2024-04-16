@@ -45,14 +45,14 @@ jobs:
       python39_numpy120:
         python.version: '3.9'
         MATPLOTLIB: 3.3.0
-        NUMPY: 1.20.0
-        SCIPY: 1.7.0
-        PANDAS: 1.2.0
+        NUMPY: 1.22.3
+        SCIPY: 1.8.0
+        PANDAS: 1.4.0
       python_310_no_binary:
         python.version: '3.10'
         ARCH_NO_BINARY: true
         PYTEST_OPTS: '--skip-slow'
-        PANDAS: 1.4.0
+        PANDAS: 1.5.0
         USE_NUMBA: true
       python_39_no_binary_environment:
         python.version: '3.9'
@@ -62,22 +62,22 @@ jobs:
         PYTEST_OPTS: '--skip-slow'
       python_39_no_numba:
         python.version: '3.9'
-        NUMPY: 1.21.0
+        NUMPY: 1.24.0
         USE_NUMBA: false
-        MATPLOTLIB: 3.3.0
+        MATPLOTLIB: 3.5.0
         PANDAS: 1.5.0
         PYTEST_PATTERN: "(slow or not slow)"
       python_39_numpy_118:
         python.version: '3.9'
-        NUMPY: 1.22.0
+        NUMPY: 1.24.0
         USE_NUMBA: false
         PYTEST_PATTERN: "(slow or not slow)"
       python_minimums:
         python.version: '3.9'
-        NUMPY: 1.19.0
-        SCIPY: 1.5.0
-        MATPLOTLIB: 3.3.0
-        PANDAS: 1.1.0
+        NUMPY: 1.23.0
+        SCIPY: 1.9.0
+        MATPLOTLIB: 3.4.0
+        PANDAS: 1.4.0
       python312_pre:
         python.version: '3.12'
         pip.pre: true
@@ -176,9 +176,8 @@ jobs:
       testRunTitle: 'Python $(python.version)'
     condition: succeededOrFailed()
 
-  - task: PublishCodeCoverageResults@1
+  - task: PublishCodeCoverageResults@2
     inputs:
-      codeCoverageTool: Cobertura
       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
     condition: and(eq(variables['coverage'], 'true'), ne(variables['test.install'], 'true'))
 

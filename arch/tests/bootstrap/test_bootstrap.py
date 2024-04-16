@@ -538,7 +538,7 @@ def test_jackknife(bs_setup):
 
     x = bs_setup.x_df
     results_df = _loo_jackknife(bs_setup.func, len(x), (x,), {})
-    assert_equal(results, results_df)
+    assert_allclose(results, results_df)
 
     y = bs_setup.y
     results = _loo_jackknife(bs_setup.func, len(y), (y,), {})

@@ -45,9 +45,9 @@ if NP_GTE_121 and TYPE_CHECKING:
     AnyArray = np.ndarray[Any, Any]  # pragma: no cover
     Uint32Array = np.ndarray[Any, np.dtype[np.uint32]]  # pragma: no cover
 else:
-    Uint32Array = (
-        IntArray
-    ) = Float64Array = Int64Array = Int32Array = BoolArray = AnyArray = NDArray
+    Uint32Array = IntArray = Float64Array = Int64Array = Int32Array = BoolArray = (
+        AnyArray
+    ) = NDArray
 
 BootstrapIndexT = Union[
     Int64Array, tuple[Int64Array, ...], tuple[list[Int64Array], dict[str, Int64Array]]
