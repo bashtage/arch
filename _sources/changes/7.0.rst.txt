@@ -1,0 +1,14 @@
+=========
+Version 7
+=========
+
+Release 7.0
+===========
+- Full compatability with NumPy 2
+- Improved compatability with future changes in pandas 3.
+- Increases in related minimum requirements.
+
+.. note::
+
+   In order to use NumPy 2, the environment must consist of packages
+   that have been built against NumPy 2.0.0rc1 or later.
