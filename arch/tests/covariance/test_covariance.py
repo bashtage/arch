@@ -125,7 +125,7 @@ def test_bartlett_auto(data: ArrayLike):
     assert int(nw.bandwidth) == expected_bw
     expected = 1.0 - np.arange(nw.bandwidth + 1) / (nw.bandwidth + 1)
     assert_allclose(nw.kernel_weights, expected)
-    resid = data - np.asarray(data.mean(0))
+    resid = data - np.asarray(data.mean(axis=0))
     resid = np.asarray(resid)
     nobs = resid.shape[0]
     expected_cov = resid.T @ resid / nobs
