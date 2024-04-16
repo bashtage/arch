@@ -38,7 +38,8 @@ def ensure1d(
     x: int | float | Sequence[int | float] | ArrayLike,
     name: Hashable | None,
     series: Literal[True] = ...,
-) -> Series: ...  # pragma: no cover
+) -> Series:  # pragma: no cover
+    ...  # pragma: no cover
 
 
 @overload
@@ -46,7 +47,8 @@ def ensure1d(
     x: int | float | Sequence[int | float] | ArrayLike,
     name: Hashable | None,
     series: Literal[False],
-) -> np.ndarray: ...  # pragma: no cover
+) -> np.ndarray:  # pragma: no cover
+    ...  # pragma: no cover
 
 
 def ensure1d(
