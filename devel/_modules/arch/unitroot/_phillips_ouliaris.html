@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.unitroot._phillips_ouliaris - arch 7.0.0</title>
+        <title>arch.unitroot._phillips_ouliaris - arch v7.0.1 (+2)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch 7.0.0" class="md-header__button md-logo" aria-label="arch 7.0.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.0.1 (+2)" class="md-header__button md-logo" aria-label="arch v7.0.1 (+2)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 7.0.0
+            arch v7.0.1 (+2)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch 7.0.0" class="md-nav__button md-logo" aria-label="arch 7.0.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.0.1 (+2)" class="md-nav__button md-logo" aria-label="arch v7.0.1 (+2)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 7.0.0
+    arch v7.0.1 (+2)
   </label>
   
     <div class="md-nav__source">
@@ -543,9 +543,7 @@
 <span class="sd">        and &quot;quadratic-spectral&quot; for the Quadratic Spectral kernel.</span>
 <span class="sd">    bandwidth : int, default None</span>
 <span class="sd">        The bandwidth to use. If not provided, the optimal bandwidth is</span>
-<span class="sd">        estimated from the data. Setting the bandwidth to 0 and using</span>
-<span class="sd">        &quot;unadjusted&quot; produces the classic OLS covariance estimator.</span>
-<span class="sd">        Setting the bandwidth to 0 and using &quot;robust&quot; produces White&#39;s</span>
+<span class="sd">        estimated from the data. Setting the bandwidth to 0 produces White&#39;s</span>
 <span class="sd">        covariance estimator.</span>
 <span class="sd">    force_int : bool, default False</span>
 <span class="sd">        Whether the force the estimated optimal bandwidth to be an integer.</span>
@@ -566,14 +564,6 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-
-<span class="sd">    .. warning::</span>
-
-<span class="sd">       The critical value simulation is on-going and so the critical values</span>
-<span class="sd">       may change slightly as more simulations are completed. These are still</span>
-<span class="sd">       based on far more simulations (minimum 2,000,000) than were possible</span>
-<span class="sd">       in 1990 (5000) that are reported in [1]_.</span>
-
 <span class="sd">    Supports 4 distinct tests.</span>
 
 <span class="sd">    Define the cross-sectional regression</span>
@@ -644,7 +634,7 @@
 <span class="sd">    differs from the expression in [1]_. We recenter :math:`z_t` by subtracting</span>
 <span class="sd">    the first observation, so that :math:`\tilde{z}_t = z_t - z_1`. This is</span>
 <span class="sd">    needed to ensure that the initial value does not affect the distribution</span>
-<span class="sd">    under the null. When the trend is anything other than &quot;n&quot;, this set is not</span>
+<span class="sd">    under the null. When the trend is anything other than &quot;n&quot;, this step is not</span>
 <span class="sd">    needed and the test statistics is identical whether the first observation</span>
 <span class="sd">    is subtracted or not.</span>
 
@@ -931,7 +921,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    7.3.7.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
