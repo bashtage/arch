@@ -175,9 +175,7 @@ def phillips_ouliaris(
         and "quadratic-spectral" for the Quadratic Spectral kernel.
     bandwidth : int, default None
         The bandwidth to use. If not provided, the optimal bandwidth is
-        estimated from the data. Setting the bandwidth to 0 and using
-        "unadjusted" produces the classic OLS covariance estimator.
-        Setting the bandwidth to 0 and using "robust" produces White's
+        estimated from the data. Setting the bandwidth to 0 produces White's
         covariance estimator.
     force_int : bool, default False
         Whether the force the estimated optimal bandwidth to be an integer.
@@ -198,14 +196,6 @@ def phillips_ouliaris(
 
     Notes
     -----
-
-    .. warning::
-
-       The critical value simulation is on-going and so the critical values
-       may change slightly as more simulations are completed. These are still
-       based on far more simulations (minimum 2,000,000) than were possible
-       in 1990 (5000) that are reported in [1]_.
-
     Supports 4 distinct tests.
 
     Define the cross-sectional regression
@@ -276,7 +266,7 @@ def phillips_ouliaris(
     differs from the expression in [1]_. We recenter :math:`z_t` by subtracting
     the first observation, so that :math:`\tilde{z}_t = z_t - z_1`. This is
     needed to ensure that the initial value does not affect the distribution
-    under the null. When the trend is anything other than "n", this set is not
+    under the null. When the trend is anything other than "n", this step is not
     needed and the test statistics is identical whether the first observation
     is subtracted or not.
 

@@ -127,7 +127,6 @@ html_theme_options = {
     "site_url": "https://bashtage.github.io/arch/",
     "repo_url": "https://github.com/bashtage/arch/",
     "repo_name": "arch",
-    "repo_type": "github",
     "palette": {"primary": "blue", "accent": "indigo"},
     "globaltoc_collapse": True,
     "toc_title": "Contents",
