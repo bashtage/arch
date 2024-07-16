@@ -1,4 +1,4 @@
-setuptools>=61
+setuptools>=70.0.0
 wheel
 setuptools_scm[toml]>=8.0.3,<9
 oldest-supported-numpy
