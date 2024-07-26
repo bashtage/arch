@@ -1364,9 +1364,9 @@ def test_non_contiguous_input(use_numpy):
     # GH 740
     if use_numpy:
         y = np.array(SP500, copy=True)[::2]
-        assert not y.flags['C_CONTIGUOUS']
+        assert not y.flags["C_CONTIGUOUS"]
     else:
         y = SP500.iloc[::2]
-    mod = arch_model(y, mean='Zero')
+    mod = arch_model(y, mean="Zero")
     res = mod.fit()
     assert res.params.shape[0] == 3
