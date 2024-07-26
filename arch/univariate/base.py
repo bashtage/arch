@@ -193,7 +193,7 @@ class ARCHModel(metaclass=ABCMeta):
             self._y_series = cast(pd.Series, ensure1d(y, "y", series=True))
         else:
             self._y_series = cast(pd.Series, ensure1d(np.empty((0,)), "y", series=True))
-        self._y = np.asarray(self._y_series)
+        self._y = np.ascontiguousarray(self._y_series)
         if not np.all(np.isfinite(self._y)):
             raise ValueError(
                 "NaN or inf values found in y. y must contains only finite values."

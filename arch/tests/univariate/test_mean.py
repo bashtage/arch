@@ -1357,3 +1357,16 @@ def test_arch_lm_ar_model(lags):
     val = fit.arch_lm_test()
     assert val.stat > 0
     assert val.pval <= 1
+
+
+@pytest.mark.parametrize("use_numpy", [True, False])
+def test_non_contiguous_input(use_numpy):
+    # GH 740
+    if use_numpy:
+        y = np.array(SP500, copy=True)[::2]
+        assert not y.flags['C_CONTIGUOUS']
+    else:
+        y = SP500.iloc[::2]
+    mod = arch_model(y, mean='Zero')
+    res = mod.fit()
+    assert res.params.shape[0] == 3
