@@ -48,11 +48,11 @@ jobs:
         NUMPY: 1.22.3
         SCIPY: 1.8.0
         PANDAS: 1.4.0
-      python_310_no_binary:
-        python.version: '3.10'
+      python_311_no_binary:
+        python.version: '3.11'
         ARCH_NO_BINARY: true
         PYTEST_OPTS: '--skip-slow'
-        PANDAS: 1.5.0
+        PANDAS: 2.2.2
         USE_NUMBA: true
       python_39_no_binary_environment:
         python.version: '3.9'
