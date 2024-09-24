@@ -81,5 +81,5 @@ exclude = '''
 [tool.setuptools_scm]
 write_to = "arch/_version.py"
 
-[tool.ruff]
+[tool.ruff.lint]
 typing-modules = ["arch.typing"]
