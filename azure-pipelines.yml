@@ -9,6 +9,7 @@ variables:
   OMP_NUM_THREADS: 1
   VML_NUM_THREADS: 1
   OPENBLAS_NUM_THREADS: 1
+  JUPYTER_PLATFORM_DIRS: 1
   PYTHONHASHSEED: 12345678 # Ensure tests are correctly gathered by xdist
   TEST_INSTALL: false
   MPLBACKEND: agg
