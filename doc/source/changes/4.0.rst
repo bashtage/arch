@@ -39,7 +39,7 @@ Release 4.16
 Release 4.15
 ============
 - This is a minor release with doc fixes and other small updates. The only notable
-  feature is :func:`~arch.unitroot.unitroot.PhillipsPerron.regression` which returns
+  feature is :meth:`~arch.unitroot.unitroot.PhillipsPerron.regression` which returns
   regression results from the model estimated as part of the test (:issue:`395`).
 
 Release 4.14
@@ -161,7 +161,7 @@ Release 4.7
 Release 4.6
 ===========
 - Added support for MIDAS volatility processes using Hyperbolic
-  weighting in :class:`~arch.univariate.MidasHyperbolic`
+  weighting in :class:`~arch.univariate.MIDASHyperbolic`
   (:issue:`233`).
 
 Release 4.5
