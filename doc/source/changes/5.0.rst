@@ -22,7 +22,7 @@ Release 5.4
 
 Release 5.3
 ===========
-- Fixed a bug in :func:`~arch.univariate.mean.arch_model` where ``power`` was
+- Fixed a bug in :func:`~arch.univariate.arch_model` where ``power`` was
   not passed to the :class:`~arch.univariate.FIGARCH` constructor (:issue:`572`).
 - Fixed a bug that affected downstream projects due to an overly specific assert
   (:issue:`569`).
@@ -75,8 +75,8 @@ Volatility Modeling
   instances and integers.  If an integer is passed, the random number generator is constructed by
   calling :func:`numpy.random.default_rng` The ``seed`` keyword argument replaces the
   ``random_state`` keyword argument.
-- The :func:`~arch.univariate.distribution.Normal.random_state` property has also been deprecated in favor
-  of :func:`~arch.univariate.distribution.Normal.generator`.
+- The :meth:`~arch.univariate.distribution.Normal.random_state` property has also been deprecated in favor
+  of :meth:`~arch.univariate.distribution.Normal.generator`.
 - Added :class:`~arch.univariate.ARCHInMean` mean process supporting (G)ARCH-in-mean models.
 - Extended :class:`~arch.univariate.volatility.VolatilityProcess` with
   :func:`~arch.univariate.volatility.VolatilityProcess.volatility_updater` that contains a
