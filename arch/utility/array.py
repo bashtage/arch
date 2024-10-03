@@ -13,7 +13,17 @@ from functools import cached_property
 from typing import Any, Literal, overload
 
 import numpy as np
-from pandas import DataFrame, DatetimeIndex, Index, NaT, Series, Timestamp, to_datetime
+import pandas as pd
+from pandas import (
+    DataFrame,
+    DatetimeIndex,
+    Index,
+    NaT,
+    Series,
+    Timestamp,
+    concat,
+    to_datetime,
+)
 
 from arch.typing import AnyPandas, ArrayLike, DateLike, NDArray
 
@@ -311,3 +321,31 @@ def find_index(s: AnyPandas, index: int | DateLike) -> int:
     if loc.size == 0:
         raise ValueError("index not found")
     return int(loc)
+
+
+def append_same_type(original, new):
+    append_ok = isinstance(original, (list, np.ndarray)) and isinstance(
+        new, (float, np.floating)
+    )
+    append_ok = append_ok or isinstance(new, type(original))
+    if not append_ok:
+        raise TypeError(
+            "Input data must be the same type as the original data, unless the "
+            "original was an NDArray or a list, in which case the input data can "
+            f"be a scalar float. Got {type(new)}, expected {type(original)}."
+        )
+    if isinstance(original, (Series, DataFrame)):
+        extended = concat([original, new], axis=0)
+    elif isinstance(original, np.ndarray):
+        extended = np.concatenate([original, np.atleast_1d(new)])
+    elif isinstance(original, list):
+        if isinstance(new, list):
+            extended = original + new
+        else:
+            extended = original + [new]
+    else:
+        raise TypeError(
+            "Input data must be a pandas Series, DataFrame, numpy ndarray, or "
+            f"list. Got {type(original)}."
+        )
+    return extended

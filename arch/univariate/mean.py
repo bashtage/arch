@@ -40,6 +40,7 @@ from arch.univariate.distribution import (
     SkewStudent,
     StudentsT,
 )
+from arch.utility.array import append_same_type
 
 if TYPE_CHECKING:
     # Fake path to satisfy mypy
@@ -271,6 +272,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             distribution=distribution,
             rescale=rescale,
         )
+        self._x_original = x
         self._x = x
         self._x_names: list[str] = []
         self._x_index: None | NDArray | pd.Index = None
@@ -306,6 +308,25 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                 RuntimeWarning,
             )
             self._hold_back = max_lags
+
+        self._init_model()
+
+    def append(self, y: ArrayLike, x: ArrayLike2D | None = None) -> None:
+        super().append(y)
+        if x is not None:
+            if self._x is None:
+                raise ValueError("x was not provided in the original model")
+            _x = np.atleast_2d(np.asarray(x))
+            if _x.ndim != 2:
+                raise ValueError("x must be 2-d")
+            elif _x.shape[1] != self._x.shape[1]:
+                raise ValueError(
+                    "x must have the same number of columns as the original x"
+                )
+            self._x_original = append_same_type(self._x_original, x)
+            self._x = np.asarray(self._x_original)
+            if self._x.shape[0] != self._y.shape[0]:
+                raise ValueError("x must have the same number of observations as y")
 
         self._init_model()
 

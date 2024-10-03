@@ -36,7 +36,7 @@ from arch.typing import (
 )
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
-from arch.utility.array import ensure1d
+from arch.utility.array import append_same_type, ensure1d
 from arch.utility.exceptions import (
     ConvergenceWarning,
     DataScaleWarning,
@@ -230,6 +230,28 @@ class ARCHModel(metaclass=ABCMeta):
     def name(self) -> str:
         """The name of the model."""
         return self._name
+
+    def append(self, y: ArrayLike) -> None:
+        """
+        Append data to the model
+
+        Parameters
+        ----------
+        y : ndarray or Series
+            Data to append
+
+        Returns
+        -------
+        ARCHModel
+            Model with data appended
+        """
+        _y = ensure1d(y, "y", series=True)
+        self._y_original = append_same_type(self._y_original, y)
+        self._y_series = pd.concat([self._y_series, _y])
+        self._y = np.concatenate([self._y, np.asarray(_y)])
+
+        self._fit_indices: [0, int(self._y.shape[0])]
+        self._fit_y = self._y
 
     def constraints(self) -> tuple[Float64Array, Float64Array]:
         """
