@@ -38,7 +38,7 @@ except ImportError:
             return wrapper
 
         # Used as a decorator, e.g., @jit
-        def wrap(func):
+        def wrap(func: Callable[..., Any]) -> Callable[..., Any]:
             @functools.wraps(func)
             def wrapper(*args: Any, **kwargs: Any) -> Callable[..., Any]:
                 import warnings
