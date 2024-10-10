@@ -309,7 +309,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
         self._init_model()
 
-    def _scale_changed(self):
+    def _scale_changed(self) -> None:
         """
         Called when the scale has changed.  This allows the model
         to update any values that are affected by the scale changes,

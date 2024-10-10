@@ -18,8 +18,8 @@ data = pdr.get_data_yahoo("^GSPC", start, end)
 price = data["Adj Close"]
 rets = 100 * price.resample("M").last().pct_change()
 
-l, u = rets.quantile([0.01, 0.99])
-bins = np.linspace(l, u, NBINS)
+lower, upper = rets.quantile([0.01, 0.99])
+bins = np.linspace(lower, upper, NBINS)
 fig = plt.figure(frameon=False)
 fig.set_size_inches(8, 8)
 ax = fig.add_subplot("111")

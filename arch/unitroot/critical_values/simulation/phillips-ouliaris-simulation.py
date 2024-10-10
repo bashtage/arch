@@ -314,7 +314,7 @@ def worker(
             )
             last_print_remaining = remaining
     results = results.quantile(QUANTILES)
-    results.to_hdf(full_path, "results")
+    results.to_hdf(full_path, key="results")
     if os.path.exists(temp_file_name(full_path)):
         try:
             os.unlink(temp_file_name(full_path))

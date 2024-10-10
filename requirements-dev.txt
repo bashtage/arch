@@ -23,6 +23,7 @@ flake8
 mypy
 ruff
 pyupgrade>=3.4.0
+jupyterlab-code-formatter
 
 # Documentation
 ipython>=7
