@@ -8,8 +8,6 @@ The p-values are generated through Monte Carlo simulation using 100,000
 replications and 2000 data points.
 """
 
-from __future__ import annotations
-
 from numpy import array
 
 # constant-only model

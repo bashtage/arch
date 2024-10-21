@@ -11,8 +11,6 @@ This version has been optimized for execution on a large cluster and should
 scale well with 128 or more engines.
 """
 
-from __future__ import annotations
-
 import datetime
 import time
 from typing import cast

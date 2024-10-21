@@ -1,10 +1,8 @@
-from __future__ import annotations
-
 from collections import defaultdict
 import glob
 from itertools import product
 import os
-from typing import NamedTuple, cast
+from typing import NamedTuple, Union, cast
 
 from black import FileMode, TargetVersion, format_file_contents
 import matplotlib.backends.backend_pdf
@@ -96,7 +94,7 @@ def estimate_cv_regression(
     return out, float(tau.min())
 
 
-def fit_pval_model(quantiles: pd.DataFrame | pd.Series) -> PvalueResult:
+def fit_pval_model(quantiles: Union[pd.DataFrame, pd.Series]) -> PvalueResult:
     percentiles = quantiles.index.to_numpy()
     lhs = stats.norm.ppf(percentiles)
     data = np.asarray(quantiles)

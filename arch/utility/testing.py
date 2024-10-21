@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from functools import cached_property
 
 from scipy.stats import chi2
@@ -67,17 +65,9 @@ class WaldTestStatistic:
 
     def __str__(self) -> str:
         name = "" if not self._name else self._name + "\n"
-        msg = (
-            "{name}H0: {null}\n{name}H1: {alternative}\nStatistic: {stat:0.4f}\n"
-            "P-value: {pval:0.4f}\nDistributed: {dist}"
-        )
-        return msg.format(
-            name=name,
-            null=self.null,
-            alternative=self.alternative,
-            stat=self.stat,
-            pval=self.pval,
-            dist=self.dist_name,
+        return (
+            f"{name}H0: {self.null}\n{name}H1: {self.alternative}\nStatistic: {self.stat:0.4f}\n"
+            f"P-value: {self.pval:0.4f}\nDistributed: {self.dist}"
         )
 
     def __repr__(self) -> str:

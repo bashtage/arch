@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import overload
+from typing import Optional, Union, overload
 
 import numpy as np
 import pandas as pd
@@ -75,12 +73,12 @@ def add_trend(
 
 
 def add_trend(
-    x: NDArrayOrFrame | None = None,
+    x: Optional[NDArrayOrFrame] = None,
     trend: Literal["n", "c", "t", "ct", "ctt"] = "c",
     prepend: bool = False,
-    nobs: int | None = None,
+    nobs: Optional[int] = None,
     has_constant: Literal["raise", "add", "skip"] = "skip",
-) -> Float64Array | pd.DataFrame:
+) -> Union[Float64Array, pd.DataFrame]:
     """
     Adds a trend and/or constant to an array.
 
@@ -133,7 +131,7 @@ def add_trend(
         nobs = len(np.asanyarray(x))
     elif nobs is None or nobs <= 0:
         raise ValueError("nobs must be a positive integer if x is None")
-    trend_array = np.vander(np.arange(1, nobs + 1, dtype=np.float64), trend_order + 1)
+    trend_array = np.vander(np.arange(1, nobs + 1, dtype=np.double), trend_order + 1)
     # put in order ctt
     trend_array = np.fliplr(trend_array)
     if trend_name == "t":

@@ -293,7 +293,7 @@ class TestMeanModel:
         direct = pd.DataFrame(
             index=np.arange(t),
             columns=["h." + str(i + 1) for i in range(6)],
-            dtype="float64",
+            dtype=float,
         )
 
         params = np.asarray(res.params)
@@ -325,7 +325,7 @@ class TestMeanModel:
         direct = pd.DataFrame(
             index=self.y_series.index,
             columns=["h." + str(i + 1) for i in range(6)],
-            dtype="float64",
+            dtype=float,
         )
         forecasts = res.forecast(horizon=6)
         params = np.asarray(res.params)
@@ -415,7 +415,7 @@ class TestMeanModel:
         direct = pd.DataFrame(
             index=np.arange(y.shape[0]),
             columns=["h." + str(i + 1) for i in range(5)],
-            dtype="float64",
+            dtype=float,
         )
         params = res.params.iloc[:-1]
         for i in range(2, y.shape[0]):

@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 from collections.abc import Sequence
-from typing import Any, NamedTuple
+from typing import Any, NamedTuple, Union
 
 import numpy as np
 import pandas as pd
@@ -55,7 +53,7 @@ def estimate_cv_regression(
 
 
 def fit_pval_model(
-    quantiles: pd.Series | pd.DataFrame,
+    quantiles: Union[pd.Series, pd.DataFrame],
     small_order: int = 3,
     use_log: bool = False,
     drop_insignif: bool = True,

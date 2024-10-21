@@ -11,8 +11,6 @@ P-type statistics with trend ct based on 11,250,000 simulations
 P-type statistics with trend ctt based on 13,250,000 simulations
 """
 
-from __future__ import annotations
-
 from math import inf
 
 CV_PARAMETERS = {

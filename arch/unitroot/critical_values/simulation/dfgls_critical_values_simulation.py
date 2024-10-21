@@ -4,10 +4,8 @@ to MacKinnon (2010).  Makes use of parallel_fun in statsmodels which works
 best when joblib is installed.
 """
 
-from __future__ import annotations
-
 import datetime
-from typing import cast
+from typing import Optional, cast
 
 import numpy as np
 from numpy.linalg import pinv
@@ -49,7 +47,7 @@ def wrapper(n: int, trend: Literal["c", "ct"], b: int, seed: int = 0) -> np.ndar
 
 
 def dfgsl_simulation(
-    n: int, trend: Literal["c", "ct"], b: int, rng: RandomState | None = None
+    n: int, trend: Literal["c", "ct"], b: int, rng: Optional[RandomState] = None
 ) -> float:
     """
     Simulates the empirical distribution of the DFGLS test statistic
@@ -138,7 +136,7 @@ if __name__ == "__main__":
         results = np.zeros((len(percentiles), len(T), EX_NUM))
 
         for i in range(EX_NUM):
-            print("Experiment Number {} of {} " "(trend {})".format(i + 1, EX_NUM, tr))
+            print(f"Experiment Number {i + 1} of {EX_NUM} " "(trend {tr})")
             now = datetime.datetime.now()
             parallel, p_func, n_jobs = parallel_func(
                 wrapper, n_jobs=NUM_JOBS, verbose=2

@@ -1,14 +1,9 @@
-from __future__ import annotations
-
 from collections.abc import Hashable
 import datetime as dt
-from typing import TYPE_CHECKING, Any, Callable, Literal, Optional, TypeVar, Union
+from typing import Any, Callable, Literal, Optional, TypeVar, Union
 
 import numpy as np
 from pandas import DataFrame, Series, Timestamp
-
-NP_GTE_121 = np.lib.NumpyVersion(np.__version__) >= np.lib.NumpyVersion("1.21.0")
-
 
 __all__ = [
     "NDArray",
@@ -36,18 +31,13 @@ __all__ = [
 ]
 
 NDArray = Union[np.ndarray]
-if NP_GTE_121 and TYPE_CHECKING:
-    Float64Array = np.ndarray[Any, np.dtype[np.float64]]  # pragma: no cover
-    Int64Array = np.ndarray[Any, np.dtype[np.int64]]  # pragma: no cover
-    Int32Array = np.ndarray[Any, np.dtype[np.int32]]  # pragma: no cover
-    IntArray = np.ndarray[Any, np.dtype[np.int_]]  # pragma: no cover
-    BoolArray = np.ndarray[Any, np.dtype[np.bool_]]  # pragma: no cover
-    AnyArray = np.ndarray[Any, Any]  # pragma: no cover
-    Uint32Array = np.ndarray[Any, np.dtype[np.uint32]]  # pragma: no cover
-else:
-    Uint32Array = IntArray = Float64Array = Int64Array = Int32Array = BoolArray = (
-        AnyArray
-    ) = NDArray
+Float64Array = np.ndarray[Any, np.dtype[np.double]]  # pragma: no cover
+Int64Array = np.ndarray[Any, np.dtype[np.longlong]]  # pragma: no cover
+Int32Array = np.ndarray[Any, np.dtype[np.intc]]  # pragma: no cover
+IntArray = np.ndarray[Any, np.dtype[np.int_]]  # pragma: no cover
+BoolArray = np.ndarray[Any, np.dtype[np.bool_]]  # pragma: no cover
+AnyArray = np.ndarray[Any, Any]  # pragma: no cover
+Uint32Array = np.ndarray[Any, np.dtype[np.uintc]]  # pragma: no cover
 
 BootstrapIndexT = Union[
     Int64Array, tuple[Int64Array, ...], tuple[list[Int64Array], dict[str, Int64Array]]

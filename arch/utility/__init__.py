@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 import os
+from typing import Union
 
 from arch.utility.cov import cov_nw
 
@@ -8,7 +7,7 @@ PKG = os.path.dirname(os.path.dirname(__file__))
 
 
 def test(
-    extra_args: str | list[str] | None = None,
+    extra_args: Union[str, list[str], None] = None,
     exit: bool = True,
     append: bool = True,
     location: str = "",
@@ -49,7 +48,8 @@ def test(
     if not os.path.exists(pkg_loc):
         raise RuntimeError(f"{pkg_loc} was not found. Unable to run tests")
     cmd = [pkg_loc] + cmd
-    print("running: pytest {}".format(" ".join(cmd)))
+    cmd_str = " ".join(cmd)
+    print(f"running: pytest {cmd_str}")
     status = pytest.main(cmd)
     if exit:  # pragma: no cover
         sys.exit(status)

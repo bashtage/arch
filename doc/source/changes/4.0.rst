@@ -39,7 +39,7 @@ Release 4.16
 Release 4.15
 ============
 - This is a minor release with doc fixes and other small updates. The only notable
-  feature is :meth:`~arch.unitroot.unitroot.PhillipsPerron.regression` which returns
+  feature is :meth:`~arch.unitroot.PhillipsPerron.regression` which returns
   regression results from the model estimated as part of the test (:issue:`395`).
 
 Release 4.14
@@ -106,7 +106,7 @@ Release 4.9
 - Added :func:`~arch.unitroot.auto_bandwidth` to compute optimized bandwidth
   for a number of common kernel covariance estimators (:issue:`303`). This code
   was written by Michael Rabba.
-- Added a parameter `rescale` to :func:`~arch.univariate.mean.arch_model`
+- Added a parameter `rescale` to :func:`~arch.univariate.arch_model`
   that allows the estimator to rescale data if it may help parameter
   estimation. If `rescale=True`, then the data will be rescaled by a power
   of 10 (e.g., 10, 100, or 1000) to produce a series with a residual

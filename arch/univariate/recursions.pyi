@@ -1,3 +1,5 @@
+from typing import Optional, Union
+
 from arch.typing import Float64Array, Int32Array
 
 def harch_recursion(
@@ -104,7 +106,7 @@ def garch_core(
 
 class VolatilityUpdater:
     def initialize_update(
-        self, parameters: Float64Array, backcast: float | Float64Array, nobs: int
+        self, parameters: Float64Array, backcast: Union[float, Float64Array], nobs: int
     ) -> None: ...
     def _update_tester(
         self,
@@ -119,7 +121,7 @@ class GARCHUpdater(VolatilityUpdater):
     def __init__(self, p: int, o: int, q: int, power: float) -> None: ...
 
 class EWMAUpdater(VolatilityUpdater):
-    def __init__(self, lam: float | None) -> None: ...
+    def __init__(self, lam: Optional[float]) -> None: ...
 
 class FIGARCHUpdater(VolatilityUpdater):
     def __init__(self, p: int, q: int, power: float, truncation: int) -> None: ...

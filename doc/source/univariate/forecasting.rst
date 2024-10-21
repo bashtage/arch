@@ -244,3 +244,10 @@ Output Classes
 
    ARCHModelForecast
    ARCHModelForecastSimulation
+
+.. currentmodule:: arch.univariate.volatility
+
+.. autosummary::
+   :toctree: generated/
+
+   VarianceForecast
