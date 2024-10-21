@@ -28,7 +28,7 @@ from the benchmark model.  The alternative is
 This procedure accounts for dependence between the losses and the fact that
 there are potentially alternative models being considered.
 
-**Note**: Also callable using :class:`~arch.bootstrap.RealityCheck`
+**Note**: Also callable using ``arch.bootstrap.RealityCheck``
 
 
 .. autosummary::
