@@ -229,23 +229,23 @@ for key in quantiles_d:
 plt.rc("figure", figsize=(16, 8))
 sns.set_style("darkgrid")
 pdf = matplotlib.backends.backend_pdf.PdfPages("output.pdf")
-for key in quantiles:
-    temp = quantiles[key]
+for quantile_key in quantiles:
+    temp = quantiles[quantile_key]
     y = temp.index.to_numpy()[:, None]
     x = temp.to_numpy()
-    stat = key[0]
+    stat = quantile_key[0]
     if stat in ("z_t", "z_a"):
         x = -1 * x
     if stat in ("p_u", "p_z"):
         y = 1 - y
     fig, ax = plt.subplots(1, 1)
     plt.plot(x, y)
-    plt.title(key)
+    plt.title(", ".join(quantile_key))
     pdf.savefig(fig)
     if stat in ("p_u", "p_z"):
         fig, ax = plt.subplots(1, 1)
         plt.plot(np.log(x), y)
-        plt.title(f"Log {key[0]}, {key[1]}")
+        plt.title(f"Log {quantile_key[0]}, {quantile_key[1]}")
         pdf.savefig(fig)
 pdf.close()
 

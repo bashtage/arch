@@ -9,6 +9,7 @@ from itertools import product
 import os
 from random import shuffle
 import sys
+from typing import Sequence
 
 import colorama
 from joblib import Parallel, cpu_count, delayed
@@ -35,7 +36,7 @@ if sys.platform.lower() == "win32":
 def block(
     rg: Generator,
     trend: str,
-    sample_sizes: list[int],
+    sample_sizes: Sequence[int],
     cross_section_size: int,
     simulations: int,
     idx: int,

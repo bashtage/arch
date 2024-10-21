@@ -139,7 +139,7 @@ class CovarianceEstimate:
 
 
 @jit(nopython=True)
-def _cov_jit(df, k, num_weights, w, x):
+def _cov_jit(df: int, k: int, num_weights: int, w: np.ndarray, x: np.ndarray) -> np.ndarray:
     oss = np.zeros((k, k))
     for i in range(1, num_weights):
         oss += w[i] * (x[i:].T @ x[:-i]) / df
