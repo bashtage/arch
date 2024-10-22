@@ -7,8 +7,6 @@ did not appear in the original paper and have been computed using an identical
 simulation.
 """
 
-from __future__ import annotations
-
 from numpy import array, asarray, inf
 
 from arch.typing import Float64Array

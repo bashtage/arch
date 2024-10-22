@@ -1,10 +1,8 @@
-from __future__ import annotations
-
 from arch.compat.numba import jit
 
 from abc import ABC, abstractmethod
 from functools import cached_property
-from typing import SupportsInt, cast
+from typing import Optional, SupportsInt, Union, cast
 
 import numpy as np
 from pandas import DataFrame, Index
@@ -62,7 +60,7 @@ class CovarianceEstimate:
     long_run : ndarray, default None
         The long-run covariance estimate. If not provided, computed from
         short_run and one_sided_strict.
-    one_sided_strict : ndarray, default None
+    one_sided : ndarray, default None
         The one-sided-strict covariance estimate. If not provided, computed
         from short_run and one_sided_strict.
 
@@ -86,9 +84,9 @@ class CovarianceEstimate:
         self,
         short_run: Float64Array,
         one_sided_strict: Float64Array,
-        columns: Index | list[str] | None = None,
-        long_run: Float64Array | None = None,
-        one_sided: Float64Array | None = None,
+        columns: Union[Index, list[str], None] = None,
+        long_run: Optional[Float64Array] = None,
+        one_sided: Optional[Float64Array] = None,
     ) -> None:
         self._sr = short_run
         self._oss = one_sided_strict
@@ -96,13 +94,13 @@ class CovarianceEstimate:
         self._long_run = long_run
         self._one_sided = one_sided
 
-    def _wrap(self, value: Float64Array) -> Float64Array | DataFrame:
+    def _wrap(self, value: Float64Array) -> Union[Float64Array, DataFrame]:
         if self._columns is not None:
             return DataFrame(value, columns=self._columns, index=self._columns)
         return value
 
     @cached_property
-    def long_run(self) -> Float64Array | DataFrame:
+    def long_run(self) -> Union[Float64Array, DataFrame]:
         """
         The long-run covariance estimate.
         """
@@ -113,14 +111,14 @@ class CovarianceEstimate:
         return self._wrap(long_run)
 
     @cached_property
-    def short_run(self) -> Float64Array | DataFrame:
+    def short_run(self) -> Union[Float64Array, DataFrame]:
         """
         The short-run covariance estimate.
         """
         return self._wrap(self._sr)
 
     @cached_property
-    def one_sided(self) -> Float64Array | DataFrame:
+    def one_sided(self) -> Union[Float64Array, DataFrame]:
         """
         The one-sided covariance estimate.
         """
@@ -131,7 +129,7 @@ class CovarianceEstimate:
         return self._wrap(one_sided)
 
     @cached_property
-    def one_sided_strict(self) -> Float64Array | DataFrame:
+    def one_sided_strict(self) -> Union[Float64Array, DataFrame]:
         """
         The one-sided strict covariance estimate.
         """
@@ -139,7 +137,9 @@ class CovarianceEstimate:
 
 
 @jit(nopython=True)
-def _cov_jit(df: int, k: int, num_weights: int, w: np.ndarray, x: np.ndarray) -> np.ndarray:
+def _cov_jit(
+    df: int, k: int, num_weights: int, w: np.ndarray, x: np.ndarray
+) -> np.ndarray:
     oss = np.zeros((k, k))
     for i in range(1, num_weights):
         oss += w[i] * (x[i:].T @ x[:-i]) / df
@@ -185,10 +185,10 @@ class CovarianceEstimator(ABC):
     def __init__(
         self,
         x: ArrayLike,
-        bandwidth: float | None = None,
+        bandwidth: Optional[float] = None,
         df_adjust: int = 0,
         center: bool = True,
-        weights: ArrayLike | None = None,
+        weights: Optional[ArrayLike] = None,
         force_int: bool = False,
     ):
         self._x_orig = ensure2d(x, "x")

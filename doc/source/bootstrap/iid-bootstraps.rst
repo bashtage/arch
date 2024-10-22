@@ -21,4 +21,4 @@ type of data arises naturally in experimental settings, e.g., website A/B testin
 .. autosummary::
    :toctree: generated/
 
-   ~arch.bootstrap.IndependentSamplesBootstrap
+   IndependentSamplesBootstrap

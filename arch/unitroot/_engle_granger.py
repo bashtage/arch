@@ -1,4 +1,4 @@
-from __future__ import annotations
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -29,10 +29,10 @@ def engle_granger(
     x: ArrayLike2D,
     trend: UnitRootTrend = "c",
     *,
-    lags: int | None = None,
-    max_lags: int | None = None,
+    lags: Optional[int] = None,
+    max_lags: Optional[int] = None,
     method: Literal["aic", "bic", "t-stat"] = "bic",
-) -> EngleGrangerTestResults:
+) -> "EngleGrangerTestResults":
     r"""
     Test for cointegration within a set of time series.
 
@@ -143,8 +143,8 @@ class EngleGrangerTestResults(ResidualCointegrationTestResult):
         alternative: str = "Cointegration",
         trend: str = "c",
         order: int = 2,
-        adf: ADF | None = None,
-        xsection: RegressionResults | None = None,
+        adf: Optional[ADF] = None,
+        xsection: Optional[RegressionResults] = None,
     ) -> None:
         super().__init__(
             stat, pvalue, crit_vals, null, alternative, trend, order, xsection
@@ -167,7 +167,7 @@ class EngleGrangerTestResults(ResidualCointegrationTestResult):
         return self._adf.lags
 
     @property
-    def max_lags(self) -> int | None:
+    def max_lags(self) -> Union[int, None]:
         """The maximum number of lags used in the lag-length selection."""
         return self._adf.max_lags
 

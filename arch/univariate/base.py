@@ -2,14 +2,12 @@
 Core classes for ARCH models
 """
 
-from __future__ import annotations
-
 from abc import ABCMeta, abstractmethod
 from collections.abc import Sequence
 from copy import deepcopy
 import datetime as dt
 from functools import cached_property
-from typing import Any, Callable, cast
+from typing import Any, Callable, Optional, Union, cast
 import warnings
 
 import numpy as np
@@ -181,11 +179,11 @@ class ARCHModel(metaclass=ABCMeta):
 
     def __init__(
         self,
-        y: ArrayLike | None = None,
-        volatility: VolatilityProcess | None = None,
-        distribution: Distribution | None = None,
-        hold_back: int | None = None,
-        rescale: bool | None = None,
+        y: Optional[ArrayLike] = None,
+        volatility: Optional[VolatilityProcess] = None,
+        distribution: Optional[Distribution] = None,
+        hold_back: Optional[int] = None,
+        rescale: Optional[bool] = None,
     ) -> None:
         self._name = "ARCHModel"
         self._is_pandas = isinstance(y, (pd.DataFrame, pd.Series))
@@ -203,14 +201,14 @@ class ARCHModel(metaclass=ABCMeta):
         self._fit_indices: list[int] = [0, int(self._y.shape[0])]
         self._fit_y = self._y
 
-        self.hold_back: int | None = hold_back
+        self.hold_back: Optional[int] = hold_back
         self._hold_back = 0 if hold_back is None else hold_back
 
-        self.rescale: bool | None = rescale
+        self.rescale: Optional[bool] = rescale
         self.scale: float = 1.0
 
-        self._backcast: None | float | Float64Array = None
-        self._var_bounds: Float64Array | None = None
+        self._backcast: Union[float, Float64Array, None] = None
+        self._var_bounds: Optional[Float64Array] = None
 
         if isinstance(volatility, VolatilityProcess):
             self._volatility = volatility
@@ -261,7 +259,7 @@ class ARCHModel(metaclass=ABCMeta):
         return [(-np.inf, np.inf)] * num_params
 
     @property
-    def y(self) -> ArrayLike | None:
+    def y(self) -> Optional[ArrayLike]:
         """Returns the dependent variable"""
         return self._y_original
 
@@ -315,14 +313,14 @@ class ARCHModel(metaclass=ABCMeta):
         self.scale = rescale
 
     @abstractmethod
-    def _scale_changed(self):
+    def _scale_changed(self) -> None:
         """
         Called when the scale has changed.  This allows the model
         to update any values that are affected by the scale changes,
         e.g., any logged values.
         """
 
-    def _r2(self, params: ArrayLike1D) -> None | float:
+    def _r2(self, params: ArrayLike1D) -> Optional[float]:
         """
         Computes the model r-square.  Optional to over-ride.  Must match
         signature.
@@ -338,7 +336,7 @@ class ARCHModel(metaclass=ABCMeta):
     @abstractmethod
     def _fit_no_arch_normal_errors(
         self, cov_type: Literal["robust", "classic"] = "robust"
-    ) -> ARCHModelResult:
+    ) -> "ARCHModelResult":
         """
         Must be overridden with closed form estimator
         """
@@ -357,8 +355,8 @@ class ARCHModel(metaclass=ABCMeta):
     def _fit_parameterless_model(
         self,
         cov_type: Literal["robust", "classic"],
-        backcast: float | Float64Array,
-    ) -> ARCHModelResult:
+        backcast: Union[float, Float64Array],
+    ) -> "ARCHModelResult":
         """
         When models have no parameters, fill return values
 
@@ -383,7 +381,7 @@ class ARCHModel(metaclass=ABCMeta):
         vol = cast(Float64Array, np.sqrt(vol))
 
         # Reshape resids vol
-        vol_final = np.empty_like(self._y, dtype=np.float64)
+        vol_final = np.empty_like(self._y, dtype=np.double)
         vol_final.fill(np.nan)
         vol_final[first_obs:last_obs] = vol
 
@@ -414,10 +412,10 @@ class ARCHModel(metaclass=ABCMeta):
         self,
         parameters: Float64Array,
         sigma2: Float64Array,
-        backcast: float | Float64Array,
+        backcast: Union[float, Float64Array],
         var_bounds: Float64Array,
         individual: bool = False,
-    ) -> float | Float64Array:
+    ) -> Union[float, Float64Array]:
         """
         Computes the log-likelihood using the entire model
 
@@ -464,7 +462,8 @@ class ARCHModel(metaclass=ABCMeta):
         return names
 
     def _parse_parameters(
-        self, x: ArrayLike1D | Sequence[float]
+        self,
+        x: Union[ArrayLike1D, Sequence[float]],
     ) -> tuple[Float64Array, Float64Array, Float64Array]:
         """Return the parameters of each model in a tuple"""
         x = np.asarray(x, dtype=float)
@@ -473,10 +472,10 @@ class ARCHModel(metaclass=ABCMeta):
 
     def fix(
         self,
-        params: Sequence[float] | ArrayLike1D,
-        first_obs: int | DateLike | None = None,
-        last_obs: int | DateLike | None = None,
-    ) -> ARCHModelFixedResult:
+        params: Union[ArrayLike1D, Sequence[float]],
+        first_obs: Union[int, DateLike, None] = None,
+        last_obs: Union[int, DateLike, None] = None,
+    ) -> "ARCHModelFixedResult":
         """
         Allows an ARCHModelFixedResult to be constructed from fixed parameters.
 
@@ -524,10 +523,10 @@ class ARCHModel(metaclass=ABCMeta):
         names = self._all_parameter_names()
         # Reshape resids and vol
         first_obs, last_obs = self._fit_indices
-        resids_final = np.empty_like(self._y, dtype=np.float64)
+        resids_final = np.empty_like(self._y, dtype=np.double)
         resids_final.fill(np.nan)
         resids_final[first_obs:last_obs] = resids
-        vol_final = np.empty_like(self._y, dtype=np.float64)
+        vol_final = np.empty_like(self._y, dtype=np.double)
         vol_final.fill(np.nan)
         vol_final[first_obs:last_obs] = vol
 
@@ -545,7 +544,9 @@ class ARCHModel(metaclass=ABCMeta):
 
     @abstractmethod
     def _adjust_sample(
-        self, first_obs: int | DateLike | None, last_obs: int | DateLike | None
+        self,
+        first_obs: Union[int, DateLike, None],
+        last_obs: Union[int, DateLike, None],
     ) -> None:
         """
         Performs sample adjustment for estimation
@@ -565,16 +566,16 @@ class ARCHModel(metaclass=ABCMeta):
     def fit(
         self,
         update_freq: int = 1,
-        disp: bool | Literal["off", "final"] = "final",
-        starting_values: ArrayLike1D | None = None,
+        disp: Union[bool, Literal["off"], Literal["final"]] = "final",
+        starting_values: Optional[ArrayLike1D] = None,
         cov_type: Literal["robust", "classic"] = "robust",
         show_warning: bool = True,
-        first_obs: int | DateLike | None = None,
-        last_obs: int | DateLike | None = None,
-        tol: float | None = None,
-        options: dict[str, Any] | None = None,
-        backcast: None | float | Float64Array = None,
-    ) -> ARCHModelResult:
+        first_obs: Union[int, DateLike, None] = None,
+        last_obs: Union[int, DateLike, None] = None,
+        tol: Optional[float] = None,
+        options: Optional[dict[str, Any]] = None,
+        backcast: Union[float, Float64Array, None] = None,
+    ) -> "ARCHModelResult":
         r"""
         Estimate model parameters
 
@@ -787,10 +788,10 @@ class ARCHModel(metaclass=ABCMeta):
         names = self._all_parameter_names()
         # Reshape resids and vol
         first_obs, last_obs = self._fit_indices
-        resids_final = np.empty_like(self._y, dtype=np.float64)
+        resids_final = np.empty_like(self._y, dtype=np.double)
         resids_final.fill(np.nan)
         resids_final[first_obs:last_obs] = resids
-        vol_final = np.empty_like(self._y, dtype=np.float64)
+        vol_final = np.empty_like(self._y, dtype=np.double)
         vol_final.fill(np.nan)
         vol_final[first_obs:last_obs] = vol
 
@@ -846,12 +847,12 @@ class ARCHModel(metaclass=ABCMeta):
     @abstractmethod
     def simulate(
         self,
-        params: ArrayLike1D | Sequence[float],
+        params: Union[ArrayLike1D, Sequence[float]],
         nobs: int,
         burn: int = 500,
-        initial_value: float | None = None,
-        x: ArrayLike | None = None,
-        initial_value_vol: float | None = None,
+        initial_value: Optional[float] = None,
+        x: Optional[ArrayLike] = None,
+        initial_value_vol: Optional[float] = None,
     ) -> pd.DataFrame:
         pass
 
@@ -859,8 +860,8 @@ class ARCHModel(metaclass=ABCMeta):
     def resids(
         self,
         params: Float64Array,
-        y: ArrayLike1D | None = None,
-        regressors: ArrayLike2D | None = None,
+        y: Optional[ArrayLike1D] = None,
+        regressors: Optional[ArrayLike2D] = None,
     ) -> ArrayLike1D:
         """
         Compute model residuals
@@ -883,7 +884,7 @@ class ARCHModel(metaclass=ABCMeta):
     def compute_param_cov(
         self,
         params: Float64Array,
-        backcast: None | float | Float64Array = None,
+        backcast: Union[float, Float64Array, None] = None,
         robust: bool = True,
     ) -> Float64Array:
         """
@@ -934,16 +935,16 @@ class ARCHModel(metaclass=ABCMeta):
         self,
         params: ArrayLike1D,
         horizon: int = 1,
-        start: int | DateLike | None = None,
+        start: Union[int, DateLike, None] = None,
         align: Literal["origin", "target"] = "origin",
         method: ForecastingMethod = "analytic",
         simulations: int = 1000,
-        rng: Callable[[int | tuple[int, ...]], Float64Array] | None = None,
-        random_state: np.random.RandomState | None = None,
+        rng: Optional[Callable[[Union[int, tuple[int, ...]]], Float64Array]] = None,
+        random_state: Optional[np.random.RandomState] = None,
         *,
         reindex: bool = False,
-        x: None | dict[Label, ArrayLike] | ArrayLike = None,
-    ) -> ARCHModelForecast:
+        x: Union[dict[Label, ArrayLike], ArrayLike, None] = None,
+    ) -> "ARCHModelForecast":
         """
         Construct forecasts from estimated model
 
@@ -1260,7 +1261,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         return pd.Series(self._params, index=self._names, name="params")
 
     @cached_property
-    def conditional_volatility(self) -> pd.Series | Float64Array:
+    def conditional_volatility(self) -> Union[Float64Array, pd.Series]:
         """
         Estimated conditional volatility
 
@@ -1285,7 +1286,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         return self._nobs
 
     @cached_property
-    def resid(self) -> Float64Array | pd.Series:
+    def resid(self) -> Union[Float64Array, pd.Series]:
         """
         Model residuals
         """
@@ -1295,7 +1296,7 @@ class ARCHModelFixedResult(_SummaryRepr):
             return self._resid
 
     @cached_property
-    def std_resid(self) -> Float64Array | pd.Series:
+    def std_resid(self) -> Union[Float64Array, pd.Series]:
         """
         Residuals standardized by conditional volatility
         """
@@ -1304,7 +1305,9 @@ class ARCHModelFixedResult(_SummaryRepr):
             std_res.name = "std_resid"
         return std_res
 
-    def plot(self, annualize: str | None = None, scale: float | None = None) -> Figure:
+    def plot(
+        self, annualize: Optional[str] = None, scale: Optional[float] = None
+    ) -> "Figure":
         """
         Plot standardized residuals and conditional volatility
 
@@ -1381,18 +1384,18 @@ class ARCHModelFixedResult(_SummaryRepr):
 
     def forecast(
         self,
-        params: ArrayLike1D | None = None,
+        params: Optional[ArrayLike1D] = None,
         horizon: int = 1,
-        start: int | DateLike | None = None,
+        start: Union[int, DateLike, None] = None,
         align: Literal["origin", "target"] = "origin",
         method: ForecastingMethod = "analytic",
         simulations: int = 1000,
-        rng: Callable[[int | tuple[int, ...]], Float64Array] | None = None,
-        random_state: np.random.RandomState | None = None,
+        rng: Optional[Callable[[Union[int, tuple[int, ...]]], Float64Array]] = None,
+        random_state: Optional[np.random.RandomState] = None,
         *,
         reindex: bool = False,
-        x: None | dict[Label, ArrayLike] | ArrayLike = None,
-    ) -> ARCHModelForecast:
+        x: Union[dict[Label, ArrayLike], ArrayLike, None] = None,
+    ) -> "ARCHModelForecast":
         """
         Construct forecasts from estimated model
 
@@ -1519,14 +1522,14 @@ class ARCHModelFixedResult(_SummaryRepr):
     @deprecate_kwarg("type", "plot_type")
     def hedgehog_plot(
         self,
-        params: ArrayLike1D | None = None,
+        params: Optional[ArrayLike1D] = None,
         horizon: int = 10,
         step: int = 10,
-        start: int | DateLike | None = None,
+        start: Union[int, DateLike, None] = None,
         plot_type: Literal["volatility", "mean"] = "volatility",
         method: ForecastingMethod = "analytic",
         simulations: int = 1000,
-    ) -> Figure:
+    ) -> "Figure":
         """
         Plot forecasts from estimated model
 
@@ -1636,7 +1639,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         return fig
 
     def arch_lm_test(
-        self, lags: int | None = None, standardized: bool = False
+        self, lags: Optional[int] = None, standardized: bool = False
     ) -> WaldTestStatistic:
         """
         ARCH LM test for conditional heteroskedasticity
@@ -1726,7 +1729,7 @@ class ARCHModelResult(ARCHModelFixedResult):
     def __init__(
         self,
         params: Float64Array,
-        param_cov: Float64Array | None,
+        param_cov: Optional[Float64Array],
         r2: float,
         resid: Float64Array,
         volatility: Float64Array,
@@ -1879,7 +1882,7 @@ class ARCHModelResult(ARCHModelFixedResult):
             row = []
             for i, table_val in enumerate(table_vals):
                 val = table_val[pos]
-                if isinstance(val, (np.float64, float)):
+                if isinstance(val, (np.double, float)):
                     converted = format_float_fixed(val, *formats[i])
                 else:
                     converted = val
@@ -2015,7 +2018,7 @@ def _align_forecast(
 
 
 def _format_forecasts(
-    values: Float64Array, index: list[Label] | pd.Index, start_index: int
+    values: Float64Array, index: Union[list[Label], pd.Index], start_index: int
 ) -> pd.DataFrame:
     horizon = values.shape[1]
     format_str = "{0:>0" + str(int(np.ceil(np.log10(horizon + 0.5)))) + "}"
@@ -2041,11 +2044,11 @@ class ARCHModelForecastSimulation:
 
     def __init__(
         self,
-        index: list[Label] | pd.Index,
-        values: Float64Array | None,
-        residuals: Float64Array | None,
-        variances: Float64Array | None,
-        residual_variances: Float64Array | None,
+        index: Union[list[Label], pd.Index],
+        values: Optional[Float64Array],
+        residuals: Optional[Float64Array],
+        variances: Optional[Float64Array],
+        residual_variances: Optional[Float64Array],
     ) -> None:
         self._index = pd.Index(index)
         self._values = values
@@ -2059,29 +2062,29 @@ class ARCHModelForecastSimulation:
         return self._index
 
     @property
-    def values(self) -> Float64Array | None:
+    def values(self) -> Optional[Float64Array]:
         """The values of the process"""
         return self._values
 
     @property
-    def residuals(self) -> Float64Array | None:
+    def residuals(self) -> Optional[Float64Array]:
         """Simulated residuals used to produce the values"""
         return self._residuals
 
     @property
-    def variances(self) -> Float64Array | None:
+    def variances(self) -> Optional[Float64Array]:
         """Simulated variances of the values"""
         return self._variances
 
     @property
-    def residual_variances(self) -> Float64Array | None:
+    def residual_variances(self) -> Optional[Float64Array]:
         """Simulated variance of the residuals"""
         return self._residual_variances
 
 
 def _reindex(
-    a: Float64Array | None, idx: list[Label] | pd.Index
-) -> Float64Array | None:
+    a: Optional[Float64Array], idx: Union[list[Label], pd.Index]
+) -> Optional[Float64Array]:
     if a is None:
         return a
     assert a is not None
@@ -2112,15 +2115,15 @@ class ARCHModelForecast:
 
     def __init__(
         self,
-        index: list[Label] | pd.Index,
+        index: Union[list[Label], pd.Index],
         start_index: int,
         mean: Float64Array,
         variance: Float64Array,
         residual_variance: Float64Array,
-        simulated_paths: Float64Array | None = None,
-        simulated_variances: Float64Array | None = None,
-        simulated_residual_variances: Float64Array | None = None,
-        simulated_residuals: Float64Array | None = None,
+        simulated_paths: Optional[Float64Array] = None,
+        simulated_variances: Optional[Float64Array] = None,
+        simulated_residual_variances: Optional[Float64Array] = None,
+        simulated_residuals: Optional[Float64Array] = None,
         align: Literal["origin", "target"] = "origin",
         *,
         reindex: bool = False,
@@ -2169,7 +2172,7 @@ class ARCHModelForecast:
         return self._residual_variance
 
     @property
-    def simulations(self) -> ARCHModelForecastSimulation:
+    def simulations(self) -> "ARCHModelForecastSimulation":
         """
         Detailed simulation results if using a simulation-based method
 

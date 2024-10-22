@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import types
 
 from arch.univariate import recursions_python

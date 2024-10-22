@@ -6,8 +6,6 @@ These have been computed using the methodology of MacKinnon (1994) and (2010)
 simulation. See dfgls_critival_values_simulation for implementation.
 """
 
-from __future__ import annotations
-
 from numpy import array
 
 dfgls_cv_approx = {

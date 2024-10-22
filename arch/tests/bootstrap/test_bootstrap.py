@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 import copy
-from typing import Callable, NamedTuple
+from typing import Callable, NamedTuple, Union
 import warnings
 
 import numpy as np
@@ -44,7 +42,7 @@ class BSData(NamedTuple):
     y_series: pd.Series
     z_df: pd.DataFrame
 
-    func: Callable[[np.ndarray, int], float | np.ndarray]
+    func: Callable[[np.ndarray, int], Union[float, np.ndarray]]
 
 
 @pytest.fixture(scope="function", params=[1234, "gen", "rs"])

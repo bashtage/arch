@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import cast
+from typing import Optional, cast
 
 import numpy as np
 import pandas as pd
@@ -9,7 +7,7 @@ from statsmodels.iolib.summary import Summary
 from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import RegressionResults
 
-import arch.covariance.kernel as lrcov
+from arch.covariance.kernel import CovarianceEstimator
 from arch.typing import ArrayLike1D, ArrayLike2D, Literal, UnitRootTrend
 from arch.unitroot._shared import (
     KERNEL_ERR,
@@ -42,9 +40,9 @@ def _po_ptests(
     test_type: Literal["Pu", "Pz"],
     trend: UnitRootTrend,
     kernel: str,
-    bandwidth: int | None,
+    bandwidth: Optional[int],
     force_int: bool,
-) -> PhillipsOuliarisTestResults:
+) -> "PhillipsOuliarisTestResults":
     nobs = z.shape[0]
     z_lead = z.iloc[1:]
     z_lag = add_trend(z.iloc[:-1], trend=trend)
@@ -94,9 +92,9 @@ def _po_ztests(
     test_type: Literal["Za", "Zt"],
     trend: UnitRootTrend,
     kernel: str,
-    bandwidth: int | None,
+    bandwidth: Optional[int],
     force_int: bool,
-) -> PhillipsOuliarisTestResults:
+) -> "PhillipsOuliarisTestResults":
     # Za and Zt tests
     u = np.asarray(xsection.resid)[:, None]
     nobs = u.shape[0]
@@ -139,9 +137,9 @@ def phillips_ouliaris(
     *,
     test_type: Literal["Za", "Zt", "Pu", "Pz"] = "Zt",
     kernel: str = "bartlett",
-    bandwidth: int | None = None,
+    bandwidth: Optional[int] = None,
     force_int: bool = False,
-) -> PhillipsOuliarisTestResults:
+) -> "PhillipsOuliarisTestResults":
     r"""
     Test for cointegration within a set of time series.
 
@@ -321,9 +319,9 @@ class PhillipsOuliarisTestResults(ResidualCointegrationTestResult):
         alternative: str = "Cointegration",
         trend: str = "c",
         order: int = 2,
-        xsection: RegressionResults | None = None,
+        xsection: Optional[RegressionResults] = None,
         test_type: str = "Za",
-        kernel_est: lrcov.CovarianceEstimator | None = None,
+        kernel_est: Optional[CovarianceEstimator] = None,
         rho: float = 0.0,
     ) -> None:
         super().__init__(

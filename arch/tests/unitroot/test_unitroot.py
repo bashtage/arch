@@ -1,11 +1,9 @@
 # TODO: Tests for features that are just called
 # TODO: Test for trend='ctt'
-from __future__ import annotations
-
 from arch.compat.statsmodels import dataset_loader
 
 import os
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 import warnings
 
 import numpy as np
@@ -526,10 +524,10 @@ def test_kpss_data_dependent_lags(data, trend, lags):
 class ZATestResult(NamedTuple):
     stat: float
     pvalue: float
-    lags: int | None
+    lags: Optional[int]
     trend: str
-    max_lags: int | None
-    method: str | None
+    max_lags: Optional[int]
+    method: Optional[str]
     actual_lags: int
 
 

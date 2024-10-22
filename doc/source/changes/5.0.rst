@@ -75,12 +75,12 @@ Volatility Modeling
   instances and integers.  If an integer is passed, the random number generator is constructed by
   calling :func:`numpy.random.default_rng` The ``seed`` keyword argument replaces the
   ``random_state`` keyword argument.
-- The :meth:`~arch.univariate.distribution.Normal.random_state` property has also been deprecated in favor
-  of :meth:`~arch.univariate.distribution.Normal.generator`.
+- The ``Normal.random_state`` property has also been deprecated in favor
+  of :meth:`~arch.univariate.Normal.generator`.
 - Added :class:`~arch.univariate.ARCHInMean` mean process supporting (G)ARCH-in-mean models.
 - Extended :class:`~arch.univariate.volatility.VolatilityProcess` with
   :func:`~arch.univariate.volatility.VolatilityProcess.volatility_updater` that contains a
-  :class:`~arch.univariate.recursions_python.VolatilityUpdater` to allow
+  :class:`~arch.univariate.recursions.VolatilityUpdater` to allow
   :class:`~arch.univariate.ARCHInMean` to be created from different volatility processes.
 
 Setup

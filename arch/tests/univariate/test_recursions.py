@@ -72,11 +72,7 @@ class Timer:
         print(self.first_name + ": " + f"{1000 * self.times[0]:0.3f} ms")
         print(self.second_name + ": " + f"{1000 * self.times[1]:0.3f} ms")
         if self.ratio < 1:
-            print(
-                "{} is {:0.1f}% faster".format(
-                    self.first_name, 100 * (1 / self.ratio - 1)
-                )
-            )
+            print(f"{self.first_name} is {100 * (1 / self.ratio - 1):0.1f}% faster")
         else:
             print(f"{self.second_name} is {100 * (self.ratio - 1):0.1f}% faster")
         print(self.first_name + "/" + self.second_name + f" Ratio: {self.ratio:0.3f}\n")

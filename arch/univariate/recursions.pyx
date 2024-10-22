@@ -63,15 +63,15 @@ def harch_core(
     t: int
         Location of variance to compute. Assumes variance has been computed
         at times t-1, t-2, ...
-    parameters : 1-d array, float64
+    parameters : 1-d array, double
         Model parameters
-    resids : 1-d array, float64
+    resids : 1-d array, double
         Residuals to use in the recursion
-    sigma2 : 1-d array, float64
+    sigma2 : 1-d array, double
         Conditional variances with same shape as resids
     lags : 1-d array, int
         Lag lengths in the HARCH
-    backcast : float64
+    backcast : double
         Value to use when initializing the recursion
     var_bounds : 2-d array
         nobs by 2-element array of upper and lower bounds for conditional
@@ -109,17 +109,17 @@ def harch_recursion(const double[::1] parameters,
     """
     Parameters
     ----------
-    parameters : 1-d array, float64
+    parameters : 1-d array, double
         Model parameters
-    resids : 1-d array, float64
+    resids : 1-d array, double
         Residuals to use in the recursion
-    sigma2 : 1-d array, float64
+    sigma2 : 1-d array, double
         Conditional variances with same shape as resids
     lags : 1-d array, int
         Lag lengths in the HARCH
     nobs : int
         Length of resids
-    backcast : float64
+    backcast : double
         Value to use when initializing the recursion
     var_bounds : 2-d array
         nobs by 2-element array of upper and lower bounds for conditional
@@ -154,17 +154,17 @@ def arch_recursion(const double[::1] parameters,
     """
     Parameters
     ----------
-    parameters : 1-d array, float64
+    parameters : 1-d array, double
         Model parameters
-    resids : 1-d array, float64
+    resids : 1-d array, double
         Residuals to use in the recursion
-    sigma2 : 1-d array, float64
+    sigma2 : 1-d array, double
         Conditional variances with same shape as resids
     p : int
         Number of lags in ARCH model
     nobs : int
         Length of resids
-    backcast : float64
+    backcast : double
         Value to use when initializing the recursion
     var_bounds : 2-d array
         nobs by 2-element array of upper and lower bounds for conditional
@@ -274,14 +274,14 @@ def garch_recursion(const double[::1] parameters,
 
     Parameters
     ----------
-    parameters : 1-d array, float64
+    parameters : 1-d array, double
         Model parameters
-    fresids : 1-d array, float64
+    fresids : 1-d array, double
         Absolute value of residuals raised to the power in the model.  For
         example, in a standard GARCH model, the power is 2.0.
-    sresids : 1-d array, float64
+    sresids : 1-d array, double
         Variable containing the sign of the residuals (-1.0, 0.0, 1.0)
-    sigma2 : 1-d array, float64
+    sigma2 : 1-d array, double
         Conditional variances with same shape as resids
     p : int
         Number of symmetric innovations in model
@@ -291,7 +291,7 @@ def garch_recursion(const double[::1] parameters,
         Number of lags of the (transformed) variance in the model
     nobs : int
         Length of resids
-    backcast : float64
+    backcast : double
         Value to use when initializing the recursion
     var_bounds : 2-d array
         nobs by 2-element array of upper and lower bounds for conditional
@@ -345,11 +345,11 @@ def egarch_recursion(const double[::1] parameters,
 
     Parameters
     ----------
-    parameters : 1-d array, float64
+    parameters : 1-d array, double
         Model parameters
-    resids : 1-d array, float64
+    resids : 1-d array, double
         Residuals to use in the recursion
-    sigma2 : 1-d array, float64
+    sigma2 : 1-d array, double
         Conditional variances with same shape as resids
     p : int
         Number of symmetric innovations in model
@@ -359,16 +359,16 @@ def egarch_recursion(const double[::1] parameters,
         Number of lags of the (transformed) variance in the model
     nobs : int
         Length of resids
-    backcast : float64
+    backcast : double
         Value to use when initializing the recursion
     var_bounds : 2-d array
         nobs by 2-element array of upper and lower bounds for conditional
         variances for each time period
-    lnsigma2 : 1-d array, float64
+    lnsigma2 : 1-d array, double
         Temporary array (overwritten) with same shape as resids
-    std_resids : 1-d array, float64
+    std_resids : 1-d array, double
         Temporary array (overwritten) with same shape as resids
-    abs_std_resids : 1-d array, float64
+    abs_std_resids : 1-d array, double
         Temporary array (overwritten) with same shape as resids
     """
 
@@ -420,17 +420,17 @@ def midas_recursion(const double[::1] parameters,
     """
     Parameters
     ----------
-    parameters : 1-d array, float64
+    parameters : 1-d array, double
         Model parameters
-    weights : 1-d array, float64
+    weights : 1-d array, double
         Weights for MIDAS recursions
-    resids : 1-d array, float64
+    resids : 1-d array, double
         Residuals to use in the recursion
-    sigma2 : 1-d array, float64
+    sigma2 : 1-d array, double
         Conditional variances with same shape as resids
     nobs : int
         Length of resids
-    backcast : float64
+    backcast : double
         Value to use when initializing the recursion
     var_bounds : 2-d array
         nobs by 2-element array of upper and lower bounds for conditional
@@ -445,13 +445,13 @@ def midas_recursion(const double[::1] parameters,
     alpha = parameters[1]
     gamma = parameters[2]
 
-    aw = np.zeros(m, dtype=np.float64)
-    gw = np.zeros(m, dtype=np.float64)
+    aw = np.zeros(m, dtype=np.double)
+    gw = np.zeros(m, dtype=np.double)
     for i in range(m):
         aw[i] = alpha * weights[i]
         gw[i] = gamma * weights[i]
 
-    resids2 = np.zeros(nobs, dtype=np.float64)
+    resids2 = np.zeros(nobs, dtype=np.double)
 
     for t in range(nobs):
         resids2[t] = resids[t] * resids[t]
@@ -593,6 +593,23 @@ def aparch_recursion(const double[::1] parameters,
 
 
 cdef class VolatilityUpdater:
+    """
+    Base class that all volatility updaters must inherit from.
+
+    Notes
+    -----
+    See the implementation available for information on modifying ``__init__``
+    to capture model-specific parameters and how ``initialize_update`` is
+    used to precompute values that change in each likelihood but not
+    each iteration of the recursion.
+
+    When writing a volatility updater, it is recommended to follow the
+    examples in recursions.pyx which use Cython to produce a C-callable
+    update function that can then be used to improve performance. The
+    subclasses of this abstract metaclass are all pure Python and
+    model estimation performance is poor since loops are written
+    in Python.
+    """
     def __init__(self):
         pass
 
@@ -795,7 +812,7 @@ cdef class MIDASUpdater(VolatilityUpdater):
         self.gw = np.empty(m)
         self.weights = np.empty(m)
         self.resids2 = np.empty(0)
-        self.DOUBLE_EPS = np.finfo(np.float64).eps
+        self.DOUBLE_EPS = np.finfo(np.double).eps
 
     def __setstate__(self, state):
         cdef Py_ssize_t i

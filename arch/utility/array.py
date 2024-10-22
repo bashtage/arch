@@ -2,15 +2,13 @@
 Utility functions that do not explicitly relate to Volatility modeling
 """
 
-from __future__ import annotations
-
 from arch.compat.pandas import is_datetime64_any_dtype
 
 from abc import ABCMeta
 from collections.abc import Hashable, Sequence
 import datetime as dt
 from functools import cached_property
-from typing import Any, Literal, overload
+from typing import Any, Literal, Optional, Union, overload
 
 import numpy as np
 from pandas import DataFrame, DatetimeIndex, Index, NaT, Series, Timestamp, to_datetime
@@ -35,8 +33,8 @@ deprecation_doc: str = """
 
 @overload
 def ensure1d(
-    x: int | float | Sequence[int | float] | ArrayLike,
-    name: Hashable | None,
+    x: Union[int, float, Sequence[Union[int, float]], ArrayLike],
+    name: Optional[Hashable],
     series: Literal[True] = ...,
 ) -> Series:  # pragma: no cover
     ...  # pragma: no cover
@@ -44,18 +42,18 @@ def ensure1d(
 
 @overload
 def ensure1d(
-    x: int | float | Sequence[int | float] | ArrayLike,
-    name: Hashable | None,
+    x: Union[int, float, Sequence[Union[int, float]], ArrayLike],
+    name: Optional[Hashable],
     series: Literal[False],
 ) -> np.ndarray:  # pragma: no cover
     ...  # pragma: no cover
 
 
 def ensure1d(
-    x: int | float | Sequence[int | float] | ArrayLike,  # noqa: E231
-    name: Hashable | None,
+    x: Union[int, float, Sequence[Union[int, float]], ArrayLike],  # noqa: E231
+    name: Optional[Hashable],
     series: bool = False,
-) -> NDArray | Series:
+) -> Union[NDArray, Series]:
     if isinstance(x, Series):
         if not isinstance(x.name, str):
             x.name = str(x.name)
@@ -87,9 +85,11 @@ def ensure1d(
 
 
 def ensure2d(
-    x: Sequence[float | int] | Sequence[Sequence[float | int]] | ArrayLike,
+    x: Union[
+        Sequence[Union[float, int]], Sequence[Sequence[Union[float, int]]], ArrayLike
+    ],
     name: str,
-) -> DataFrame | NDArray:
+) -> Union[DataFrame, NDArray]:
     if isinstance(x, Series):
         return DataFrame(x)
     elif isinstance(x, DataFrame):
@@ -107,13 +107,11 @@ def ensure2d(
         raise TypeError("Variable " + name + "must be a Series, DataFrame or ndarray.")
 
 
-def parse_dataframe(
-    x: ArrayLike | None, name: str | list[str]
-) -> (
-    tuple[Index, Index]
-    | tuple[list[Hashable | None], Index]
-    | tuple[list[str], NDArray]
-):
+def parse_dataframe(x: Optional[ArrayLike], name: Union[str, list[str]]) -> Union[
+    tuple[Index, Index],
+    tuple[list[Optional[Hashable]], Index],
+    tuple[list[str], NDArray],
+]:
     if x is None:
         assert isinstance(name, str)
         return [name], np.empty(0)
@@ -185,8 +183,8 @@ class AbstractDocStringInheritor(ConcreteClassMeta, DocStringInheritor):
 
 
 def date_to_index(
-    date: str | dt.date | dt.datetime | np.datetime64 | Timestamp,
-    date_index: DatetimeIndex | NDArray | Series[Timestamp],
+    date: Union[str, dt.date, dt.datetime, np.datetime64, Timestamp],
+    date_index: Union[DatetimeIndex, NDArray, "Series[Timestamp]"],
 ) -> int:
     """
     Looks up a date in an array of dates
@@ -255,7 +253,9 @@ def date_to_index(
     return int(loc)
 
 
-def cutoff_to_index(cutoff: None | int | DateLike, index: Index, default: int) -> int:
+def cutoff_to_index(
+    cutoff: Union[None, int, DateLike], index: Index, default: int
+) -> int:
     """
     Converts a cutoff to a numerical index
 
@@ -284,7 +284,7 @@ def cutoff_to_index(cutoff: None | int | DateLike, index: Index, default: int) -
     return int_index
 
 
-def find_index(s: AnyPandas, index: int | DateLike) -> int:
+def find_index(s: AnyPandas, index: Union[int, DateLike]) -> int:
     """
     Returns the numeric index for a string or datetime
 

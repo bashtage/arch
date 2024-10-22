@@ -53,7 +53,9 @@ else:
 # extensions coming with Sphinx (named "sphinx.ext.*") or your custom
 # ones.
 extensions = [
+    # One of the next two only
     "sphinx.ext.napoleon",
+    # "numpydoc",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.extlinks",
@@ -90,7 +92,7 @@ templates_path = ["_templates"]
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = [".rst", ".md"]
-source_suffix = ".rst"
+source_suffix = {".rst": "restructuredtext"}
 
 # The master toctree document.
 master_doc = "index"
@@ -280,10 +282,12 @@ intersphinx_mapping = {
 
 extlinks = {"issue": ("https://github.com/bashtage/arch/issues/%s", "GH%s")}
 
+
+napoleon_google_docstring = False
 napoleon_use_admonition_for_examples = False
 napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = False
-
+napoleon_attr_annotations = True
 napoleon_preprocess_types = True
 napoleon_use_param = True
 napoleon_type_aliases = {
@@ -294,32 +298,51 @@ napoleon_type_aliases = {
     "AxesSubplot": "matplotlib.axes.Axes",
     "DataFrame": "pandas.DataFrame",
     "Series": "pandas.Series",
-    "csc_matrix": "scipy.sparse.csc_matrix",
-    "DataArray": "xarray.DataArray",
     "ndarray": "numpy.ndarray",
     "np.ndarray": "numpy.array",
     "pd.Series": "pandas.Series",
     "RandomState": "numpy.random.RandomState",
     "Generator": "numpy.random.Generator",
+    "float64": "numpy.double",
+    "numpy.float64": "numpy.double",
+    "OptimizeResult": "scipy.optimize.OptimizeResult",
     "VarianceForecast": "arch.univariate.volatility.VarianceForecast",
+    "CovarianceEstimator": "arch.covariance.kernel.CovarianceEstimator",
+    "CovarianceEstimate": "arch.covariance.kernel.CovarianceEstimate",
+    "VolatilityUpdater": "arch.univariate.recursions.VolatilityUpdater",
+    "ARCHModel": "arch.univariate.base.ARCHModel",
+    "ARCHModelResult": "arch.univariate.base.ARCHModelResult",
+    "ARCHModelFixedResult": "arch.univariate.base.ARCHModelFixedResult",
 }
 
 numpydoc_use_autodoc_signature = True
 numpydoc_xref_param_type = True
 numpydoc_class_members_toctree = False
 numpydoc_xref_aliases = {
+    "array-like": ":term:`array-like <array_like>`",
+    "array_like": ":term:`array_like`",
     "Figure": "matplotlib.figure.Figure",
     "Axes": "matplotlib.axes.Axes",
     "AxesSubplot": "matplotlib.axes.Axes",
     "DataFrame": "pandas.DataFrame",
     "Series": "pandas.Series",
     "ndarray": "numpy.ndarray",
-    "RandomState": "numpy.random.RandomState",
-    "VarianceForecast": "arch.univariate.volatility.VarianceForecast",
-    "Generator": "numpy.random.Generator",
     "np.ndarray": "numpy.array",
     "pd.Series": "pandas.Series",
+    "RandomState": "numpy.random.RandomState",
+    "Generator": "numpy.random.Generator",
+    "float64": "numpy.double",
+    "numpy.float64": "numpy.double",
+    "OptimizeResult": "scipy.optimize.OptimizeResult",
+    "VarianceForecast": "arch.univariate.volatility.VarianceForecast",
+    "CovarianceEstimator": "arch.covariance.kernel.CovarianceEstimator",
+    "CovarianceEstimate": "arch.covariance.kernel.CovarianceEstimate",
+    "VolatilityUpdater": "arch.univariate.recursions.VolatilityUpdater",
+    "ARCHModel": "arch.univariate.base.ARCHModel",
+    "ARCHModelResult": "arch.univariate.base.ARCHModelResult",
+    "ARCHModelFixedResult": "arch.univariate.base.ARCHModelFixedResult",
 }
+numpydoc_xref_ignore = {"type", "optional", "default"}
 
 autosummary_generate = True
 autoclass_content = "class"

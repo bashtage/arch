@@ -1,17 +1,17 @@
-from __future__ import annotations
-
 from collections.abc import Sequence
 from functools import cached_property
+from typing import Optional
 
 import numpy as np
 import pandas as pd
+from pandas import DataFrame, Series
 from pandas.util._decorators import Appender, Substitution
 from scipy import stats
 from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
 from statsmodels.iolib.table import SimpleTable
 from statsmodels.regression.linear_model import OLS, RegressionResults
 
-import arch.covariance.kernel as lrcov
+from arch.covariance.kernel import CovarianceEstimate, CovarianceEstimator
 from arch.typing import ArrayLike1D, ArrayLike2D, Float64Array, Literal, UnitRootTrend
 from arch.unitroot._engle_granger import EngleGrangerTestResults, engle_granger
 from arch.unitroot._phillips_ouliaris import (
@@ -45,10 +45,10 @@ __all__ = [
 class _CommonCointegrationResults:
     def __init__(
         self,
-        params: pd.Series,
-        cov: pd.DataFrame,
-        resid: pd.Series,
-        kernel_est: lrcov.CovarianceEstimator,
+        params: Series,
+        cov: DataFrame,
+        resid: Series,
+        kernel_est: CovarianceEstimator,
         num_x: int,
         trend: UnitRootTrend,
         df_adjust: bool,
@@ -71,31 +71,31 @@ class _CommonCointegrationResults:
         self._estimator_type = estimator_type
 
     @property
-    def params(self) -> pd.Series:
+    def params(self) -> Series:
         """The estimated parameters of the cointegrating vector"""
         return self._params.iloc[: self._ci_size]
 
     @cached_property
-    def std_errors(self) -> pd.Series:
+    def std_errors(self) -> Series:
         """
         Standard errors  of the parameters in the cointegrating vector
         """
         se = np.sqrt(np.diag(self.cov))
-        return pd.Series(se, index=self.params.index, name="std_errors")
+        return Series(se, index=self.params.index, name="std_errors")
 
     @cached_property
-    def tvalues(self) -> pd.Series:
+    def tvalues(self) -> Series:
         """
         T-statistics of the parameters in the cointegrating vector
         """
-        return pd.Series(self.params / self.std_errors, name="tvalues")
+        return Series(self.params / self.std_errors, name="tvalues")
 
     @cached_property
-    def pvalues(self) -> pd.Series:
+    def pvalues(self) -> Series:
         """
         P-value of the parameters in the cointegrating vector
         """
-        return pd.Series(2 * (1 - stats.norm.cdf(np.abs(self.tvalues))), name="pvalues")
+        return Series(2 * (1 - stats.norm.cdf(np.abs(self.tvalues))), name="pvalues")
 
     @property
     def cov(self) -> pd.DataFrame:
@@ -103,7 +103,7 @@ class _CommonCointegrationResults:
         return self._cov.iloc[: self._ci_size, : self._ci_size]
 
     @property
-    def resid(self) -> pd.Series:
+    def resid(self) -> Series:
         """The model residuals"""
         return self._resid
 
@@ -128,7 +128,7 @@ class _CommonCointegrationResults:
         return self._rsquared_adj
 
     @cached_property
-    def _cov_est(self) -> lrcov.CovarianceEstimate:
+    def _cov_est(self) -> CovarianceEstimate:
         r = np.asarray(self._resid)
         kern_class = self._kernel_est.__class__
         bw = self._bandwidth
@@ -327,13 +327,13 @@ class DynamicOLSResults(_CommonCointegrationResults):
 
     def __init__(
         self,
-        params: pd.Series,
-        cov: pd.DataFrame,
-        resid: pd.Series,
+        params: Series,
+        cov: DataFrame,
+        resid: Series,
         lags: int,
         leads: int,
         cov_type: str,
-        kernel_est: lrcov.CovarianceEstimator,
+        kernel_est: CovarianceEstimator,
         num_x: int,
         trend: UnitRootTrend,
         reg_results: RegressionResults,
@@ -357,7 +357,7 @@ class DynamicOLSResults(_CommonCointegrationResults):
         self._ci_size = params.shape[0] - self._num_x * (leads + lags + 1)
 
     @property
-    def full_params(self) -> pd.Series:
+    def full_params(self) -> Series:
         """The complete set of parameters, including leads and lags"""
         return self._params
 
@@ -529,11 +529,11 @@ class DynamicOLS:
         y: ArrayLike1D,
         x: ArrayLike2D,
         trend: UnitRootTrend = "c",
-        lags: int | None = None,
-        leads: int | None = None,
+        lags: Optional[int] = None,
+        leads: Optional[int] = None,
         common: bool = False,
-        max_lag: int | None = None,
-        max_lead: int | None = None,
+        max_lag: Optional[int] = None,
+        max_lead: Optional[int] = None,
         method: Literal["aic", "bic", "hqic"] = "bic",
     ) -> None:
         setup = _check_cointegrating_regression(y, x, trend)
@@ -684,7 +684,7 @@ class DynamicOLS:
             "unadjusted", "homoskedastic", "robust", "kernel"
         ] = "unadjusted",
         kernel: str = "bartlett",
-        bandwidth: int | None = None,
+        bandwidth: Optional[int] = None,
         force_int: bool = False,
         df_adjust: bool = False,
     ) -> DynamicOLSResults:
@@ -762,7 +762,7 @@ class DynamicOLS:
         cov, est = self._cov(
             cov_type, kernel, bandwidth, force_int, df_adjust, rhs, resid
         )
-        params = pd.Series(np.squeeze(coeffs), index=rhs.columns, name="params")
+        params = Series(np.squeeze(coeffs), index=rhs.columns, name="params")
         num_x = self._x.shape[1]
         return DynamicOLSResults(
             params,
@@ -782,12 +782,12 @@ class DynamicOLS:
     def _cov(
         cov_type: Literal["unadjusted", "homoskedastic", "robust", "kernel"],
         kernel: str,
-        bandwidth: int | None,
+        bandwidth: Optional[int],
         force_int: bool,
         df_adjust: bool,
         rhs: pd.DataFrame,
-        resids: pd.Series,
-    ) -> tuple[pd.DataFrame, lrcov.CovarianceEstimator]:
+        resids: Series,
+    ) -> tuple[pd.DataFrame, CovarianceEstimator]:
         """Estimate the covariance"""
         kernel = kernel.lower().replace("-", "").replace("_", "")
         if kernel not in KERNEL_ESTIMATORS:
@@ -817,11 +817,11 @@ class DynamicOLS:
 class CointegrationAnalysisResults(_CommonCointegrationResults):
     def __init__(
         self,
-        params: pd.Series,
-        cov: pd.DataFrame,
-        resid: pd.Series,
+        params: Series,
+        cov: DataFrame,
+        resid: Series,
         omega_112: float,
-        kernel_est: lrcov.CovarianceEstimator,
+        kernel_est: CovarianceEstimator,
         num_x: int,
         trend: UnitRootTrend,
         df_adjust: bool,
@@ -983,7 +983,7 @@ class FullyModifiedOLS:
         y: ArrayLike1D,
         x: ArrayLike2D,
         trend: UnitRootTrend = "c",
-        x_trend: UnitRootTrend | None = None,
+        x_trend: Optional[UnitRootTrend] = None,
     ) -> None:
         setup = _check_cointegrating_regression(y, x, trend)
         self._y = setup.y
@@ -993,8 +993,8 @@ class FullyModifiedOLS:
         self._y_df = pd.DataFrame(self._y)
 
     def _common_fit(
-        self, kernel: str, bandwidth: float | None, force_int: bool, diff: bool
-    ) -> tuple[lrcov.CovarianceEstimator, Float64Array, Float64Array]:
+        self, kernel: str, bandwidth: Optional[float], force_int: bool, diff: bool
+    ) -> tuple[CovarianceEstimator, Float64Array, Float64Array]:
         kernel = _check_kernel(kernel)
         res = _cross_section(self._y, self._x, self._trend)
         x = np.asarray(self._x)
@@ -1023,7 +1023,7 @@ class FullyModifiedOLS:
         beta = np.asarray(res.params)[: x.shape[1]]
         return cov_est, eta, beta
 
-    def _final_statistics(self, theta: pd.Series) -> tuple[pd.Series, float, float]:
+    def _final_statistics(self, theta: Series) -> tuple[Series, float, float]:
         z = add_trend(self._x, self._trend)
         nobs, nvar = z.shape
         resid = self._y - np.asarray(z @ theta)
@@ -1043,7 +1043,7 @@ class FullyModifiedOLS:
     def fit(
         self,
         kernel: str = "bartlett",
-        bandwidth: float | None = None,
+        bandwidth: Optional[float] = None,
         force_int: bool = True,
         diff: bool = False,
         df_adjust: bool = False,
@@ -1112,7 +1112,7 @@ class FullyModifiedOLS:
         zpz_inv = np.linalg.inv(zpz)
         param_cov = omega_112 * zpz_inv
         cols = z_df.columns
-        params_s = pd.Series(params.squeeze(), index=cols, name="params")
+        params_s = Series(params.squeeze(), index=cols, name="params")
         param_cov = pd.DataFrame(param_cov, columns=cols, index=cols)
         resid, r2, r2_adj = self._final_statistics(params_s)
         resid_kern = KERNEL_ESTIMATORS[kernel](
@@ -1141,7 +1141,7 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         y: ArrayLike1D,
         x: ArrayLike2D,
         trend: UnitRootTrend = "c",
-        x_trend: UnitRootTrend | None = None,
+        x_trend: Optional[UnitRootTrend] = None,
     ) -> None:
         super().__init__(y, x, trend, x_trend)
 
@@ -1149,7 +1149,7 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
     def fit(
         self,
         kernel: str = "bartlett",
-        bandwidth: float | None = None,
+        bandwidth: Optional[float] = None,
         force_int: bool = True,
         diff: bool = False,
         df_adjust: bool = False,
@@ -1184,7 +1184,7 @@ class CanonicalCointegratingReg(FullyModifiedOLS):
         with_trend = add_trend(self._x.iloc[:10], self._trend)
         assert isinstance(with_trend, pd.DataFrame)
         cols = with_trend.columns
-        params = pd.Series(params.squeeze(), index=cols, name="params")
+        params = Series(params.squeeze(), index=cols, name="params")
         param_cov = pd.DataFrame(param_cov, columns=cols, index=cols)
         resid, r2, r2_adj = self._final_statistics(params)
         resid_kern = KERNEL_ESTIMATORS[kernel](
