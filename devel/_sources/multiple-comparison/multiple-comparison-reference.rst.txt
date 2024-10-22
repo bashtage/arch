@@ -34,7 +34,7 @@ there are potentially alternative models being considered.
 .. autosummary::
    :toctree: generated/
 
-   ~arch.bootstrap.SPA
+   SPA
 
 
 Stepwise Multiple Testing (StepM)
@@ -50,7 +50,7 @@ to allow multiple calls.
 .. autosummary::
    :toctree: generated/
 
-   ~arch.bootstrap.StepM
+   StepM
 
 Model Confidence Set (MCS)
 ==========================
@@ -65,4 +65,4 @@ Familywise Error Rate rather than the usual test size.
 .. autosummary::
    :toctree: generated/
 
-   ~arch.bootstrap.MCS
+   MCS

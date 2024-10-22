@@ -1,0 +1,8 @@
+:orphan:
+
+arch.univariate.recursions.VolatilityUpdater.initialize\_update
+===============================================================
+
+.. currentmodule:: arch.univariate.recursions
+
+.. automethod:: VolatilityUpdater.initialize_update

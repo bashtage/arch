@@ -1,0 +1,6 @@
+arch.covariance.kernel.CovarianceEstimator.cov
+==============================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: CovarianceEstimator.cov

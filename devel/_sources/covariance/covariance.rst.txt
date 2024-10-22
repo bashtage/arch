@@ -33,3 +33,13 @@ Results
    :toctree: generated/
 
    CovarianceEstimate
+
+
+Base Class
+----------
+All long-run covariance estimators inherit from :class:`~arch.covariance.kernel.CovarianceEstimator`.
+
+.. autosummary::
+   :toctree: generated/
+
+   CovarianceEstimator

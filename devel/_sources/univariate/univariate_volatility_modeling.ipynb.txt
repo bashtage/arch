@@ -24,7 +24,6 @@
    },
    "outputs": [],
    "source": [
-    "%matplotlib inline\n",
     "import matplotlib.pyplot as plt\n",
     "import seaborn\n",
     "\n",

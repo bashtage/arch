@@ -1,0 +1,6 @@
+arch.univariate.volatility.VarianceForecast.forecasts
+=====================================================
+
+.. currentmodule:: arch.univariate.volatility
+
+.. autoproperty:: VarianceForecast.forecasts
