@@ -1484,6 +1484,7 @@ def test_fixed_equivalence_plots(fit_fixed_models):
     close_plots()
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("simulations", [1, 100])
 def test_fixed_equivalence_forecastable(forecastable_model, simulations):
     res, res_fixed = forecastable_model
@@ -1501,6 +1502,7 @@ def test_fixed_equivalence_forecastable(forecastable_model, simulations):
     assert isinstance(f1, type(f2))
 
 
+@pytest.mark.slow
 @pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
 def test_fixed_equivalence_forecastable_plots(forecastable_model):
     res, res_fixed = forecastable_model
