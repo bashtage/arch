@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.univariate.mean - arch v7.1.1 (+6)</title>
+        <title>arch.univariate.mean - arch v7.1.1 (+9)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.1.1 (+6)" class="md-header__button md-logo" aria-label="arch v7.1.1 (+6)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.1.1 (+9)" class="md-header__button md-logo" aria-label="arch v7.1.1 (+9)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.1.1 (+6)
+            arch v7.1.1 (+9)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.1.1 (+6)" class="md-nav__button md-logo" aria-label="arch v7.1.1 (+6)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.1.1 (+9)" class="md-nav__button md-logo" aria-label="arch v7.1.1 (+9)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.1.1 (+6)
+    arch v7.1.1 (+9)
   </label>
   
     <div class="md-nav__source">
@@ -1413,7 +1413,11 @@
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">horizon</span><span class="p">):</span>
                 <span class="n">_impulses</span> <span class="o">=</span> <span class="n">impulse</span><span class="p">[</span><span class="n">i</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:,</span> <span class="kc">None</span><span class="p">]</span>
                 <span class="n">lrvp</span> <span class="o">=</span> <span class="n">variance_paths</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">_impulses</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-                <span class="n">long_run_variance_paths</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">lrvp</span><span class="p">)</span>
+                <span class="n">lrvp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">lrvp</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">lrvp</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">lrvp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">lrvp</span><span class="p">)</span>
+                    <span class="n">lrvp</span> <span class="o">=</span> <span class="n">lrvp</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="n">long_run_variance_paths</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">lrvp</span>
             <span class="n">t</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lags</span>
             <span class="n">mean_paths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shocks</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="n">horizon</span><span class="p">,))</span>
             <span class="n">dynp_rev</span> <span class="o">=</span> <span class="n">dynp</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>

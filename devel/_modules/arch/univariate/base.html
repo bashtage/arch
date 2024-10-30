@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.univariate.base - arch v7.1.1 (+6)</title>
+        <title>arch.univariate.base - arch v7.1.1 (+9)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.1.1 (+6)" class="md-header__button md-logo" aria-label="arch v7.1.1 (+6)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.1.1 (+9)" class="md-header__button md-logo" aria-label="arch v7.1.1 (+9)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.1.1 (+6)
+            arch v7.1.1 (+9)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.1.1 (+6)" class="md-nav__button md-logo" aria-label="arch v7.1.1 (+6)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.1.1 (+9)" class="md-nav__button md-logo" aria-label="arch v7.1.1 (+9)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.1.1 (+6)
+    arch v7.1.1 (+9)
   </label>
   
     <div class="md-nav__source">
@@ -776,9 +776,11 @@
         <span class="n">vol_final</span><span class="p">[</span><span class="n">first_obs</span><span class="p">:</span><span class="n">last_obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">vol</span>
 
         <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_parameter_names</span><span class="p">()</span>
-        <span class="n">loglikelihood</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static_gaussian_loglikelihood</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="n">r2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r2</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">fit_start</span><span class="p">,</span> <span class="n">fit_stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span>
+        <span class="n">loglikelihood</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loglikelihood</span><span class="p">(</span>
+            <span class="n">params</span><span class="p">,</span> <span class="n">vol</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">fit_stop</span> <span class="o">-</span> <span class="n">fit_start</span><span class="p">),</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span>
+        <span class="p">)</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ARCHModelResult</span><span class="p">(</span>
@@ -915,8 +917,7 @@
         <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_parameter_names</span><span class="p">()</span>
         <span class="c1"># Reshape resids and vol</span>
         <span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span>
-        <span class="n">resids_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
-        <span class="n">resids_final</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">resids_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
         <span class="n">resids_final</span><span class="p">[</span><span class="n">first_obs</span><span class="p">:</span><span class="n">last_obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">resids</span>
         <span class="n">vol_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
         <span class="n">vol_final</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
@@ -925,8 +926,8 @@
         <span class="n">model_copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ARCHModelFixedResult</span><span class="p">(</span>
             <span class="n">params</span><span class="p">,</span>
-            <span class="n">resids</span><span class="p">,</span>
-            <span class="n">vol</span><span class="p">,</span>
+            <span class="n">resids_final</span><span class="p">,</span>
+            <span class="n">vol_final</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="p">,</span>
             <span class="n">names</span><span class="p">,</span>
             <span class="n">loglikelihood</span><span class="p">,</span>
