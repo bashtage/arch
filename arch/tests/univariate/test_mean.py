@@ -1452,6 +1452,7 @@ def test_non_contiguous_input(use_numpy):
     assert res.params.shape[0] == 3
 
 
+@pytest.mark.slow
 def test_fixed_equivalence(fit_fixed_models):
     res, res_fixed = fit_fixed_models
 
