@@ -930,8 +930,7 @@ class ConstantVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         forecasts = np.full((t - start, horizon), np.nan)
 
         forecasts[:, :] = parameters[0]
-        forecast_paths = None
-        return VarianceForecast(forecasts, forecast_paths)
+        return VarianceForecast(forecasts)
 
     def _simulation_forecast(
         self,
@@ -2804,7 +2803,8 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
     ----------
     variance : {array, Series}
         Array containing the variances to use.  Should have the same shape as the
-        data used in the model.
+        data used in the model. This is not checked since the model is not
+        available when the FixedVariance process is created.
     unit_scale : bool, optional
         Flag whether to enforce a unit scale.  If False, a scale parameter will be
         estimated so that the model variance will be proportional to ``variance``.
@@ -2823,7 +2823,7 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         self._name = "Fixed Variance"
         self._name += " (Unit Scale)" if unit_scale else ""
         self._variance_series = ensure1d(variance, "variance", True)
-        self._variance = np.asarray(variance)
+        self._variance = np.atleast_1d(variance)
 
     def compute_variance(
         self,
@@ -2841,6 +2841,10 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         return sigma2
 
     def starting_values(self, resids: Float64Array) -> Float64Array:
+        if self._variance.ndim != 1 or self._variance.shape[0] < self._stop:
+            raise ValueError(
+                f"variance must be a 1-d array with at least {self._stop} elements"
+            )
         if not self._unit_scale:
             _resids = resids / np.sqrt(self._variance[self._start : self._stop])
             return np.array([_resids.var()])
@@ -2893,7 +2897,7 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         horizon: int,
     ) -> VarianceForecast:
         t = resids.shape[0]
-        forecasts = np.full((t, horizon), np.nan)
+        forecasts = np.full((t - start, horizon), np.nan)
 
         return VarianceForecast(forecasts)
 
@@ -2909,10 +2913,9 @@ class FixedVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         rng: RNGType,
     ) -> VarianceForecast:
         t = resids.shape[0]
-        forecasts = np.full((t, horizon), np.nan)
-        forecast_paths = np.empty((t, simulations, horizon))
-        forecast_paths.fill(np.nan)
-        shocks = np.full((t, simulations, horizon), np.nan)
+        forecasts = np.full((t - start, horizon), np.nan)
+        forecast_paths = np.full((t - start, simulations, horizon), np.nan)
+        shocks = np.full((t - start, simulations, horizon), np.nan)
 
         return VarianceForecast(forecasts, forecast_paths, shocks)
 

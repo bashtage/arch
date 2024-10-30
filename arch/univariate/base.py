@@ -386,9 +386,11 @@ class ARCHModel(metaclass=ABCMeta):
         vol_final[first_obs:last_obs] = vol
 
         names = self._all_parameter_names()
-        loglikelihood = self._static_gaussian_loglikelihood(y)
         r2 = self._r2(params)
         fit_start, fit_stop = self._fit_indices
+        loglikelihood = -1.0 * self._loglikelihood(
+            params, vol**2 * np.ones(fit_stop - fit_start), backcast, var_bounds
+        )
 
         assert isinstance(r2, float)
         return ARCHModelResult(
@@ -523,8 +525,7 @@ class ARCHModel(metaclass=ABCMeta):
         names = self._all_parameter_names()
         # Reshape resids and vol
         first_obs, last_obs = self._fit_indices
-        resids_final = np.empty_like(self._y, dtype=np.double)
-        resids_final.fill(np.nan)
+        resids_final = np.full_like(self._y, np.nan, dtype=np.double)
         resids_final[first_obs:last_obs] = resids
         vol_final = np.empty_like(self._y, dtype=np.double)
         vol_final.fill(np.nan)
@@ -533,8 +534,8 @@ class ARCHModel(metaclass=ABCMeta):
         model_copy = deepcopy(self)
         return ARCHModelFixedResult(
             params,
-            resids,
-            vol,
+            resids_final,
+            vol_final,
             self._y_series,
             names,
             loglikelihood,

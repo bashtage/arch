@@ -1,6 +1,7 @@
 from arch.compat.pandas import MONTH_END
 
 from io import StringIO
+import itertools
 from itertools import product
 from string import ascii_lowercase
 import struct
@@ -26,7 +27,12 @@ import statsmodels.tools as smtools
 
 from arch.data import sp500
 from arch.typing import Literal
-from arch.univariate.base import ARCHModelForecast, ARCHModelResult, _align_forecast
+from arch.univariate.base import (
+    ARCHModel,
+    ARCHModelForecast,
+    ARCHModelResult,
+    _align_forecast,
+)
 from arch.univariate.distribution import (
     GeneralizedError,
     Normal,
@@ -46,6 +52,7 @@ from arch.univariate.volatility import (
     FixedVariance,
     MIDASHyperbolic,
     RiskMetrics2006,
+    VolatilityProcess,
 )
 from arch.utility.exceptions import ConvergenceWarning, DataScaleWarning
 
@@ -73,6 +80,14 @@ RTOL = 1e-4 if struct.calcsize("P") < 8 else 1e-6
 DISPLAY: Literal["off", "final"] = "off"
 UPDATE_FREQ = 0 if DISPLAY == "off" else 3
 SP500 = 100 * sp500.load()["Adj Close"].pct_change().dropna()
+rs = np.random.RandomState(20241029)
+X = SP500 * 0.01 + SP500.std() * rs.standard_normal(SP500.shape)
+
+
+def close_plots():
+    import matplotlib.pyplot as plt
+
+    plt.close("all")
 
 
 @pytest.fixture(scope="module", params=[True, False])
@@ -81,6 +96,73 @@ def simulated_data(request):
     zm = ZeroMean(volatility=GARCH(), distribution=Normal(seed=rs))
     sim_data = zm.simulate(np.array([0.1, 0.1, 0.88]), 1000)
     return np.asarray(sim_data.data) if request.param else sim_data.data
+
+
+simple_mean_models = [
+    ARX(SP500, lags=1),
+    HARX(SP500, lags=[1, 5]),
+    ConstantMean(SP500),
+    ZeroMean(SP500),
+]
+
+mean_models = [
+    ARX(SP500, x=X, lags=1),
+    HARX(SP500, x=X, lags=[1, 5]),
+    LS(SP500, X),
+] + simple_mean_models
+
+analytic_volatility_processes = [
+    ARCH(3),
+    FIGARCH(1, 1),
+    GARCH(1, 1, 1),
+    HARCH([1, 5, 22]),
+    ConstantVariance(),
+    EWMAVariance(0.94),
+    FixedVariance(np.full_like(SP500, SP500.var())),
+    MIDASHyperbolic(),
+    RiskMetrics2006(),
+]
+
+other_volatility_processes = [
+    APARCH(1, 1, 1, 1.5),
+    EGARCH(1, 1, 1),
+]
+
+volatility_processes = analytic_volatility_processes + other_volatility_processes
+
+
+@pytest.fixture(
+    scope="module",
+    params=list(itertools.product(simple_mean_models, analytic_volatility_processes)),
+    ids=[
+        f"{a.__class__.__name__}-{b}"
+        for a, b in itertools.product(simple_mean_models, analytic_volatility_processes)
+    ],
+)
+def forecastable_model(request):
+    mod: ARCHModel
+    vol: VolatilityProcess
+    mod, vol = request.param
+    mod.volatility = vol
+    res = mod.fit()
+    return res, mod.fix(res.params)
+
+
+@pytest.fixture(
+    scope="module",
+    params=list(itertools.product(mean_models, volatility_processes)),
+    ids=[
+        f"{a.__class__.__name__}-{b}"
+        for a, b in itertools.product(mean_models, volatility_processes)
+    ],
+)
+def fit_fixed_models(request):
+    mod: ARCHModel
+    vol: VolatilityProcess
+    mod, vol = request.param
+    mod.volatility = vol
+    res = mod.fit()
+    return res, mod.fix(res.params)
 
 
 class TestMeanModel:
@@ -480,9 +562,7 @@ class TestMeanModel:
         with pytest.raises(ValueError):
             res.plot(annualize="unknown")
 
-        import matplotlib.pyplot as plt
-
-        plt.close("all")
+        close_plots()
 
         res.plot(scale=360)
         res.hedgehog_plot(start=500)
@@ -491,7 +571,7 @@ class TestMeanModel:
         res.hedgehog_plot(start=500, method="simulation", simulations=100)
         res.hedgehog_plot(plot_type="volatility", method="bootstrap")
 
-        plt.close("all")
+        close_plots()
 
     def test_arch_arx(self):
         self.rng.seed(12345)
@@ -1370,3 +1450,63 @@ def test_non_contiguous_input(use_numpy):
     mod = arch_model(y, mean="Zero")
     res = mod.fit()
     assert res.params.shape[0] == 3
+
+
+def test_fixed_equivalence(fit_fixed_models):
+    res, res_fixed = fit_fixed_models
+
+    assert_allclose(res.aic, res_fixed.aic)
+    assert_allclose(res.bic, res_fixed.bic)
+    assert_allclose(res.loglikelihood, res_fixed.loglikelihood)
+    assert res.nobs == res_fixed.nobs
+    assert res.num_params == res_fixed.num_params
+    assert_allclose(res.params, res_fixed.params)
+    assert_allclose(res.conditional_volatility, res_fixed.conditional_volatility)
+    assert_allclose(res.std_resid, res_fixed.std_resid)
+    assert_allclose(res.resid, res_fixed.resid)
+    assert_allclose(res.arch_lm_test(5).stat, res_fixed.arch_lm_test(5).stat)
+    assert res.model.__class__ is res_fixed.model.__class__
+    assert res.model.volatility.__class__ is res_fixed.model.volatility.__class__
+    assert isinstance(res.summary(), type(res_fixed.summary()))
+    if res.num_params > 0:
+        assert "std err" in str(res.summary())
+        assert "std err" not in str(res_fixed.summary())
+
+
+@pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
+def test_fixed_equivalence_plots(fit_fixed_models):
+    res, res_fixed = fit_fixed_models
+
+    fig = res.plot()
+    fixed_fig = res_fixed.plot()
+    assert isinstance(fig, type(fixed_fig))
+
+    close_plots()
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("simulations", [1, 100])
+def test_fixed_equivalence_forecastable(forecastable_model, simulations):
+    res, res_fixed = forecastable_model
+    f1 = res.forecast(horizon=5)
+    f2 = res_fixed.forecast(horizon=5)
+    assert isinstance(f1, type(f2))
+    assert_allclose(f1.mean, f2.mean)
+    assert_allclose(f1.variance, f2.variance)
+
+    f1 = res.forecast(horizon=5, method="simulation", simulations=simulations)
+    f2 = res_fixed.forecast(horizon=5, method="simulation", simulations=simulations)
+    assert isinstance(f1, type(f2))
+    f1 = res.forecast(horizon=5, method="bootstrap", simulations=simulations)
+    f2 = res_fixed.forecast(horizon=5, method="bootstrap", simulations=simulations)
+    assert isinstance(f1, type(f2))
+
+
+@pytest.mark.slow
+@pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
+def test_fixed_equivalence_forecastable_plots(forecastable_model):
+    res, res_fixed = forecastable_model
+    fig1 = res.hedgehog_plot(start=SP500.shape[0] - 25)
+    fig2 = res_fixed.hedgehog_plot(start=SP500.shape[0] - 25)
+    assert isinstance(fig1, type(fig2))
+    close_plots()

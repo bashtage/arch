@@ -28,14 +28,12 @@ jobs:
       python_311_copy_on_write:
         python.version: '3.11'
         ARCH_TEST_COPY_ON_WRITE: 1
-      python_39_coverage:
+      python_minimums:
         python.version: '3.9'
-        ARCH_CYTHON_COVERAGE: true
-        PYTEST_PATTERN: "(not slow)"
-      python_39_statsmodels_main:
-        python.version: '3.9'
-        STATSMODELS_MAIN: true
-        coverage: false
+        NUMPY: 1.23.0
+        SCIPY: 1.9.0
+        MATPLOTLIB: 3.4.0
+        PANDAS: 1.4.0
       python_39_conda_numba:
         python.version: '3.9'
         use.conda: 'true'
@@ -48,6 +46,10 @@ jobs:
         NUMPY: 1.22.3
         SCIPY: 1.8.0
         PANDAS: 1.4.0
+      python_311_cython_coverage:
+        python.version: '3.11'
+        ARCH_CYTHON_COVERAGE: true
+        PYTEST_PATTERN: "(not slow)"
       python_311_no_binary:
         python.version: '3.11'
         ARCH_NO_BINARY: true
@@ -72,12 +74,10 @@ jobs:
         NUMPY: 1.24.0
         USE_NUMBA: false
         PYTEST_PATTERN: "(slow or not slow)"
-      python_minimums:
+      python_312_statsmodels_main:
         python.version: '3.9'
-        NUMPY: 1.23.0
-        SCIPY: 1.9.0
-        MATPLOTLIB: 3.4.0
-        PANDAS: 1.4.0
+        STATSMODELS_MAIN: true
+        coverage: false
       python312_pre:
         python.version: '3.12'
         pip.pre: true
