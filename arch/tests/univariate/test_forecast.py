@@ -1104,3 +1104,104 @@ def test_multistep(analytical_model_spec):
     rv_ri = fcasts_ri.residual_variance
     assert_frame_equal(rv, rv_ri.iloc[-1:])
     assert rv_ri.shape == (SP500.shape[0], 10)
+
+
+def test_forecast_exog_single_exog():
+    rg = np.random.default_rng(0)
+    y = rg.standard_normal(100)
+    x = pd.DataFrame(rg.standard_normal((100, 1)), columns=["x"])
+    x_oos = rg.standard_normal((1, 5))
+    mod = ARX(y, x=x, lags=1)
+    res = mod.fit()
+    # Direct forecast
+    c, p, b, _ = res.params
+    oos = np.zeros((1, 5))
+    oos[0, 0] = c + p * y[-1] + b * x_oos[0, 0]
+    oos[0, 1] = c + p * oos[0, 0] + b * x_oos[0, 1]
+    oos[0, 2] = c + p * oos[0, 1] + b * x_oos[0, 2]
+    oos[0, 3] = c + p * oos[0, 2] + b * x_oos[0, 3]
+    oos[0, 4] = c + p * oos[0, 3] + b * x_oos[0, 4]
+    fcast = res.forecast(horizon=5, x=x_oos)
+    assert_allclose(oos, fcast.mean)
+
+    x_oos2 = np.tile(x_oos, (100, 1))
+    fcast2 = res.forecast(horizon=5, x=x_oos2)
+    assert_allclose(fcast.mean, fcast2.mean)
+
+    x_oos3 = np.tile(x_oos, (1, 100, 1))
+    fcast3 = res.forecast(horizon=5, x=x_oos3)
+    assert_allclose(fcast.mean, fcast3.mean)
+
+    x_oos4 = {"x": x_oos}
+    fcast4 = res.forecast(horizon=5, x=x_oos4)
+    assert_allclose(fcast.mean, fcast4.mean)
+
+
+def test_forecast_exog_multi_exog():
+    rg = np.random.default_rng(0)
+    y = rg.standard_normal(100)
+    x = pd.DataFrame(rg.standard_normal((100, 2)), columns=["x1", "x2"])
+    x_oos = rg.standard_normal((2, 1, 5))
+    mod = ARX(y, x=x, lags=1)
+    res = mod.fit()
+
+    c, p, b1, b2, _ = res.params
+    oos = np.zeros((1, 5))
+    oos[0, 0] = c + p * y[-1] + b1 * x_oos[0, 0, 0] + b2 * x_oos[1, 0, 0]
+    oos[0, 1] = c + p * oos[0, 0] + b1 * x_oos[0, 0, 1] + b2 * x_oos[1, 0, 1]
+    oos[0, 2] = c + p * oos[0, 1] + b1 * x_oos[0, 0, 2] + b2 * x_oos[1, 0, 2]
+    oos[0, 3] = c + p * oos[0, 2] + b1 * x_oos[0, 0, 3] + b2 * x_oos[1, 0, 3]
+    oos[0, 4] = c + p * oos[0, 3] + b1 * x_oos[0, 0, 4] + b2 * x_oos[1, 0, 4]
+
+    fcast = res.forecast(horizon=5, x=x_oos)
+    assert_allclose(oos, fcast.mean)
+
+    x_oos2 = np.tile(x_oos, (100, 1))
+    fcast2 = res.forecast(horizon=5, x=x_oos2)
+    assert_allclose(fcast.mean, fcast2.mean)
+
+    x_oos3 = {"x1": x_oos[0], "x2": x_oos[1]}
+    fcast3 = res.forecast(horizon=5, x=x_oos3)
+    assert_allclose(fcast.mean, fcast3.mean)
+
+
+def test_forecast_exog_single_exog_limited_sample():
+    rg = np.random.default_rng(0)
+    y = rg.standard_normal(100)
+    x = pd.DataFrame(rg.standard_normal((100, 1)), columns=["x"])
+    x_oos = rg.standard_normal((3, 5))
+    mod = ARX(y, x=x, lags=1)
+    res = mod.fit(first_obs=0, last_obs=98)
+    oos = np.zeros((3, 5))
+    # Direct forecast
+    c, p, b, _ = res.params
+    for idx in range(3):
+        oos[idx, 0] = c + p * y[(-3 + idx)] + b * x_oos[idx, 0]
+        oos[idx, 1] = c + p * oos[idx, 0] + b * x_oos[idx, 1]
+        oos[idx, 2] = c + p * oos[idx, 1] + b * x_oos[idx, 2]
+        oos[idx, 3] = c + p * oos[idx, 2] + b * x_oos[idx, 3]
+        oos[idx, 4] = c + p * oos[idx, 3] + b * x_oos[idx, 4]
+    fcast = res.forecast(horizon=5, x=x_oos)
+    assert_allclose(oos, fcast.mean)
+
+    x_oos2 = np.concatenate([np.zeros((97, 5)), x_oos], axis=0)
+    fcast2 = res.forecast(horizon=5, x=x_oos2)
+    assert_allclose(fcast.mean, fcast2.mean)
+
+    x_oos3 = x_oos2[None, :, :]
+    fcast3 = res.forecast(horizon=5, x=x_oos3)
+    assert_allclose(fcast.mean, fcast3.mean)
+
+    x_oos4 = {"x": x_oos}
+    fcast4 = res.forecast(horizon=5, x=x_oos4)
+    assert_allclose(fcast.mean, fcast4.mean)
+
+
+def test_forecast_simulation_horizon_1():
+    rg = np.random.default_rng(0)
+    y = rg.standard_normal(100)
+    x = pd.DataFrame(rg.standard_normal((100, 1)), columns=["x"])
+    mod = ARX(y, x=x, lags=1)
+    res = mod.fit(first_obs=0, last_obs=98)
+    res.forecast(start=1, x=x, method="simulation", simulations=2)
+    res.forecast(start=1, x=x, method="simulation", simulations=1)
