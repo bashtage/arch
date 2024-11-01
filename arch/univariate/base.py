@@ -1457,7 +1457,7 @@ class ARCHModelFixedResult(_SummaryRepr):
               (1000, 10), and only the final row is used to produce forecasts.
             * A dictionary of 2-d array-like: This format is identical to the
               previous except that the dictionary keys must match the names of
-              the exog variables.  Requires that the exog variables were pass
+              the exog variables.  Requires that the exog variables were passed
               as a pandas DataFrame.
             * A 3-d NumPy array (or equivalent). In this format, each panel
               (0th axis) is a 2-d array that must have shape (nforecast, horizon)

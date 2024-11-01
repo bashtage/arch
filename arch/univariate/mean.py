@@ -1018,10 +1018,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             for i in range(horizon):
                 _impulses = impulse[i::-1][:, None]
                 lrvp = variance_paths[:, :, : (i + 1)].dot(_impulses**2)
-                lrvp = np.squeeze(lrvp)
-                if lrvp.ndim < 2:
-                    lrvp = np.atleast_1d(lrvp)
-                    lrvp = lrvp[:, None]
+                lrvp = lrvp[:, :, 0]
                 long_run_variance_paths[:, :, i] = lrvp
             t, m = self._y.shape[0], self._max_lags
             mean_paths = np.empty(shocks.shape[:2] + (m + horizon,))
