@@ -1205,3 +1205,22 @@ def test_forecast_simulation_horizon_1():
     res = mod.fit(first_obs=0, last_obs=98)
     res.forecast(start=1, x=x, method="simulation", simulations=2)
     res.forecast(start=1, x=x, method="simulation", simulations=1)
+
+
+def test_forecast_start():
+    rg = np.random.default_rng(0)
+    y = rg.standard_normal(10)
+    x = pd.DataFrame(rg.standard_normal((10, 1)), columns=["x"])
+    mod = ARX(y, x=x, lags=3)
+    res = mod.fit(first_obs=0, last_obs=98)
+    fcast = res.forecast(start=2, x=x)
+    fcast2 = res.forecast(start=2, method="simulation", simulations=1, x=x)
+    assert_allclose(fcast.mean, fcast2.mean)
+
+    c, p1, p2, p3, b, _ = res.params
+    oos = np.full((8, 1), np.nan)
+    for i in range(2, 9):
+        oos[i - 2, 0] = (
+            c + p1 * y[i] + p2 * y[i - 1] + p3 * y[i - 2] + b * x.iloc[i + 1, 0]
+        )
+    assert_allclose(fcast.mean, oos)
