@@ -1213,8 +1213,8 @@ def test_forecast_start():
     x = pd.DataFrame(rg.standard_normal((10, 1)), columns=["x"])
     mod = ARX(y, x=x, lags=3)
     res = mod.fit(first_obs=0, last_obs=98)
-    fcast = res.forecast(start=2, x=x)
-    fcast2 = res.forecast(start=2, method="simulation", simulations=1, x=x)
+    fcast = res.forecast(start=2, x=x.shift(-1))
+    fcast2 = res.forecast(start=2, method="simulation", simulations=1, x=x.shift(-1))
     assert_allclose(fcast.mean, fcast2.mean)
 
     c, p1, p2, p3, b, _ = res.params
