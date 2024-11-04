@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.univariate.base - arch 7.0.0</title>
+        <title>arch.univariate.base - arch 7.2.0</title>
       
     
 
@@ -47,7 +47,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.359ec555e2989f00f.min.css?v=b000af5c" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.4b4a8c74e2ff2ab5b.min.css?v=afa97f93" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch 7.0.0" class="md-header__button md-logo" aria-label="arch 7.0.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 7.2.0" class="md-header__button md-logo" aria-label="arch 7.2.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 7.0.0
+            arch 7.2.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch 7.0.0" class="md-nav__button md-logo" aria-label="arch 7.0.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 7.2.0" class="md-nav__button md-logo" aria-label="arch 7.2.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 7.0.0
+    arch 7.2.0
   </label>
   
     <div class="md-nav__source">
@@ -325,6 +325,22 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../types.html" class="md-nav__link">
+        <span title="/types.rst (reference label)" class="md-ellipsis">Common Type Definitions</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../changes.html" class="md-nav__link">
         <span title="/changes.rst (reference label)" class="md-ellipsis">Change Log</span>
       </a>
@@ -368,14 +384,12 @@
 <span class="sd">Core classes for ARCH models</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -549,11 +563,11 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">volatility</span><span class="p">:</span> <span class="n">VolatilityProcess</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">distribution</span><span class="p">:</span> <span class="n">Distribution</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">hold_back</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">rescale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">volatility</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">VolatilityProcess</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">distribution</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Distribution</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">hold_back</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rescale</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;ARCHModel&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_pandas</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">))</span>
@@ -561,7 +575,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,)),</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;NaN or inf values found in y. y must contains only finite values.&quot;</span>
@@ -571,14 +585,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">hold_back</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">hold_back</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hold_back</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">hold_back</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hold_back</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">hold_back</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">hold_back</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">rescale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">rescale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rescale</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">rescale</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_backcast</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_var_bounds</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_var_bounds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">volatility</span><span class="p">,</span> <span class="n">VolatilityProcess</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span> <span class="o">=</span> <span class="n">volatility</span>
@@ -635,7 +649,7 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the dependent variable&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_original</span>
 
@@ -689,14 +703,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">rescale</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_scale_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_scale_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Called when the scale has changed.  This allows the model</span>
 <span class="sd">        to update any values that are affected by the scale changes,</span>
 <span class="sd">        e.g., any logged values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the model r-square.  Optional to over-ride.  Must match</span>
 <span class="sd">        signature.</span>
@@ -712,7 +726,7 @@
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_fit_no_arch_normal_errors</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">cov_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;robust&quot;</span><span class="p">,</span> <span class="s2">&quot;classic&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;robust&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ARCHModelResult</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ARCHModelResult&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Must be overridden with closed form estimator</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -731,8 +745,8 @@
     <span class="k">def</span> <span class="nf">_fit_parameterless_model</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cov_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;robust&quot;</span><span class="p">,</span> <span class="s2">&quot;classic&quot;</span><span class="p">],</span>
-        <span class="n">backcast</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ARCHModelResult</span><span class="p">:</span>
+        <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ARCHModelResult&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        When models have no parameters, fill return values</span>
 
@@ -757,14 +771,16 @@
         <span class="n">vol</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">vol</span><span class="p">))</span>
 
         <span class="c1"># Reshape resids vol</span>
-        <span class="n">vol_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">vol_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
         <span class="n">vol_final</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
         <span class="n">vol_final</span><span class="p">[</span><span class="n">first_obs</span><span class="p">:</span><span class="n">last_obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">vol</span>
 
         <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_parameter_names</span><span class="p">()</span>
-        <span class="n">loglikelihood</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static_gaussian_loglikelihood</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="n">r2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r2</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">fit_start</span><span class="p">,</span> <span class="n">fit_stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span>
+        <span class="n">loglikelihood</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loglikelihood</span><span class="p">(</span>
+            <span class="n">params</span><span class="p">,</span> <span class="n">vol</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">fit_stop</span> <span class="o">-</span> <span class="n">fit_start</span><span class="p">),</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span>
+        <span class="p">)</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ARCHModelResult</span><span class="p">(</span>
@@ -788,10 +804,10 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
-        <span class="n">backcast</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span><span class="p">,</span>
+        <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">],</span>
         <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the log-likelihood using the entire model</span>
 
@@ -838,7 +854,8 @@
         <span class="k">return</span> <span class="n">names</span>
 
     <span class="k">def</span> <span class="nf">_parse_parameters</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the parameters of each model in a tuple&quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -849,10 +866,10 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.fix.html#arch.univariate.base.ARCHModel.fix">[docs]</a>
     <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">params</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
-        <span class="n">first_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">last_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ARCHModelFixedResult</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
+        <span class="n">first_obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DateLike</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">last_obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DateLike</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ARCHModelFixedResult&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Allows an ARCHModelFixedResult to be constructed from fixed parameters.</span>
 
@@ -900,18 +917,17 @@
         <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_parameter_names</span><span class="p">()</span>
         <span class="c1"># Reshape resids and vol</span>
         <span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span>
-        <span class="n">resids_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="n">resids_final</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">resids_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
         <span class="n">resids_final</span><span class="p">[</span><span class="n">first_obs</span><span class="p">:</span><span class="n">last_obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">resids</span>
-        <span class="n">vol_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">vol_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
         <span class="n">vol_final</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
         <span class="n">vol_final</span><span class="p">[</span><span class="n">first_obs</span><span class="p">:</span><span class="n">last_obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">vol</span>
 
         <span class="n">model_copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ARCHModelFixedResult</span><span class="p">(</span>
             <span class="n">params</span><span class="p">,</span>
-            <span class="n">resids</span><span class="p">,</span>
-            <span class="n">vol</span><span class="p">,</span>
+            <span class="n">resids_final</span><span class="p">,</span>
+            <span class="n">vol_final</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="p">,</span>
             <span class="n">names</span><span class="p">,</span>
             <span class="n">loglikelihood</span><span class="p">,</span>
@@ -922,7 +938,9 @@
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_adjust_sample</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">first_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">last_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">first_obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DateLike</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">last_obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DateLike</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Performs sample adjustment for estimation</span>
@@ -944,16 +962,16 @@
     <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">update_freq</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">disp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;off&quot;</span><span class="p">,</span> <span class="s2">&quot;final&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;final&quot;</span><span class="p">,</span>
-        <span class="n">starting_values</span><span class="p">:</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disp</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;off&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;final&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;final&quot;</span><span class="p">,</span>
+        <span class="n">starting_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">cov_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;robust&quot;</span><span class="p">,</span> <span class="s2">&quot;classic&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;robust&quot;</span><span class="p">,</span>
         <span class="n">show_warning</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">first_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">last_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">backcast</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ARCHModelResult</span><span class="p">:</span>
+        <span class="n">first_obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DateLike</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">last_obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DateLike</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">tol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ARCHModelResult&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Estimate model parameters</span>
 
@@ -1166,10 +1184,10 @@
         <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_parameter_names</span><span class="p">()</span>
         <span class="c1"># Reshape resids and vol</span>
         <span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span>
-        <span class="n">resids_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">resids_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
         <span class="n">resids_final</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
         <span class="n">resids_final</span><span class="p">[</span><span class="n">first_obs</span><span class="p">:</span><span class="n">last_obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">resids</span>
-        <span class="n">vol_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">vol_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
         <span class="n">vol_final</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
         <span class="n">vol_final</span><span class="p">[</span><span class="n">first_obs</span><span class="p">:</span><span class="n">last_obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">vol</span>
 
@@ -1234,12 +1252,12 @@
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
         <span class="n">nobs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">burn</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
-        <span class="n">initial_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">initial_value_vol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">initial_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">initial_value_vol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="k">pass</span></div>
 
@@ -1250,8 +1268,8 @@
     <span class="k">def</span> <span class="nf">resids</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
-        <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">regressors</span><span class="p">:</span> <span class="n">ArrayLike2D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">regressors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike2D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute model residuals</span>
@@ -1277,7 +1295,7 @@
     <span class="k">def</span> <span class="nf">compute_param_cov</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
-        <span class="n">backcast</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">robust</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1331,16 +1349,16 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DateLike</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">align</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;origin&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;origin&quot;</span><span class="p">,</span>
         <span class="n">method</span><span class="p">:</span> <span class="n">ForecastingMethod</span> <span class="o">=</span> <span class="s2">&quot;analytic&quot;</span><span class="p">,</span>
         <span class="n">simulations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
-        <span class="n">rng</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="n">Float64Array</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">random_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rng</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]]],</span> <span class="n">Float64Array</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">reindex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">x</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Label</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ARCHModelForecast</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Label</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">],</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ARCHModelForecast&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct forecasts from estimated model</span>
 
@@ -1398,6 +1416,8 @@
 <span class="sd">              with a horizon of 10, then the input can be (1, 10). Alternatively,</span>
 <span class="sd">              if the original data had 1000 observations, then the input can be</span>
 <span class="sd">              (1000, 10), and only the final row is used to produce forecasts.</span>
+<span class="sd">              When using an (nobs, horizon) array, the values much be aligned</span>
+<span class="sd">              so that all values in row t are all out-of-sample at time-t.</span>
 <span class="sd">            * A dictionary of 2-d array-like: This format is identical to the</span>
 <span class="sd">              previous except that the dictionary keys must match the names of</span>
 <span class="sd">              the exog variables.  Requires that the exog variables were</span>
@@ -1409,7 +1429,7 @@
 
 <span class="sd">            Due to the complexity required to accommodate all scenarios, please</span>
 <span class="sd">            see the example notebook that demonstrates the valid formats for</span>
-<span class="sd">            x.</span>
+<span class="sd">            x, and discusses alignment.</span>
 
 <span class="sd">            .. versionadded:: 4.19</span>
 
@@ -1664,7 +1684,7 @@
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;params&quot;</span><span class="p">)</span>
 
     <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">conditional_volatility</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">|</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">conditional_volatility</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Estimated conditional volatility</span>
 
@@ -1689,7 +1709,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span>
 
     <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">resid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">resid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Model residuals</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1699,7 +1719,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resid</span>
 
     <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">std_resid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">std_resid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Residuals standardized by conditional volatility</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1710,7 +1730,9 @@
 
 <div class="viewcode-block" id="ARCHModelFixedResult.plot">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.plot.html#arch.univariate.base.ARCHModelFixedResult.plot">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annualize</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">annualize</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Figure&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot standardized residuals and conditional volatility</span>
 
@@ -1790,18 +1812,18 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.forecast.html#arch.univariate.base.ARCHModelFixedResult.forecast">[docs]</a>
     <span class="k">def</span> <span class="nf">forecast</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DateLike</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">align</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;origin&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;origin&quot;</span><span class="p">,</span>
         <span class="n">method</span><span class="p">:</span> <span class="n">ForecastingMethod</span> <span class="o">=</span> <span class="s2">&quot;analytic&quot;</span><span class="p">,</span>
         <span class="n">simulations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
-        <span class="n">rng</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="n">Float64Array</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">random_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rng</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]]],</span> <span class="n">Float64Array</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">reindex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">x</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Label</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ARCHModelForecast</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Label</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">],</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ARCHModelForecast&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct forecasts from estimated model</span>
 
@@ -1862,7 +1884,7 @@
 <span class="sd">              (1000, 10), and only the final row is used to produce forecasts.</span>
 <span class="sd">            * A dictionary of 2-d array-like: This format is identical to the</span>
 <span class="sd">              previous except that the dictionary keys must match the names of</span>
-<span class="sd">              the exog variables.  Requires that the exog variables were pass</span>
+<span class="sd">              the exog variables.  Requires that the exog variables were passed</span>
 <span class="sd">              as a pandas DataFrame.</span>
 <span class="sd">            * A 3-d NumPy array (or equivalent). In this format, each panel</span>
 <span class="sd">              (0th axis) is a 2-d array that must have shape (nforecast, horizon)</span>
@@ -1931,14 +1953,14 @@
     <span class="nd">@deprecate_kwarg</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;plot_type&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">hedgehog_plot</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
         <span class="n">step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">DateLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DateLike</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">plot_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;volatility&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;volatility&quot;</span><span class="p">,</span>
         <span class="n">method</span><span class="p">:</span> <span class="n">ForecastingMethod</span> <span class="o">=</span> <span class="s2">&quot;analytic&quot;</span><span class="p">,</span>
         <span class="n">simulations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Figure&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot forecasts from estimated model</span>
 
@@ -2051,7 +2073,7 @@
 <div class="viewcode-block" id="ARCHModelFixedResult.arch_lm_test">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModelFixedResult.arch_lm_test.html#arch.univariate.base.ARCHModelFixedResult.arch_lm_test">[docs]</a>
     <span class="k">def</span> <span class="nf">arch_lm_test</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">lags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">standardized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">lags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">standardized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaldTestStatistic</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        ARCH LM test for conditional heteroskedasticity</span>
@@ -2145,7 +2167,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
-        <span class="n">param_cov</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">param_cov</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">],</span>
         <span class="n">r2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
         <span class="n">volatility</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
@@ -2303,7 +2325,7 @@
             <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">table_val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">table_vals</span><span class="p">):</span>
                 <span class="n">val</span> <span class="o">=</span> <span class="n">table_val</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
                     <span class="n">converted</span> <span class="o">=</span> <span class="n">format_float_fixed</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="o">*</span><span class="n">formats</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">converted</span> <span class="o">=</span> <span class="n">val</span>
@@ -2441,7 +2463,7 @@
 
 
 <span class="k">def</span> <span class="nf">_format_forecasts</span><span class="p">(</span>
-    <span class="n">values</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Label</span><span class="p">]</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span> <span class="n">start_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">values</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Label</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">],</span> <span class="n">start_index</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="n">horizon</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">format_str</span> <span class="o">=</span> <span class="s2">&quot;{0:&gt;0&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">horizon</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">))))</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span>
@@ -2469,11 +2491,11 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">index</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Label</span><span class="p">]</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
-        <span class="n">values</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">residuals</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">variances</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">residual_variances</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Label</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">],</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">],</span>
+        <span class="n">residuals</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">],</span>
+        <span class="n">variances</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">],</span>
+        <span class="n">residual_variances</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="n">values</span>
@@ -2487,30 +2509,30 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The values of the process&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">residuals</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">residuals</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Simulated residuals used to produce the values&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residuals</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">variances</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">variances</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Simulated variances of the values&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variances</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">residual_variances</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">residual_variances</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Simulated variance of the residuals&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residual_variances</span></div>
 
 
 
 <span class="k">def</span> <span class="nf">_reindex</span><span class="p">(</span>
-    <span class="n">a</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Label</span><span class="p">]</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">a</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">],</span> <span class="n">idx</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Label</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">]:</span>
     <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">a</span>
     <span class="k">assert</span> <span class="n">a</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -2543,15 +2565,15 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">index</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Label</span><span class="p">]</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span>
+        <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Label</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">],</span>
         <span class="n">start_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">mean</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
         <span class="n">variance</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
         <span class="n">residual_variance</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
-        <span class="n">simulated_paths</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">simulated_variances</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">simulated_residual_variances</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">simulated_residuals</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">simulated_paths</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">simulated_variances</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">simulated_residual_variances</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">simulated_residuals</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">align</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;origin&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;origin&quot;</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">reindex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -2600,7 +2622,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residual_variance</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">simulations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ARCHModelForecastSimulation</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">simulations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ARCHModelForecastSimulation&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Detailed simulation results if using a simulation-based method</span>
 
@@ -2642,7 +2664,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    8.1.3.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

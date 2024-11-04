@@ -15,7 +15,7 @@
     
   
       
-        <title>Volatility Forecasting - arch 7.0.0</title>
+        <title>Volatility Forecasting - arch 7.2.0</title>
       
     
 
@@ -47,7 +47,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.359ec555e2989f00f.min.css?v=b000af5c" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.4b4a8c74e2ff2ab5b.min.css?v=afa97f93" />
         <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
         <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -93,7 +93,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch 7.0.0" class="md-header__button md-logo" aria-label="arch 7.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 7.2.0" class="md-header__button md-logo" aria-label="arch 7.2.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -103,7 +103,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 7.0.0
+            arch 7.2.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -190,10 +190,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch 7.0.0" class="md-nav__button md-logo" aria-label="arch 7.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 7.2.0" class="md-nav__button md-logo" aria-label="arch 7.2.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 7.0.0
+    arch 7.2.0
   </label>
   
     <div class="md-nav__source">
@@ -856,6 +856,22 @@
   
   
     <li class="md-nav__item">
+      <a href="../types.html" class="md-nav__link">
+        <span title="/types.rst (reference label)" class="md-ellipsis">Common Type Definitions</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../changes.html" class="md-nav__link">
         <span title="/changes.rst (reference label)" class="md-ellipsis">Change Log</span>
       </a>
@@ -990,8 +1006,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[1]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 
 <span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
@@ -1008,12 +1023,12 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[2]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="kn">import</span> <span class="nn">arch.data.sp500</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">arch.data.sp500</span>
 <span class="kn">from</span> <span class="nn">arch</span> <span class="kn">import</span> <span class="n">arch_model</span>
 
 <span class="n">data</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sp500</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
@@ -1045,10 +1060,10 @@
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     35,   Neg. LLF: 6970.2779565773335
-Iteration:     10,   Func. Count:     63,   Neg. LLF: 6936.718477482076
+Iteration:      5,   Func. Count:     35,   Neg. LLF: 6970.2765831170655
+Iteration:     10,   Func. Count:     63,   Neg. LLF: 6936.718477482658
 Optimization terminated successfully    (Exit mode 0)
-            Current function value: 6936.718476988951
+            Current function value: 6936.718476988985
             Iterations: 11
             Function evaluations: 68
             Gradient evaluations: 11
@@ -1136,10 +1151,10 @@ Date
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     34,   Neg. LLF: 4578.713295409127
-Iteration:     10,   Func. Count:     63,   Neg. LLF: 4555.338451419905
+Iteration:      5,   Func. Count:     34,   Neg. LLF: 4578.71329752255
+Iteration:     10,   Func. Count:     63,   Neg. LLF: 4555.33845173251
 Optimization terminated successfully    (Exit mode 0)
-            Current function value: 4555.285110045323
+            Current function value: 4555.285110045305
             Iterations: 14
             Function evaluations: 83
             Gradient evaluations: 14
@@ -1200,7 +1215,7 @@ Date
 2010-01-26  1.112205  1.115886  1.119545
 2010-01-27  1.051295  1.055327  1.059335
 2010-01-28  1.085678  1.089512  1.093324
-2010-01-29  1.085786  1.089594  1.093378
+2010-01-29  1.085786  1.089593  1.093378
 </pre></div></div>
 </div>
 <h3 id="Recursive-Forecast-Generation">Recursive Forecast Generation<a class="headerlink" href="#Recursive-Forecast-Generation" title="Link to this heading">¶</a></h3>
@@ -1248,7 +1263,7 @@ Date
 2010-01-15  0.629696  0.635989  0.642244
 2010-01-19  0.694735  0.700656  0.706541
 2010-01-20  0.736509  0.742193  0.747842
-2010-01-21  0.952751  0.957246  0.961713
+2010-01-21  0.952751  0.957245  0.961713
 2010-01-22  1.251145  1.254050  1.256936
 2010-01-25  1.176864  1.180162  1.183441
 2010-01-26  1.110848  1.114497  1.118124
@@ -1277,10 +1292,10 @@ Date
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration:      5,   Func. Count:     40,   Neg. LLF: 6846.48928243015
-Iteration:     10,   Func. Count:     75,   Neg. LLF: 6822.883188650879
+Iteration:      5,   Func. Count:     40,   Neg. LLF: 6846.496611626368
+Iteration:     10,   Func. Count:     75,   Neg. LLF: 6822.883179368218
 Optimization terminated successfully    (Exit mode 0)
-            Current function value: 6822.882823441358
+            Current function value: 6822.882823437632
             Iterations: 13
             Function evaluations: 93
             Gradient evaluations: 13
@@ -1309,7 +1324,7 @@ Name: 2018-12-31 00:00:00, dtype: float64
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-(16804.0, 17165.0)
+(np.float64(16804.0), np.float64(17165.0))
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1344,36 +1359,10 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <img alt="../_images/univariate_univariate_volatility_forecasting_24_0.png" src="../_images/univariate_univariate_volatility_forecasting_24_0.png" />
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[13]:
-</code></pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-
-<span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">sims</span><span class="o">.</span><span class="n">variances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-</code></pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[13]:
-</code></pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-&lt;Axes: &gt;
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_forecasting_25_1.png" src="../_images/univariate_univariate_volatility_forecasting_25_1.png" />
-</div>
-</div>
 <h3 id="Bootstrap-Forecasts">Bootstrap Forecasts<a class="headerlink" href="#Bootstrap-Forecasts" title="Link to this heading">¶</a></h3>
 <p>Bootstrap-based forecasts are nearly identical to simulation-based forecasts except that the values used to simulate the process are computed from historical data rather than using the assumed distribution of the residuals. Forecasts produced using this method also return an <code class="docutils literal notranslate"><span class="pre">ARCHModelForecastSimulation</span></code> containing information about the simulated paths.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[13]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">)</span>
@@ -1393,7 +1382,7 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_forecasting_27_0.png" src="../_images/univariate_univariate_volatility_forecasting_27_0.png" />
+<img alt="../_images/univariate_univariate_volatility_forecasting_26_0.png" src="../_images/univariate_univariate_volatility_forecasting_26_0.png" />
 </div>
 </div>
 <h1 id="Value-at-Risk-Forecasting">Value-at-Risk Forecasting<a class="headerlink" href="#Value-at-Risk-Forecasting" title="Link to this heading">¶</a></h1>
@@ -1403,7 +1392,7 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <p>where <span class="math notranslate nohighlight">\(q_{\alpha}\)</span> is the <span class="math notranslate nohighlight">\(\alpha\)</span> quantile of the standardized residuals, e.g., 5%.</p>
 <p>The quantile can be either computed from the estimated model density or computed using the empirical distribution of the standardized residuals. The example below shows both methods.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[14]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="s2">&quot;Garch&quot;</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">&quot;skewt&quot;</span><span class="p">)</span>
@@ -1415,7 +1404,7 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <p>First, we use the model to estimate the VaR. The quantiles can be computed using the <code class="docutils literal notranslate"><span class="pre">ppf</span></code> method of the distribution attached to the model. The quantiles are printed below.</p>
 <p><strong>Note</strong>: <code class="docutils literal notranslate"><span class="pre">forecast</span></code> is called with <code class="docutils literal notranslate"><span class="pre">align=&quot;target&quot;</span></code> so that the forecasts are already aligned with the target and so do not need further shifting.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[15]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">forecasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">align</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">)</span>
@@ -1436,7 +1425,7 @@ Name: 2018-12-31 00:00:00, dtype: float64
 </div>
 <p>Next, we plot the two VaRs along with the returns. The returns that violate the VaR forecasts are highlighted.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[16]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">value_at_risk</span> <span class="o">=</span> <span class="o">-</span><span class="n">cond_mean</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cond_var</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span> <span class="n">q</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
@@ -1478,13 +1467,13 @@ Name: 2018-12-31 00:00:00, dtype: float64
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_forecasting_33_0.png" src="../_images/univariate_univariate_volatility_forecasting_33_0.png" />
+<img alt="../_images/univariate_univariate_volatility_forecasting_32_0.png" src="../_images/univariate_univariate_volatility_forecasting_32_0.png" />
 </div>
 </div>
 <h2 id="Filtered-Historical-Simulation">Filtered Historical Simulation<a class="headerlink" href="#Filtered-Historical-Simulation" title="Link to this heading">¶</a></h2>
 <p>Next, we use the empirical distribution of the standardized residuals to estimate the quantiles. These values are very similar to those estimated using the assumed distribution. The plot below is identical except for the slightly different quantiles.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[17]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">std_rets</span> <span class="o">=</span> <span class="p">(</span><span class="n">returns</span><span class="p">[:</span><span class="s2">&quot;2017&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span>
@@ -1505,7 +1494,7 @@ dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[18]:
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">value_at_risk</span> <span class="o">=</span> <span class="o">-</span><span class="n">cond_mean</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cond_var</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span> <span class="n">q</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
@@ -1541,7 +1530,7 @@ dtype: float64
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/univariate_univariate_volatility_forecasting_36_0.png" src="../_images/univariate_univariate_volatility_forecasting_36_0.png" />
+<img alt="../_images/univariate_univariate_volatility_forecasting_35_0.png" src="../_images/univariate_univariate_volatility_forecasting_35_0.png" />
 </div>
 </div>
 
@@ -1565,7 +1554,7 @@ dtype: float64
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="generated/generated/arch.univariate.base.ARCHModelForecastSimulation.variances.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: arch.univariate.base.ARCHModelForecastSimulation.variances" rel="prev">
+        <a href="generated/generated/arch.univariate.volatility.VarianceForecast.shocks.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: arch.univariate.volatility.VarianceForecast.shocks" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -1574,7 +1563,7 @@ dtype: float64
               <span class="md-footer__direction">
                 Previous
               </span>
-              arch.univariate.base.ARCHModelForecastSimulation.variances
+              arch.univariate.volatility.VarianceForecast.shocks
             </div>
           </div>
         </a>
@@ -1611,7 +1600,7 @@ dtype: float64
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    8.1.3.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

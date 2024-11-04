@@ -1,0 +1,6 @@
+arch.covariance.kernel.CovarianceEstimator.kernel\_const
+========================================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoproperty:: CovarianceEstimator.kernel_const

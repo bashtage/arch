@@ -1,0 +1,6 @@
+arch.univariate.volatility.VarianceForecast.forecast\_paths
+===========================================================
+
+.. currentmodule:: arch.univariate.volatility
+
+.. autoproperty:: VarianceForecast.forecast_paths

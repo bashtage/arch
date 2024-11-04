@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.unitroot._phillips_ouliaris - arch 7.0.0</title>
+        <title>arch.unitroot._phillips_ouliaris - arch 7.2.0</title>
       
     
 
@@ -47,7 +47,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.359ec555e2989f00f.min.css?v=b000af5c" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.4b4a8c74e2ff2ab5b.min.css?v=afa97f93" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch 7.0.0" class="md-header__button md-logo" aria-label="arch 7.0.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 7.2.0" class="md-header__button md-logo" aria-label="arch 7.2.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 7.0.0
+            arch 7.2.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch 7.0.0" class="md-nav__button md-logo" aria-label="arch 7.0.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 7.2.0" class="md-nav__button md-logo" aria-label="arch 7.2.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 7.0.0
+    arch 7.2.0
   </label>
   
     <div class="md-nav__source">
@@ -325,6 +325,22 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../types.html" class="md-nav__link">
+        <span title="/types.rst (reference label)" class="md-ellipsis">Common Type Definitions</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../changes.html" class="md-nav__link">
         <span title="/changes.rst (reference label)" class="md-ellipsis">Change Log</span>
       </a>
@@ -364,9 +380,7 @@
 
 
 <h1>Source code for arch.unitroot._phillips_ouliaris</h1><div class="highlight"><pre>
-<span></span><code><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">cast</span>
+<span></span><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -375,7 +389,7 @@
 <span class="kn">from</span> <span class="nn">statsmodels.iolib.table</span> <span class="kn">import</span> <span class="n">SimpleTable</span>
 <span class="kn">from</span> <span class="nn">statsmodels.regression.linear_model</span> <span class="kn">import</span> <span class="n">RegressionResults</span>
 
-<span class="kn">import</span> <span class="nn">arch.covariance.kernel</span> <span class="k">as</span> <span class="nn">lrcov</span>
+<span class="kn">from</span> <span class="nn">arch.covariance.kernel</span> <span class="kn">import</span> <span class="n">CovarianceEstimator</span>
 <span class="kn">from</span> <span class="nn">arch.typing</span> <span class="kn">import</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">ArrayLike2D</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">UnitRootTrend</span>
 <span class="kn">from</span> <span class="nn">arch.unitroot._shared</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">KERNEL_ERR</span><span class="p">,</span>
@@ -408,9 +422,9 @@
     <span class="n">test_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Pu&quot;</span><span class="p">,</span> <span class="s2">&quot;Pz&quot;</span><span class="p">],</span>
     <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span><span class="p">,</span>
     <span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">bandwidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">bandwidth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
     <span class="n">force_int</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PhillipsOuliarisTestResults</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PhillipsOuliarisTestResults&quot;</span><span class="p">:</span>
     <span class="n">nobs</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">z_lead</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
     <span class="n">z_lag</span> <span class="o">=</span> <span class="n">add_trend</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">trend</span><span class="o">=</span><span class="n">trend</span><span class="p">)</span>
@@ -460,9 +474,9 @@
     <span class="n">test_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Za&quot;</span><span class="p">,</span> <span class="s2">&quot;Zt&quot;</span><span class="p">],</span>
     <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span><span class="p">,</span>
     <span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">bandwidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">bandwidth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
     <span class="n">force_int</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PhillipsOuliarisTestResults</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PhillipsOuliarisTestResults&quot;</span><span class="p">:</span>
     <span class="c1"># Za and Zt tests</span>
     <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xsection</span><span class="o">.</span><span class="n">resid</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
     <span class="n">nobs</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -507,9 +521,9 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">test_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Za&quot;</span><span class="p">,</span> <span class="s2">&quot;Zt&quot;</span><span class="p">,</span> <span class="s2">&quot;Pu&quot;</span><span class="p">,</span> <span class="s2">&quot;Pz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Zt&quot;</span><span class="p">,</span>
     <span class="n">kernel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bartlett&quot;</span><span class="p">,</span>
-    <span class="n">bandwidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">bandwidth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">force_int</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PhillipsOuliarisTestResults</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PhillipsOuliarisTestResults&quot;</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Test for cointegration within a set of time series.</span>
 
@@ -543,9 +557,7 @@
 <span class="sd">        and &quot;quadratic-spectral&quot; for the Quadratic Spectral kernel.</span>
 <span class="sd">    bandwidth : int, default None</span>
 <span class="sd">        The bandwidth to use. If not provided, the optimal bandwidth is</span>
-<span class="sd">        estimated from the data. Setting the bandwidth to 0 and using</span>
-<span class="sd">        &quot;unadjusted&quot; produces the classic OLS covariance estimator.</span>
-<span class="sd">        Setting the bandwidth to 0 and using &quot;robust&quot; produces White&#39;s</span>
+<span class="sd">        estimated from the data. Setting the bandwidth to 0 produces White&#39;s</span>
 <span class="sd">        covariance estimator.</span>
 <span class="sd">    force_int : bool, default False</span>
 <span class="sd">        Whether the force the estimated optimal bandwidth to be an integer.</span>
@@ -566,14 +578,6 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-
-<span class="sd">    .. warning::</span>
-
-<span class="sd">       The critical value simulation is on-going and so the critical values</span>
-<span class="sd">       may change slightly as more simulations are completed. These are still</span>
-<span class="sd">       based on far more simulations (minimum 2,000,000) than were possible</span>
-<span class="sd">       in 1990 (5000) that are reported in [1]_.</span>
-
 <span class="sd">    Supports 4 distinct tests.</span>
 
 <span class="sd">    Define the cross-sectional regression</span>
@@ -644,7 +648,7 @@
 <span class="sd">    differs from the expression in [1]_. We recenter :math:`z_t` by subtracting</span>
 <span class="sd">    the first observation, so that :math:`\tilde{z}_t = z_t - z_1`. This is</span>
 <span class="sd">    needed to ensure that the initial value does not affect the distribution</span>
-<span class="sd">    under the null. When the trend is anything other than &quot;n&quot;, this set is not</span>
+<span class="sd">    under the null. When the trend is anything other than &quot;n&quot;, this step is not</span>
 <span class="sd">    needed and the test statistics is identical whether the first observation</span>
 <span class="sd">    is subtracted or not.</span>
 
@@ -702,9 +706,9 @@
         <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Cointegration&quot;</span><span class="p">,</span>
         <span class="n">trend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span>
         <span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-        <span class="n">xsection</span><span class="p">:</span> <span class="n">RegressionResults</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">xsection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RegressionResults</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">test_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Za&quot;</span><span class="p">,</span>
-        <span class="n">kernel_est</span><span class="p">:</span> <span class="n">lrcov</span><span class="o">.</span><span class="n">CovarianceEstimator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">kernel_est</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CovarianceEstimator</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">rho</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -931,7 +935,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    8.1.3.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

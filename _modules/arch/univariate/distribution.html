@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.univariate.distribution - arch 7.0.0</title>
+        <title>arch.univariate.distribution - arch 7.2.0</title>
       
     
 
@@ -47,7 +47,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.359ec555e2989f00f.min.css?v=b000af5c" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.4b4a8c74e2ff2ab5b.min.css?v=afa97f93" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch 7.0.0" class="md-header__button md-logo" aria-label="arch 7.0.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 7.2.0" class="md-header__button md-logo" aria-label="arch 7.2.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 7.0.0
+            arch 7.2.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch 7.0.0" class="md-nav__button md-logo" aria-label="arch 7.0.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch 7.2.0" class="md-nav__button md-logo" aria-label="arch 7.2.0" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 7.0.0
+    arch 7.2.0
   </label>
   
     <div class="md-nav__source">
@@ -325,6 +325,22 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../types.html" class="md-nav__link">
+        <span title="/types.rst (reference label)" class="md-ellipsis">Common Type Definitions</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../changes.html" class="md-nav__link">
         <span title="/changes.rst (reference label)" class="md-ellipsis">Change Log</span>
       </a>
@@ -368,11 +384,9 @@
 <span class="sd">Distributions to use in ARCH models.  All distributions must inherit from</span>
 <span class="sd">:class:`Distribution` and provide the same methods with the same inputs.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="p">(</span>
@@ -412,13 +426,13 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">random_state</span><span class="p">:</span> <span class="n">RandomState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RandomState</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">seed</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">RandomState</span> <span class="o">|</span> <span class="n">Generator</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">RandomState</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;Distribution&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">random_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -434,11 +448,11 @@
                 <span class="s2">&quot;Use seed instead.&quot;</span><span class="p">,</span>
                 <span class="ne">FutureWarning</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">_seed</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">RandomState</span> <span class="o">|</span> <span class="n">Generator</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">random_state</span>
+            <span class="n">_seed</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">RandomState</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_state</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_seed</span> <span class="o">=</span> <span class="n">seed</span>
         <span class="k">if</span> <span class="n">_seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_generator</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">|</span> <span class="n">RandomState</span> <span class="o">=</span> <span class="n">default_rng</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_generator</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Generator</span><span class="p">,</span> <span class="n">RandomState</span><span class="p">]</span> <span class="o">=</span> <span class="n">default_rng</span><span class="p">()</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_seed</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">integer</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_generator</span> <span class="o">=</span> <span class="n">default_rng</span><span class="p">(</span><span class="n">_seed</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_seed</span><span class="p">,</span> <span class="p">(</span><span class="n">RandomState</span><span class="p">,</span> <span class="n">Generator</span><span class="p">)):</span>
@@ -454,7 +468,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="k">def</span> <span class="nf">_check_constraints</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -476,12 +490,12 @@
         <span class="k">return</span> <span class="n">asarray</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">generator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RandomState</span> <span class="o">|</span> <span class="n">Generator</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">generator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">RandomState</span><span class="p">,</span> <span class="n">Generator</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The NumPy Generator or RandomState attached to the distribution&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generator</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">random_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RandomState</span> <span class="o">|</span> <span class="n">Generator</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">random_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">RandomState</span><span class="p">,</span> <span class="n">Generator</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The NumPy RandomState attached to the distribution</span>
 
@@ -497,7 +511,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generator</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulate i.i.d. draws from the distribution</span>
 
@@ -520,8 +534,8 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.simulate.html#arch.univariate.distribution.Distribution.simulate">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="n">Float64Array</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">ArrayLike1D</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]]],</span> <span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulates i.i.d. draws from the distribution</span>
 
@@ -582,11 +596,11 @@
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span> <span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loglikelihood evaluation.</span>
 
@@ -652,9 +666,9 @@
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">pits</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span><span class="p">:</span>
+        <span class="n">pits</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span> <span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inverse cumulative density function (ICDF)</span>
 
@@ -678,8 +692,8 @@
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">resids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">resids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Cumulative distribution function</span>
@@ -703,7 +717,7 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.moment.html#arch.univariate.distribution.Distribution.moment">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">moment</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Moment of order n</span>
@@ -729,7 +743,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Order n lower partial moment from -inf to z</span>
@@ -798,9 +812,9 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">random_state</span><span class="p">:</span> <span class="n">RandomState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RandomState</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">seed</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">RandomState</span> <span class="o">|</span> <span class="n">Generator</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">RandomState</span><span class="p">,</span> <span class="n">Generator</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;Normal&quot;</span>
@@ -821,11 +835,11 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.loglikelihood.html#arch.univariate.distribution.Normal.loglikelihood">[docs]</a>
     <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span> <span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Computes the log-likelihood of assuming residuals are normally</span>
 <span class="sd">        distributed, conditional on the variance</span>
 
@@ -870,14 +884,14 @@
         <span class="k">return</span> <span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generator</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Normal.simulate">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.simulate.html#arch.univariate.distribution.Normal.simulate">[docs]</a>
     <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="n">Float64Array</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">ArrayLike1D</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]]],</span> <span class="n">Float64Array</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulator</span></div>
 
 
@@ -891,8 +905,8 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.cdf.html#arch.univariate.distribution.Normal.cdf">[docs]</a>
     <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">resids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">resids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">asarray</span><span class="p">(</span><span class="n">resids</span><span class="p">))</span></div>
@@ -902,8 +916,8 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.ppf.html#arch.univariate.distribution.Normal.ppf">[docs]</a>
     <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">pits</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pits</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">scalar</span> <span class="o">=</span> <span class="n">isscalar</span><span class="p">(</span><span class="n">pits</span><span class="p">)</span>
@@ -921,7 +935,7 @@
 <div class="viewcode-block" id="Normal.moment">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.moment.html#arch.univariate.distribution.Normal.moment">[docs]</a>
     <span class="k">def</span> <span class="nf">moment</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">nan</span>
@@ -935,7 +949,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">nan</span>
@@ -973,9 +987,9 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">random_state</span><span class="p">:</span> <span class="n">RandomState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RandomState</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">seed</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">RandomState</span> <span class="o">|</span> <span class="n">Generator</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">RandomState</span><span class="p">,</span> <span class="n">Generator</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;Standardized Student&#39;s t&quot;</span>
@@ -997,11 +1011,11 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.loglikelihood.html#arch.univariate.distribution.StudentsT.loglikelihood">[docs]</a>
     <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span> <span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Computes the log-likelihood of assuming residuals are have a</span>
 <span class="sd">        standardized (to have unit variance) Student&#39;s t distribution,</span>
 <span class="sd">        conditional on the variance.</span>
@@ -1074,7 +1088,7 @@
         <span class="k">return</span> <span class="n">array</span><span class="p">([</span><span class="n">sv</span><span class="p">])</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span>
         <span class="n">std_dev</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span>
@@ -1083,8 +1097,8 @@
 <div class="viewcode-block" id="StudentsT.simulate">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.simulate.html#arch.univariate.distribution.StudentsT.simulate">[docs]</a>
     <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="n">Float64Array</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">ArrayLike1D</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]]],</span> <span class="n">Float64Array</span><span class="p">]:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">2.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The shape parameter must be larger than 2&quot;</span><span class="p">)</span>
@@ -1102,8 +1116,8 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.cdf.html#arch.univariate.distribution.StudentsT.cdf">[docs]</a>
     <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">resids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">resids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">nu</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1115,8 +1129,8 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.ppf.html#arch.univariate.distribution.StudentsT.ppf">[docs]</a>
     <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">pits</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pits</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">pits</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">pits</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -1128,7 +1142,7 @@
 <div class="viewcode-block" id="StudentsT.moment">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.moment.html#arch.univariate.distribution.StudentsT.moment">[docs]</a>
     <span class="k">def</span> <span class="nf">moment</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">nan</span>
@@ -1144,7 +1158,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">nu</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1241,9 +1255,9 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">random_state</span><span class="p">:</span> <span class="n">RandomState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RandomState</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">seed</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">RandomState</span> <span class="o">|</span> <span class="n">Generator</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">RandomState</span><span class="p">,</span> <span class="n">Generator</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;Standardized Skew Student&#39;s t&quot;</span>
@@ -1265,7 +1279,7 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.loglikelihood.html#arch.univariate.distribution.SkewStudent.loglikelihood">[docs]</a>
     <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -1365,7 +1379,7 @@
         <span class="k">return</span> <span class="n">array</span><span class="p">([</span><span class="n">sv</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="c1"># No need to normalize since it is already done in parameterization</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_generator</span><span class="p">,</span> <span class="n">Generator</span><span class="p">):</span>
@@ -1379,8 +1393,8 @@
 <div class="viewcode-block" id="SkewStudent.simulate">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.simulate.html#arch.univariate.distribution.SkewStudent.simulate">[docs]</a>
     <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="n">Float64Array</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">ArrayLike1D</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]]],</span> <span class="n">Float64Array</span><span class="p">]:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">2.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The shape parameter must be larger than 2&quot;</span><span class="p">)</span>
@@ -1398,7 +1412,7 @@
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;lambda&quot;</span><span class="p">]</span></div>
 
 
-    <span class="k">def</span> <span class="nf">__const_a</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__const_a</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array</span> <span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute a constant.</span>
 
@@ -1417,7 +1431,7 @@
         <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_c</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">lam</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">__const_b</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__const_b</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array</span> <span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute b constant.</span>
 
@@ -1436,7 +1450,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">lam</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">a</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">__const_c</span><span class="p">(</span><span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__const_c</span><span class="p">(</span><span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute c constant.</span>
 
@@ -1460,8 +1474,8 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.cdf.html#arch.univariate.distribution.SkewStudent.cdf">[docs]</a>
     <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">resids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">resids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">scalar</span> <span class="o">=</span> <span class="n">isscalar</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
@@ -1489,9 +1503,9 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.ppf.html#arch.univariate.distribution.SkewStudent.ppf">[docs]</a>
     <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">pits</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Float64Array</span><span class="p">:</span>
+        <span class="n">pits</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span> <span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">scalar</span> <span class="o">=</span> <span class="n">isscalar</span><span class="p">(</span><span class="n">pits</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">scalar</span><span class="p">:</span>
@@ -1522,7 +1536,7 @@
 <div class="viewcode-block" id="SkewStudent.moment">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.moment.html#arch.univariate.distribution.SkewStudent.moment">[docs]</a>
     <span class="k">def</span> <span class="nf">moment</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">eta</span><span class="p">,</span> <span class="n">lam</span> <span class="o">=</span> <span class="n">parameters</span>
@@ -1560,7 +1574,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">eta</span><span class="p">,</span> <span class="n">lam</span> <span class="o">=</span> <span class="n">parameters</span>
@@ -1627,9 +1641,9 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">random_state</span><span class="p">:</span> <span class="n">RandomState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RandomState</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">seed</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">RandomState</span> <span class="o">|</span> <span class="n">Generator</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">RandomState</span><span class="p">,</span> <span class="n">Generator</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;Generalized Error Distribution&quot;</span>
@@ -1651,7 +1665,7 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.loglikelihood.html#arch.univariate.distribution.GeneralizedError.loglikelihood">[docs]</a>
     <span class="k">def</span> <span class="nf">loglikelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
         <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -1731,7 +1745,7 @@
         <span class="k">return</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.5</span><span class="p">])</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span>
         <span class="n">nu</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1748,8 +1762,8 @@
 <div class="viewcode-block" id="GeneralizedError.simulate">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.simulate.html#arch.univariate.distribution.GeneralizedError.simulate">[docs]</a>
     <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="n">Float64Array</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">ArrayLike1D</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]]],</span> <span class="n">Float64Array</span><span class="p">]:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The shape parameter must be larger than 1&quot;</span><span class="p">)</span>
@@ -1767,8 +1781,8 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.ppf.html#arch.univariate.distribution.GeneralizedError.ppf">[docs]</a>
     <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">pits</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pits</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">pits</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">pits</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -1781,8 +1795,8 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.cdf.html#arch.univariate.distribution.GeneralizedError.cdf">[docs]</a>
     <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">resids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">resids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">nu</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1794,7 +1808,7 @@
 <div class="viewcode-block" id="GeneralizedError.moment">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.moment.html#arch.univariate.distribution.GeneralizedError.moment">[docs]</a>
     <span class="k">def</span> <span class="nf">moment</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">nan</span>
@@ -1811,7 +1825,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike1D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">nu</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1901,7 +1915,7 @@
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    8.1.3.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

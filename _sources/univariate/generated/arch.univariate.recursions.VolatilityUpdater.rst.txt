@@ -1,0 +1,22 @@
+﻿arch.univariate.recursions.VolatilityUpdater
+============================================
+
+.. currentmodule:: arch.univariate.recursions
+
+.. autoclass:: VolatilityUpdater
+   :exclude-members: initialize_update,
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~VolatilityUpdater.initialize_update
+   
+   
+   
+   
+   
+   

@@ -2,6 +2,11 @@
 Version 7
 =========
 
+Release 7.2
+===========
+- Fixed a number of bugs that affect :class:`~arch.univariate.base.ARCHModelFixedResult`.
+- Improved documentation of the correct format of exogenous variables when forecasting.
+
 Release 7.1
 ===========
 - Improve documentation

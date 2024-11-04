@@ -1,0 +1,31 @@
+﻿arch.univariate.volatility.VarianceForecast
+===========================================
+
+.. currentmodule:: arch.univariate.volatility
+
+.. autoclass:: VarianceForecast
+   :exclude-members: 
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~VarianceForecast.forecast_paths
+      ~VarianceForecast.forecasts
+      ~VarianceForecast.shocks
+   
+   
+   

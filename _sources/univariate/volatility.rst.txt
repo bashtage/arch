@@ -56,10 +56,10 @@ all public methods.
    VolatilityProcess
 
 They may optionally expose a
-:class:`~arch.univariate.recursions_python.VolatilityUpdater` class
+:class:`~arch.univariate.recursions.VolatilityUpdater` class
 that can be used in :class:`~arch.univariate.ARCHInMean` estimation.
 
-.. currentmodule:: arch.univariate.recursions_python
+.. currentmodule:: arch.univariate.recursions
 
 .. autosummary::
    :toctree: generated/

@@ -1,0 +1,38 @@
+﻿arch.covariance.kernel.CovarianceEstimator
+==========================================
+
+.. currentmodule:: arch.covariance.kernel
+
+.. autoclass:: CovarianceEstimator
+   :exclude-members: 
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree: generated/
+
+   
+   
+   
+   
+   
+   .. rubric:: Properties
+
+   .. autosummary::
+      :toctree: generated/
+
+      ~CovarianceEstimator.bandwidth
+      ~CovarianceEstimator.bandwidth_scale
+      ~CovarianceEstimator.centered
+      ~CovarianceEstimator.cov
+      ~CovarianceEstimator.force_int
+      ~CovarianceEstimator.kernel_const
+      ~CovarianceEstimator.kernel_weights
+      ~CovarianceEstimator.name
+      ~CovarianceEstimator.opt_bandwidth
+      ~CovarianceEstimator.rate
+   
+   
+   

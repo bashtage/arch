@@ -28,13 +28,13 @@ from the benchmark model.  The alternative is
 This procedure accounts for dependence between the losses and the fact that
 there are potentially alternative models being considered.
 
-**Note**: Also callable using :class:`~arch.bootstrap.RealityCheck`
+**Note**: Also callable using ``arch.bootstrap.RealityCheck``
 
 
 .. autosummary::
    :toctree: generated/
 
-   ~arch.bootstrap.SPA
+   SPA
 
 
 Stepwise Multiple Testing (StepM)
@@ -50,7 +50,7 @@ to allow multiple calls.
 .. autosummary::
    :toctree: generated/
 
-   ~arch.bootstrap.StepM
+   StepM
 
 Model Confidence Set (MCS)
 ==========================
@@ -65,4 +65,4 @@ Familywise Error Rate rather than the usual test size.
 .. autosummary::
    :toctree: generated/
 
-   ~arch.bootstrap.MCS
+   MCS

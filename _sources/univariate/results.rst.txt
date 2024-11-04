@@ -1,8 +1,8 @@
 Model Results
 =============
-All model return the same object, a results class (:class:`ARCHModelResult`).
-When using the ``fix`` method, a (:class:`ARCHModelFixedResult`) is produced
-that lacks some properties of a (:class:`ARCHModelResult`) that are not
+All model return the same object, a results class (:class:`~arch.univariate.base.ARCHModelResult`).
+When using the ``fix`` method, a (:class:`~arch.univariate.base.ARCHModelFixedResult`) is produced
+that lacks some properties of a (:class:`~arch.univariate.base.ARCHModelResult`) that are not
 relevant when parameters are not estimated.
 
 

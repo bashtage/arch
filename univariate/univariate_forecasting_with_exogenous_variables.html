@@ -15,7 +15,7 @@
     
   
       
-        <title>Forecasting with Exogenous Regressors - arch 7.0.0</title>
+        <title>Forecasting with Exogenous Regressors - arch 7.2.0</title>
       
     
 
@@ -47,7 +47,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.359ec555e2989f00f.min.css?v=b000af5c" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.4b4a8c74e2ff2ab5b.min.css?v=afa97f93" />
         <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
         <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -93,7 +93,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch 7.0.0" class="md-header__button md-logo" aria-label="arch 7.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 7.2.0" class="md-header__button md-logo" aria-label="arch 7.2.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -103,7 +103,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 7.0.0
+            arch 7.2.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -190,10 +190,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch 7.0.0" class="md-nav__button md-logo" aria-label="arch 7.0.0" data-md-component="logo">
+    <a href="../index.html" title="arch 7.2.0" class="md-nav__button md-logo" aria-label="arch 7.2.0" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 7.0.0
+    arch 7.2.0
   </label>
   
     <div class="md-nav__source">
@@ -476,6 +476,47 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#Conditional-Mean-Alignment-vs.-Forecast-Alignment" class="md-nav__link">
+    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#conditional-mean-alignment-vs.-forecast-alignment (reference label)" class="md-ellipsis">Conditional Mean Alignment vs.<wbr> Forecast Alignment</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conditional Mean Alignment vs. Forecast Alignment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#Conditional-Mean-uses-target-alignment" class="md-nav__link">
+    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#conditional-mean-uses-target-alignment (reference label)" class="md-ellipsis">Conditional Mean uses target alignment</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forecast-uses-origin-alignment" class="md-nav__link">
+    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#forecast-uses-origin-alignment (reference label)" class="md-ellipsis">forecast uses origin alignment</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#(Nearly)-out-of-sample-forecasts" class="md-nav__link">
+    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#(nearly)-out-of-sample-forecasts (reference label)" class="md-ellipsis"><wbr>(Nearly) out-<wbr>of-<wbr>sample forecasts</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#True-out-of-sample-forecasts" class="md-nav__link">
+    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#true-out-of-sample-forecasts (reference label)" class="md-ellipsis">True out-<wbr>of-<wbr>sample forecasts</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -702,6 +743,22 @@
   
   
     <li class="md-nav__item">
+      <a href="../types.html" class="md-nav__link">
+        <span title="/types.rst (reference label)" class="md-ellipsis">Common Type Definitions</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../changes.html" class="md-nav__link">
         <span title="/changes.rst (reference label)" class="md-ellipsis">Change Log</span>
       </a>
@@ -837,6 +894,47 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#Conditional-Mean-Alignment-vs.-Forecast-Alignment" class="md-nav__link">
+    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#conditional-mean-alignment-vs.-forecast-alignment (reference label)" class="md-ellipsis">Conditional Mean Alignment vs.<wbr> Forecast Alignment</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conditional Mean Alignment vs. Forecast Alignment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#Conditional-Mean-uses-target-alignment" class="md-nav__link">
+    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#conditional-mean-uses-target-alignment (reference label)" class="md-ellipsis">Conditional Mean uses target alignment</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forecast-uses-origin-alignment" class="md-nav__link">
+    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#forecast-uses-origin-alignment (reference label)" class="md-ellipsis">forecast uses origin alignment</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#(Nearly)-out-of-sample-forecasts" class="md-nav__link">
+    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#(nearly)-out-of-sample-forecasts (reference label)" class="md-ellipsis"><wbr>(Nearly) out-<wbr>of-<wbr>sample forecasts</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#True-out-of-sample-forecasts" class="md-nav__link">
+    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#true-out-of-sample-forecasts (reference label)" class="md-ellipsis">True out-<wbr>of-<wbr>sample forecasts</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -866,15 +964,12 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">array</span></code> - The vales can alternatively be passed as a 3-d NumPy <code class="docutils literal notranslate"><span class="pre">array</span></code> where dimension 0 tracks the regressor index, dimension 1 is the time period and dimension 2 is the horizon.</p></li>
 </ul>
 <p>When a model contains a single exogenous regressor it is possible to use a 2-d array or <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> where dim0 tracks the time period where the forecast is generated and dimension 1 tracks the horizon.</p>
-<p>In the special case where a model contains a single regressor <em>and</em> the horizon is 1, then a 1-d array of pandas Series can be used.</p>
+<p>In the special case where a model contains a single regressor <em>and</em> the horizon is 1, then a 1-d array or pandas Series can be used.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[1]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># initial setup</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">seaborn</span>
@@ -965,12 +1060,12 @@
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([5.65805541, 5.3290277 , 5.16451385, 5.08225693, 5.04112846,
-       5.02056423, 5.01028212, 5.00514106, 5.00257053, 5.00128526])
+array([6.34514725, 5.67257362, 5.33628681, 5.16814341, 5.0840717 ,
+       5.04203585, 5.02101793, 5.01050896, 5.00525448, 5.00262724])
 </pre></div></div>
 </div>
 <h2 id="Fitting-the-model">Fitting the model<a class="headerlink" href="#Fitting-the-model" title="Link to this heading">¶</a></h2>
-<p>Next, the most is fit. The parameters are accurately estimated.</p>
+<p>Next, the model is fit. The parameters are precisely estimated.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[5]:
 </code></pre></div>
@@ -989,29 +1084,29 @@ array([5.65805541, 5.3290277 , 5.16451385, 5.08225693, 5.04112846,
 <div class="highlight"><pre>
                           AR-X - GARCH Model Results
 ==============================================================================
-Dep. Variable:                   data   R-squared:                       0.992
-Mean Model:                      AR-X   Adj. R-squared:                  0.992
-Vol Model:                      GARCH   Log-Likelihood:               -1391.04
-Distribution:                  Normal   AIC:                           2796.08
-Method:            Maximum Likelihood   BIC:                           2830.43
+Dep. Variable:                   data   R-squared:                       0.989
+Mean Model:                      AR-X   Adj. R-squared:                  0.989
+Vol Model:                      GARCH   Log-Likelihood:               -1374.68
+Distribution:                  Normal   AIC:                           2763.35
+Method:            Maximum Likelihood   BIC:                           2797.70
                                         No. Observations:                  999
-Date:                Tue, May 30 2023   Df Residuals:                      995
-Time:                        10:55:41   Df Model:                            4
+Date:                Mon, Nov 04 2024   Df Residuals:                      995
+Time:                        16:00:31   Df Model:                            4
                                Mean Model
 ========================================================================
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
-Const          2.9447      0.151     19.443  3.308e-84 [  2.648,  3.242]
-data[1]        0.6947  3.807e-03    182.482      0.000 [  0.687,  0.702]
-x0             1.9813  2.175e-02     91.078      0.000 [  1.939,  2.024]
-x1            -1.9620  2.564e-02    -76.519      0.000 [ -2.012, -1.912]
+Const          3.0982      0.146     21.173  1.708e-99 [  2.811,  3.385]
+data[1]        0.7027  3.517e-03    199.807      0.000 [  0.696,  0.710]
+x0             1.9744  2.083e-02     94.805      0.000 [  1.934,  2.015]
+x1            -2.0069  2.504e-02    -80.160      0.000 [ -2.056, -1.958]
                              Volatility Model
 ==========================================================================
                  coef    std err          t      P&gt;|t|    95.0% Conf. Int.
 --------------------------------------------------------------------------
-omega          0.0946  3.606e-02      2.622  8.733e-03 [2.389e-02,  0.165]
-alpha[1]       0.0974  2.496e-02      3.903  9.516e-05 [4.849e-02,  0.146]
-beta[1]        0.8083  5.059e-02     15.977  1.839e-57   [  0.709,  0.907]
+omega          0.0913  3.193e-02      2.859  4.246e-03 [2.871e-02,  0.154]
+alpha[1]       0.1510  3.318e-02      4.553  5.300e-06 [8.602e-02,  0.216]
+beta[1]        0.7601  5.362e-02     14.175  1.313e-45   [  0.655,  0.865]
 ==========================================================================
 
 Covariance estimator: robust
@@ -1121,133 +1216,133 @@ The shape is (2, 1, 10)
   <tbody>
     <tr>
       <th>990</th>
-      <td>17.638678</td>
-      <td>19.057943</td>
-      <td>19.305712</td>
-      <td>18.876070</td>
-      <td>18.090794</td>
-      <td>17.153279</td>
-      <td>16.187233</td>
-      <td>15.263806</td>
-      <td>14.420245</td>
-      <td>13.672511</td>
+      <td>6.427409</td>
+      <td>5.678505</td>
+      <td>5.550445</td>
+      <td>5.756834</td>
+      <td>6.127391</td>
+      <td>6.562077</td>
+      <td>7.003670</td>
+      <td>7.421078</td>
+      <td>7.799049</td>
+      <td>8.131789</td>
     </tr>
     <tr>
       <th>991</th>
-      <td>20.307394</td>
-      <td>20.095492</td>
-      <td>19.176459</td>
-      <td>18.008276</td>
-      <td>16.816890</td>
-      <td>15.707369</td>
-      <td>14.722133</td>
-      <td>13.871672</td>
-      <td>13.150830</td>
-      <td>12.547444</td>
+      <td>5.653403</td>
+      <td>5.212080</td>
+      <td>5.154577</td>
+      <td>5.359781</td>
+      <td>5.721542</td>
+      <td>6.159865</td>
+      <td>6.619864</td>
+      <td>7.066816</td>
+      <td>7.480757</td>
+      <td>7.851864</td>
     </tr>
     <tr>
       <th>992</th>
-      <td>18.286380</td>
-      <td>16.896235</td>
-      <td>15.586099</td>
-      <td>14.454254</td>
-      <td>13.517502</td>
-      <td>12.759810</td>
-      <td>12.154606</td>
-      <td>11.674450</td>
-      <td>11.294780</td>
-      <td>10.994971</td>
+      <td>5.204390</td>
+      <td>4.751193</td>
+      <td>4.580281</td>
+      <td>4.689833</td>
+      <td>5.005348</td>
+      <td>5.444598</td>
+      <td>5.940164</td>
+      <td>6.444023</td>
+      <td>6.925402</td>
+      <td>7.366767</td>
     </tr>
     <tr>
       <th>993</th>
-      <td>24.177049</td>
-      <td>22.846561</td>
-      <td>20.903832</td>
-      <td>18.944579</td>
-      <td>17.198290</td>
-      <td>15.728217</td>
-      <td>14.527010</td>
-      <td>13.561360</td>
-      <td>12.791967</td>
-      <td>12.181810</td>
+      <td>11.113016</td>
+      <td>11.420600</td>
+      <td>11.376927</td>
+      <td>11.198700</td>
+      <td>10.985574</td>
+      <td>10.780567</td>
+      <td>10.599841</td>
+      <td>10.447271</td>
+      <td>10.321479</td>
+      <td>10.219158</td>
     </tr>
     <tr>
       <th>994</th>
-      <td>21.476395</td>
-      <td>19.945167</td>
-      <td>18.325031</td>
-      <td>16.830889</td>
-      <td>15.536242</td>
-      <td>14.450638</td>
-      <td>13.557059</td>
-      <td>12.829543</td>
-      <td>12.241130</td>
-      <td>11.767149</td>
+      <td>12.110336</td>
+      <td>12.031316</td>
+      <td>11.721126</td>
+      <td>11.366508</td>
+      <td>11.041428</td>
+      <td>10.768919</td>
+      <td>10.550430</td>
+      <td>10.379393</td>
+      <td>10.247223</td>
+      <td>10.145753</td>
     </tr>
     <tr>
       <th>995</th>
-      <td>13.887372</td>
-      <td>11.827018</td>
-      <td>10.504285</td>
-      <td>9.701208</td>
-      <td>9.250338</td>
-      <td>9.029847</td>
-      <td>8.954356</td>
-      <td>8.965773</td>
-      <td>9.025626</td>
-      <td>9.109140</td>
+      <td>6.465793</td>
+      <td>6.492245</td>
+      <td>6.891241</td>
+      <td>7.382006</td>
+      <td>7.848326</td>
+      <td>8.249829</td>
+      <td>8.579405</td>
+      <td>8.843178</td>
+      <td>9.051418</td>
+      <td>9.214647</td>
     </tr>
     <tr>
       <th>996</th>
-      <td>12.091224</td>
-      <td>10.738291</td>
-      <td>9.893515</td>
-      <td>9.402421</td>
-      <td>9.147641</td>
-      <td>9.044580</td>
-      <td>9.034509</td>
-      <td>9.077894</td>
-      <td>9.148903</td>
-      <td>9.231197</td>
+      <td>10.907973</td>
+      <td>12.063593</td>
+      <td>12.730623</td>
+      <td>13.004653</td>
+      <td>13.002989</td>
+      <td>12.827806</td>
+      <td>12.556598</td>
+      <td>12.243377</td>
+      <td>11.923287</td>
+      <td>11.617573</td>
     </tr>
     <tr>
       <th>997</th>
-      <td>14.752402</td>
-      <td>14.165799</td>
-      <td>13.584948</td>
-      <td>13.038435</td>
-      <td>12.542245</td>
-      <td>12.103274</td>
-      <td>11.722401</td>
-      <td>11.396828</td>
-      <td>11.121754</td>
-      <td>10.891488</td>
+      <td>3.937348</td>
+      <td>4.132189</td>
+      <td>4.796268</td>
+      <td>5.575919</td>
+      <td>6.319854</td>
+      <td>6.972341</td>
+      <td>7.521071</td>
+      <td>7.972085</td>
+      <td>8.337976</td>
+      <td>8.632578</td>
     </tr>
     <tr>
       <th>998</th>
-      <td>15.530046</td>
-      <td>14.262848</td>
-      <td>13.244627</td>
-      <td>12.449407</td>
-      <td>11.837882</td>
-      <td>11.371370</td>
-      <td>11.016716</td>
-      <td>10.747264</td>
-      <td>10.542302</td>
-      <td>10.386034</td>
+      <td>-3.124113</td>
+      <td>-1.765012</td>
+      <td>0.196835</td>
+      <td>2.124228</td>
+      <td>3.789854</td>
+      <td>5.145754</td>
+      <td>6.215404</td>
+      <td>7.044957</td>
+      <td>7.682544</td>
+      <td>8.170559</td>
     </tr>
     <tr>
       <th>999</th>
-      <td>11.481761</td>
-      <td>10.462828</td>
-      <td>10.056773</td>
-      <td>9.917344</td>
-      <td>9.885242</td>
-      <td>9.890079</td>
-      <td>9.902827</td>
-      <td>9.913039</td>
-      <td>9.918147</td>
-      <td>9.918574</td>
+      <td>-6.115248</td>
+      <td>-4.480330</td>
+      <td>-2.291303</td>
+      <td>-0.131894</td>
+      <td>1.777204</td>
+      <td>3.379588</td>
+      <td>4.688134</td>
+      <td>5.740694</td>
+      <td>6.580315</td>
+      <td>7.247118</td>
     </tr>
   </tbody>
 </table>
@@ -1295,7 +1390,7 @@ The shape is (2, 1, 10)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-0.0
+np.float64(0.0)
 </pre></div></div>
 </div>
 <h2 id="x-input-array-sizes"><code class="docutils literal notranslate"><span class="pre">x</span></code> input array sizes<a class="headerlink" href="#x-input-array-sizes" title="Link to this heading">¶</a></h2>
@@ -1329,7 +1424,7 @@ The shape is (2, 1, 10)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-0.0
+np.float64(0.0)
 </pre></div></div>
 </div>
 <h2 id="Special-Cases-with-a-single-x-variable">Special Cases with a single <code class="docutils literal notranslate"><span class="pre">x</span></code> variable<a class="headerlink" href="#Special-Cases-with-a-single-x-variable" title="Link to this heading">¶</a></h2>
@@ -1351,29 +1446,29 @@ The shape is (2, 1, 10)
 <div class="highlight"><pre>
                           AR-X - GARCH Model Results
 ==============================================================================
-Dep. Variable:                   data   R-squared:                       0.955
-Mean Model:                      AR-X   Adj. R-squared:                  0.955
-Vol Model:                      GARCH   Log-Likelihood:               -2280.96
-Distribution:                  Normal   AIC:                           4573.92
-Method:            Maximum Likelihood   BIC:                           4603.36
+Dep. Variable:                   data   R-squared:                       0.933
+Mean Model:                      AR-X   Adj. R-squared:                  0.933
+Vol Model:                      GARCH   Log-Likelihood:               -2316.63
+Distribution:                  Normal   AIC:                           4645.26
+Method:            Maximum Likelihood   BIC:                           4674.70
                                         No. Observations:                  999
-Date:                Tue, May 30 2023   Df Residuals:                      996
-Time:                        10:55:42   Df Model:                            3
+Date:                Mon, Nov 04 2024   Df Residuals:                      996
+Time:                        16:00:32   Df Model:                            3
                                Mean Model
 ========================================================================
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
-Const         -6.4609      0.226    -28.561 2.064e-179 [ -6.904, -6.018]
-data[1]        0.7695  8.995e-03     85.552      0.000 [  0.752,  0.787]
-x0             1.7394  5.329e-02     32.643 1.021e-233 [  1.635,  1.844]
-                               Volatility Model
-=============================================================================
-                 coef    std err          t      P&gt;|t|       95.0% Conf. Int.
------------------------------------------------------------------------------
-omega          0.1073  7.460e-02      1.438      0.150   [-3.895e-02,  0.253]
-alpha[1]   8.6689e-03  1.513e-02      0.573      0.567 [-2.099e-02,3.832e-02]
-beta[1]        0.9717  2.616e-02     37.149 4.549e-302      [  0.920,  1.023]
-=============================================================================
+Const         -6.2299      0.257    -24.220 1.365e-129 [ -6.734, -5.726]
+data[1]        0.7464  1.038e-02     71.885      0.000 [  0.726,  0.767]
+x0             1.7550  5.777e-02     30.379 1.050e-202 [  1.642,  1.868]
+                             Volatility Model
+==========================================================================
+                 coef    std err          t      P&gt;|t|    95.0% Conf. Int.
+--------------------------------------------------------------------------
+omega          5.4304      1.840      2.952  3.157e-03   [  1.825,  9.036]
+alpha[1]       0.1112  4.061e-02      2.739  6.156e-03 [3.165e-02,  0.191]
+beta[1]    2.6000e-17      0.304  8.541e-17      1.000   [ -0.597,  0.597]
+==========================================================================
 
 Covariance estimator: robust
 </pre></div></div>
@@ -1423,8 +1518,8 @@ Covariance estimator: robust
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([[1.04095499, 1.27798546, 1.30149937, 1.53498654, 1.60825322,
-        1.53831759, 1.55948399, 1.49811376, 1.74794163, 1.54496175]])
+array([[0.91626075, 1.1470658 , 1.40030468, 1.41469616, 1.26955774,
+        1.29757613, 1.29802358, 1.41217752, 1.52628177, 1.49453252]])
 </pre></div></div>
 </div>
 <h3 id="Simulating-the-out-of-sample-x">Simulating the out-of-sample <code class="docutils literal notranslate"><span class="pre">x</span></code><a class="headerlink" href="#Simulating-the-out-of-sample-x" title="Link to this heading">¶</a></h3>
@@ -1472,9 +1567,323 @@ array([[1.04095499, 1.27798546, 1.30149937, 1.53498654, 1.60825322,
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([[2.95980851, 4.9043695 , 6.49587772, 7.50716786, 8.27211937,
-        8.71428305, 8.71321666, 8.67711577, 8.80764753, 9.17554847]])
+array([[3.08780599, 4.83111783, 6.40709867, 7.60549762, 8.40970494,
+        8.81096892, 8.59588943, 8.64276272, 8.97999513, 9.36824482]])
 </pre></div></div>
+</div>
+<h2 id="Conditional-Mean-Alignment-vs.-Forecast-Alignment">Conditional Mean Alignment vs. Forecast Alignment<a class="headerlink" href="#Conditional-Mean-Alignment-vs.-Forecast-Alignment" title="Link to this heading">¶</a></h2>
+<p>When fitting a model with exogenous variables, the data are aligned so that the values in <code class="docutils literal notranslate"><span class="pre">x[j]</span></code> are used to compute the conditional mean of <code class="docutils literal notranslate"><span class="pre">y[j]</span></code>. For example, in the case of an AR(1)-X, the model is</p>
+<div class="math notranslate nohighlight">
+\[Y_t = \phi_0 + \phi_1 Y_{t-1} + \beta X_{t} + \epsilon_t.\]</div>
+<p>We can recover the conditional mean by subtracting the residuals from the original data. When we do this we see that the conditional mean of observation 0 is missing since we need one lag of <span class="math notranslate nohighlight">\(Y\)</span> to fit the model.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[17]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">mod</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">exog</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="s2">&quot;ARX&quot;</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">-</span> <span class="n">res</span><span class="o">.</span><span class="n">resid</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[17]:
+</code></pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0            NaN
+1     -15.555672
+2     -15.225693
+3     -13.113944
+4      -4.405566
+         ...
+995     8.045397
+996     9.178801
+997     5.320586
+998    -1.552152
+999    -6.952927
+Length: 1000, dtype: float64
+</pre></div></div>
+</div>
+<h3 id="Conditional-Mean-uses-target-alignment">Conditional Mean uses target alignment<a class="headerlink" href="#Conditional-Mean-uses-target-alignment" title="Link to this heading">¶</a></h3>
+<p>When modeling the conditional mean in an AR-X, HAR-X, or LS model, the <span class="math notranslate nohighlight">\(X\)</span> data is target-aligned. This requires that when modeling the mean of <code class="docutils literal notranslate"><span class="pre">y[t]</span></code>, the correct values of <span class="math notranslate nohighlight">\(X\)</span> must appear in <code class="docutils literal notranslate"><span class="pre">x[t]</span></code>. Mathematically, the <span class="math notranslate nohighlight">\(X\)</span> matrix used when estimating a model should have the structure (using the Python indexing convention of a T-element data set having indices 0, 1, …, T-1):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\left[\begin{array}{c}
+X_{0}\\
+X_{1}\\
+\vdots\\
+X_{T-1}
+\end{array}\right]\end{split}\]</div>
+<h3 id="forecast-uses-origin-alignment"><code class="docutils literal notranslate"><span class="pre">forecast</span></code> uses origin alignment<a class="headerlink" href="#forecast-uses-origin-alignment" title="Link to this heading">¶</a></h3>
+<p>Forecasting with <span class="math notranslate nohighlight">\(X\)</span> values aligns them differently. When producing a 1-step-ahead forecast for <span class="math notranslate nohighlight">\(Y_{t+1}\)</span> using information available at time <span class="math notranslate nohighlight">\(t\)</span>, the <span class="math notranslate nohighlight">\(X\)</span> values used for this forecast must appear in for <code class="docutils literal notranslate"><span class="pre">t</span></code>. This is needed since when once wants to produce true out-of-sample forecasts (see below), it must be the case that the final row of <code class="docutils literal notranslate"><span class="pre">x</span></code> passed <code class="docutils literal notranslate"><span class="pre">forecast</span></code> must all occur after the final time stamp of the most recent <span class="math notranslate nohighlight">\(Y\)</span> value. Mathematically, the <span class="math notranslate nohighlight">\(X\)</span>
+matrix used in forecasting should have the following structure (using Python indexing convention so that a <span class="math notranslate nohighlight">\(T\)</span> observation dataset will have indices 0, 1, …, T-1).</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\left[\begin{array}{cccc}
+E\left[X_{1}|\mathcal{F}_0\right] &amp; E\left[X_{2}|\mathcal{F}_0\right] &amp; \ldots &amp; E\left[X_{h|\mathcal{F}_0}\right]\\
+E\left[X_{2}|\mathcal{F}_1\right] &amp; E\left[X_{3}|\mathcal{F}_0\right] &amp; \ldots &amp; E\left[X_{h+1}|\mathcal{F}_1\right]\\
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots\\
+E\left[X_{T}|\mathcal{F}_{T-1}\right] &amp; E\left[X_{T+1}|\mathcal{F}_{T-1}\right] &amp; \ldots &amp; E\left[X_{T+h-1}|\mathcal{F}_{T-1}\right]
+\end{array}\right]\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(|\mathcal{F}_{s}\)</span> is the time-<span class="math notranslate nohighlight">\(s\)</span> information set.</p>
+<p>If you use the same <code class="docutils literal notranslate"><span class="pre">x</span></code> value in the model when forecasting, you will see different values due to this alignment difference. Naively using the same <code class="docutils literal notranslate"><span class="pre">x</span></code> values ie equivalent to setting</p>
+<div class="math notranslate nohighlight">
+\[E\left[X_{s}|\mathcal{F}_{s-1} \right] = X_{s-1}\]</div>
+<p>In general this would not be correct when forecasting, and will always produce forecasts that differ from the conditional mean. In order to recover the conditional mean using the forecast function, it is necessary to <code class="docutils literal notranslate"><span class="pre">shift</span></code> the <span class="math notranslate nohighlight">\(X\)</span> values by -1, so that once shifted, the <code class="docutils literal notranslate"><span class="pre">x</span></code> values will have the relationship</p>
+<div class="math notranslate nohighlight">
+\[E\left[X_{s}|\mathcal{F}_{s-1} \right] = X_{s} .\]</div>
+<p>Here we shift the <span class="math notranslate nohighlight">\(X\)</span> data by <code class="docutils literal notranslate"><span class="pre">-1</span></code> so <code class="docutils literal notranslate"><span class="pre">x[s]</span></code> is treated as being in the information set for <code class="docutils literal notranslate"><span class="pre">y[s-1]</span></code>. Also, note that the final forecast is <code class="docutils literal notranslate"><span class="pre">NaN</span></code>. Conceptually this must be the case because the value of <span class="math notranslate nohighlight">\(X\)</span> at 999 should be ahead of 999 (i.e., at observation 1,000), and we do not have this value.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[18]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">exog_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="n">exog</span><span class="p">[[</span><span class="n">col</span><span class="p">]]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">exog</span><span class="p">}</span>
+<span class="n">fcast</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">exog_dict</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">fcast</span><span class="o">.</span><span class="n">mean</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[18]:
+</code></pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>h.1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>-15.555672</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>-15.225693</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>-13.113944</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>-4.405566</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>-1.300279</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>995</th>
+      <td>9.178801</td>
+    </tr>
+    <tr>
+      <th>996</th>
+      <td>5.320586</td>
+    </tr>
+    <tr>
+      <th>997</th>
+      <td>-1.552152</td>
+    </tr>
+    <tr>
+      <th>998</th>
+      <td>-6.952927</td>
+    </tr>
+    <tr>
+      <th>999</th>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+<p>1000 rows × 1 columns</p>
+</div></div>
+</div>
+<h3 id="(Nearly)-out-of-sample-forecasts">(Nearly) out-of-sample forecasts<a class="headerlink" href="#(Nearly)-out-of-sample-forecasts" title="Link to this heading">¶</a></h3>
+<p>These “in-sample” forecasts are not really forecasts at all but are just fitted values with a different alignment. If you want real (nearly) out-of-sample forecasts<span class="math notranslate nohighlight">\(\dagger\)</span>, it is necessary to replace the actual values of <span class="math notranslate nohighlight">\(X\)</span> with their conditional expectation. This can be done by taking the fitted values from AR(1) models of the <span class="math notranslate nohighlight">\(X\)</span> variables.</p>
+<p><span class="math notranslate nohighlight">\(\dagger\)</span> These are not true out-of-sample since the parameters were estimated using data from that same range of indices where these forecasts target. True out-of-sample requires both using forecast <span class="math notranslate nohighlight">\(X\)</span> values and parameters estimated without the period being forecasted.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[19]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">res0</span> <span class="o">=</span> <span class="n">ARX</span><span class="p">(</span><span class="n">exog</span><span class="p">[</span><span class="s2">&quot;x0&quot;</span><span class="p">],</span> <span class="n">lags</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">res1</span> <span class="o">=</span> <span class="n">ARX</span><span class="p">(</span><span class="n">exog</span><span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">],</span> <span class="n">lags</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">forecast_x</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">res0</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">res1</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+<span class="n">forecast_x</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;x0f&quot;</span><span class="p">,</span> <span class="s2">&quot;x1f&quot;</span><span class="p">]</span>
+<span class="n">in_samp_forcast_exog</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x0&quot;</span><span class="p">:</span> <span class="n">forecast_x</span><span class="p">[[</span><span class="s2">&quot;x0f&quot;</span><span class="p">]],</span> <span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="n">forecast_x</span><span class="p">[[</span><span class="s2">&quot;x1f&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)}</span>
+<span class="n">fcast</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">in_samp_forcast_exog</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">fcast</span><span class="o">.</span><span class="n">mean</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[19]:
+</code></pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>h.1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>-13.425601</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>-13.914905</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>-14.427516</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>-8.946122</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1.765684</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>995</th>
+      <td>6.687221</td>
+    </tr>
+    <tr>
+      <th>996</th>
+      <td>10.632919</td>
+    </tr>
+    <tr>
+      <th>997</th>
+      <td>2.182969</td>
+    </tr>
+    <tr>
+      <th>998</th>
+      <td>-2.408569</td>
+    </tr>
+    <tr>
+      <th>999</th>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+<p>1000 rows × 1 columns</p>
+</div></div>
+</div>
+<h3 id="True-out-of-sample-forecasts">True out-of-sample forecasts<a class="headerlink" href="#True-out-of-sample-forecasts" title="Link to this heading">¶</a></h3>
+<p>In order to make a true out-of-sample prediction, we need the expected values of <code class="docutils literal notranslate"><span class="pre">X</span></code> from the end of the data we have. These can be constructed by forecasting the two <span class="math notranslate nohighlight">\(X\)</span> variables and then passing these values as <code class="docutils literal notranslate"><span class="pre">x</span></code> to <code class="docutils literal notranslate"><span class="pre">forecast</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[20]:
+</code></pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">mod</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">exog</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="s2">&quot;ARX&quot;</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+
+<span class="n">actual_x_oos</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;x0&quot;</span><span class="p">:</span> <span class="n">res0</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span>
+    <span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="n">res1</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">fcasts</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">horizon</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">actual_x_oos</span><span class="p">)</span>
+<span class="n">fcasts</span><span class="o">.</span><span class="n">mean</span>
+</code></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[20]:
+</code></pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>h.01</th>
+      <th>h.02</th>
+      <th>h.03</th>
+      <th>h.04</th>
+      <th>h.05</th>
+      <th>h.06</th>
+      <th>h.07</th>
+      <th>h.08</th>
+      <th>h.09</th>
+      <th>h.10</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>999</th>
+      <td>-6.014692</td>
+      <td>-4.324836</td>
+      <td>-2.119601</td>
+      <td>0.036138</td>
+      <td>1.935561</td>
+      <td>3.529482</td>
+      <td>4.833372</td>
+      <td>5.885207</td>
+      <td>6.72714</td>
+      <td>7.398171</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 </div>
 
 
@@ -1543,7 +1952,7 @@ array([[2.95980851, 4.9043695 , 6.49587772, 7.50716786, 8.27211937,
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    8.1.3.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
