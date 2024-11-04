@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.univariate.HARX.forecast - arch v7.1.1 (+13)</title>
+        <title>arch.univariate.HARX.forecast - arch v7.1.1 (+16)</title>
       
     
 
@@ -92,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.1.1 (+13)" class="md-header__button md-logo" aria-label="arch v7.1.1 (+13)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.1.1 (+16)" class="md-header__button md-logo" aria-label="arch v7.1.1 (+16)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -102,7 +102,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.1.1 (+13)
+            arch v7.1.1 (+16)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -189,10 +189,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.1.1 (+13)" class="md-nav__button md-logo" aria-label="arch v7.1.1 (+13)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.1.1 (+16)" class="md-nav__button md-logo" aria-label="arch v7.1.1 (+16)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.1.1 (+13)
+    arch v7.1.1 (+16)
   </label>
   
     <div class="md-nav__source">
@@ -1374,7 +1374,9 @@ periods and nobs is the original shape of y. For example, if a
 single series of forecasts are made from the end of the sample
 with a horizon of 10, then the input can be (1, 10). Alternatively,
 if the original data had 1000 observations, then the input can be
-(1000, 10), and only the final row is used to produce forecasts.</p></li>
+(1000, 10), and only the final row is used to produce forecasts.
+When using an (nobs, horizon) array, the values much be aligned
+so that all values in row t are all out-of-sample at time-t.</p></li>
 <li><p>A dictionary of 2-d array-like: This format is identical to the
 previous except that the dictionary keys must match the names of
 the exog variables.  Requires that the exog variables were
@@ -1386,7 +1388,7 @@ the exogenous variables.</p></li>
 </ul>
 <p>Due to the complexity required to accommodate all scenarios, please
 see the example notebook that demonstrates the valid formats for
-x.</p>
+x, and discusses alignment.</p>
 <div class="admonition versionadded">
 <p class="admonition-title"><span class="versionmodified added">Added in version 4.19.</span></p>
 </div>

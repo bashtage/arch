@@ -15,7 +15,7 @@
     
   
       
-        <title>Volatility Scenarios - arch v7.1.1 (+13)</title>
+        <title>Volatility Scenarios - arch v7.1.1 (+16)</title>
       
     
 
@@ -93,7 +93,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v7.1.1 (+13)" class="md-header__button md-logo" aria-label="arch v7.1.1 (+13)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.1.1 (+16)" class="md-header__button md-logo" aria-label="arch v7.1.1 (+16)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -103,7 +103,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.1.1 (+13)
+            arch v7.1.1 (+16)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -190,10 +190,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v7.1.1 (+13)" class="md-nav__button md-logo" aria-label="arch v7.1.1 (+13)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.1.1 (+16)" class="md-nav__button md-logo" aria-label="arch v7.1.1 (+16)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.1.1 (+13)
+    arch v7.1.1 (+16)
   </label>
   
     <div class="md-nav__source">
@@ -828,8 +828,8 @@ Vol Model:                  GJR-GARCH   Log-Likelihood:               -8196.75
 Distribution:                  Normal   AIC:                           16403.5
 Method:            Maximum Likelihood   BIC:                           16436.1
                                         No. Observations:                 5030
-Date:                Tue, May 30 2023   Df Residuals:                     5029
-Time:                        10:55:35   Df Model:                            1
+Date:                Mon, Nov 04 2024   Df Residuals:                     5029
+Time:                        11:37:16   Df Model:                            1
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
@@ -846,7 +846,7 @@ beta[1]        0.9100  1.107e-02     82.232      0.000      [  0.888,  0.932]
 =============================================================================
 
 Covariance estimator: robust
-ARCHModelResult, id: 0x202821906a0
+ARCHModelResult, id: 0x7fa69c52dd50
 </pre></div></div>
 </div>
 <p>GJR-GARCH models support analytical forecasts, which is the default. The forecasts are produced for all of 2017 using the estimated model parameters.</p>
@@ -866,9 +866,9 @@ ARCHModelResult, id: 0x202821906a0
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-                h.01      h.02      h.03      h.04      h.05      h.06
+                h.01      h.02      h.03      h.04      h.05      h.06  \
 Date
-2017-01-03  0.623295  0.637251  0.647817  0.663746  0.673404  0.687952  \
+2017-01-03  0.623295  0.637251  0.647817  0.663746  0.673404  0.687952
 2017-01-04  0.599455  0.617539  0.635838  0.649695  0.659733  0.667267
 2017-01-05  0.567297  0.583415  0.597571  0.613065  0.621790  0.636180
 2017-01-06  0.542506  0.555688  0.570280  0.585426  0.595551  0.608487
@@ -900,9 +900,9 @@ Date
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-                h.01      h.02      h.03      h.04      h.05      h.06
+                h.01      h.02      h.03      h.04      h.05      h.06  \
 Date
-2017-01-03  0.623295  0.637504  0.651549  0.665431  0.679154  0.692717  \
+2017-01-03  0.623295  0.637504  0.651549  0.665431  0.679154  0.692717
 2017-01-04  0.599455  0.613940  0.628257  0.642408  0.656397  0.670223
 2017-01-05  0.567297  0.582153  0.596837  0.611352  0.625699  0.639880
 2017-01-06  0.542506  0.557649  0.572616  0.587410  0.602034  0.616488
@@ -944,9 +944,9 @@ Date
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-                h.01      h.02      h.03      h.04      h.05      h.06
+                h.01      h.02      h.03      h.04      h.05      h.06  \
 Date
-2017-01-03  0.623295  0.685911  0.745202  0.821112  0.886289  0.966737  \
+2017-01-03  0.623295  0.685911  0.745202  0.821112  0.886289  0.966737
 2017-01-04  0.599455  0.668181  0.743119  0.811486  0.877539  0.936587
 2017-01-05  0.567297  0.629195  0.691225  0.758891  0.816663  0.893986
 2017-01-06  0.542506  0.596301  0.656603  0.721505  0.778286  0.849680
@@ -957,7 +957,7 @@ Date
 2017-01-03  0.970796  0.977504  0.982202  0.992547
 2017-01-04  0.955295  0.965540  0.966432  0.974248
 2017-01-05  0.905952  0.915208  0.930777  0.938636
-2017-01-06  0.856175  0.873865  0.886221  0.890002
+2017-01-06  0.856175  0.873866  0.886221  0.890002
 2017-01-09  0.851104  0.864591  0.874696  0.894397
 </pre></div></div>
 </div>
@@ -996,9 +996,9 @@ parameter.</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-                h.01      h.02      h.03      h.04      h.05      h.06
+                h.01      h.02      h.03      h.04      h.05      h.06  \
 Date
-2017-01-03  0.623295  0.676081  0.734322  0.779325  0.828189  0.898202  \
+2017-01-03  0.623295  0.676081  0.734322  0.779325  0.828189  0.898202
 2017-01-04  0.599455  0.645237  0.697133  0.750169  0.816280  0.888417
 2017-01-05  0.567297  0.610493  0.665995  0.722954  0.777860  0.840369
 2017-01-06  0.542506  0.597387  0.644534  0.691387  0.741206  0.783319
@@ -1008,7 +1008,7 @@ Date
 Date
 2017-01-03  0.958215  1.043704  1.124684  1.203893
 2017-01-04  0.945120  1.013400  1.084042  1.158148
-2017-01-05  0.889032  0.961424  1.022412  1.097192
+2017-01-05  0.889032  0.961424  1.022413  1.097192
 2017-01-06  0.840667  0.895559  0.957266  1.019497
 2017-01-09  0.820788  0.887791  0.938708  1.028614
 </pre></div></div>
