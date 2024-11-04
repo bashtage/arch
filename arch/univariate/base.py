@@ -1003,6 +1003,8 @@ class ARCHModel(metaclass=ABCMeta):
               with a horizon of 10, then the input can be (1, 10). Alternatively,
               if the original data had 1000 observations, then the input can be
               (1000, 10), and only the final row is used to produce forecasts.
+              When using an (nobs, horizon) array, the values much be aligned
+              so that all values in row t are all out-of-sample at time-t.
             * A dictionary of 2-d array-like: This format is identical to the
               previous except that the dictionary keys must match the names of
               the exog variables.  Requires that the exog variables were
@@ -1014,7 +1016,7 @@ class ARCHModel(metaclass=ABCMeta):
 
             Due to the complexity required to accommodate all scenarios, please
             see the example notebook that demonstrates the valid formats for
-            x.
+            x, and discusses alignment.
 
             .. versionadded:: 4.19
 
