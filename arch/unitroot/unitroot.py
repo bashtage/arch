@@ -17,6 +17,7 @@ from numpy import (
     diag,
     diff,
     empty,
+    float64,
     full,
     hstack,
     inf,
@@ -235,7 +236,7 @@ def _autolag_ols_low_memory(
         trendx.append(empty((nobs, 0)))
     else:
         if "tt" in trend:
-            tt = arange(1, nobs + 1, dtype=float)[:, None] ** 2
+            tt = arange(1, nobs + 1, dtype=float64)[:, None] ** 2
             tt *= sqrt(5) / float(nobs) ** (5 / 2)
             trendx.append(tt)
         if "t" in trend:
@@ -402,6 +403,7 @@ def _df_select_lags(
     if max_lags is None:
         max_lags = int(ceil(12.0 * power(nobs / 100.0, 1 / 4.0)))
         max_lags = max(min(max_lags, max_max_lags), 0)
+        assert isinstance(max_lags, int)
         if max_lags > 119:
             warnings.warn(
                 "The value of max_lags was not specified and has been calculated as "
@@ -1970,8 +1972,8 @@ def auto_bandwidth(
     float
         The estimated optimal bandwidth.
     """
-    y = ensure1d(y, "y")
-    if y.shape[0] < 2:
+    y_arr = ensure1d(y, "y")
+    if y_arr.shape[0] < 2:
         raise ValueError("Data must contain more than one observation")
 
     lower_kernel = kernel.lower()
@@ -1987,12 +1989,12 @@ def auto_bandwidth(
     else:
         raise ValueError("Unknown kernel")
 
-    n = int(4 * ((len(y) / 100) ** n_power))
+    n = int(4 * ((len(y_arr) / 100) ** n_power))
     sig = (n + 1) * [0]
 
     for i in range(n + 1):
-        a = list(y[i:])
-        b = list(y[: len(y) - i])
+        a = list(y_arr[i:])
+        b = list(y_arr[: len(y_arr) - i])
         sig[i] = int(npsum([i * j for (i, j) in zip(a, b)]))
 
     sigma_m1 = sig[1 : len(sig)]  # sigma without the 1st element
@@ -2018,6 +2020,6 @@ def auto_bandwidth(
         else:  # kernel == "qs":
             gamma = 1.3221 * (((s2 / s0) ** 2) ** t_power)
 
-    bandwidth = gamma * power(len(y), t_power)
+    bandwidth = gamma * power(len(y_arr), t_power)
 
     return bandwidth

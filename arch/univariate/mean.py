@@ -5,7 +5,7 @@ Mean models to use with ARCH processes.  All mean models must inherit from
 
 from collections.abc import Mapping, Sequence
 import copy
-from typing import TYPE_CHECKING, Callable, Optional, Union, cast
+from typing import TYPE_CHECKING, Callable, Optional, Union, cast, overload
 
 import numpy as np
 import pandas as pd
@@ -546,7 +546,9 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             if isinstance(self._x, pd.Series):
                 self._x = pd.DataFrame(self._x)
             elif self._x.ndim == 1:
+                assert isinstance(self._x, np.ndarray)
                 self._x = np.asarray(self._x)[:, None]
+            assert isinstance(self._x, (np.ndarray, pd.DataFrame))
             if self._x.ndim != 2 or self._x.shape[0] != self._y.shape[0]:
                 raise ValueError(
                     "x must be nobs by n, where nobs is the same as "
@@ -1722,6 +1724,38 @@ class ARCHInMean(ARX):
 
     def starting_values(self) -> Float64Array:
         return np.r_[super().starting_values(), 0.0]
+
+    @overload
+    def _loglikelihood(
+        self,
+        parameters: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+    ) -> float:  # pragma: no cover
+        ...  # pragma: no cover
+
+    @overload
+    def _loglikelihood(
+        self,
+        parameters: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+        individual: Literal[False] = ...,
+    ) -> float:  # pragma: no cover
+        ...  # pragma: no cover
+
+    @overload
+    def _loglikelihood(
+        self,
+        parameters: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+        individual: Literal[True] = ...,
+    ) -> Float64Array:  # pragma: no cover
+        ...  # pragma: no cover
 
     def _loglikelihood(
         self,

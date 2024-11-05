@@ -1271,7 +1271,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         pos_data: list[Union[NDArray, pd.DataFrame, pd.Series]] = []
         for values in self._args:
             if isinstance(values, (pd.Series, pd.DataFrame)):
-                assert isinstance(indices, NDArray)
+                assert isinstance(indices, np.ndarray)
                 pos_data.append(values.iloc[indices])
             else:
                 assert isinstance(values, np.ndarray)
@@ -1279,7 +1279,7 @@ class IIDBootstrap(metaclass=DocStringInheritor):
         named_data: dict[str, Union[NDArray, pd.DataFrame, pd.Series]] = {}
         for key, values in self._kwargs.items():
             if isinstance(values, (pd.Series, pd.DataFrame)):
-                assert isinstance(indices, NDArray)
+                assert isinstance(indices, np.ndarray)
                 named_data[key] = values.iloc[indices]
             else:
                 assert isinstance(values, np.ndarray)

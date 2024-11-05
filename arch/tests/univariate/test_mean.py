@@ -29,6 +29,7 @@ from arch.data import sp500
 from arch.typing import Literal
 from arch.univariate.base import (
     ARCHModel,
+    ARCHModelFixedResult,
     ARCHModelForecast,
     ARCHModelResult,
     _align_forecast,
@@ -139,7 +140,7 @@ volatility_processes = analytic_volatility_processes + other_volatility_processe
         for a, b in itertools.product(simple_mean_models, analytic_volatility_processes)
     ],
 )
-def forecastable_model(request):
+def forecastable_model(request) -> tuple[ARCHModelResult, ARCHModelFixedResult]:
     mod: ARCHModel
     vol: VolatilityProcess
     mod, vol = request.param
