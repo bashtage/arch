@@ -2111,6 +2111,7 @@ class EWMAVariance(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         var_bounds: Float64Array,
     ) -> Float64Array:
         lam = parameters[0] if self._estimate_lam else self.lam
+        assert isinstance(lam, float)
         return ewma_recursion(lam, resids, sigma2, resids.shape[0], float(backcast))
 
     def constraints(self) -> tuple[Float64Array, Float64Array]:

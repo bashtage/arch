@@ -7,7 +7,7 @@ from collections.abc import Sequence
 from copy import deepcopy
 import datetime as dt
 from functools import cached_property
-from typing import Any, Callable, Optional, Union, cast
+from typing import Any, Callable, Optional, Union, cast, overload
 import warnings
 
 import numpy as np
@@ -410,6 +410,38 @@ class ARCHModel(metaclass=ABCMeta):
             deepcopy(self),
         )
 
+    @overload
+    def _loglikelihood(
+        self,
+        parameters: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+    ) -> float:  # pragma: no cover
+        ...  # pragma: no cover
+
+    @overload
+    def _loglikelihood(
+        self,
+        parameters: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+        individual: Literal[False] = ...,
+    ) -> float:  # pragma: no cover
+        ...  # pragma: no cover
+
+    @overload
+    def _loglikelihood(
+        self,
+        parameters: Float64Array,
+        sigma2: Float64Array,
+        backcast: Union[float, Float64Array],
+        var_bounds: Float64Array,
+        individual: Literal[True] = ...,
+    ) -> Float64Array:  # pragma: no cover
+        ...  # pragma: no cover
+
     def _loglikelihood(
         self,
         parameters: Float64Array,
@@ -706,6 +738,7 @@ class ARCHModel(metaclass=ABCMeta):
         if starting_values is not None:
             assert sv is not None
             sv = ensure1d(sv, "starting_values")
+            assert isinstance(sv, (np.ndarray, pd.Series))
             valid = sv.shape[0] == num_params
             if a.shape[0] > 0:
                 satisfies_constraints = a.dot(sv) - b >= 0
@@ -1362,7 +1395,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         ax = fig.add_subplot(2, 1, 1)
         ax.plot(self._index.values, self.resid / self.conditional_volatility)
         ax.set_title("Standardized Residuals")
-        ax.axes.xaxis.set_ticklabels([])
+        ax.set_xticklabels([])
         _set_tight_x(ax, self._index)
 
         ax = fig.add_subplot(2, 1, 2)
