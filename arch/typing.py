@@ -4,6 +4,7 @@ from typing import Any, Callable, Literal, Optional, TypeVar, Union
 
 import numpy as np
 from pandas import DataFrame, Series, Timestamp
+from numpy.typing import NDArray
 
 __all__ = [
     "NDArray",
@@ -30,14 +31,13 @@ __all__ = [
     "BootstrapIndexT",
 ]
 
-NDArray = Union[np.ndarray]
-Float64Array = np.ndarray[Any, np.dtype[np.double]]  # pragma: no cover
-Int64Array = np.ndarray[Any, np.dtype[np.longlong]]  # pragma: no cover
-Int32Array = np.ndarray[Any, np.dtype[np.intc]]  # pragma: no cover
-IntArray = np.ndarray[Any, np.dtype[np.int_]]  # pragma: no cover
-BoolArray = np.ndarray[Any, np.dtype[np.bool_]]  # pragma: no cover
-AnyArray = np.ndarray[Any, Any]  # pragma: no cover
-Uint32Array = np.ndarray[Any, np.dtype[np.uintc]]  # pragma: no cover
+Float64Array = NDArray[np.float64]           # For float64 (or double)
+Int64Array = NDArray[np.int64]               # For int64 (np.longlong)
+Int32Array = NDArray[np.int32]               # For int32 (np.intc)
+IntArray = NDArray[np.int_]                  # For platform-dependent int
+BoolArray = NDArray[np.bool_]                # For boolean arrays
+AnyArray = NDArray[Any]                      # For arrays with any dtype and shape
+Uint32Array = NDArray[np.uint32]             # For unsigned 32-bit int (np.uintc)
 
 BootstrapIndexT = Union[
     Int64Array, tuple[Int64Array, ...], tuple[list[Int64Array], dict[str, Int64Array]]
