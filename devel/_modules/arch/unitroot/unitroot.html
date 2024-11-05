@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.unitroot.unitroot - arch 7.2.0</title>
+        <title>arch.unitroot.unitroot - arch v7.2.1 (+2)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch 7.2.0" class="md-header__button md-logo" aria-label="arch 7.2.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+2)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch 7.2.0
+            arch v7.2.1 (+2)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch 7.2.0" class="md-nav__button md-logo" aria-label="arch 7.2.0" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+2)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch 7.2.0
+    arch v7.2.1 (+2)
   </label>
   
     <div class="md-nav__source">
@@ -399,6 +399,7 @@
     <span class="n">diag</span><span class="p">,</span>
     <span class="n">diff</span><span class="p">,</span>
     <span class="n">empty</span><span class="p">,</span>
+    <span class="n">float64</span><span class="p">,</span>
     <span class="n">full</span><span class="p">,</span>
     <span class="n">hstack</span><span class="p">,</span>
     <span class="n">inf</span><span class="p">,</span>
@@ -617,7 +618,7 @@
         <span class="n">trendx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">empty</span><span class="p">((</span><span class="n">nobs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="s2">&quot;tt&quot;</span> <span class="ow">in</span> <span class="n">trend</span><span class="p">:</span>
-            <span class="n">tt</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nobs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="n">tt</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nobs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float64</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
             <span class="n">tt</span> <span class="o">*=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
             <span class="n">trendx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tt</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;t&quot;</span> <span class="ow">in</span> <span class="n">trend</span><span class="p">:</span>
@@ -784,6 +785,7 @@
     <span class="k">if</span> <span class="n">max_lags</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">max_lags</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="mf">12.0</span> <span class="o">*</span> <span class="n">power</span><span class="p">(</span><span class="n">nobs</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">4.0</span><span class="p">)))</span>
         <span class="n">max_lags</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">max_lags</span><span class="p">,</span> <span class="n">max_max_lags</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_lags</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">max_lags</span> <span class="o">&gt;</span> <span class="mi">119</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                 <span class="s2">&quot;The value of max_lags was not specified and has been calculated as &quot;</span>
@@ -2372,8 +2374,8 @@
 <span class="sd">    float</span>
 <span class="sd">        The estimated optimal bandwidth.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="n">y_arr</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">y_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Data must contain more than one observation&quot;</span><span class="p">)</span>
 
     <span class="n">lower_kernel</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -2389,12 +2391,12 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown kernel&quot;</span><span class="p">)</span>
 
-    <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">**</span> <span class="n">n_power</span><span class="p">))</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">y_arr</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">**</span> <span class="n">n_power</span><span class="p">))</span>
     <span class="n">sig</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">:])</span>
-        <span class="n">b</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">y_arr</span><span class="p">[</span><span class="n">i</span><span class="p">:])</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">y_arr</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_arr</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span>
         <span class="n">sig</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">npsum</span><span class="p">([</span><span class="n">i</span> <span class="o">*</span> <span class="n">j</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)]))</span>
 
     <span class="n">sigma_m1</span> <span class="o">=</span> <span class="n">sig</span><span class="p">[</span><span class="mi">1</span> <span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">sig</span><span class="p">)]</span>  <span class="c1"># sigma without the 1st element</span>
@@ -2420,7 +2422,7 @@
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># kernel == &quot;qs&quot;:</span>
             <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.3221</span> <span class="o">*</span> <span class="p">(((</span><span class="n">s2</span> <span class="o">/</span> <span class="n">s0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="n">t_power</span><span class="p">)</span>
 
-    <span class="n">bandwidth</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">power</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">t_power</span><span class="p">)</span>
+    <span class="n">bandwidth</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">power</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_arr</span><span class="p">),</span> <span class="n">t_power</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">bandwidth</span></div>
 
