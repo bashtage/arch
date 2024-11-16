@@ -2962,7 +2962,7 @@ class FIGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
     .. math::
 
-        h_t = \omega + [1-\beta L - \phi L  (1-L)^d] \epsilon_t^2 + \beta h_{t-1}
+        h_t = \omega + [1-\beta L - (1-\phi L)  (1-L)^d] \epsilon_t^2 + \beta h_{t-1}
 
     where ``L`` is the lag operator and ``d`` is the fractional differencing
     parameter. The model is estimated using the ARCH(:math:`\infty`)
