@@ -37,7 +37,7 @@ echo $CMD
 eval $CMD
 
 if [ "${PIP_PRE}" = true ]; then
-  python -m pip install matplotlib cython --upgrade
+  python -m pip install matplotlib cython formulaic --upgrade
   python -m pip uninstall -y numpy pandas scipy matplotlib statsmodels
   python -m pip install -i https://pypi.anaconda.org/scientific-python-nightly-wheels/simple numpy pandas scipy matplotlib statsmodels --upgrade --use-deprecated=legacy-resolver
 fi
