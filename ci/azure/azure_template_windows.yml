@@ -26,6 +26,8 @@ jobs:
         python.version: '3.11'
       python312_win_latest:
         python.version: '3.12'
+      python313_win_latest:
+        python.version: '3.12'
     maxParallel: 10
 
   steps:

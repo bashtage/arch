@@ -16,12 +16,12 @@ pytest-xdist
 pytest-cov
 
 # formatting
-black[jupyter]~=24.8.0
-isort~=5.0
+black[jupyter]~=24.10.0
+isort~=5.12
 colorama
 flake8
 mypy
-ruff
+ruff>=0.8.6
 pyupgrade>=3.4.0
 jupyterlab-code-formatter
 

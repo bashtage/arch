@@ -120,7 +120,7 @@ SHORT_TREND_DESCRIPTION = {
 
 
 def _is_reduced_rank(
-    x: Union[Float64Array, DataFrame]
+    x: Union[Float64Array, DataFrame],
 ) -> tuple[bool, Union[int, None]]:
     """
     Check if a matrix has reduced rank preferring quick checks

@@ -136,7 +136,7 @@ if __name__ == "__main__":
         results = np.zeros((len(percentiles), len(T), EX_NUM))
 
         for i in range(EX_NUM):
-            print(f"Experiment Number {i + 1} of {EX_NUM} " "(trend {tr})")
+            print(f"Experiment Number {i + 1} of {EX_NUM} (trend {tr})")
             now = datetime.datetime.now()
             parallel, p_func, n_jobs = parallel_func(
                 wrapper, n_jobs=NUM_JOBS, verbose=2
