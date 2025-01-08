@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.univariate.base - arch v7.2.1 (+6)</title>
+        <title>arch.univariate.base - arch v7.2.1 (+10)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+6)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+10)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+10)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+6)
+            arch v7.2.1 (+10)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+6)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+10)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+10)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+6)
+    arch v7.2.1 (+10)
   </label>
   
     <div class="md-nav__source">
@@ -427,8 +427,13 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">WaldTestStatistic</span>
 
+<span class="n">MPL_LT_310</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.figure</span><span class="w"> </span><span class="kn">import</span> <span class="n">Figure</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">packaging.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">Version</span>
+
+    <span class="n">MPL_LT_310</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;3.10.0&quot;</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 
@@ -2070,7 +2075,7 @@
 
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">use_date</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dep_var</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">)</span>
-        <span class="n">plot_fn</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot_date</span> <span class="k">if</span> <span class="n">use_date</span> <span class="k">else</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span>
+        <span class="n">plot_fn</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot_date</span> <span class="k">if</span> <span class="n">use_date</span> <span class="ow">and</span> <span class="n">MPL_LT_310</span> <span class="k">else</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span>
         <span class="n">x_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dep_var</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">plot_mean</span><span class="p">:</span>
             <span class="n">y_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dep_var</span><span class="p">)</span>

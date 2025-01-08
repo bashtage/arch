@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.univariate.volatility - arch v7.2.1 (+6)</title>
+        <title>arch.univariate.volatility - arch v7.2.1 (+10)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+6)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+10)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+10)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+6)
+            arch v7.2.1 (+10)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+6)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+10)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+10)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+6)
+    arch v7.2.1 (+10)
   </label>
   
     <div class="md-nav__source">
@@ -898,8 +898,7 @@
         <span class="n">std_resid</span> <span class="o">=</span> <span class="n">resids</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_bootstrap_obs</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;start must include more than </span><span class="si">{}</span><span class="s2"> &quot;</span>
-                <span class="s2">&quot;observations&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_bootstrap_obs</span><span class="p">)</span>
+                <span class="sa">f</span><span class="s2">&quot;start must include more than </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_bootstrap_obs</span><span class="si">}</span><span class="s2"> observations&quot;</span>
             <span class="p">)</span>
         <span class="n">rng</span> <span class="o">=</span> <span class="n">BootstrapRng</span><span class="p">(</span><span class="n">std_resid</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span><span class="o">.</span><span class="n">rng</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulation_forecast</span><span class="p">(</span>
