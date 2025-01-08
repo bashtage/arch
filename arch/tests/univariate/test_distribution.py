@@ -58,7 +58,7 @@ class TestDistributions:
         # Direct calculation of PDF, then log
         constant = np.exp(gammaln(0.5 * (v + 1)) - gammaln(0.5 * v))
         pdf = constant / np.sqrt(np.pi * (v - 2) * self.sigma2)
-        pdf *= (1 + self.resids ** 2.0 / (self.sigma2 * (v - 2))) ** (-(v + 1) / 2)
+        pdf *= (1 + self.resids**2.0 / (self.sigma2 * (v - 2))) ** (-(v + 1) / 2)
         ll2 = np.log(pdf).sum()
         assert_almost_equal(ll1, ll2)
 
@@ -87,14 +87,14 @@ class TestDistributions:
         # Direct calculation of PDF, then log
         const_c = gamma((eta + 1) / 2) / ((np.pi * (eta - 2)) ** 0.5 * gamma(eta / 2))
         const_a = 4 * lam * const_c * (eta - 2) / (eta - 1)
-        const_b = (1 + 3 * lam ** 2 - const_a ** 2) ** 0.5
+        const_b = (1 + 3 * lam**2 - const_a**2) ** 0.5
 
-        resids = self.resids / self.sigma2 ** 0.5
+        resids = self.resids / self.sigma2**0.5
         power = -(eta + 1) / 2
         pdf = (
             const_b
             * const_c
-            / self.sigma2 ** 0.5
+            / self.sigma2**0.5
             * (
                 1
                 + 1

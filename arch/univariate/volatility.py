@@ -508,8 +508,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         std_resid = resids / np.sqrt(sigma2)
         if start < self._min_bootstrap_obs:
             raise ValueError(
-                "start must include more than {} "
-                "observations".format(self._min_bootstrap_obs)
+                f"start must include more than {self._min_bootstrap_obs} observations"
             )
         rng = BootstrapRng(std_resid, start, random_state=random_state).rng()
         return self._simulation_forecast(

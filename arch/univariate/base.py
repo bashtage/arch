@@ -45,8 +45,13 @@ from arch.utility.exceptions import (
 )
 from arch.utility.testing import WaldTestStatistic
 
+MPL_LT_310 = False
 try:
+    from matplotlib import __version__
     from matplotlib.figure import Figure
+    from packaging.version import Version
+
+    MPL_LT_310 = Version(__version__) < Version("3.10.0")
 except ImportError:
     pass
 
@@ -1642,7 +1647,7 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         fig, ax = plt.subplots(1, 1)
         use_date = isinstance(self._dep_var.index, pd.DatetimeIndex)
-        plot_fn = ax.plot_date if use_date else ax.plot
+        plot_fn = ax.plot_date if use_date and MPL_LT_310 else ax.plot
         x_values = np.array(self._dep_var.index)
         if plot_mean:
             y_values = np.asarray(self._dep_var)

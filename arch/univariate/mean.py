@@ -949,7 +949,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                 "Due to backcasting and/or data availability start cannot be less "
                 "than the index of the largest value in the right-hand-side "
                 "variables used to fit the first observation.  In this model, "
-                "this value is {}.".format(max(0, earliest - 1))
+                f"this value is {max(0, earliest - 1)}."
             )
         # Parse params
         params = np.asarray(params)

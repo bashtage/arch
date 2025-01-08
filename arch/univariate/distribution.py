@@ -2,6 +2,7 @@
 Distributions to use in ARCH models.  All distributions must inherit from
 :class:`Distribution` and provide the same methods with the same inputs.
 """
+
 from abc import ABCMeta, abstractmethod
 from collections.abc import Sequence
 from typing import Callable, Optional, Union
@@ -100,8 +101,8 @@ class Distribution(metaclass=ABCMeta):
         for p, n, b in zip(params, self.name, bounds):
             if not (b[0] <= p <= b[1]):
                 raise ValueError(
-                    "{} does not satisfy the bounds requirement "
-                    "of ({}, {})".format(n, *b)
+                    f"{n} does not satisfy the bounds requirement of "
+                    f"({b[0]}, {b[1]})"
                 )
         return asarray(params)
 
@@ -205,7 +206,7 @@ class Distribution(metaclass=ABCMeta):
         resids: ArrayLike,
         sigma2: ArrayLike,
         individual: bool = False,
-    ) -> Union[float , Float64Array]:
+    ) -> Union[float, Float64Array]:
         """
         Loglikelihood evaluation.
 
@@ -264,7 +265,7 @@ class Distribution(metaclass=ABCMeta):
         self,
         pits: Union[float, Sequence[float], ArrayLike1D],
         parameters: Union[Sequence[float], ArrayLike1D, None] = None,
-    ) -> Union[float , Float64Array]:
+    ) -> Union[float, Float64Array]:
         """
         Inverse cumulative density function (ICDF)
 
@@ -414,7 +415,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike,
         sigma2: ArrayLike,
         individual: bool = False,
-    ) -> Union[float , Float64Array]:
+    ) -> Union[float, Float64Array]:
         r"""Computes the log-likelihood of assuming residuals are normally
         distributed, conditional on the variance
 
@@ -446,7 +447,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
             +\frac{x^{2}}{\sigma^{2}}\right)
 
         """
-        lls = -0.5 * (log(2 * pi) + log(sigma2) + resids ** 2.0 / sigma2)
+        lls = -0.5 * (log(2 * pi) + log(sigma2) + resids**2.0 / sigma2)
         if individual:
             return lls
         else:
@@ -557,7 +558,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         resids: ArrayLike,
         sigma2: ArrayLike,
         individual: bool = False,
-    ) -> Union[float , Float64Array]:
+    ) -> Union[float, Float64Array]:
         r"""Computes the log-likelihood of assuming residuals are have a
         standardized (to have unit variance) Student's t distribution,
         conditional on the variance.
@@ -595,7 +596,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         nu = parameters[0]
         lls = gammaln((nu + 1) / 2) - gammaln(nu / 2) - log(pi * (nu - 2)) / 2
         lls -= 0.5 * (log(sigma2))
-        lls -= ((nu + 1) / 2) * (log(1 + (resids ** 2.0) / (sigma2 * (nu - 2))))
+        lls -= ((nu + 1) / 2) * (log(1 + (resids**2.0) / (sigma2 * (nu - 2))))
 
         if individual:
             return lls
@@ -685,7 +686,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         nu = parameters[0]
         var = nu / (nu - 2)
         scale = 1.0 / sqrt(var)
-        moment = (scale ** n) * self._ord_t_partial_moment(n, z / scale, nu)
+        moment = (scale**n) * self._ord_t_partial_moment(n, z / scale, nu)
         return moment
 
     @staticmethod
@@ -729,9 +730,9 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         elif n == 1:
             c = gamma(0.5 * (nu + 1)) / (sqrt(nu * pi) * gamma(0.5 * nu))
             e = 0.5 * (nu + 1)
-            moment = (0.5 * (c * nu) / (1 - e)) * ((1 + (z ** 2) / nu) ** (1 - e))
+            moment = (0.5 * (c * nu) / (1 - e)) * ((1 + (z**2) / nu) ** (1 - e))
         else:
-            t1 = (z ** (n - 1)) * (nu + z ** 2) * stats.t.pdf(z, nu)
+            t1 = (z ** (n - 1)) * (nu + z**2) * stats.t.pdf(z, nu)
             t2 = (n - 1) * nu * StudentsT._ord_t_partial_moment(n - 2, z, nu)
             moment = (1 / (n - nu)) * (t1 - t2)
         return moment
@@ -846,7 +847,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         const_a = self.__const_a(parameters)
         const_b = self.__const_b(parameters)
 
-        resids = resids / sigma2 ** 0.5
+        resids = resids / sigma2**0.5
         lls = log(const_b) + const_c - log(sigma2) / 2
         if abs(lam) >= 1.0:
             lam = sign(lam) * (1.0 - 1e-6)
@@ -911,7 +912,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def parameter_names(self) -> list[str]:
         return ["eta", "lambda"]
 
-    def __const_a(self, parameters: Union[Float64Array , Sequence[float]]) -> float:
+    def __const_a(self, parameters: Union[Float64Array, Sequence[float]]) -> float:
         """
         Compute a constant.
 
@@ -930,7 +931,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         c = self.__const_c(parameters)
         return float(4 * lam * exp(c) * (eta - 2) / (eta - 1))
 
-    def __const_b(self, parameters: Union[Float64Array , Sequence[float]]) -> float:
+    def __const_b(self, parameters: Union[Float64Array, Sequence[float]]) -> float:
         """
         Compute b constant.
 
@@ -946,7 +947,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         """
         lam = float(parameters[1])
         a = self.__const_a(parameters)
-        return (1 + 3 * lam ** 2 - a ** 2) ** 0.5
+        return (1 + 3 * lam**2 - a**2) ** 0.5
 
     @staticmethod
     def __const_c(parameters: Union[Float64Array, Sequence[float]]) -> float:
@@ -999,7 +1000,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         self,
         pits: Union[float, Sequence[float], ArrayLike1D],
         parameters: Union[Sequence[float], ArrayLike1D, None] = None,
-    ) -> Union[float , Float64Array]:
+    ) -> Union[float, Float64Array]:
         parameters = self._check_constraints(parameters)
         scalar = isscalar(pits)
         if scalar:
@@ -1052,8 +1053,8 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
             )
             l_pmom = ((-1) ** k) * r_pmom
 
-            lhs = (1 - lam) * (lscale ** k) * (loc ** (n - k)) * l_pmom
-            rhs = (1 + lam) * (rscale ** k) * (loc ** (n - k)) * r_pmom
+            lhs = (1 - lam) * (lscale**k) * (loc ** (n - k)) * l_pmom
+            rhs = (1 + lam) * (rscale**k) * (loc ** (n - k)) * r_pmom
             moment += comb(n, k) * (lhs + rhs)
 
         return moment
@@ -1083,7 +1084,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
             lhs = (
                 (1 - lam)
                 * (loc ** (n - k))
-                * (lscale ** k)
+                * (lscale**k)
                 * StudentsT._ord_t_partial_moment(k, z=(lbound - loc) / lscale, nu=eta)
             )
 
@@ -1091,7 +1092,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
                 rhs = (
                     (1 + lam)
                     * (loc ** (n - k))
-                    * (rscale ** k)
+                    * (rscale**k)
                     * (
                         StudentsT._ord_t_partial_moment(k, z=(z - loc) / rscale, nu=eta)
                         - StudentsT._ord_t_partial_moment(k, z=0.0, nu=eta)
@@ -1285,7 +1286,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         parameters = self._check_constraints(parameters)
         nu = parameters[0]
         scale = 1.0 / sqrt(stats.gennorm(nu).var())
-        moment = (scale ** n) * self._ord_gennorm_partial_moment(n, z / scale, nu)
+        moment = (scale**n) * self._ord_gennorm_partial_moment(n, z / scale, nu)
         return moment
 
     @staticmethod

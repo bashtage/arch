@@ -1354,7 +1354,7 @@ def test_param_cov():
 def test_plot_bad_index():
     import matplotlib.pyplot as plt
 
-    idx = sorted(f"{a}{b}{c}" for a, b, c, in product(*([ascii_lowercase] * 3)))
+    idx = sorted(f"{a}{b}{c}" for a, b, c in product(*([ascii_lowercase] * 3)))
     sp500_copy = SP500.copy()
     sp500_copy.index = idx[: sp500_copy.shape[0]]
     res = ConstantMean(sp500_copy).fit(disp=False)

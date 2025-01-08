@@ -15,7 +15,12 @@ import pytest
 import scipy.stats as stats
 from statsmodels.datasets import macrodata, modechoice, nile, randhie, sunspots
 from statsmodels.regression.linear_model import OLS
-from statsmodels.tsa.stattools import _autolag, lagmat
+from statsmodels.tsa.stattools import lagmat
+
+try:
+    from statsmodels.tsa.stattools import _autolag
+except ImportError:
+    from statsmodels.tsa.stattools._stattools import _autolag
 
 from arch.unitroot import ADF, DFGLS, KPSS, PhillipsPerron, VarianceRatio, ZivotAndrews
 from arch.unitroot.critical_values.dickey_fuller import tau_2010
