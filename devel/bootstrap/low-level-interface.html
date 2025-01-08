@@ -15,7 +15,7 @@
     
   
       
-        <title>Low-level Interfaces - arch v7.2.1 (+2)</title>
+        <title>Low-level Interfaces - arch v7.2.1 (+6)</title>
       
     
 
@@ -92,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v7.2.1 (+2)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+6)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -102,7 +102,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+2)
+            arch v7.2.1 (+6)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -189,10 +189,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v7.2.1 (+2)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+6)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+2)
+    arch v7.2.1 (+6)
   </label>
   
     <div class="md-nav__source">
@@ -633,10 +633,10 @@
 <p>The bootstrap method apply can be use to directly compute parameter estimates
 from a function and the bootstrapped data.</p>
 <p>This example makes use of monthly S&amp;P 500 data.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">pandas_datareader.data</span> <span class="k">as</span> <span class="nn">web</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
 
 <span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1951</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -650,14 +650,14 @@ from a function and the bootstrapped data.</p>
 </div>
 <p>The function will compute the Sharpe ratio – the (annualized) mean divided by
 the (annualized) standard deviation.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="k">def</span> <span class="nf">sharpe_ratio</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sharpe_ratio</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">12</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">var</span><span class="p">())])</span>
 </code></pre></div>
 </div>
 <p>The bootstrapped Sharpe ratios can be directly computed using <cite>apply</cite>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">seaborn</span>
-<span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="kn">import</span> <span class="n">IIDBootstrap</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">IIDBootstrap</span>
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
 <span class="n">sharpe_ratios</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">sr</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
 <span class="n">sharpe_ratios</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sharp_ratios</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Sharpe Ratio&#39;</span><span class="p">])</span>
@@ -674,10 +674,10 @@ constructing the bootstrap instance, and the second contains the all keyword
 arguments passed when constructing the instance.</p>
 <p>This example makes uses of simulated data to demonstrate how to use the
 bootstrap iterator.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="kn">import</span> <span class="n">IIDBootstrap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">IIDBootstrap</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>

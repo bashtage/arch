@@ -15,7 +15,7 @@
     
   
       
-        <title>numpy - arch v7.2.1 (+2)</title>
+        <title>numpy - arch v7.2.1 (+6)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v7.2.1 (+2)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+6)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+2)
+            arch v7.2.1 (+6)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v7.2.1 (+2)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+6)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+2)
+    arch v7.2.1 (+6)
   </label>
   
     <div class="md-nav__source">
@@ -467,17 +467,17 @@
 <span class="sd">Exceptions to this rule are documented.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
-<span class="kn">from</span> <span class="nn">._globals</span> <span class="kn">import</span> <span class="n">_NoValue</span><span class="p">,</span> <span class="n">_CopyMode</span>
-<span class="kn">from</span> <span class="nn">._expired_attrs_2_0</span> <span class="kn">import</span> <span class="n">__expired_attributes__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._globals</span><span class="w"> </span><span class="kn">import</span> <span class="n">_NoValue</span><span class="p">,</span> <span class="n">_CopyMode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._expired_attrs_2_0</span><span class="w"> </span><span class="kn">import</span> <span class="n">__expired_attributes__</span>
 
 
 <span class="c1"># If a version with git hash was stored, use that instead</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">version</span>
-<span class="kn">from</span> <span class="nn">.version</span> <span class="kn">import</span> <span class="n">__version__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">version</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
 
 <span class="c1"># We first need to detect if we&#39;re being called as part of the numpy setup</span>
 <span class="c1"># procedure itself in a reliable manner.</span>
@@ -490,18 +490,18 @@
     <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Running from numpy source directory.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="c1"># Allow distributors to run custom init code before importing numpy._core</span>
-    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_distributor_init</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">_distributor_init</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">numpy.__config__</span> <span class="kn">import</span> <span class="n">show</span> <span class="k">as</span> <span class="n">show_config</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">numpy.__config__</span><span class="w"> </span><span class="kn">import</span> <span class="n">show</span> <span class="k">as</span> <span class="n">show_config</span>
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Error importing numpy: you should not try to import numpy from</span>
 <span class="s2">        its source directory; please exit the numpy source tree, and relaunch</span>
 <span class="s2">        your python interpreter from there.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
-    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_core</span>
-    <span class="kn">from</span> <span class="nn">._core</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">_core</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">._core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">False_</span><span class="p">,</span> <span class="n">ScalarType</span><span class="p">,</span> <span class="n">True_</span><span class="p">,</span> <span class="n">_get_promotion_state</span><span class="p">,</span> <span class="n">_no_nep50_warning</span><span class="p">,</span>
         <span class="n">_set_promotion_state</span><span class="p">,</span> <span class="nb">abs</span><span class="p">,</span> <span class="n">absolute</span><span class="p">,</span> <span class="n">acos</span><span class="p">,</span> <span class="n">acosh</span><span class="p">,</span> <span class="n">add</span><span class="p">,</span> <span class="nb">all</span><span class="p">,</span> <span class="n">allclose</span><span class="p">,</span>
         <span class="n">amax</span><span class="p">,</span> <span class="n">amin</span><span class="p">,</span> <span class="nb">any</span><span class="p">,</span> <span class="n">arange</span><span class="p">,</span> <span class="n">arccos</span><span class="p">,</span> <span class="n">arccosh</span><span class="p">,</span> <span class="n">arcsin</span><span class="p">,</span> <span class="n">arcsinh</span><span class="p">,</span>
@@ -560,17 +560,17 @@
             <span class="k">pass</span>
     <span class="k">del</span> <span class="n">ta</span>
 
-    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">lib</span>
-    <span class="kn">from</span> <span class="nn">.lib</span> <span class="kn">import</span> <span class="n">scimath</span> <span class="k">as</span> <span class="n">emath</span>
-    <span class="kn">from</span> <span class="nn">.lib._histograms_impl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">lib</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.lib</span><span class="w"> </span><span class="kn">import</span> <span class="n">scimath</span> <span class="k">as</span> <span class="n">emath</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.lib._histograms_impl</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">histogram</span><span class="p">,</span> <span class="n">histogram_bin_edges</span><span class="p">,</span> <span class="n">histogramdd</span>
     <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">.lib._nanfunctions_impl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.lib._nanfunctions_impl</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">nanargmax</span><span class="p">,</span> <span class="n">nanargmin</span><span class="p">,</span> <span class="n">nancumprod</span><span class="p">,</span> <span class="n">nancumsum</span><span class="p">,</span> <span class="n">nanmax</span><span class="p">,</span> <span class="n">nanmean</span><span class="p">,</span> 
         <span class="n">nanmedian</span><span class="p">,</span> <span class="n">nanmin</span><span class="p">,</span> <span class="n">nanpercentile</span><span class="p">,</span> <span class="n">nanprod</span><span class="p">,</span> <span class="n">nanquantile</span><span class="p">,</span> <span class="n">nanstd</span><span class="p">,</span>
         <span class="n">nansum</span><span class="p">,</span> <span class="n">nanvar</span>
     <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">.lib._function_base_impl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.lib._function_base_impl</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">select</span><span class="p">,</span> <span class="n">piecewise</span><span class="p">,</span> <span class="n">trim_zeros</span><span class="p">,</span> <span class="n">copy</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">percentile</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span> 
         <span class="n">gradient</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">unwrap</span><span class="p">,</span> <span class="n">sort_complex</span><span class="p">,</span> <span class="n">flip</span><span class="p">,</span> <span class="n">rot90</span><span class="p">,</span> <span class="n">extract</span><span class="p">,</span> <span class="n">place</span><span class="p">,</span>
         <span class="n">vectorize</span><span class="p">,</span> <span class="n">asarray_chkfinite</span><span class="p">,</span> <span class="n">average</span><span class="p">,</span> <span class="n">bincount</span><span class="p">,</span> <span class="n">digitize</span><span class="p">,</span> <span class="n">cov</span><span class="p">,</span>
@@ -578,47 +578,47 @@
         <span class="n">kaiser</span><span class="p">,</span> <span class="n">trapezoid</span><span class="p">,</span> <span class="n">trapz</span><span class="p">,</span> <span class="n">i0</span><span class="p">,</span> <span class="n">meshgrid</span><span class="p">,</span> <span class="n">delete</span><span class="p">,</span> <span class="n">insert</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span>
         <span class="n">interp</span><span class="p">,</span> <span class="n">quantile</span>
     <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">.lib._twodim_base_impl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.lib._twodim_base_impl</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">diag</span><span class="p">,</span> <span class="n">diagflat</span><span class="p">,</span> <span class="n">eye</span><span class="p">,</span> <span class="n">fliplr</span><span class="p">,</span> <span class="n">flipud</span><span class="p">,</span> <span class="n">tri</span><span class="p">,</span> <span class="n">triu</span><span class="p">,</span> <span class="n">tril</span><span class="p">,</span> <span class="n">vander</span><span class="p">,</span> 
         <span class="n">histogram2d</span><span class="p">,</span> <span class="n">mask_indices</span><span class="p">,</span> <span class="n">tril_indices</span><span class="p">,</span> <span class="n">tril_indices_from</span><span class="p">,</span> 
         <span class="n">triu_indices</span><span class="p">,</span> <span class="n">triu_indices_from</span>
     <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">.lib._shape_base_impl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.lib._shape_base_impl</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">apply_over_axes</span><span class="p">,</span> <span class="n">apply_along_axis</span><span class="p">,</span> <span class="n">array_split</span><span class="p">,</span> <span class="n">column_stack</span><span class="p">,</span> <span class="n">dsplit</span><span class="p">,</span>
         <span class="n">dstack</span><span class="p">,</span> <span class="n">expand_dims</span><span class="p">,</span> <span class="n">hsplit</span><span class="p">,</span> <span class="n">kron</span><span class="p">,</span> <span class="n">put_along_axis</span><span class="p">,</span> <span class="n">row_stack</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span>
         <span class="n">take_along_axis</span><span class="p">,</span> <span class="n">tile</span><span class="p">,</span> <span class="n">vsplit</span>
     <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">.lib._type_check_impl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.lib._type_check_impl</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">iscomplexobj</span><span class="p">,</span> <span class="n">isrealobj</span><span class="p">,</span> <span class="n">imag</span><span class="p">,</span> <span class="n">iscomplex</span><span class="p">,</span> <span class="n">isreal</span><span class="p">,</span> <span class="n">nan_to_num</span><span class="p">,</span> <span class="n">real</span><span class="p">,</span> 
         <span class="n">real_if_close</span><span class="p">,</span> <span class="n">typename</span><span class="p">,</span> <span class="n">mintypecode</span><span class="p">,</span> <span class="n">common_type</span>
     <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">.lib._arraysetops_impl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.lib._arraysetops_impl</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">ediff1d</span><span class="p">,</span> <span class="n">in1d</span><span class="p">,</span> <span class="n">intersect1d</span><span class="p">,</span> <span class="n">isin</span><span class="p">,</span> <span class="n">setdiff1d</span><span class="p">,</span> <span class="n">setxor1d</span><span class="p">,</span> <span class="n">union1d</span><span class="p">,</span>
         <span class="n">unique</span><span class="p">,</span> <span class="n">unique_all</span><span class="p">,</span> <span class="n">unique_counts</span><span class="p">,</span> <span class="n">unique_inverse</span><span class="p">,</span> <span class="n">unique_values</span>
     <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">.lib._ufunclike_impl</span> <span class="kn">import</span> <span class="n">fix</span><span class="p">,</span> <span class="n">isneginf</span><span class="p">,</span> <span class="n">isposinf</span>
-    <span class="kn">from</span> <span class="nn">.lib._arraypad_impl</span> <span class="kn">import</span> <span class="n">pad</span>
-    <span class="kn">from</span> <span class="nn">.lib._utils_impl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.lib._ufunclike_impl</span><span class="w"> </span><span class="kn">import</span> <span class="n">fix</span><span class="p">,</span> <span class="n">isneginf</span><span class="p">,</span> <span class="n">isposinf</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.lib._arraypad_impl</span><span class="w"> </span><span class="kn">import</span> <span class="n">pad</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.lib._utils_impl</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">show_runtime</span><span class="p">,</span> <span class="n">get_include</span><span class="p">,</span> <span class="n">info</span>
     <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">.lib._stride_tricks_impl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.lib._stride_tricks_impl</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">broadcast_arrays</span><span class="p">,</span> <span class="n">broadcast_shapes</span><span class="p">,</span> <span class="n">broadcast_to</span>
     <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">.lib._polynomial_impl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.lib._polynomial_impl</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">poly</span><span class="p">,</span> <span class="n">polyint</span><span class="p">,</span> <span class="n">polyder</span><span class="p">,</span> <span class="n">polyadd</span><span class="p">,</span> <span class="n">polysub</span><span class="p">,</span> <span class="n">polymul</span><span class="p">,</span> <span class="n">polydiv</span><span class="p">,</span> <span class="n">polyval</span><span class="p">,</span>
         <span class="n">polyfit</span><span class="p">,</span> <span class="n">poly1d</span><span class="p">,</span> <span class="n">roots</span>
     <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">.lib._npyio_impl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.lib._npyio_impl</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">savetxt</span><span class="p">,</span> <span class="n">loadtxt</span><span class="p">,</span> <span class="n">genfromtxt</span><span class="p">,</span> <span class="n">load</span><span class="p">,</span> <span class="n">save</span><span class="p">,</span> <span class="n">savez</span><span class="p">,</span> <span class="n">packbits</span><span class="p">,</span>
         <span class="n">savez_compressed</span><span class="p">,</span> <span class="n">unpackbits</span><span class="p">,</span> <span class="n">fromregex</span>
     <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">.lib._index_tricks_impl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.lib._index_tricks_impl</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">diag_indices_from</span><span class="p">,</span> <span class="n">diag_indices</span><span class="p">,</span> <span class="n">fill_diagonal</span><span class="p">,</span> <span class="n">ndindex</span><span class="p">,</span> <span class="n">ndenumerate</span><span class="p">,</span>
         <span class="n">ix_</span><span class="p">,</span> <span class="n">c_</span><span class="p">,</span> <span class="n">r_</span><span class="p">,</span> <span class="n">s_</span><span class="p">,</span> <span class="n">ogrid</span><span class="p">,</span> <span class="n">mgrid</span><span class="p">,</span> <span class="n">unravel_index</span><span class="p">,</span> <span class="n">ravel_multi_index</span><span class="p">,</span> 
         <span class="n">index_exp</span>
     <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">matrixlib</span> <span class="k">as</span> <span class="n">_mat</span>
-    <span class="kn">from</span> <span class="nn">.matrixlib</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">matrixlib</span> <span class="k">as</span> <span class="n">_mat</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.matrixlib</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">asmatrix</span><span class="p">,</span> <span class="n">bmat</span><span class="p">,</span> <span class="n">matrix</span>
     <span class="p">)</span>
 
@@ -702,64 +702,64 @@
     <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;numpy.ufunc size changed&quot;</span><span class="p">)</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;numpy.ndarray size changed&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
         <span class="c1"># Warn for expired attributes</span>
-        <span class="kn">import</span> <span class="nn">warnings</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
         <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;linalg&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.linalg</span> <span class="k">as</span> <span class="nn">linalg</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.linalg</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">linalg</span>
             <span class="k">return</span> <span class="n">linalg</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.fft</span> <span class="k">as</span> <span class="nn">fft</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.fft</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fft</span>
             <span class="k">return</span> <span class="n">fft</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;dtypes&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.dtypes</span> <span class="k">as</span> <span class="nn">dtypes</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.dtypes</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dtypes</span>
             <span class="k">return</span> <span class="n">dtypes</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;random&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.random</span> <span class="k">as</span> <span class="nn">random</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.random</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">random</span>
             <span class="k">return</span> <span class="n">random</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;polynomial&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.polynomial</span> <span class="k">as</span> <span class="nn">polynomial</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.polynomial</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">polynomial</span>
             <span class="k">return</span> <span class="n">polynomial</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;ma&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">ma</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.ma</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ma</span>
             <span class="k">return</span> <span class="n">ma</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;ctypeslib&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.ctypeslib</span> <span class="k">as</span> <span class="nn">ctypeslib</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.ctypeslib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ctypeslib</span>
             <span class="k">return</span> <span class="n">ctypeslib</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;exceptions&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.exceptions</span> <span class="k">as</span> <span class="nn">exceptions</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.exceptions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">exceptions</span>
             <span class="k">return</span> <span class="n">exceptions</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;testing&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.testing</span> <span class="k">as</span> <span class="nn">testing</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.testing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">testing</span>
             <span class="k">return</span> <span class="n">testing</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;matlib&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.matlib</span> <span class="k">as</span> <span class="nn">matlib</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.matlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">matlib</span>
             <span class="k">return</span> <span class="n">matlib</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;f2py&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.f2py</span> <span class="k">as</span> <span class="nn">f2py</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.f2py</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">f2py</span>
             <span class="k">return</span> <span class="n">f2py</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;typing&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.typing</span> <span class="k">as</span> <span class="nn">typing</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">typing</span>
             <span class="k">return</span> <span class="n">typing</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;rec&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.rec</span> <span class="k">as</span> <span class="nn">rec</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.rec</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rec</span>
             <span class="k">return</span> <span class="n">rec</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;char&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.char</span> <span class="k">as</span> <span class="nn">char</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.char</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">char</span>
             <span class="k">return</span> <span class="n">char</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;array_api&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;`numpy.array_api` is not available from &quot;</span>
                                  <span class="s2">&quot;numpy 2.0 onwards&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;core&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.core</span> <span class="k">as</span> <span class="nn">core</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.core</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">core</span>
             <span class="k">return</span> <span class="n">core</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;strings&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">numpy.strings</span> <span class="k">as</span> <span class="nn">strings</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.strings</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">strings</span>
             <span class="k">return</span> <span class="n">strings</span>
         <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;distutils&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="s1">&#39;distutils&#39;</span> <span class="ow">in</span> <span class="n">__numpy_submodules__</span><span class="p">:</span>
-                <span class="kn">import</span> <span class="nn">numpy.distutils</span> <span class="k">as</span> <span class="nn">distutils</span>
+                <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.distutils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">distutils</span>
                 <span class="k">return</span> <span class="n">distutils</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;`numpy.distutils` is not available from &quot;</span>
@@ -786,13 +786,13 @@
                 <span class="s2">&quot;`np.chararray` is deprecated and will be removed from &quot;</span>
                 <span class="s2">&quot;the main namespace in the future. Use an array with a string &quot;</span>
                 <span class="s2">&quot;or bytes dtype instead.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-            <span class="kn">import</span> <span class="nn">numpy.char</span> <span class="k">as</span> <span class="nn">char</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.char</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">char</span>
             <span class="k">return</span> <span class="n">char</span><span class="o">.</span><span class="n">chararray</span>
 
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;module </span><span class="si">{!r}</span><span class="s2"> has no attribute &quot;</span>
                              <span class="s2">&quot;</span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="fm">__dir__</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__dir__</span><span class="p">():</span>
         <span class="n">public_symbols</span> <span class="o">=</span> <span class="p">(</span>
             <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">|</span> <span class="n">__numpy_submodules__</span>
         <span class="p">)</span>
@@ -803,11 +803,11 @@
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">public_symbols</span><span class="p">)</span>
 
     <span class="c1"># Pytest testing</span>
-    <span class="kn">from</span> <span class="nn">numpy._pytesttester</span> <span class="kn">import</span> <span class="n">PytestTester</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">numpy._pytesttester</span><span class="w"> </span><span class="kn">import</span> <span class="n">PytestTester</span>
     <span class="n">test</span> <span class="o">=</span> <span class="n">PytestTester</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
     <span class="k">del</span> <span class="n">PytestTester</span>
 
-    <span class="k">def</span> <span class="nf">_sanity_check</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sanity_check</span><span class="p">():</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Quick sanity checks for common bugs caused by environment.</span>
 <span class="sd">        There are some cases e.g. with wrong BLAS ABI that cause wrong</span>
@@ -828,12 +828,12 @@
                    <span class="s2">&quot;by incorrect BLAS library being linked in, or by mixing &quot;</span>
                    <span class="s2">&quot;package managers (pip, conda, apt, ...). Search closed &quot;</span>
                    <span class="s2">&quot;numpy issues for similar problems.&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="kn">from</span> <span class="kc">None</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
     <span class="n">_sanity_check</span><span class="p">()</span>
     <span class="k">del</span> <span class="n">_sanity_check</span>
 
-    <span class="k">def</span> <span class="nf">_mac_os_check</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_mac_os_check</span><span class="p">():</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Quick Sanity check for Mac OS look for accelerate build bugs.</span>
 <span class="sd">        Testing numpy polyfit calls init_dgelsd(LAPACK)</span>
@@ -847,7 +847,7 @@
             <span class="k">pass</span>
 
     <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;darwin&quot;</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">exceptions</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">exceptions</span>
         <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">(</span><span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">w</span><span class="p">:</span>
             <span class="n">_mac_os_check</span><span class="p">()</span>
             <span class="c1"># Throw runtime error, if the test failed Check for warning and error_message</span>
@@ -868,7 +868,7 @@
             <span class="k">del</span> <span class="n">w</span>
     <span class="k">del</span> <span class="n">_mac_os_check</span>
 
-    <span class="k">def</span> <span class="nf">hugepage_setup</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hugepage_setup</span><span class="p">():</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        We usually use madvise hugepages support, but on some old kernels it</span>
 <span class="sd">        is slow and thus better avoided. Specifically kernel version 4.6 </span>
@@ -911,8 +911,8 @@
         <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NPY_PROMOTION_STATE&quot;</span><span class="p">,</span> <span class="s2">&quot;weak&quot;</span><span class="p">))</span>
 
     <span class="c1"># Tell PyInstaller where to find hook-numpy.py</span>
-    <span class="k">def</span> <span class="nf">_pyinstaller_hooks_dir</span><span class="p">():</span>
-        <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_pyinstaller_hooks_dir</span><span class="p">():</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
         <span class="k">return</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="s2">&quot;_pyinstaller&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">())]</span>
 
 

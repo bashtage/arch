@@ -15,7 +15,7 @@
     
   
       
-        <title>Bootstrap Examples - arch v7.2.1 (+2)</title>
+        <title>Bootstrap Examples - arch v7.2.1 (+6)</title>
       
     
 
@@ -93,7 +93,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v7.2.1 (+2)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+6)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -103,7 +103,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+2)
+            arch v7.2.1 (+6)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -190,10 +190,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v7.2.1 (+2)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+6)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+2)
+    arch v7.2.1 (+6)
   </label>
   
     <div class="md-nav__source">
@@ -757,8 +757,8 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[1]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">seaborn</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span>
 
 <span class="n">seaborn</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
@@ -774,10 +774,10 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[2]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">import</span> <span class="nn">arch.data.frenchdata</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.frenchdata</span>
 
 <span class="n">ff</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frenchdata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 </code></pre></div>
@@ -814,7 +814,7 @@ max      38.850000    36.700000    35.460000     1.350000
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[4]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">sharpe_ratio</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sharpe_ratio</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">var</span><span class="p">())</span>
     <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">mu</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">])</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
     <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">,</span> <span class="s2">&quot;SR&quot;</span><span class="p">]</span>
@@ -853,7 +853,7 @@ dtype: float64
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[6]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="kn">import</span> <span class="n">StationaryBootstrap</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">StationaryBootstrap</span>
 
 <span class="c1"># Initialize with entropy from random.org</span>
 <span class="n">entropy</span> <span class="o">=</span> <span class="p">[</span><span class="mi">877788388</span><span class="p">,</span> <span class="mi">418255226</span><span class="p">,</span> <span class="mi">989657335</span><span class="p">,</span> <span class="mi">69307515</span><span class="p">]</span>
@@ -951,7 +951,7 @@ Upper  11.471040  22.129620  0.691471
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[10]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="kn">import</span> <span class="n">optimal_block_length</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">optimal_block_length</span>
 
 <span class="n">opt</span> <span class="o">=</span> <span class="n">optimal_block_length</span><span class="p">(</span><span class="n">excess_market</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
@@ -995,7 +995,7 @@ Mkt-RF   47.766787  54.679322
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[12]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">arch.data.binary</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.binary</span>
 
 <span class="n">binary</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">binary</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="n">binary</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
@@ -1025,7 +1025,7 @@ max      1.000000  800.000000    4.000000    4.00000
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[13]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
 
 <span class="n">endog</span> <span class="o">=</span> <span class="n">binary</span><span class="p">[[</span><span class="s2">&quot;admit&quot;</span><span class="p">]]</span>
 <span class="n">exog</span> <span class="o">=</span> <span class="n">binary</span><span class="p">[[</span><span class="s2">&quot;gre&quot;</span><span class="p">,</span> <span class="s2">&quot;gpa&quot;</span><span class="p">]]</span>
@@ -1058,7 +1058,7 @@ dtype: float64
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[14]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">probit_wrap</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">probit_wrap</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">sm</span><span class="o">.</span><span class="n">Probit</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">params</span>
 </code></pre></div>
 </div>
@@ -1089,7 +1089,7 @@ dtype: float64
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[16]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="kn">import</span> <span class="n">IIDBootstrap</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">IIDBootstrap</span>
 
 <span class="n">bs</span> <span class="o">=</span> <span class="n">IIDBootstrap</span><span class="p">(</span><span class="n">endog</span><span class="o">=</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="o">=</span><span class="n">exog</span><span class="p">)</span>
 <span class="n">cov</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">probit_wrap</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
@@ -1104,9 +1104,9 @@ dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
           Const           gre       gpa
-Const  0.433370 -6.926698e-05 -0.113503
-gre   -0.000069  3.999562e-07 -0.000049
-gpa   -0.113503 -4.935676e-05  0.041818
+Const  0.427950 -1.156143e-04 -0.103166
+gre   -0.000116  4.713464e-07 -0.000049
+gpa   -0.103166 -4.867311e-05  0.038572
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1125,14 +1125,14 @@ gpa   -0.113503 -4.935676e-05  0.041818
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Const    0.658309
-gre      0.000632
-gpa      0.204493
+Const    0.654178
+gre      0.000687
+gpa      0.196397
 dtype: float64
 T-stats
-Const   -4.562505
-gre      2.597221
-gpa      2.222933
+Const   -4.591310
+gre      2.392462
+gpa      2.314569
 dtype: float64
 </pre></div></div>
 </div>
@@ -1152,8 +1152,8 @@ dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
           Const       gre       gpa
-Lower -4.198666  0.000369  0.084079
-Upper -1.734587  0.002848  0.815805
+Lower -4.174863  0.000384  0.071005
+Upper -1.770251  0.002812  0.834634
 </pre></div></div>
 </div>
 <h3 id="Speeding-things-up">Speeding things up<a class="headerlink" href="#Speeding-things-up" title="Link to this heading">¶</a></h3>
@@ -1162,7 +1162,7 @@ Upper -1.734587  0.002848  0.815805
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[19]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">probit_wrap_start_params</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">start_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">probit_wrap_start_params</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">start_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">sm</span><span class="o">.</span><span class="n">Probit</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">start_params</span><span class="o">=</span><span class="n">start_params</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">params</span>
 </code></pre></div>
 </div>
@@ -1186,9 +1186,9 @@ Upper -1.734587  0.002848  0.815805
 <div class="output_area docutils container">
 <div class="highlight"><pre>
           Const           gre       gpa
-Const  0.433370 -6.926698e-05 -0.113503
-gre   -0.000069  3.999562e-07 -0.000049
-gpa   -0.113503 -4.935676e-05  0.041818
+Const  0.427950 -1.156143e-04 -0.103166
+gre   -0.000116  4.713464e-07 -0.000049
+gpa   -0.103166 -4.867311e-05  0.038572
 </pre></div></div>
 </div>
 <h2 id="Bootstrapping-Uneven-Length-Samples">Bootstrapping Uneven Length Samples<a class="headerlink" href="#Bootstrapping-Uneven-Length-Samples" title="Link to this heading">¶</a></h2>
@@ -1198,10 +1198,10 @@ for the difference in means of two groups.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[21]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">arch.bootstrap</span> <span class="kn">import</span> <span class="n">IndependentSamplesBootstrap</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">IndependentSamplesBootstrap</span>
 
 
-<span class="k">def</span> <span class="nf">mean_diff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mean_diff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
 

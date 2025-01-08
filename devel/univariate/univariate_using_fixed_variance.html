@@ -15,7 +15,7 @@
     
   
       
-        <title>Using the Fixed Variance process - arch v7.2.1 (+2)</title>
+        <title>Using the Fixed Variance process - arch v7.2.1 (+6)</title>
       
     
 
@@ -93,7 +93,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v7.2.1 (+2)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+6)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -103,7 +103,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+2)
+            arch v7.2.1 (+6)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -190,10 +190,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v7.2.1 (+2)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+6)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+2)
+    arch v7.2.1 (+6)
   </label>
   
     <div class="md-nav__source">
@@ -778,8 +778,8 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[1]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">seaborn</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span>
 
 <span class="n">seaborn</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
@@ -795,7 +795,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[2]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 </code></pre></div>
 </div>
 </div>
@@ -805,7 +805,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[3]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">arch.data.vix</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.vix</span>
 
 <span class="n">vix_data</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">vix</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="n">vix</span> <span class="o">=</span> <span class="n">vix_data</span><span class="o">.</span><span class="n">vix</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
@@ -827,8 +827,8 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[4]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">arch.univariate.mean</span> <span class="kn">import</span> <span class="n">HARX</span><span class="p">,</span> <span class="n">ZeroMean</span>
-<span class="kn">from</span> <span class="nn">arch.univariate.volatility</span> <span class="kn">import</span> <span class="n">GARCH</span><span class="p">,</span> <span class="n">FixedVariance</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.mean</span><span class="w"> </span><span class="kn">import</span> <span class="n">HARX</span><span class="p">,</span> <span class="n">ZeroMean</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.volatility</span><span class="w"> </span><span class="kn">import</span> <span class="n">GARCH</span><span class="p">,</span> <span class="n">FixedVariance</span>
 
 <span class="n">mod</span> <span class="o">=</span> <span class="n">HARX</span><span class="p">(</span><span class="n">vix</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">22</span><span class="p">])</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
@@ -849,8 +849,8 @@ Vol Model:          Constant Variance   Log-Likelihood:               -2267.95
 Distribution:                  Normal   AIC:                           4545.90
 Method:            Maximum Likelihood   BIC:                           4571.50
                                         No. Observations:                 1237
-Date:                Tue, Nov 05 2024   Df Residuals:                     1233
-Time:                        17:50:47   Df Model:                            4
+Date:                Wed, Jan 08 2025   Df Residuals:                     1233
+Time:                        15:14:33   Df Model:                            4
                                    Mean Model
 ================================================================================
                       coef    std err          t      P&gt;|t|     95.0% Conf. Int.
@@ -894,8 +894,8 @@ Vol Model:                  GJR-GARCH   Log-Likelihood:               -1936.93
 Distribution:                  Normal   AIC:                           3881.86
 Method:            Maximum Likelihood   BIC:                           3902.35
                                         No. Observations:                 1237
-Date:                Tue, Nov 05 2024   Df Residuals:                     1237
-Time:                        17:50:47   Df Model:                            0
+Date:                Wed, Jan 08 2025   Df Residuals:                     1237
+Time:                        15:14:33   Df Model:                            0
                               Volatility Model
 ===========================================================================
                  coef    std err          t      P&gt;|t|     95.0% Conf. Int.
@@ -967,8 +967,8 @@ Vol Model:             Fixed Variance   Log-Likelihood:               -1935.95
 Distribution:                  Normal   AIC:                           3881.89
 Method:            Maximum Likelihood   BIC:                           3907.50
                                         No. Observations:                 1237
-Date:                Tue, Nov 05 2024   Df Residuals:                     1233
-Time:                        17:50:48   Df Model:                            4
+Date:                Wed, Jan 08 2025   Df Residuals:                     1233
+Time:                        15:14:34   Df Model:                            4
                                     Mean Model
 ==================================================================================
                       coef    std err          t      P&gt;|t|       95.0% Conf. Int.
@@ -1023,8 +1023,8 @@ Vol Model:         Fixed Variance (Unit Scale)   Log-Likelihood:               -
 Distribution:                           Normal   AIC:                           3879.48
 Method:                     Maximum Likelihood   BIC:                           3899.96
                                                  No. Observations:                 1237
-Date:                         Tue, Nov 05 2024   Df Residuals:                     1233
-Time:                                 17:50:48   Df Model:                            4
+Date:                         Wed, Jan 08 2025   Df Residuals:                     1233
+Time:                                 15:14:34   Df Model:                            4
                                     Mean Model
 =================================================================================
                       coef    std err          t      P&gt;|t|      95.0% Conf. Int.
@@ -1063,8 +1063,8 @@ Vol Model:                  GJR-GARCH   Log-Likelihood:               -1932.61
 Distribution:                  Normal   AIC:                           3881.23
 Method:            Maximum Likelihood   BIC:                           3922.19
                                         No. Observations:                 1237
-Date:                Tue, Nov 05 2024   Df Residuals:                     1233
-Time:                        17:50:48   Df Model:                            4
+Date:                Wed, Jan 08 2025   Df Residuals:                     1233
+Time:                        15:14:34   Df Model:                            4
                                    Mean Model
 ================================================================================
                       coef    std err          t      P&gt;|t|     95.0% Conf. Int.

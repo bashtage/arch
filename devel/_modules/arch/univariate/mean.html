@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.univariate.mean - arch v7.2.1 (+2)</title>
+        <title>arch.univariate.mean - arch v7.2.1 (+6)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+2)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+6)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+2)
+            arch v7.2.1 (+6)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+2)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+6)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+2)
+    arch v7.2.1 (+6)
   </label>
   
     <div class="md-nav__source">
@@ -385,16 +385,16 @@
 <span class="sd">:class:`ARCHModel` and provide the same methods with the same inputs.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">overload</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">overload</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">OptimizeResult</span>
-<span class="kn">from</span> <span class="nn">statsmodels.tsa.tsatools</span> <span class="kn">import</span> <span class="n">lagmat</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimizeResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.tsatools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lagmat</span>
 
-<span class="kn">from</span> <span class="nn">arch.typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">ArrayLike1D</span><span class="p">,</span>
     <span class="n">ArrayLike2D</span><span class="p">,</span>
@@ -406,14 +406,14 @@
     <span class="n">Label</span><span class="p">,</span>
     <span class="n">NDArray</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">arch.univariate.base</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ARCHModel</span><span class="p">,</span>
     <span class="n">ARCHModelForecast</span><span class="p">,</span>
     <span class="n">ARCHModelResult</span><span class="p">,</span>
     <span class="n">_callback_info</span><span class="p">,</span>
     <span class="n">implicit_constant</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">arch.univariate.distribution</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.distribution</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Distribution</span><span class="p">,</span>
     <span class="n">GeneralizedError</span><span class="p">,</span>
     <span class="n">Normal</span><span class="p">,</span>
@@ -423,20 +423,20 @@
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="c1"># Fake path to satisfy mypy</span>
-    <span class="kn">from</span> <span class="nn">arch.univariate.recursions_python</span> <span class="kn">import</span> <span class="n">ARCHInMeanRecursion</span><span class="p">,</span> <span class="n">VolatilityUpdater</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.recursions_python</span><span class="w"> </span><span class="kn">import</span> <span class="n">ARCHInMeanRecursion</span><span class="p">,</span> <span class="n">VolatilityUpdater</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">arch.univariate.recursions</span> <span class="kn">import</span> <span class="n">ARCHInMeanRecursion</span><span class="p">,</span> <span class="n">VolatilityUpdater</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.recursions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ARCHInMeanRecursion</span><span class="p">,</span> <span class="n">VolatilityUpdater</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-        <span class="kn">from</span> <span class="nn">arch.univariate.recursions_python</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.recursions_python</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
             <span class="n">ARCHInMeanRecursion</span><span class="p">,</span>
             <span class="n">VolatilityUpdater</span><span class="p">,</span>
         <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
 
-<span class="kn">from</span> <span class="nn">arch.typing</span> <span class="kn">import</span> <span class="n">Literal</span>
-<span class="kn">from</span> <span class="nn">arch.univariate.volatility</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.volatility</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">APARCH</span><span class="p">,</span>
     <span class="n">ARCH</span><span class="p">,</span>
     <span class="n">EGARCH</span><span class="p">,</span>
@@ -446,7 +446,7 @@
     <span class="n">ConstantVariance</span><span class="p">,</span>
     <span class="n">VolatilityProcess</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AbstractDocStringInheritor</span><span class="p">,</span>
     <span class="n">cutoff_to_index</span><span class="p">,</span>
     <span class="n">ensure1d</span><span class="p">,</span>
@@ -464,14 +464,14 @@
 <span class="p">}</span>
 
 
-<span class="k">def</span> <span class="nf">_forecast_pad</span><span class="p">(</span><span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">forecasts</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_forecast_pad</span><span class="p">(</span><span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">forecasts</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
     <span class="n">shape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
     <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span>
     <span class="n">fill</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">shape</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">fill</span><span class="p">,</span> <span class="n">forecasts</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_ar_forecast</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ar_forecast</span><span class="p">(</span>
     <span class="n">y</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
     <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">start_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -514,7 +514,7 @@
     <span class="k">return</span> <span class="n">fcasts</span>
 
 
-<span class="k">def</span> <span class="nf">_ar_to_impulse</span><span class="p">(</span><span class="n">steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ar_to_impulse</span><span class="p">(</span><span class="n">steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">impulse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
     <span class="n">impulse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
@@ -531,7 +531,7 @@
 
 <div class="viewcode-block" id="HARX">
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.HARX.html#arch.univariate.HARX">[docs]</a>
-<span class="k">class</span> <span class="nc">HARX</span><span class="p">(</span><span class="n">ARCHModel</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HARX</span><span class="p">(</span><span class="n">ARCHModel</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Heterogeneous Autoregression (HAR), with optional exogenous regressors,</span>
 <span class="sd">    model estimation and simulation</span>
@@ -627,7 +627,7 @@
     <span class="c1"># To allow for addition mean parameters in simulation</span>
     <span class="n">_extra_simulation_params</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike2D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -671,7 +671,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_hold_back</span> <span class="o">=</span> <span class="n">max_lags</span> <span class="k">if</span> <span class="n">hold_back</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">hold_back</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hold_back</span> <span class="o">&lt;</span> <span class="n">max_lags</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
 
             <span class="n">warn</span><span class="p">(</span>
                 <span class="s2">&quot;hold_back is less then the minimum number given the lags selected&quot;</span><span class="p">,</span>
@@ -681,7 +681,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_model</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_scale_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_scale_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Called when the scale has changed.  This allows the model</span>
 <span class="sd">        to update any values that are affected by the scale changes,</span>
@@ -691,17 +691,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_model</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike2D</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike2D</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the value of the exogenous regressors in the model&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
 
 <div class="viewcode-block" id="HARX.parameter_names">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.HARX.parameter_names.html#arch.univariate.HARX.parameter_names">[docs]</a>
-    <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_variable_names</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates the model description for use by __str__ and related</span>
 <span class="sd">        functions&quot;&quot;&quot;</span>
         <span class="n">lagstr</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
@@ -719,7 +719,7 @@
         <span class="n">od</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">od</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">descr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_description</span><span class="p">()</span>
         <span class="n">descr_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;(&quot;</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">descr</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -730,12 +730,12 @@
 
         <span class="k">return</span> <span class="n">descr_str</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">txt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
         <span class="n">txt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">txt</span> <span class="o">+</span> <span class="s2">&quot;, id: &quot;</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;HTML representation for IPython Notebook&quot;&quot;&quot;</span>
         <span class="n">descr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_description</span><span class="p">()</span>
         <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&lt;strong&gt;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;&lt;/strong&gt;(&quot;</span>
@@ -746,7 +746,7 @@
 
 <div class="viewcode-block" id="HARX.resids">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.HARX.resids.html#arch.univariate.HARX.resids">[docs]</a>
-    <span class="k">def</span> <span class="nf">resids</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resids</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -759,14 +759,14 @@
 
 
     <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the number of parameters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">regressors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regressors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">_simulate_mean</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_simulate_mean</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
@@ -807,7 +807,7 @@
 
 <div class="viewcode-block" id="HARX.simulate">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.HARX.simulate.html#arch.univariate.HARX.simulate">[docs]</a>
-    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
         <span class="n">nobs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -910,7 +910,7 @@
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_generate_variable_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_variable_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates variable names or use in summaries&quot;&quot;&quot;</span>
         <span class="n">variable_names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">lags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
@@ -922,7 +922,7 @@
             <span class="n">variable_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x_names</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">variable_names</span>
 
-    <span class="k">def</span> <span class="nf">_generate_lag_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_lag_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates lag names.  Overridden by other models&quot;&quot;&quot;</span>
         <span class="n">lags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
         <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
@@ -933,7 +933,7 @@
             <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var_name</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lags</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lags</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">names</span>
 
-    <span class="k">def</span> <span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks the specification for obvious errors&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
@@ -952,7 +952,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_x_names</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_reformat_lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reformat_lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reformat input lags to be a 2 by m array, which simplifies other</span>
 <span class="sd">        operations.  Output is stored in _lags</span>
@@ -1001,13 +1001,13 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="n">lags</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_rotated</span><span class="p">:</span>
-                <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
 
                 <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Rotation is not available when using the 2-d lags input format&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incorrect format for lags&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_har_to_ar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_har_to_ar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lags</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">params</span><span class="p">[:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constant</span><span class="p">)]</span>
         <span class="n">har</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constant</span><span class="p">)</span> <span class="p">:]</span>
@@ -1018,7 +1018,7 @@
             <span class="n">ar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">params</span><span class="p">[:</span><span class="mi">1</span><span class="p">],</span> <span class="n">ar</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">ar</span>
 
-    <span class="k">def</span> <span class="nf">_init_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Should be called whenever the model is initialized or changed&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reformat_lags</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_specification</span><span class="p">()</span>
@@ -1045,7 +1045,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">regressors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">reg_constant</span><span class="p">,</span> <span class="n">reg_lags</span><span class="p">,</span> <span class="n">reg_x</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span>
         <span class="n">constant</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_regressors</span>
@@ -1063,7 +1063,7 @@
 
         <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="o">/</span> <span class="n">tss</span>
 
-    <span class="k">def</span> <span class="nf">_adjust_sample</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_adjust_sample</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">first_obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DateLike</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">last_obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DateLike</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
@@ -1080,7 +1080,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_fit_regressors</span> <span class="o">=</span> <span class="n">reg</span><span class="p">[</span><span class="n">_first_obs_index</span><span class="p">:</span><span class="n">_last_obs_index</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span>
 
-    <span class="k">def</span> <span class="nf">_fit_no_arch_normal_errors_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fit_no_arch_normal_errors_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Estimates model parameters excluding sigma2</span>
 
@@ -1105,7 +1105,7 @@
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_fit_no_arch_normal_errors</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fit_no_arch_normal_errors</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">cov_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;robust&quot;</span><span class="p">,</span> <span class="s2">&quot;classic&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;robust&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ARCHModelResult</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1212,7 +1212,7 @@
             <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_reformat_forecast_x</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reformat_forecast_x</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Label</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">],</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -1319,7 +1319,7 @@
 
 <div class="viewcode-block" id="HARX.forecast">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.HARX.forecast.html#arch.univariate.HARX.forecast">[docs]</a>
-    <span class="k">def</span> <span class="nf">forecast</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forecast</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -1458,7 +1458,7 @@
 
 <div class="viewcode-block" id="ConstantMean">
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.ConstantMean.html#arch.univariate.ConstantMean">[docs]</a>
-<span class="k">class</span> <span class="nc">ConstantMean</span><span class="p">(</span><span class="n">HARX</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConstantMean</span><span class="p">(</span><span class="n">HARX</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Constant mean model estimation and simulation.</span>
 
@@ -1497,7 +1497,7 @@
 <span class="sd">        y_t = \mu + \epsilon_t</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">hold_back</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1516,20 +1516,20 @@
 
 <div class="viewcode-block" id="ConstantMean.parameter_names">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.ConstantMean.parameter_names.html#arch.univariate.ConstantMean.parameter_names">[docs]</a>
-    <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">]</span></div>
 
 
     <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">1</span>
 
-    <span class="k">def</span> <span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_model_description</span><span class="p">(</span><span class="n">include_lags</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ConstantMean.simulate">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.ConstantMean.simulate.html#arch.univariate.ConstantMean.simulate">[docs]</a>
-    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
         <span class="n">nobs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -1601,7 +1601,7 @@
 
 <div class="viewcode-block" id="ConstantMean.resids">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.ConstantMean.resids.html#arch.univariate.ConstantMean.resids">[docs]</a>
-    <span class="k">def</span> <span class="nf">resids</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resids</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1615,7 +1615,7 @@
 
 <div class="viewcode-block" id="ZeroMean">
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.ZeroMean.html#arch.univariate.ZeroMean">[docs]</a>
-<span class="k">class</span> <span class="nc">ZeroMean</span><span class="p">(</span><span class="n">HARX</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ZeroMean</span><span class="p">(</span><span class="n">HARX</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Model with zero conditional mean estimation and simulation</span>
 
@@ -1655,7 +1655,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">hold_back</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1676,20 +1676,20 @@
 
 <div class="viewcode-block" id="ZeroMean.parameter_names">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.ZeroMean.parameter_names.html#arch.univariate.ZeroMean.parameter_names">[docs]</a>
-    <span class="k">def</span> <span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[]</span></div>
 
 
     <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_model_description</span><span class="p">(</span><span class="n">include_lags</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ZeroMean.simulate">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.ZeroMean.simulate.html#arch.univariate.ZeroMean.simulate">[docs]</a>
-    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
         <span class="n">nobs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -1764,7 +1764,7 @@
 
 <div class="viewcode-block" id="ZeroMean.resids">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.ZeroMean.resids.html#arch.univariate.ZeroMean.resids">[docs]</a>
-    <span class="k">def</span> <span class="nf">resids</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resids</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1780,7 +1780,7 @@
 
 <div class="viewcode-block" id="ARX">
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.ARX.html#arch.univariate.ARX">[docs]</a>
-<span class="k">class</span> <span class="nc">ARX</span><span class="p">(</span><span class="n">HARX</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ARX</span><span class="p">(</span><span class="n">HARX</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Autoregressive model with optional exogenous regressors estimation and</span>
 <span class="sd">    simulation</span>
@@ -1836,7 +1836,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike2D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1881,7 +1881,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+=</span> <span class="s2">&quot;-X&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates the model description for use by __str__ and related</span>
 <span class="sd">        functions&quot;&quot;&quot;</span>
         <span class="n">lagstr</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
@@ -1900,7 +1900,7 @@
         <span class="n">od</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">od</span>
 
-    <span class="k">def</span> <span class="nf">_generate_lag_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_lag_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="n">lags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
         <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">var_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
@@ -1914,7 +1914,7 @@
 
 <div class="viewcode-block" id="LS">
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.LS.html#arch.univariate.LS">[docs]</a>
-<span class="k">class</span> <span class="nc">LS</span><span class="p">(</span><span class="n">HARX</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LS</span><span class="p">(</span><span class="n">HARX</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Least squares model estimation and simulation</span>
 
@@ -1959,7 +1959,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike2D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1987,7 +1987,7 @@
 
 <div class="viewcode-block" id="ARCHInMean">
 <a class="viewcode-back" href="../../../univariate/generated/arch.univariate.ARCHInMean.html#arch.univariate.ARCHInMean">[docs]</a>
-<span class="k">class</span> <span class="nc">ARCHInMean</span><span class="p">(</span><span class="n">ARX</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ARCHInMean</span><span class="p">(</span><span class="n">ARX</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    (G)ARCH-in-mean model and simulation</span>
 
@@ -2050,7 +2050,7 @@
     <span class="c1"># To account for GIM param</span>
     <span class="n">_extra_simulation_params</span> <span class="o">=</span> <span class="mi">1</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike2D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2099,11 +2099,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_recursion</span> <span class="o">=</span> <span class="n">ARCHInMeanRecursion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_volatility_updater</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">form</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="s2">&quot;vol&quot;</span><span class="p">,</span> <span class="s2">&quot;var&quot;</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">form</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="s2">&quot;vol&quot;</span><span class="p">,</span> <span class="s2">&quot;var&quot;</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The form of the conditional variance in the mean&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_form</span>
 
-    <span class="k">def</span> <span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="n">base_descr</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_model_description</span><span class="p">(</span><span class="n">include_lags</span><span class="p">)</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">base_descr</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="n">descr</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">base_descr</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]}</span>
@@ -2116,18 +2116,18 @@
             <span class="n">descr</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_descr</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">descr</span>
 
-    <span class="k">def</span> <span class="nf">_generate_variable_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_variable_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="n">names</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_generate_variable_names</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">names</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;kappa&quot;</span><span class="p">]</span>
 
     <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">num_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">regressors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regressors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
 
 <div class="viewcode-block" id="ARCHInMean.forecast">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.ARCHInMean.forecast.html#arch.univariate.ARCHInMean.forecast">[docs]</a>
-    <span class="k">def</span> <span class="nf">forecast</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forecast</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
         <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -2148,7 +2148,7 @@
 
 <div class="viewcode-block" id="ARCHInMean.resids">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.ARCHInMean.resids.html#arch.univariate.ARCHInMean.resids">[docs]</a>
-    <span class="k">def</span> <span class="nf">resids</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resids</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2159,12 +2159,12 @@
 
 <div class="viewcode-block" id="ARCHInMean.starting_values">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.ARCHInMean.starting_values.html#arch.univariate.ARCHInMean.starting_values">[docs]</a>
-    <span class="k">def</span> <span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">starting_values</span><span class="p">(),</span> <span class="mf">0.0</span><span class="p">]</span></div>
 
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">_loglikelihood</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_loglikelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
@@ -2174,7 +2174,7 @@
         <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">_loglikelihood</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_loglikelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
@@ -2185,7 +2185,7 @@
         <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">_loglikelihood</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_loglikelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
@@ -2195,7 +2195,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
         <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
-    <span class="k">def</span> <span class="nf">_loglikelihood</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_loglikelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
@@ -2232,7 +2232,7 @@
 
         <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">-</span><span class="n">llf</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_simulate_mean</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_simulate_mean</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
@@ -2294,7 +2294,7 @@
 
 <div class="viewcode-block" id="arch_model">
 <a class="viewcode-back" href="../../../univariate/introduction.html#arch.univariate.arch_model">[docs]</a>
-<span class="k">def</span> <span class="nf">arch_model</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">arch_model</span><span class="p">(</span>
     <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">],</span>
     <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike2D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">mean</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>

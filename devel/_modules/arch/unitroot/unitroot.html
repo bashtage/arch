@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.unitroot.unitroot - arch v7.2.1 (+2)</title>
+        <title>arch.unitroot.unitroot - arch v7.2.1 (+6)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+2)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+6)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+2)
+            arch v7.2.1 (+6)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+2)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+6)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+2)
+    arch v7.2.1 (+6)
   </label>
   
     <div class="md-nav__source">
@@ -380,12 +380,12 @@
 
 
 <h1>Source code for arch.unitroot.unitroot</h1><div class="highlight"><pre>
-<span></span><code><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="nb">abs</span><span class="p">,</span>
     <span class="n">amax</span><span class="p">,</span>
     <span class="n">amin</span><span class="p">,</span>
@@ -417,15 +417,15 @@
     <span class="n">squeeze</span><span class="p">,</span>
     <span class="nb">sum</span> <span class="k">as</span> <span class="n">npsum</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="kn">import</span> <span class="n">LinAlgError</span><span class="p">,</span> <span class="n">inv</span><span class="p">,</span> <span class="n">lstsq</span><span class="p">,</span> <span class="n">matrix_rank</span><span class="p">,</span> <span class="n">pinv</span><span class="p">,</span> <span class="n">qr</span><span class="p">,</span> <span class="n">solve</span>
-<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
-<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">norm</span>
-<span class="kn">from</span> <span class="nn">statsmodels.iolib.summary</span> <span class="kn">import</span> <span class="n">Summary</span>
-<span class="kn">from</span> <span class="nn">statsmodels.iolib.table</span> <span class="kn">import</span> <span class="n">SimpleTable</span>
-<span class="kn">from</span> <span class="nn">statsmodels.regression.linear_model</span> <span class="kn">import</span> <span class="n">OLS</span><span class="p">,</span> <span class="n">RegressionResults</span>
-<span class="kn">from</span> <span class="nn">statsmodels.tsa.tsatools</span> <span class="kn">import</span> <span class="n">lagmat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinAlgError</span><span class="p">,</span> <span class="n">inv</span><span class="p">,</span> <span class="n">lstsq</span><span class="p">,</span> <span class="n">matrix_rank</span><span class="p">,</span> <span class="n">pinv</span><span class="p">,</span> <span class="n">qr</span><span class="p">,</span> <span class="n">solve</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.iolib.summary</span><span class="w"> </span><span class="kn">import</span> <span class="n">Summary</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.iolib.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleTable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.regression.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">OLS</span><span class="p">,</span> <span class="n">RegressionResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.tsatools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lagmat</span>
 
-<span class="kn">from</span> <span class="nn">arch.typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">ArrayLike1D</span><span class="p">,</span>
     <span class="n">ArrayLike2D</span><span class="p">,</span>
@@ -433,7 +433,7 @@
     <span class="n">Literal</span><span class="p">,</span>
     <span class="n">UnitRootTrend</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">arch.unitroot.critical_values.dfgls</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.critical_values.dfgls</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">dfgls_cv_approx</span><span class="p">,</span>
     <span class="n">dfgls_large_p</span><span class="p">,</span>
     <span class="n">dfgls_small_p</span><span class="p">,</span>
@@ -441,7 +441,7 @@
     <span class="n">dfgls_tau_min</span><span class="p">,</span>
     <span class="n">dfgls_tau_star</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">arch.unitroot.critical_values.dickey_fuller</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.critical_values.dickey_fuller</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">adf_z_cv_approx</span><span class="p">,</span>
     <span class="n">adf_z_large_p</span><span class="p">,</span>
     <span class="n">adf_z_max</span><span class="p">,</span>
@@ -455,17 +455,17 @@
     <span class="n">tau_small_p</span><span class="p">,</span>
     <span class="n">tau_star</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">arch.unitroot.critical_values.kpss</span> <span class="kn">import</span> <span class="n">kpss_critical_values</span>
-<span class="kn">from</span> <span class="nn">arch.unitroot.critical_values.zivot_andrews</span> <span class="kn">import</span> <span class="n">za_critical_values</span>
-<span class="kn">from</span> <span class="nn">arch.utility</span> <span class="kn">import</span> <span class="n">cov_nw</span>
-<span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="kn">import</span> <span class="n">AbstractDocStringInheritor</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">ensure2d</span>
-<span class="kn">from</span> <span class="nn">arch.utility.exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.critical_values.kpss</span><span class="w"> </span><span class="kn">import</span> <span class="n">kpss_critical_values</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.critical_values.zivot_andrews</span><span class="w"> </span><span class="kn">import</span> <span class="n">za_critical_values</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility</span><span class="w"> </span><span class="kn">import</span> <span class="n">cov_nw</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractDocStringInheritor</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">ensure2d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">InfeasibleTestException</span><span class="p">,</span>
     <span class="n">InvalidLengthWarning</span><span class="p">,</span>
     <span class="n">PerformanceWarning</span><span class="p">,</span>
     <span class="n">invalid_length_doc</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">arch.utility.timeseries</span> <span class="kn">import</span> <span class="n">add_trend</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.timeseries</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_trend</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;ADF&quot;</span><span class="p">,</span>
@@ -501,7 +501,7 @@
 <span class="p">}</span>
 
 
-<span class="k">def</span> <span class="nf">_is_reduced_rank</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_reduced_rank</span><span class="p">(</span>
     <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -518,7 +518,7 @@
         <span class="k">return</span> <span class="n">x_rank</span> <span class="o">&lt;</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x_rank</span>
 
 
-<span class="k">def</span> <span class="nf">_select_best_ic</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_select_best_ic</span><span class="p">(</span>
     <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;aic&quot;</span><span class="p">,</span> <span class="s2">&quot;bic&quot;</span><span class="p">,</span> <span class="s2">&quot;t-stat&quot;</span><span class="p">],</span>
     <span class="n">nobs</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
@@ -574,7 +574,7 @@
 <span class="s2">&quot;&quot;&quot;</span>
 
 
-<span class="k">def</span> <span class="nf">_autolag_ols_low_memory</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_autolag_ols_low_memory</span><span class="p">(</span>
     <span class="n">y</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
     <span class="n">maxlag</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span><span class="p">,</span>
@@ -668,7 +668,7 @@
     <span class="k">return</span> <span class="n">_select_best_ic</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">tstat</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_autolag_ols</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_autolag_ols</span><span class="p">(</span>
     <span class="n">endog</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
     <span class="n">exog</span><span class="p">:</span> <span class="n">ArrayLike2D</span><span class="p">,</span>
     <span class="n">startlag</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -739,7 +739,7 @@
     <span class="k">return</span> <span class="n">_select_best_ic</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">tstat</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_df_select_lags</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_df_select_lags</span><span class="p">(</span>
     <span class="n">y</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
     <span class="n">trend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">,</span> <span class="s2">&quot;ctt&quot;</span><span class="p">],</span>
     <span class="n">max_lags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
@@ -814,13 +814,13 @@
     <span class="k">return</span> <span class="n">ic_best</span><span class="p">,</span> <span class="n">best_lag</span>
 
 
-<span class="k">def</span> <span class="nf">_add_column_names</span><span class="p">(</span><span class="n">rhs</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">lags</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_column_names</span><span class="p">(</span><span class="n">rhs</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">lags</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a DataFrame with named columns&quot;&quot;&quot;</span>
     <span class="n">lag_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Diff.L</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">lags</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Level.L1&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">lag_names</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_estimate_df_regression</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_estimate_df_regression</span><span class="p">(</span>
     <span class="n">y</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">trend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">,</span> <span class="s2">&quot;ctt&quot;</span><span class="p">],</span> <span class="n">lags</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RegressionResults</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function that estimates the core (A)DF regression</span>
@@ -858,10 +858,10 @@
     <span class="k">return</span> <span class="n">OLS</span><span class="p">(</span><span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 
 
-<span class="k">class</span> <span class="nc">UnitRootTest</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnitRootTest</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class to be used for inheritance in unit root bootstrap&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">lags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
@@ -887,29 +887,29 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_summary_text</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&quot;&quot;&quot;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&quot;&quot;&quot;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Display as HTML for IPython notebook.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">as_html</span><span class="p">()</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check that the data are compatible with running a test.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This is the core routine that computes the test statistic, computes</span>
 <span class="sd">        the p-value and constructs the critical values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_compute_if_needed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_if_needed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks whether the statistic needs to be computed, and computed if</span>
 <span class="sd">        needed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -918,49 +918,49 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_compute_statistic</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">null_hypothesis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">null_hypothesis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The null hypothesis&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_null_hypothesis</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">alternative_hypothesis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">alternative_hypothesis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The alternative hypothesis&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alternative_hypothesis</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">nobs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nobs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of observations used when computing the test statistic.</span>
 <span class="sd">        Accounts for loss of data due to lags for regression-based bootstrap.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">valid_trends</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">valid_trends</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;List of valid trend terms.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valid_trends</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">pvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the p-value for the test statistic&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_compute_if_needed</span><span class="p">()</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pvalue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pvalue</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">stat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The test statistic for a unit root&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_compute_if_needed</span><span class="p">()</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">critical_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">critical_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Dictionary containing critical values specific to the test, number of</span>
 <span class="sd">        observations and included deterministic trend terms.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_compute_if_needed</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_critical_values</span>
 
-    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Summary</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Summary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Summary of test, containing statistic, p-value and critical values&quot;&quot;&quot;</span>
         <span class="n">table_data</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">(</span><span class="s2">&quot;Test Statistic&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="si">:</span><span class="s2">0.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
@@ -1007,7 +1007,7 @@
         <span class="k">return</span> <span class="n">smry</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets or gets the number of lags used in the model.</span>
 <span class="sd">        When bootstrap use DF-type regressions, lags is the number of lags in the</span>
 <span class="sd">        regression model.  When bootstrap use long-run variance estimators, lags</span>
@@ -1018,12 +1018,12 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the data used in the test statistic&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">trend</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">trend</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets or gets the deterministic trend term used in the test. See</span>
 <span class="sd">        valid_trends for a list of supported trends</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1032,7 +1032,7 @@
 
 <div class="viewcode-block" id="ADF">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.ADF.html#arch.unitroot.ADF">[docs]</a>
-<span class="k">class</span> <span class="nc">ADF</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ADF</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Augmented Dickey-Fuller unit root test</span>
 
@@ -1122,7 +1122,7 @@
 <span class="sd">       https://ideas.repec.org/p/qed/wpaper/1227.html</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">lags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1141,7 +1141,7 @@
         <span class="k">if</span> <span class="n">low_memory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_low_memory</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">1e5</span> <span class="k">else</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_select_lag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_select_lag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">ic_best</span><span class="p">,</span> <span class="n">best_lag</span> <span class="o">=</span> <span class="n">_df_select_lags</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span>
             <span class="n">cast</span><span class="p">(</span><span class="n">UnitRootTrend</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">),</span>
@@ -1152,7 +1152,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ic_best</span> <span class="o">=</span> <span class="n">ic_best</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="n">best_lag</span>
 
-    <span class="k">def</span> <span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">trend_order</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;nc&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span>
         <span class="n">lag_len</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
         <span class="n">required</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">trend_order</span> <span class="o">+</span> <span class="n">lag_len</span>
@@ -1162,7 +1162,7 @@
                 <span class="sa">f</span><span class="s2">&quot;trend </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">trend</span><span class="si">}</span><span class="s2"> and the user-specified number of lags.&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_select_lag</span><span class="p">()</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -1188,13 +1188,13 @@
         <span class="p">}</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">regression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RegressionResults</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">regression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RegressionResults</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the OLS regression results from the ADF model estimated&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_compute_if_needed</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regression</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">max_lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets or gets the maximum lags used when automatically selecting lag</span>
 <span class="sd">        length&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lags</span></div>
@@ -1203,7 +1203,7 @@
 
 <div class="viewcode-block" id="DFGLS">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.DFGLS.html#arch.unitroot.DFGLS">[docs]</a>
-<span class="k">class</span> <span class="nc">DFGLS</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DFGLS</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Elliott, Rothenberg and Stock&#39;s ([ers]_) GLS detrended Dickey-Fuller</span>
 
@@ -1274,7 +1274,7 @@
 <span class="sd">           Economics letters, 94(1), 12-19.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">lags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1297,7 +1297,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_c</span> <span class="o">=</span> <span class="o">-</span><span class="mf">13.5</span>
 
-    <span class="k">def</span> <span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">trend_order</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">)</span>
         <span class="n">lag_len</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
         <span class="n">required</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">trend_order</span> <span class="o">+</span> <span class="n">lag_len</span>
@@ -1307,7 +1307,7 @@
                 <span class="sa">f</span><span class="s2">&quot;trend </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">trend</span><span class="si">}</span><span class="s2"> and the user-specified number of lags.&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Core routine to estimate DF-GLS test statistic&quot;&quot;&quot;</span>
         <span class="c1"># 1. GLS detrend</span>
         <span class="n">trend</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c</span>
@@ -1359,17 +1359,17 @@
         <span class="p">}</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">trend</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">trend</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">regression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RegressionResults</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">regression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RegressionResults</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the OLS regression results from the ADF model estimated&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_compute_if_needed</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regression</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">max_lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets or gets the maximum lags used when automatically selecting lag</span>
 <span class="sd">        length&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_lags</span></div>
@@ -1378,7 +1378,7 @@
 
 <div class="viewcode-block" id="PhillipsPerron">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.PhillipsPerron.html#arch.unitroot.PhillipsPerron">[docs]</a>
-<span class="k">class</span> <span class="nc">PhillipsPerron</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PhillipsPerron</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Phillips-Perron unit root test</span>
 
@@ -1469,7 +1469,7 @@
 <span class="sd">           https://ideas.repec.org/p/qed/wpaper/1227.html</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">lags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1485,7 +1485,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="n">lags</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_regression</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">trend_order</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;nc&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span>
         <span class="n">lag_len</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
         <span class="n">required</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">3</span> <span class="o">+</span> <span class="n">trend_order</span><span class="p">,</span> <span class="n">lag_len</span><span class="p">)</span>
@@ -1495,7 +1495,7 @@
                 <span class="sa">f</span><span class="s2">&quot;trend </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">trend</span><span class="si">}</span><span class="s2"> and the user-specified number of lags.&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Core routine to estimate PP test statistics&quot;&quot;&quot;</span>
         <span class="c1"># 1. Estimate Regression</span>
         <span class="n">y</span><span class="p">,</span> <span class="n">trend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span>
@@ -1562,7 +1562,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_test_name</span> <span class="o">+</span> <span class="s2">&quot; (Z-&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_test_type</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">test_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets or sets the test type returned by stat.</span>
 <span class="sd">        Valid values are &quot;tau&quot; or &quot;rho&quot;</span>
@@ -1570,7 +1570,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_test_type</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">regression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RegressionResults</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">regression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RegressionResults</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns OLS regression results for the specification used in the test</span>
 
@@ -1584,7 +1584,7 @@
 
 <div class="viewcode-block" id="KPSS">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.KPSS.html#arch.unitroot.KPSS">[docs]</a>
-<span class="k">class</span> <span class="nc">KPSS</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">KPSS</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Kwiatkowski, Phillips, Schmidt and Shin (KPSS) stationarity test</span>
 
@@ -1655,7 +1655,7 @@
 <span class="sd">           147-159.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">lags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">trend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">valid_trends</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">)</span>
@@ -1675,7 +1675,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_alternative_hypothesis</span> <span class="o">=</span> <span class="s2">&quot;The process contains a unit root.&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_resids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">trend_order</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">)</span>
         <span class="n">lag_len</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
         <span class="n">required</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">trend_order</span><span class="p">,</span> <span class="n">lag_len</span><span class="p">)</span>
@@ -1685,7 +1685,7 @@
                 <span class="sa">f</span><span class="s2">&quot;trend </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">trend</span><span class="si">}</span><span class="s2"> and the user-specified number of lags.&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># 1. Estimate model with trend</span>
         <span class="n">nobs</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">trend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span>
         <span class="n">z</span> <span class="o">=</span> <span class="n">add_trend</span><span class="p">(</span><span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="n">trend</span><span class="p">)</span>
@@ -1720,7 +1720,7 @@
             <span class="s2">&quot;10%&quot;</span><span class="p">:</span> <span class="n">critical_values</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
         <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">_autolag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_autolag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the number of lags for covariance matrix estimation in KPSS</span>
 <span class="sd">        test using method of Hobijn et al (1998). See also Andrews (1991),</span>
@@ -1755,7 +1755,7 @@
 
 <div class="viewcode-block" id="ZivotAndrews">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.ZivotAndrews.html#arch.unitroot.ZivotAndrews">[docs]</a>
-<span class="k">class</span> <span class="nc">ZivotAndrews</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ZivotAndrews</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Zivot-Andrews structural-break unit-root test</span>
 
@@ -1823,7 +1823,7 @@
 <span class="sd">           Business &amp; Economic Studies, 10: 251-270.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">lags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1846,7 +1846,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_alternative_hypothesis</span> <span class="o">=</span> <span class="s2">&quot;The process is trend and break stationary.&quot;</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_quick_ols</span><span class="p">(</span><span class="n">endog</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">exog</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_quick_ols</span><span class="p">(</span><span class="n">endog</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">exog</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Minimal implementation of LS estimator for internal use</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1858,7 +1858,7 @@
         <span class="n">sigma2</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">e</span> <span class="o">/</span> <span class="p">(</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">k_exog</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">b</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">diag</span><span class="p">(</span><span class="n">sigma2</span> <span class="o">*</span> <span class="n">xpxi</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">trend_order</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trend</span><span class="p">)</span>
         <span class="n">lag_len</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
         <span class="n">required</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">trend_order</span> <span class="o">+</span> <span class="n">lag_len</span>
@@ -1868,7 +1868,7 @@
                 <span class="sa">f</span><span class="s2">&quot;trend </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">trend</span><span class="si">}</span><span class="s2"> and the user-specified number of lags.&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This is the core routine that computes the test statistic, computes</span>
 <span class="sd">        the p-value and constructs the critical values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1948,7 +1948,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_stat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">amin</span><span class="p">(</span><span class="n">stats</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cv_interpolate</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_cv_interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cv_interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Linear interpolation for Zivot-Andrews p-values and critical values</span>
 
@@ -1974,7 +1974,7 @@
 
 <div class="viewcode-block" id="VarianceRatio">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.VarianceRatio.html#arch.unitroot.VarianceRatio">[docs]</a>
-<span class="k">class</span> <span class="nc">VarianceRatio</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VarianceRatio</span><span class="p">(</span><span class="n">UnitRootTest</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">AbstractDocStringInheritor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Variance Ratio test of a random walk.</span>
 
@@ -2024,7 +2024,7 @@
 <span class="sd">       Press.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">lags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
@@ -2050,7 +2050,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_critical_values</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">q</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;%&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cv</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">vr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The ratio of the long block lags-period variance</span>
 <span class="sd">        to the 1-period variance&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_compute_if_needed</span><span class="p">()</span>
@@ -2058,23 +2058,23 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vr</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">overlap</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">overlap</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets of gets the indicator to use overlapping returns in the</span>
 <span class="sd">        long-period variance estimator&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_overlap</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">robust</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">robust</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets of gets the indicator to use a heteroskedasticity robust</span>
 <span class="sd">        variance estimator&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robust</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">debiased</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">debiased</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets of gets the indicator to use debiased variances in the ratio&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debiased</span>
 
-    <span class="k">def</span> <span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">lags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span>
         <span class="n">required</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">lags</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_overlap</span> <span class="k">else</span> <span class="n">lags</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">debiased</span><span class="p">)</span>
@@ -2084,7 +2084,7 @@
                 <span class="sa">f</span><span class="s2">&quot;trend </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">trend</span><span class="si">}</span><span class="s2"> and the user-specified number of lags.&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">overlap</span><span class="p">,</span> <span class="n">debiased</span><span class="p">,</span> <span class="n">robust</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_overlap</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debiased</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robust</span>
         <span class="n">y</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">trend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trend</span>
         <span class="k">assert</span> <span class="n">q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -2148,7 +2148,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">mackinnonp</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mackinnonp</span><span class="p">(</span>
     <span class="n">stat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">regression</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">,</span> <span class="s2">&quot;ctt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span>
     <span class="n">num_unit_roots</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -2231,7 +2231,7 @@
     <span class="k">return</span> <span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">polyval</span><span class="p">(</span><span class="n">poly_coef</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">stat</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">mackinnoncrit</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mackinnoncrit</span><span class="p">(</span>
     <span class="n">num_unit_roots</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">regression</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">,</span> <span class="s2">&quot;ctt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span>
     <span class="n">nobs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">inf</span><span class="p">,</span>
@@ -2309,7 +2309,7 @@
         <span class="k">return</span> <span class="n">polyval</span><span class="p">(</span><span class="n">poly_coef</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">nobs</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">kpss_crit</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kpss_crit</span><span class="p">(</span>
     <span class="n">stat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">trend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2349,7 +2349,7 @@
 
 <div class="viewcode-block" id="auto_bandwidth">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.auto_bandwidth.html#arch.unitroot.auto_bandwidth">[docs]</a>
-<span class="k">def</span> <span class="nf">auto_bandwidth</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">auto_bandwidth</span><span class="p">(</span>
     <span class="n">y</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
     <span class="n">kernel</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
         <span class="s2">&quot;ba&quot;</span><span class="p">,</span> <span class="s2">&quot;bartlett&quot;</span><span class="p">,</span> <span class="s2">&quot;nw&quot;</span><span class="p">,</span> <span class="s2">&quot;pa&quot;</span><span class="p">,</span> <span class="s2">&quot;parzen&quot;</span><span class="p">,</span> <span class="s2">&quot;gallant&quot;</span><span class="p">,</span> <span class="s2">&quot;qs&quot;</span><span class="p">,</span> <span class="s2">&quot;andrews&quot;</span>

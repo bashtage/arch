@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.unitroot._phillips_ouliaris - arch v7.2.1 (+2)</title>
+        <title>arch.unitroot._phillips_ouliaris - arch v7.2.1 (+6)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+2)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+6)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+2)
+            arch v7.2.1 (+6)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+2)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+6)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+2)
+    arch v7.2.1 (+6)
   </label>
   
     <div class="md-nav__source">
@@ -380,24 +380,24 @@
 
 
 <h1>Source code for arch.unitroot._phillips_ouliaris</h1><div class="highlight"><pre>
-<span></span><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">cast</span>
+<span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">cast</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
-<span class="kn">from</span> <span class="nn">statsmodels.iolib.summary</span> <span class="kn">import</span> <span class="n">Summary</span>
-<span class="kn">from</span> <span class="nn">statsmodels.iolib.table</span> <span class="kn">import</span> <span class="n">SimpleTable</span>
-<span class="kn">from</span> <span class="nn">statsmodels.regression.linear_model</span> <span class="kn">import</span> <span class="n">RegressionResults</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.iolib.summary</span><span class="w"> </span><span class="kn">import</span> <span class="n">Summary</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.iolib.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleTable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.regression.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegressionResults</span>
 
-<span class="kn">from</span> <span class="nn">arch.covariance.kernel</span> <span class="kn">import</span> <span class="n">CovarianceEstimator</span>
-<span class="kn">from</span> <span class="nn">arch.typing</span> <span class="kn">import</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">ArrayLike2D</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">UnitRootTrend</span>
-<span class="kn">from</span> <span class="nn">arch.unitroot._shared</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.covariance.kernel</span><span class="w"> </span><span class="kn">import</span> <span class="n">CovarianceEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">ArrayLike2D</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">UnitRootTrend</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot._shared</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">KERNEL_ERR</span><span class="p">,</span>
     <span class="n">KERNEL_ESTIMATORS</span><span class="p">,</span>
     <span class="n">ResidualCointegrationTestResult</span><span class="p">,</span>
     <span class="n">_cross_section</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">arch.unitroot.critical_values.phillips_ouliaris</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.critical_values.phillips_ouliaris</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">CV_PARAMETERS</span><span class="p">,</span>
     <span class="n">CV_TAU_MIN</span><span class="p">,</span>
     <span class="n">PVAL_LARGE_P</span><span class="p">,</span>
@@ -406,17 +406,17 @@
     <span class="n">PVAL_TAU_MIN</span><span class="p">,</span>
     <span class="n">PVAL_TAU_STAR</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">arch.unitroot.unitroot</span> <span class="kn">import</span> <span class="n">TREND_DESCRIPTION</span>
-<span class="kn">from</span> <span class="nn">arch.utility.array</span> <span class="kn">import</span> <span class="n">ensure2d</span>
-<span class="kn">from</span> <span class="nn">arch.utility.io</span> <span class="kn">import</span> <span class="n">str_format</span>
-<span class="kn">from</span> <span class="nn">arch.utility.timeseries</span> <span class="kn">import</span> <span class="n">add_trend</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.unitroot</span><span class="w"> </span><span class="kn">import</span> <span class="n">TREND_DESCRIPTION</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure2d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">str_format</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.timeseries</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_trend</span>
 
 
-<span class="k">class</span> <span class="nc">CriticalValueWarning</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CriticalValueWarning</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
     <span class="k">pass</span>
 
 
-<span class="k">def</span> <span class="nf">_po_ptests</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_po_ptests</span><span class="p">(</span>
     <span class="n">z</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">xsection</span><span class="p">:</span> <span class="n">RegressionResults</span><span class="p">,</span>
     <span class="n">test_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Pu&quot;</span><span class="p">,</span> <span class="s2">&quot;Pz&quot;</span><span class="p">],</span>
@@ -468,7 +468,7 @@
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_po_ztests</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_po_ztests</span><span class="p">(</span>
     <span class="n">yx</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">xsection</span><span class="p">:</span> <span class="n">RegressionResults</span><span class="p">,</span>
     <span class="n">test_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Za&quot;</span><span class="p">,</span> <span class="s2">&quot;Zt&quot;</span><span class="p">],</span>
@@ -514,7 +514,7 @@
 
 <div class="viewcode-block" id="phillips_ouliaris">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.cointegration.phillips_ouliaris.html#arch.unitroot.cointegration.phillips_ouliaris">[docs]</a>
-<span class="k">def</span> <span class="nf">phillips_ouliaris</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">phillips_ouliaris</span><span class="p">(</span>
     <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
     <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike2D</span><span class="p">,</span>
     <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span>
@@ -696,8 +696,8 @@
 
 <div class="viewcode-block" id="PhillipsOuliarisTestResults">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.cointegration.PhillipsOuliarisTestResults.html#arch.unitroot.cointegration.PhillipsOuliarisTestResults">[docs]</a>
-<span class="k">class</span> <span class="nc">PhillipsOuliarisTestResults</span><span class="p">(</span><span class="n">ResidualCointegrationTestResult</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PhillipsOuliarisTestResults</span><span class="p">(</span><span class="n">ResidualCointegrationTestResult</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">stat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">pvalue</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -729,18 +729,18 @@
         <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Name of the long-run covariance estimator&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_est</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Bandwidth used by the long-run covariance estimator&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_est</span><span class="o">.</span><span class="n">bandwidth</span>
 
 <div class="viewcode-block" id="PhillipsOuliarisTestResults.summary">
 <a class="viewcode-back" href="../../../unitroot/generated/generated/arch.unitroot.cointegration.PhillipsOuliarisTestResults.summary.html#arch.unitroot.cointegration.PhillipsOuliarisTestResults.summary">[docs]</a>
-    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Summary</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Summary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Summary of test, containing statistic, p-value and critical values&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">):</span>
             <span class="n">bw</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">))</span>
@@ -789,7 +789,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">phillips_ouliaris_cv</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">phillips_ouliaris_cv</span><span class="p">(</span>
     <span class="n">test_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Za&quot;</span><span class="p">,</span> <span class="s2">&quot;Zt&quot;</span><span class="p">,</span> <span class="s2">&quot;Pu&quot;</span><span class="p">,</span> <span class="s2">&quot;Pz&quot;</span><span class="p">],</span>
     <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span><span class="p">,</span>
     <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -831,7 +831,7 @@
     <span class="n">tbl</span> <span class="o">=</span> <span class="n">CV_PARAMETERS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
     <span class="n">min_size</span> <span class="o">=</span> <span class="n">CV_TAU_MIN</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">nobs</span> <span class="o">&lt;</span> <span class="n">min_size</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">warnings</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;The sample size is smaller than the smallest sample size used &quot;</span>
@@ -848,7 +848,7 @@
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">crit_vals</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">phillips_ouliaris_pval</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">phillips_ouliaris_pval</span><span class="p">(</span>
     <span class="n">stat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">test_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Za&quot;</span><span class="p">,</span> <span class="s2">&quot;Zt&quot;</span><span class="p">,</span> <span class="s2">&quot;Pu&quot;</span><span class="p">,</span> <span class="s2">&quot;Pz&quot;</span><span class="p">],</span>
     <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span><span class="p">,</span>

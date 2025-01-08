@@ -15,7 +15,7 @@
     
   
       
-        <title>ARCH Modeling - arch v7.2.1 (+2)</title>
+        <title>ARCH Modeling - arch v7.2.1 (+6)</title>
       
     
 
@@ -93,7 +93,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v7.2.1 (+2)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+6)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -103,7 +103,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+2)
+            arch v7.2.1 (+6)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -190,10 +190,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v7.2.1 (+2)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+6)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+2)
+    arch v7.2.1 (+6)
   </label>
   
     <div class="md-nav__source">
@@ -873,8 +873,8 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[1]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">seaborn</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span>
 
 <span class="n">seaborn</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
@@ -890,9 +890,9 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[2]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
 
-<span class="kn">import</span> <span class="nn">arch.data.sp500</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.sp500</span>
 
 <span class="n">st</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1988</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">en</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -926,7 +926,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[3]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">arch</span> <span class="kn">import</span> <span class="n">arch_model</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch</span><span class="w"> </span><span class="kn">import</span> <span class="n">arch_model</span>
 
 <span class="n">am</span> <span class="o">=</span> <span class="n">arch_model</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
@@ -954,8 +954,8 @@ Vol Model:                      GARCH   Log-Likelihood:               -6936.72
 Distribution:                  Normal   AIC:                           13881.4
 Method:            Maximum Likelihood   BIC:                           13907.5
                                         No. Observations:                 5030
-Date:                Tue, Nov 05 2024   Df Residuals:                     5029
-Time:                        17:50:55   Df Model:                            1
+Date:                Wed, Jan 08 2025   Df Residuals:                     5029
+Time:                        15:14:40   Df Model:                            1
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
@@ -1018,8 +1018,8 @@ Vol Model:                  GJR-GARCH   Log-Likelihood:               -6822.88
 Distribution:                  Normal   AIC:                           13655.8
 Method:            Maximum Likelihood   BIC:                           13688.4
                                         No. Observations:                 5030
-Date:                Tue, Nov 05 2024   Df Residuals:                     5029
-Time:                        17:50:57   Df Model:                            1
+Date:                Wed, Jan 08 2025   Df Residuals:                     5029
+Time:                        15:14:40   Df Model:                            1
                                   Mean Model
 =============================================================================
                  coef    std err          t      P&gt;|t|       95.0% Conf. Int.
@@ -1078,8 +1078,8 @@ Vol Model:                TARCH/ZARCH   Log-Likelihood:               -6799.18
 Distribution:                  Normal   AIC:                           13608.4
 Method:            Maximum Likelihood   BIC:                           13641.0
                                         No. Observations:                 5030
-Date:                Tue, Nov 05 2024   Df Residuals:                     5029
-Time:                        17:50:57   Df Model:                            1
+Date:                Wed, Jan 08 2025   Df Residuals:                     5029
+Time:                        15:14:40   Df Model:                            1
                                   Mean Model
 =============================================================================
                  coef    std err          t      P&gt;|t|       95.0% Conf. Int.
@@ -1131,8 +1131,8 @@ Vol Model:                      TARCH/ZARCH   Log-Likelihood:               -672
 Distribution:      Standardized Student&#39;s t   AIC:                           13456.3
 Method:                  Maximum Likelihood   BIC:                           13495.4
                                               No. Observations:                 5030
-Date:                      Tue, Nov 05 2024   Df Residuals:                     5029
-Time:                              17:50:57   Df Model:                            1
+Date:                      Wed, Jan 08 2025   Df Residuals:                     5029
+Time:                              15:14:41   Df Model:                            1
                                  Mean Model
 ============================================================================
                  coef    std err          t      P&gt;|t|      95.0% Conf. Int.
@@ -1181,8 +1181,8 @@ Vol Model:                       TARCH/ZARCH   Log-Likelihood:               -69
 Distribution:       Standardized Student&#39;s t   AIC:                           13829.9
 Method:            User-specified Parameters   BIC:                           13869.0
                                                No. Observations:                 5030
-Date:                       Tue, Nov 05 2024
-Time:                               17:50:57
+Date:                       Wed, Jan 08 2025
+Time:                               15:14:41
       Mean Model
 =====================
                  coef
@@ -1211,7 +1211,7 @@ Std. errors not available when the model is not estimated,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[9]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">,</span> <span class="n">fixed_res</span><span class="o">.</span><span class="n">conditional_volatility</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Estimated&quot;</span><span class="p">,</span> <span class="s2">&quot;Fixed&quot;</span><span class="p">]</span>
@@ -1278,7 +1278,7 @@ Std. errors not available when the model is not estimated,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[10]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">arch.data.core_cpi</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.core_cpi</span>
 
 <span class="n">core_cpi</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">core_cpi</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="n">ann_inflation</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">core_cpi</span><span class="o">.</span><span class="n">CPILFESL</span><span class="o">.</span><span class="n">pct_change</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
@@ -1298,7 +1298,7 @@ Std. errors not available when the model is not estimated,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[11]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="kn">import</span> <span class="n">ARX</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ARX</span>
 
 <span class="n">ar</span> <span class="o">=</span> <span class="n">ARX</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">ann_inflation</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">ar</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
@@ -1318,8 +1318,8 @@ Vol Model:          Constant Variance   Log-Likelihood:               -3299.84
 Distribution:                  Normal   AIC:                           6609.68
 Method:            Maximum Likelihood   BIC:                           6632.57
                                         No. Observations:                  719
-Date:                Tue, Nov 05 2024   Df Residuals:                      715
-Time:                        17:50:58   Df Model:                            4
+Date:                Wed, Jan 08 2025   Df Residuals:                      715
+Time:                        15:14:41   Df Model:                            4
                                    Mean Model
 ===============================================================================
                    coef    std err          t      P&gt;|t|       95.0% Conf. Int.
@@ -1339,12 +1339,12 @@ Covariance estimator: White&#39;s Heteroskedasticity Consistent Estimator
 </pre></div></div>
 </div>
 <h3 id="Volatility-Processes">Volatility Processes<a class="headerlink" href="#Volatility-Processes" title="Link to this heading">¶</a></h3>
-<p>Volatility processes can be added a a mean model using the <code class="docutils literal notranslate"><span class="pre">volatility</span></code> property. This example adds an ARCH(5) process to model volatility. The arguments <code class="docutils literal notranslate"><span class="pre">iter</span></code> and <code class="docutils literal notranslate"><span class="pre">disp</span></code> are used in <code class="docutils literal notranslate"><span class="pre">fit()</span></code> to suppress estimation output.</p>
+<p>Volatility processes can be added to a mean model using the <code class="docutils literal notranslate"><span class="pre">volatility</span></code> property. This example adds an ARCH(5) process to model volatility. The arguments <code class="docutils literal notranslate"><span class="pre">iter</span></code> and <code class="docutils literal notranslate"><span class="pre">disp</span></code> are used in <code class="docutils literal notranslate"><span class="pre">fit()</span></code> to suppress estimation output.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[12]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="kn">import</span> <span class="n">ARCH</span><span class="p">,</span> <span class="n">GARCH</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ARCH</span><span class="p">,</span> <span class="n">GARCH</span>
 
 <span class="n">ar</span><span class="o">.</span><span class="n">volatility</span> <span class="o">=</span> <span class="n">ARCH</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
@@ -1365,8 +1365,8 @@ Vol Model:                       ARCH   Log-Likelihood:               -3174.60
 Distribution:                  Normal   AIC:                           6369.19
 Method:            Maximum Likelihood   BIC:                           6414.97
                                         No. Observations:                  719
-Date:                Tue, Nov 05 2024   Df Residuals:                      715
-Time:                        17:50:58   Df Model:                            4
+Date:                Wed, Jan 08 2025   Df Residuals:                      715
+Time:                        15:14:41   Df Model:                            4
                                    Mean Model
 ===============================================================================
                    coef    std err          t      P&gt;|t|       95.0% Conf. Int.
@@ -1413,7 +1413,7 @@ Covariance estimator: robust
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[14]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="kn">import</span> <span class="n">StudentsT</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate</span><span class="w"> </span><span class="kn">import</span> <span class="n">StudentsT</span>
 
 <span class="n">ar</span><span class="o">.</span><span class="n">distribution</span> <span class="o">=</span> <span class="n">StudentsT</span><span class="p">()</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">update_freq</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
@@ -1434,8 +1434,8 @@ Vol Model:                             ARCH   Log-Likelihood:               -316
 Distribution:      Standardized Student&#39;s t   AIC:                           6358.51
 Method:                  Maximum Likelihood   BIC:                           6408.86
                                               No. Observations:                  719
-Date:                      Tue, Nov 05 2024   Df Residuals:                      715
-Time:                              17:50:59   Df Model:                            4
+Date:                      Wed, Jan 08 2025   Df Residuals:                      715
+Time:                              15:14:42   Df Model:                            4
                                    Mean Model
 ===============================================================================
                    coef    std err          t      P&gt;|t|       95.0% Conf. Int.
@@ -1470,9 +1470,9 @@ Covariance estimator: robust
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[15]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
 
-<span class="kn">import</span> <span class="nn">arch.data.wti</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">arch.data.wti</span>
 
 <span class="n">crude</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">wti</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="n">crude_ret</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">crude</span><span class="o">.</span><span class="n">DCOILWTICO</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
@@ -1726,33 +1726,33 @@ dtype: float64
   <tbody>
     <tr>
       <th>0</th>
-      <td>6.859147</td>
-      <td>2.136842</td>
-      <td>6.829781</td>
+      <td>-0.099027</td>
+      <td>2.045979</td>
+      <td>-0.128392</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>-3.036264</td>
-      <td>2.522926</td>
-      <td>-3.065629</td>
+      <td>-3.139060</td>
+      <td>1.985968</td>
+      <td>-3.168425</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.244887</td>
-      <td>2.593872</td>
-      <td>0.215522</td>
+      <td>-2.313486</td>
+      <td>2.127208</td>
+      <td>-2.342851</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>-2.691191</td>
-      <td>2.512419</td>
-      <td>-2.720557</td>
+      <td>2.166725</td>
+      <td>2.167949</td>
+      <td>2.137360</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>-1.112402</td>
-      <td>2.553091</td>
-      <td>-1.141767</td>
+      <td>-0.442541</td>
+      <td>2.150342</td>
+      <td>-0.471906</td>
     </tr>
   </tbody>
 </table>
@@ -1764,9 +1764,9 @@ dtype: float64
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[19]:
 </code></pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">arch.univariate</span> <span class="kn">import</span> <span class="n">ConstantMean</span><span class="p">,</span> <span class="n">SkewStudent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantMean</span><span class="p">,</span> <span class="n">SkewStudent</span>
 
 <span class="n">rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">([</span><span class="mi">892380934</span><span class="p">,</span> <span class="mi">189201902</span><span class="p">,</span> <span class="mi">129129894</span><span class="p">,</span> <span class="mi">9890437</span><span class="p">])</span>
 <span class="c1"># Save the initial state to reset later</span>

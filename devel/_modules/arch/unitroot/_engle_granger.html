@@ -15,7 +15,7 @@
     
   
       
-        <title>arch.unitroot._engle_granger - arch v7.2.1 (+2)</title>
+        <title>arch.unitroot._engle_granger - arch v7.2.1 (+6)</title>
       
     
 
@@ -87,7 +87,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+2)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+6)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+2)
+            arch v7.2.1 (+6)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+2)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+6)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+2)
+    arch v7.2.1 (+6)
   </label>
   
     <div class="md-nav__source">
@@ -380,22 +380,22 @@
 
 
 <h1>Source code for arch.unitroot._engle_granger</h1><div class="highlight"><pre>
-<span></span><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
-<span class="kn">from</span> <span class="nn">statsmodels.iolib.summary</span> <span class="kn">import</span> <span class="n">Summary</span>
-<span class="kn">from</span> <span class="nn">statsmodels.iolib.table</span> <span class="kn">import</span> <span class="n">SimpleTable</span>
-<span class="kn">from</span> <span class="nn">statsmodels.regression.linear_model</span> <span class="kn">import</span> <span class="n">RegressionResults</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.iolib.summary</span><span class="w"> </span><span class="kn">import</span> <span class="n">Summary</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.iolib.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleTable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.regression.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegressionResults</span>
 
-<span class="kn">from</span> <span class="nn">arch.typing</span> <span class="kn">import</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">ArrayLike2D</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">UnitRootTrend</span>
-<span class="kn">from</span> <span class="nn">arch.unitroot._shared</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">ArrayLike2D</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">UnitRootTrend</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot._shared</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ResidualCointegrationTestResult</span><span class="p">,</span>
     <span class="n">_check_cointegrating_regression</span><span class="p">,</span>
     <span class="n">_cross_section</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">arch.unitroot.critical_values.engle_granger</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.critical_values.engle_granger</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">CV_PARAMETERS</span><span class="p">,</span>
     <span class="n">LARGE_PARAMETERS</span><span class="p">,</span>
     <span class="n">SMALL_PARAMETERS</span><span class="p">,</span>
@@ -403,12 +403,12 @@
     <span class="n">TAU_MIN</span><span class="p">,</span>
     <span class="n">TAU_STAR</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">arch.unitroot.unitroot</span> <span class="kn">import</span> <span class="n">ADF</span><span class="p">,</span> <span class="n">TREND_DESCRIPTION</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.unitroot</span><span class="w"> </span><span class="kn">import</span> <span class="n">ADF</span><span class="p">,</span> <span class="n">TREND_DESCRIPTION</span>
 
 
 <div class="viewcode-block" id="engle_granger">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.cointegration.engle_granger.html#arch.unitroot.cointegration.engle_granger">[docs]</a>
-<span class="k">def</span> <span class="nf">engle_granger</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">engle_granger</span><span class="p">(</span>
     <span class="n">y</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">,</span>
     <span class="n">x</span><span class="p">:</span> <span class="n">ArrayLike2D</span><span class="p">,</span>
     <span class="n">trend</span><span class="p">:</span> <span class="n">UnitRootTrend</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span>
@@ -494,7 +494,7 @@
 
 <div class="viewcode-block" id="EngleGrangerTestResults">
 <a class="viewcode-back" href="../../../unitroot/generated/arch.unitroot.cointegration.EngleGrangerTestResults.html#arch.unitroot.cointegration.EngleGrangerTestResults">[docs]</a>
-<span class="k">class</span> <span class="nc">EngleGrangerTestResults</span><span class="p">(</span><span class="n">ResidualCointegrationTestResult</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EngleGrangerTestResults</span><span class="p">(</span><span class="n">ResidualCointegrationTestResult</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Results class for Engle-Granger cointegration tests.</span>
 
@@ -521,7 +521,7 @@
 <span class="sd">        The OLS results used in the cross-sectional regression.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">stat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">pvalue</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -549,17 +549,17 @@
         <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of lags used in the Augmented Dickey-Fuller regression.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adf</span><span class="o">.</span><span class="n">lags</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">max_lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The maximum number of lags used in the lag-length selection.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adf</span><span class="o">.</span><span class="n">max_lags</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">rho</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rho</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The estimated coefficient in the Dickey-Fuller Test</span>
 
@@ -584,7 +584,7 @@
 
 <div class="viewcode-block" id="EngleGrangerTestResults.summary">
 <a class="viewcode-back" href="../../../unitroot/generated/generated/arch.unitroot.cointegration.EngleGrangerTestResults.summary.html#arch.unitroot.cointegration.EngleGrangerTestResults.summary">[docs]</a>
-    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Summary</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Summary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Summary of test, containing statistic, p-value and critical values&quot;&quot;&quot;</span>
         <span class="n">table_data</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">(</span><span class="s2">&quot;Test Statistic&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="si">:</span><span class="s2">0.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
@@ -629,7 +629,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">engle_granger_cv</span><span class="p">(</span><span class="n">trend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">nobs</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">engle_granger_cv</span><span class="p">(</span><span class="n">trend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">nobs</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Critical Values for Engle-Granger t-tests</span>
 
@@ -666,7 +666,7 @@
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">crit_vals</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">engle_granger_pval</span><span class="p">(</span><span class="n">stat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">trend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_x</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">engle_granger_pval</span><span class="p">(</span><span class="n">stat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">trend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_x</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Asymptotic P-values for Engle-Granger t-tests</span>
 

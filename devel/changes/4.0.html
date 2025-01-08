@@ -15,7 +15,7 @@
     
   
       
-        <title>Version 4 - arch v7.2.1 (+2)</title>
+        <title>Version 4 - arch v7.2.1 (+6)</title>
       
     
 
@@ -92,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v7.2.1 (+2)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+6)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -102,7 +102,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+2)
+            arch v7.2.1 (+6)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -189,10 +189,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v7.2.1 (+2)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+2)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+6)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+6)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+2)
+    arch v7.2.1 (+6)
   </label>
   
     <div class="md-nav__source">
@@ -857,7 +857,7 @@ more memory than when <code class="docutils literal notranslate"><span class="pr
 simulation or bootstrap-based forecasting.</p></li>
 <li><p>The default value <code class="docutils literal notranslate"><span class="pre">reindex</span></code> can be changed by importing</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">arch.__future__</span> <span class="kn">import</span> <span class="n">reindexing</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">arch.__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">reindexing</span>
 </code></pre></div>
 </div>
 <ul class="simple">
@@ -964,7 +964,7 @@ jackknife used the wrong centering variable (<a class="extlink-issue reference e
 <li><p>Added <a class="reference internal" href="../univariate/generated/generated/arch.univariate.base.ARCHModelResult.optimization_result.html#arch.univariate.base.ARCHModelResult.optimization_result" title="arch.univariate.base.ARCHModelResult.optimization_result (Python property) — Information about the convergence of the loglikelihood optimization"><code class="xref py py-func docutils literal notranslate"><span class="pre">optimization_result()</span></code></a> to
 simplify checking for convergence of the numerical optimizer (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/292">GH292</a>).</p></li>
 <li><p>Added <cite>random_state</cite> argument to <a class="reference internal" href="../univariate/generated/generated/arch.univariate.HARX.forecast.html#arch.univariate.HARX.forecast" title="arch.univariate.HARX.forecast (Python method) — Construct forecasts from estimated model"><code class="xref py py-func docutils literal notranslate"><span class="pre">forecast()</span></code></a>
-to allow a <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a> object to be passed in when
+to allow a <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a> object to be passed in when
 forecasting when <cite>method=’bootstrap’</cite>. This allows the repeatable forecast to
 be produced (<a class="extlink-issue reference external" href="https://github.com/bashtage/arch/issues/290">GH290</a>).</p></li>
 <li><p>Fixed a bug in <a class="reference internal" href="../unitroot/generated/arch.unitroot.VarianceRatio.html#arch.unitroot.VarianceRatio" title="arch.unitroot.VarianceRatio (Python class) — Variance Ratio test of a random walk."><code class="xref py py-class docutils literal notranslate"><span class="pre">VarianceRatio</span></code></a> that used the wrong
