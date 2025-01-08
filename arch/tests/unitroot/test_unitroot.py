@@ -19,7 +19,7 @@ from statsmodels.tsa.stattools import lagmat
 
 try:
     from statsmodels.tsa.stattools import _autolag
-except:
+except ImportError:
     from statsmodels.tsa.stattools._stattools import _autolag
 
 from arch.unitroot import ADF, DFGLS, KPSS, PhillipsPerron, VarianceRatio, ZivotAndrews
