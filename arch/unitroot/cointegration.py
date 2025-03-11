@@ -1,11 +1,10 @@
 from collections.abc import Sequence
 from functools import cached_property
-from typing import Optional
+from typing import Optional, cast
 
 import numpy as np
 import pandas as pd
 from pandas import DataFrame, Series
-from pandas.util._decorators import Appender, Substitution
 from scipy import stats
 from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
 from statsmodels.iolib.table import SimpleTable
@@ -30,6 +29,7 @@ from arch.unitroot.unitroot import SHORT_TREND_DESCRIPTION
 from arch.utility.array import ensure2d
 from arch.utility.io import pval_format, str_format
 from arch.utility.timeseries import add_trend
+from arch.vendor._decorators import Appender, Substitution
 
 __all__ = [
     "engle_granger",
@@ -1034,8 +1034,8 @@ class FullyModifiedOLS:
             center = float(self._y.mean())
             tss_df = 1
         y_centered = self._y - center
-        ssr = resid.T @ resid
-        tss = y_centered.T @ y_centered
+        ssr = float(cast(float, resid.T @ resid))
+        tss = float(cast(float, y_centered.T @ y_centered))
         r2 = 1.0 - ssr / tss
         r2_adj = 1.0 - (ssr / (nobs - nvar)) / (tss / (nobs - tss_df))
         return resid, r2, r2_adj

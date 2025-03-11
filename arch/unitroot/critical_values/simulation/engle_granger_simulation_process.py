@@ -1,5 +1,6 @@
 from collections import defaultdict
 import glob
+from typing import MutableMapping, cast
 
 from black import FileMode, TargetVersion, format_file_contents
 import numpy as np
@@ -26,13 +27,13 @@ for key in input_data:
 
 trends = ("nc", "c", "ct", "ctt")
 critical_values = (1, 5, 10)
-final_cv: dict[str, dict[int, list[float]]] = {}
+final_cv: dict[str, dict[int, list[list[float]]]] = {}
 for trend in trends:
     print(trend)
     results = final[trend]
 
     # For percentiles 1, 5 and 10, regress on a constant, and powers of 1/T
-    out = defaultdict(list)
+    out: MutableMapping[int, list[list[float]]] = defaultdict(list)
     for cv in critical_values:
         num_ex = results.shape[-1]
         loc = np.argmin(np.abs(np.array(PERCENTILES) - cv))
@@ -52,7 +53,7 @@ for trend in trends:
                 params[-1] = 0.00
             out[cv].append(params)
         values = np.array(out[cv]).tolist()
-        out[cv] = [[round(val, 5) for val in row] for row in values]
+        out[cv] = [[round(cast(float, val), 5) for val in row] for row in values]
 
     final_cv[trend] = dict(out)
 

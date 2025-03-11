@@ -1477,6 +1477,11 @@ def test_fixed_equivalence(fit_fixed_models):
 
 @pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
 def test_fixed_equivalence_plots(fit_fixed_models):
+    import matplotlib
+
+    backend = matplotlib.get_backend()
+    matplotlib.use("agg")
+
     res, res_fixed = fit_fixed_models
 
     fig = res.plot()
@@ -1484,6 +1489,7 @@ def test_fixed_equivalence_plots(fit_fixed_models):
     assert isinstance(fig, type(fixed_fig))
 
     close_plots()
+    matplotlib.use(backend)
 
 
 @pytest.mark.slow

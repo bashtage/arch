@@ -11,6 +11,7 @@ from arch.utility.timeseries import add_trend
 
 try:
     import matplotlib.pyplot as plt
+
 except ImportError:
     pass
 
@@ -241,7 +242,7 @@ class ResidualCointegrationTestResult(CointegrationTestResult):
         title = "Cointegrating Residual" if title is None else title
         ax = df.plot(legend=False, ax=axes, title=title)
         ax.set_xlim(df.index.min(), df.index.max())
-        fig = ax.get_figure()
+        fig = cast(plt.Figure, ax.get_figure())
         fig.tight_layout(pad=1.0)
 
         return fig
