@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from functools import wraps
-import inspect
-import os
 from textwrap import dedent
 from typing import (
     TYPE_CHECKING,
@@ -15,117 +13,12 @@ import warnings
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
-    from types import FrameType
-
-
-def find_stack_level() -> int:
-    """
-    Find the first place in the stack that is not inside pandas
-    (tests notwithstanding).
-    """
-
-    import pandas as pd
-
-    pkg_dir = os.path.dirname(pd.__file__)
-    test_dir = os.path.join(pkg_dir, "tests")
-
-    # https://stackoverflow.com/questions/17407119/python-inspect-stack-is-slow
-    frame: FrameType | None = inspect.currentframe()
-    try:
-        n = 0
-        while frame:
-            filename = inspect.getfile(frame)
-            if filename.startswith(pkg_dir) and not filename.startswith(test_dir):
-                frame = frame.f_back
-                n += 1
-            else:
-                break
-    finally:
-        # See note in
-        # https://docs.python.org/3/library/inspect.html#inspect.Traceback
-        del frame
-    return n
 
 
 # Typing variables from pandas
 T = TypeVar("T")
 FuncType = Callable[..., Any]
 F = TypeVar("F", bound=FuncType)
-
-
-def deprecate(
-    name: str,
-    alternative: Callable[..., Any],
-    version: str,
-    alt_name: str | None = None,
-    klass: type[Warning] | None = None,
-    stacklevel: int = 2,
-    msg: str | None = None,
-) -> Callable[[F], F]:
-    """
-    Return a new function that emits a deprecation warning on use.
-
-    To use this method for a deprecated function, another function
-    `alternative` with the same signature must exist. The deprecated
-    function will emit a deprecation warning, and in the docstring
-    it will contain the deprecation directive with the provided version
-    so it can be detected for future removal.
-
-    Parameters
-    ----------
-    name : str
-        Name of function to deprecate.
-    alternative : func
-        Function to use instead.
-    version : str
-        Version of pandas in which the method has been deprecated.
-    alt_name : str, optional
-        Name to use in preference of alternative.__name__.
-    klass : Warning, default FutureWarning
-    stacklevel : int, default 2
-    msg : str
-        The message to display in the warning.
-        Default is '{name} is deprecated. Use {alt_name} instead.'
-    """
-    alt_name = alt_name or alternative.__name__
-    klass = klass or FutureWarning
-    warning_msg = msg or f"{name} is deprecated, use {alt_name} instead."
-
-    @wraps(alternative)
-    def wrapper(*args: Any, **kwargs: Any) -> Callable[..., Any]:
-        warnings.warn(warning_msg, klass, stacklevel=stacklevel)
-        return alternative(*args, **kwargs)
-
-    # adding deprecated directive to the docstring
-    msg = msg or f"Use `{alt_name}` instead."
-    doc_error_msg = (
-        "deprecate needs a correctly formatted docstring in "
-        "the target function (should have a one liner short "
-        "summary, and opening quotes should be in their own "
-        f"line). Found:\n{alternative.__doc__}"
-    )
-
-    # when python is running in optimized mode (i.e. `-OO`), docstrings are
-    # removed, so we check that a docstring with correct formatting is used
-    # but we allow empty docstrings
-    if alternative.__doc__:
-        if alternative.__doc__.count("\n") < 3:
-            raise AssertionError(doc_error_msg)
-        empty1, summary, empty2, doc_string = alternative.__doc__.split("\n", 3)
-        if empty1 or empty2 and not summary:
-            raise AssertionError(doc_error_msg)
-        wrapper.__doc__ = dedent(
-            f"""
-        {summary.strip()}
-
-        .. deprecated:: {version}
-            {msg}
-
-        {dedent(doc_string)}"""
-        )
-    # error: Incompatible return value type (got "Callable[[VarArg(Any), KwArg(Any)],
-    # Callable[...,Any]]", expected "Callable[[F], F]")
-    return wrapper  # type: ignore[return-value]
 
 
 def deprecate_kwarg(
@@ -246,52 +139,6 @@ def deprecate_kwarg(
         return cast(F, wrapper)
 
     return _deprecate_kwarg
-
-
-def _format_argument_list(allow_args: list[str]) -> str:
-    """
-    Convert the allow_args argument (either string or integer) of
-    `deprecate_nonkeyword_arguments` function to a string describing
-    it to be inserted into warning message.
-
-    Parameters
-    ----------
-    allowed_args : list, tuple or int
-        The `allowed_args` argument for `deprecate_nonkeyword_arguments`,
-        but None value is not allowed.
-
-    Returns
-    -------
-    str
-        The substring describing the argument list in best way to be
-        inserted to the warning message.
-
-    Examples
-    --------
-    `format_argument_list([])` -> ''
-    `format_argument_list(['a'])` -> "except for the arguments 'a'"
-    `format_argument_list(['a', 'b'])` -> "except for the arguments 'a' and 'b'"
-    `format_argument_list(['a', 'b', 'c'])` ->
-        "except for the arguments 'a', 'b' and 'c'"
-    """
-    if "self" in allow_args:
-        allow_args.remove("self")
-    if not allow_args:
-        return ""
-    elif len(allow_args) == 1:
-        return f" except for the argument '{allow_args[0]}'"
-    else:
-        last = allow_args[-1]
-        args = ", ".join(["'" + x + "'" for x in allow_args[:-1]])
-        return f" except for the arguments {args} and '{last}'"
-
-
-def future_version_msg(version: str | None) -> str:
-    """Specify which version of pandas the deprecation will take place in."""
-    if version is None:
-        return "In a future version of pandas"
-    else:
-        return f"Starting with pandas version {version}"
 
 
 # Substitution and Appender are derived from matplotlib.docstring (1.1.0)
