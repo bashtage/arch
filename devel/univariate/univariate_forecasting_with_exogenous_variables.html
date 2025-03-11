@@ -10,12 +10,19 @@
       
       
       
+      
+        <link rel="prev" href="univariate_volatility_scenarios.html">
+      
+      
+        <link rel="next" href="mean.html">
+      
+      
       <link rel="icon" href="../_static/favicon.ico">
     
     
   
       
-        <title>Forecasting with Exogenous Regressors - arch v7.2.1 (+12)</title>
+        <title>Forecasting with Exogenous Regressors - arch v7.2.1 (+14)</title>
       
     
 
@@ -30,15 +37,13 @@
     
       
         
-        
-          
-          
-          <meta name="theme-color" content="#2094f3">
-        
       
       
 
+
     
+    
+      
     
     
       
@@ -47,10 +52,10 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.4b4a8c74e2ff2ab5b.min.css?v=afa97f93" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.8bc14be58eddc636f.min.css?v=68780cc0" />
         <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
         <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -65,9 +70,8 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="blue" data-md-color-accent="indigo">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo">
   
-    
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -84,26 +88,29 @@
       
     </div>
     
-      <div data-md-component="outdated" hidden>
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
         
       </div>
     
     
       
 
-<header class="md-header" data-md-component="header">
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v7.2.1 (+12)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+12)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+14)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+14)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+12)
+            arch v7.2.1 (+14)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -116,10 +123,14 @@
       </div>
     </div>
     
+      
+    
+    
     
     
       <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
       </label>
       <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
@@ -127,24 +138,27 @@
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
@@ -156,7 +170,7 @@
         <a href="https://github.com/bashtage/arch/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     arch
@@ -188,19 +202,20 @@
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v7.2.1 (+12)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+12)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+14)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+14)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+12)
+    arch v7.2.1 (+14)
   </label>
   
     <div class="md-nav__source">
       <a href="https://github.com/bashtage/arch/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     arch
@@ -212,149 +227,231 @@
     
       
       
-      
-
   
   
     
   
   
+  
+    
+    
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" checked>
-      
-      
-      
         
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="univariate.html"><span title="/univariate/univariate.rst (reference label)" class="md-ellipsis">Univariate Volatility Models</span></a>
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
           
-            <label for="__nav_1">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="Univariate Volatility Models" data-md-level="1">
-        <label class="md-nav__title" for="__nav_1">
-          <span class="md-nav__icon md-icon"></span>
-          <span title="/univariate/univariate.rst (reference label)" class="md-ellipsis">Univariate Volatility Models</span>
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
+          <div class="md-nav__link md-nav__container">
+            <a href="univariate.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate.rst (reference label)">Univariate Volatility Models</span>
+    
+  </span>
+  
+
+            </a>
             
               
+              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            <span title="/univariate/univariate.rst (reference label)">Univariate Volatility Models</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="introduction.html" class="md-nav__link">
-        <span title="/univariate/introduction.rst (reference label)" class="md-ellipsis">Introduction</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/introduction.rst (reference label)">Introduction</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="univariate_volatility_modeling.html" class="md-nav__link">
-        <span title="/univariate/univariate_volatility_modeling.ipynb (reference label)" class="md-ellipsis">Examples</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate_volatility_modeling.ipynb (reference label)">Examples</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="forecasting.html" class="md-nav__link">
-        <span title="/univariate/forecasting.rst (reference label)" class="md-ellipsis">Forecasting</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/forecasting.rst (reference label)">Forecasting</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="univariate_volatility_forecasting.html" class="md-nav__link">
-        <span title="/univariate/univariate_volatility_forecasting.ipynb (reference label)" class="md-ellipsis">Volatility Forecasting</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate_volatility_forecasting.ipynb (reference label)">Volatility Forecasting</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="univariate_volatility_forecasting.html#Value-at-Risk-Forecasting" class="md-nav__link">
-        <span title="/univariate/univariate_volatility_forecasting.ipynb#value-at-risk-forecasting (reference label)" class="md-ellipsis">Value-<wbr>at-<wbr>Risk Forecasting</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate_volatility_forecasting.ipynb#value-at-risk-forecasting (reference label)">Value-<wbr>at-<wbr>Risk Forecasting</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="univariate_volatility_scenarios.html" class="md-nav__link">
-        <span title="/univariate/univariate_volatility_scenarios.ipynb (reference label)" class="md-ellipsis">Forecasting Scenarios</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate_volatility_scenarios.ipynb (reference label)">Forecasting Scenarios</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
   
   
     
   
     
+  
   
   
     <li class="md-nav__item md-nav__item--active">
       
       
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb (reference label)" class="md-ellipsis">Forecasting with Exogenous Variables</span>
+          
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb (reference label)">Forecasting with Exogenous Variables</span>
+    
+  </span>
+  
+
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="#" class="md-nav__link md-nav__link--active">
-        <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb (reference label)" class="md-ellipsis">Forecasting with Exogenous Variables</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb (reference label)">Forecasting with Exogenous Variables</span>
+    
+  </span>
+  
+
       </a>
       
         
@@ -375,35 +472,50 @@
       
         <li class="md-nav__item">
   <a href="#Simulating-data" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#simulating-data (reference label)" class="md-ellipsis">Simulating data</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#simulating-data (reference label)">Simulating data</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#Plotting-the-data" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#plotting-the-data (reference label)" class="md-ellipsis">Plotting the data</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#plotting-the-data (reference label)">Plotting the data</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#Forecasting-the-X-values" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#forecasting-the-x-values (reference label)" class="md-ellipsis">Forecasting the X values</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#forecasting-the-x-values (reference label)">Forecasting the X values</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#Fitting-the-model" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#fitting-the-model (reference label)" class="md-ellipsis">Fitting the model</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#fitting-the-model (reference label)">Fitting the model</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#Using-a-dict" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#using-a-dict (reference label)" class="md-ellipsis">Using a dict</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#using-a-dict (reference label)">Using a dict</span>
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Using a dict">
@@ -411,7 +523,10 @@
         
           <li class="md-nav__item">
   <a href="#Using-DataFrame" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#using-dataframe (reference label)" class="md-ellipsis">Using Data<wbr>Frame</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#using-dataframe (reference label)">Using Data<wbr>Frame</span>
+    </span>
   </a>
   
 </li>
@@ -423,35 +538,50 @@
       
         <li class="md-nav__item">
   <a href="#Using-an-array" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#using-an-array (reference label)" class="md-ellipsis">Using an array</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#using-an-array (reference label)">Using an array</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#Producing-multiple-forecasts" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#producing-multiple-forecasts (reference label)" class="md-ellipsis">Producing multiple forecasts</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#producing-multiple-forecasts (reference label)">Producing multiple forecasts</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#x-input-array-sizes" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#x-input-array-sizes (reference label)" class="md-ellipsis">x input array sizes</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#x-input-array-sizes (reference label)">x input array sizes</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#Special-Cases-with-a-single-x-variable" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#special-cases-with-a-single-x-variable (reference label)" class="md-ellipsis">Special Cases with a single x variable</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#special-cases-with-a-single-x-variable (reference label)">Special Cases with a single x variable</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#Simulation" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#simulation (reference label)" class="md-ellipsis">Simulation</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#simulation (reference label)">Simulation</span>
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Simulation">
@@ -459,14 +589,20 @@
         
           <li class="md-nav__item">
   <a href="#Static-out-of-sample-x" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#static-out-of-sample-x (reference label)" class="md-ellipsis">Static out-<wbr>of-<wbr>sample x</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#static-out-of-sample-x (reference label)">Static out-<wbr>of-<wbr>sample x</span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#Simulating-the-out-of-sample-x" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#simulating-the-out-of-sample-x (reference label)" class="md-ellipsis">Simulating the out-<wbr>of-<wbr>sample x</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#simulating-the-out-of-sample-x (reference label)">Simulating the out-<wbr>of-<wbr>sample x</span>
+    </span>
   </a>
   
 </li>
@@ -478,7 +614,10 @@
       
         <li class="md-nav__item">
   <a href="#Conditional-Mean-Alignment-vs.-Forecast-Alignment" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#conditional-mean-alignment-vs.-forecast-alignment (reference label)" class="md-ellipsis">Conditional Mean Alignment vs.<wbr> Forecast Alignment</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#conditional-mean-alignment-vs.-forecast-alignment (reference label)">Conditional Mean Alignment vs.<wbr> Forecast Alignment</span>
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Conditional Mean Alignment vs. Forecast Alignment">
@@ -486,28 +625,40 @@
         
           <li class="md-nav__item">
   <a href="#Conditional-Mean-uses-target-alignment" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#conditional-mean-uses-target-alignment (reference label)" class="md-ellipsis">Conditional Mean uses target alignment</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#conditional-mean-uses-target-alignment (reference label)">Conditional Mean uses target alignment</span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#forecast-uses-origin-alignment" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#forecast-uses-origin-alignment (reference label)" class="md-ellipsis">forecast uses origin alignment</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#forecast-uses-origin-alignment (reference label)">forecast uses origin alignment</span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#(Nearly)-out-of-sample-forecasts" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#(nearly)-out-of-sample-forecasts (reference label)" class="md-ellipsis"><wbr>(Nearly) out-<wbr>of-<wbr>sample forecasts</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#(nearly)-out-of-sample-forecasts (reference label)"><wbr>(Nearly) out-<wbr>of-<wbr>sample forecasts</span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#True-out-of-sample-forecasts" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#true-out-of-sample-forecasts (reference label)" class="md-ellipsis">True out-<wbr>of-<wbr>sample forecasts</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#true-out-of-sample-forecasts (reference label)">True out-<wbr>of-<wbr>sample forecasts</span>
+    </span>
   </a>
   
 </li>
@@ -524,115 +675,179 @@
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="mean.html" class="md-nav__link">
-        <span title="/univariate/mean.rst (reference label)" class="md-ellipsis">Mean Models</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/mean.rst (reference label)">Mean Models</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="volatility.html" class="md-nav__link">
-        <span title="/univariate/volatility.rst (reference label)" class="md-ellipsis">Volatility Processes</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/volatility.rst (reference label)">Volatility Processes</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="univariate_using_fixed_variance.html" class="md-nav__link">
-        <span title="/univariate/univariate_using_fixed_variance.ipynb (reference label)" class="md-ellipsis">Using the Fixed Variance Process</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/univariate_using_fixed_variance.ipynb (reference label)">Using the Fixed Variance Process</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="distribution.html" class="md-nav__link">
-        <span title="/univariate/distribution.rst (reference label)" class="md-ellipsis">Distributions</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/distribution.rst (reference label)">Distributions</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="results.html" class="md-nav__link">
-        <span title="/univariate/results.rst (reference label)" class="md-ellipsis">Results</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/results.rst (reference label)">Results</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="utility.html" class="md-nav__link">
-        <span title="/univariate/utility.rst (reference label)" class="md-ellipsis">Utilities</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/utility.rst (reference label)">Utilities</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="background.html" class="md-nav__link">
-        <span title="/univariate/background.rst (reference label)" class="md-ellipsis">Background and References</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/univariate/background.rst (reference label)">Background and References</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
   
@@ -640,15 +855,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../bootstrap/bootstrap.html" class="md-nav__link">
-        <span title="/bootstrap/bootstrap.rst (reference label)" class="md-ellipsis">Bootstrapping</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bootstrap/bootstrap.rst (reference label)">Bootstrapping</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -656,15 +878,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../multiple-comparison/multiple-comparisons.html" class="md-nav__link">
-        <span title="/multiple-comparison/multiple-comparisons.rst (reference label)" class="md-ellipsis">Multiple Comparison Problems</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/multiple-comparison/multiple-comparisons.rst (reference label)">Multiple Comparison Problems</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -672,15 +901,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../unitroot/unitroot.html" class="md-nav__link">
-        <span title="/unitroot/unitroot.rst (reference label)" class="md-ellipsis">Unit Root Testing</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/unitroot/unitroot.rst (reference label)">Unit Root Testing</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -688,15 +924,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../unitroot/unitroot.html#cointegration-analysis" class="md-nav__link">
-        <span title="/unitroot/unitroot.rst#cointegration-analysis (reference label)" class="md-ellipsis">Cointegration Analysis</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/unitroot/unitroot.rst#cointegration-analysis (reference label)">Cointegration Analysis</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -704,15 +947,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../covariance/covariance.html" class="md-nav__link">
-        <span title="/covariance/covariance.rst (reference label)" class="md-ellipsis">Long-<wbr>run Covariance Estimation</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/covariance/covariance.rst (reference label)">Long-<wbr>run Covariance Estimation</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -720,15 +970,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../api.html" class="md-nav__link">
-        <span title="/api.rst (reference label)" class="md-ellipsis">API Reference</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/api.rst (reference label)">API Reference</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -736,15 +993,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../types.html" class="md-nav__link">
-        <span title="/types.rst (reference label)" class="md-ellipsis">Common Type Definitions</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/types.rst (reference label)">Common Type Definitions</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -752,15 +1016,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../changes.html" class="md-nav__link">
-        <span title="/changes.rst (reference label)" class="md-ellipsis">Change Log</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/changes.rst (reference label)">Change Log</span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -793,35 +1064,50 @@
       
         <li class="md-nav__item">
   <a href="#Simulating-data" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#simulating-data (reference label)" class="md-ellipsis">Simulating data</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#simulating-data (reference label)">Simulating data</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#Plotting-the-data" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#plotting-the-data (reference label)" class="md-ellipsis">Plotting the data</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#plotting-the-data (reference label)">Plotting the data</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#Forecasting-the-X-values" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#forecasting-the-x-values (reference label)" class="md-ellipsis">Forecasting the X values</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#forecasting-the-x-values (reference label)">Forecasting the X values</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#Fitting-the-model" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#fitting-the-model (reference label)" class="md-ellipsis">Fitting the model</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#fitting-the-model (reference label)">Fitting the model</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#Using-a-dict" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#using-a-dict (reference label)" class="md-ellipsis">Using a dict</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#using-a-dict (reference label)">Using a dict</span>
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Using a dict">
@@ -829,7 +1115,10 @@
         
           <li class="md-nav__item">
   <a href="#Using-DataFrame" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#using-dataframe (reference label)" class="md-ellipsis">Using Data<wbr>Frame</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#using-dataframe (reference label)">Using Data<wbr>Frame</span>
+    </span>
   </a>
   
 </li>
@@ -841,35 +1130,50 @@
       
         <li class="md-nav__item">
   <a href="#Using-an-array" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#using-an-array (reference label)" class="md-ellipsis">Using an array</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#using-an-array (reference label)">Using an array</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#Producing-multiple-forecasts" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#producing-multiple-forecasts (reference label)" class="md-ellipsis">Producing multiple forecasts</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#producing-multiple-forecasts (reference label)">Producing multiple forecasts</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#x-input-array-sizes" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#x-input-array-sizes (reference label)" class="md-ellipsis">x input array sizes</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#x-input-array-sizes (reference label)">x input array sizes</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#Special-Cases-with-a-single-x-variable" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#special-cases-with-a-single-x-variable (reference label)" class="md-ellipsis">Special Cases with a single x variable</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#special-cases-with-a-single-x-variable (reference label)">Special Cases with a single x variable</span>
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#Simulation" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#simulation (reference label)" class="md-ellipsis">Simulation</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#simulation (reference label)">Simulation</span>
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Simulation">
@@ -877,14 +1181,20 @@
         
           <li class="md-nav__item">
   <a href="#Static-out-of-sample-x" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#static-out-of-sample-x (reference label)" class="md-ellipsis">Static out-<wbr>of-<wbr>sample x</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#static-out-of-sample-x (reference label)">Static out-<wbr>of-<wbr>sample x</span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#Simulating-the-out-of-sample-x" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#simulating-the-out-of-sample-x (reference label)" class="md-ellipsis">Simulating the out-<wbr>of-<wbr>sample x</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#simulating-the-out-of-sample-x (reference label)">Simulating the out-<wbr>of-<wbr>sample x</span>
+    </span>
   </a>
   
 </li>
@@ -896,7 +1206,10 @@
       
         <li class="md-nav__item">
   <a href="#Conditional-Mean-Alignment-vs.-Forecast-Alignment" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#conditional-mean-alignment-vs.-forecast-alignment (reference label)" class="md-ellipsis">Conditional Mean Alignment vs.<wbr> Forecast Alignment</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#conditional-mean-alignment-vs.-forecast-alignment (reference label)">Conditional Mean Alignment vs.<wbr> Forecast Alignment</span>
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Conditional Mean Alignment vs. Forecast Alignment">
@@ -904,28 +1217,40 @@
         
           <li class="md-nav__item">
   <a href="#Conditional-Mean-uses-target-alignment" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#conditional-mean-uses-target-alignment (reference label)" class="md-ellipsis">Conditional Mean uses target alignment</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#conditional-mean-uses-target-alignment (reference label)">Conditional Mean uses target alignment</span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#forecast-uses-origin-alignment" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#forecast-uses-origin-alignment (reference label)" class="md-ellipsis">forecast uses origin alignment</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#forecast-uses-origin-alignment (reference label)">forecast uses origin alignment</span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#(Nearly)-out-of-sample-forecasts" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#(nearly)-out-of-sample-forecasts (reference label)" class="md-ellipsis"><wbr>(Nearly) out-<wbr>of-<wbr>sample forecasts</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#(nearly)-out-of-sample-forecasts (reference label)"><wbr>(Nearly) out-<wbr>of-<wbr>sample forecasts</span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#True-out-of-sample-forecasts" class="md-nav__link">
-    <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#true-out-of-sample-forecasts (reference label)" class="md-ellipsis">True out-<wbr>of-<wbr>sample forecasts</span>
+    
+    <span class="md-ellipsis">
+      <span title="/univariate/univariate_forecasting_with_exogenous_variables.ipynb#true-out-of-sample-forecasts (reference label)">True out-<wbr>of-<wbr>sample forecasts</span>
+    </span>
   </a>
   
 </li>
@@ -947,6 +1272,7 @@
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset" role="main">
                   
+
 
 
 <h1 id="Forecasting-with-Exogenous-Regressors">Forecasting with Exogenous Regressors<a class="headerlink" href="#Forecasting-with-Exogenous-Regressors" title="Link to this heading">¶</a></h1>
@@ -1060,8 +1386,8 @@
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([4.97880698, 4.98940349, 4.99470175, 4.99735087, 4.99867544,
-       4.99933772, 4.99966886, 4.99983443, 4.99991721, 4.99995861])
+array([4.40592629, 4.70296314, 4.85148157, 4.92574079, 4.96287039,
+       4.9814352 , 4.9907176 , 4.9953588 , 4.9976794 , 4.9988397 ])
 </pre></div></div>
 </div>
 <h2 id="Fitting-the-model">Fitting the model<a class="headerlink" href="#Fitting-the-model" title="Link to this heading">¶</a></h2>
@@ -1084,30 +1410,30 @@ array([4.97880698, 4.98940349, 4.99470175, 4.99735087, 4.99867544,
 <div class="highlight"><pre>
                           AR-X - GARCH Model Results
 ==============================================================================
-Dep. Variable:                   data   R-squared:                       0.989
-Mean Model:                      AR-X   Adj. R-squared:                  0.989
-Vol Model:                      GARCH   Log-Likelihood:               -1335.84
-Distribution:                  Normal   AIC:                           2685.67
-Method:            Maximum Likelihood   BIC:                           2720.02
+Dep. Variable:                   data   R-squared:                       0.992
+Mean Model:                      AR-X   Adj. R-squared:                  0.992
+Vol Model:                      GARCH   Log-Likelihood:               -1394.96
+Distribution:                  Normal   AIC:                           2803.93
+Method:            Maximum Likelihood   BIC:                           2838.28
                                         No. Observations:                  999
-Date:                Wed, Jan 08 2025   Df Residuals:                      995
-Time:                        18:34:57   Df Model:                            4
+Date:                Tue, Mar 11 2025   Df Residuals:                      995
+Time:                        12:20:25   Df Model:                            4
                                Mean Model
 ========================================================================
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
-Const          2.8742      0.160     17.983  2.647e-72 [  2.561,  3.187]
-data[1]        0.7010  3.722e-03    188.307      0.000 [  0.694,  0.708]
-x0             2.0008  2.125e-02     94.141      0.000 [  1.959,  2.042]
-x1            -1.9848  2.662e-02    -74.569      0.000 [ -2.037, -1.933]
-                             Volatility Model
-==========================================================================
-                 coef    std err          t      P&gt;|t|    95.0% Conf. Int.
---------------------------------------------------------------------------
-omega          0.1971  5.044e-02      3.908  9.325e-05 [9.824e-02,  0.296]
-alpha[1]       0.1147  2.601e-02      4.411  1.029e-05 [6.374e-02,  0.166]
-beta[1]        0.6587  6.653e-02      9.901  4.101e-23   [  0.528,  0.789]
-==========================================================================
+Const          3.1594      0.156     20.310  1.044e-91 [  2.855,  3.464]
+data[1]        0.7004  3.585e-03    195.355      0.000 [  0.693,  0.707]
+x0             1.9955  2.198e-02     90.787      0.000 [  1.952,  2.039]
+x1            -2.0411  2.577e-02    -79.196      0.000 [ -2.092, -1.991]
+                              Volatility Model
+===========================================================================
+                 coef    std err          t      P&gt;|t|     95.0% Conf. Int.
+---------------------------------------------------------------------------
+omega          0.0762  4.586e-02      1.661  9.664e-02 [-1.369e-02,  0.166]
+alpha[1]       0.0839  2.954e-02      2.840  4.507e-03  [2.601e-02,  0.142]
+beta[1]        0.8398  6.987e-02     12.020  2.774e-33    [  0.703,  0.977]
+===========================================================================
 
 Covariance estimator: robust
 </pre></div></div>
@@ -1216,133 +1542,133 @@ The shape is (2, 1, 10)
   <tbody>
     <tr>
       <th>990</th>
-      <td>19.862075</td>
-      <td>19.147035</td>
-      <td>18.116864</td>
-      <td>17.007374</td>
-      <td>15.937827</td>
-      <td>14.963798</td>
-      <td>14.106250</td>
-      <td>13.367698</td>
-      <td>12.741283</td>
-      <td>12.215861</td>
+      <td>18.468502</td>
+      <td>18.641293</td>
+      <td>17.964706</td>
+      <td>16.969528</td>
+      <td>15.913924</td>
+      <td>14.916982</td>
+      <td>14.027310</td>
+      <td>13.258405</td>
+      <td>12.606931</td>
+      <td>12.062148</td>
     </tr>
     <tr>
       <th>991</th>
-      <td>16.397593</td>
-      <td>15.135500</td>
-      <td>14.062799</td>
-      <td>13.184776</td>
-      <td>12.480558</td>
-      <td>11.921959</td>
-      <td>11.481428</td>
-      <td>11.134941</td>
-      <td>10.862649</td>
-      <td>10.648611</td>
+      <td>9.395135</td>
+      <td>8.629667</td>
+      <td>8.437393</td>
+      <td>8.489714</td>
+      <td>8.631906</td>
+      <td>8.793917</td>
+      <td>8.946317</td>
+      <td>9.078699</td>
+      <td>9.189183</td>
+      <td>9.279402</td>
     </tr>
     <tr>
       <th>992</th>
-      <td>17.869011</td>
-      <td>16.492636</td>
-      <td>15.181732</td>
-      <td>14.056913</td>
-      <td>13.139112</td>
-      <td>12.409926</td>
-      <td>11.838897</td>
-      <td>11.395065</td>
-      <td>11.051263</td>
-      <td>10.785182</td>
+      <td>9.901233</td>
+      <td>9.252276</td>
+      <td>8.974112</td>
+      <td>8.889303</td>
+      <td>8.902356</td>
+      <td>8.961666</td>
+      <td>9.039432</td>
+      <td>9.120919</td>
+      <td>9.198621</td>
+      <td>9.269050</td>
     </tr>
     <tr>
       <th>993</th>
-      <td>14.988565</td>
-      <td>12.213923</td>
-      <td>10.131242</td>
-      <td>8.755879</td>
-      <td>7.956093</td>
-      <td>7.574768</td>
-      <td>7.474505</td>
-      <td>7.549417</td>
-      <td>7.723701</td>
-      <td>7.945982</td>
+      <td>10.279947</td>
+      <td>10.320329</td>
+      <td>10.431524</td>
+      <td>10.510823</td>
+      <td>10.535107</td>
+      <td>10.510958</td>
+      <td>10.453072</td>
+      <td>10.375749</td>
+      <td>10.290184</td>
+      <td>10.204145</td>
     </tr>
     <tr>
       <th>994</th>
-      <td>13.872008</td>
-      <td>11.677889</td>
-      <td>9.989943</td>
-      <td>8.862618</td>
-      <td>8.204422</td>
-      <td>7.891922</td>
-      <td>7.813311</td>
-      <td>7.881034</td>
-      <td>8.031864</td>
-      <td>8.222730</td>
+      <td>7.293600</td>
+      <td>7.223623</td>
+      <td>7.551463</td>
+      <td>7.971251</td>
+      <td>8.361796</td>
+      <td>8.684779</td>
+      <td>8.936685</td>
+      <td>9.126754</td>
+      <td>9.267337</td>
+      <td>9.370051</td>
     </tr>
     <tr>
       <th>995</th>
-      <td>4.418210</td>
-      <td>2.161020</td>
-      <td>1.360052</td>
-      <td>1.422953</td>
-      <td>1.965586</td>
-      <td>2.743882</td>
-      <td>3.607028</td>
-      <td>4.465546</td>
-      <td>5.269682</td>
-      <td>5.994905</td>
+      <td>7.009529</td>
+      <td>6.490509</td>
+      <td>6.241322</td>
+      <td>6.232222</td>
+      <td>6.395038</td>
+      <td>6.662753</td>
+      <td>6.982300</td>
+      <td>7.316244</td>
+      <td>7.640462</td>
+      <td>7.940891</td>
     </tr>
     <tr>
       <th>996</th>
-      <td>8.330830</td>
-      <td>6.567341</td>
-      <td>5.495764</td>
-      <td>5.017691</td>
-      <td>4.971088</td>
-      <td>5.203806</td>
-      <td>5.596217</td>
-      <td>6.062976</td>
-      <td>6.547494</td>
-      <td>7.014875</td>
+      <td>-2.418835</td>
+      <td>-3.359520</td>
+      <td>-3.071346</td>
+      <td>-2.129274</td>
+      <td>-0.886195</td>
+      <td>0.446418</td>
+      <td>1.746911</td>
+      <td>2.950177</td>
+      <td>4.026155</td>
+      <td>4.965944</td>
     </tr>
     <tr>
       <th>997</th>
-      <td>5.887802</td>
-      <td>4.665138</td>
-      <td>4.041131</td>
-      <td>3.916175</td>
-      <td>4.140948</td>
-      <td>4.579173</td>
-      <td>5.125980</td>
-      <td>5.708312</td>
-      <td>6.279263</td>
-      <td>6.811348</td>
+      <td>-0.666765</td>
+      <td>0.336335</td>
+      <td>1.594426</td>
+      <td>2.850789</td>
+      <td>3.996263</td>
+      <td>4.993628</td>
+      <td>5.839559</td>
+      <td>6.545600</td>
+      <td>7.128769</td>
+      <td>7.607050</td>
     </tr>
     <tr>
       <th>998</th>
-      <td>3.755174</td>
-      <td>2.765036</td>
-      <td>2.555017</td>
-      <td>2.835666</td>
-      <td>3.394519</td>
-      <td>4.085533</td>
-      <td>4.813885</td>
-      <td>5.521725</td>
-      <td>6.176669</td>
-      <td>6.763170</td>
+      <td>5.803588</td>
+      <td>7.083781</td>
+      <td>7.843784</td>
+      <td>8.321992</td>
+      <td>8.641255</td>
+      <td>8.866128</td>
+      <td>9.031537</td>
+      <td>9.157164</td>
+      <td>9.254697</td>
+      <td>9.331504</td>
     </tr>
     <tr>
       <th>999</th>
-      <td>6.203619</td>
-      <td>6.904585</td>
-      <td>7.467112</td>
-      <td>7.921532</td>
-      <td>8.289724</td>
-      <td>8.588320</td>
-      <td>8.830415</td>
-      <td>9.026535</td>
-      <td>9.185236</td>
-      <td>9.313506</td>
+      <td>9.749674</td>
+      <td>10.616916</td>
+      <td>10.862191</td>
+      <td>10.835299</td>
+      <td>10.703032</td>
+      <td>10.542402</td>
+      <td>10.386882</td>
+      <td>10.249231</td>
+      <td>10.132686</td>
+      <td>10.036371</td>
     </tr>
   </tbody>
 </table>
@@ -1446,28 +1772,28 @@ np.float64(0.0)
 <div class="highlight"><pre>
                           AR-X - GARCH Model Results
 ==============================================================================
-Dep. Variable:                   data   R-squared:                       0.933
-Mean Model:                      AR-X   Adj. R-squared:                  0.933
-Vol Model:                      GARCH   Log-Likelihood:               -2266.50
-Distribution:                  Normal   AIC:                           4545.00
-Method:            Maximum Likelihood   BIC:                           4574.44
+Dep. Variable:                   data   R-squared:                       0.947
+Mean Model:                      AR-X   Adj. R-squared:                  0.947
+Vol Model:                      GARCH   Log-Likelihood:               -2335.24
+Distribution:                  Normal   AIC:                           4682.48
+Method:            Maximum Likelihood   BIC:                           4711.92
                                         No. Observations:                  999
-Date:                Wed, Jan 08 2025   Df Residuals:                      996
-Time:                        18:34:58   Df Model:                            3
+Date:                Tue, Mar 11 2025   Df Residuals:                      996
+Time:                        12:20:26   Df Model:                            3
                                Mean Model
 ========================================================================
                  coef    std err          t      P&gt;|t|  95.0% Conf. Int.
 ------------------------------------------------------------------------
-Const         -6.5703      0.290    -22.619 2.819e-113 [ -7.140, -6.001]
-data[1]        0.7568  1.001e-02     75.587      0.000 [  0.737,  0.776]
-x0             1.7556  6.213e-02     28.258 1.144e-175 [  1.634,  1.877]
+Const         -7.0234      0.286    -24.563 3.105e-133 [ -7.584, -6.463]
+data[1]        0.7325  1.102e-02     66.470      0.000 [  0.711,  0.754]
+x0             1.9023  6.451e-02     29.490 3.847e-191 [  1.776,  2.029]
                              Volatility Model
 ==========================================================================
                  coef    std err          t      P&gt;|t|    95.0% Conf. Int.
 --------------------------------------------------------------------------
-omega          4.9459      5.164      0.958      0.338   [ -5.175, 15.066]
-alpha[1]       0.1044  5.153e-02      2.027  4.268e-02 [3.445e-03,  0.205]
-beta[1]    1.1928e-16      0.964  1.237e-16      1.000   [ -1.890,  1.890]
+omega          4.9967      0.952      5.251  1.511e-07   [  3.132,  6.862]
+alpha[1]       0.1677  4.032e-02      4.159  3.199e-05 [8.866e-02,  0.247]
+beta[1]        0.0537      0.153      0.351      0.725   [ -0.246,  0.353]
 ==========================================================================
 
 Covariance estimator: robust
@@ -1518,8 +1844,8 @@ Covariance estimator: robust
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([[0.91722716, 1.19375964, 1.29920476, 1.46852024, 1.38168597,
-        1.14755565, 1.17999518, 1.34417045, 1.30780109, 1.36287964]])
+array([[0.74929598, 0.937047  , 1.03705658, 1.11359269, 1.16654156,
+        1.36661092, 1.2538435 , 1.27808263, 1.22324344, 1.26944225]])
 </pre></div></div>
 </div>
 <h3 id="Simulating-the-out-of-sample-x">Simulating the out-of-sample <code class="docutils literal notranslate"><span class="pre">x</span></code><a class="headerlink" href="#Simulating-the-out-of-sample-x" title="Link to this heading">¶</a></h3>
@@ -1567,8 +1893,8 @@ array([[0.91722716, 1.19375964, 1.29920476, 1.46852024, 1.38168597,
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([[3.1852955 , 4.89946029, 6.49104534, 7.76785425, 8.65870142,
-        8.85924546, 8.78093677, 9.01216117, 9.23736631, 9.42441604]])
+array([[3.04569406, 4.88852085, 6.27304387, 7.50248155, 8.38492111,
+        8.82366024, 8.79367973, 8.80332517, 9.0110765 , 9.3501968 ]])
 </pre></div></div>
 </div>
 <h2 id="Conditional-Mean-Alignment-vs.-Forecast-Alignment">Conditional Mean Alignment vs. Forecast Alignment<a class="headerlink" href="#Conditional-Mean-Alignment-vs.-Forecast-Alignment" title="Link to this heading">¶</a></h2>
@@ -1593,16 +1919,16 @@ array([[3.1852955 , 4.89946029, 6.49104534, 7.76785425, 8.65870142,
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 0            NaN
-1      11.573658
-2      12.964289
-3      10.401979
-4       8.159774
+1      19.259104
+2      17.981923
+3      12.746339
+4      11.401170
          ...
-995     8.224080
-996     8.131465
-997     8.699857
-998     4.563362
-999     6.509717
+995     8.030980
+996     0.923056
+997    -0.996056
+998     3.425549
+999     8.296370
 Length: 1000, dtype: float64
 </pre></div></div>
 </div>
@@ -1672,23 +1998,23 @@ E\left[X_{T}|\mathcal{F}_{T-1}\right] &amp; E\left[X_{T+1}|\mathcal{F}_{T-1}\rig
   <tbody>
     <tr>
       <th>0</th>
-      <td>11.573658</td>
+      <td>19.259104</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>12.964289</td>
+      <td>17.981923</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>10.401979</td>
+      <td>12.746339</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>8.159774</td>
+      <td>11.401170</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>6.910558</td>
+      <td>12.779742</td>
     </tr>
     <tr>
       <th>...</th>
@@ -1696,19 +2022,19 @@ E\left[X_{T}|\mathcal{F}_{T-1}\right] &amp; E\left[X_{T+1}|\mathcal{F}_{T-1}\rig
     </tr>
     <tr>
       <th>995</th>
-      <td>8.131465</td>
+      <td>0.923056</td>
     </tr>
     <tr>
       <th>996</th>
-      <td>8.699857</td>
+      <td>-0.996056</td>
     </tr>
     <tr>
       <th>997</th>
-      <td>4.563362</td>
+      <td>3.425549</td>
     </tr>
     <tr>
       <th>998</th>
-      <td>6.509717</td>
+      <td>8.296370</td>
     </tr>
     <tr>
       <th>999</th>
@@ -1767,23 +2093,23 @@ E\left[X_{T}|\mathcal{F}_{T-1}\right] &amp; E\left[X_{T+1}|\mathcal{F}_{T-1}\rig
   <tbody>
     <tr>
       <th>0</th>
-      <td>9.978076</td>
+      <td>20.199480</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>12.730137</td>
+      <td>19.091463</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>12.422030</td>
+      <td>15.047005</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>10.663731</td>
+      <td>10.206494</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>7.856469</td>
+      <td>11.482734</td>
     </tr>
     <tr>
       <th>...</th>
@@ -1791,19 +2117,19 @@ E\left[X_{T}|\mathcal{F}_{T-1}\right] &amp; E\left[X_{T+1}|\mathcal{F}_{T-1}\rig
     </tr>
     <tr>
       <th>995</th>
-      <td>6.353375</td>
+      <td>5.767941</td>
     </tr>
     <tr>
       <th>996</th>
-      <td>8.181362</td>
+      <td>-3.257289</td>
     </tr>
     <tr>
       <th>997</th>
-      <td>4.896673</td>
+      <td>0.920747</td>
     </tr>
     <tr>
       <th>998</th>
-      <td>3.397965</td>
+      <td>6.269823</td>
     </tr>
     <tr>
       <th>999</th>
@@ -1870,21 +2196,31 @@ E\left[X_{T}|\mathcal{F}_{T-1}\right] &amp; E\left[X_{T+1}|\mathcal{F}_{T-1}\rig
   <tbody>
     <tr>
       <th>999</th>
-      <td>6.243921</td>
-      <td>7.038198</td>
-      <td>7.729215</td>
-      <td>8.32735</td>
-      <td>8.839245</td>
-      <td>9.271884</td>
-      <td>9.633276</td>
-      <td>9.932055</td>
-      <td>10.176889</td>
-      <td>10.376013</td>
+      <td>9.767283</td>
+      <td>10.658876</td>
+      <td>10.943531</td>
+      <td>10.965916</td>
+      <td>10.886092</td>
+      <td>10.776082</td>
+      <td>10.666458</td>
+      <td>10.568699</td>
+      <td>10.485799</td>
+      <td>10.417235</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
+
+
+
+
+
+
+
+
+  
+  
 
 
 
@@ -1901,42 +2237,6 @@ E\left[X_{T}|\mathcal{F}_{T-1}\right] &amp; E\left[X_{T+1}|\mathcal{F}_{T-1}\rig
       </main>
       
         <footer class="md-footer">
-  
-    
-    <nav class="md-footer__inner md-grid" aria-label="Footer" >
-      
-        
-        <a href="univariate_volatility_scenarios.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Volatility Scenarios" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              Volatility Scenarios
-            </div>
-          </div>
-        </a>
-      
-      
-        
-        <a href="mean.html" class="md-footer__link md-footer__link--next" aria-label="Next: Mean Models" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              Mean Models
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
   
   
   
@@ -1962,26 +2262,32 @@ E\left[X_{T}|\mathcal{F}_{T-1}\right] &amp; E\left[X_{T+1}|\mathcal{F}_{T-1}\rig
   
     
     
+    
+    
     <a href="https://github.com/bashtage/arch" target="_blank" rel="noopener" title="Source on github.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
     </a>
   
+    
+    
     
     
       
       
     
     <a href="https://pypi.org/project/arch/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6zM286.2 404c11.1 0 20.1 9.1 20.1 20.3 0 11.3-9 20.4-20.1 20.4-11 0-20.1-9.2-20.1-20.4.1-11.3 9.1-20.3 20.1-20.3zM167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4zm-6.7-142.6c-11.1 0-20.1-9.1-20.1-20.3.1-11.3 9-20.4 20.1-20.4 11 0 20.1 9.2 20.1 20.4s-9 20.3-20.1 20.3z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 404c11.1 0 20.1 9.1 20.1 20.3 0 11.3-9 20.4-20.1 20.4-11 0-20.1-9.2-20.1-20.4.1-11.3 9.1-20.3 20.1-20.3M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.7-142.6c-11.1 0-20.1-9.1-20.1-20.3.1-11.3 9-20.4 20.1-20.4 11 0 20.1 9.2 20.1 20.4s-9 20.3-20.1 20.3"/></svg>
     </a>
   
+    
+    
     
     
       
       
     
     <a href="https://doi.org/10.5281/zenodo.593254" target="_blank" rel="noopener" title="doi.org" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M0 216C0 149.7 53.7 96 120 96h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V216zm256 0c0-66.3 53.7-120 120-120h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64h-64c-35.3 0-64-28.7-64-64V216z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M0 216C0 149.7 53.7 96 120 96h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V216m256 0c0-66.3 53.7-120 120-120h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64h-64c-35.3 0-64-28.7-64-64V216"/></svg>
     </a>
   
 </div>
@@ -1996,10 +2302,11 @@ E\left[X_{T}|\mathcal{F}_{T-1}\right] &amp; E\left[X_{T+1}|\mathcal{F}_{T-1}\rig
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/arch/"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/arch/devel/"}, {"aliases": [], "title": "RTD (Release)", "version": "https://arch.readthedocs.io/"}], "versionPath": null}}</script>
     
       
-        <script src="../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=8ec58cb5"></script>
+        <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js?v=cadf963e"></script>
