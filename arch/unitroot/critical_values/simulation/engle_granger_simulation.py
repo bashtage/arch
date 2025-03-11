@@ -73,19 +73,19 @@ def block(
                 sub -= mu
             if trend in ("ct", "ctt"):
                 # Orthogonalize to trend
-                tau = np.arange(float(sub_size + 1))
-                tau -= tau.mean()
-                tau.shape = (sub_size + 1, 1)
+                _tau = np.arange(float(sub_size + 1))
+                _tau -= _tau.mean()
+                tau = _tau.reshape((sub_size + 1, 1))
                 coefs = (tau * sub).sum(1) / (tau**2).sum()
                 coefs.shape = (this_block, 1, cross_section_size)
                 sub -= coefs * tau
             if trend == "ctt":
-                tau = np.arange(float(sub_size + 1))
-                tau -= tau.mean()
-                tau2 = np.arange(float(sub_size + 1)) ** 2
-                tau2 -= tau2.mean()
-                tau2 -= (tau * tau2).sum() / (tau**2).sum() * tau
-                tau2.shape = (sub_size + 1, 1)
+                _tau = np.arange(float(sub_size + 1))
+                _tau -= _tau.mean()
+                _tau2 = np.arange(float(sub_size + 1)) ** 2
+                _tau2 -= _tau2.mean()
+                _tau2 -= (_tau * _tau2).sum() / (_tau**2).sum() * tau
+                tau2 = _tau2.reshape((sub_size + 1, 1))
                 coefs = (tau2 * sub).sum(1) / (tau2**2).sum()
                 coefs.shape = (this_block, 1, cross_section_size)
                 sub -= coefs * tau2

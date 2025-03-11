@@ -12,7 +12,6 @@ import warnings
 
 import numpy as np
 import pandas as pd
-from pandas.util._decorators import deprecate_kwarg
 from scipy.optimize import OptimizeResult
 import scipy.stats as stats
 from statsmodels.iolib.summary import Summary, fmt_2cols, fmt_params
@@ -44,6 +43,7 @@ from arch.utility.exceptions import (
     starting_value_warning,
 )
 from arch.utility.testing import WaldTestStatistic
+from arch.vendor._decorators import deprecate_kwarg
 
 MPL_LT_310 = False
 try:

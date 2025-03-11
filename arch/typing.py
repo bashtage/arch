@@ -31,7 +31,7 @@ __all__ = [
 ]
 
 NDArray = Union[np.ndarray]
-Float64Array = np.ndarray[Any, np.dtype[np.double]]  # pragma: no cover
+Float64Array = np.ndarray[Any, np.dtype[np.float64]]  # pragma: no cover
 Int64Array = np.ndarray[Any, np.dtype[np.longlong]]  # pragma: no cover
 Int32Array = np.ndarray[Any, np.dtype[np.intc]]  # pragma: no cover
 IntArray = np.ndarray[Any, np.dtype[np.int_]]  # pragma: no cover

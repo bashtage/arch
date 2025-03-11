@@ -246,7 +246,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
     def __init__(
         self,
         y: Optional[ArrayLike] = None,
-        x: Optional[ArrayLike2D] = None,
+        x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
         lags: Union[
             int, Sequence[int], Sequence[Sequence[int]], Int32Array, Int64Array, None
         ] = None,
@@ -270,7 +270,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self.lags: Union[
             int, Sequence[int], Sequence[Sequence[int]], Int32Array, Int64Array, None
         ] = lags
-        self._lags = np.empty((0, 0))
+        self._lags = np.empty((0, 0), dtype=int)
         self.constant: bool = constant
         self.use_rotated: bool = use_rotated
         self.regressors: Float64Array = np.empty((0, 0), dtype=np.double)
@@ -421,7 +421,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         nobs: int,
         burn: int = 500,
         initial_value: Union[float, Float64Array, None] = None,
-        x: Optional[ArrayLike] = None,
+        x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
         initial_value_vol: Union[float, Float64Array, None] = None,
     ) -> pd.DataFrame:
         """
@@ -482,7 +482,8 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         if x is None:
             x = np.empty((nobs + burn, 0))
         else:
-            x = np.asarray(x)
+            _x = np.asarray(x, dtype=float)
+            x = _x.reshape((x.shape[0], -1))
         k_x = x.shape[1]
         if x.shape[0] != nobs + burn:
             raise ValueError("x must have nobs + burn rows")
@@ -580,7 +581,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                     "When using the 1-d format of lags, values must be positive"
                 )
             lags = np.unique(lags)
-            temp = np.array([lags, lags])
+            temp = np.array([lags, lags], dtype=int)
             if self.use_rotated:
                 temp[0, 1:] = temp[0, 0:-1]
                 temp[0, 0] = 0
@@ -597,12 +598,12 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                 )
             ind = np.lexsort(np.flipud(lags))
             lags = lags[:, ind]
-            test_mat = np.zeros((lags.shape[1], np.max(lags)))
+            test_mat = np.zeros((lags.shape[1], np.max(lags)), dtype=int)
             # Subtract 1 so first is 0 indexed
             lags = lags - np.array([[1], [0]])
             for i in range(lags.shape[1]):
-                test_mat[i, lags[0, i] : lags[1, i]] = 1.0
-            rank = np.linalg.matrix_rank(test_mat)
+                test_mat[i, lags[0, i] : lags[1, i]] = 1
+            rank = np.linalg.matrix_rank(test_mat.astype(float))
             if rank != lags.shape[1]:
                 raise ValueError("lags contains redundant entries")
 
@@ -850,8 +851,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
                 )
         elif self._x is None:
             raise TypeError(
-                "x is not None but the model does not contain any exogenous "
-                "variables."
+                "x is not None but the model does not contain any exogenous variables."
             )
         assert self._x is not None
         nx = self._x.shape[1]
@@ -1131,7 +1131,7 @@ class ConstantMean(HARX):
         nobs: int,
         burn: int = 500,
         initial_value: Union[float, Float64Array, None] = None,
-        x: Optional[ArrayLike] = None,
+        x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
         initial_value_vol: Union[float, Float64Array, None] = None,
     ) -> pd.DataFrame:
         """
@@ -1279,7 +1279,7 @@ class ZeroMean(HARX):
         nobs: int,
         burn: int = 500,
         initial_value: Union[float, Float64Array, None] = None,
-        x: Optional[ArrayLike] = None,
+        x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
         initial_value_vol: Union[float, Float64Array, None] = None,
     ) -> pd.DataFrame:
         """
@@ -1416,7 +1416,7 @@ class ARX(HARX):
     def __init__(
         self,
         y: Optional[ArrayLike] = None,
-        x: Optional[ArrayLike2D] = None,
+        x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
         lags: Union[int, list[int], Int32Array, Int64Array, None] = None,
         constant: bool = True,
         hold_back: Optional[int] = None,
@@ -1536,7 +1536,7 @@ class LS(HARX):
     def __init__(
         self,
         y: Optional[ArrayLike] = None,
-        x: Optional[ArrayLike2D] = None,
+        x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
         constant: bool = True,
         hold_back: Optional[int] = None,
         volatility: Optional[VolatilityProcess] = None,
@@ -1624,7 +1624,7 @@ class ARCHInMean(ARX):
     def __init__(
         self,
         y: Optional[ArrayLike] = None,
-        x: Optional[ArrayLike2D] = None,
+        x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
         lags: Union[int, list[int], Int32Array, Int64Array, None] = None,
         constant: bool = True,
         hold_back: Optional[int] = None,
@@ -1855,7 +1855,7 @@ class ARCHInMean(ARX):
 
 def arch_model(
     y: Optional[ArrayLike],
-    x: Optional[ArrayLike2D] = None,
+    x: Optional[Union[ArrayLike, ArrayLike2D]] = None,
     mean: Literal[
         "Constant", "Zero", "LS", "AR", "ARX", "HAR", "HARX", "constant", "zero"
     ] = "Constant",

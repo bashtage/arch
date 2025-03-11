@@ -14,6 +14,7 @@ from numpy import (
     asarray,
     empty,
     exp,
+    float64,
     int64,
     integer,
     isscalar,
@@ -101,8 +102,7 @@ class Distribution(metaclass=ABCMeta):
         for p, n, b in zip(params, self.name, bounds):
             if not (b[0] <= p <= b[1]):
                 raise ValueError(
-                    f"{n} does not satisfy the bounds requirement of "
-                    f"({b[0]}, {b[1]})"
+                    f"{n} does not satisfy the bounds requirement of ({b[0]}, {b[1]})"
                 )
         return asarray(params)
 
@@ -1020,7 +1020,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         icdf[cond] = icdf1
         icdf[~cond] = icdf2
         icdf = icdf * (1 + sign(pits - (1 - lam) / 2) * lam) * (1 - 2 / eta) ** 0.5 - a
-        icdf = icdf / b
+        icdf = icdf / float64(b)
 
         if scalar:
             return float(icdf[0])
@@ -1085,7 +1085,9 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
                 (1 - lam)
                 * (loc ** (n - k))
                 * (lscale**k)
-                * StudentsT._ord_t_partial_moment(k, z=(lbound - loc) / lscale, nu=eta)
+                * StudentsT._ord_t_partial_moment(
+                    k, z=(lbound - loc) / lscale, nu=float(eta)
+                )
             )
 
             if z > loc:
@@ -1094,8 +1096,10 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
                     * (loc ** (n - k))
                     * (rscale**k)
                     * (
-                        StudentsT._ord_t_partial_moment(k, z=(z - loc) / rscale, nu=eta)
-                        - StudentsT._ord_t_partial_moment(k, z=0.0, nu=eta)
+                        StudentsT._ord_t_partial_moment(
+                            k, z=(z - loc) / rscale, nu=float(eta)
+                        )
+                        - StudentsT._ord_t_partial_moment(k, z=0.0, nu=float(eta))
                     )
                 )
             else:

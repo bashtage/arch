@@ -612,7 +612,7 @@ class SPA(MultipleComparison, metaclass=DocStringInheritor):
         self.bootstrap: CircularBlockBootstrap = bootstrap_inst
         self._pvalues: dict[str, float] = {}
         self._simulated_vals: Optional[Float64Array] = None
-        self._selector = np.ones(self.k, dtype=np.bool_)
+        self._selector: BoolArray = np.ones(self.k, dtype=np.bool_)
         self._model = "SPA"
         if self.studentize:
             method = "bootstrap" if self.nested else "asymptotic"
