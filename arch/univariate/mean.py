@@ -18,6 +18,7 @@ from arch.typing import (
     ArrayLike2D,
     DateLike,
     Float64Array,
+    Float64Array2D,
     ForecastingMethod,
     Int32Array,
     Int64Array,
@@ -270,7 +271,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self.lags: Union[
             int, Sequence[int], Sequence[Sequence[int]], Int32Array, Int64Array, None
         ] = lags
-        self._lags = np.empty((0, 0), dtype=int)
+        self._lags: Int64Array = np.empty((0, 0), dtype=int)
         self.constant: bool = constant
         self.use_rotated: bool = use_rotated
         self.regressors: Float64Array = np.empty((0, 0), dtype=np.double)
@@ -480,7 +481,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         """
 
         if x is None:
-            x = np.empty((nobs + burn, 0))
+            x: Float64Array2D = np.empty((nobs + burn, 0))
         else:
             _x = np.asarray(x, dtype=float)
             x = _x.reshape((x.shape[0], -1))
@@ -788,10 +789,10 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         r2 = self._r2(regression_params)
 
         first_obs, last_obs = self._fit_indices
-        resids = np.empty_like(self._y, dtype=np.double)
+        resids = np.empty(self._y.shape, dtype=float)
         resids.fill(np.nan)
         resids[first_obs:last_obs] = e
-        vol = np.zeros_like(resids)
+        vol = np.zeros(resids.shape, dtype=float)
         vol.fill(np.nan)
         vol[first_obs:last_obs] = np.sqrt(sigma2)
         names = self._all_parameter_names()

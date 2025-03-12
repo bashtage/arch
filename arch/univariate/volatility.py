@@ -1782,7 +1782,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs = resids.shape[0]
         weights = self._weights(parameters)
         if not self._asym:
-            params = np.zeros(3)
+            params: Float64Array = np.zeros(3)
             params[:2] = parameters[:2]
         else:
             params = parameters[:3]

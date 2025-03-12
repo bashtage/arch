@@ -827,11 +827,9 @@ class ARCHModel(metaclass=ABCMeta):
         names = self._all_parameter_names()
         # Reshape resids and vol
         first_obs, last_obs = self._fit_indices
-        resids_final = np.empty_like(self._y, dtype=np.double)
-        resids_final.fill(np.nan)
+        resids_final = np.full(self._y.shape, np.nan, dtype=float)
         resids_final[first_obs:last_obs] = resids
-        vol_final = np.empty_like(self._y, dtype=np.double)
-        vol_final.fill(np.nan)
+        vol_final = np.full(self._y.shape, np.nan, dtype=float)
         vol_final[first_obs:last_obs] = vol
 
         fit_start, fit_stop = self._fit_indices
@@ -1909,7 +1907,7 @@ class ARCHModelResult(ARCHModelFixedResult):
 
         stubs = list(self._names)
         header = ["coef", "std err", "t", "P>|t|", "95.0% Conf. Int."]
-        table_vals = (
+        table_vals: tuple[Union[np.ndarray, pd.Series], ...] = (
             np.asarray(self.params),
             np.asarray(self.std_err),
             np.asarray(self.tvalues),

@@ -114,7 +114,7 @@ def z_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> tuple[float, flo
     one_sided_strict = 0.0
     for i in range(1, lag + 1):
         w = 1 - i / (lag + 1)
-        one_sided_strict += 1 / nobs * w * k[i:].T @ k[:-i]
+        one_sided_strict += 1 / nobs * w * float(k[i:].T @ k[:-i])
     u2 = float(u[:-1].T @ u[:-1])
 
     z_ = (alpha - 1) - nobs * one_sided_strict / u2
@@ -192,7 +192,7 @@ def p_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> tuple[float, flo
     omega21 = omega[0, 1:]
     omega22 = omega[1:, 1:]
     omega112 = float(omega[0, 0] - np.squeeze(omega21.T @ inv(omega22) @ omega21))
-    denom = u.T @ u / nobs
+    denom = float(u.T @ u / nobs)
     p_u = nobs * omega112 / denom
 
     tr = add_trend(nobs=z.shape[0], trend=trend)
@@ -201,7 +201,7 @@ def p_tests(z: Float64Array, lag: int, trend: UnitRootTrend) -> tuple[float, flo
     else:
         z = z - z[:1]  # Recenter on first
     m_zz = z.T @ z / nobs
-    p_z = nobs * float((omega @ inv(m_zz)).trace())
+    p_z = float(nobs * (omega @ inv(m_zz)).trace())
     return p_u, p_z
 
 

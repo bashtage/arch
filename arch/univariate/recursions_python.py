@@ -987,8 +987,8 @@ class RiskMetrics2006Updater(VolatilityUpdater, metaclass=AbstractDocStringInher
         self.kmax = kmax
         self.combination_weights = combination_weights
         self.smoothing_parameters = smoothing_parameters
-        self.backcast = np.empty(kmax)
-        self.last_sigma2s = np.empty((1, kmax))
+        self.backcast: Float64Array = np.empty(kmax)
+        self.last_sigma2s: Float64Array = np.empty((1, kmax))
 
     def initialize_update(
         self, parameters: Float64Array, backcast: Union[float, Float64Array], nobs: int

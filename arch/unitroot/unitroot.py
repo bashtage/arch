@@ -168,14 +168,16 @@ def _select_best_ic(
     maxlag = len(sigma2) - 1
     if method == "aic":
         crit = -2 * llf + 2 * arange(float(maxlag + 1))
-        icbest, lag = min(zip(crit, arange(maxlag + 1)))
+        icbest, _lag = min(zip(crit, arange(maxlag + 1)))
+        lag = int(_lag)
     elif method == "bic":
         crit = -2 * llf + log(nobs) * arange(float(maxlag + 1))
-        icbest, lag = min(zip(crit, arange(maxlag + 1)))
+        icbest, _lag = min(zip(crit, arange(maxlag + 1)))
+        lag = int(_lag)
     elif method == "t-stat":
         stop = 1.6448536269514722
         large_tstat = abs(tstat) >= stop
-        lag = int(squeeze(max(argwhere(large_tstat))))
+        lag = int(squeeze(argwhere(large_tstat)).max())
         icbest = float(tstat[lag])
     else:
         raise ValueError("Unknown method")

@@ -20,6 +20,8 @@ __all__ = [
     "UnitRootTrend",
     "ForecastingMethod",
     "Float64Array",
+    "Float64Array1D",
+    "Float64Array2D",
     "Int64Array",
     "Int32Array",
     "BoolArray",
@@ -31,13 +33,15 @@ __all__ = [
 ]
 
 NDArray = Union[np.ndarray]
-Float64Array = np.ndarray[Any, np.dtype[np.float64]]  # pragma: no cover
-Int64Array = np.ndarray[Any, np.dtype[np.longlong]]  # pragma: no cover
-Int32Array = np.ndarray[Any, np.dtype[np.intc]]  # pragma: no cover
-IntArray = np.ndarray[Any, np.dtype[np.int_]]  # pragma: no cover
-BoolArray = np.ndarray[Any, np.dtype[np.bool_]]  # pragma: no cover
-AnyArray = np.ndarray[Any, Any]  # pragma: no cover
-Uint32Array = np.ndarray[Any, np.dtype[np.uintc]]  # pragma: no cover
+Float64Array = np.ndarray[tuple[int, ...], np.dtype[np.float64]]  # pragma: no cover
+Float64Array1D = np.ndarray[tuple[int], np.dtype[np.float64]]  # pragma: no cover
+Float64Array2D = np.ndarray[tuple[int, int], np.dtype[np.float64]]  # pragma: no cover
+Int64Array = np.ndarray[tuple[int, ...], np.dtype[np.longlong]]  # pragma: no cover
+Int32Array = np.ndarray[tuple[int, ...], np.dtype[np.intc]]  # pragma: no cover
+IntArray = np.ndarray[tuple[int, ...], np.dtype[np.int_]]  # pragma: no cover
+BoolArray = np.ndarray[tuple[int, ...], np.dtype[np.bool_]]  # pragma: no cover
+AnyArray = np.ndarray[tuple[int, ...], Any]  # pragma: no cover
+Uint32Array = np.ndarray[tuple[int, ...], np.dtype[np.uintc]]  # pragma: no cover
 
 BootstrapIndexT = Union[
     Int64Array, tuple[Int64Array, ...], tuple[list[Int64Array], dict[str, Int64Array]]
