@@ -553,7 +553,7 @@ class TestMeanModel:
         assert "lags: none" in ar.__str__()
 
     @pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
-    def test_ar_plot(self):
+    def test_ar_plot(self, agg_backend):
         ar = ARX(self.y, lags=1, volatility=GARCH(), distribution=StudentsT())
         res = ar.fit(disp=DISPLAY, update_freq=UPDATE_FREQ, cov_type="mle")
         res.plot()
@@ -1351,7 +1351,7 @@ def test_param_cov():
 
 
 @pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
-def test_plot_bad_index():
+def test_plot_bad_index(agg_backend):
     import matplotlib.pyplot as plt
 
     idx = sorted(f"{a}{b}{c}" for a, b, c in product(*([ascii_lowercase] * 3)))
@@ -1476,7 +1476,7 @@ def test_fixed_equivalence(fit_fixed_models):
 
 
 @pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
-def test_fixed_equivalence_plots(fit_fixed_models):
+def test_fixed_equivalence_plots(fit_fixed_models, agg_backend):
     import matplotlib
 
     backend = matplotlib.get_backend()
@@ -1512,7 +1512,7 @@ def test_fixed_equivalence_forecastable(forecastable_model, simulations):
 
 @pytest.mark.slow
 @pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not installed")
-def test_fixed_equivalence_forecastable_plots(forecastable_model):
+def test_fixed_equivalence_forecastable_plots(forecastable_model, agg_backend):
     res, res_fixed = forecastable_model
     fig1 = res.hedgehog_plot(start=SP500.shape[0] - 25)
     fig2 = res_fixed.hedgehog_plot(start=SP500.shape[0] - 25)
