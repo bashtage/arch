@@ -45,3 +45,42 @@ def pytest_runtest_setup(item):
         "--only-slow"
     ):  # pragma: no cover
         pytest.skip("skipping due to --only-slow")  # pragma: no cover
+
+
+@pytest.fixture()
+def agg_backend():
+    """
+    Fixture that switches the backend to agg for the duration of the test
+
+    Returns
+    -------
+    switch_backend : callable
+        Function that will change the backend to agg when called
+
+    Notes
+    -----
+    Used by passing as an argument to the function that produces a plot,
+    for example
+
+    def test_some_plot(agg_backend):
+        <test code>
+    """
+    backend = None
+    try:
+        import matplotlib
+
+        backend = matplotlib.get_backend()
+        matplotlib.use("agg")
+
+    except ImportError:
+        # Nothing to do if MPL is not available
+        pass
+
+    def null():
+        pass
+
+    yield null
+    if backend:
+        import matplotlib
+
+        matplotlib.use(backend)

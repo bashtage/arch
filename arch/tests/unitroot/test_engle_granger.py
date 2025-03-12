@@ -142,7 +142,7 @@ TRIVARIATE = {
 @pytest.mark.parametrize("trend", ["n", "c", "ct", "ctt"])
 @pytest.mark.parametrize("method", ["aic", "bic"])
 @pytest.mark.parametrize("lhs", ["x", "y", "z"])
-def test_trivariate(data, trend, method, lhs):
+def test_trivariate(data, trend, method, lhs, agg_backend):
     rhs = ["x", "y", "z"]
     if isinstance(data, pd.DataFrame):
         rhs.remove(lhs)
@@ -214,7 +214,7 @@ def test_name_ci_vector(data):
 
 
 @pytest.mark.skipif(not HAS_MATPLOTLIB, reason="matplotlib not available")
-def test_plot(data):
+def test_plot(data, agg_backend):
     rhs = ["x", "y", "z"]
     lhs = "y"
     if isinstance(data, pd.DataFrame):
