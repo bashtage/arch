@@ -18,10 +18,12 @@ from arch.typing import (
     ArrayLike2D,
     DateLike,
     Float64Array,
+    Float64Array1D,
     Float64Array2D,
     ForecastingMethod,
     Int32Array,
     Int64Array,
+    Int64Array2D,
     Label,
     NDArray,
 )
@@ -271,7 +273,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self.lags: Union[
             int, Sequence[int], Sequence[Sequence[int]], Int32Array, Int64Array, None
         ] = lags
-        self._lags: Int64Array = np.empty((0, 0), dtype=int)
+        self._lags: Int64Array2D = np.empty((0, 0), dtype=int)
         self.constant: bool = constant
         self.use_rotated: bool = use_rotated
         self.regressors: Float64Array = np.empty((0, 0), dtype=np.double)
@@ -360,7 +362,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
 
     def resids(
         self,
-        params: Float64Array,
+        params: Float64Array1D,
         y: Optional[ArrayLike1D] = None,
         regressors: Optional[ArrayLike2D] = None,
     ) -> ArrayLike1D:
@@ -481,12 +483,12 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         """
 
         if x is None:
-            x: Float64Array2D = np.empty((nobs + burn, 0))
+            x_arr: Float64Array2D = np.empty((nobs + burn, 0))
         else:
             _x = np.asarray(x, dtype=float)
-            x = _x.reshape((x.shape[0], -1))
-        k_x = x.shape[1]
-        if x.shape[0] != nobs + burn:
+            x_arr = _x.reshape((_x.shape[0], -1))
+        k_x = x_arr.shape[1]
+        if x_arr.shape[0] != nobs + burn:
             raise ValueError("x must have nobs + burn rows")
         assert self._lags is not None
         mc = (
@@ -514,7 +516,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         errors = sim_data[0]
         vol = cast(Float64Array, np.sqrt(sim_data[1]))
 
-        y = self._simulate_mean(params[:mc], x, errors, initial_value, sim_data[1])
+        y = self._simulate_mean(params[:mc], x_arr, errors, initial_value, sim_data[1])
 
         df = dict(data=y[burn:], volatility=vol[burn:], errors=errors[burn:])
         return pd.DataFrame(df)
@@ -620,11 +622,12 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         if self._max_lags == 0:
             return params[: int(self.constant)]
         har = params[int(self.constant) :]
-        ar = np.zeros(self._max_lags)
+        ar: Float64Array1D
+        ar = np.zeros(self._max_lags, dtype=float)
         for value, lag in zip(har, self._lags.T):
             ar[lag[0] : lag[1]] += value / (lag[1] - lag[0])
         if self.constant:
-            ar = np.concatenate((params[:1], ar))
+            ar = cast(Float64Array1D, np.concatenate((params[:1], ar)))
         return ar
 
     def _init_model(self) -> None:
@@ -1197,12 +1200,12 @@ class ConstantMean(HARX):
 
     def resids(
         self,
-        params: Float64Array,
+        params: Float64Array1D,
         y: Optional[ArrayLike1D] = None,
         regressors: Optional[ArrayLike2D] = None,
     ) -> ArrayLike1D:
-        y = self._fit_y if y is None else np.asarray(y, dtype=np.double)
-        return y - params
+        _y = self._fit_y if y is None else np.asarray(y, dtype=np.double)
+        return _y - params
 
 
 class ZeroMean(HARX):
@@ -1326,14 +1329,14 @@ class ZeroMean(HARX):
         >>> zm.volatility = GARCH(p=1, o=1, q=1)
         >>> sim_data = zm.simulate([0.05, 0.1, 0.1, 0.8], 300)
         """
-        params = np.asarray(ensure1d(params, "params", False), dtype=float)
+        _params = ensure1d(params, "params", False).astype(float)
         if initial_value is not None or x is not None:
             raise ValueError(
                 "Both initial value and x must be none when "
                 "simulating a constant mean process."
             )
 
-        _, vp, dp = self._parse_parameters(params)
+        _, vp, dp = self._parse_parameters(_params)
 
         sim_values = self.volatility.simulate(
             vp, nobs + burn, self.distribution.simulate(dp), burn, initial_value_vol
@@ -1348,7 +1351,7 @@ class ZeroMean(HARX):
 
     def resids(
         self,
-        params: Float64Array,
+        params: Float64Array1D,
         y: Optional[ArrayLike1D] = None,
         regressors: Optional[ArrayLike2D] = None,
     ) -> ArrayLike1D:
@@ -1717,7 +1720,7 @@ class ARCHInMean(ARX):
 
     def resids(
         self,
-        params: Float64Array,
+        params: Float64Array1D,
         y: Optional[ArrayLike1D] = None,
         regressors: Optional[ArrayLike2D] = None,
     ) -> ArrayLike1D:
@@ -1729,9 +1732,9 @@ class ARCHInMean(ARX):
     @overload
     def _loglikelihood(
         self,
-        parameters: Float64Array,
-        sigma2: Float64Array,
-        backcast: Union[float, Float64Array],
+        parameters: Float64Array1D,
+        sigma2: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
         var_bounds: Float64Array,
     ) -> float:  # pragma: no cover
         ...  # pragma: no cover
@@ -1739,9 +1742,9 @@ class ARCHInMean(ARX):
     @overload
     def _loglikelihood(
         self,
-        parameters: Float64Array,
-        sigma2: Float64Array,
-        backcast: Union[float, Float64Array],
+        parameters: Float64Array1D,
+        sigma2: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
         var_bounds: Float64Array,
         individual: Literal[False] = ...,
     ) -> float:  # pragma: no cover
@@ -1750,22 +1753,22 @@ class ARCHInMean(ARX):
     @overload
     def _loglikelihood(
         self,
-        parameters: Float64Array,
-        sigma2: Float64Array,
-        backcast: Union[float, Float64Array],
+        parameters: Float64Array1D,
+        sigma2: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
         var_bounds: Float64Array,
         individual: Literal[True] = ...,
-    ) -> Float64Array:  # pragma: no cover
+    ) -> Float64Array1D:  # pragma: no cover
         ...  # pragma: no cover
 
     def _loglikelihood(
         self,
-        parameters: Float64Array,
-        sigma2: Float64Array,
-        backcast: Union[float, Float64Array],
+        parameters: Float64Array1D,
+        sigma2: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
         var_bounds: Float64Array,
         individual: bool = False,
-    ) -> Union[float, Float64Array]:
+    ) -> Union[float, Float64Array1D]:
         # Parse parameters
         _callback_info["count"] += 1
 
@@ -1793,7 +1796,7 @@ class ARCHInMean(ARX):
             _callback_info["llf"] = llf_f = -float(llf)
             return llf_f
 
-        return cast(np.ndarray, -llf)
+        return cast(Float64Array1D, -llf)
 
     def _simulate_mean(
         self,

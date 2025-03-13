@@ -1908,7 +1908,7 @@ def mackinnoncrit(
         return asymptotic_cv
     else:
         # Flip so that highest power to lowest power
-        return polyval(poly_coef[::-1], 1.0 / nobs)
+        return polyval(poly_coef[::-1], 1.0 / nobs).astype(float)
 
 
 def kpss_crit(

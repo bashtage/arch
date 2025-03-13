@@ -27,6 +27,7 @@ from arch.typing import (
     ArrayLike2D,
     DateLike,
     Float64Array,
+    Float64Array1D,
     ForecastingMethod,
     Label,
     Literal,
@@ -196,6 +197,7 @@ class ARCHModel(metaclass=ABCMeta):
             self._y_series = cast(pd.Series, ensure1d(y, "y", series=True))
         else:
             self._y_series = cast(pd.Series, ensure1d(np.empty((0,)), "y", series=True))
+        self._y: Float64Array1D
         self._y = np.ascontiguousarray(self._y_series)
         if not np.all(np.isfinite(self._y)):
             raise ValueError(
@@ -377,17 +379,16 @@ class ARCHModel(metaclass=ABCMeta):
         params = np.empty(0)
         param_cov = np.empty((0, 0))
         first_obs, last_obs = self._fit_indices
-        resids_final = np.full_like(self._y, np.nan)
+        resids_final = np.full(self._y.shape, np.nan)
         resids_final[first_obs:last_obs] = y
 
         var_bounds = self.volatility.variance_bounds(y)
-        vol = np.zeros_like(y)
+        vol = np.zeros(y.shape, dtype=float)
         self.volatility.compute_variance(params, y, vol, backcast, var_bounds)
         vol = cast(Float64Array, np.sqrt(vol))
 
         # Reshape resids vol
-        vol_final = np.empty_like(self._y, dtype=np.double)
-        vol_final.fill(np.nan)
+        vol_final = np.full(self._y.shape, np.nan, dtype=np.double)
         vol_final[first_obs:last_obs] = vol
 
         names = self._all_parameter_names()
@@ -418,9 +419,9 @@ class ARCHModel(metaclass=ABCMeta):
     @overload
     def _loglikelihood(
         self,
-        parameters: Float64Array,
-        sigma2: Float64Array,
-        backcast: Union[float, Float64Array],
+        parameters: Float64Array1D,
+        sigma2: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
         var_bounds: Float64Array,
     ) -> float:  # pragma: no cover
         ...  # pragma: no cover
@@ -428,9 +429,9 @@ class ARCHModel(metaclass=ABCMeta):
     @overload
     def _loglikelihood(
         self,
-        parameters: Float64Array,
-        sigma2: Float64Array,
-        backcast: Union[float, Float64Array],
+        parameters: Float64Array1D,
+        sigma2: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
         var_bounds: Float64Array,
         individual: Literal[False] = ...,
     ) -> float:  # pragma: no cover
@@ -439,22 +440,22 @@ class ARCHModel(metaclass=ABCMeta):
     @overload
     def _loglikelihood(
         self,
-        parameters: Float64Array,
-        sigma2: Float64Array,
-        backcast: Union[float, Float64Array],
+        parameters: Float64Array1D,
+        sigma2: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
         var_bounds: Float64Array,
         individual: Literal[True] = ...,
-    ) -> Float64Array:  # pragma: no cover
+    ) -> Float64Array1D:  # pragma: no cover
         ...  # pragma: no cover
 
     def _loglikelihood(
         self,
-        parameters: Float64Array,
-        sigma2: Float64Array,
-        backcast: Union[float, Float64Array],
+        parameters: Float64Array1D,
+        sigma2: Float64Array1D,
+        backcast: Union[float, Float64Array1D],
         var_bounds: Float64Array,
         individual: bool = False,
-    ) -> Union[float, Float64Array]:
+    ) -> Union[float, Float64Array1D]:
         """
         Computes the log-likelihood using the entire model
 
@@ -503,7 +504,7 @@ class ARCHModel(metaclass=ABCMeta):
     def _parse_parameters(
         self,
         x: Union[ArrayLike1D, Sequence[float]],
-    ) -> tuple[Float64Array, Float64Array, Float64Array]:
+    ) -> tuple[Float64Array1D, Float64Array1D, Float64Array1D]:
         """Return the parameters of each model in a tuple"""
         x = np.asarray(x, dtype=float)
         km, kv = int(self.num_params), int(self.volatility.num_params)
@@ -562,10 +563,9 @@ class ARCHModel(metaclass=ABCMeta):
         names = self._all_parameter_names()
         # Reshape resids and vol
         first_obs, last_obs = self._fit_indices
-        resids_final = np.full_like(self._y, np.nan, dtype=np.double)
+        resids_final = np.full(self._y.shape, np.nan, dtype=float)
         resids_final[first_obs:last_obs] = resids
-        vol_final = np.empty_like(self._y, dtype=np.double)
-        vol_final.fill(np.nan)
+        vol_final = np.full(self._y.shape, np.nan, dtype=float)
         vol_final[first_obs:last_obs] = vol
 
         model_copy = deepcopy(self)
@@ -896,7 +896,7 @@ class ARCHModel(metaclass=ABCMeta):
     @abstractmethod
     def resids(
         self,
-        params: Float64Array,
+        params: Float64Array1D,
         y: Optional[ArrayLike1D] = None,
         regressors: Optional[ArrayLike2D] = None,
     ) -> ArrayLike1D:
@@ -1645,7 +1645,9 @@ class ARCHModelFixedResult(_SummaryRepr):
 
         fig, ax = plt.subplots(1, 1)
         use_date = isinstance(self._dep_var.index, pd.DatetimeIndex)
-        plot_fn = ax.plot_date if use_date and MPL_LT_310 else ax.plot
+        plot_fn = ax.plot
+        if MPL_LT_310 and hasattr(ax, "plot_date") and use_date:
+            plot_fn = ax.plot_date
         x_values = np.array(self._dep_var.index)
         if plot_mean:
             y_values = np.asarray(self._dep_var)
