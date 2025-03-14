@@ -18,7 +18,7 @@
     
   
       
-        <title>arch.univariate.distribution - arch v7.2.1 (+20)</title>
+        <title>arch.univariate.distribution - arch v7.2.1 (+23)</title>
       
     
 
@@ -48,7 +48,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.8bc14be58eddc636f.min.css?v=68780cc0" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.f1e42938f8d3c76eb.min.css?v=85834ad9" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -89,7 +89,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+20)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+20)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -100,7 +100,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+20)
+            arch v7.2.1 (+23)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -195,10 +195,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+20)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+20)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+20)
+    arch v7.2.1 (+23)
   </label>
   
     <div class="md-nav__source">
@@ -465,6 +465,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="nb">abs</span><span class="p">,</span>
     <span class="n">array</span><span class="p">,</span>
@@ -488,7 +489,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">comb</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">gammainc</span><span class="p">,</span> <span class="n">gammaincc</span><span class="p">,</span> <span class="n">gammaln</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stats</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">Float64Array</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array1D</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractDocStringInheritor</span><span class="p">,</span> <span class="n">ensure1d</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Distribution&quot;</span><span class="p">,</span> <span class="s2">&quot;Normal&quot;</span><span class="p">,</span> <span class="s2">&quot;StudentsT&quot;</span><span class="p">,</span> <span class="s2">&quot;SkewStudent&quot;</span><span class="p">,</span> <span class="s2">&quot;GeneralizedError&quot;</span><span class="p">]</span>
@@ -509,7 +510,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;Distribution&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array1D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">random_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -546,7 +547,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_constraints</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
         <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
@@ -676,7 +677,7 @@
         <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loglikelihood evaluation.</span>
 
@@ -915,7 +916,7 @@
         <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Computes the log-likelihood of assuming residuals are normally</span>
 <span class="sd">        distributed, conditional on the variance</span>
 
@@ -998,10 +999,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">scalar</span> <span class="o">=</span> <span class="n">isscalar</span><span class="p">(</span><span class="n">pits</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">scalar</span><span class="p">:</span>
-            <span class="n">pits</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">pits</span><span class="p">])</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pits</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+            <span class="n">_pits</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">pits</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">pits</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">pits</span><span class="p">)</span>
-        <span class="n">ppf</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">pits</span><span class="p">)</span>
+            <span class="n">_pits</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">pits</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">ppf</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">_pits</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">scalar</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ppf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1091,7 +1093,7 @@
         <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Computes the log-likelihood of assuming residuals are have a</span>
 <span class="sd">        standardized (to have unit variance) Student&#39;s t distribution,</span>
 <span class="sd">        conditional on the variance.</span>
@@ -1178,7 +1180,7 @@
         <span class="n">parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">2.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The shape parameter must be larger than 2&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulator</span></div>
 
 
@@ -1209,10 +1211,10 @@
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-        <span class="n">pits</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">pits</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">_pits</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">pits</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">nu</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">var</span> <span class="o">=</span> <span class="n">nu</span> <span class="o">/</span> <span class="p">(</span><span class="n">nu</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">))</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">pits</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">))</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">_pits</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StudentsT.moment">
@@ -1359,7 +1361,7 @@
         <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the log-likelihood of assuming residuals are have a</span>
 <span class="sd">        standardized (to have unit variance) Skew Student&#39;s t distribution,</span>
@@ -1406,12 +1408,13 @@
 
 <span class="sd">        and :math:`\Gamma` is the gamma function.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">parameters</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-        <span class="n">eta</span><span class="p">,</span> <span class="n">lam</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="n">parameters_arr</span><span class="p">:</span> <span class="n">Float64Array1D</span>
+        <span class="n">parameters_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">asarray</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+        <span class="n">eta</span><span class="p">,</span> <span class="n">lam</span> <span class="o">=</span> <span class="n">parameters_arr</span>
 
-        <span class="n">const_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_c</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-        <span class="n">const_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_a</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-        <span class="n">const_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_b</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="n">const_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_c</span><span class="p">(</span><span class="n">parameters_arr</span><span class="p">)</span>
+        <span class="n">const_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_a</span><span class="p">(</span><span class="n">parameters_arr</span><span class="p">)</span>
+        <span class="n">const_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_b</span><span class="p">(</span><span class="n">parameters_arr</span><span class="p">)</span>
 
         <span class="n">resids</span> <span class="o">=</span> <span class="n">resids</span> <span class="o">/</span> <span class="n">sigma2</span><span class="o">**</span><span class="mf">0.5</span>
         <span class="n">lls</span> <span class="o">=</span> <span class="n">log</span><span class="p">(</span><span class="n">const_b</span><span class="p">)</span> <span class="o">+</span> <span class="n">const_c</span> <span class="o">-</span> <span class="n">log</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
@@ -1478,7 +1481,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;The skew parameter must be smaller than 1 in absolute value&quot;</span>
             <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulator</span></div>
 
 
@@ -1488,7 +1491,7 @@
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;lambda&quot;</span><span class="p">]</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__const_a</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__const_a</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute a constant.</span>
 
@@ -1507,7 +1510,7 @@
         <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_c</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">lam</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__const_b</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__const_b</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute b constant.</span>
 
@@ -1526,7 +1529,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">lam</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">a</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">__const_c</span><span class="p">(</span><span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__const_c</span><span class="p">(</span><span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute c constant.</span>
 
@@ -1555,21 +1558,18 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">scalar</span> <span class="o">=</span> <span class="n">isscalar</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">scalar</span><span class="p">:</span>
-            <span class="n">resids</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">resids</span><span class="p">])</span>
-        <span class="n">resids</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">_resids</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="s2">&quot;resids&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">eta</span><span class="p">,</span> <span class="n">lam</span> <span class="o">=</span> <span class="n">parameters</span>
 
         <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_a</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_b</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
 
         <span class="n">var</span> <span class="o">=</span> <span class="n">eta</span> <span class="o">/</span> <span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">y1</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">resids</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
-        <span class="n">y2</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">resids</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">_resids</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+        <span class="n">y2</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">_resids</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
         <span class="n">tcdf</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span><span class="o">.</span><span class="n">cdf</span>
-        <span class="n">resids</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">tcdf</span><span class="p">(</span><span class="n">y1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">resids</span> <span class="o">&lt;</span> <span class="p">(</span><span class="o">-</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">))</span>
-        <span class="n">p</span> <span class="o">+=</span> <span class="p">(</span><span class="n">resids</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="o">-</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">))</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tcdf</span><span class="p">(</span><span class="n">y2</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">))</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">tcdf</span><span class="p">(</span><span class="n">y1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">_resids</span> <span class="o">&lt;</span> <span class="p">(</span><span class="o">-</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">))</span>
+        <span class="n">p</span> <span class="o">+=</span> <span class="p">(</span><span class="n">_resids</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="o">-</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">))</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tcdf</span><span class="p">(</span><span class="n">y2</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">scalar</span><span class="p">:</span>
             <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">p</span></div>
@@ -1579,7 +1579,7 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.ppf.html#arch.univariate.distribution.SkewStudent.ppf">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ppf</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">pits</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">],</span>
+        <span class="n">pits</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">],</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
@@ -1652,14 +1652,14 @@
         <span class="n">z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-        <span class="n">eta</span><span class="p">,</span> <span class="n">lam</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="n">parameters_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="n">eta</span><span class="p">,</span> <span class="n">lam</span> <span class="o">=</span> <span class="n">parameters_arr</span>
 
         <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="n">eta</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">nan</span>
 
-        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_a</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-        <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_b</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_a</span><span class="p">(</span><span class="n">parameters_arr</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__const_b</span><span class="p">(</span><span class="n">parameters_arr</span><span class="p">)</span>
 
         <span class="n">loc</span> <span class="o">=</span> <span class="o">-</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span>
         <span class="n">lscale</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">eta</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">/</span> <span class="n">b</span>
@@ -1749,7 +1749,7 @@
         <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the log-likelihood of assuming residuals are have a</span>
 <span class="sd">        Generalized Error Distribution, conditional on the variance.</span>
@@ -1847,7 +1847,7 @@
         <span class="n">parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The shape parameter must be larger than 1&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulator</span></div>
 
 
@@ -1865,10 +1865,10 @@
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-        <span class="n">pits</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">pits</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">_pits</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">pits</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">nu</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">var</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gennorm</span><span class="p">(</span><span class="n">nu</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">gennorm</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">))</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">pits</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">gennorm</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">))</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">_pits</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GeneralizedError.cdf">
@@ -1881,8 +1881,8 @@
         <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_constraints</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">nu</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">var</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gennorm</span><span class="p">(</span><span class="n">nu</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
-        <span class="n">resids</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">gennorm</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">))</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span></div>
+        <span class="n">_resids</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="s2">&quot;resids&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">gennorm</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">))</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">_resids</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GeneralizedError.moment">

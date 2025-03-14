@@ -18,7 +18,7 @@
     
   
       
-        <title>arch.covariance.kernel - arch v7.2.1 (+20)</title>
+        <title>arch.covariance.kernel - arch v7.2.1 (+23)</title>
       
     
 
@@ -48,7 +48,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.8bc14be58eddc636f.min.css?v=68780cc0" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.f1e42938f8d3c76eb.min.css?v=85834ad9" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -89,7 +89,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+20)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+20)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -100,7 +100,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+20)
+            arch v7.2.1 (+23)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -195,10 +195,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+20)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+20)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+20)
+    arch v7.2.1 (+23)
   </label>
   
     <div class="md-nav__source">
@@ -464,7 +464,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">Index</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">Float64Array</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array2D</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractDocStringInheritor</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">ensure2d</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.vendor._decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">Substitution</span>
 
@@ -673,11 +673,12 @@
                 <span class="s2">&quot;size of x using df_adjust. df_adjust must be less than&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
+        <span class="n">xw</span><span class="p">:</span> <span class="n">Float64Array2D</span>
         <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">xw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">xw</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">),</span> <span class="s2">&quot;weights&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="n">xw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span> <span class="o">=</span> <span class="n">xw</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="n">_xw</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">),</span> <span class="s2">&quot;weights&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">xw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_weights</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array2D</span><span class="p">,</span> <span class="n">_xw</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">xw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="ow">or</span> <span class="n">xw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span>
@@ -909,7 +910,9 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="p">((</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">bw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+            <span class="nb">float</span>
+        <span class="p">)</span></div>
 
 
 

@@ -18,7 +18,7 @@
     
   
       
-        <title>arch.univariate.volatility - arch v7.2.1 (+20)</title>
+        <title>arch.univariate.volatility - arch v7.2.1 (+23)</title>
       
     
 
@@ -48,7 +48,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.8bc14be58eddc636f.min.css?v=68780cc0" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.f1e42938f8d3c76eb.min.css?v=85834ad9" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -89,7 +89,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+20)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+20)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -100,7 +100,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+20)
+            arch v7.2.1 (+23)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -195,10 +195,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+20)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+20)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+20)
+    arch v7.2.1 (+23)
   </label>
   
     <div class="md-nav__source">
@@ -474,6 +474,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ArrayLike1D</span><span class="p">,</span>
     <span class="n">Float64Array</span><span class="p">,</span>
+    <span class="n">Float64Array1D</span><span class="p">,</span>
     <span class="n">ForecastingMethod</span><span class="p">,</span>
     <span class="n">Int32Array</span><span class="p">,</span>
     <span class="n">RNGType</span><span class="p">,</span>
@@ -832,7 +833,8 @@
         <span class="n">_var_bounds</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
             <span class="p">(</span><span class="n">var_bounds</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">]]))</span>
         <span class="p">)</span>
-        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array1D</span>
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">compute_variance</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">_resids</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">_var_bounds</span><span class="p">)</span>
         <span class="n">forecasts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">t</span> <span class="o">-</span> <span class="n">start_index</span><span class="p">,</span> <span class="n">horizon</span><span class="p">))</span>
         <span class="n">forecasts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma2</span><span class="p">[</span><span class="n">start_index</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
@@ -1228,7 +1230,7 @@
 <span class="sd">        The analytic ``method`` is not supported for all models.  Attempting</span>
 <span class="sd">        to use this method when not available will raise a ValueError.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="n">_parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">method_name</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">method_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;analytic&quot;</span><span class="p">,</span> <span class="s2">&quot;simulation&quot;</span><span class="p">,</span> <span class="s2">&quot;bootstrap&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> is not a known forecasting method&quot;</span><span class="p">)</span>
@@ -1238,7 +1240,7 @@
         <span class="n">start</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">start</span>
         <span class="k">if</span> <span class="n">method_name</span> <span class="o">==</span> <span class="s2">&quot;analytic&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analytic_forecast</span><span class="p">(</span>
-                <span class="n">parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">horizon</span>
+                <span class="n">_parameters</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">horizon</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;simulation&quot;</span><span class="p">:</span>
             <span class="c1"># TODO: This looks like a design flaw.It is optional above but then must</span>
@@ -1246,7 +1248,7 @@
             <span class="c1">#  expected to know when to provide the rng or not</span>
             <span class="k">assert</span> <span class="n">rng</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulation_forecast</span><span class="p">(</span>
-                <span class="n">parameters</span><span class="p">,</span>
+                <span class="n">_parameters</span><span class="p">,</span>
                 <span class="n">resids</span><span class="p">,</span>
                 <span class="n">backcast</span><span class="p">,</span>
                 <span class="n">var_bounds</span><span class="p">,</span>
@@ -1263,7 +1265,7 @@
                 <span class="p">)</span>
 
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bootstrap_forecast</span><span class="p">(</span>
-                <span class="n">parameters</span><span class="p">,</span>
+                <span class="n">_parameters</span><span class="p">,</span>
                 <span class="n">resids</span><span class="p">,</span>
                 <span class="n">backcast</span><span class="p">,</span>
                 <span class="n">var_bounds</span><span class="p">,</span>
@@ -2366,7 +2368,7 @@
         <span class="n">nobs</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asym</span><span class="p">:</span>
-            <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
             <span class="n">params</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
@@ -2385,13 +2387,13 @@
         <span class="n">burn</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
         <span class="n">initial_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
-        <span class="n">parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">_parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asym</span><span class="p">:</span>
-            <span class="n">omega</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">omega</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="n">_parameters</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">omega</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">omega</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">_parameters</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
             <span class="n">gamma</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">(</span><span class="n">_parameters</span><span class="p">)</span>
         <span class="n">aw</span> <span class="o">=</span> <span class="n">weights</span> <span class="o">*</span> <span class="n">alpha</span>
         <span class="n">gw</span> <span class="o">=</span> <span class="n">weights</span> <span class="o">*</span> <span class="n">gamma</span>
 
@@ -2399,10 +2401,10 @@
 
         <span class="k">if</span> <span class="n">initial_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">initial_value</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">)</span>
+                <span class="n">initial_value</span> <span class="o">=</span> <span class="n">_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">warn</span><span class="p">(</span><span class="n">initial_value_warning</span><span class="p">,</span> <span class="n">InitialValueWarning</span><span class="p">)</span>
-                <span class="n">initial_value</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">initial_value</span> <span class="o">=</span> <span class="n">_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">m</span> <span class="o">=</span> <span class="n">weights</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">burn</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">burn</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
@@ -3308,7 +3310,7 @@
 
         <span class="k">if</span> <span class="n">initial_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">beta_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="n">p</span> <span class="o">+</span> <span class="n">o</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:])</span>
+                <span class="n">beta_sum</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="n">p</span> <span class="o">+</span> <span class="n">o</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">beta_sum</span> <span class="o">=</span> <span class="mf">0.0</span>
 
@@ -3320,8 +3322,9 @@
 
         <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">)</span>
+        <span class="n">lnsigma2</span><span class="p">:</span> <span class="n">Float64Array1D</span>
         <span class="n">lnsigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">)</span>
-        <span class="n">abserrors</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">errors</span><span class="p">))</span>
+        <span class="n">abserrors</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">errors</span><span class="p">))</span>
 
         <span class="n">norm_const</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
         <span class="n">max_lag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">q</span><span class="p">])</span>
@@ -3343,7 +3346,7 @@
                 <span class="n">lnsigma2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+=</span> <span class="n">parameters</span><span class="p">[</span><span class="n">loc</span><span class="p">]</span> <span class="o">*</span> <span class="n">lnsigma2</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">j</span><span class="p">]</span>
                 <span class="n">loc</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">lnsigma2</span><span class="p">))</span>
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">lnsigma2</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">errors</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">burn</span><span class="p">:],</span> <span class="n">sigma2</span><span class="p">[</span><span class="n">burn</span><span class="p">:]</span></div>

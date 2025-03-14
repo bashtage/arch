@@ -22,7 +22,7 @@
     
   
       
-        <title>Multiple Comparisons - arch v7.2.1 (+20)</title>
+        <title>Multiple Comparisons - arch v7.2.1 (+23)</title>
       
     
 
@@ -52,7 +52,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.8bc14be58eddc636f.min.css?v=68780cc0" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.f1e42938f8d3c76eb.min.css?v=85834ad9" />
         <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
         <link rel="stylesheet" type="text/css" href="../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -99,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="arch v7.2.1 (+20)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+20)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+23)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+20)
+            arch v7.2.1 (+23)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -205,10 +205,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="arch v7.2.1 (+20)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+20)" data-md-component="logo">
+    <a href="../index.html" title="arch v7.2.1 (+23)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
       <img src="../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+20)
+    arch v7.2.1 (+23)
   </label>
   
     <div class="md-nav__source">
@@ -836,9 +836,9 @@
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-lower         0.454
-consistent    0.605
-upper         0.615
+lower         0.329
+consistent    0.377
+upper         0.377
 dtype: float64
 </pre></div></div>
 </div>
@@ -908,7 +908,7 @@ dtype: float64
 
 <span class="n">pvalues</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pvalues</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">pvalues</span><span class="p">:</span>
-    <span class="n">values</span> <span class="o">=</span> <span class="n">pvalues</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">pvalues</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">values</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
     <span class="n">pvalues</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
 <span class="c1"># Change the index so that the x-values are between 0 and 1</span>
@@ -953,9 +953,9 @@ dtype: float64
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-lower         0.008
-consistent    0.011
-upper         0.011
+lower         0.001
+consistent    0.001
+upper         0.001
 dtype: float64
 </pre></div></div>
 </div>
@@ -998,7 +998,7 @@ dtype: float64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Model indices:
-[&#39;344&#39;, &#39;368&#39;, &#39;381&#39;, &#39;389&#39;, &#39;396&#39;, &#39;403&#39;, &#39;441&#39;, &#39;445&#39;, &#39;450&#39;, &#39;452&#39;, &#39;455&#39;, &#39;459&#39;, &#39;460&#39;, &#39;473&#39;, &#39;475&#39;, &#39;485&#39;, &#39;486&#39;, &#39;491&#39;, &#39;492&#39;, &#39;493&#39;, &#39;497&#39;]
+[&#39;276&#39;, &#39;289&#39;, &#39;291&#39;, &#39;302&#39;, &#39;317&#39;, &#39;330&#39;, &#39;331&#39;, &#39;333&#39;, &#39;345&#39;, &#39;347&#39;, &#39;349&#39;, &#39;360&#39;, &#39;361&#39;, &#39;365&#39;, &#39;368&#39;, &#39;369&#39;, &#39;372&#39;, &#39;392&#39;, &#39;397&#39;, &#39;401&#39;, &#39;402&#39;, &#39;405&#39;, &#39;407&#39;, &#39;409&#39;, &#39;410&#39;, &#39;415&#39;, &#39;427&#39;, &#39;428&#39;, &#39;432&#39;, &#39;433&#39;, &#39;442&#39;, &#39;443&#39;, &#39;446&#39;, &#39;448&#39;, &#39;449&#39;, &#39;450&#39;, &#39;451&#39;, &#39;452&#39;, &#39;453&#39;, &#39;454&#39;, &#39;456&#39;, &#39;461&#39;, &#39;462&#39;, &#39;463&#39;, &#39;464&#39;, &#39;465&#39;, &#39;466&#39;, &#39;467&#39;, &#39;470&#39;, &#39;473&#39;, &#39;474&#39;, &#39;484&#39;, &#39;485&#39;, &#39;489&#39;, &#39;490&#39;, &#39;491&#39;, &#39;496&#39;, &#39;497&#39;, &#39;498&#39;]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1053,35 +1053,35 @@ Model indices:
 MCS P-values
             Pvalue
 Model name
-model.0      0.000
-model.40     0.000
-model.100    0.000
-model.80     0.000
-model.20     0.000
-model.60     0.012
-model.340    0.023
-model.240    0.068
-model.300    0.068
-model.120    0.072
-model.180    0.093
-model.160    0.119
-model.140    0.128
-model.260    0.160
-model.480    0.160
-model.420    0.160
-model.280    0.160
-model.360    0.160
-model.220    0.160
-model.200    0.160
-model.380    0.160
-model.320    0.253
-model.440    0.267
-model.400    0.267
-model.460    1.000
+model.120    0.004
+model.260    0.044
+model.80     0.044
+model.60     0.156
+model.20     0.156
+model.100    0.156
+model.240    0.198
+model.280    0.202
+model.220    0.209
+model.140    0.278
+model.40     0.332
+model.160    0.342
+model.320    0.613
+model.300    0.662
+model.0      0.662
+model.200    0.718
+model.380    0.718
+model.400    0.826
+model.460    0.826
+model.340    0.826
+model.480    0.826
+model.180    0.902
+model.420    0.902
+model.440    0.902
+model.360    1.000
 Included
-[&#39;140&#39;, &#39;160&#39;, &#39;200&#39;, &#39;220&#39;, &#39;260&#39;, &#39;280&#39;, &#39;320&#39;, &#39;360&#39;, &#39;380&#39;, &#39;400&#39;, &#39;420&#39;, &#39;440&#39;, &#39;460&#39;, &#39;480&#39;]
+[&#39;0&#39;, &#39;100&#39;, &#39;140&#39;, &#39;160&#39;, &#39;180&#39;, &#39;20&#39;, &#39;200&#39;, &#39;220&#39;, &#39;240&#39;, &#39;280&#39;, &#39;300&#39;, &#39;320&#39;, &#39;340&#39;, &#39;360&#39;, &#39;380&#39;, &#39;40&#39;, &#39;400&#39;, &#39;420&#39;, &#39;440&#39;, &#39;460&#39;, &#39;480&#39;, &#39;60&#39;]
 Excluded
-[&#39;0&#39;, &#39;100&#39;, &#39;120&#39;, &#39;180&#39;, &#39;20&#39;, &#39;240&#39;, &#39;300&#39;, &#39;340&#39;, &#39;40&#39;, &#39;60&#39;, &#39;80&#39;]
+[&#39;120&#39;, &#39;260&#39;, &#39;80&#39;]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">

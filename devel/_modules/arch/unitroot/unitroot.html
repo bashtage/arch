@@ -18,7 +18,7 @@
     
   
       
-        <title>arch.unitroot.unitroot - arch v7.2.1 (+20)</title>
+        <title>arch.unitroot.unitroot - arch v7.2.1 (+23)</title>
       
     
 
@@ -48,7 +48,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.8bc14be58eddc636f.min.css?v=68780cc0" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.f1e42938f8d3c76eb.min.css?v=85834ad9" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -89,7 +89,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+20)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+20)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -100,7 +100,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+20)
+            arch v7.2.1 (+23)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -195,10 +195,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+20)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+20)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+20)
+    arch v7.2.1 (+23)
   </label>
   
     <div class="md-nav__source">
@@ -625,14 +625,16 @@
     <span class="n">maxlag</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;aic&quot;</span><span class="p">:</span>
         <span class="n">crit</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">llf</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">arange</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">maxlag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="n">icbest</span><span class="p">,</span> <span class="n">lag</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">crit</span><span class="p">,</span> <span class="n">arange</span><span class="p">(</span><span class="n">maxlag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="n">icbest</span><span class="p">,</span> <span class="n">_lag</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">crit</span><span class="p">,</span> <span class="n">arange</span><span class="p">(</span><span class="n">maxlag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="n">lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_lag</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;bic&quot;</span><span class="p">:</span>
         <span class="n">crit</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">llf</span> <span class="o">+</span> <span class="n">log</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span> <span class="o">*</span> <span class="n">arange</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">maxlag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="n">icbest</span><span class="p">,</span> <span class="n">lag</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">crit</span><span class="p">,</span> <span class="n">arange</span><span class="p">(</span><span class="n">maxlag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="n">icbest</span><span class="p">,</span> <span class="n">_lag</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">crit</span><span class="p">,</span> <span class="n">arange</span><span class="p">(</span><span class="n">maxlag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="n">lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_lag</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;t-stat&quot;</span><span class="p">:</span>
         <span class="n">stop</span> <span class="o">=</span> <span class="mf">1.6448536269514722</span>
         <span class="n">large_tstat</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tstat</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">stop</span>
-        <span class="n">lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">squeeze</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">argwhere</span><span class="p">(</span><span class="n">large_tstat</span><span class="p">))))</span>
+        <span class="n">lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">squeeze</span><span class="p">(</span><span class="n">argwhere</span><span class="p">(</span><span class="n">large_tstat</span><span class="p">))</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
         <span class="n">icbest</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tstat</span><span class="p">[</span><span class="n">lag</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown method&quot;</span><span class="p">)</span>
@@ -2381,7 +2383,7 @@
         <span class="k">return</span> <span class="n">asymptotic_cv</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Flip so that highest power to lowest power</span>
-        <span class="k">return</span> <span class="n">polyval</span><span class="p">(</span><span class="n">poly_coef</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">nobs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">polyval</span><span class="p">(</span><span class="n">poly_coef</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">nobs</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">kpss_crit</span><span class="p">(</span>
