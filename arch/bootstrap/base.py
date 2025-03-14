@@ -1,5 +1,5 @@
 from collections.abc import Generator as PyGenerator, Mapping, Sequence
-from typing import Any, Callable, Optional, Union, cast
+from typing import Any, Callable, Hashable, List, Optional, Union, cast
 import warnings
 
 import numpy as np
@@ -187,7 +187,7 @@ def optimal_block_length(x: Union[ArrayLike1D, ArrayLike2D]) -> pd.DataFrame:
     x_arr = np.asarray(ensure2d(np.asarray(x, dtype=float), "x"), dtype=float)
     opt = [_single_optimal_block(col) for col in x_arr.T]
     if isinstance(x, pd.DataFrame):
-        idx = list(x.columns)
+        idx: List[Hashable] = list(x.columns)
     elif isinstance(x, pd.Series):
         idx = [x.name]
     else:

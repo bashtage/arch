@@ -17,6 +17,7 @@ from scipy.special import gammaln
 from arch.typing import (
     ArrayLike1D,
     Float64Array,
+    Float64Array1D,
     ForecastingMethod,
     Int32Array,
     RNGType,
@@ -367,7 +368,8 @@ class VolatilityProcess(metaclass=ABCMeta):
         _var_bounds: Float64Array = np.concatenate(
             (var_bounds, np.array([[0, np.inf]]))
         )
-        sigma2 = np.zeros(t + 1)
+        sigma2: Float64Array1D
+        sigma2 = np.zeros(t + 1, dtype=float)
         self.compute_variance(parameters, _resids, sigma2, backcast, _var_bounds)
         forecasts = np.zeros((t - start_index, horizon))
         forecasts[:, 0] = sigma2[start_index + 1 :]
@@ -740,7 +742,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         The analytic ``method`` is not supported for all models.  Attempting
         to use this method when not available will raise a ValueError.
         """
-        parameters = np.asarray(parameters)
+        _parameters = np.asarray(parameters)
         method_name = method.lower()
         if method_name not in ("analytic", "simulation", "bootstrap"):
             raise ValueError(f"{method} is not a known forecasting method")
@@ -750,7 +752,7 @@ class VolatilityProcess(metaclass=ABCMeta):
         start = len(resids) - 1 if start is None else start
         if method_name == "analytic":
             return self._analytic_forecast(
-                parameters, resids, backcast, var_bounds, start, horizon
+                _parameters, resids, backcast, var_bounds, start, horizon
             )
         elif method == "simulation":
             # TODO: This looks like a design flaw.It is optional above but then must
@@ -758,7 +760,7 @@ class VolatilityProcess(metaclass=ABCMeta):
             #  expected to know when to provide the rng or not
             assert rng is not None
             return self._simulation_forecast(
-                parameters,
+                _parameters,
                 resids,
                 backcast,
                 var_bounds,
@@ -775,7 +777,7 @@ class VolatilityProcess(metaclass=ABCMeta):
                 )
 
             return self._bootstrap_forecast(
-                parameters,
+                _parameters,
                 resids,
                 backcast,
                 var_bounds,
@@ -1782,7 +1784,7 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         nobs = resids.shape[0]
         weights = self._weights(parameters)
         if not self._asym:
-            params = np.zeros(3)
+            params: Float64Array = np.zeros(3)
             params[:2] = parameters[:2]
         else:
             params = parameters[:3]
@@ -1798,13 +1800,13 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
         burn: int = 500,
         initial_value: Union[float, Float64Array, None] = None,
     ) -> tuple[Float64Array, Float64Array]:
-        parameters = np.asarray(ensure1d(parameters, "parameters", False), dtype=float)
+        _parameters = np.asarray(ensure1d(parameters, "parameters", False), dtype=float)
         if self._asym:
-            omega, alpha, gamma = parameters[:3]
+            omega, alpha, gamma = _parameters[:3]
         else:
-            omega, alpha = parameters[:2]
+            omega, alpha = _parameters[:2]
             gamma = 0
-        weights = self._weights(parameters)
+        weights = self._weights(_parameters)
         aw = weights * alpha
         gw = weights * gamma
 
@@ -1812,10 +1814,10 @@ class MIDASHyperbolic(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         if initial_value is None:
             if (1.0 - alpha - 0.5 * gamma) > 0:
-                initial_value = parameters[0] / (1.0 - alpha - 0.5 * gamma)
+                initial_value = _parameters[0] / (1.0 - alpha - 0.5 * gamma)
             else:
                 warn(initial_value_warning, InitialValueWarning)
-                initial_value = parameters[0]
+                initial_value = _parameters[0]
 
         m = weights.shape[0]
         burn = max(burn, m)
@@ -2634,7 +2636,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         if initial_value is None:
             if q > 0:
-                beta_sum = np.sum(parameters[p + o + 1 :])
+                beta_sum = float(np.sum(parameters[p + o + 1 :]))
             else:
                 beta_sum = 0.0
 
@@ -2646,8 +2648,9 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
 
         sigma2 = np.zeros(nobs + burn)
         data = np.zeros(nobs + burn)
+        lnsigma2: Float64Array1D
         lnsigma2 = np.zeros(nobs + burn)
-        abserrors = cast(Float64Array, np.abs(errors))
+        abserrors = cast(Float64Array1D, np.abs(errors))
 
         norm_const = np.sqrt(2 / np.pi)
         max_lag = np.max([p, o, q])
@@ -2669,7 +2672,7 @@ class EGARCH(VolatilityProcess, metaclass=AbstractDocStringInheritor):
                 lnsigma2[t] += parameters[loc] * lnsigma2[t - 1 - j]
                 loc += 1
 
-        sigma2 = cast(Float64Array, np.exp(lnsigma2))
+        sigma2 = np.exp(lnsigma2)
         data = errors * np.sqrt(sigma2)
 
         return data[burn:], sigma2[burn:]

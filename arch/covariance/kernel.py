@@ -7,7 +7,7 @@ from typing import Optional, SupportsInt, Union, cast
 import numpy as np
 from pandas import DataFrame, Index
 
-from arch.typing import ArrayLike, Float64Array
+from arch.typing import ArrayLike, Float64Array, Float64Array2D
 from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
 from arch.vendor._decorators import Substitution
 
@@ -211,11 +211,12 @@ class CovarianceEstimator(ABC):
                 "size of x using df_adjust. df_adjust must be less than"
                 f" {self._x.shape[0]}"
             )
+        xw: Float64Array2D
         if weights is None:
             xw = self._x_weights = np.ones((self._x.shape[1], 1))
         else:
-            xw = ensure1d(np.asarray(weights), "weights", series=False)
-            xw = self._x_weights = xw[:, None]
+            _xw = ensure1d(np.asarray(weights), "weights", series=False).astype(float)
+            xw = self._x_weights = cast(Float64Array2D, _xw[:, None])
         if (
             xw.shape[0] != self._x.shape[1]
             or xw.shape[1] != 1
@@ -444,7 +445,9 @@ class Bartlett(CovarianceEstimator, metaclass=AbstractDocStringInheritor):
 
     def _weights(self) -> Float64Array:
         bw = self.bandwidth
-        return (bw + 1 - np.arange(int(bw + 1), dtype="double")) / (bw + 1)
+        return ((bw + 1 - np.arange(int(bw + 1), dtype="double")) / (bw + 1)).astype(
+            float
+        )
 
 
 _parzen_formula = """\

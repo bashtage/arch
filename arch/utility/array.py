@@ -13,7 +13,7 @@ from typing import Any, Literal, Optional, Union, overload
 import numpy as np
 from pandas import DataFrame, DatetimeIndex, Index, NaT, Series, Timestamp, to_datetime
 
-from arch.typing import AnyPandas, ArrayLike, DateLike, NDArray
+from arch.typing import AnyArray1D, AnyPandas, ArrayLike, DateLike, NDArray
 
 __all__ = [
     "ensure1d",
@@ -45,7 +45,7 @@ def ensure1d(
     x: Union[int, float, Sequence[Union[int, float]], ArrayLike],
     name: Optional[Hashable],
     series: Literal[False],
-) -> np.ndarray:  # pragma: no cover
+) -> AnyArray1D:  # pragma: no cover
     ...  # pragma: no cover
 
 
@@ -53,35 +53,33 @@ def ensure1d(
     x: Union[int, float, Sequence[Union[int, float]], ArrayLike],  # noqa: E231
     name: Optional[Hashable],
     series: bool = False,
-) -> Union[NDArray, Series]:
+) -> Union[AnyArray1D, Series]:
     if isinstance(x, Series):
         if not isinstance(x.name, str):
             x.name = str(x.name)
         if series:
             return x
         else:
-            return np.asarray(x)
+            return x.to_numpy()
 
     if isinstance(x, DataFrame):
         if x.shape[1] != 1:
             raise ValueError(f"{name} must be squeezable to 1 dimension")
         if not series:
-            return np.asarray(x.iloc[:, 0])
+            return x.iloc[:, 0].to_numpy()
         x_series = Series(x.iloc[:, 0], x.index)
         if not isinstance(x_series.name, str):
             x_series.name = str(x_series.name)
         return x_series
 
-    x_arr = np.squeeze(np.asarray(x))
-    if x_arr.ndim == 0:
-        x_arr = x_arr[None]
-    elif x_arr.ndim != 1:
+    x_arr = np.asarray(x)
+    if sum([s > 1 for s in x_arr.shape]) > 1:
         raise ValueError(f"{name} must be squeezable to 1 dimension")
-
+    x_arr = x_arr.ravel()
     if series:
         return Series(x_arr, name=name)
     else:
-        return x_arr
+        return x_arr.ravel()
 
 
 def ensure2d(
