@@ -8,12 +8,20 @@ from abc import ABCMeta
 from collections.abc import Hashable, Sequence
 import datetime as dt
 from functools import cached_property
-from typing import Any, Literal, Optional, Union, overload
+from typing import Any, Literal, Optional, Union, cast, overload
 
 import numpy as np
 from pandas import DataFrame, DatetimeIndex, Index, NaT, Series, Timestamp, to_datetime
 
-from arch.typing import AnyArray1D, AnyPandas, ArrayLike, DateLike, NDArray
+from arch.typing import (
+    AnyArray,
+    AnyArray1D,
+    AnyPandas,
+    ArrayLike,
+    DateLike,
+    Float64Array1D,
+    NDArray,
+)
 
 __all__ = [
     "ensure1d",
@@ -24,11 +32,40 @@ __all__ = [
     "ensure2d",
     "AbstractDocStringInheritor",
     "find_index",
+    "to_array_1d",
 ]
 
 deprecation_doc: str = """
 {func} has been moved.  Please use {new_location}.{func}.
 """
+
+
+def to_array_1d(x: Union[AnyArray, Series]) -> Float64Array1D:
+    """
+    Ensure array is 1D and float64
+
+    Parameters
+    ----------
+    x : {ndarray, Series}
+        Array to convert
+
+    Returns
+    -------
+    ndarray
+        1D float64 array
+    """
+    if isinstance(x, np.ndarray):
+        _x = x.squeeze()
+        if _x.ndim == 1:
+            return cast(Float64Array1D, _x.astype(float))
+        elif _x.ndim == 0:
+            return cast(Float64Array1D, np.atleast_1d(_x).astype(float))
+        else:
+            raise ValueError("Array must be 1D or 1D convertible")
+    elif isinstance(x, Series):
+        return x.to_numpy().astype(float)
+    else:
+        raise TypeError("x must be a Series or ndarray")
 
 
 @overload

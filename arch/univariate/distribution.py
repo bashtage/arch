@@ -33,7 +33,7 @@ from scipy.special import comb, gamma, gammainc, gammaincc, gammaln
 import scipy.stats as stats
 
 from arch.typing import ArrayLike, ArrayLike1D, Float64Array, Float64Array1D
-from arch.utility.array import AbstractDocStringInheritor, ensure1d
+from arch.utility.array import AbstractDocStringInheritor, ensure1d, to_array_1d
 
 __all__ = ["Distribution", "Normal", "StudentsT", "SkewStudent", "GeneralizedError"]
 
@@ -230,7 +230,7 @@ class Distribution(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def starting_values(self, std_resid: Float64Array) -> Float64Array:
+    def starting_values(self, std_resid: Float64Array1D) -> Float64Array1D:
         """
         Construct starting values for use in optimization.
 
@@ -454,7 +454,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid: Float64Array) -> Float64Array:
+    def starting_values(self, std_resid: Float64Array1D) -> Float64Array1D:
         return empty(0)
 
     def _simulator(self, size: Union[int, tuple[int, ...]]) -> Float64Array:
@@ -605,7 +605,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid: Float64Array) -> Float64Array:
+    def starting_values(self, std_resid: Float64Array1D) -> Float64Array1D:
         """
         Construct starting values for use in optimization.
 
@@ -641,7 +641,9 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         parameters = ensure1d(parameters, "parameters", False)
         if parameters[0] <= 2.0:
             raise ValueError("The shape parameter must be larger than 2")
-        self._parameters = ensure1d(parameters, "parameters", series=False).astype(float)
+        self._parameters = ensure1d(parameters, "parameters", series=False).astype(
+            float
+        )
         return self._simulator
 
     def parameter_names(self) -> list[str]:
@@ -864,7 +866,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid: Float64Array) -> Float64Array:
+    def starting_values(self, std_resid: Float64Array1D) -> Float64Array1D:
         """
         Construct starting values for use in optimization.
 
@@ -909,7 +911,9 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
             raise ValueError(
                 "The skew parameter must be smaller than 1 in absolute value"
             )
-        self._parameters = ensure1d(parameters, "parameters", series=False).astype(float)
+        self._parameters = ensure1d(parameters, "parameters", series=False).astype(
+            float
+        )
         return self._simulator
 
     def parameter_names(self) -> list[str]:
@@ -1201,7 +1205,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid: Float64Array) -> Float64Array:
+    def starting_values(self, std_resid: Float64Array1D) -> Float64Array1D:
         """
         Construct starting values for use in optimization.
 
@@ -1220,7 +1224,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         -----
         Defaults to 1.5 which is implies heavier tails than a normal
         """
-        return array([1.5])
+        return to_array_1d(array([1.5]))
 
     def _simulator(self, size: Union[int, tuple[int, ...]]) -> Float64Array:
         assert self._parameters is not None
@@ -1242,7 +1246,9 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         parameters = ensure1d(parameters, "parameters", False)
         if parameters[0] <= 1.0:
             raise ValueError("The shape parameter must be larger than 1")
-        self._parameters = ensure1d(parameters, "parameters", series=False).astype(float)
+        self._parameters = ensure1d(parameters, "parameters", series=False).astype(
+            float
+        )
         return self._simulator
 
     def parameter_names(self) -> list[str]:

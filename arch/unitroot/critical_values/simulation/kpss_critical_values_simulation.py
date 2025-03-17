@@ -10,6 +10,7 @@ import numpy as np
 from numpy.random import RandomState
 import pandas as pd
 
+from arch.typing import Float64Array
 from arch.utility.timeseries import add_trend
 
 
@@ -30,7 +31,7 @@ def simulate_kpss(
     standard_normal = rng.standard_normal
 
     e = standard_normal((nobs, b))
-    z = np.ones((nobs, 1))
+    z: Float64Array = np.ones((nobs, 1))
     if trend == "ct":
         z = add_trend(z, trend="t")
     zinv = np.linalg.pinv(z)

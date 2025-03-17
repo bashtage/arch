@@ -3,6 +3,7 @@ from collections.abc import Sequence
 from typing import Optional, Union, cast
 import warnings
 
+import numpy as np
 from numpy import (
     abs,
     amax,
@@ -48,6 +49,7 @@ from arch.typing import (
     ArrayLike1D,
     ArrayLike2D,
     Float64Array,
+    Float64Array2D,
     Literal,
     UnitRootTrend,
 )
@@ -76,7 +78,12 @@ from arch.unitroot.critical_values.dickey_fuller import (
 from arch.unitroot.critical_values.kpss import kpss_critical_values
 from arch.unitroot.critical_values.zivot_andrews import za_critical_values
 from arch.utility import cov_nw
-from arch.utility.array import AbstractDocStringInheritor, ensure1d, ensure2d
+from arch.utility.array import (
+    AbstractDocStringInheritor,
+    ensure1d,
+    ensure2d,
+    to_array_1d,
+)
 from arch.utility.exceptions import (
     InfeasibleTestException,
     InvalidLengthWarning,
@@ -339,10 +346,12 @@ def _autolag_ols(
                 max_lags=maxlag, lag=max(exog_rank - startlag, 0)
             )
         )
-    q, r = qr(exog)
-    qpy = q.T @ endog
-    ypy = endog.T @ endog
-    xpx = exog.T @ exog
+    _exog = np.asarray(exog, dtype=float)
+    _endog = to_array_1d(endog)
+    q, r = qr(_exog)
+    qpy = q.T @ _endog
+    ypy = _endog.T @ _endog
+    xpx: Float64Array2D = _exog.T @ _exog
 
     sigma2 = empty(maxlag + 1)
     tstat = empty(maxlag + 1)
@@ -1340,11 +1349,12 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         """
         resids = self._resids
         assert resids is not None
+        _resids = to_array_1d(resids)
         covlags = int(power(self._nobs, 2.0 / 9.0))
-        s0 = sum(resids**2) / self._nobs
+        s0 = sum(_resids**2) / self._nobs
         s1 = 0
         for i in range(1, covlags + 1):
-            resids_prod = resids[i:] @ resids[: self._nobs - i]
+            resids_prod = _resids[i:] @ _resids[: self._nobs - i]
             resids_prod /= self._nobs / 2
             s0 += resids_prod
             s1 += i * resids_prod

@@ -17,10 +17,11 @@ from arch.univariate.volatility import (
 
 SP500 = 100 * sp500.load()["Adj Close"].pct_change().dropna()
 SP500 = SP500.iloc[SP500.shape[0] // 2 :]
-X = pd.concat([SP500, SP500], axis=1)
-X.columns = pd.Index([0, 1])
 RANDOMSTATE = np.random.RandomState(12349876)
-X.loc[:, :] = RANDOMSTATE.standard_normal(X.shape)
+X = pd.DataFrame(
+    RANDOMSTATE.standard_normal((SP500.shape[0], 2)), columns=[0, 1], index=SP500.index
+)
+
 
 SUPPORTED = [
     HARCH,

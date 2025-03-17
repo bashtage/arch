@@ -34,7 +34,7 @@ from arch.typing import (
 )
 from arch.univariate.distribution import Distribution, Normal
 from arch.univariate.volatility import ConstantVariance, VolatilityProcess
-from arch.utility.array import ensure1d
+from arch.utility.array import ensure1d, to_array_1d
 from arch.utility.exceptions import (
     ConvergenceWarning,
     DataScaleWarning,
@@ -197,8 +197,9 @@ class ARCHModel(metaclass=ABCMeta):
             self._y_series = cast(pd.Series, ensure1d(y, "y", series=True))
         else:
             self._y_series = cast(pd.Series, ensure1d(np.empty((0,)), "y", series=True))
-        self._y: Float64Array1D
-        self._y = np.ascontiguousarray(self._y_series)
+        self._y = to_array_1d(
+            np.ascontiguousarray(self._y_series.to_numpy()).astype(float)
+        )
         if not np.all(np.isfinite(self._y)):
             raise ValueError(
                 "NaN or inf values found in y. y must contains only finite values."
@@ -214,7 +215,7 @@ class ARCHModel(metaclass=ABCMeta):
         self.rescale: Optional[bool] = rescale
         self.scale: float = 1.0
 
-        self._backcast: Union[float, Float64Array, None] = None
+        self._backcast: Union[float, Float64Array1D, None] = None
         self._var_bounds: Optional[Float64Array] = None
 
         if isinstance(volatility, VolatilityProcess):
@@ -236,7 +237,7 @@ class ARCHModel(metaclass=ABCMeta):
         """The name of the model."""
         return self._name
 
-    def constraints(self) -> tuple[Float64Array, Float64Array]:
+    def constraints(self) -> tuple[Float64Array, Float64Array1D]:
         """
         Construct linear constraint arrays  for use in non-linear optimization
 
@@ -298,7 +299,7 @@ class ARCHModel(metaclass=ABCMeta):
             raise ValueError("Must subclass Distribution")
         self._distribution = value
 
-    def _check_scale(self, resids: Float64Array) -> None:
+    def _check_scale(self, resids: Float64Array1D) -> None:
         check = self.rescale in (None, True)
         if not check:
             return
@@ -335,7 +336,7 @@ class ARCHModel(metaclass=ABCMeta):
         raise NotImplementedError("Subclasses optionally may provide.")
 
     @abstractmethod
-    def _fit_no_arch_normal_errors_params(self) -> Float64Array:
+    def _fit_no_arch_normal_errors_params(self) -> Float64Array1D:
         """
         Must be overridden with closed form estimator the return parameters ony
         """
@@ -349,7 +350,7 @@ class ARCHModel(metaclass=ABCMeta):
         """
 
     @staticmethod
-    def _static_gaussian_loglikelihood(resids: Float64Array) -> float:
+    def _static_gaussian_loglikelihood(resids: Float64Array1D) -> float:
         nobs = resids.shape[0]
         sigma2 = resids.dot(resids) / nobs
 
@@ -362,7 +363,7 @@ class ARCHModel(metaclass=ABCMeta):
     def _fit_parameterless_model(
         self,
         cov_type: Literal["robust", "classic"],
-        backcast: Union[float, Float64Array],
+        backcast: Union[float, Float64Array1D],
     ) -> "ARCHModelResult":
         """
         When models have no parameters, fill return values
@@ -385,7 +386,7 @@ class ARCHModel(metaclass=ABCMeta):
         var_bounds = self.volatility.variance_bounds(y)
         vol = np.zeros(y.shape, dtype=float)
         self.volatility.compute_variance(params, y, vol, backcast, var_bounds)
-        vol = cast(Float64Array, np.sqrt(vol))
+        vol = cast(Float64Array1D, np.sqrt(vol))
 
         # Reshape resids vol
         vol_final = np.full(self._y.shape, np.nan, dtype=np.double)
@@ -612,7 +613,7 @@ class ARCHModel(metaclass=ABCMeta):
         last_obs: Union[int, DateLike, None] = None,
         tol: Optional[float] = None,
         options: Optional[dict[str, Any]] = None,
-        backcast: Union[float, Float64Array, None] = None,
+        backcast: Union[float, Float64Array1D, None] = None,
     ) -> "ARCHModelResult":
         r"""
         Estimate model parameters
@@ -677,14 +678,14 @@ class ARCHModel(metaclass=ABCMeta):
 
         self._adjust_sample(first_obs, last_obs)
 
-        resids = np.asarray(self.resids(self.starting_values()), dtype=float)
+        resids = self.resids(self.starting_values())
         self._check_scale(resids)
         if self.scale != 1.0:
             # Scale changed, rescale data and reset model
-            self._y = cast(np.ndarray, self.scale * np.asarray(self._y_original))
+            self._y = self.scale * np.asarray(self._y_original)
             self._scale_changed()
             self._adjust_sample(first_obs, last_obs)
-            resids = np.asarray(self.resids(self.starting_values()), dtype=float)
+            resids = self.resids(self.starting_values())
 
         if backcast is None:
             backcast = v.backcast(resids)
@@ -817,7 +818,7 @@ class ARCHModel(metaclass=ABCMeta):
         resids = np.asarray(self.resids(mp), dtype=float)
         vol = np.zeros_like(resids)
         self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
-        vol = cast(Float64Array, np.sqrt(vol))
+        vol = cast(Float64Array1D, np.sqrt(vol))
 
         try:
             r2 = self._r2(mp)
@@ -862,7 +863,7 @@ class ARCHModel(metaclass=ABCMeta):
             List of variable names for the mean model
         """
 
-    def starting_values(self) -> Float64Array:
+    def starting_values(self) -> Float64Array1D:
         """
         Returns starting values for the mean model, often the same as the
         values returned from fit
@@ -920,8 +921,8 @@ class ARCHModel(metaclass=ABCMeta):
 
     def compute_param_cov(
         self,
-        params: Float64Array,
-        backcast: Union[float, Float64Array, None] = None,
+        params: Float64Array1D,
+        backcast: Union[float, Float64Array1D, None] = None,
         robust: bool = True,
     ) -> Float64Array:
         """
@@ -1139,9 +1140,9 @@ class ARCHModelFixedResult(_SummaryRepr):
 
     def __init__(
         self,
-        params: Float64Array,
-        resid: Float64Array,
-        volatility: Float64Array,
+        params: Float64Array1D,
+        resid: Float64Array1D,
+        volatility: Float64Array1D,
         dep_var: pd.Series,
         names: list[str],
         loglikelihood: float,
@@ -1300,7 +1301,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         return pd.Series(self._params, index=self._names, name="params")
 
     @cached_property
-    def conditional_volatility(self) -> Union[Float64Array, pd.Series]:
+    def conditional_volatility(self) -> Union[Float64Array1D, pd.Series]:
         """
         Estimated conditional volatility
 
@@ -1325,7 +1326,7 @@ class ARCHModelFixedResult(_SummaryRepr):
         return self._nobs
 
     @cached_property
-    def resid(self) -> Union[Float64Array, pd.Series]:
+    def resid(self) -> Union[Float64Array1D, pd.Series]:
         """
         Model residuals
         """
@@ -1335,7 +1336,7 @@ class ARCHModelFixedResult(_SummaryRepr):
             return self._resid
 
     @cached_property
-    def std_resid(self) -> Union[Float64Array, pd.Series]:
+    def std_resid(self) -> Union[Float64Array1D, pd.Series]:
         """
         Residuals standardized by conditional volatility
         """
@@ -1769,11 +1770,11 @@ class ARCHModelResult(ARCHModelFixedResult):
 
     def __init__(
         self,
-        params: Float64Array,
+        params: Float64Array1D,
         param_cov: Optional[Float64Array],
         r2: float,
-        resid: Float64Array,
-        volatility: Float64Array,
+        resid: Float64Array1D,
+        volatility: Float64Array1D,
         cov_type: str,
         dep_var: pd.Series,
         names: list[str],
