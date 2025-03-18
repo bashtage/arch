@@ -299,11 +299,11 @@ class ARCHModel(metaclass=ABCMeta):
             raise ValueError("Must subclass Distribution")
         self._distribution = value
 
-    def _check_scale(self, resids: Float64Array1D) -> None:
+    def _check_scale(self, resids: ArrayLike1D) -> None:
         check = self.rescale in (None, True)
         if not check:
             return
-        orig_scale = scale = resids.var()
+        orig_scale = scale = float(np.var(resids))
         rescale = 1.0
         while not 0.1 <= scale < 10000.0 and scale > 0:
             if scale < 1.0:
@@ -389,14 +389,17 @@ class ARCHModel(metaclass=ABCMeta):
         vol = cast(Float64Array1D, np.sqrt(vol))
 
         # Reshape resids vol
-        vol_final = np.full(self._y.shape, np.nan, dtype=np.double)
+        vol_final = np.full(self._y.shape, np.nan, dtype=float)
         vol_final[first_obs:last_obs] = vol
 
         names = self._all_parameter_names()
         r2 = self._r2(params)
         fit_start, fit_stop = self._fit_indices
         loglikelihood = -1.0 * self._loglikelihood(
-            params, vol**2 * np.ones(fit_stop - fit_start), backcast, var_bounds
+            params,
+            cast(Float64Array1D, vol**2 * np.ones(fit_stop - fit_start)),
+            backcast,
+            var_bounds,
         )
 
         assert isinstance(r2, float)
@@ -477,14 +480,14 @@ class ARCHModel(metaclass=ABCMeta):
 
         # 1. Resids
         mp, vp, dp = self._parse_parameters(parameters)
-        resids = np.asarray(self.resids(mp), dtype=float)
+        _resids = self.resids(mp)
 
         # 2. Compute sigma2 using VolatilityModel
         sigma2 = self.volatility.compute_variance(
-            vp, resids, sigma2, backcast, var_bounds
+            vp, _resids, sigma2, backcast, var_bounds
         )
         # 3. Compute log likelihood using Distribution
-        llf = self.distribution.loglikelihood(dp, resids, sigma2, individual)
+        llf = self.distribution.loglikelihood(dp, _resids, sigma2, individual)
 
         if not individual:
             _callback_info["llf"] = llf_f = -float(llf)
@@ -507,9 +510,13 @@ class ARCHModel(metaclass=ABCMeta):
         x: Union[ArrayLike1D, Sequence[float]],
     ) -> tuple[Float64Array1D, Float64Array1D, Float64Array1D]:
         """Return the parameters of each model in a tuple"""
-        x = np.asarray(x, dtype=float)
+        _x = to_array_1d(np.asarray(x, dtype=float))
         km, kv = int(self.num_params), int(self.volatility.num_params)
-        return x[:km], x[km : km + kv], x[km + kv :]
+        return (
+            to_array_1d(x[:km]),
+            to_array_1d(x[km : km + kv]),
+            to_array_1d(x[km + kv :]),
+        )
 
     def fix(
         self,
@@ -543,8 +550,8 @@ class ARCHModel(metaclass=ABCMeta):
         v = self.volatility
 
         self._adjust_sample(first_obs, last_obs)
-        resids = np.asarray(self.resids(self.starting_values()), dtype=float)
-        sigma2 = np.zeros_like(resids)
+        resids = self.resids(self.starting_values())
+        sigma2 = np.zeros(resids.shape[0], dtype=float)
         backcast = v.backcast(resids)
         self._backcast = backcast
 
@@ -556,10 +563,10 @@ class ARCHModel(metaclass=ABCMeta):
 
         mp, vp, dp = self._parse_parameters(params)
 
-        resids = np.asarray(self.resids(mp), dtype=float)
-        vol = np.zeros_like(resids)
+        resids = to_array_1d(self.resids(mp))
+        vol = np.zeros(resids.shape[0], dtype=float)
         self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
-        vol = np.asarray(np.sqrt(vol))
+        vol = to_array_1d(np.sqrt(vol))
 
         names = self._all_parameter_names()
         # Reshape resids and vol
@@ -682,7 +689,9 @@ class ARCHModel(metaclass=ABCMeta):
         self._check_scale(resids)
         if self.scale != 1.0:
             # Scale changed, rescale data and reset model
-            self._y = self.scale * np.asarray(self._y_original)
+            self._y = to_array_1d(
+                self.scale * ensure1d(self._y_original, "y", series=False)
+            )
             self._scale_changed()
             self._adjust_sample(first_obs, last_obs)
             resids = self.resids(self.starting_values())
@@ -702,7 +711,7 @@ class ARCHModel(metaclass=ABCMeta):
         if total_params == 0:
             return self._fit_parameterless_model(cov_type=cov_type, backcast=backcast)
 
-        sigma2 = np.zeros_like(resids)
+        sigma2 = np.zeros(resids.shape[0], dtype=float)
         self._backcast = backcast
         sv_volatility = v.starting_values(resids)
         self._var_bounds = var_bounds = v.variance_bounds(resids)
@@ -756,8 +765,14 @@ class ARCHModel(metaclass=ABCMeta):
                 starting_values = None
 
         if starting_values is None:
-            sv = np.hstack(
-                [self.starting_values(), sv_volatility, d.starting_values(std_resids)]
+            sv = to_array_1d(
+                np.hstack(
+                    [
+                        self.starting_values(),
+                        sv_volatility,
+                        d.starting_values(std_resids),
+                    ]
+                )
             )
 
         # 4. Estimate models using constrained optimization
@@ -815,8 +830,8 @@ class ARCHModel(metaclass=ABCMeta):
 
         mp, vp, dp = self._parse_parameters(params)
 
-        resids = np.asarray(self.resids(mp), dtype=float)
-        vol = np.zeros_like(resids)
+        resids = self.resids(mp)
+        vol = np.zeros(resids.shape[0], dtype=float)
         self.volatility.compute_variance(vp, resids, vol, backcast, var_bounds)
         vol = cast(Float64Array1D, np.sqrt(vol))
 
@@ -939,7 +954,7 @@ class ARCHModel(metaclass=ABCMeta):
             classic MLE (False)
 
         """
-        resids = np.asarray(self.resids(self.starting_values()), dtype=float)
+        resids = self.resids(self.starting_values())
         var_bounds = self.volatility.variance_bounds(resids)
         nobs = resids.shape[0]
         if backcast is None and self._backcast is None:
@@ -949,7 +964,7 @@ class ARCHModel(metaclass=ABCMeta):
             backcast = self._backcast
 
         kwargs = {
-            "sigma2": np.zeros_like(resids),
+            "sigma2": np.zeros(resids.shape[0], dtype=float),
             "backcast": backcast,
             "var_bounds": var_bounds,
             "individual": False,
@@ -1968,7 +1983,7 @@ class ARCHModelResult(ARCHModelFixedResult):
         if self._param_cov is not None:
             param_cov = self._param_cov
         else:
-            params = np.asarray(self.params)
+            params = to_array_1d(self.params)
             if self.cov_type == "robust":
                 param_cov = self.model.compute_param_cov(params)
             else:

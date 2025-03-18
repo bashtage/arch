@@ -185,7 +185,7 @@ class Distribution(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def bounds(self, resids: Float64Array) -> list[tuple[float, float]]:
+    def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
         """
         Parameter bounds for use in optimization.
 
@@ -230,7 +230,7 @@ class Distribution(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def starting_values(self, std_resid: Float64Array1D) -> Float64Array1D:
+    def starting_values(self, std_resid: ArrayLike1D) -> Float64Array1D:
         """
         Construct starting values for use in optimization.
 
@@ -407,7 +407,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
     def constraints(self) -> tuple[Float64Array, Float64Array]:
         return empty(0), empty(0)
 
-    def bounds(self, resids: Float64Array) -> list[tuple[float, float]]:
+    def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
         return []
 
     def loglikelihood(
@@ -454,7 +454,7 @@ class Normal(Distribution, metaclass=AbstractDocStringInheritor):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid: Float64Array1D) -> Float64Array1D:
+    def starting_values(self, std_resid: ArrayLike1D) -> Float64Array1D:
         return empty(0)
 
     def _simulator(self, size: Union[int, tuple[int, ...]]) -> Float64Array:
@@ -551,7 +551,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
     def constraints(self) -> tuple[Float64Array, Float64Array]:
         return array([[1], [-1]]), array([2.05, -500.0])
 
-    def bounds(self, resids: Float64Array) -> list[tuple[float, float]]:
+    def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
         return [(2.05, 500.0)]
 
     def loglikelihood(
@@ -605,7 +605,7 @@ class StudentsT(Distribution, metaclass=AbstractDocStringInheritor):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid: Float64Array1D) -> Float64Array1D:
+    def starting_values(self, std_resid: ArrayLike1D) -> Float64Array1D:
         """
         Construct starting values for use in optimization.
 
@@ -788,7 +788,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
     def constraints(self) -> tuple[Float64Array, Float64Array]:
         return array([[1, 0], [-1, 0], [0, 1], [0, -1]]), array([2.05, -300.0, -1, -1])
 
-    def bounds(self, resids: Float64Array) -> list[tuple[float, float]]:
+    def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
         return [(2.05, 300.0), (-1, 1)]
 
     def loglikelihood(
@@ -866,7 +866,7 @@ class SkewStudent(Distribution, metaclass=AbstractDocStringInheritor):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid: Float64Array1D) -> Float64Array1D:
+    def starting_values(self, std_resid: ArrayLike1D) -> Float64Array1D:
         """
         Construct starting values for use in optimization.
 
@@ -1145,7 +1145,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
     def constraints(self) -> tuple[Float64Array, Float64Array]:
         return array([[1], [-1]]), array([1.01, -500.0])
 
-    def bounds(self, resids: Float64Array) -> list[tuple[float, float]]:
+    def bounds(self, resids: ArrayLike1D) -> list[tuple[float, float]]:
         return [(1.01, 500.0)]
 
     def loglikelihood(
@@ -1205,7 +1205,7 @@ class GeneralizedError(Distribution, metaclass=AbstractDocStringInheritor):
         else:
             return sum(lls)
 
-    def starting_values(self, std_resid: Float64Array1D) -> Float64Array1D:
+    def starting_values(self, std_resid: ArrayLike1D) -> Float64Array1D:
         """
         Construct starting values for use in optimization.
 

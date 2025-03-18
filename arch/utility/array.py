@@ -55,6 +55,8 @@ def to_array_1d(x: Union[AnyArray, Series]) -> Float64Array1D:
         1D float64 array
     """
     if isinstance(x, np.ndarray):
+        if x.ndim == 1 and x.dtype == np.float64:
+            return cast(Float64Array1D, x)
         _x = x.squeeze()
         if _x.ndim == 1:
             return cast(Float64Array1D, _x.astype(float))

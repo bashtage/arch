@@ -16,7 +16,7 @@ pytest-xdist
 pytest-cov
 
 # formatting
-black[jupyter]~=24.10.0
+black[jupyter]~=25.1.0
 isort~=5.12
 colorama
 flake8

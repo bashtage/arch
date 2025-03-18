@@ -49,6 +49,7 @@ from arch.typing import (
     ArrayLike1D,
     ArrayLike2D,
     Float64Array,
+    Float64Array1D,
     Float64Array2D,
     Literal,
     UnitRootTrend,
@@ -431,7 +432,7 @@ def _df_select_lags(
     rhs = lagmat(delta_y[:, None], max_lags, trim="both", original="in")
     nobs = rhs.shape[0]
     rhs[:, 0] = y[-nobs - 1 : -1]  # replace 0 with level of y
-    lhs = delta_y[-nobs:]
+    lhs = to_array_1d(delta_y[-nobs:])
 
     if trend != "n":
         full_rhs = add_trend(rhs, trend, prepend=True)
@@ -1352,10 +1353,11 @@ class KPSS(UnitRootTest, metaclass=AbstractDocStringInheritor):
         _resids = to_array_1d(resids)
         covlags = int(power(self._nobs, 2.0 / 9.0))
         s0 = sum(_resids**2) / self._nobs
-        s1 = 0
+        s1 = 0.0
+        nobs = float(self._nobs)
         for i in range(1, covlags + 1):
-            resids_prod = _resids[i:] @ _resids[: self._nobs - i]
-            resids_prod /= self._nobs / 2
+            resids_prod = float(_resids[i:] @ _resids[: self._nobs - i])
+            resids_prod /= nobs / 2
             s0 += resids_prod
             s1 += i * resids_prod
         if s0 <= 0:
@@ -1706,7 +1708,7 @@ class VarianceRatio(UnitRootTest, metaclass=AbstractDocStringInheritor):
             # Check length of y
             if nq % q != 0:
                 extra = nq % q
-                y = y[:-extra]
+                y = cast(Float64Array1D, y[:-extra])
                 warnings.warn(
                     invalid_length_doc.format(var="y", block=q, drop=extra),
                     InvalidLengthWarning,

@@ -268,7 +268,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
             distribution=distribution,
             rescale=rescale,
         )
-        self._x: Optional[Union[pd.DataFrame, Float64Array2D]]
+        self._x: Optional[Union[pd.DataFrame, Float64Array2D]] = None
         self._x_original = x
         self._x_names: list[str] = []
         self._x_index: Union[NDArray, pd.Index, None] = None
@@ -281,7 +281,7 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         self.regressors: Float64Array2D = np.empty((0, 0), dtype=np.double)
 
         self._name = "HAR"
-        if self._x is not None:
+        if self._x_original is not None:
             self._name += "-X"
         if lags is not None:
             max_lags = int(np.max(np.asarray(lags, dtype=np.int32)))
@@ -553,8 +553,10 @@ class HARX(ARCHModel, metaclass=AbstractDocStringInheritor):
         )
         if self._x_original is not None:
             if isinstance(self._x_original, pd.Series):
-                self._x = pd.DataFrame(self._x)
-            elif not isinstance(self._x_original, pd.DataFrame):
+                self._x = pd.DataFrame(self._x_original)
+            elif isinstance(self._x_original, pd.DataFrame):
+                self._x = self._x_original
+            else:
                 x_original = np.asarray(self._x_original, dtype=float)
                 if x_original.ndim == 1:
                     x_original = x_original[:, None]
@@ -1470,7 +1472,7 @@ class ARX(HARX):
             rescale=rescale,
         )
         self._name = "AR"
-        if self._x is not None:
+        if self._x_original is not None:
             self._name += "-X"
 
     def _model_description(self, include_lags: bool = True) -> dict[str, str]:
@@ -1482,7 +1484,7 @@ class ARX(HARX):
             lagstr_comp = [str(lag[1]) for lag in self._lags.T]
             lagstr = ", ".join(lagstr_comp)
 
-        xstr = str(self._x.shape[1]) if self._x is not None else "0"
+        xstr = str(self._x.shape[1]) if self._x_original is not None else "0"
         conststr = "yes" if self.constant else "no"
         od = {"constant": conststr}
         if include_lags:
