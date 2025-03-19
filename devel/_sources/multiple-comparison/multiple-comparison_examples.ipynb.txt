@@ -229,14 +229,14 @@
    "source": [
     "import pandas as pd\n",
     "\n",
-    "pvalues = pd.DataFrame(pvalues)\n",
-    "for col in pvalues:\n",
-    "    values = pvalues[col].to_numpy(copy=True)\n",
+    "pvalues_df = pd.DataFrame(pvalues)\n",
+    "for col in pvalues_df:\n",
+    "    values = pvalues_df[col].to_numpy(copy=True)\n",
     "    values.sort()\n",
-    "    pvalues[col] = values\n",
+    "    pvalues_df[col] = values\n",
     "# Change the index so that the x-values are between 0 and 1\n",
-    "pvalues.index = np.linspace(0.005, 0.995, 100)\n",
-    "fig = pvalues.plot()"
+    "pvalues_df.index = pd.Index(np.linspace(0.005, 0.995, 100))\n",
+    "fig = pvalues_df.plot()"
    ]
   },
   {
@@ -288,8 +288,10 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "model_losses = pd.DataFrame(model_losses, columns=[\"model.\" + str(i) for i in range(k)])\n",
-    "avg_model_losses = pd.DataFrame(model_losses.mean(0), columns=[\"Average loss\"])\n",
+    "model_losses_df = pd.DataFrame(\n",
+    "    model_losses, columns=[\"model.\" + str(i) for i in range(k)]\n",
+    ")\n",
+    "avg_model_losses = pd.DataFrame(model_losses_df.mean(axis=0), columns=[\"Average loss\"])\n",
     "fig = avg_model_losses.plot(style=[\"o\"])"
    ]
   },
@@ -315,7 +317,7 @@
    "source": [
     "from arch.bootstrap import StepM\n",
     "\n",
-    "stepm = StepM(bm_losses, model_losses)\n",
+    "stepm = StepM(bm_losses, model_losses_df)\n",
     "stepm.compute()\n",
     "print(\"Model indices:\")\n",
     "print([model.split(\".\")[1] for model in stepm.superior_models])"
@@ -327,7 +329,9 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "better_models = pd.concat([model_losses.mean(0), model_losses.mean(0)], axis=1)\n",
+    "better_models = pd.concat(\n",
+    "    [model_losses_df.mean(axis=0), model_losses_df.mean(axis=0)], axis=1\n",
+    ")\n",
     "better_models.columns = [\"Same or worse\", \"Better\"]\n",
     "better = better_models.index.isin(stepm.superior_models)\n",
     "worse = np.logical_not(better)\n",
@@ -359,7 +363,7 @@
     "from arch.bootstrap import MCS\n",
     "\n",
     "# Limit the size of the set\n",
-    "losses = model_losses.iloc[:, ::20]\n",
+    "losses = model_losses_df.iloc[:, ::20]\n",
     "mcs = MCS(losses, size=0.10)\n",
     "mcs.compute()\n",
     "print(\"MCS P-values\")\n",
@@ -379,7 +383,7 @@
    "outputs": [],
    "source": [
     "status = pd.DataFrame(\n",
-    "    [losses.mean(0), losses.mean(0)], index=[\"Excluded\", \"Included\"]\n",
+    "    [losses.mean(axis=0), losses.mean(axis=0)], index=[\"Excluded\", \"Included\"]\n",
     ").T\n",
     "status.loc[status.index.isin(included), \"Excluded\"] = np.nan\n",
     "status.loc[status.index.isin(excluded), \"Included\"] = np.nan\n",
@@ -403,7 +407,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.12.7"
+   "version": "3.12.9"
   }
  },
  "nbformat": 4,

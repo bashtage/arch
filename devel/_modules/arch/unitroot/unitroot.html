@@ -1,6 +1,7 @@
 
 
 
+
 <!doctype html>
 <html lang="en" class="no-js">
   <head>
@@ -18,7 +19,7 @@
     
   
       
-        <title>arch.unitroot.unitroot - arch v7.2.1 (+23)</title>
+        <title>arch.unitroot.unitroot - arch v7.2.1 (+29)</title>
       
     
 
@@ -48,7 +49,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.f1e42938f8d3c76eb.min.css?v=85834ad9" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.96fe8683ff2bd71e9.min.css?v=13adf062" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -89,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+29)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+29)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -100,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+23)
+            arch v7.2.1 (+29)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -195,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+29)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+29)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+23)
+    arch v7.2.1 (+29)
   </label>
   
     <div class="md-nav__source">
@@ -450,8 +451,9 @@
           
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset" role="main">
+                
+                
                   
-
 
 
 <h1>Source code for arch.unitroot.unitroot</h1><div class="highlight"><pre>
@@ -460,6 +462,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="nb">abs</span><span class="p">,</span>
     <span class="n">amax</span><span class="p">,</span>
@@ -505,6 +508,8 @@
     <span class="n">ArrayLike1D</span><span class="p">,</span>
     <span class="n">ArrayLike2D</span><span class="p">,</span>
     <span class="n">Float64Array</span><span class="p">,</span>
+    <span class="n">Float64Array1D</span><span class="p">,</span>
+    <span class="n">Float64Array2D</span><span class="p">,</span>
     <span class="n">Literal</span><span class="p">,</span>
     <span class="n">UnitRootTrend</span><span class="p">,</span>
 <span class="p">)</span>
@@ -533,7 +538,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.critical_values.kpss</span><span class="w"> </span><span class="kn">import</span> <span class="n">kpss_critical_values</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.unitroot.critical_values.zivot_andrews</span><span class="w"> </span><span class="kn">import</span> <span class="n">za_critical_values</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility</span><span class="w"> </span><span class="kn">import</span> <span class="n">cov_nw</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractDocStringInheritor</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">ensure2d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AbstractDocStringInheritor</span><span class="p">,</span>
+    <span class="n">ensure1d</span><span class="p">,</span>
+    <span class="n">ensure2d</span><span class="p">,</span>
+    <span class="n">to_array_1d</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">InfeasibleTestException</span><span class="p">,</span>
     <span class="n">InvalidLengthWarning</span><span class="p">,</span>
@@ -796,10 +806,12 @@
                 <span class="n">max_lags</span><span class="o">=</span><span class="n">maxlag</span><span class="p">,</span> <span class="n">lag</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">exog_rank</span> <span class="o">-</span> <span class="n">startlag</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="p">)</span>
-    <span class="n">q</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">qr</span><span class="p">(</span><span class="n">exog</span><span class="p">)</span>
-    <span class="n">qpy</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">endog</span>
-    <span class="n">ypy</span> <span class="o">=</span> <span class="n">endog</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">endog</span>
-    <span class="n">xpx</span> <span class="o">=</span> <span class="n">exog</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">exog</span>
+    <span class="n">_exog</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">exog</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">_endog</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">endog</span><span class="p">)</span>
+    <span class="n">q</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">qr</span><span class="p">(</span><span class="n">_exog</span><span class="p">)</span>
+    <span class="n">qpy</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">_endog</span>
+    <span class="n">ypy</span> <span class="o">=</span> <span class="n">_endog</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">_endog</span>
+    <span class="n">xpx</span><span class="p">:</span> <span class="n">Float64Array2D</span> <span class="o">=</span> <span class="n">_exog</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">_exog</span>
 
     <span class="n">sigma2</span> <span class="o">=</span> <span class="n">empty</span><span class="p">(</span><span class="n">maxlag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">tstat</span> <span class="o">=</span> <span class="n">empty</span><span class="p">(</span><span class="n">maxlag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
@@ -879,7 +891,7 @@
     <span class="n">rhs</span> <span class="o">=</span> <span class="n">lagmat</span><span class="p">(</span><span class="n">delta_y</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">max_lags</span><span class="p">,</span> <span class="n">trim</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">original</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">)</span>
     <span class="n">nobs</span> <span class="o">=</span> <span class="n">rhs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">rhs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="n">nobs</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># replace 0 with level of y</span>
-    <span class="n">lhs</span> <span class="o">=</span> <span class="n">delta_y</span><span class="p">[</span><span class="o">-</span><span class="n">nobs</span><span class="p">:]</span>
+    <span class="n">lhs</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">delta_y</span><span class="p">[</span><span class="o">-</span><span class="n">nobs</span><span class="p">:])</span>
 
     <span class="k">if</span> <span class="n">trend</span> <span class="o">!=</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span>
         <span class="n">full_rhs</span> <span class="o">=</span> <span class="n">add_trend</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">trend</span><span class="p">,</span> <span class="n">prepend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1808,12 +1820,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resids</span>
         <span class="k">assert</span> <span class="n">resids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">_resids</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
         <span class="n">covlags</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">power</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="mf">9.0</span><span class="p">))</span>
-        <span class="n">s0</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">resids</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span>
-        <span class="n">s1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">s0</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">_resids</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span>
+        <span class="n">s1</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">covlags</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">resids_prod</span> <span class="o">=</span> <span class="n">resids</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span> <span class="o">@</span> <span class="n">resids</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span>
-            <span class="n">resids_prod</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">resids_prod</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">_resids</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span> <span class="o">@</span> <span class="n">_resids</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span>
+            <span class="n">resids_prod</span> <span class="o">/=</span> <span class="n">nobs</span> <span class="o">/</span> <span class="mi">2</span>
             <span class="n">s0</span> <span class="o">+=</span> <span class="n">resids_prod</span>
             <span class="n">s1</span> <span class="o">+=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">resids_prod</span>
         <span class="k">if</span> <span class="n">s0</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -2170,7 +2184,7 @@
             <span class="c1"># Check length of y</span>
             <span class="k">if</span> <span class="n">nq</span> <span class="o">%</span> <span class="n">q</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">extra</span> <span class="o">=</span> <span class="n">nq</span> <span class="o">%</span> <span class="n">q</span>
-                <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:</span><span class="o">-</span><span class="n">extra</span><span class="p">]</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">y</span><span class="p">[:</span><span class="o">-</span><span class="n">extra</span><span class="p">])</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                     <span class="n">invalid_length_doc</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="n">q</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">extra</span><span class="p">),</span>
                     <span class="n">InvalidLengthWarning</span><span class="p">,</span>

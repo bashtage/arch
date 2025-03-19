@@ -1,6 +1,7 @@
 
 
 
+
 <!doctype html>
 <html lang="en" class="no-js">
   <head>
@@ -18,7 +19,7 @@
     
   
       
-        <title>arch.univariate.base - arch v7.2.1 (+23)</title>
+        <title>arch.univariate.base - arch v7.2.1 (+29)</title>
       
     
 
@@ -48,7 +49,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.f1e42938f8d3c76eb.min.css?v=85834ad9" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.96fe8683ff2bd71e9.min.css?v=13adf062" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -89,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+29)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+29)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -100,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+23)
+            arch v7.2.1 (+29)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -195,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+29)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+29)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+23)
+    arch v7.2.1 (+29)
   </label>
   
     <div class="md-nav__source">
@@ -450,8 +451,9 @@
           
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset" role="main">
+                
+                
                   
-
 
 
 <h1>Source code for arch.univariate.base</h1><div class="highlight"><pre>
@@ -485,13 +487,14 @@
     <span class="n">DateLike</span><span class="p">,</span>
     <span class="n">Float64Array</span><span class="p">,</span>
     <span class="n">Float64Array1D</span><span class="p">,</span>
+    <span class="n">Float64Array2D</span><span class="p">,</span>
     <span class="n">ForecastingMethod</span><span class="p">,</span>
     <span class="n">Label</span><span class="p">,</span>
     <span class="n">Literal</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.distribution</span><span class="w"> </span><span class="kn">import</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">Normal</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.univariate.volatility</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantVariance</span><span class="p">,</span> <span class="n">VolatilityProcess</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure1d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">to_array_1d</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ConvergenceWarning</span><span class="p">,</span>
     <span class="n">DataScaleWarning</span><span class="p">,</span>
@@ -656,8 +659,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,)),</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">:</span> <span class="n">Float64Array1D</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_series</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;NaN or inf values found in y. y must contains only finite values.&quot;</span>
@@ -673,7 +677,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">rescale</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">rescale</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_var_bounds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">volatility</span><span class="p">,</span> <span class="n">VolatilityProcess</span><span class="p">):</span>
@@ -697,7 +701,7 @@
 
 <div class="viewcode-block" id="ARCHModel.constraints">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.constraints.html#arch.univariate.base.ARCHModel.constraints">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct linear constraint arrays  for use in non-linear optimization</span>
 
@@ -763,11 +767,11 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must subclass Distribution&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_check_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rescale</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">check</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="n">orig_scale</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+        <span class="n">orig_scale</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">resids</span><span class="p">))</span>
         <span class="n">rescale</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="mf">0.1</span> <span class="o">&lt;=</span> <span class="n">scale</span> <span class="o">&lt;</span> <span class="mf">10000.0</span> <span class="ow">and</span> <span class="n">scale</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">scale</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
@@ -800,7 +804,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses optionally may provide.&quot;</span><span class="p">)</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_fit_no_arch_normal_errors_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fit_no_arch_normal_errors_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Must be overridden with closed form estimator the return parameters ony</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -814,7 +818,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_static_gaussian_loglikelihood</span><span class="p">(</span><span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_static_gaussian_loglikelihood</span><span class="p">(</span><span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">nobs</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">sigma2</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span> <span class="o">/</span> <span class="n">nobs</span>
 
@@ -827,7 +831,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_fit_parameterless_model</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cov_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;robust&quot;</span><span class="p">,</span> <span class="s2">&quot;classic&quot;</span><span class="p">],</span>
-        <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">],</span>
+        <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ARCHModelResult&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        When models have no parameters, fill return values</span>
@@ -850,17 +854,20 @@
         <span class="n">var_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">variance_bounds</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="n">vol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">compute_variance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">)</span>
-        <span class="n">vol</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">vol</span><span class="p">))</span>
+        <span class="n">vol</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">vol</span><span class="p">))</span>
 
         <span class="c1"># Reshape resids vol</span>
-        <span class="n">vol_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+        <span class="n">vol_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">vol_final</span><span class="p">[</span><span class="n">first_obs</span><span class="p">:</span><span class="n">last_obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">vol</span>
 
         <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_parameter_names</span><span class="p">()</span>
         <span class="n">r2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r2</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">fit_start</span><span class="p">,</span> <span class="n">fit_stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span>
         <span class="n">loglikelihood</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loglikelihood</span><span class="p">(</span>
-            <span class="n">params</span><span class="p">,</span> <span class="n">vol</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">fit_stop</span> <span class="o">-</span> <span class="n">fit_start</span><span class="p">),</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span>
+            <span class="n">params</span><span class="p">,</span>
+            <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">vol</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">fit_stop</span> <span class="o">-</span> <span class="n">fit_start</span><span class="p">)),</span>
+            <span class="n">backcast</span><span class="p">,</span>
+            <span class="n">var_bounds</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
@@ -887,7 +894,7 @@
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">],</span>
-        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
+        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array2D</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
         <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
@@ -897,7 +904,7 @@
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">],</span>
-        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
+        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array2D</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
         <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
@@ -908,7 +915,7 @@
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">],</span>
-        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
+        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array2D</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
         <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
@@ -918,7 +925,7 @@
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">],</span>
-        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
+        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array2D</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -941,14 +948,14 @@
 
         <span class="c1"># 1. Resids</span>
         <span class="n">mp</span><span class="p">,</span> <span class="n">vp</span><span class="p">,</span> <span class="n">dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-        <span class="n">resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="n">mp</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">_resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span>
 
         <span class="c1"># 2. Compute sigma2 using VolatilityModel</span>
         <span class="n">sigma2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">compute_variance</span><span class="p">(</span>
-            <span class="n">vp</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span>
+            <span class="n">vp</span><span class="p">,</span> <span class="n">_resids</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span>
         <span class="p">)</span>
         <span class="c1"># 3. Compute log likelihood using Distribution</span>
-        <span class="n">llf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">individual</span><span class="p">)</span>
+        <span class="n">llf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">_resids</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">,</span> <span class="n">individual</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">individual</span><span class="p">:</span>
             <span class="n">_callback_info</span><span class="p">[</span><span class="s2">&quot;llf&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">llf_f</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">llf</span><span class="p">)</span>
@@ -971,9 +978,13 @@
         <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the parameters of each model in a tuple&quot;&quot;&quot;</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">_x</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
         <span class="n">km</span><span class="p">,</span> <span class="n">kv</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_params</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">num_params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">x</span><span class="p">[:</span><span class="n">km</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">km</span> <span class="p">:</span> <span class="n">km</span> <span class="o">+</span> <span class="n">kv</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">km</span> <span class="o">+</span> <span class="n">kv</span> <span class="p">:]</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">to_array_1d</span><span class="p">(</span><span class="n">_x</span><span class="p">[:</span><span class="n">km</span><span class="p">]),</span>
+            <span class="n">to_array_1d</span><span class="p">(</span><span class="n">_x</span><span class="p">[</span><span class="n">km</span> <span class="p">:</span> <span class="n">km</span> <span class="o">+</span> <span class="n">kv</span><span class="p">]),</span>
+            <span class="n">to_array_1d</span><span class="p">(</span><span class="n">_x</span><span class="p">[</span><span class="n">km</span> <span class="o">+</span> <span class="n">kv</span> <span class="p">:]),</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="ARCHModel.fix">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.fix.html#arch.univariate.base.ARCHModel.fix">[docs]</a>
@@ -1009,8 +1020,8 @@
         <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_sample</span><span class="p">(</span><span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span><span class="p">)</span>
-        <span class="n">resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">())</span>
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">backcast</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">backcast</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_backcast</span> <span class="o">=</span> <span class="n">backcast</span>
 
@@ -1022,10 +1033,10 @@
 
         <span class="n">mp</span><span class="p">,</span> <span class="n">vp</span><span class="p">,</span> <span class="n">dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
-        <span class="n">resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="n">mp</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-        <span class="n">vol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="n">resids</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="n">mp</span><span class="p">))</span>
+        <span class="n">vol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">compute_variance</span><span class="p">(</span><span class="n">vp</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">)</span>
-        <span class="n">vol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">vol</span><span class="p">))</span>
+        <span class="n">vol</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">vol</span><span class="p">))</span>
 
         <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_parameter_names</span><span class="p">()</span>
         <span class="c1"># Reshape resids and vol</span>
@@ -1082,7 +1093,7 @@
         <span class="n">last_obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DateLike</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">tol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ARCHModelResult&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Estimate model parameters</span>
@@ -1147,14 +1158,16 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_sample</span><span class="p">(</span><span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span><span class="p">)</span>
 
-        <span class="n">resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_scale</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="c1"># Scale changed, rescale data and reset model</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_original</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">*</span> <span class="n">ensure1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_original</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_scale_changed</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_sample</span><span class="p">(</span><span class="n">first_obs</span><span class="p">,</span> <span class="n">last_obs</span><span class="p">)</span>
-            <span class="n">resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">())</span>
 
         <span class="k">if</span> <span class="n">backcast</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">backcast</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">backcast</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
@@ -1171,7 +1184,7 @@
         <span class="k">if</span> <span class="n">total_params</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_parameterless_model</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="n">cov_type</span><span class="p">,</span> <span class="n">backcast</span><span class="o">=</span><span class="n">backcast</span><span class="p">)</span>
 
-        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_backcast</span> <span class="o">=</span> <span class="n">backcast</span>
         <span class="n">sv_volatility</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">starting_values</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_var_bounds</span> <span class="o">=</span> <span class="n">var_bounds</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">variance_bounds</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
@@ -1225,8 +1238,14 @@
                 <span class="n">starting_values</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">starting_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">sv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
-                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">(),</span> <span class="n">sv_volatility</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">starting_values</span><span class="p">(</span><span class="n">std_resids</span><span class="p">)]</span>
+            <span class="n">sv</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">(),</span>
+                        <span class="n">sv_volatility</span><span class="p">,</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">starting_values</span><span class="p">(</span><span class="n">std_resids</span><span class="p">),</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
             <span class="p">)</span>
 
         <span class="c1"># 4. Estimate models using constrained optimization</span>
@@ -1284,10 +1303,10 @@
 
         <span class="n">mp</span><span class="p">,</span> <span class="n">vp</span><span class="p">,</span> <span class="n">dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
-        <span class="n">resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="n">mp</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-        <span class="n">vol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span>
+        <span class="n">vol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">compute_variance</span><span class="p">(</span><span class="n">vp</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">var_bounds</span><span class="p">)</span>
-        <span class="n">vol</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">vol</span><span class="p">))</span>
+        <span class="n">vol</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">vol</span><span class="p">))</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">r2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r2</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span>
@@ -1338,7 +1357,7 @@
 
 <div class="viewcode-block" id="ARCHModel.starting_values">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.starting_values.html#arch.univariate.base.ARCHModel.starting_values">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns starting values for the mean model, often the same as the</span>
 <span class="sd">        values returned from fit</span>
@@ -1405,8 +1424,8 @@
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.base.ARCHModel.compute_param_cov.html#arch.univariate.base.ARCHModel.compute_param_cov">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_param_cov</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
-        <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
+        <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">robust</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1423,7 +1442,7 @@
 <span class="sd">            classic MLE (False)</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_values</span><span class="p">())</span>
         <span class="n">var_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">variance_bounds</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
         <span class="n">nobs</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">backcast</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backcast</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1433,7 +1452,7 @@
             <span class="n">backcast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backcast</span>
 
         <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;sigma2&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">resids</span><span class="p">),</span>
+            <span class="s2">&quot;sigma2&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">resids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
             <span class="s2">&quot;backcast&quot;</span><span class="p">:</span> <span class="n">backcast</span><span class="p">,</span>
             <span class="s2">&quot;var_bounds&quot;</span><span class="p">:</span> <span class="n">var_bounds</span><span class="p">,</span>
             <span class="s2">&quot;individual&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
@@ -1631,9 +1650,9 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
-        <span class="n">resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
-        <span class="n">volatility</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
+        <span class="n">resid</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
+        <span class="n">volatility</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">dep_var</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
         <span class="n">names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">loglikelihood</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -1795,7 +1814,7 @@
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;params&quot;</span><span class="p">)</span>
 
     <span class="nd">@cached_property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">conditional_volatility</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">conditional_volatility</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Estimated conditional volatility</span>
 
@@ -1820,7 +1839,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nobs</span>
 
     <span class="nd">@cached_property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">resid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Model residuals</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1830,7 +1849,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resid</span>
 
     <span class="nd">@cached_property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">std_resid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">std_resid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Residuals standardized by conditional volatility</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -2279,11 +2298,11 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">param_cov</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Float64Array</span><span class="p">],</span>
         <span class="n">r2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
-        <span class="n">volatility</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
+        <span class="n">resid</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
+        <span class="n">volatility</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">cov_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">dep_var</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
         <span class="n">names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
@@ -2483,7 +2502,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_cov</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">param_cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_cov</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cov_type</span> <span class="o">==</span> <span class="s2">&quot;robust&quot;</span><span class="p">:</span>
                 <span class="n">param_cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">compute_param_cov</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>

@@ -1,6 +1,7 @@
 
 
 
+
 <!doctype html>
 <html lang="en" class="no-js">
   <head>
@@ -18,7 +19,7 @@
     
   
       
-        <title>arch.univariate.distribution - arch v7.2.1 (+23)</title>
+        <title>arch.univariate.distribution - arch v7.2.1 (+29)</title>
       
     
 
@@ -48,7 +49,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.f1e42938f8d3c76eb.min.css?v=85834ad9" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.96fe8683ff2bd71e9.min.css?v=13adf062" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -89,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+29)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+29)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -100,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+23)
+            arch v7.2.1 (+29)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -195,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+29)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+29)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+23)
+    arch v7.2.1 (+29)
   </label>
   
     <div class="md-nav__source">
@@ -450,8 +451,9 @@
           
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset" role="main">
+                
+                
                   
-
 
 
 <h1>Source code for arch.univariate.distribution</h1><div class="highlight"><pre>
@@ -490,7 +492,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stats</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">arch.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">ArrayLike1D</span><span class="p">,</span> <span class="n">Float64Array</span><span class="p">,</span> <span class="n">Float64Array1D</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractDocStringInheritor</span><span class="p">,</span> <span class="n">ensure1d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractDocStringInheritor</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">,</span> <span class="n">to_array_1d</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Distribution&quot;</span><span class="p">,</span> <span class="s2">&quot;Normal&quot;</span><span class="p">,</span> <span class="s2">&quot;StudentsT&quot;</span><span class="p">,</span> <span class="s2">&quot;SkewStudent&quot;</span><span class="p">,</span> <span class="s2">&quot;GeneralizedError&quot;</span><span class="p">]</span>
 
@@ -652,7 +654,7 @@
 <div class="viewcode-block" id="Distribution.bounds">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.bounds.html#arch.univariate.distribution.Distribution.bounds">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameter bounds for use in optimization.</span>
 
@@ -703,7 +705,7 @@
 <div class="viewcode-block" id="Distribution.starting_values">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.distribution.Distribution.starting_values.html#arch.univariate.distribution.Distribution.starting_values">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct starting values for use in optimization.</span>
 
@@ -904,7 +906,7 @@
 
 <div class="viewcode-block" id="Normal.bounds">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.bounds.html#arch.univariate.distribution.Normal.bounds">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
         <span class="k">return</span> <span class="p">[]</span></div>
 
 
@@ -957,7 +959,7 @@
 
 <div class="viewcode-block" id="Normal.starting_values">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.Normal.starting_values.html#arch.univariate.distribution.Normal.starting_values">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 
@@ -1081,7 +1083,7 @@
 
 <div class="viewcode-block" id="StudentsT.bounds">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.bounds.html#arch.univariate.distribution.StudentsT.bounds">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
         <span class="k">return</span> <span class="p">[(</span><span class="mf">2.05</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">)]</span></div>
 
 
@@ -1141,7 +1143,7 @@
 
 <div class="viewcode-block" id="StudentsT.starting_values">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.StudentsT.starting_values.html#arch.univariate.distribution.StudentsT.starting_values">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct starting values for use in optimization.</span>
 
@@ -1180,7 +1182,9 @@
         <span class="n">parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">2.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The shape parameter must be larger than 2&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+            <span class="nb">float</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulator</span></div>
 
 
@@ -1349,7 +1353,7 @@
 
 <div class="viewcode-block" id="SkewStudent.bounds">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.bounds.html#arch.univariate.distribution.SkewStudent.bounds">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
         <span class="k">return</span> <span class="p">[(</span><span class="mf">2.05</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span></div>
 
 
@@ -1433,7 +1437,7 @@
 
 <div class="viewcode-block" id="SkewStudent.starting_values">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.SkewStudent.starting_values.html#arch.univariate.distribution.SkewStudent.starting_values">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct starting values for use in optimization.</span>
 
@@ -1481,7 +1485,9 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;The skew parameter must be smaller than 1 in absolute value&quot;</span>
             <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+            <span class="nb">float</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulator</span></div>
 
 
@@ -1737,7 +1743,7 @@
 
 <div class="viewcode-block" id="GeneralizedError.bounds">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.bounds.html#arch.univariate.distribution.GeneralizedError.bounds">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resids</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
         <span class="k">return</span> <span class="p">[(</span><span class="mf">1.01</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">)]</span></div>
 
 
@@ -1803,7 +1809,7 @@
 
 <div class="viewcode-block" id="GeneralizedError.starting_values">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.GeneralizedError.starting_values.html#arch.univariate.distribution.GeneralizedError.starting_values">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_resid</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct starting values for use in optimization.</span>
 
@@ -1822,7 +1828,7 @@
 <span class="sd">        -----</span>
 <span class="sd">        Defaults to 1.5 which is implies heavier tails than a normal</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.5</span><span class="p">])</span></div>
+        <span class="k">return</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">1.5</span><span class="p">]))</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
@@ -1847,7 +1853,9 @@
         <span class="n">parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The shape parameter must be larger than 1&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+            <span class="nb">float</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulator</span></div>
 
 

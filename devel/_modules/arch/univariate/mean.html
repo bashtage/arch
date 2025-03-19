@@ -1,6 +1,7 @@
 
 
 
+
 <!doctype html>
 <html lang="en" class="no-js">
   <head>
@@ -18,7 +19,7 @@
     
   
       
-        <title>arch.univariate.mean - arch v7.2.1 (+23)</title>
+        <title>arch.univariate.mean - arch v7.2.1 (+29)</title>
       
     
 
@@ -48,7 +49,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.f1e42938f8d3c76eb.min.css?v=85834ad9" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.96fe8683ff2bd71e9.min.css?v=13adf062" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -89,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+29)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+29)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -100,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+23)
+            arch v7.2.1 (+29)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -195,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+29)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+29)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+23)
+    arch v7.2.1 (+29)
   </label>
   
     <div class="md-nav__source">
@@ -450,8 +451,9 @@
           
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset" role="main">
+                
+                
                   
-
 
 
 <h1>Source code for arch.univariate.mean</h1><div class="highlight"><pre>
@@ -498,6 +500,7 @@
     <span class="n">SkewStudent</span><span class="p">,</span>
     <span class="n">StudentsT</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arch.utility.array</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_array_1d</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="c1"># Fake path to satisfy mypy</span>
@@ -587,7 +590,7 @@
         <span class="n">fcasts</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">constant</span> <span class="o">+</span> <span class="n">fcasts</span><span class="p">[:,</span> <span class="n">i</span> <span class="o">-</span> <span class="n">p</span> <span class="p">:</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">arp_rev</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">fcasts</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span> <span class="o">-</span> <span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">exogp</span>
-    <span class="n">fcasts</span> <span class="o">=</span> <span class="n">fcasts</span><span class="p">[:,</span> <span class="n">p</span><span class="p">:]</span>
+    <span class="n">fcasts</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array2D</span><span class="p">,</span> <span class="n">fcasts</span><span class="p">[:,</span> <span class="n">p</span><span class="p">:])</span>
 
     <span class="k">return</span> <span class="n">fcasts</span>
 
@@ -726,7 +729,8 @@
             <span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">,</span>
             <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">Float64Array2D</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x_original</span> <span class="o">=</span> <span class="n">x</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_x_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_x_index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lags</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -735,10 +739,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span><span class="p">:</span> <span class="n">Int64Array2D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">constant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">constant</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_rotated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">use_rotated</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">regressors</span><span class="p">:</span> <span class="n">Float64Array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regressors</span><span class="p">:</span> <span class="n">Float64Array2D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;HAR&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_original</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+=</span> <span class="s2">&quot;-X&quot;</span>
         <span class="k">if</span> <span class="n">lags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">max_lags</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">lags</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)))</span>
@@ -830,10 +834,10 @@
         <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">regressors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike2D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike1D</span><span class="p">:</span>
-        <span class="n">regressors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_regressors</span> <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">regressors</span>
+        <span class="n">_regressors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_regressors</span> <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">regressors</span>
         <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span> <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">y</span>
-        <span class="k">assert</span> <span class="n">regressors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="n">y</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">regressors</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">params</span><span class="p">)</span></div>
+        <span class="k">assert</span> <span class="n">_regressors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">y</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">_regressors</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">params</span><span class="p">)</span></div>
 
 
     <span class="nd">@cached_property</span>
@@ -967,7 +971,7 @@
         <span class="n">vc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">num_params</span>
         <span class="n">dc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">num_params</span>
         <span class="n">num_params</span> <span class="o">=</span> <span class="n">mc</span> <span class="o">+</span> <span class="n">vc</span> <span class="o">+</span> <span class="n">dc</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">&quot;params&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">ensure1d</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">&quot;params&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">num_params</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;params has the wrong number of elements. &quot;</span>
@@ -975,8 +979,8 @@
             <span class="p">)</span>
 
         <span class="n">dist_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">dc</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="n">dc</span><span class="p">:]</span>
-        <span class="n">vol_params</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">mc</span> <span class="p">:</span> <span class="n">mc</span> <span class="o">+</span> <span class="n">vc</span><span class="p">]</span>
-        <span class="n">simulator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">dist_params</span><span class="p">)</span>
+        <span class="n">vol_params</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="n">mc</span> <span class="p">:</span> <span class="n">mc</span> <span class="o">+</span> <span class="n">vc</span><span class="p">])</span>
+        <span class="n">simulator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">dist_params</span><span class="p">))</span>
         <span class="n">sim_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span>
             <span class="n">vol_params</span><span class="p">,</span> <span class="n">nobs</span> <span class="o">+</span> <span class="n">burn</span><span class="p">,</span> <span class="n">simulator</span><span class="p">,</span> <span class="n">burn</span><span class="p">,</span> <span class="n">initial_value_vol</span>
         <span class="p">)</span>
@@ -1014,22 +1018,26 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks the specification for obvious errors&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">err_msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;x must be nobs by n, where nobs is the same as the number of elements in y&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_original</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x_original</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x_original</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x_original</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_original</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">x_original</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x_original</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">x_original</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">x_original</span> <span class="o">=</span> <span class="n">x_original</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array2D</span><span class="p">,</span> <span class="n">x_original</span><span class="p">)</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">))</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;x must be nobs by n, where nobs is the same as &quot;</span>
-                    <span class="s2">&quot;the number of elements in y&quot;</span>
-                <span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
             <span class="n">def_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;x&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
             <span class="n">names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_index</span> <span class="o">=</span> <span class="n">parse_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span> <span class="n">def_names</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_x_names</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array2D</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_reformat_lags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1052,7 +1060,7 @@
                     <span class="s2">&quot;When using the 1-d format of lags, values must be positive&quot;</span>
                 <span class="p">)</span>
             <span class="n">lags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">lags</span><span class="p">)</span>
-            <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lags</span><span class="p">,</span> <span class="n">lags</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Int64Array2D</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lags</span><span class="p">,</span> <span class="n">lags</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">))</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_rotated</span><span class="p">:</span>
                 <span class="n">temp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                 <span class="n">temp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1068,7 +1076,7 @@
                     <span class="s2">&quot;lags[0,j] &lt;= lags[1,j] for all lags values.&quot;</span>
                 <span class="p">)</span>
             <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">lexsort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">lags</span><span class="p">))</span>
-            <span class="n">lags</span> <span class="o">=</span> <span class="n">lags</span><span class="p">[:,</span> <span class="n">ind</span><span class="p">]</span>
+            <span class="n">lags</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Int64Array2D</span><span class="p">,</span> <span class="n">lags</span><span class="p">[:,</span> <span class="n">ind</span><span class="p">])</span>
             <span class="n">test_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">lags</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">lags</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
             <span class="c1"># Subtract 1 so first is 0 indexed</span>
             <span class="n">lags</span> <span class="o">=</span> <span class="n">lags</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
@@ -1077,8 +1085,8 @@
             <span class="n">rank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_rank</span><span class="p">(</span><span class="n">test_mat</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">rank</span> <span class="o">!=</span> <span class="n">lags</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;lags contains redundant entries&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Int64Array2D</span><span class="p">,</span> <span class="n">lags</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_lags</span> <span class="o">=</span> <span class="n">lags</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_rotated</span><span class="p">:</span>
                 <span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
 
@@ -1123,7 +1131,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">reg_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">nobs_orig</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">regressors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">reg_constant</span><span class="p">,</span> <span class="n">reg_lags</span><span class="p">,</span> <span class="n">reg_x</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regressors</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+            <span class="n">Float64Array2D</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">reg_constant</span><span class="p">,</span> <span class="n">reg_lags</span><span class="p">,</span> <span class="n">reg_x</span><span class="p">))</span>
+        <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">ArrayLike1D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span>
@@ -1139,7 +1149,7 @@
         <span class="n">tss</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">tss</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-        <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="n">to_array_1d</span><span class="p">(</span><span class="n">params</span><span class="p">)))</span>
 
         <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="o">/</span> <span class="n">tss</span>
 
@@ -1155,12 +1165,12 @@
         <span class="k">if</span> <span class="n">_last_obs_index</span> <span class="o">&lt;=</span> <span class="n">_first_obs_index</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;first_obs and last_obs produce in an empty array.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">_first_obs_index</span><span class="p">,</span> <span class="n">_last_obs_index</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">[</span><span class="n">_first_obs_index</span><span class="p">:</span><span class="n">_last_obs_index</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">[</span><span class="n">_first_obs_index</span><span class="p">:</span><span class="n">_last_obs_index</span><span class="p">])</span>
         <span class="n">reg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regressors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fit_regressors</span> <span class="o">=</span> <span class="n">reg</span><span class="p">[</span><span class="n">_first_obs_index</span><span class="p">:</span><span class="n">_last_obs_index</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">volatility</span><span class="o">.</span><span class="n">stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_indices</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_fit_no_arch_normal_errors_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fit_no_arch_normal_errors_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Estimates model parameters excluding sigma2</span>
 
@@ -1227,7 +1237,9 @@
         <span class="n">opt</span> <span class="o">=</span> <span class="n">OptimizeResult</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">})</span>
 
         <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">regression_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">regression_params</span><span class="p">:</span> <span class="n">Float64Array1D</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+                <span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">xpxi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="n">nobs</span><span class="p">)</span>
             <span class="n">fitted</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">regression_params</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1238,7 +1250,7 @@
         <span class="n">e</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">fitted</span>
         <span class="n">sigma2</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="n">nobs</span>
 
-        <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">regression_params</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">))</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">regression_params</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">)))</span>
         <span class="n">hessian</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_params</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
         <span class="n">hessian</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span><span class="p">,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">xpxi</span>
         <span class="n">hessian</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
@@ -1342,7 +1354,7 @@
                         <span class="sa">f</span><span class="s2">&quot;the included exogenous regressors. </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> not found in: &quot;</span>
                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">keys</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="p">)</span>
-                <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">temp</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
                 <span class="n">collected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
@@ -1426,7 +1438,7 @@
                 <span class="sa">f</span><span class="s2">&quot;this value is </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">earliest</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
         <span class="c1"># Parse params</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">mp</span><span class="p">,</span> <span class="n">vp</span><span class="p">,</span> <span class="n">dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
         <span class="c1">#####################################</span>
@@ -1434,9 +1446,13 @@
         <span class="c1">#####################################</span>
         <span class="c1"># Back cast should use only the sample used in fitting</span>
         <span class="n">resids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span>
-        <span class="n">backcast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span><span class="o">.</span><span class="n">backcast</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
-        <span class="n">full_resids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">[</span><span class="n">earliest</span><span class="p">:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">regressors</span><span class="p">[</span><span class="n">earliest</span><span class="p">:]),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span>
+        <span class="n">backcast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span><span class="o">.</span><span class="n">backcast</span><span class="p">(</span><span class="n">resids</span><span class="p">)</span>
+        <span class="n">full_resids</span> <span class="o">=</span> <span class="n">to_array_1d</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span>
+                <span class="n">mp</span><span class="p">,</span>
+                <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">[</span><span class="n">earliest</span><span class="p">:]),</span>
+                <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array2D</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">regressors</span><span class="p">[</span><span class="n">earliest</span><span class="p">:]),</span>
+            <span class="p">)</span>
         <span class="p">)</span>
         <span class="n">vb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volatility</span><span class="o">.</span><span class="n">variance_bounds</span><span class="p">(</span><span class="n">full_resids</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1686,8 +1702,8 @@
         <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">regressors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike2D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike1D</span><span class="p">:</span>
-        <span class="n">_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span> <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">_y</span> <span class="o">-</span> <span class="n">params</span></div>
+        <span class="n">_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span> <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">to_array_1d</span><span class="p">(</span><span class="n">ensure1d</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">_y</span> <span class="o">-</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 </div>
 
 
@@ -1957,7 +1973,7 @@
             <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;AR&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_original</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+=</span> <span class="s2">&quot;-X&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_lags</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
@@ -2233,12 +2249,14 @@
         <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike1D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">regressors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike2D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike1D</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span><span class="n">params</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">regressors</span><span class="o">=</span><span class="n">regressors</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">resids</span><span class="p">(</span>
+            <span class="n">cast</span><span class="p">(</span><span class="n">Float64Array1D</span><span class="p">,</span> <span class="n">params</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">regressors</span><span class="o">=</span><span class="n">regressors</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ARCHInMean.starting_values">
 <a class="viewcode-back" href="../../../univariate/generated/generated/arch.univariate.ARCHInMean.starting_values.html#arch.univariate.ARCHInMean.starting_values">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">starting_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">starting_values</span><span class="p">(),</span> <span class="mf">0.0</span><span class="p">]</span></div>
 
 
@@ -2248,7 +2266,7 @@
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">],</span>
-        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
+        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array2D</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
         <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
@@ -2258,7 +2276,7 @@
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">],</span>
-        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
+        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array2D</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
         <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
@@ -2269,7 +2287,7 @@
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">],</span>
-        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
+        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array2D</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float64Array1D</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
         <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
@@ -2279,7 +2297,7 @@
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">sigma2</span><span class="p">:</span> <span class="n">Float64Array1D</span><span class="p">,</span>
         <span class="n">backcast</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">],</span>
-        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array</span><span class="p">,</span>
+        <span class="n">var_bounds</span><span class="p">:</span> <span class="n">Float64Array2D</span><span class="p">,</span>
         <span class="n">individual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Float64Array1D</span><span class="p">]:</span>
         <span class="c1"># Parse parameters</span>

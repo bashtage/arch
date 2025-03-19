@@ -1,6 +1,7 @@
 
 
 
+
 <!doctype html>
 <html lang="en" class="no-js">
   <head>
@@ -18,7 +19,7 @@
     
   
       
-        <title>arch.bootstrap.multiple_comparison - arch v7.2.1 (+23)</title>
+        <title>arch.bootstrap.multiple_comparison - arch v7.2.1 (+29)</title>
       
     
 
@@ -48,7 +49,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.f1e42938f8d3c76eb.min.css?v=85834ad9" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.96fe8683ff2bd71e9.min.css?v=13adf062" />
         <link rel="stylesheet" type="text/css" href="../../../_static/css/small_fixes.css?v=64f7a1ef" />
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -89,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+29)" class="md-header__button md-logo" aria-label="arch v7.2.1 (+29)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -100,7 +101,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            arch v7.2.1 (+23)
+            arch v7.2.1 (+29)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -195,10 +196,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../index.html" title="arch v7.2.1 (+23)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+23)" data-md-component="logo">
+    <a href="../../../index.html" title="arch v7.2.1 (+29)" class="md-nav__button md-logo" aria-label="arch v7.2.1 (+29)" data-md-component="logo">
       <img src="../../../_static/bw-logo.svg" alt="logo">
     </a>
-    arch v7.2.1 (+23)
+    arch v7.2.1 (+29)
   </label>
   
     <div class="md-nav__source">
@@ -450,8 +451,9 @@
           
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset" role="main">
+                
+                
                   
-
 
 
 <h1>Source code for arch.bootstrap.multiple_comparison</h1><div class="highlight"><pre>
@@ -473,7 +475,7 @@
     <span class="n">ArrayLike2D</span><span class="p">,</span>
     <span class="n">BoolArray</span><span class="p">,</span>
     <span class="n">Float64Array</span><span class="p">,</span>
-    <span class="n">Int64Array</span><span class="p">,</span>
+    <span class="n">Int64Array1D</span><span class="p">,</span>
     <span class="n">IntArray</span><span class="p">,</span>
     <span class="n">Literal</span><span class="p">,</span>
     <span class="n">Uint32Array</span><span class="p">,</span>
@@ -913,7 +915,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">reps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_superior_models</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_superior_models</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span> <span class="n">CircularBlockBootstrap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">bootstrap</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="s2">&quot;StepM&quot;</span>
@@ -939,16 +941,13 @@
         <span class="c1"># 1. Run SPA</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
         <span class="c1"># 2. If any models superior, store indices, remove and re-run SPA</span>
-        <span class="n">better_models</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">better_models</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+        <span class="n">better_models</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">better_models</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
         <span class="n">all_better_models</span> <span class="o">=</span> <span class="n">better_models</span><span class="p">[:]</span>
         <span class="c1"># 3. Stop if nothing superior</span>
         <span class="k">while</span> <span class="n">better_models</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">better_models</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">):</span>
             <span class="c1"># A. Use Selector to remove better models</span>
             <span class="n">selector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>  <span class="c1"># Columns</span>
-                <span class="n">selector</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">all_better_models</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">selector</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">all_better_models</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">selector</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">all_better_models</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
             <span class="c1"># B. Rerun</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">spa</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
@@ -962,7 +961,7 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">superior_models</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">superior_models</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        List of the indices or column names of the superior models</span>
 
@@ -975,6 +974,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_superior_models</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;compute must be called before accessing superior_models&quot;</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_superior_models</span><span class="p">])</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_superior_models</span></div>
 
 
@@ -1266,7 +1267,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pvalue</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
         <span class="n">pvalue_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="s2">&quot;consistent&quot;</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;consistent&quot;</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Int64Array</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Int64Array1D</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns set of models rejected as being equal-or-worse than the</span>
 <span class="sd">        benchmark</span>
@@ -1296,10 +1297,7 @@
         <span class="n">crit_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critical_values</span><span class="p">(</span><span class="n">pvalue</span><span class="o">=</span><span class="n">pvalue</span><span class="p">)[</span><span class="n">pvalue_type</span><span class="p">]</span>
         <span class="n">better_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_diff</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">crit_val</span>
         <span class="n">better_models</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">better_models</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selector</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">better_models</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">better_models</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">better_models</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

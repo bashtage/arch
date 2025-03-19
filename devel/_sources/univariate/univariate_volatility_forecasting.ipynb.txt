@@ -46,10 +46,9 @@
    "source": [
     "import sys\n",
     "\n",
+    "import arch.data.sp500\n",
     "import numpy as np\n",
     "import pandas as pd\n",
-    "\n",
-    "import arch.data.sp500\n",
     "from arch import arch_model\n",
     "\n",
     "data = arch.data.sp500.load()\n",
@@ -493,7 +492,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.12.7"
+   "version": "3.12.9"
   }
  },
  "nbformat": 4,
