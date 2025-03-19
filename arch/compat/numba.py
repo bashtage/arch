@@ -4,6 +4,13 @@ from typing import Any, Callable, Optional
 
 from arch.utility.exceptions import PerformanceWarning
 
+try:
+    import numba  # noqa
+
+    HAS_NUMBA = True
+except ImportError:
+    HAS_NUMBA = False
+
 DISABLE_NUMBA = os.environ.get("ARCH_DISABLE_NUMBA", False) in ("1", "true", "True")
 
 performance_warning: str = """
@@ -51,4 +58,4 @@ except ImportError:
         return wrap
 
 
-__all__ = ["jit", "PerformanceWarning"]
+__all__ = ["jit", "PerformanceWarning", "HAS_NUMBA", "DISABLE_NUMBA"]

@@ -1,4 +1,4 @@
-from arch.compat.numba import jit
+from arch.compat.numba import DISABLE_NUMBA, HAS_NUMBA, jit
 
 from abc import ABC, abstractmethod
 from functools import cached_property
@@ -136,14 +136,19 @@ class CovarianceEstimate:
         return self._wrap(self._oss)
 
 
-@jit(nopython=True)
-def _cov_jit(
+def _cov_kernel(
     df: int, k: int, num_weights: int, w: np.ndarray, x: np.ndarray
 ) -> np.ndarray:
     oss = np.zeros((k, k))
     for i in range(1, num_weights):
         oss += w[i] * (x[i:].T @ x[:-i]) / df
     return oss
+
+
+if HAS_NUMBA and not DISABLE_NUMBA:
+    _cov_jit = jit(_cov_kernel, nopython=True)
+else:
+    _cov_jit = _cov_kernel
 
 
 class CovarianceEstimator(ABC):
